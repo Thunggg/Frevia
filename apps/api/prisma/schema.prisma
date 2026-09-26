@@ -1,0 +1,1225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================
+// 1. Roles & Permissions
+// ============================
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        RoleName  @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
+  userId    Int
+  roleId    Int
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([userId, roleId])
+}
+
+model Permission {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(500)
+  description String?
+  path        String     @db.VarChar(1000)
+  method      HttpMethod
+  module      String?    @default("") @db.VarChar(500)
+  createdById Int?
+  updatedById Int?
+  deletedById Int?
+  deletedAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  rolePermissions RolePermission[]
+
+  // NOTE: cần tạo bằng raw SQL migration (Prisma không hỗ trợ partial unique index):
+  // CREATE UNIQUE INDEX idx_permissions_active ON "Permission" (name) WHERE "deletedAt" IS NULL;
+  @@index([deletedAt])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([roleId, permissionId])
+}
+
+// ============================
+// 2. Authentication & User Core
+// ============================
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique @db.VarChar(255)
+  passwordHash  String?   @db.VarChar(255) // Nullable cho OAuth users
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // --- Auth / core ---
+  userRoles           UserRole[]
+  emailVerifications  EmailVerification[]
+  passwordResetTokens PasswordResetToken[]
+  sessions            Session[]
+  oauthAccounts       OauthAccount[]
+  twoFactorAuth       TwoFactorAuth?
+  userSettings        UserSetting?
+  profile             Profile?
+
+  // --- Verification / profile visits ---
+  idVerificationDocuments IdVerificationDocument[] @relation("IdVerificationUser")
+  idVerificationsReviewed IdVerificationDocument[] @relation("IdVerificationAdmin")
+  profileVisitsMade       ProfileVisitLog[]        @relation("ProfileVisitViewer")
+  profileVisitsReceived   ProfileVisitLog[]        @relation("ProfileVisitTarget")
+
+  // --- Jobs ---
+  jobsPosted         Job[]
+  jobBookmarks       JobBookmark[]
+  recentlyViewedJobs RecentlyViewedJob[]
+  savedSearches      SavedSearch[]
+  jobAlerts          JobAlert[]
+
+  // --- Proposals ---
+  proposals         Proposal[]
+  proposalTemplates ProposalTemplate[]
+
+  // --- Contracts ---
+  contractsAsClient     Contract[]             @relation("ContractClient")
+  contractsAsFreelancer Contract[]             @relation("ContractFreelancer")
+  contractTermTemplates ContractTermTemplate[]
+  revisionRequests      RevisionRequest[]
+  contractActivityLogs  ContractActivityLog[]
+
+  // --- Escrow / Web3 ---
+  walletWithdrawals WalletWithdrawal[]
+  gasFeeSubsidies   GasFeeSubsidy[]
+
+  // --- Certificates / Disputes / Reviews ---
+  certificatesAsFreelancer Certificate[]     @relation("CertificateFreelancer")
+  certificatesAsClient     Certificate[]     @relation("CertificateClient")
+  disputesRaised           Dispute[]         @relation("DisputeRaisedBy")
+  disputesHandled          Dispute[]         @relation("DisputeAdmin")
+  disputeEvidences         DisputeEvidence[]
+  reviewsGiven             Review[]          @relation("ReviewReviewer")
+  reviewsReceived          Review[]          @relation("ReviewReviewee")
+  reviewResponses          ReviewResponse[]
+
+  // --- Forum ---
+  forumPosts          ForumPost[]
+  forumComments       ForumComment[]
+  forumLikes          ForumLike[]
+  forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
+  forumReportsHandled ForumReport[]  @relation("ForumReportAdmin")
+
+  // --- Notifications / Moderation / System ---
+  notifications            Notification[]
+  moderationReportsMade    ModerationQueue[] @relation("ModerationReporter")
+  moderationReportsHandled ModerationQueue[] @relation("ModerationAdmin")
+  bannedKeywordsCreated    BannedKeyword[]
+
+  // --- Relationships / Collaboration ---
+  favoritesAsClient      FavoriteFreelancer[]    @relation("FavoriteClient")
+  favoritesAsFreelancer  FavoriteFreelancer[]    @relation("FavoriteTargetFreelancer")
+  followsAsClient        FollowFreelancer[]      @relation("FollowClient")
+  followsAsFreelancer    FollowFreelancer[]      @relation("FollowTargetFreelancer")
+  portfolioLikes         PortfolioLike[]
+  projectProgressUpdates ProjectProgressUpdate[]
+  sharedFiles            SharedFile[]
+
+  // --- Messaging ---
+  conversationsAsParticipant1 Conversation[]  @relation("ConversationParticipant1")
+  conversationsAsParticipant2 Conversation[]  @relation("ConversationParticipant2")
+  directMessages              DirectMessage[]
+
+  @@index([deletedAt])
+}
+
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model Session {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  refreshToken String    @unique @db.VarChar(512)
+  deviceInfo   String?
+  ipAddress    String?   @db.VarChar(45)
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+  revoked      Boolean   @default(false)
+  deletedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model OauthAccount {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  provider       String   @db.VarChar(50)
+  providerUserId String   @db.VarChar(255)
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@unique([provider, providerUserId])
+}
+
+model TwoFactorAuth {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  secret    String   @db.VarChar(255)
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model UserSetting {
+  id                Int    @id @default(autoincrement())
+  userId            Int    @unique
+  theme             String @default("light") @db.VarChar(20)
+  language          String @default("en") @db.VarChar(10)
+  notificationPrefs Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 3. Profiles & Freelancer/Client Details
+// ============================
+model Profile {
+  id                       Int                @id @default(autoincrement())
+  userId                   Int                @unique
+  displayName              String?            @db.VarChar(255)
+  avatarUrl                String?            @db.VarChar(500)
+  coverUrl                 String?            @db.VarChar(500)
+  bio                      String?
+  onlineStatus             Boolean            @default(false)
+  availabilityStatus       AvailabilityStatus @default(OFFLINE)
+  profileCompletionPercent Int                @default(0)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancerProfile FreelancerProfile?
+  clientProfile     ClientProfile?
+  socialLinks       SocialLink[]
+}
+
+model FreelancerProfile {
+  id             Int      @id @default(autoincrement())
+  profileId      Int      @unique
+  title          String?  @db.VarChar(255)
+  // ĐÃ XÓA hourly_rate
+  education      Json?
+  certifications Json?
+  languages      Json?
+  idVerified     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  skills         FreelancerSkill[]
+  portfolioItems PortfolioItem[]
+}
+
+model FreelancerSkill {
+  id                  Int    @id @default(autoincrement())
+  freelancerProfileId Int
+  skillName           String @db.VarChar(100)
+  proficiencyLevel    Int    @db.SmallInt // Range 1-10.
+
+  freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([freelancerProfileId])
+  @@index([skillName])
+}
+
+model ClientProfile {
+  id                 Int      @id @default(autoincrement())
+  profileId          Int      @unique
+  companyName        String?  @db.VarChar(255)
+  companyDescription String?
+  website            String?  @db.VarChar(255)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model PortfolioItem {
+  id                  Int       @id @default(autoincrement())
+  freelancerProfileId Int
+  title               String    @db.VarChar(255)
+  description         String?
+  mediaUrls           String[]
+  projectUrl          String?   @db.VarChar(500)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+
+  freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  likes             PortfolioLike[]
+}
+
+model SocialLink {
+  id        Int            @id @default(autoincrement())
+  profileId Int
+  platform  SocialPlatform
+  url       String         @db.VarChar(500)
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model IdVerificationDocument {
+  id           Int                @id @default(autoincrement())
+  userId       Int
+  documentType DocumentType
+  fileUrl      String             @db.VarChar(500)
+  status       VerificationStatus @default(PENDING)
+  adminId      Int?
+  reviewNotes  String?
+  createdAt    DateTime           @default(now())
+  reviewedAt   DateTime?
+  deletedAt    DateTime?
+
+  user  User  @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  admin User? @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model ProfileVisitLog {
+  id                 Int      @id @default(autoincrement())
+  viewerId           Int
+  targetFreelancerId Int
+  viewedAt           DateTime @default(now())
+
+  viewer           User @relation("ProfileVisitViewer", fields: [viewerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  targetFreelancer User @relation("ProfileVisitTarget", fields: [targetFreelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([targetFreelancerId])
+}
+
+// ============================
+// 4. Jobs
+// ============================
+model Job {
+  id          Int        @id @default(autoincrement())
+  clientId    Int
+  title       String     @db.VarChar(255)
+  description String?
+  budgetMin   Decimal?   @db.Decimal(10, 2)
+  budgetMax   Decimal?   @db.Decimal(10, 2)
+  budgetType  BudgetType
+  deadline    DateTime?
+  status      JobStatus  @default(DRAFT)
+  featured    Boolean    @default(false)
+  expiryDate  DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+
+  client           User                @relation(fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  skills           JobSkill[]
+  bookmarks        JobBookmark[]
+  recentlyViewedBy RecentlyViewedJob[]
+  proposals        Proposal[]
+  contract         Contract?
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model JobSkill {
+  id        Int    @id @default(autoincrement())
+  jobId     Int
+  skillName String @db.VarChar(100)
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([jobId])
+  @@index([skillName])
+}
+
+model JobBookmark {
+  userId    Int
+  jobId     Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([userId, jobId])
+}
+
+model RecentlyViewedJob {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  jobId    Int
+  viewedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([userId])
+}
+
+model SavedSearch {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  name         String   @db.VarChar(100)
+  searchParams Json
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model JobAlert {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  keywords  String?
+  skills    String[]
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 5. Proposals
+// ============================
+model Proposal {
+  id           Int            @id @default(autoincrement())
+  jobId        Int
+  freelancerId Int
+  coverLetter  String?
+  bidAmount    Decimal        @db.Decimal(10, 2)
+  deliveryTime Int
+  status       ProposalStatus @default(PENDING)
+  isDraft      Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+
+  job         Job                  @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer  User                 @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  attachments ProposalAttachment[]
+
+  // NOTE: cần raw SQL migration cho partial unique index:
+  // CREATE UNIQUE INDEX idx_active_proposals ON "Proposal" ("jobId", "freelancerId") WHERE "deletedAt" IS NULL;
+  @@index([jobId])
+  @@index([freelancerId])
+  @@index([status])
+}
+
+model ProposalTemplate {
+  id           Int       @id @default(autoincrement())
+  freelancerId Int
+  name         String    @db.VarChar(255)
+  content      String
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  freelancer User @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model ProposalAttachment {
+  id         Int       @id @default(autoincrement())
+  proposalId Int
+  fileUrl    String    @db.VarChar(500)
+  fileName   String?   @db.VarChar(255)
+  fileSize   Int?
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 6. Contracts
+// ============================
+model Contract {
+  id                    Int            @id @default(autoincrement())
+  jobId                 Int            @unique
+  clientId              Int
+  freelancerId          Int
+  escrowContractAddress String?        @db.VarChar(42)
+  terms                 String?
+  totalAmount           Decimal        @db.Decimal(10, 2) // Giá trị hợp đồng cố định
+  depositPercent        Decimal        @default(0) @db.Decimal(5, 2) // Phần trăm cọc, vd 10.00
+  status                ContractStatus @default(PENDING_SIGN)
+  paymentStatus         PaymentStatus  @default(PENDING)
+  signedByClient        Boolean        @default(false)
+  signedByFreelancer    Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  signedAt              DateTime?
+  completedAt           DateTime?
+  expiresAt             DateTime? // Hết hạn tự động cho trạng thái PENDING_SIGN
+  deletedAt             DateTime?
+
+  job                    Job                     @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  client                 User                    @relation("ContractClient", fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer             User                    @relation("ContractFreelancer", fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  milestones             Milestone[]
+  activityLogs           ContractActivityLog[]
+  invoice                Invoice?
+  certificate            Certificate?
+  disputes               Dispute[]
+  reviews                Review[]
+  projectProgressUpdates ProjectProgressUpdate[]
+  sharedFiles            SharedFile[]
+
+  // NOTE: paymentStatus chỉ được chuyển thành PAID khi contract.status = COMPLETED (áp dụng ở application layer).
+  @@index([clientId])
+  @@index([freelancerId])
+  @@index([status])
+}
+
+// ============================
+// 7. Contract Term Templates (mẫu điều khoản tái sử dụng)
+// ============================
+model ContractTermTemplate {
+  id        Int       @id @default(autoincrement())
+  creatorId Int
+  title     String    @db.VarChar(255)
+  content   String
+  category  String?   @db.VarChar(100)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([creatorId])
+}
+
+// ============================
+// 8. Milestones
+// ============================
+model Milestone {
+  id                Int             @id @default(autoincrement())
+  contractId        Int
+  title             String          @db.VarChar(255)
+  dueDate           DateTime?
+  status            MilestoneStatus @default(PENDING)
+  completionPercent Int             @default(0) @db.SmallInt // 0-100, tính từ task
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  contract         Contract          @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  taskChecklists   TaskChecklist[]
+  revisionRequests RevisionRequest[]
+
+  @@index([contractId])
+  @@index([status])
+}
+
+// ============================
+// 9. Task Checklists
+// ============================
+model TaskChecklist {
+  id                Int       @id @default(autoincrement())
+  milestoneId       Int
+  taskDescription   String
+  completionPercent Int       @default(0) @db.SmallInt
+  dueDate           DateTime?
+  isCompleted       Boolean   @default(false) // tự động true khi completionPercent = 100
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([milestoneId])
+}
+
+// ============================
+// 10. Revision Requests (yêu cầu chỉnh sửa)
+// ============================
+model RevisionRequest {
+  id          Int            @id @default(autoincrement())
+  milestoneId Int
+  requestedBy Int
+  description String
+  status      RevisionStatus @default(PENDING)
+  deadline    DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  requester User      @relation(fields: [requestedBy], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([milestoneId])
+  @@index([requestedBy])
+}
+
+// ============================
+// 11. Contract Activity Log
+// ============================
+model ContractActivityLog {
+  id         Int                    @id @default(autoincrement())
+  contractId Int
+  userId     Int?
+  action     ContractActivityAction
+  metadata   Json?
+  createdAt  DateTime               @default(now())
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([contractId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============================
+// 12. Escrow / Web3 Off-chain Records
+// ============================
+model WalletWithdrawal {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  txHash    String?          @db.VarChar(66)
+  amount    Decimal          @db.Decimal(10, 2)
+  token     String           @db.VarChar(10)
+  status    WithdrawalStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model GasFeeSubsidy {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  txHash    String?       @db.VarChar(66)
+  amount    Decimal       @db.Decimal(10, 2)
+  status    SubsidyStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 13. Invoices (hóa đơn)
+// ============================
+model Invoice {
+  id            Int           @id @default(autoincrement())
+  contractId    Int           @unique
+  invoiceNumber String        @unique @db.VarChar(50)
+  totalAmount   Decimal       @db.Decimal(10, 2)
+  description   String?
+  status        InvoiceStatus @default(DRAFT)
+  issuedAt      DateTime?
+  dueDate       DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([invoiceNumber])
+}
+
+// ============================
+// 14. Certificates (chứng nhận hoàn thành dự án)
+// ============================
+model Certificate {
+  id             Int       @id @default(autoincrement())
+  contractId     Int       @unique
+  freelancerId   Int
+  clientId       Int
+  certificateUid String    @unique @db.VarChar(100)
+  completionDate DateTime?
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+
+  contract   Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer User     @relation("CertificateFreelancer", fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  client     User     @relation("CertificateClient", fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 15. Disputes
+// ============================
+model Dispute {
+  id              Int             @id @default(autoincrement())
+  contractId      Int
+  raisedBy        Int
+  reason          String
+  status          DisputeStatus   @default(OPENED)
+  outcome         DisputeOutcome?
+  adminId         Int?
+  resolutionNotes String?
+  createdAt       DateTime        @default(now())
+  resolvedAt      DateTime?
+
+  contract Contract          @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  raiser   User              @relation("DisputeRaisedBy", fields: [raisedBy], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  admin    User?             @relation("DisputeAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  evidence DisputeEvidence[]
+  timeline DisputeTimeline[]
+
+  @@index([contractId])
+  @@index([status])
+}
+
+model DisputeEvidence {
+  id          Int      @id @default(autoincrement())
+  disputeId   Int
+  userId      Int
+  fileUrl     String   @db.VarChar(500)
+  message     String?
+  submittedAt DateTime @default(now())
+
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([disputeId])
+}
+
+model DisputeTimeline {
+  id          Int      @id @default(autoincrement())
+  disputeId   Int
+  event       String   @db.VarChar(100)
+  description String?
+  createdAt   DateTime @default(now())
+
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([disputeId])
+}
+
+// ============================
+// 16. Reviews & Ratings
+// ============================
+model Review {
+  id            Int       @id @default(autoincrement())
+  contractId    Int
+  reviewerId    Int
+  revieweeId    Int
+  overallRating Decimal   @db.Decimal(2, 1)
+  breakdown     Json?
+  comment       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  contract Contract        @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewer User            @relation("ReviewReviewer", fields: [reviewerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewee User            @relation("ReviewReviewee", fields: [revieweeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  response ReviewResponse?
+
+  @@unique([contractId, reviewerId])
+  @@index([revieweeId])
+  @@index([reviewerId])
+}
+
+model ReviewResponse {
+  id           Int       @id @default(autoincrement())
+  reviewId     Int       @unique
+  userId       Int
+  responseText String
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+// ============================
+// 17. Forum
+// ============================
+model ForumCategory {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  posts ForumPost[]
+}
+
+model ForumPost {
+  id         Int       @id @default(autoincrement())
+  categoryId Int?
+  userId     Int
+  title      String    @db.VarChar(255)
+  content    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  category ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  comments ForumComment[]
+  likes    ForumLike[]
+  reports  ForumReport[]
+
+  @@index([categoryId])
+  @@index([userId])
+}
+
+model ForumComment {
+  id        Int       @id @default(autoincrement())
+  postId    Int
+  userId    Int
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  post    ForumPost     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user    User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  likes   ForumLike[]
+  reports ForumReport[]
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model ForumLike {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  postId       Int?
+  commentId    Int?
+  reactionType String   @default("like") @db.VarChar(20)
+  createdAt    DateTime @default(now())
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  post    ForumPost?    @relation(fields: [postId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  comment ForumComment? @relation(fields: [commentId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+}
+
+model ForumReport {
+  id         Int          @id @default(autoincrement())
+  reporterId Int
+  postId     Int?
+  commentId  Int?
+  reason     String
+  status     ReportStatus @default(PENDING)
+  adminId    Int?
+  createdAt  DateTime     @default(now())
+
+  reporter User          @relation("ForumReportReporter", fields: [reporterId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  post     ForumPost?    @relation(fields: [postId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  comment  ForumComment? @relation(fields: [commentId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  admin    User?         @relation("ForumReportAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([status])
+}
+
+// ============================
+// 18. Notifications & Announcements
+// ============================
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  title     String?          @db.VarChar(255)
+  message   String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  deletedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+model AnnouncementBanner {
+  id        Int       @id @default(autoincrement())
+  message   String
+  link      String?   @db.VarChar(500)
+  startDate DateTime?
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+// ============================
+// 19. Admin & System
+// ============================
+// ĐÃ XÓA BẢNG admin_action_logs
+// ĐÃ XÓA BẢNG user_activity_logs
+
+model ModerationQueue {
+  id          Int                   @id @default(autoincrement())
+  contentType ModerationContentType
+  contentId   Int?
+  reporterId  Int?
+  reason      String?
+  status      ReportStatus          @default(PENDING)
+  adminId     Int?
+  actionTaken String?
+  createdAt   DateTime              @default(now())
+  resolvedAt  DateTime?
+
+  reporter User? @relation("ModerationReporter", fields: [reporterId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  admin    User? @relation("ModerationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([status])
+}
+
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(100)
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ĐÃ XÓA BẢNG email_templates
+// ĐÃ XÓA BẢNG static_pages
+
+model BannedKeyword {
+  id        Int      @id @default(autoincrement())
+  keyword   String   @unique @db.VarChar(255)
+  createdBy Int?
+  createdAt DateTime @default(now())
+
+  creator User? @relation(fields: [createdBy], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model AdvertisementBanner {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar(255)
+  imageUrl  String?   @db.VarChar(500)
+  linkUrl   String?   @db.VarChar(500)
+  startDate DateTime?
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+// ============================
+// 20. Relationships & Junction Tables
+// ============================
+model FavoriteFreelancer {
+  clientId     Int
+  freelancerId Int
+  createdAt    DateTime @default(now())
+
+  client     User @relation("FavoriteClient", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  freelancer User @relation("FavoriteTargetFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([clientId, freelancerId])
+  @@index([freelancerId])
+}
+
+model FollowFreelancer {
+  clientId     Int
+  freelancerId Int
+  createdAt    DateTime @default(now())
+
+  client     User @relation("FollowClient", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  freelancer User @relation("FollowTargetFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([clientId, freelancerId])
+  @@index([freelancerId])
+}
+
+model PortfolioLike {
+  userId          Int
+  portfolioItemId Int
+  createdAt       DateTime @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  portfolioItem PortfolioItem @relation(fields: [portfolioItemId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([userId, portfolioItemId])
+}
+
+// ============================
+// 21. Collaboration
+// ============================
+model ProjectProgressUpdate {
+  id           Int      @id @default(autoincrement())
+  contractId   Int
+  freelancerId Int
+  note         String
+  updatedAt    DateTime @default(now())
+
+  contract   Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer User     @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([contractId])
+}
+
+model SharedFile {
+  id         Int       @id @default(autoincrement())
+  contractId Int
+  uploaderId Int
+  fileUrl    String    @db.VarChar(500)
+  fileName   String?   @db.VarChar(255)
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  uploader User     @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([contractId])
+}
+
+// ============================
+// 22. Messaging
+// ============================
+model Conversation {
+  id           Int       @id @default(autoincrement())
+  participant1 Int
+  participant2 Int
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  participantOne User            @relation("ConversationParticipant1", fields: [participant1], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  participantTwo User            @relation("ConversationParticipant2", fields: [participant2], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  messages       DirectMessage[]
+
+  @@unique([participant1, participant2])
+  @@index([participant1])
+  @@index([participant2])
+}
+
+model DirectMessage {
+  id             Int       @id @default(autoincrement())
+  conversationId Int
+  senderId       Int
+  message        String
+  isRead         Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  deletedAt      DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+}
+
+// ============================
+// ENUMS
+// ============================
+enum RoleName {
+  ADMIN
+  CLIENT
+  FREELANCER
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
+  CANCELLED
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ContractStatus {
+  PENDING_SIGN
+  ACTIVE
+  COMPLETED
+  DISPUTED
+  CANCELLED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DisputeStatus {
+  OPENED
+  EVIDENCE_SUBMITTED
+  UNDER_REVIEW
+  RESOLVED
+}
+
+enum DisputeOutcome {
+  REFUND_CLIENT
+  RELEASE_FREELANCER
+  SPLIT
+}
+
+enum NotificationType {
+  JOB_ALERT
+  PROPOSAL_NEW
+  PROPOSAL_ACCEPTED
+  CONTRACT_CREATED
+  PAYMENT_RELEASED
+  DISPUTE_OPENED
+  REVIEW_RECEIVED
+  SYSTEM_ANNOUNCEMENT
+  MESSAGE_NEW
+  MILESTONE_COMPLETED
+  TASK_OVERDUE
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum SocialPlatform {
+  GITHUB
+  LINKEDIN
+  TWITTER
+  FACEBOOK
+  INSTAGRAM
+  YOUTUBE
+  WEBSITE
+  OTHER
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ContractActivityAction {
+  CONTRACT_CREATED
+  CLIENT_SIGNED
+  FREELANCER_SIGNED
+  ACTIVATED
+  MILESTONE_CREATED
+  MILESTONE_COMPLETED
+  MILESTONE_CANCELLED
+  PAYMENT_COMPLETED
+  DEPOSIT_REFUNDED
+  COMPLETED
+  CANCELLED
+  DISPUTE_OPENED
+  DISPUTE_RESOLVED
+}
+
+enum BudgetType {
+  FIXED_PRICE
+}
+
+enum WithdrawalStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum HttpMethod {
+  GET
+  POST
+  PUT
+  PATCH
+  DELETE
+}
+
+enum DocumentType {
+  PASSPORT
+  ID_CARD
+  DRIVER_LICENSE
+  RESIDENCE_PERMIT
+  OTHER
+}
+
+enum SubsidyStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  BUSY
+  AWAY
+  OFFLINE
+}
+
+enum ModerationContentType {
+  JOB
+  PROPOSAL
+  CONTRACT
+  MILESTONE
+  REVIEW
+  PORTFOLIO_ITEM
+  FORUM_POST
+  FORUM_COMMENT
+  USER_PROFILE
+  CHAT_MESSAGE
+}
+
+enum RevisionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
