@@ -223,31 +223,14 @@ export class AuthService {
         throw RoleNotFoundException();
       }
 
-      const accessTokenPayload: AccessTokenPayloadCreate = {
-        userId: user.id,
-        roleId: primaryRole.id,
-        roleName: primaryRole.name,
-      };
-
-      const accessToken =
-        await this.tokenService.signAccessToken(accessTokenPayload);
-      const refreshTokenPayload: RefreshTokenPayloadCreate = {
-        userId: user.id,
-      };
-      const refreshToken =
-        await this.tokenService.signRefreshToken(refreshTokenPayload);
-
-      const refreshDecoded =
-        await this.tokenService.verifyRefreshToken(refreshToken);
-
-      // Tạo session
-      await this.authRepository.createSession({
-        userId: user.id,
-        refreshToken,
-        deviceInfo: userAgent,
-        ipAddress: ipAddress,
-        expiresAt: new Date(refreshDecoded.exp * 1000),
-      });
+      const { accessToken, refreshToken } =
+        await this.generateAccessAndRefreshTokens({
+          userId: user.id,
+          roleId: primaryRole.id,
+          roleName: primaryRole.name,
+          userAgent,
+          ipAddress,
+        });
 
       return { accessToken, refreshToken };
     } catch (error) {
@@ -261,5 +244,46 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  private async generateAccessAndRefreshTokens({
+    userId,
+    roleId,
+    roleName,
+    userAgent,
+    ipAddress,
+  }: {
+    userId: number;
+    roleId: number;
+    roleName: string;
+    userAgent: string;
+    ipAddress: string;
+  }) {
+    const accessTokenPayload: AccessTokenPayloadCreate = {
+      userId,
+      roleId,
+      roleName,
+    };
+    const accessToken =
+      await this.tokenService.signAccessToken(accessTokenPayload);
+    const refreshTokenPayload: RefreshTokenPayloadCreate = {
+      userId,
+    };
+    const refreshToken =
+      await this.tokenService.signRefreshToken(refreshTokenPayload);
+
+    const refreshDecoded =
+      await this.tokenService.verifyRefreshToken(refreshToken);
+
+    // Tạo session
+    await this.authRepository.createSession({
+      userId,
+      refreshToken,
+      deviceInfo: userAgent,
+      ipAddress: ipAddress,
+      expiresAt: new Date(refreshDecoded.exp * 1000),
+    });
+
+    return { accessToken, refreshToken };
   }
 }
