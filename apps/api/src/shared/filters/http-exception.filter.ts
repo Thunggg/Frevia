@@ -1,8 +1,20 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpExceptionBody,
+  Logger,
+} from '@nestjs/common';
+import { ApiError } from '@shared/types';
 import { Response } from 'express';
 import { ZodSerializationException } from 'nestjs-zod';
 import { ZodError } from 'zod';
-import { AppException } from '../exceptions/app.exception';
+
+interface ValidationIssue {
+  message: string;
+  path: string;
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -17,8 +29,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
       if (zodError instanceof ZodError) {
         this.logger.error(`ZodSerializationException: ${zodError.message}`);
       }
-    } else if (exception instanceof AppException) {
-      response.status(exception.getStatus()).json(exception.getResponse());
+    } else if (exception instanceof HttpException) {
+      const body: HttpExceptionBody = {
+        ...(exception.getResponse() as object),
+      } as HttpExceptionBody;
+
+      const apiRes: ApiError = {
+        success: false,
+        error: {
+          code: String(body.statusCode),
+          message: body.error!,
+          details: body.message as unknown as ValidationIssue[],
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      response.status(exception.getStatus()).json(apiRes);
     } else {
       this.logger.error(exception);
     }

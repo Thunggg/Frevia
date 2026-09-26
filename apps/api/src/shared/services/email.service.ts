@@ -1,8 +1,6 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { ErrorCode } from '@shared/types';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import { envConfig } from '../config/validate-env';
-import { AppException } from '../exceptions/app.exception';
 
 @Injectable()
 export class EmailService {
@@ -31,11 +29,9 @@ export class EmailService {
     } catch (error: any) {
       console.log(error);
 
-      throw new AppException(
-        ErrorCode.INTERNAL_SERVER_ERROR,
-        error?.message as string,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException([
+        { message: error?.message, path: 'email' },
+      ]);
     }
   }
 }

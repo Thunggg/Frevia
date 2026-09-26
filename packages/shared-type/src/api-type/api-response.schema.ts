@@ -2,7 +2,6 @@ import { z } from "zod";
 
 // ===== VALIDATION ISSUE =====
 export const ValidationIssueSchema = z.object({
-  code: z.string(),
   path: z.string(),
   message: z.string(),
 });
