@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
-import { EmailVerificationType, UserType } from '@shared/types';
+import {
+  EmailVerificationType,
+  TypeOfVerificationCode,
+  UserType,
+} from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -21,11 +25,18 @@ export class AuthRepository {
     });
   }
 
-  async findVerificationCode(
-    code: string,
-    type: VerificationCodeType,
-    email: string,
-  ): Promise<Omit<EmailVerificationType, 'id'> | null> {
+  async findVerificationCode({
+    code,
+    email,
+    type,
+  }: {
+    code: string;
+    email: string;
+    type: TypeOfVerificationCode;
+  }): Promise<Pick<
+    EmailVerificationType,
+    'id' | 'attempts' | 'code' | 'type' | 'expiresAt' | 'createdAt'
+  > | null> {
     return await this.prisma.verificationCode.findFirst({
       where: {
         code,
@@ -212,6 +223,30 @@ export class AuthRepository {
   }) {
     return await this.prisma.session.delete({
       where: { refreshToken: token, userId },
+    });
+  }
+
+  update(
+    where: { id: number },
+    data: Partial<UserType>,
+  ): Promise<UserType | null> {
+    return this.prisma.user.update({
+      where: {
+        ...where,
+        deletedAt: null,
+      },
+      data,
+    });
+  }
+
+  async deleteVerifycationCode(uniqueValue: {
+    email: string;
+    type: TypeOfVerificationCode;
+  }) {
+    return await this.prisma.verificationCode.delete({
+      where: {
+        email_type: uniqueValue,
+      },
     });
   }
 }

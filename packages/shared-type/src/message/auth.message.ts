@@ -2,6 +2,7 @@ export const AuthMessage = {
   // --- Service ---
   EMAIL_ALREADY_EXISTS: "Error.EmailAlreadyExists",
   EMAIL_NOT_FOUND: "Error.EmailNotFound",
+  INVALID_EMAIL: "Error.InvalidEmail",
   USER_BANNED: "Error.UserBanned",
   INVALID_VERIFICATION_CODE: "Error.InvalidVerificationCode",
   OTP_EXPIRED: "Error.OTPExpired",

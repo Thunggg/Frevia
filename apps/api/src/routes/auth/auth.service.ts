@@ -6,6 +6,8 @@ import {
 } from '@prisma/client/runtime/client';
 import {
   AccessTokenPayloadCreate,
+  EmailVerificationType,
+  ForgotPasswordBodyType,
   LoginBodyType,
   MessageResType,
   RefreshTokenBodySchemaType,
@@ -70,19 +72,11 @@ export class AuthService {
       }
 
       // 2. Xác thực mã OTP
-      const otp = await this.authRepository.findVerificationCode(
-        otpCode,
-        TypeOfVerificationCode.EMAIL_VERIFICATION,
+      await this.validateVerificationCode({
+        code: otpCode,
         email,
-      );
-
-      if (!otp) {
-        throw InvalidVerificationCodeException();
-      }
-
-      if (otp.expiresAt < new Date()) {
-        throw OTPExpiredException();
-      }
+        type: TypeOfVerificationCode.EMAIL_VERIFICATION,
+      });
 
       // 3. Tạo User trong transaction
       let roleId: number;
@@ -373,5 +367,66 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async forgotPassword(
+    payload: ForgotPasswordBodyType,
+  ): Promise<MessageResType> {
+    const { code, email, newPassword } = payload;
+
+    // Kiểm tra xem user có tồn tại hay không
+    const user = await this.authRepository.findUserForLogin(email as string);
+
+    if (!user) {
+      throw EmailNotFoundException();
+    }
+
+    // kiểm tra mã otp có hợp lệ hay không
+    await this.validateVerificationCode({
+      email,
+      code,
+      type: TypeOfVerificationCode.PASSWORD_RESET,
+    });
+
+    const passwordHashed = await this.hashingService.hash(newPassword);
+
+    await Promise.all([
+      this.authRepository.update({ id: user.id }, { password: passwordHashed }),
+      this.authRepository.deleteVerifycationCode({
+        email,
+        type: TypeOfVerificationCode.PASSWORD_RESET,
+      }),
+    ]);
+
+    return {
+      message: 'Update password successfully',
+    };
+  }
+
+  async validateVerificationCode(uniqueValue: {
+    email: string;
+    code: string;
+    type: TypeOfVerificationCode;
+  }): Promise<
+    Pick<
+      EmailVerificationType,
+      'id' | 'attempts' | 'code' | 'type' | 'expiresAt' | 'createdAt'
+    >
+  > {
+    const verifycationOTP = await this.authRepository.findVerificationCode({
+      email: uniqueValue.email,
+      code: uniqueValue.code,
+      type: uniqueValue.type,
+    });
+
+    if (!verifycationOTP) {
+      throw InvalidVerificationCodeException();
+    }
+
+    if (verifycationOTP.expiresAt < new Date()) {
+      throw OTPExpiredException();
+    }
+
+    return verifycationOTP;
   }
 }
