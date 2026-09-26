@@ -82,8 +82,7 @@ model User {
 
   // --- Auth / core ---
   userRoles           UserRole[]
-  emailVerifications  EmailVerification[]
-  passwordResetTokens PasswordResetToken[]
+  verificationTokens  VerificationToken[]
   sessions            Session[]
   oauthAccounts       OauthAccount[]
   twoFactorAuth       TwoFactorAuth?
@@ -158,24 +157,17 @@ model User {
   @@index([deletedAt])
 }
 
-model EmailVerification {
-  id        Int      @id @default(autoincrement())
+model VerificationToken {
+  id        Int       @id @default(autoincrement())
   userId    Int
-  token     String   @unique @db.VarChar(255)
+  type      TokenType
+  token     String    @unique @db.VarChar(255)
   expiresAt DateTime
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-}
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-model PasswordResetToken {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  token     String   @unique @db.VarChar(255)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@index([userId, type])
 }
 
 model Session {
@@ -1221,4 +1213,9 @@ enum InvoiceStatus {
   SENT
   PAID
   CANCELLED
+}
+
+enum TokenType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
 }

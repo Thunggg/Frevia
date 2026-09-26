@@ -3,7 +3,11 @@ import { z } from 'zod';
 
 const envSchema = z.object({
   PORT: z.string(),
+  DIRECT_URL: z.string(),
   NODE_ENV: z.string(),
+  OTP_EXPIRES_IN: z.string(),
+  EMAIL_USERNAME: z.string(),
+  EMAIL_PASSWORD: z.string(),
 });
 
 const envParsed = envSchema.safeParse(process.env);

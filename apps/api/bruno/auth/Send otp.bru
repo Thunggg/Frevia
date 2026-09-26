@@ -1,0 +1,23 @@
+meta {
+  name: Send otp
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/otp
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "thuannguyen20041028@gmail.com",
+    "type": "EMAIL_VERIFICATION"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

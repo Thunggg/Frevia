@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { RoleName } from "../constants/role.constant";
+import { TypeOfVerificationCode } from "../constants/token.constant";
 
 export const UserSchema = z.object({
   id: z.number(),
@@ -10,6 +12,18 @@ export const UserSchema = z.object({
   deletedAt: z.date().nullable(),
 });
 
+export const EmailVerificationSchema = z.object({
+  id: z.number(),
+  email: z.email(),
+  token: z.string().length(6),
+  type: z.enum([
+    TypeOfVerificationCode.EMAIL_VERIFICATION,
+    TypeOfVerificationCode.PASSWORD_RESET,
+  ]),
+  expiresAt: z.date(),
+  createdAt: z.date(),
+});
+
 export const RegisterBodySchema = UserSchema.pick({
   email: true,
   password: true,
@@ -17,6 +31,8 @@ export const RegisterBodySchema = UserSchema.pick({
   .extend({
     otpCode: z.string().length(6),
     confirmPassword: z.string(),
+    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
+    fullName: z.string().min(1),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (!password) {
@@ -43,5 +59,12 @@ export const RegisterResSchema = UserSchema.omit({
   deletedAt: true,
 });
 
+export const SendOTPSchema = EmailVerificationSchema.pick({
+  email: true,
+  type: true,
+}).strict();
+
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
+
+export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;

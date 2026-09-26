@@ -45,7 +45,7 @@ async function createAccountRole({
   if (!accountIsExist) {
     const accountRole = await prisma.role.findFirst({
       where: {
-        name: role,
+        name: role as any,
       },
     });
 
