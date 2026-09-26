@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, VerificationCodeType } from '@prisma/client';
+import { User, VerificationCode, VerificationCodeType } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
 export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
         email,
@@ -19,7 +19,7 @@ export class AuthRepository {
     code: string,
     type: VerificationCodeType,
     email: string,
-  ) {
+  ): Promise<VerificationCode | null> {
     return await this.prisma.verificationCode.findFirst({
       where: {
         code,
@@ -32,7 +32,7 @@ export class AuthRepository {
   async findVerificationCodeByEmailAndType(
     email: string,
     type: VerificationCodeType,
-  ) {
+  ): Promise<VerificationCode | null> {
     return await this.prisma.verificationCode.findUnique({
       where: {
         email_type: {
@@ -42,51 +42,43 @@ export class AuthRepository {
       },
     });
   }
-
-  async deleteVerificationCodeMany(
-    code: string,
-    type: VerificationCodeType,
-    email: string,
-    tx?: Prisma.TransactionClient,
-  ) {
-    const client = tx || this.prisma;
-    return await client.verificationCode.deleteMany({
-      where: {
-        code,
-        type,
-        email,
-      },
-    });
-  }
-
-  async createUser(
-    data: {
+  async createUserAndRegister(
+    deleteOtp: { code: string; type: VerificationCodeType; email: string },
+    user: {
       email: string;
       password?: string;
       isBanned?: boolean;
       fullName: string;
       roleId: number;
     },
-    tx?: Prisma.TransactionClient,
-  ) {
-    const client = tx || this.prisma;
-    return client.user.create({
-      data: {
-        email: data.email,
-        password: data.password,
-        isBanned: data.isBanned ?? false,
-        profile: {
-          create: {
-            displayName: data.fullName,
+  ): Promise<User> {
+    const [, createdUser] = await this.prisma.$transaction([
+      this.prisma.verificationCode.deleteMany({
+        where: {
+          code: deleteOtp.code,
+          type: deleteOtp.type,
+          email: deleteOtp.email,
+        },
+      }),
+      this.prisma.user.create({
+        data: {
+          email: user.email,
+          password: user.password,
+          isBanned: user.isBanned ?? false,
+          profile: {
+            create: {
+              displayName: user.fullName,
+            },
+          },
+          userRoles: {
+            create: {
+              roleId: user.roleId,
+            },
           },
         },
-        userRoles: {
-          create: {
-            roleId: data.roleId,
-          },
-        },
-      },
-    });
+      }),
+    ]);
+    return createdUser;
   }
 
   async upsertVerificationCode(data: {
@@ -95,7 +87,7 @@ export class AuthRepository {
     code: string;
     expiresAt: Date;
     attempts: number;
-  }) {
+  }): Promise<VerificationCode> {
     return await this.prisma.verificationCode.upsert({
       where: {
         email_type: {

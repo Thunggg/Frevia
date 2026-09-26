@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   MessageResType,
   RegisterBodyType,
+  RegisterResType,
   RoleName,
   SendOTPBodyType,
   TypeOfVerificationCode,
@@ -13,7 +14,6 @@ import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
-import { PrismaService } from '../../shared/services/prisma.service';
 import {
   EmailAlreadyExistsException,
   EmailNotFoundException,
@@ -28,13 +28,12 @@ import { AuthRepository } from './auth.repo';
 export class AuthService {
   constructor(
     private readonly hashingService: HashingService,
-    private readonly prisma: PrismaService,
     private emailService: EmailService,
     private sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async register(body: RegisterBodyType) {
+  async register(body: RegisterBodyType): Promise<RegisterResType> {
     try {
       const { email, otpCode, password, fullName, role } = body;
 
@@ -65,39 +64,30 @@ export class AuthService {
       }
 
       // 3. Tạo User trong transaction
-      const result = await this.prisma.$transaction(async (tx) => {
-        let roleId: number;
-        if (role === RoleName.CLIENT) {
-          roleId = await this.sharedRoleRepository.getClientRoleId();
-        } else if (role === RoleName.FREELANCER) {
-          roleId = await this.sharedRoleRepository.getFreelancerRoleId();
-        } else {
-          roleId = await this.sharedRoleRepository.getAdminRoleId();
-        }
+      let roleId: number;
+      if (role === RoleName.CLIENT) {
+        roleId = await this.sharedRoleRepository.getClientRoleId();
+      } else if (role === RoleName.FREELANCER) {
+        roleId = await this.sharedRoleRepository.getFreelancerRoleId();
+      } else {
+        roleId = await this.sharedRoleRepository.getAdminRoleId();
+      }
 
-        await this.authRepository.deleteVerificationCodeMany(
-          otpCode,
-          TypeOfVerificationCode.EMAIL_VERIFICATION,
+      const hashedPassword = await this.hashingService.hash(password as string);
+
+      const result = await this.authRepository.createUserAndRegister(
+        {
+          code: otpCode,
+          type: TypeOfVerificationCode.EMAIL_VERIFICATION,
           email,
-          tx,
-        );
-
-        const hashedPassword = await this.hashingService.hash(
-          password as string,
-        );
-
-        const user = await this.authRepository.createUser(
-          {
-            email,
-            password: hashedPassword,
-            fullName,
-            roleId,
-          },
-          tx,
-        );
-
-        return user;
-      });
+        },
+        {
+          email,
+          password: hashedPassword,
+          fullName,
+          roleId,
+        },
+      );
 
       return result;
     } catch (error) {
