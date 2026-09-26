@@ -70,6 +70,9 @@ export const SendOTPSchema = EmailVerificationSchema.pick({
   type: true,
 }).strict();
 
+export type UserType = z.infer<typeof UserSchema>;
+export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
+
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
 

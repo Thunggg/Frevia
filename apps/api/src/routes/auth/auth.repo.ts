@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { User, VerificationCode, VerificationCodeType } from '@prisma/client';
+import { VerificationCodeType } from '@prisma/client';
+import { EmailVerificationType, UserType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
 export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(
+    email: string,
+  ): Promise<Omit<
+    UserType,
+    'password' | 'createdAt' | 'updatedAt' | 'deletedAt'
+  > | null> {
     return this.prisma.user.findUnique({
       where: {
         email,
@@ -19,7 +25,7 @@ export class AuthRepository {
     code: string,
     type: VerificationCodeType,
     email: string,
-  ): Promise<VerificationCode | null> {
+  ): Promise<Omit<EmailVerificationType, 'id'> | null> {
     return await this.prisma.verificationCode.findFirst({
       where: {
         code,
@@ -32,7 +38,7 @@ export class AuthRepository {
   async findVerificationCodeByEmailAndType(
     email: string,
     type: VerificationCodeType,
-  ): Promise<VerificationCode | null> {
+  ): Promise<Omit<EmailVerificationType, 'id'> | null> {
     return await this.prisma.verificationCode.findUnique({
       where: {
         email_type: {
@@ -51,7 +57,9 @@ export class AuthRepository {
       fullName: string;
       roleId: number;
     },
-  ): Promise<User> {
+  ): Promise<
+    Omit<UserType, 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+  > {
     const [, createdUser] = await this.prisma.$transaction([
       this.prisma.verificationCode.deleteMany({
         where: {
@@ -87,7 +95,7 @@ export class AuthRepository {
     code: string;
     expiresAt: Date;
     attempts: number;
-  }): Promise<VerificationCode> {
+  }): Promise<Omit<EmailVerificationType, 'id'>> {
     return await this.prisma.verificationCode.upsert({
       where: {
         email_type: {

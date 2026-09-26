@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import {
   MessageResType,
   RegisterBodyType,
-  RegisterResType,
   RoleName,
   SendOTPBodyType,
   TypeOfVerificationCode,
+  UserType,
 } from '@shared/types';
 import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
@@ -33,7 +33,11 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async register(body: RegisterBodyType): Promise<RegisterResType> {
+  async register(
+    body: RegisterBodyType,
+  ): Promise<
+    Omit<UserType, 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+  > {
     try {
       const { email, otpCode, password, fullName, role } = body;
 
