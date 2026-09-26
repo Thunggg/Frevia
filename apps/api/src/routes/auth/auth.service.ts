@@ -3,6 +3,7 @@ import {
   ErrorCode,
   MessageResType,
   RegisterBodyType,
+  RoleName,
   SendOTPBodyType,
   TypeOfVerificationCode,
 } from '@shared/types';
@@ -11,6 +12,7 @@ import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
 import { AppException } from '../../shared/exceptions/app.exception';
 import { generateOTP } from '../../shared/helper/generate-otp';
+import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -21,11 +23,12 @@ export class AuthService {
     private readonly hashingService: HashingService,
     private readonly prisma: PrismaService,
     private emailService: EmailService,
+    private sharedRoleRepository: SharedRoleRepository,
   ) {}
 
   async register(body: RegisterBodyType) {
     try {
-      const { email, otpCode, password, fullName } = body;
+      const { email, otpCode, password, fullName, role } = body;
 
       // 1. Kiểm tra xem user đã tồn tại hay chưa
       const existingUser = await this.prisma.user.findUnique({
@@ -57,9 +60,6 @@ export class AuthService {
           code: otpCode,
           type: TypeOfVerificationCode.EMAIL_VERIFICATION,
           email,
-          expiresAt: {
-            gte: new Date(),
-          },
         },
       });
 
@@ -76,13 +76,22 @@ export class AuthService {
       if (otp.expiresAt < new Date()) {
         throw new AppException(
           ErrorCode.OTP_EXPIRED as string,
-          'OTP expired',
+          'OTP has expired',
           HttpStatus.NOT_FOUND,
         );
       }
 
       // Tạo User
       const result = await this.prisma.$transaction(async () => {
+        let roleId: number;
+        if (role === RoleName.CLIENT) {
+          roleId = await this.sharedRoleRepository.getClientRoleId();
+        } else if (role === RoleName.FREELANCER) {
+          roleId = await this.sharedRoleRepository.getFreelancerRoleId();
+        } else {
+          roleId = await this.sharedRoleRepository.getAdminRoleId();
+        }
+
         await this.prisma.verificationCode.deleteMany({
           where: {
             code: otpCode,
@@ -91,14 +100,23 @@ export class AuthService {
           },
         });
 
+        const hashedPassword = await this.hashingService.hash(
+          password as string,
+        );
+
         const user = await this.prisma.user.create({
           data: {
             email,
-            password,
+            password: hashedPassword,
             isActive: true,
             profile: {
               create: {
                 displayName: fullName,
+              },
+            },
+            userRoles: {
+              create: {
+                roleId,
               },
             },
           },
