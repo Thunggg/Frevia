@@ -1,15 +1,14 @@
 import { z } from "zod";
 
-// ===== VALIDATION ISSUE (khớp thật với ZodIssue) =====
+// ===== VALIDATION ISSUE =====
 export const ValidationIssueSchema = z.object({
-  code: z.string(), // "invalid_type", "unrecognized_keys", ...
+  code: z.string(),
   path: z.string(),
   message: z.string(),
 });
 export type ValidationIssue = z.infer<typeof ValidationIssueSchema>;
 
-// ===== RESPONSE WRAPPER (chỉ cần type, không cần Zod validate) =====
-// Lý do: đây là data do chính backend tạo ra, không phải input ngoài cần validate runtime.
+// ===== RESPONSE WRAPPER =====
 export type ApiSuccess<T> = {
   success: true;
   data: T;
@@ -39,8 +38,3 @@ export type ApiPaginated<T> = {
   data: T[];
   pagination: PaginationMeta;
 };
-
-// ===== TYPE GUARD tiện dùng ở FE =====
-export function isApiSuccess<T>(res: ApiResponse<T>): res is ApiSuccess<T> {
-  return res.success === true;
-}
