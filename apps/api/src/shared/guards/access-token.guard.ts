@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { REQUEST_USER_KEY } from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { TokenService } from '../services/token.service';
@@ -35,7 +36,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.tokenService.verifyAccessToken(token);
-      request['user'] = payload;
+      request[REQUEST_USER_KEY] = payload;
     } catch {
       throw new UnauthorizedException();
     }

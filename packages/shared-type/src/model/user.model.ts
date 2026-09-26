@@ -100,6 +100,10 @@ export const RefreshTokenBodySchema = SessionSchema.pick({
   refreshToken: true,
 }).strict();
 
+export const LogoutBodySchema = SessionSchema.pick({
+  refreshToken: true,
+}).strict();
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -111,3 +115,5 @@ export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;
 export type LoginBodyType = z.infer<typeof LoginBodySchema>;
 
 export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
+
+export type LogoutBodySchemaType = z.infer<typeof LogoutBodySchema>;
