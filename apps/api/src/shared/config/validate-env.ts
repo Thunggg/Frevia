@@ -9,6 +9,10 @@ const envSchema = z.object({
   OTP_ATTEMPT_WINDOW: z.string(),
   EMAIL_USERNAME: z.string(),
   EMAIL_PASSWORD: z.string(),
+  ACCESS_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_SECRET: z.string(),
+  ACCESS_TOKEN_EXPIRES_IN: z.string(),
+  REFRESH_TOKEN_EXPIRES_IN: z.string(),
 });
 
 const envParsed = envSchema.safeParse(process.env);
