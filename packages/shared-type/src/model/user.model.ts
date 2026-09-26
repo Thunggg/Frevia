@@ -5,11 +5,13 @@ import { AuthMessage } from "../message/auth.message";
 
 export const UserSchema = z.object({
   id: z.number(),
-  email: z.email(),
+  email: z.email().trim().toLowerCase().max(254),
   password: z
     .string()
     .min(8, AuthMessage.PASSWORD_TOO_SHORT)
     .max(32, AuthMessage.PASSWORD_TOO_LONG)
+    .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
+    .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER)
     .nullable(),
   isBanned: z.boolean().default(false),
   createdAt: z.date(),
@@ -19,8 +21,8 @@ export const UserSchema = z.object({
 
 export const EmailVerificationSchema = z.object({
   id: z.number(),
-  email: z.email(),
-  code: z.string().length(6, AuthMessage.OTP_CODE_INVALID_LENGTH),
+  email: z.email().trim().toLowerCase(),
+  code: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
   type: z.enum([
     TypeOfVerificationCode.EMAIL_VERIFICATION,
     TypeOfVerificationCode.PASSWORD_RESET,
@@ -35,10 +37,14 @@ export const RegisterBodySchema = UserSchema.pick({
   password: true,
 })
   .extend({
-    otpCode: z.string().length(6, AuthMessage.OTP_CODE_INVALID_LENGTH),
+    otpCode: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
     confirmPassword: z.string(),
     role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
-    fullName: z.string().min(1, AuthMessage.FULLNAME_REQUIRED),
+    fullName: z
+      .string()
+      .trim()
+      .min(1, AuthMessage.FULLNAME_REQUIRED)
+      .max(100, AuthMessage.FULLNAME_TOO_LONG),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (!password) {
@@ -47,9 +53,7 @@ export const RegisterBodySchema = UserSchema.pick({
         message: AuthMessage.PASSWORD_REQUIRED,
         path: ["password"],
       });
-    }
-
-    if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       ctx.addIssue({
         code: "custom",
         message: AuthMessage.PASSWORD_NOT_MATCH,
