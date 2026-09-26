@@ -12,7 +12,7 @@ export type ValidationIssue = z.infer<typeof ValidationIssueSchema>;
 export type ApiSuccess<T> = {
   success: true;
   data: T;
-  meta?: { timestamp: string };
+  timestamp: string;
 };
 
 export type ApiError = {
@@ -22,6 +22,7 @@ export type ApiError = {
     message: string;
     details?: ValidationIssue[];
   };
+  timestamp: string;
 };
 
 export type ApiResponse<T> = ApiSuccess<T> | ApiError;
@@ -37,4 +38,5 @@ export type ApiPaginated<T> = {
   success: true;
   data: T[];
   pagination: PaginationMeta;
+  timestamp: string;
 };

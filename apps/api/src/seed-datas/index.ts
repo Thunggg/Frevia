@@ -52,10 +52,9 @@ async function createAccountRole({
     const newAccount = await prisma.user.create({
       data: {
         email,
-        passwordHash: (await hashingService.hash(
+        password: (await hashingService.hash(
           DEFAULT_EMAIL_AND_PASSWORD[role].password,
         )) as string,
-        emailVerified: true,
         isActive: true,
         userRoles: {
           create: {

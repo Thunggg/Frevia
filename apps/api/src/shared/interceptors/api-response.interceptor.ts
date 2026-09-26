@@ -21,7 +21,7 @@ export class ApiResponseInterceptor<T> implements NestInterceptor<
       map((data) => ({
         success: true as const,
         data,
-        meta: { timestamp: new Date().toISOString() },
+        timestamp: new Date().toISOString(),
       })),
     );
   }
