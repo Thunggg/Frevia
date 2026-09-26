@@ -74,6 +74,18 @@ export const SendOTPSchema = EmailVerificationSchema.pick({
   type: true,
 }).strict();
 
+export const LoginBodySchema = z.object({
+  email: z.email().trim().toLowerCase(),
+  password: z.string().min(1, AuthMessage.PASSWORD_REQUIRED),
+});
+
+export const LoginResSchema = z
+  .object({
+    accessToken: z.string(),
+    refreshToken: z.string(),
+  })
+  .strict();
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -81,3 +93,5 @@ export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
 
 export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;
+
+export type LoginBodyType = z.infer<typeof LoginBodySchema>;

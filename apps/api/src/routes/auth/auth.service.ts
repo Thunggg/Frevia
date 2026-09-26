@@ -4,7 +4,10 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
+  AccessTokenPayloadCreate,
+  LoginBodyType,
   MessageResType,
+  RefreshTokenPayloadCreate,
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
@@ -19,11 +22,14 @@ import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
+import { TokenService } from '../../shared/services/token.service';
 import {
   EmailAlreadyExistsException,
   EmailNotFoundException,
+  IncorrectCredentialsException,
   InvalidVerificationCodeException,
   OTPExpiredException,
+  RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
   UserBannedException,
@@ -34,9 +40,10 @@ import { AuthRepository } from './auth.repo';
 export class AuthService {
   constructor(
     private readonly hashingService: HashingService,
-    private emailService: EmailService,
-    private sharedRoleRepository: SharedRoleRepository,
+    private readonly emailService: EmailService,
+    private readonly sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
+    private readonly tokenService: TokenService,
   ) {}
 
   async register(
@@ -174,5 +181,58 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async login(body: LoginBodyType): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const { email, password } = body;
+
+    const user = await this.authRepository.findUserForLogin(email);
+
+    // Dùng CÙNG 1 exception cho cả 2 case (không tồn tại / sai password)
+    // để tránh lộ thông tin email nào đã đăng ký (user enumeration)
+    if (!user) {
+      throw IncorrectCredentialsException;
+    }
+
+    if (user.isBanned) {
+      throw UserBannedException;
+    }
+
+    if (!user.password) {
+      // User đăng ký qua OAuth, không có password để so sánh
+      throw IncorrectCredentialsException;
+    }
+
+    const isPasswordValid = await this.hashingService.verify(
+      password as string,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw IncorrectCredentialsException;
+    }
+
+    const primaryRole = user.userRoles[0]?.role;
+    if (!primaryRole) {
+      throw RoleNotFoundException;
+    }
+
+    const accessTokenPayload: AccessTokenPayloadCreate = {
+      userId: user.id,
+      roleId: primaryRole.id,
+      roleName: primaryRole.name,
+    };
+
+    const accessToken =
+      await this.tokenService.signAccessToken(accessTokenPayload);
+    const refreshTokenPayload: RefreshTokenPayloadCreate = {
+      userId: user.id,
+    };
+    const refreshToken =
+      await this.tokenService.signRefreshToken(refreshTokenPayload);
+
+    return { accessToken, refreshToken };
   }
 }

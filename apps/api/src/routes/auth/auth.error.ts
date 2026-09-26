@@ -56,3 +56,7 @@ export const RoleNotFoundException = new NotFoundException([
 export const UniqueViolationException = new ConflictException([
   { message: AuthMessage.EMAIL_ALREADY_EXISTS, path: 'email' },
 ]);
+
+export const IncorrectCredentialsException = new UnauthorizedException([
+  { message: AuthMessage.INCORRECT_CREDENTIALS, path: 'email' },
+]);

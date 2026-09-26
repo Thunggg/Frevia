@@ -48,6 +48,7 @@ export class AuthRepository {
       },
     });
   }
+
   async createUserAndRegister(
     deleteOtp: { code: string; type: VerificationCodeType; email: string },
     user: {
@@ -81,6 +82,7 @@ export class AuthRepository {
           userRoles: {
             create: {
               roleId: user.roleId,
+              isPrimary: true,
             },
           },
         },
@@ -116,6 +118,20 @@ export class AuthRepository {
         expiresAt: data.expiresAt,
         createdAt: new Date(),
         attempts: data.attempts,
+      },
+    });
+  }
+
+  async findUserForLogin(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+      include: {
+        userRoles: {
+          include: { role: true },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
       },
     });
   }

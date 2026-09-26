@@ -16,13 +16,13 @@ headers {
 
 body:json {
   {
-    "email": "seller1@gmail.com",
+    "email": "admin@gmail.com",
     "password": "123456"
   }
 }
 
 script:post-response {
-  const body = res.body;
+  const body = res.body.data;
     if (body.accessToken) {
       bru.setEnvVar("accessToken", body.accessToken);
       bru.setEnvVar("refreshToken", body.refreshToken);

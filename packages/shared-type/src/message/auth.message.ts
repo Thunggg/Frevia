@@ -11,6 +11,7 @@ export const AuthMessage = {
   REFRESH_TOKEN_REVOKED: "Error.RefreshTokenRevoked",
   EMAIL_REQUIRED: "Error.EmailRequired",
   ROLE_NOT_FOUND: "Error.RoleNotFound",
+  INCORRECT_CREDENTIALS: "Error.IncorrectCredentials",
 
   // --- Validation messages (dùng trong Zod schema) ---
   PASSWORD_REQUIRED: "Error.PasswordRequired",

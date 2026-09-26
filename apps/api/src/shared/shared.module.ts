@@ -28,6 +28,12 @@ import { TokenService } from './services/token.service';
     TokenService,
     SharedRoleRepository,
   ],
-  exports: [PrismaService, HashingService, EmailService, SharedRoleRepository],
+  exports: [
+    PrismaService,
+    HashingService,
+    EmailService,
+    SharedRoleRepository,
+    TokenService,
+  ],
 })
 export class SharedModule {}
