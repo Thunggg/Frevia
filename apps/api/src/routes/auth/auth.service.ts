@@ -26,7 +26,8 @@ import { TokenService } from '../../shared/services/token.service';
 import {
   EmailAlreadyExistsException,
   EmailNotFoundException,
-  IncorrectCredentialsException,
+  IncorrectEmailException,
+  IncorrectPasswordException,
   InvalidVerificationCodeException,
   OTPExpiredException,
   RoleNotFoundException,
@@ -58,11 +59,11 @@ export class AuthService {
       const existingUser = await this.authRepository.findUserByEmail(email);
 
       if (existingUser?.isBanned) {
-        throw UserBannedException;
+        throw UserBannedException();
       }
 
       if (existingUser) {
-        throw EmailAlreadyExistsException;
+        throw EmailAlreadyExistsException();
       }
 
       // 2. Xác thực mã OTP
@@ -73,11 +74,11 @@ export class AuthService {
       );
 
       if (!otp) {
-        throw InvalidVerificationCodeException;
+        throw InvalidVerificationCodeException();
       }
 
       if (otp.expiresAt < new Date()) {
-        throw OTPExpiredException;
+        throw OTPExpiredException();
       }
 
       // 3. Tạo User trong transaction
@@ -112,9 +113,9 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw UniqueViolationException;
+        throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
-        throw ServerErrorException;
+        throw ServerErrorException();
       }
       throw error;
     }
@@ -130,11 +131,11 @@ export class AuthService {
       ]);
 
       if (type === TypeOfVerificationCode.EMAIL_VERIFICATION && user) {
-        throw EmailAlreadyExistsException;
+        throw EmailAlreadyExistsException();
       }
 
       if (type === TypeOfVerificationCode.PASSWORD_RESET && !user) {
-        throw EmailNotFoundException;
+        throw EmailNotFoundException();
       }
 
       // Kiểm tra xem nếu đang bị block attempt mà đã hết thời gian block thì reset lại cho người dùng
@@ -148,7 +149,7 @@ export class AuthService {
         now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
       if (record && record.attempts > 5 && !windowExpired) {
-        throw TooManyAttemptsException;
+        throw TooManyAttemptsException();
       }
 
       // Tạo mã OTP
@@ -175,64 +176,86 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw UniqueViolationException;
+        throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
-        throw ServerErrorException;
+        throw ServerErrorException();
       }
       throw error;
     }
   }
 
-  async login(body: LoginBodyType): Promise<{
+  async login(
+    body: LoginBodyType & { userAgent: string; ipAddress: string },
+  ): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
-    const { email, password } = body;
+    try {
+      const { email, password, userAgent, ipAddress } = body;
 
-    const user = await this.authRepository.findUserForLogin(email);
+      const user = await this.authRepository.findUserForLogin(email);
 
-    // Dùng CÙNG 1 exception cho cả 2 case (không tồn tại / sai password)
-    // để tránh lộ thông tin email nào đã đăng ký (user enumeration)
-    if (!user) {
-      throw IncorrectCredentialsException;
+      // check 2 trường hợp là user không tồn tại hoặc user đăng ký qua OAuth
+      if (!user) {
+        throw IncorrectEmailException();
+      }
+
+      if (!user.password) {
+        throw IncorrectPasswordException();
+      }
+
+      const isPasswordValid = await this.hashingService.verify(
+        password as string,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw IncorrectPasswordException();
+      }
+
+      if (user.isBanned) {
+        throw UserBannedException();
+      }
+
+      // Lấy ra role đầu tiên của user đã chọn hoặc lần switch role gần nhất
+      const primaryRole = user.userRoles[0]?.role;
+      if (!primaryRole) {
+        throw RoleNotFoundException();
+      }
+
+      const accessTokenPayload: AccessTokenPayloadCreate = {
+        userId: user.id,
+        roleId: primaryRole.id,
+        roleName: primaryRole.name,
+      };
+
+      const accessToken =
+        await this.tokenService.signAccessToken(accessTokenPayload);
+      const refreshTokenPayload: RefreshTokenPayloadCreate = {
+        userId: user.id,
+      };
+      const refreshToken =
+        await this.tokenService.signRefreshToken(refreshTokenPayload);
+
+      // Tạo session
+      await this.authRepository.createSession({
+        userId: user.id,
+        refreshToken,
+        deviceInfo: userAgent,
+        ipAddress: ipAddress,
+      });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException();
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      }
+      throw error;
     }
-
-    if (user.isBanned) {
-      throw UserBannedException;
-    }
-
-    if (!user.password) {
-      // User đăng ký qua OAuth, không có password để so sánh
-      throw IncorrectCredentialsException;
-    }
-
-    const isPasswordValid = await this.hashingService.verify(
-      password as string,
-      user.password,
-    );
-    if (!isPasswordValid) {
-      throw IncorrectCredentialsException;
-    }
-
-    const primaryRole = user.userRoles[0]?.role;
-    if (!primaryRole) {
-      throw RoleNotFoundException;
-    }
-
-    const accessTokenPayload: AccessTokenPayloadCreate = {
-      userId: user.id,
-      roleId: primaryRole.id,
-      roleName: primaryRole.name,
-    };
-
-    const accessToken =
-      await this.tokenService.signAccessToken(accessTokenPayload);
-    const refreshTokenPayload: RefreshTokenPayloadCreate = {
-      userId: user.id,
-    };
-    const refreshToken =
-      await this.tokenService.signRefreshToken(refreshTokenPayload);
-
-    return { accessToken, refreshToken };
   }
 }

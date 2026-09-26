@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import { EmailVerificationType, UserType } from '@shared/types';
+import ms from 'ms';
+import { envConfig } from '../../shared/config/validate-env';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -123,7 +125,7 @@ export class AuthRepository {
   }
 
   async findUserForLogin(email: string) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { email, deletedAt: null },
       include: {
         userRoles: {
@@ -134,5 +136,31 @@ export class AuthRepository {
         },
       },
     });
+  }
+
+  async createSession({
+    userId,
+    deviceInfo,
+    ipAddress,
+    refreshToken,
+  }: {
+    userId: number;
+    deviceInfo: string;
+    ipAddress: string;
+    refreshToken: string;
+  }) {
+    const session = await this.prisma.session.create({
+      data: {
+        userId,
+        refreshToken,
+        deviceInfo,
+        ipAddress,
+        expiresAt: new Date(
+          (Date.now() + ms(envConfig.REFRESH_TOKEN_EXPIRES_IN)) as number,
+        ),
+        createdAt: new Date(),
+      },
+    });
+    return session;
   }
 }
