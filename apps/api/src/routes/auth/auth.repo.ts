@@ -161,4 +161,45 @@ export class AuthRepository {
     });
     return session;
   }
+
+  async deleteSessionByRefreshToken({
+    refreshToken,
+    userId,
+  }: {
+    refreshToken: string;
+    userId: number;
+  }) {
+    return await this.prisma.session.delete({
+      where: {
+        refreshToken,
+        userId,
+      },
+    });
+  }
+
+  async findUniqueRefreshTokenIncludeUserRole({
+    refreshToken,
+  }: {
+    refreshToken: string;
+  }) {
+    return this.prisma.session.findUnique({
+      where: {
+        refreshToken,
+      },
+      include: {
+        user: {
+          include: {
+            userRoles: {
+              include: {
+                role: true,
+              },
+              orderBy: {
+                isPrimary: 'desc',
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

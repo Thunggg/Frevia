@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
@@ -7,6 +8,7 @@ import {
   AccessTokenPayloadCreate,
   LoginBodyType,
   MessageResType,
+  RefreshTokenBodySchemaType,
   RefreshTokenPayloadCreate,
   RegisterBodyType,
   RoleName,
@@ -30,6 +32,7 @@ import {
   IncorrectPasswordException,
   InvalidVerificationCodeException,
   OTPExpiredException,
+  RefreshTokenRevokedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
@@ -285,5 +288,69 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  async refreshToken(
+    payload: RefreshTokenBodySchemaType & {
+      userAgent: string;
+      ipAddress: string;
+    },
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    try {
+      // Verify refresh token
+      const { userId } = await this.tokenService.verifyRefreshToken(
+        payload.refreshToken,
+      );
+
+      // Kiểm tra refresh token có tồn tại trong DB hay ko
+      const refreshTokenIsInDB =
+        await this.authRepository.findUniqueRefreshTokenIncludeUserRole({
+          refreshToken: payload.refreshToken,
+        });
+
+      // Kiểm tra token có tồn tại và userId gửi lên có đúng với userId trong db hay ko
+      if (!refreshTokenIsInDB || refreshTokenIsInDB.user.id !== userId) {
+        throw RefreshTokenRevokedException();
+      }
+
+      // Xóa TRƯỚC, đảm bảo không còn request nào khác dùng lại token này
+      await this.authRepository.deleteSessionByRefreshToken({
+        refreshToken: payload.refreshToken,
+        userId,
+      });
+
+      const tokens = await this.generateAccessAndRefreshTokens({
+        userId,
+        roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
+        roleName: refreshTokenIsInDB.user.userRoles[0].role.name,
+        userAgent: payload.userAgent,
+        ipAddress: payload.ipAddress,
+      });
+
+      return tokens;
+    } catch (error: unknown) {
+      // Lỗi P2002 là lỗi unique trong database.
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException();
+      }
+      // Lỗi P2025 là lỗi record not found trong database.
+      else if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw RefreshTokenRevokedException();
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      } else if (error instanceof JsonWebTokenError) {
+        throw RefreshTokenRevokedException();
+      }
+      throw error;
+    }
   }
 }

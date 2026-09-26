@@ -46,6 +46,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       response.status(exception.getStatus()).json(apiRes);
     } else {
+      const apiRes: ApiError = {
+        success: false,
+        error: {
+          code: String(500),
+          message: (exception as Error).message,
+        },
+        timestamp: new Date().toISOString(),
+      };
+      response.status(500).json(apiRes);
       this.logger.error(exception);
     }
   }

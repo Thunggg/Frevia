@@ -177,8 +177,6 @@ model Session {
   ipAddress    String?   @db.VarChar(45)
   expiresAt    DateTime
   createdAt    DateTime  @default(now())
-  revoked      Boolean   @default(false)
-  deletedAt    DateTime?
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 }

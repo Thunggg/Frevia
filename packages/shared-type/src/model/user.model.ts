@@ -32,6 +32,16 @@ export const EmailVerificationSchema = z.object({
   createdAt: z.date(),
 });
 
+export const SessionSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  refreshToken: z.string(),
+  deviceInfo: z.string(),
+  ipAddress: z.string(),
+  expiresAt: z.date(),
+  createdAt: z.date(),
+});
+
 export const RegisterBodySchema = UserSchema.pick({
   email: true,
   password: true,
@@ -86,6 +96,10 @@ export const LoginResSchema = z
   })
   .strict();
 
+export const RefreshTokenBodySchema = SessionSchema.pick({
+  refreshToken: true,
+}).strict();
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -95,3 +109,5 @@ export type RegisterResType = z.infer<typeof RegisterResSchema>;
 export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;
 
 export type LoginBodyType = z.infer<typeof LoginBodySchema>;
+
+export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
