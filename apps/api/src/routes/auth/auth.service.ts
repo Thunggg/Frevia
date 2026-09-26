@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
+  AccessTokenPayloadCreate,
+  LoginBodyType,
   MessageResType,
+  RefreshTokenBodySchemaType,
+  RefreshTokenPayloadCreate,
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
@@ -19,11 +24,16 @@ import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
+import { TokenService } from '../../shared/services/token.service';
 import {
   EmailAlreadyExistsException,
   EmailNotFoundException,
+  IncorrectEmailException,
+  IncorrectPasswordException,
   InvalidVerificationCodeException,
   OTPExpiredException,
+  RefreshTokenRevokedException,
+  RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
   UserBannedException,
@@ -34,9 +44,10 @@ import { AuthRepository } from './auth.repo';
 export class AuthService {
   constructor(
     private readonly hashingService: HashingService,
-    private emailService: EmailService,
-    private sharedRoleRepository: SharedRoleRepository,
+    private readonly emailService: EmailService,
+    private readonly sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
+    private readonly tokenService: TokenService,
   ) {}
 
   async register(
@@ -51,11 +62,11 @@ export class AuthService {
       const existingUser = await this.authRepository.findUserByEmail(email);
 
       if (existingUser?.isBanned) {
-        throw UserBannedException;
+        throw UserBannedException();
       }
 
       if (existingUser) {
-        throw EmailAlreadyExistsException;
+        throw EmailAlreadyExistsException();
       }
 
       // 2. Xác thực mã OTP
@@ -66,11 +77,11 @@ export class AuthService {
       );
 
       if (!otp) {
-        throw InvalidVerificationCodeException;
+        throw InvalidVerificationCodeException();
       }
 
       if (otp.expiresAt < new Date()) {
-        throw OTPExpiredException;
+        throw OTPExpiredException();
       }
 
       // 3. Tạo User trong transaction
@@ -105,9 +116,9 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw UniqueViolationException;
+        throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
-        throw ServerErrorException;
+        throw ServerErrorException();
       }
       throw error;
     }
@@ -123,11 +134,11 @@ export class AuthService {
       ]);
 
       if (type === TypeOfVerificationCode.EMAIL_VERIFICATION && user) {
-        throw EmailAlreadyExistsException;
+        throw EmailAlreadyExistsException();
       }
 
       if (type === TypeOfVerificationCode.PASSWORD_RESET && !user) {
-        throw EmailNotFoundException;
+        throw EmailNotFoundException();
       }
 
       // Kiểm tra xem nếu đang bị block attempt mà đã hết thời gian block thì reset lại cho người dùng
@@ -141,7 +152,7 @@ export class AuthService {
         now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
       if (record && record.attempts > 5 && !windowExpired) {
-        throw TooManyAttemptsException;
+        throw TooManyAttemptsException();
       }
 
       // Tạo mã OTP
@@ -168,9 +179,176 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw UniqueViolationException;
+        throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
-        throw ServerErrorException;
+        throw ServerErrorException();
+      }
+      throw error;
+    }
+  }
+
+  async login(
+    body: LoginBodyType & { userAgent: string; ipAddress: string },
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    try {
+      const { email, password, userAgent, ipAddress } = body;
+
+      const user = await this.authRepository.findUserForLogin(email);
+
+      // check 2 trường hợp là user không tồn tại hoặc user đăng ký qua OAuth
+      if (!user) {
+        throw IncorrectEmailException();
+      }
+
+      if (!user.password) {
+        throw IncorrectPasswordException();
+      }
+
+      const isPasswordValid = await this.hashingService.verify(
+        password as string,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw IncorrectPasswordException();
+      }
+
+      if (user.isBanned) {
+        throw UserBannedException();
+      }
+
+      // Lấy ra role đầu tiên của user đã chọn hoặc lần switch role gần nhất
+      const primaryRole = user.userRoles[0]?.role;
+      if (!primaryRole) {
+        throw RoleNotFoundException();
+      }
+
+      const { accessToken, refreshToken } =
+        await this.generateAccessAndRefreshTokens({
+          userId: user.id,
+          roleId: primaryRole.id,
+          roleName: primaryRole.name,
+          userAgent,
+          ipAddress,
+        });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException();
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      }
+      throw error;
+    }
+  }
+
+  private async generateAccessAndRefreshTokens({
+    userId,
+    roleId,
+    roleName,
+    userAgent,
+    ipAddress,
+  }: {
+    userId: number;
+    roleId: number;
+    roleName: string;
+    userAgent: string;
+    ipAddress: string;
+  }) {
+    const accessTokenPayload: AccessTokenPayloadCreate = {
+      userId,
+      roleId,
+      roleName,
+    };
+    const accessToken =
+      await this.tokenService.signAccessToken(accessTokenPayload);
+    const refreshTokenPayload: RefreshTokenPayloadCreate = {
+      userId,
+    };
+    const refreshToken =
+      await this.tokenService.signRefreshToken(refreshTokenPayload);
+
+    const refreshDecoded =
+      await this.tokenService.verifyRefreshToken(refreshToken);
+
+    // Tạo session
+    await this.authRepository.createSession({
+      userId,
+      refreshToken,
+      deviceInfo: userAgent,
+      ipAddress: ipAddress,
+      expiresAt: new Date(refreshDecoded.exp * 1000),
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshToken(
+    payload: RefreshTokenBodySchemaType & {
+      userAgent: string;
+      ipAddress: string;
+    },
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    try {
+      // Verify refresh token
+      const { userId } = await this.tokenService.verifyRefreshToken(
+        payload.refreshToken,
+      );
+
+      // Kiểm tra refresh token có tồn tại trong DB hay ko
+      const refreshTokenIsInDB =
+        await this.authRepository.findUniqueRefreshTokenIncludeUserRole({
+          refreshToken: payload.refreshToken,
+        });
+
+      // Kiểm tra token có tồn tại và userId gửi lên có đúng với userId trong db hay ko
+      if (!refreshTokenIsInDB || refreshTokenIsInDB.user.id !== userId) {
+        throw RefreshTokenRevokedException();
+      }
+
+      // Xóa TRƯỚC, đảm bảo không còn request nào khác dùng lại token này
+      await this.authRepository.deleteSessionByRefreshToken({
+        refreshToken: payload.refreshToken,
+        userId,
+      });
+
+      const tokens = await this.generateAccessAndRefreshTokens({
+        userId,
+        roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
+        roleName: refreshTokenIsInDB.user.userRoles[0].role.name,
+        userAgent: payload.userAgent,
+        ipAddress: payload.ipAddress,
+      });
+
+      return tokens;
+    } catch (error: unknown) {
+      // Lỗi P2002 là lỗi unique trong database.
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException();
+      }
+      // Lỗi P2025 là lỗi record not found trong database.
+      else if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw RefreshTokenRevokedException();
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      } else if (error instanceof JsonWebTokenError) {
+        throw RefreshTokenRevokedException();
       }
       throw error;
     }

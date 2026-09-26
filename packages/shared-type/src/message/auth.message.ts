@@ -6,11 +6,12 @@ export const AuthMessage = {
   INVALID_VERIFICATION_CODE: "Error.InvalidVerificationCode",
   OTP_EXPIRED: "Error.OTPExpired",
   TOO_MANY_ATTEMPTS: "Error.TooManyAttempts",
-  INCORRECT_PASSWORD: "Error.IncorrectPassword",
   FAILED_TO_SEND_OTP: "Error.FailedToSendOTP",
   REFRESH_TOKEN_REVOKED: "Error.RefreshTokenRevoked",
   EMAIL_REQUIRED: "Error.EmailRequired",
   ROLE_NOT_FOUND: "Error.RoleNotFound",
+  INCORRECT_EMAIL: "Error.IncorrectEmail",
+  INCORRECT_PASSWORD: "Error.IncorrectPassword",
 
   // --- Validation messages (dùng trong Zod schema) ---
   PASSWORD_REQUIRED: "Error.PasswordRequired",

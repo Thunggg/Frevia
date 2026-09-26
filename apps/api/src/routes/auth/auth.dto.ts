@@ -1,5 +1,8 @@
 import {
+  LoginBodySchema,
+  LoginResSchema,
   MessageResSchema,
+  RefreshTokenBodySchema,
   RegisterBodySchema,
   RegisterResSchema,
   SendOTPSchema,
@@ -11,3 +14,8 @@ export class RegisterResponseDto extends createZodDto(RegisterResSchema) {}
 
 export class SendOTPBodyDTO extends createZodDto(SendOTPSchema) {}
 export class SendOTPResponseDTO extends createZodDto(MessageResSchema) {}
+
+export class LoginBodyDTO extends createZodDto(LoginBodySchema) {}
+export class LoginResponseDto extends createZodDto(LoginResSchema) {}
+
+export class RefreshTokenBodyDTO extends createZodDto(RefreshTokenBodySchema) {}

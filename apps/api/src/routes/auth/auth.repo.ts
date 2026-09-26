@@ -48,6 +48,7 @@ export class AuthRepository {
       },
     });
   }
+
   async createUserAndRegister(
     deleteOtp: { code: string; type: VerificationCodeType; email: string },
     user: {
@@ -81,6 +82,7 @@ export class AuthRepository {
           userRoles: {
             create: {
               roleId: user.roleId,
+              isPrimary: true,
             },
           },
         },
@@ -116,6 +118,87 @@ export class AuthRepository {
         expiresAt: data.expiresAt,
         createdAt: new Date(),
         attempts: data.attempts,
+      },
+    });
+  }
+
+  async findUserForLogin(email: string) {
+    return await this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+      include: {
+        userRoles: {
+          include: { role: true },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
+      },
+    });
+  }
+
+  async createSession({
+    userId,
+    deviceInfo,
+    ipAddress,
+    refreshToken,
+    expiresAt,
+  }: {
+    userId: number;
+    deviceInfo: string;
+    ipAddress: string;
+    refreshToken: string;
+    expiresAt: Date;
+  }) {
+    const session = await this.prisma.session.create({
+      data: {
+        userId,
+        refreshToken,
+        deviceInfo,
+        ipAddress,
+        expiresAt,
+        createdAt: new Date(),
+      },
+    });
+    return session;
+  }
+
+  async deleteSessionByRefreshToken({
+    refreshToken,
+    userId,
+  }: {
+    refreshToken: string;
+    userId: number;
+  }) {
+    return await this.prisma.session.delete({
+      where: {
+        refreshToken,
+        userId,
+      },
+    });
+  }
+
+  async findUniqueRefreshTokenIncludeUserRole({
+    refreshToken,
+  }: {
+    refreshToken: string;
+  }) {
+    return this.prisma.session.findUnique({
+      where: {
+        refreshToken,
+      },
+      include: {
+        user: {
+          include: {
+            userRoles: {
+              include: {
+                role: true,
+              },
+              orderBy: {
+                isPrimary: 'desc',
+              },
+            },
+          },
+        },
       },
     });
   }

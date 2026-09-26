@@ -18,6 +18,6 @@ export const MyZodValidationPipe: typeof ZodValidationPipe =
         return new UnprocessableEntityException(issues);
       }
 
-      throw ServerErrorException;
+      throw ServerErrorException();
     },
   });
