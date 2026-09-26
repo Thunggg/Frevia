@@ -55,7 +55,7 @@ async function createAccountRole({
         password: (await hashingService.hash(
           DEFAULT_EMAIL_AND_PASSWORD[role].password,
         )) as string,
-        isActive: true,
+        isBanned: false,
         userRoles: {
           create: {
             roleId: accountRole!.id,

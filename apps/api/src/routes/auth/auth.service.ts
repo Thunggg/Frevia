@@ -38,15 +38,15 @@ export class AuthService {
         },
       });
 
-      if (existingUser && existingUser.isActive) {
+      if (existingUser && !existingUser.isBanned) {
         throw new AppException(
           ErrorCode.USER_ALREADY_EXISTS as string,
-          'Email already registered and active',
+          'Email already registered',
           HttpStatus.CONFLICT,
         );
       }
 
-      if (existingUser && !existingUser.isActive) {
+      if (existingUser && existingUser.isBanned) {
         throw new AppException(
           ErrorCode.USER_ALREADY_EXISTS as string,
           'Your account is banned',
@@ -82,7 +82,7 @@ export class AuthService {
       }
 
       // Tạo User
-      const result = await this.prisma.$transaction(async () => {
+      const result = await this.prisma.$transaction(async (tx) => {
         let roleId: number;
         if (role === RoleName.CLIENT) {
           roleId = await this.sharedRoleRepository.getClientRoleId();
@@ -92,7 +92,7 @@ export class AuthService {
           roleId = await this.sharedRoleRepository.getAdminRoleId();
         }
 
-        await this.prisma.verificationCode.deleteMany({
+        await tx.verificationCode.deleteMany({
           where: {
             code: otpCode,
             type: TypeOfVerificationCode.EMAIL_VERIFICATION,
@@ -104,11 +104,11 @@ export class AuthService {
           password as string,
         );
 
-        const user = await this.prisma.user.create({
+        const user = await tx.user.create({
           data: {
             email,
             password: hashedPassword,
-            isActive: true,
+            isBanned: false,
             profile: {
               create: {
                 displayName: fullName,
@@ -199,7 +199,7 @@ export class AuthService {
         create: {
           email,
           code,
-          type: TypeOfVerificationCode.EMAIL_VERIFICATION,
+          type: type,
           expiresAt: addMilliseconds(
             new Date(),
             ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,

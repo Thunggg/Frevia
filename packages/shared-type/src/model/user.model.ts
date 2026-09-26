@@ -6,7 +6,7 @@ export const UserSchema = z.object({
   id: z.number(),
   email: z.email(),
   password: z.string().nullable(),
-  isActive: z.boolean().default(true),
+  isBanned: z.boolean().default(true),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
