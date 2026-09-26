@@ -15,11 +15,12 @@ export const UserSchema = z.object({
 export const EmailVerificationSchema = z.object({
   id: z.number(),
   email: z.email(),
-  token: z.string().length(6),
+  code: z.string().length(6),
   type: z.enum([
     TypeOfVerificationCode.EMAIL_VERIFICATION,
     TypeOfVerificationCode.PASSWORD_RESET,
   ]),
+  attempts: z.number().default(0),
   expiresAt: z.date(),
   createdAt: z.date(),
 });

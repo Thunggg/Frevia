@@ -8,6 +8,8 @@ export const ErrorCode = {
   FORBIDDEN: "FORBIDDEN",
   NOT_FOUND: "NOT_FOUND",
   INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+  OTP_EXPIRED: "OTP_EXPIRED",
+  TOO_MANY_ATTEMPTS: "TOO_MANY_ATTEMPTS",
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

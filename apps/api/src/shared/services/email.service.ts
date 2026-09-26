@@ -10,7 +10,7 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
       auth: {
         user: envConfig.EMAIL_USERNAME,
         pass: envConfig.EMAIL_PASSWORD,
@@ -21,7 +21,7 @@ export class EmailService {
   async sendOTP({ email, code }: { email: string; code: string }) {
     try {
       const mainOptions = {
-        from: envConfig.EMAIL_USERNAME,
+        from: 'Frevia Team',
         to: email,
         subject: 'Verify email',
         html: `<p>You have got a new message</b><ul><li>Username:${email}</li><li>Code:${code}</li></ul>`,

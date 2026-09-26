@@ -82,7 +82,6 @@ model User {
 
   // --- Auth / core ---
   userRoles           UserRole[]
-  verificationTokens  VerificationToken[]
   sessions            Session[]
   oauthAccounts       OauthAccount[]
   twoFactorAuth       TwoFactorAuth?
@@ -157,17 +156,17 @@ model User {
   @@index([deletedAt])
 }
 
-model VerificationToken {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  type      TokenType
-  token     String    @unique @db.VarChar(255)
-  expiresAt DateTime
-  createdAt DateTime  @default(now())
+model VerificationCode {
+  id          Int                  @id @default(autoincrement())
+  email       String               @db.VarChar(500)
+  code        String               @db.VarChar(255) // lưu hash, không lưu plaintext
+  type        VerificationCodeType
+  attempts    Int                  @default(0)
+  expiresAt   DateTime
+  createdAt   DateTime             @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@index([userId, type])
+  @@unique([email, type])
+  @@index([expiresAt])
 }
 
 model Session {
@@ -1215,7 +1214,7 @@ enum InvoiceStatus {
   CANCELLED
 }
 
-enum TokenType {
+enum VerificationCodeType {
   PASSWORD_RESET
   EMAIL_VERIFICATION
 }

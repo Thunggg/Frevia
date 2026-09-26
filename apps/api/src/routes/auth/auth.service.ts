@@ -52,19 +52,18 @@ export class AuthService {
       }
 
       // 2. Xác thực mã OTP
-      const otp = await this.prisma.verificationToken.findFirst({
+      const otp = await this.prisma.verificationCode.findFirst({
         where: {
-          token: otpCode,
+          code: otpCode,
           type: TypeOfVerificationCode.EMAIL_VERIFICATION,
-          user: {
-            email,
-          },
+          email,
           expiresAt: {
             gte: new Date(),
           },
         },
       });
 
+      // Kiểm tra xem otp có tồn tại hay ko
       if (!otp) {
         throw new AppException(
           ErrorCode.INVALID_OTP as string,
@@ -73,15 +72,22 @@ export class AuthService {
         );
       }
 
+      // Kiểm tra xem otp đã hết hạn hay chưa
+      if (otp.expiresAt < new Date()) {
+        throw new AppException(
+          ErrorCode.OTP_EXPIRED as string,
+          'OTP expired',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       // Tạo User
       const result = await this.prisma.$transaction(async () => {
-        await this.prisma.verificationToken.deleteMany({
+        await this.prisma.verificationCode.deleteMany({
           where: {
-            token: otpCode,
+            code: otpCode,
             type: TypeOfVerificationCode.EMAIL_VERIFICATION,
-            user: {
-              email,
-            },
+            email,
           },
         });
 
@@ -112,13 +118,18 @@ export class AuthService {
     try {
       const { email, type } = body;
 
-      // Tìm user theo email
-      const user = await this.prisma.user.findUnique({
-        where: {
-          email,
-          deletedAt: null,
-        },
-      });
+      // Tìm user theo email và tìm đã có record của otp nào hay chưa
+      const [user, record] = await Promise.all([
+        this.prisma.user.findUnique({
+          where: {
+            email,
+            deletedAt: null,
+          },
+        }),
+        this.prisma.verificationCode.findUnique({
+          where: { email_type: { email, type } },
+        }),
+      ]);
 
       // Kiểm tra nếu user đã tồn tại và type là REGISTER
       if (type === TypeOfVerificationCode.EMAIL_VERIFICATION && user) {
@@ -138,18 +149,45 @@ export class AuthService {
         );
       }
 
+      // Kiểm tra OTP xem đã vượt quá số lần thử hay chưa
+      if (record && record.attempts > 5)
+        throw new AppException(
+          ErrorCode.TOO_MANY_ATTEMPTS as string,
+          'Too many attempts',
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+
       // Tạo mã OTP
       const code = generateOTP();
 
-      await this.prisma.verificationToken.create({
-        data: {
-          token: code,
+      await this.prisma.verificationCode.upsert({
+        where: {
+          email_type: {
+            email,
+            type,
+          },
+        },
+        update: {
+          code,
+          expiresAt: addMilliseconds(
+            new Date(),
+            ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
+          ),
+          createdAt: new Date(),
+          attempts: {
+            increment: 1,
+          },
+        },
+        create: {
+          email,
+          code,
           type: TypeOfVerificationCode.EMAIL_VERIFICATION,
           expiresAt: addMilliseconds(
             new Date(),
-            ms(envConfig.OTP_EXPIRES_IN as StringValue),
+            ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
           ),
-          userId: user!.id,
+          createdAt: new Date(),
+          attempts: 1,
         },
       });
 
