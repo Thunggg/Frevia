@@ -45,18 +45,17 @@ async function createAccountRole({
   if (!accountIsExist) {
     const accountRole = await prisma.role.findFirst({
       where: {
-        name: role,
+        name: role as any,
       },
     });
 
     const newAccount = await prisma.user.create({
       data: {
         email,
-        passwordHash: (await hashingService.hash(
+        password: (await hashingService.hash(
           DEFAULT_EMAIL_AND_PASSWORD[role].password,
         )) as string,
-        emailVerified: true,
-        isActive: true,
+        isBanned: false,
         userRoles: {
           create: {
             roleId: accountRole!.id,

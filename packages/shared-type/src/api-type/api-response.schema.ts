@@ -2,7 +2,6 @@ import { z } from "zod";
 
 // ===== VALIDATION ISSUE =====
 export const ValidationIssueSchema = z.object({
-  code: z.string(),
   path: z.string(),
   message: z.string(),
 });
@@ -12,7 +11,7 @@ export type ValidationIssue = z.infer<typeof ValidationIssueSchema>;
 export type ApiSuccess<T> = {
   success: true;
   data: T;
-  meta?: { timestamp: string };
+  timestamp: string;
 };
 
 export type ApiError = {
@@ -22,6 +21,7 @@ export type ApiError = {
     message: string;
     details?: ValidationIssue[];
   };
+  timestamp: string;
 };
 
 export type ApiResponse<T> = ApiSuccess<T> | ApiError;
@@ -37,4 +37,5 @@ export type ApiPaginated<T> = {
   success: true;
   data: T[];
   pagination: PaginationMeta;
+  timestamp: string;
 };

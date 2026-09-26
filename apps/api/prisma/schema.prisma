@@ -74,16 +74,14 @@ model RolePermission {
 model User {
   id            Int       @id @default(autoincrement())
   email         String    @unique @db.VarChar(255)
-  passwordHash  String?   @db.VarChar(255) // Nullable cho OAuth users
-  isActive      Boolean   @default(true)
+  password String?   @db.VarChar(255) // Nullable cho OAuth users
+  isBanned      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
 
   // --- Auth / core ---
   userRoles           UserRole[]
-  emailVerifications  EmailVerification[]
-  passwordResetTokens PasswordResetToken[]
   sessions            Session[]
   oauthAccounts       OauthAccount[]
   twoFactorAuth       TwoFactorAuth?
@@ -158,24 +156,17 @@ model User {
   @@index([deletedAt])
 }
 
-model EmailVerification {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  token     String   @unique @db.VarChar(255)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+model VerificationCode {
+  id          Int                  @id @default(autoincrement())
+  email       String               @db.VarChar(500)
+  code        String               @db.VarChar(255) // lưu hash, không lưu plaintext
+  type        VerificationCodeType
+  attempts    Int                  @default(0)
+  expiresAt   DateTime
+  createdAt   DateTime             @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-}
-
-model PasswordResetToken {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  token     String   @unique @db.VarChar(255)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@unique([email, type])
+  @@index([expiresAt])
 }
 
 model Session {
@@ -1221,4 +1212,9 @@ enum InvoiceStatus {
   SENT
   PAID
   CANCELLED
+}
+
+enum VerificationCodeType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
 }
