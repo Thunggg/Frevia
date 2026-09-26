@@ -6,6 +6,7 @@ const envSchema = z.object({
   DIRECT_URL: z.string(),
   NODE_ENV: z.string(),
   OTP_EXPIRES_IN: z.string(),
+  OTP_ATTEMPT_WINDOW: z.string(),
   EMAIL_USERNAME: z.string(),
   EMAIL_PASSWORD: z.string(),
 });

@@ -167,16 +167,32 @@ export class AuthService {
         );
       }
 
-      // Kiểm tra OTP xem đã vượt quá số lần thử hay chưa
-      if (record && record.attempts > 5)
+      //Kiểm tra xem nếu đang bị block attempt mà đã hết thời block thì sẽ reset lại cho người dùng
+      const ATTEMPT_WINDOW_MS = ms(
+        envConfig.OTP_ATTEMPT_WINDOW as StringValue,
+      ) as number;
+      const now = new Date();
+
+      const windownExpires =
+        record &&
+        now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS; // biến này để kiểm tra xem cửa sổ đã hết hạn chưa
+
+      if (record && record.attempts > 5 && !windownExpires) {
+        // Kiểm tra OTP xem đã vượt quá số lần thử hay chưa
         throw new AppException(
           ErrorCode.TOO_MANY_ATTEMPTS as string,
           'Too many attempts',
           HttpStatus.TOO_MANY_REQUESTS,
         );
+      }
 
       // Tạo mã OTP
       const code = generateOTP();
+      const expiresAt = addMilliseconds(
+        new Date(),
+        ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
+      );
+      const newAttempts = !record || windownExpires ? 1 : record.attempts + 1;
 
       await this.prisma.verificationCode.upsert({
         where: {
@@ -187,25 +203,17 @@ export class AuthService {
         },
         update: {
           code,
-          expiresAt: addMilliseconds(
-            new Date(),
-            ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
-          ),
+          expiresAt,
           createdAt: new Date(),
-          attempts: {
-            increment: 1,
-          },
+          attempts: newAttempts,
         },
         create: {
           email,
           code,
           type: type,
-          expiresAt: addMilliseconds(
-            new Date(),
-            ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
-          ),
+          expiresAt,
           createdAt: new Date(),
-          attempts: 1,
+          attempts: newAttempts,
         },
       });
 
