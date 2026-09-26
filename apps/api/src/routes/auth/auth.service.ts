@@ -353,4 +353,25 @@ export class AuthService {
       throw error;
     }
   }
+
+  async logout(refreshToken: string, userId: number): Promise<MessageResType> {
+    try {
+      await this.authRepository.deleteRefreshToken({
+        token: refreshToken,
+        userId,
+      });
+      return { message: 'logout successfully' };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        // Session không tồn tại (đã logout trước đó, hoặc refreshToken sai)
+        throw RefreshTokenRevokedException();
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      }
+      throw error;
+    }
+  }
 }
