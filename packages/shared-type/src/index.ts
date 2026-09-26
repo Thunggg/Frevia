@@ -1,2 +1,2 @@
-export * from "./api-response.schema";
-export * from "./user.schema";
+export * from "./api-type/api-response.schema";
+export * from "./model/user.model";

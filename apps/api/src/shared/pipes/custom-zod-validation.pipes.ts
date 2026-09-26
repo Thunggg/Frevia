@@ -5,7 +5,6 @@ import { ZodError } from 'zod';
 
 export const MyZodValidationPipe: typeof ZodValidationPipe =
   createZodValidationPipe({
-    // provide custom validation exception factory
     createValidationException: (error: unknown) => {
       if (error instanceof ZodError) {
         const issues: ValidationIssue[] = error.issues.map((e) => {
