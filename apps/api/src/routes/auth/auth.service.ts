@@ -1,6 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
-  ErrorCode,
   MessageResType,
   RegisterBodyType,
   RoleName,
@@ -10,12 +9,20 @@ import {
 import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
-import { AppException } from '../../shared/exceptions/app.exception';
 import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import { PrismaService } from '../../shared/services/prisma.service';
+import {
+  EmailAlreadyExistsException,
+  EmailNotFoundException,
+  InvalidVerificationCodeException,
+  OTPExpiredException,
+  TooManyAttemptsException,
+  UserBannedException,
+} from './auth.error';
+import { AuthRepository } from './auth.repo';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +31,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private emailService: EmailService,
     private sharedRoleRepository: SharedRoleRepository,
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async register(body: RegisterBodyType) {
@@ -31,57 +39,32 @@ export class AuthService {
       const { email, otpCode, password, fullName, role } = body;
 
       // 1. Kiểm tra xem user đã tồn tại hay chưa
-      const existingUser = await this.prisma.user.findUnique({
-        where: {
-          email,
-          deletedAt: null,
-        },
-      });
+      const existingUser = await this.authRepository.findUserByEmail(email);
 
-      if (existingUser && !existingUser.isBanned) {
-        throw new AppException(
-          ErrorCode.USER_ALREADY_EXISTS as string,
-          'Email already registered',
-          HttpStatus.CONFLICT,
-        );
+      if (existingUser?.isBanned) {
+        throw UserBannedException;
       }
 
-      if (existingUser && existingUser.isBanned) {
-        throw new AppException(
-          ErrorCode.USER_ALREADY_EXISTS as string,
-          'Your account is banned',
-          HttpStatus.FORBIDDEN,
-        );
+      if (existingUser) {
+        throw EmailAlreadyExistsException;
       }
 
       // 2. Xác thực mã OTP
-      const otp = await this.prisma.verificationCode.findFirst({
-        where: {
-          code: otpCode,
-          type: TypeOfVerificationCode.EMAIL_VERIFICATION,
-          email,
-        },
-      });
+      const otp = await this.authRepository.findVerificationCode(
+        otpCode,
+        TypeOfVerificationCode.EMAIL_VERIFICATION,
+        email,
+      );
 
-      // Kiểm tra xem otp có tồn tại hay ko
       if (!otp) {
-        throw new AppException(
-          ErrorCode.INVALID_OTP as string,
-          'Invalid OTP',
-          HttpStatus.NOT_FOUND,
-        );
+        throw InvalidVerificationCodeException;
       }
 
-      // Kiểm tra xem otp đã hết hạn hay chưa
       if (otp.expiresAt < new Date()) {
-        throw new AppException(
-          ErrorCode.OTP_EXPIRED as string,
-          'OTP has expired',
-          HttpStatus.NOT_FOUND,
-        );
+        throw OTPExpiredException;
       }
 
-      // Tạo User
+      // 3. Tạo User trong transaction
       const result = await this.prisma.$transaction(async (tx) => {
         let roleId: number;
         if (role === RoleName.CLIENT) {
@@ -92,35 +75,26 @@ export class AuthService {
           roleId = await this.sharedRoleRepository.getAdminRoleId();
         }
 
-        await tx.verificationCode.deleteMany({
-          where: {
-            code: otpCode,
-            type: TypeOfVerificationCode.EMAIL_VERIFICATION,
-            email,
-          },
-        });
+        await this.authRepository.deleteVerificationCodeMany(
+          otpCode,
+          TypeOfVerificationCode.EMAIL_VERIFICATION,
+          email,
+          tx,
+        );
 
         const hashedPassword = await this.hashingService.hash(
           password as string,
         );
 
-        const user = await tx.user.create({
-          data: {
+        const user = await this.authRepository.createUser(
+          {
             email,
             password: hashedPassword,
-            isBanned: false,
-            profile: {
-              create: {
-                displayName: fullName,
-              },
-            },
-            userRoles: {
-              create: {
-                roleId,
-              },
-            },
+            fullName,
+            roleId,
           },
-        });
+          tx,
+        );
 
         return user;
       });
@@ -136,85 +110,47 @@ export class AuthService {
     try {
       const { email, type } = body;
 
-      // Tìm user theo email và tìm đã có record của otp nào hay chưa
       const [user, record] = await Promise.all([
-        this.prisma.user.findUnique({
-          where: {
-            email,
-            deletedAt: null,
-          },
-        }),
-        this.prisma.verificationCode.findUnique({
-          where: { email_type: { email, type } },
-        }),
+        this.authRepository.findUserByEmail(email),
+        this.authRepository.findVerificationCodeByEmailAndType(email, type),
       ]);
 
-      // Kiểm tra nếu user đã tồn tại và type là REGISTER
       if (type === TypeOfVerificationCode.EMAIL_VERIFICATION && user) {
-        throw new AppException(
-          ErrorCode.USER_ALREADY_EXISTS as string,
-          'Email already registered and active',
-          HttpStatus.CONFLICT,
-        );
+        throw EmailAlreadyExistsException;
       }
 
-      // Kiểm tra nếu user không tồn tại và type là FORGOT_PASSWORD
       if (type === TypeOfVerificationCode.PASSWORD_RESET && !user) {
-        throw new AppException(
-          ErrorCode.USER_NOT_FOUND as string,
-          'Email not found',
-          HttpStatus.NOT_FOUND,
-        );
+        throw EmailNotFoundException;
       }
 
-      //Kiểm tra xem nếu đang bị block attempt mà đã hết thời block thì sẽ reset lại cho người dùng
+      // Kiểm tra xem nếu đang bị block attempt mà đã hết thời gian block thì reset lại cho người dùng
       const ATTEMPT_WINDOW_MS = ms(
         envConfig.OTP_ATTEMPT_WINDOW as StringValue,
       ) as number;
       const now = new Date();
 
-      const windownExpires =
+      const windowExpired =
         record &&
-        now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS; // biến này để kiểm tra xem cửa sổ đã hết hạn chưa
+        now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
-      if (record && record.attempts > 5 && !windownExpires) {
-        // Kiểm tra OTP xem đã vượt quá số lần thử hay chưa
-        throw new AppException(
-          ErrorCode.TOO_MANY_ATTEMPTS as string,
-          'Too many attempts',
-          HttpStatus.TOO_MANY_REQUESTS,
-        );
+      if (record && record.attempts > 5 && !windowExpired) {
+        throw TooManyAttemptsException;
       }
 
       // Tạo mã OTP
       const code = generateOTP();
       const expiresAt = addMilliseconds(
-        new Date(),
+        now,
         ms(envConfig.OTP_EXPIRES_IN as StringValue) as number,
       );
-      const newAttempts = !record || windownExpires ? 1 : record.attempts + 1;
+      const newAttempts = !record || windowExpired ? 1 : record.attempts + 1;
 
-      await this.prisma.verificationCode.upsert({
-        where: {
-          email_type: {
-            email,
-            type,
-          },
-        },
-        update: {
-          code,
-          expiresAt,
-          createdAt: new Date(),
-          attempts: newAttempts,
-        },
-        create: {
-          email,
-          code,
-          type: type,
-          expiresAt,
-          createdAt: new Date(),
-          attempts: newAttempts,
-        },
+      await this.authRepository.upsertVerificationCode({
+        email,
+        type,
+        code,
+        expiresAt,
+        attempts: newAttempts,
       });
 
       await this.emailService.sendOTP({ email, code });

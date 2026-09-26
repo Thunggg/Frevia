@@ -1,12 +1,17 @@
 import { z } from "zod";
 import { RoleName } from "../constants/role.constant";
 import { TypeOfVerificationCode } from "../constants/token.constant";
+import { AuthMessage } from "../message/auth.message";
 
 export const UserSchema = z.object({
   id: z.number(),
   email: z.email(),
-  password: z.string().nullable(),
-  isBanned: z.boolean().default(true),
+  password: z
+    .string()
+    .min(8, AuthMessage.PASSWORD_TOO_SHORT)
+    .max(32, AuthMessage.PASSWORD_TOO_LONG)
+    .nullable(),
+  isBanned: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
@@ -15,7 +20,7 @@ export const UserSchema = z.object({
 export const EmailVerificationSchema = z.object({
   id: z.number(),
   email: z.email(),
-  code: z.string().length(6),
+  code: z.string().length(6, AuthMessage.OTP_CODE_INVALID_LENGTH),
   type: z.enum([
     TypeOfVerificationCode.EMAIL_VERIFICATION,
     TypeOfVerificationCode.PASSWORD_RESET,
@@ -30,16 +35,16 @@ export const RegisterBodySchema = UserSchema.pick({
   password: true,
 })
   .extend({
-    otpCode: z.string().length(6),
+    otpCode: z.string().length(6, AuthMessage.OTP_CODE_INVALID_LENGTH),
     confirmPassword: z.string(),
     role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
-    fullName: z.string().min(1),
+    fullName: z.string().min(1, AuthMessage.FULLNAME_REQUIRED),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (!password) {
       ctx.addIssue({
         code: "custom",
-        message: "Password is required",
+        message: AuthMessage.PASSWORD_REQUIRED,
         path: ["password"],
       });
     }
@@ -47,7 +52,7 @@ export const RegisterBodySchema = UserSchema.pick({
     if (password !== confirmPassword) {
       ctx.addIssue({
         code: "custom",
-        message: "Password and confirm password do not match",
+        message: AuthMessage.PASSWORD_NOT_MATCH,
         path: ["confirmPassword"],
       });
     }
