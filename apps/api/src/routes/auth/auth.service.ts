@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/client';
+import {
   MessageResType,
   RegisterBodyType,
   RoleName,
@@ -10,6 +14,7 @@ import {
 import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
+import { ServerErrorException } from '../../shared/errors/shared-message.error';
 import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
@@ -20,6 +25,7 @@ import {
   InvalidVerificationCodeException,
   OTPExpiredException,
   TooManyAttemptsException,
+  UniqueViolationException,
   UserBannedException,
 } from './auth.error';
 import { AuthRepository } from './auth.repo';
@@ -95,7 +101,14 @@ export class AuthService {
 
       return result;
     } catch (error) {
-      console.log(error);
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException;
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException;
+      }
       throw error;
     }
   }
@@ -151,7 +164,14 @@ export class AuthService {
 
       return { message: 'OTP sent successfully' };
     } catch (error) {
-      console.log(error);
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw UniqueViolationException;
+      } else if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException;
+      }
       throw error;
     }
   }

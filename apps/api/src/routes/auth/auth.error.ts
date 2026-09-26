@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
@@ -50,4 +51,8 @@ export const EmailRequiredException = new BadRequestException([
 
 export const RoleNotFoundException = new NotFoundException([
   { message: AuthMessage.ROLE_NOT_FOUND, path: 'role' },
+]);
+
+export const UniqueViolationException = new ConflictException([
+  { message: AuthMessage.EMAIL_ALREADY_EXISTS, path: 'email' },
 ]);

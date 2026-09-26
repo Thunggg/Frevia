@@ -19,4 +19,7 @@ export const AuthMessage = {
   PASSWORD_NOT_MATCH: "Error.PasswordNotMatch",
   FULLNAME_REQUIRED: "Error.FullNameRequired",
   OTP_CODE_INVALID_LENGTH: "Error.OTPCodeInvalidLength",
+
+  // Error internal
+  INTERNAL_ERROR: "Error.Internal",
 } as const;

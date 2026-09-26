@@ -1,10 +1,8 @@
-import {
-  InternalServerErrorException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { ValidationIssue } from '@shared/types';
 import { createZodValidationPipe, ZodValidationPipe } from 'nestjs-zod';
 import { ZodError } from 'zod';
+import { ServerErrorException } from '../errors/shared-message.error';
 
 export const MyZodValidationPipe: typeof ZodValidationPipe =
   createZodValidationPipe({
@@ -20,12 +18,6 @@ export const MyZodValidationPipe: typeof ZodValidationPipe =
         return new UnprocessableEntityException(issues);
       }
 
-      throw new InternalServerErrorException([
-        {
-          message:
-            error instanceof Error ? error.message : 'Unknown validation error',
-          path: 'system',
-        },
-      ]);
+      throw ServerErrorException;
     },
   });
