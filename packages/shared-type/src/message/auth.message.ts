@@ -17,8 +17,12 @@ export const AuthMessage = {
   PASSWORD_TOO_SHORT: "Error.PasswordTooShort",
   PASSWORD_TOO_LONG: "Error.PasswordTooLong",
   PASSWORD_NOT_MATCH: "Error.PasswordNotMatch",
+  PASSWORD_NEED_UPPERCASE: "Error.PasswordNeedUppercase",
+  PASSWORD_NEED_NUMBER: "Error.PasswordNeedNumber",
   FULLNAME_REQUIRED: "Error.FullNameRequired",
+  FULLNAME_TOO_LONG: "Error.FullNameTooLong",
   OTP_CODE_INVALID_LENGTH: "Error.OTPCodeInvalidLength",
+  OTP_CODE_INVALID_FORMAT: "Error.OTPCodeInvalidFormat",
 
   // Error internal
   INTERNAL_ERROR: "Error.Internal",
