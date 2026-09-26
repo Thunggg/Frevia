@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import { EmailVerificationType, UserType } from '@shared/types';
-import ms from 'ms';
-import { envConfig } from '../../shared/config/validate-env';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -143,11 +141,13 @@ export class AuthRepository {
     deviceInfo,
     ipAddress,
     refreshToken,
+    expiresAt,
   }: {
     userId: number;
     deviceInfo: string;
     ipAddress: string;
     refreshToken: string;
+    expiresAt: Date;
   }) {
     const session = await this.prisma.session.create({
       data: {
@@ -155,9 +155,7 @@ export class AuthRepository {
         refreshToken,
         deviceInfo,
         ipAddress,
-        expiresAt: new Date(
-          (Date.now() + ms(envConfig.REFRESH_TOKEN_EXPIRES_IN)) as number,
-        ),
+        expiresAt,
         createdAt: new Date(),
       },
     });

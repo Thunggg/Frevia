@@ -237,12 +237,16 @@ export class AuthService {
       const refreshToken =
         await this.tokenService.signRefreshToken(refreshTokenPayload);
 
+      const refreshDecoded =
+        await this.tokenService.verifyRefreshToken(refreshToken);
+
       // Tạo session
       await this.authRepository.createSession({
         userId: user.id,
         refreshToken,
         deviceInfo: userAgent,
         ipAddress: ipAddress,
+        expiresAt: new Date(refreshDecoded.exp * 1000),
       });
 
       return { accessToken, refreshToken };
