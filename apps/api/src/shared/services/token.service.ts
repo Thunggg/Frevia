@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import {
@@ -13,6 +13,8 @@ import { envConfig } from '../config/validate-env';
 
 @Injectable()
 export class TokenService {
+  private readonly logger = new Logger(TokenService.name);
+
   constructor(private readonly jwtService: JwtService) {}
 
   // Sign access Token
@@ -39,15 +41,29 @@ export class TokenService {
 
   // Verify Access Token
   async verifyAccessToken(accessToken: string): Promise<AccessTokenPayload> {
-    return await this.jwtService.verifyAsync(accessToken, {
-      secret: envConfig.ACCESS_TOKEN_SECRET,
-    });
+    try {
+      return await this.jwtService.verifyAsync(accessToken, {
+        secret: envConfig.ACCESS_TOKEN_SECRET,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Access token verification failed: ${(error as Error).message}`,
+      );
+      throw error;
+    }
   }
 
   // Verify Refresh Token
   async verifyRefreshToken(refreshToken: string): Promise<RefreshTokenPayload> {
-    return await this.jwtService.verifyAsync(refreshToken, {
-      secret: envConfig.REFRESH_TOKEN_SECRET,
-    });
+    try {
+      return await this.jwtService.verifyAsync(refreshToken, {
+        secret: envConfig.REFRESH_TOKEN_SECRET,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Refresh token verification failed: ${(error as Error).message}`,
+      );
+      throw error;
+    }
   }
 }

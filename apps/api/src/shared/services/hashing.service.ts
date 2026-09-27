@@ -1,5 +1,7 @@
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+@Injectable()
 export class HashingService {
   private readonly SALT_ROUNDS = 10;
 

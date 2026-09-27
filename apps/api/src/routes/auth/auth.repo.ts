@@ -214,18 +214,6 @@ export class AuthRepository {
     });
   }
 
-  async deleteRefreshToken({
-    token,
-    userId,
-  }: {
-    token: string;
-    userId: number;
-  }) {
-    return await this.prisma.session.delete({
-      where: { refreshToken: token, userId },
-    });
-  }
-
   update(
     where: { id: number },
     data: Partial<UserType>,
