@@ -36,6 +36,20 @@ export const ForumPostFilterSchema = z.object({
   userId: z.coerce.number().int().positive().optional(),
 });
 
+export const CreateForumPostSchema = z.object({
+  categoryId: z.coerce.number().int().positive().optional(),
+  title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+});
+
+export const CreateForumPostResponseSchema = ForumPostSchema;
+
+export type CreateForumPostResponseType = z.infer<
+  typeof CreateForumPostResponseSchema
+>;
+
+export type CreateForumPostType = z.infer<typeof CreateForumPostSchema>;
+
 export type ForumPostFilterType = z.infer<typeof ForumPostFilterSchema>;
 
 export type ForumPostType = z.infer<typeof ForumPostSchema>;

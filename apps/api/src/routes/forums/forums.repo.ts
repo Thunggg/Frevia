@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ForumCategoryType, ForumPostFilterType } from '@shared/types';
+import {
+  ForumCategoryType,
+  ForumPostFilterType,
+  ForumPostType,
+} from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { ForumCategoryNotFoundException } from './forums.error';
 
@@ -105,5 +109,21 @@ export class ForumRepository {
       posts,
       total,
     };
+  }
+
+  async createForumPost(
+    categoryId: number | null,
+    userId: number,
+    title: string,
+    content: string,
+  ): Promise<ForumPostType> {
+    return this.prisma.forumPost.create({
+      data: {
+        categoryId,
+        userId,
+        title,
+        content,
+      },
+    });
   }
 }

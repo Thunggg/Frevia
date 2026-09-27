@@ -1,0 +1,15 @@
+meta {
+  name: Create Post
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

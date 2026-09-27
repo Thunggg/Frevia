@@ -4,6 +4,8 @@ import {
   ForumCategoryDetailResponseType,
   ForumPostListResponseType,
   ForumPostFilterType,
+  CreateForumPostType,
+  ForumPostType,
 } from '@shared/types';
 import { ForumRepository } from './forums.repo';
 import {
@@ -74,5 +76,17 @@ export class ForumService {
 
       throw error;
     }
+  }
+
+  async createForumPost(
+    userId: number,
+    body: CreateForumPostType,
+  ): Promise<ForumPostType> {
+    return this.forumRepository.createForumPost(
+      body.categoryId ?? null,
+      userId,
+      body.title,
+      body.content,
+    );
   }
 }
