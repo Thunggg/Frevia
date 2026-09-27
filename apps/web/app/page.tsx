@@ -1,5 +1,5 @@
+import { Button } from "@repo/ui/components/shadcn/button";
 import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
@@ -33,6 +33,7 @@ export default function Home() {
         />
         <ol>
           <li>
+            <Button className="bg-red-500">hahaha</Button>
             Get started by editing <code>apps/web/app/page.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
@@ -63,9 +64,7 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
+        <Button className={styles.secondary}>Open alert</Button>
       </main>
       <footer className={styles.footer}>
         <a
