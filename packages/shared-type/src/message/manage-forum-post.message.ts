@@ -11,4 +11,5 @@ export const ManageForumPostMessage = {
   INTERNAL_ERROR: "Error.Internal",
   FAILED_TO_LOAD_FORUM_POSTS: "Error.FailedToLoadForumPosts",
   FAILED_TO_CREATE_FORUM_POST: "Error.FailedToCreateForumPost",
+  FAILED_TO_VIEW_FORUM_POST: "Error.FailedToViewForumPost",
 } as const;

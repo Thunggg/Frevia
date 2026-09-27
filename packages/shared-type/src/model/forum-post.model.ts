@@ -44,6 +44,41 @@ export const CreateForumPostSchema = z.object({
 
 export const CreateForumPostResponseSchema = ForumPostSchema;
 
+export const ViewForumPostDetailSchema = z.object({
+  id: z.number(),
+  title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  // Lấy ID và tên Category của post hiện tại
+  category: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+    })
+    .nullable(),
+  // Lấy thông tin user của post hiện tại bao gồm id, displayName và avatarUrl
+  user: z.object({
+    id: z.number(),
+    profile: z
+      .object({
+        displayName: z.string().nullable(),
+        avatarUrl: z.string().nullable(),
+      })
+      .nullable(),
+  }),
+});
+
+export const ViewForumPostDetailResponseType = z.object({
+  data: ViewForumPostDetailSchema,
+});
+
+export type ViewForumPostDetailResponseType = z.infer<
+  typeof ViewForumPostDetailResponseType
+>;
+
+export type ViewForumPostDetailType = z.infer<typeof ViewForumPostDetailSchema>;
+
 export type CreateForumPostResponseType = z.infer<
   typeof CreateForumPostResponseSchema
 >;

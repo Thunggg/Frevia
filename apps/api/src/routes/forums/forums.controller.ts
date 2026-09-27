@@ -14,6 +14,7 @@ import {
   ForumCategoryListResponseDto,
   ForumPostListResponseDto,
   CreateForumPostResponseDto,
+  ViewForumPostDetailResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
 import { ForumPostFilterSchema } from '@shared/types';
@@ -50,6 +51,13 @@ export class ForumController {
     filter: ForumPostFilterType,
   ) {
     return this.forumService.getForumPostLists(filter);
+  }
+
+  @Get('posts/:id')
+  @IsPublic()
+  @ZodSerializerDto(ViewForumPostDetailResponseDto)
+  viewForumPostDetail(@Param('id', ParseIntPipe) id: number) {
+    return this.forumService.viewForumPostDetail(id);
   }
 
   @Post('posts')

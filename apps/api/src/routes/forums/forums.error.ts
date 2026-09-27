@@ -58,3 +58,11 @@ export const EmptyPostContentException = () =>
       path: 'content',
     },
   ]);
+
+export const FailedToViewForumPostException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumPostMessage.FAILED_TO_VIEW_FORUM_POST,
+      path: 'viewPost',
+    },
+  ]);

@@ -6,11 +6,13 @@ import {
   ForumPostFilterType,
   CreateForumPostType,
   ForumPostType,
+  ViewForumPostDetailResponseType,
 } from '@shared/types';
 import { ForumRepository } from './forums.repo';
 import {
   FailedToLoadForumCategoriesException,
   FailedToLoadForumPostsException,
+  FailedToViewForumPostException,
 } from './forums.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
@@ -88,5 +90,21 @@ export class ForumService {
       body.title,
       body.content,
     );
+  }
+
+  async viewForumPostDetail(
+    id: number,
+  ): Promise<ViewForumPostDetailResponseType> {
+    try {
+      const post = await this.forumRepository.viewForumPostDetail(id);
+      return {
+        data: post,
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToViewForumPostException();
+      }
+      throw error;
+    }
   }
 }

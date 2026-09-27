@@ -5,7 +5,10 @@ import {
   ForumPostType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { ForumCategoryNotFoundException } from './forums.error';
+import {
+  ForumCategoryNotFoundException,
+  ForumPostNotFoundException,
+} from './forums.error';
 
 @Injectable()
 export class ForumRepository {
@@ -125,5 +128,50 @@ export class ForumRepository {
         content,
       },
     });
+  }
+
+  async viewForumPostDetail(id: number) {
+    const forumPost = await this.prisma.forumPost.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+
+        // Lấy ID và tên Category của post hiện tại
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        // Lấy thông tin user của post hiện tại bao gồm id, displayName và avatarUrl
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!forumPost) {
+      throw ForumPostNotFoundException();
+    }
+
+    return forumPost;
   }
 }
