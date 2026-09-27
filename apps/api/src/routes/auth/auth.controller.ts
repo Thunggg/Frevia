@@ -5,6 +5,7 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { UserAgent } from '../../shared/decorators/user-agent.decorators';
 import { MessageResDTO } from '../../shared/dtos/response.dto';
 import {
+  ForgotPasswordBodyDTO,
   LoginBodyDTO,
   LoginResponseDto,
   LogoutBodyDTO,
@@ -67,6 +68,13 @@ export class AuthController {
     @UserActive('userId') userId: number,
   ) {
     return await this.authService.logout(body.refreshToken as string, userId);
+  }
+
+  @Post('forgot-password')
+  @IsPublic()
+  @ZodSerializerDto(MessageResDTO)
+  async forgotPassword(@Body() body: ForgotPasswordBodyDTO) {
+    return this.authService.forgotPassword(body);
   }
 
   @Get('test')

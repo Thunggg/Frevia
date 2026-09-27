@@ -5,7 +5,7 @@ import { AuthMessage } from "../message/auth.message";
 
 export const UserSchema = z.object({
   id: z.number(),
-  email: z.email().trim().toLowerCase().max(254),
+  email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
   password: z
     .string()
     .min(8, AuthMessage.PASSWORD_TOO_SHORT)
@@ -21,7 +21,7 @@ export const UserSchema = z.object({
 
 export const EmailVerificationSchema = z.object({
   id: z.number(),
-  email: z.email().trim().toLowerCase(),
+  email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase(),
   code: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
   type: z.enum([
     TypeOfVerificationCode.EMAIL_VERIFICATION,
@@ -85,7 +85,7 @@ export const SendOTPSchema = EmailVerificationSchema.pick({
 }).strict();
 
 export const LoginBodySchema = z.object({
-  email: z.email().trim().toLowerCase(),
+  email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase(),
   password: z.string().min(1, AuthMessage.PASSWORD_REQUIRED),
 });
 
@@ -104,6 +104,30 @@ export const LogoutBodySchema = SessionSchema.pick({
   refreshToken: true,
 }).strict();
 
+export const ForgotPasswordBodySchema = z
+  .object({
+    email: z.email(AuthMessage.INVALID_EMAIL),
+    code: z.string().length(6),
+    newPassword: z
+      .string()
+      .min(8, AuthMessage.PASSWORD_TOO_SHORT)
+      .max(32, AuthMessage.PASSWORD_TOO_LONG),
+    confirmNewPassword: z
+      .string()
+      .min(8, AuthMessage.PASSWORD_TOO_SHORT)
+      .max(32, AuthMessage.PASSWORD_TOO_LONG),
+  })
+  .strict()
+  .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+    if (newPassword !== confirmNewPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: AuthMessage.PASSWORD_NOT_MATCH,
+        path: ["confirmNewPassword"],
+      });
+    }
+  });
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -117,3 +141,5 @@ export type LoginBodyType = z.infer<typeof LoginBodySchema>;
 export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
 
 export type LogoutBodySchemaType = z.infer<typeof LogoutBodySchema>;
+
+export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
