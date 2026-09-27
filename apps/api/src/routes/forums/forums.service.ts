@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ForumCategoryListResponseType } from '@shared/types';
+import {
+  ForumCategoryListResponseType,
+  ForumCategoryDetailResponseType,
+} from '@shared/types';
 import { ForumRepository } from './forums.repo';
 import { FailedToLoadForumCategoriesException } from './forums.error';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class ForumService {
@@ -21,6 +25,22 @@ export class ForumService {
     } catch {
       // Nếu có lỗi khi truy vấn database thì trả về exception
       throw FailedToLoadForumCategoriesException();
+    }
+  }
+
+  async getForumCategoryById(
+    id: number,
+  ): Promise<ForumCategoryDetailResponseType> {
+    try {
+      const category = await this.forumRepository.getForumCategoryById(id);
+      return {
+        data: category,
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadForumCategoriesException();
+      }
+      throw error;
     }
   }
 }

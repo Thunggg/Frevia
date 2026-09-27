@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ForumCategoryType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { ForumCategoryNotFoundException } from './forums.error';
 
 @Injectable()
 export class ForumRepository {
@@ -30,5 +31,35 @@ export class ForumRepository {
         name: 'asc',
       },
     });
+  }
+
+  async getForumCategoryById(
+    id: number,
+  ): Promise<
+    Pick<
+      ForumCategoryType,
+      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
+    >
+  > {
+    // DÙng findFirst để tìm kiếm forum category theo id và deletedAt = null (chỉ lấy các category đang active)
+    const forumCategory = await this.prisma.forumCategory.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!forumCategory) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    return forumCategory;
   }
 }

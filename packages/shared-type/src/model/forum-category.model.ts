@@ -20,7 +20,14 @@ export const ForumCategoryListResponseSchema = z.object({
   data: z.array(ForumCategorySchema),
 });
 
+export const ForumCategoryDetailResponseSchema = z.object({
+  data: ForumCategorySchema,
+});
+
 export type ForumCategoryType = z.infer<typeof ForumCategorySchema>;
 export type ForumCategoryListResponseType = z.infer<
   typeof ForumCategoryListResponseSchema
+>;
+export type ForumCategoryDetailResponseType = z.infer<
+  typeof ForumCategoryDetailResponseSchema
 >;
