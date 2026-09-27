@@ -3,6 +3,7 @@ import {
   ForumCategoryType,
   ForumPostFilterType,
   ForumPostType,
+  UpdateForumPostType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
@@ -173,5 +174,51 @@ export class ForumRepository {
     }
 
     return forumPost;
+  }
+
+  async findForumPostById(id: number): Promise<ForumPostType | null> {
+    return this.prisma.forumPost.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async updateForumPost(
+    id: number,
+    data: UpdateForumPostType,
+  ): Promise<ForumPostType> {
+    return this.prisma.forumPost.update({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        ...(data.categoryId !== undefined && {
+          categoryId: data.categoryId,
+        }),
+        title: data.title,
+        content: data.content,
+      },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 }

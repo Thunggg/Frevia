@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -64,5 +65,21 @@ export const FailedToViewForumPostException = () =>
     {
       message: ManageForumPostMessage.FAILED_TO_VIEW_FORUM_POST,
       path: 'viewPost',
+    },
+  ]);
+
+export const FailedToUpdateForumPostException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumPostMessage.FAILED_TO_UPDATE_FORUM_POST,
+      path: 'updatePost',
+    },
+  ]);
+
+export const ForumPostNotOwnedException = () =>
+  new ForbiddenException([
+    {
+      message: ManageForumPostMessage.FORUM_POST_NOT_OWNED,
+      path: 'userId',
     },
   ]);

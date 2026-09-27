@@ -7,12 +7,16 @@ import {
   CreateForumPostType,
   ForumPostType,
   ViewForumPostDetailResponseType,
+  UpdateForumPostType,
 } from '@shared/types';
 import { ForumRepository } from './forums.repo';
 import {
   FailedToLoadForumCategoriesException,
   FailedToLoadForumPostsException,
   FailedToViewForumPostException,
+  FailedToUpdateForumPostException,
+  ForumPostNotFoundException,
+  ForumPostNotOwnedException,
 } from './forums.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
@@ -103,6 +107,34 @@ export class ForumService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToViewForumPostException();
+      }
+      throw error;
+    }
+  }
+
+  async updateForumPost(
+    id: number,
+    userId: number,
+    body: UpdateForumPostType,
+  ): Promise<ForumPostType> {
+    try {
+      const existingPost = await this.forumRepository.findForumPostById(id);
+
+      if (!existingPost) {
+        throw ForumPostNotFoundException();
+      }
+
+      if (existingPost.userId !== userId) {
+        throw ForumPostNotOwnedException();
+      }
+
+      return this.forumRepository.updateForumPost(id, body);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error.code === 'P2025'
+      ) {
+        throw FailedToUpdateForumPostException();
       }
       throw error;
     }

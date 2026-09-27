@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -15,12 +16,15 @@ import {
   ForumPostListResponseDto,
   CreateForumPostResponseDto,
   ViewForumPostDetailResponseDto,
+  UpdateForumPostResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
 import { ForumPostFilterSchema } from '@shared/types';
 import { CreateForumPostSchema } from '@shared/types';
+import { UpdateForumPostSchema } from '@shared/types';
 import type { ForumPostFilterType } from '@shared/types';
 import type { CreateForumPostType } from '@shared/types';
+import type { UpdateForumPostType } from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 
 @Controller('api/forums')
@@ -68,5 +72,16 @@ export class ForumController {
     body: CreateForumPostType,
   ) {
     return this.forumService.createForumPost(userId, body);
+  }
+
+  @Patch('posts/:id')
+  @ZodSerializerDto(UpdateForumPostResponseDto)
+  updateForumPost(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(UpdateForumPostSchema))
+    body: UpdateForumPostType,
+  ) {
+    return this.forumService.updateForumPost(id, userId, body);
   }
 }

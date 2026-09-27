@@ -5,6 +5,8 @@ import {
   CreateForumPostSchema,
   CreateForumPostResponseSchema,
   ViewForumPostDetailResponseType,
+  UpdateForumPostSchema,
+  UpdateForumPostResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -29,4 +31,10 @@ export class CreateForumPostResponseDto extends createZodDto(
 
 export class ViewForumPostDetailResponseDto extends createZodDto(
   ViewForumPostDetailResponseType,
+) {}
+
+export class UpdateForumPostDto extends createZodDto(UpdateForumPostSchema) {}
+
+export class UpdateForumPostResponseDto extends createZodDto(
+  UpdateForumPostResponseSchema,
 ) {}

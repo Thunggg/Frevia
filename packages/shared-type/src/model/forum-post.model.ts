@@ -92,3 +92,17 @@ export type ForumPostType = z.infer<typeof ForumPostSchema>;
 export type ForumPostListResponseType = z.infer<
   typeof ForumPostListResponseSchema
 >;
+
+export const UpdateForumPostSchema = z.object({
+  categoryId: z.coerce.number().int().positive().optional(),
+  title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+});
+
+export const UpdateForumPostResponseSchema = ForumPostSchema;
+
+export type UpdateForumPostResponseType = z.infer<
+  typeof UpdateForumPostResponseSchema
+>;
+
+export type UpdateForumPostType = z.infer<typeof UpdateForumPostSchema>;
