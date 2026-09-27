@@ -26,6 +26,7 @@ export class ForumRepository {
         updatedAt: true,
       },
       orderBy: {
+        // Sắp xếp theo name tăng dần (bảng chữ cái)
         name: 'asc',
       },
     });
