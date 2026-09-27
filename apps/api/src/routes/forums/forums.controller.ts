@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -79,9 +80,22 @@ export class ForumController {
   updateForumPost(
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
+    // Lấy Body và Validate theo schema UpdateForumPostSchema
     @Body(new ZodValidationPipe(UpdateForumPostSchema))
     body: UpdateForumPostType,
   ) {
     return this.forumService.updateForumPost(id, userId, body);
+  }
+
+  @Delete('posts/:id')
+  deleteForumPost(
+    // Lấy thông tin user đang đăng nhập
+    @UserActive('userId') userId: number,
+    // Lấy vai trò để kiểm tra quyền sở hữu
+    @UserActive('roleName') roleName: string,
+    // Lấy id của post
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.forumService.deleteForumPost(id, userId, roleName);
   }
 }

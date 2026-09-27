@@ -15,6 +15,7 @@ import {
   FailedToLoadForumPostsException,
   FailedToViewForumPostException,
   FailedToUpdateForumPostException,
+  FailedToDeleteForumPostException,
   ForumPostNotFoundException,
   ForumPostNotOwnedException,
 } from './forums.error';
@@ -135,6 +136,32 @@ export class ForumService {
         error.code === 'P2025'
       ) {
         throw FailedToUpdateForumPostException();
+      }
+      throw error;
+    }
+  }
+
+  async deleteForumPost(
+    id: number,
+    userId: number,
+    roleName: string,
+  ): Promise<ForumPostType> {
+    try {
+      const existingPost = await this.forumRepository.findForumPostById(id);
+
+      if (!existingPost) {
+        throw ForumPostNotFoundException();
+      }
+
+      // Kiểm tra quyền sở hữu, chỉ owner và ADMIN mới có quyền xóa post
+      if (existingPost.userId !== userId && roleName !== 'ADMIN') {
+        throw ForumPostNotOwnedException();
+      }
+
+      return this.forumRepository.softDeleteForumPost(id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToDeleteForumPostException();
       }
       throw error;
     }

@@ -83,3 +83,11 @@ export const ForumPostNotOwnedException = () =>
       path: 'userId',
     },
   ]);
+
+export const FailedToDeleteForumPostException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumPostMessage.FAILED_TO_DELETE_FORUM_POST,
+      path: 'deletePost',
+    },
+  ]);

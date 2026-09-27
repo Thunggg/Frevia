@@ -221,4 +221,25 @@ export class ForumRepository {
       },
     });
   }
+
+  async softDeleteForumPost(id: number): Promise<ForumPostType> {
+    return this.prisma.forumPost.update({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 }
