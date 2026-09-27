@@ -1,38 +1,23 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../shared/services/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaClientValidationError } from '@prisma/client/runtime/client';
+import { ForumCategoryListResponseType } from '@shared/types';
+import { ServerErrorException } from '../../shared/errors/shared-message.error';
+import { ForumRepository } from './forums.repo';
 
-/**
- * ForumService - Xử lý business logic cho module Forum
- * Chứa các method tương tác với database thông qua PrismaService
- */
 @Injectable()
 export class ForumService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly forumRepository: ForumRepository) {}
 
-  /**
-   * UC-04.1: View Forum Categories
-   * Lấy danh sách tất cả các category đang active
-   * @returns Danh sách forum categories
-   */
-  async getForumCategories() {
-    // Lấy các category đang active và chưa bị xóa
-    const categories = await this.prisma.forumCategory.findMany({
-      where: {
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        name: 'asc', // Sắp xếp theo tên tăng dần
-      },
-    });
+  async getForumCategories(): Promise<ForumCategoryListResponseType> {
+    try {
+      const categories = await this.forumRepository.getForumCategories();
 
-    return { data: categories };
+      return { data: categories };
+    } catch (error) {
+      if (error instanceof PrismaClientValidationError) {
+        throw ServerErrorException();
+      }
+      throw error;
+    }
   }
 }

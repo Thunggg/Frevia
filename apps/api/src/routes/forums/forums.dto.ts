@@ -1,31 +1,7 @@
-import { z } from 'zod';
+import { ForumCategoryListResponseSchema } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
-/**
- * DTOs cho Forum Module
- * Định nghĩa các schema validation và response types
- */
-
-// Forum Category DTOs
-/**
- * Schema cho một Forum Category
- */
-export const ForumCategorySchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  description: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-/**
- * Schema cho response danh sách Forum Categories
- */
-export const ForumCategoryListResponseSchema = z.object({
-  data: z.array(ForumCategorySchema),
-});
-
-// DTO Classes
+// DTO cho response của API lấy danh sách forum categories
 export class ForumCategoryListResponseDto extends createZodDto(
   ForumCategoryListResponseSchema,
 ) {}
