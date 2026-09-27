@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
@@ -44,6 +44,8 @@ import { AuthRepository } from './auth.repo';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly hashingService: HashingService,
     private readonly emailService: EmailService,
@@ -60,10 +62,13 @@ export class AuthService {
     try {
       const { email, otpCode, password, fullName, role } = body;
 
+      this.logger.log(`Register attempt for email: ${email}`);
+
       // 1. Kiểm tra xem user đã tồn tại hay chưa
       const existingUser = await this.authRepository.findUserByEmail(email);
 
       if (existingUser?.isBanned) {
+        this.logger.warn(`Banned user attempted to register: ${email}`);
         throw UserBannedException();
       }
 
@@ -104,6 +109,9 @@ export class AuthService {
         },
       );
 
+      this.logger.log(
+        `User registered successfully: ${email} (id=${result.id})`,
+      );
       return result;
     } catch (error) {
       if (
@@ -112,6 +120,7 @@ export class AuthService {
       ) {
         throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
+        this.logger.error('PrismaClientValidationError during register', error);
         throw ServerErrorException();
       }
       throw error;
@@ -121,6 +130,8 @@ export class AuthService {
   async sendOTP(body: SendOTPBodyType): Promise<MessageResType> {
     try {
       const { email, type } = body;
+
+      this.logger.log(`Send OTP request: email=${email}, type=${type}`);
 
       const [user, record] = await Promise.all([
         this.authRepository.findUserByEmail(email),
@@ -146,6 +157,7 @@ export class AuthService {
         now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
       if (record && record.attempts > 5 && !windowExpired) {
+        this.logger.warn(`OTP rate limit exceeded for email: ${email}`);
         throw TooManyAttemptsException();
       }
 
@@ -167,6 +179,7 @@ export class AuthService {
 
       await this.emailService.sendOTP({ email, code });
 
+      this.logger.log(`OTP sent successfully to: ${email}`);
       return { message: 'OTP sent successfully' };
     } catch (error) {
       if (
@@ -175,6 +188,7 @@ export class AuthService {
       ) {
         throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
+        this.logger.error('PrismaClientValidationError during sendOTP', error);
         throw ServerErrorException();
       }
       throw error;
@@ -190,10 +204,13 @@ export class AuthService {
     try {
       const { email, password, userAgent, ipAddress } = body;
 
+      this.logger.log(`Login attempt: email=${email}, ip=${ipAddress}`);
+
       const user = await this.authRepository.findUserForLogin(email);
 
       // check 2 trường hợp là user không tồn tại hoặc user đăng ký qua OAuth
       if (!user) {
+        this.logger.warn(`Login failed — email not found: ${email}`);
         throw IncorrectEmailException();
       }
 
@@ -207,10 +224,12 @@ export class AuthService {
       );
 
       if (!isPasswordValid) {
+        this.logger.warn(`Login failed — wrong password: email=${email}`);
         throw IncorrectPasswordException();
       }
 
       if (user.isBanned) {
+        this.logger.warn(`Banned user attempted to login: ${email}`);
         throw UserBannedException();
       }
 
@@ -229,6 +248,9 @@ export class AuthService {
           ipAddress,
         });
 
+      this.logger.log(
+        `Login successful: userId=${user.id}, role=${primaryRole.name}`,
+      );
       return { accessToken, refreshToken };
     } catch (error) {
       if (
@@ -237,6 +259,7 @@ export class AuthService {
       ) {
         throw UniqueViolationException();
       } else if (error instanceof PrismaClientValidationError) {
+        this.logger.error('PrismaClientValidationError during login', error);
         throw ServerErrorException();
       }
       throw error;
@@ -269,16 +292,16 @@ export class AuthService {
     const refreshToken =
       await this.tokenService.signRefreshToken(refreshTokenPayload);
 
-    const refreshDecoded =
-      await this.tokenService.verifyRefreshToken(refreshToken);
-
     // Tạo session
     await this.authRepository.createSession({
       userId,
       refreshToken,
       deviceInfo: userAgent,
       ipAddress: ipAddress,
-      expiresAt: new Date(refreshDecoded.exp * 1000),
+      expiresAt: addMilliseconds(
+        new Date(),
+        ms(envConfig.REFRESH_TOKEN_EXPIRES_IN as StringValue) as number,
+      ),
     });
 
     return { accessToken, refreshToken };
@@ -350,10 +373,12 @@ export class AuthService {
 
   async logout(refreshToken: string, userId: number): Promise<MessageResType> {
     try {
-      await this.authRepository.deleteRefreshToken({
-        token: refreshToken,
+      this.logger.log(`Logout request: userId=${userId}`);
+      await this.authRepository.deleteSessionByRefreshToken({
+        refreshToken,
         userId,
       });
+      this.logger.log(`Logout successful: userId=${userId}`);
       return { message: 'logout successfully' };
     } catch (error) {
       if (
@@ -363,6 +388,7 @@ export class AuthService {
         // Session không tồn tại (đã logout trước đó, hoặc refreshToken sai)
         throw RefreshTokenRevokedException();
       } else if (error instanceof PrismaClientValidationError) {
+        this.logger.error('PrismaClientValidationError during logout', error);
         throw ServerErrorException();
       }
       throw error;
@@ -374,11 +400,18 @@ export class AuthService {
   ): Promise<MessageResType> {
     const { code, email, newPassword } = payload;
 
+    this.logger.log(`Forgot password request: email=${email}`);
+
     // Kiểm tra xem user có tồn tại hay không
     const user = await this.authRepository.findUserForLogin(email as string);
 
     if (!user) {
       throw EmailNotFoundException();
+    }
+
+    if (user.isBanned) {
+      this.logger.warn(`Banned user attempted forgot password: ${email}`);
+      throw UserBannedException();
     }
 
     // kiểm tra mã otp có hợp lệ hay không
@@ -398,6 +431,7 @@ export class AuthService {
       }),
     ]);
 
+    this.logger.log(`Password reset successful: userId=${user.id}`);
     return {
       message: 'Update password successfully',
     };

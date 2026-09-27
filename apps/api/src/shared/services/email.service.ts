@@ -1,10 +1,15 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import { envConfig } from '../config/validate-env';
 
 @Injectable()
 export class EmailService {
   private transporter;
+  private readonly logger = new Logger(EmailService.name);
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -27,8 +32,7 @@ export class EmailService {
 
       await this.transporter.sendMail(mainOptions);
     } catch (error: any) {
-      console.log(error);
-
+      this.logger.error(error);
       throw new InternalServerErrorException([
         { message: error?.message, path: 'email' },
       ]);
