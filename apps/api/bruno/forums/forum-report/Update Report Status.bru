@@ -1,11 +1,11 @@
 meta {
-  name: Edit comment
+  name: Update Report Status
   type: http
-  seq: 13
+  seq: 4
 }
 
 patch {
-  url: {{baseUrl}}/api/forums/posts/2/comments/11
+  url: {{baseUrl}}/api/forums/reports/2/status
   body: json
   auth: bearer
 }
@@ -13,9 +13,10 @@ patch {
 auth:bearer {
   token: {{accessToken}}
 }
+
 body:json {
   {
-    "content": "Bài viết rất hay, cảm ơn bạn đã chia sẻ! hihi"
+    "status": "RESOLVED"
   }
 }
 

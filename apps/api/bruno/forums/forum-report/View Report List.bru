@@ -1,0 +1,24 @@
+meta {
+  name: View Report List
+  type: http
+  seq: 3
+}
+
+get {
+  url:  {{baseUrl}}/api/forums/reports?page=1&limit=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  page: 1
+  limit: 10
+}
+
+settings {
+  encodeUrl: true
+}

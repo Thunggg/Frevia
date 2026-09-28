@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { ForumLikeRepository } from './forums-like.repo';
 import { ToggleLikeResponseType } from '@shared/types';
 import {
   ForumPostNotFoundException,
   FailedToLikeForumPostException,
-  ForumLikeNotFoundException,
   FailedToViewForumLikeDetailException,
 } from './forums-like.error';
 
@@ -12,36 +11,42 @@ import {
 export class ForumLikeService {
   constructor(private readonly forumLikeRepository: ForumLikeRepository) {}
 
-  // Nếu ấn 1 lần thì nhận là like post, còn 2 lần thì bỏ like
   async toggleLikePost(
     userId: number,
     postId: number,
   ): Promise<ToggleLikeResponseType> {
     try {
       const existingPost = await this.forumLikeRepository.findPostById(postId);
+
       if (!existingPost) {
         throw ForumPostNotFoundException();
       }
 
-      // Kiểm tra xem post có được người dùng like trước đó không
       const existingLike = await this.forumLikeRepository.findLikeByUserAndPost(
         userId,
         postId,
       );
 
-      // Nếu post được like thì bỏ like
+      // Nếu người dùng đã like post -> bỏ like post
       if (existingLike) {
-        await this.forumLikeRepository.deleteLike(userId, postId);
-        return { liked: false };
+        await this.forumLikeRepository.deletePostLike(userId, postId);
+
+        return {
+          liked: false,
+        };
       }
 
-      // Tạo like cho post
-      await this.forumLikeRepository.createLike(userId, postId);
-      return { liked: true };
+      // Nếu người dùng chưa like post -> like post
+      await this.forumLikeRepository.createPostLike(userId, postId);
+
+      return {
+        liked: true,
+      };
     } catch (error) {
-      if (error instanceof Error && error.name === 'NotFoundException') {
+      if (error instanceof HttpException) {
         throw error;
       }
+
       throw FailedToLikeForumPostException();
     }
   }
@@ -50,14 +55,10 @@ export class ForumLikeService {
   async viewForumLikeDetail(postId: number) {
     try {
       const likes = await this.forumLikeRepository.viewForumLikeDetail(postId);
-      // Nếu không có ai like thì ném lỗi ra ngoài
-      if (likes.length === 0) {
-        throw ForumLikeNotFoundException();
-      }
       // Trả về danh sách người dùng đã like post
       return likes;
     } catch (error) {
-      if (error instanceof Error && error.name === 'NotFoundException') {
+      if (error instanceof HttpException) {
         throw error;
       }
       throw FailedToViewForumLikeDetailException();

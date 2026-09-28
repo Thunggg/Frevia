@@ -31,7 +31,7 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-        userId: true,
+
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -64,7 +64,7 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-        userId: true,
+
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -99,7 +99,7 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-        userId: true,
+
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -130,7 +130,7 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-        userId: true,
+
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -164,7 +164,6 @@ export class ForumCommentRepository {
         select: {
           id: true,
           postId: true,
-          userId: true,
           content: true,
           createdAt: true,
           updatedAt: true,
@@ -192,40 +191,79 @@ export class ForumCommentRepository {
     return { comments, total };
   }
 
+  // Kiểm tra người dùng đã like comment chưa
   async findLikeByUserAndComment(
     userId: number,
-    postId: number,
     commentId: number,
-  ): Promise<{ id: number } | null> {
+  ): Promise<{ id: number; postId: number | null } | null> {
     return this.prisma.forumLike.findFirst({
       where: {
         userId,
-        postId,
         commentId,
       },
       select: {
         id: true,
+        postId: true,
       },
+    });
+  }
+
+  // Kiểm tra người dùng đã like post chưa
+  async findLikeByUserAndPost(
+    userId: number,
+    postId: number,
+  ): Promise<{ id: number; commentId: number | null } | null> {
+    return this.prisma.forumLike.findFirst({
+      where: { userId, postId },
+      select: { id: true, commentId: true },
     });
   }
 
   async createCommentLike(userId: number, postId: number, commentId: number) {
-    return this.prisma.forumLike.create({
-      data: {
-        userId,
-        postId,
-        commentId,
-        reactionType: 'like',
-      },
-    });
+    const existingLike = await this.findLikeByUserAndPost(userId, postId);
+    // Nếu người dùng đã like post và chưa like comment thì cập nhật
+    if (existingLike && existingLike.commentId === null) {
+      return this.prisma.forumLike.update({
+        where: { id: existingLike.id },
+        data: { commentId, reactionType: 'like' },
+      });
+      // Nếu người dùng chưa like post và chưa like comment thì tạo
+    } else {
+      return this.prisma.forumLike.create({
+        data: {
+          userId,
+          postId: null,
+          commentId,
+          reactionType: 'like',
+        },
+      });
+    }
   }
 
-  async deleteCommentLike(userId: number, postId: number, commentId: number) {
-    return this.prisma.forumLike.deleteMany({
+  async deleteCommentLike(userId: number, commentId: number) {
+    const like = await this.findLikeByUserAndComment(userId, commentId);
+
+    // Nếu không tìm thấy like -> return
+    if (!like) {
+      return;
+    }
+
+    // Nếu có like post -> chỉ bỏ comment
+    if (like.postId !== null) {
+      return this.prisma.forumLike.update({
+        where: {
+          id: like.id,
+        },
+        data: {
+          commentId: null,
+        },
+      });
+    }
+
+    // Chỉ like comment -> xóa luôn
+    return this.prisma.forumLike.delete({
       where: {
-        userId,
-        postId,
-        commentId,
+        id: like.id,
       },
     });
   }

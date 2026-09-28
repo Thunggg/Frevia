@@ -1,19 +1,18 @@
 meta {
-  name: View Post List (Filter)
+  name: View Post List (No Filter)
   type: http
-  seq: 3
+  seq: 6
 }
 
 get {
-  url: {{baseUrl}}/api/forums/posts?page=1&limit=5&categoryId=1
+  url: {{baseUrl}}/api/forums/posts?page=1&limit=10
   body: none
   auth: inherit
 }
 
 params:query {
   page: 1
-  limit: 5
-  categoryId: 1
+  limit: 10
 }
 
 settings {

@@ -1,11 +1,11 @@
 meta {
-  name: Like Post / Unlike Post
+  name: Delete Comment
   type: http
-  seq: 9
+  seq: 2
 }
 
-post {
-  url: {{baseUrl}}/api/forums/posts/4/like
+delete {
+  url: {{baseUrl}}/api/forums/posts/3/comments/10
   body: none
   auth: bearer
 }
@@ -13,7 +13,6 @@ post {
 auth:bearer {
   token: {{accessToken}}
 }
-
 
 settings {
   encodeUrl: true

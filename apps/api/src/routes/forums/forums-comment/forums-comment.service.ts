@@ -130,43 +130,40 @@ export class ForumCommentService {
       const existingComment =
         await this.forumCommentRepository.findCommentById(commentId);
 
-      // kiểm tra comment có tồn tại không
       if (!existingComment) {
         throw ForumCommentNotFoundException();
       }
 
-      // kiểm tra comment có thuộc post không
-      if (existingComment.postId !== postId) {
+      if (!existingComment || existingComment.postId !== postId) {
         throw ForumCommentNotFoundException();
       }
 
-      // kiểm tra user đã like comment chưa
-      const existingLike =
+      const existingCommentLike =
         await this.forumCommentRepository.findLikeByUserAndComment(
           userId,
-          postId,
           commentId,
         );
 
-      // nếu đã like thì unlike
-      if (existingLike) {
-        await this.forumCommentRepository.deleteCommentLike(
-          userId,
-          postId,
-          commentId,
-        );
-        return { liked: false };
+      // Đã like comment -> unlike
+      if (existingCommentLike) {
+        await this.forumCommentRepository.deleteCommentLike(userId, commentId);
+
+        return {
+          liked: false,
+        };
       }
 
-      // nếu chưa like thì like
+      // Chưa like comment -> like
       await this.forumCommentRepository.createCommentLike(
         userId,
         postId,
         commentId,
       );
-      return { liked: true };
+
+      return {
+        liked: true,
+      };
     } catch (error) {
-      console.error(error);
       if (error instanceof HttpException) {
         throw error;
       }
