@@ -42,13 +42,22 @@ export const SessionSchema = z.object({
   createdAt: z.date(),
 });
 
-export const RegisterBodySchema = UserSchema.pick({
-  email: true,
-  password: true,
-})
+export const RegisterBodySchema = z
+  .object({
+    email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
+    password: z
+      .string()
+      .nonempty(AuthMessage.PASSWORD_IS_REQUIRE)
+      .min(8, AuthMessage.PASSWORD_TOO_SHORT)
+      .max(32, AuthMessage.PASSWORD_TOO_LONG)
+      .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
+      .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
+  })
   .extend({
     otpCode: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
-    confirmPassword: z.string(),
+    confirmPassword: z
+      .string()
+      .nonempty(AuthMessage.CONFIRM_PASSWORD_IS_REQUIRE),
     role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
     fullName: z
       .string()
