@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
-import { IsPublic } from '../../shared/decorators/auth.decorator';
+import { IsPublic } from '../../../shared/decorators/auth.decorator';
 import {
   ForumCategoryDetailResponseDto,
   ForumCategoryListResponseDto,
@@ -26,7 +26,7 @@ import { UpdateForumPostSchema } from '@shared/types';
 import type { ForumPostFilterType } from '@shared/types';
 import type { CreateForumPostType } from '@shared/types';
 import type { UpdateForumPostType } from '@shared/types';
-import { UserActive } from '../../shared/decorators/user-active.decorators';
+import { UserActive } from '../../../shared/decorators/user-active.decorators';
 
 @Controller('api/forums')
 export class ForumController {

@@ -10,3 +10,5 @@ export * from "./type/api-response.type";
 export * from "./type/jwt.type";
 export * from "./model/forum-post.model";
 export * from "./message/manage-forum-post.message";
+export * from "./model/forum-like.model";
+export * from "./message/manage-forum-like.message";

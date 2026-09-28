@@ -5,7 +5,7 @@ import {
   ForumPostType,
   UpdateForumPostType,
 } from '@shared/types';
-import { PrismaService } from '../../shared/services/prisma.service';
+import { PrismaService } from '../../../shared/services/prisma.service';
 import {
   ForumCategoryNotFoundException,
   ForumPostNotFoundException,

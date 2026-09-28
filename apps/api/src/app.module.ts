@@ -9,10 +9,11 @@ import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
 import { ApiResponseInterceptor } from './shared/interceptors/api-response.interceptor';
 import { MyZodValidationPipe } from './shared/pipes/custom-zod-validation.pipes';
 import { SharedModule } from './shared/shared.module';
-import { ForumModule } from './routes/forums/forums.module';
+import { ForumModule } from './routes/forums/forums-post/forums.module';
+import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
 
 @Module({
-  imports: [SharedModule, AuthModule, ForumModule],
+  imports: [SharedModule, AuthModule, ForumModule, ForumLikeModule],
   controllers: [AppController],
   providers: [
     AppService,
