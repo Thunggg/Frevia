@@ -1,3 +1,4 @@
+import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "./components/theme-provider";
@@ -32,6 +33,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           {children}
         </ThemeProvider>
       </body>
