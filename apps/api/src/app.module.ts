@@ -11,9 +11,16 @@ import { MyZodValidationPipe } from './shared/pipes/custom-zod-validation.pipes'
 import { SharedModule } from './shared/shared.module';
 import { ForumModule } from './routes/forums/forums-post/forums.module';
 import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
+import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 
 @Module({
-  imports: [SharedModule, AuthModule, ForumModule, ForumLikeModule],
+  imports: [
+    SharedModule,
+    AuthModule,
+    ForumModule,
+    ForumLikeModule,
+    BrowseJobModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

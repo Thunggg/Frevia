@@ -1,0 +1,20 @@
+meta {
+  name: View List Job
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/jobs
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  limit: 10
+}
+
+headers {
+  Accept: application/json
+}
