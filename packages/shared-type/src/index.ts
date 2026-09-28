@@ -12,3 +12,7 @@ export * from "./model/forum-post.model";
 export * from "./message/manage-forum-post.message";
 export * from "./model/forum-like.model";
 export * from "./message/manage-forum-like.message";
+export * from "./model/forum-comment.model";
+export * from "./message/manage-forum-comment.message";
+export * from "./model/forum-report.model";
+export * from "./message/manage-forum-report.message";

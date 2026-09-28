@@ -143,6 +143,15 @@ export class ForumRepository {
         title,
         content,
       },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 

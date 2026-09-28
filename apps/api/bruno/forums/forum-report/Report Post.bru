@@ -1,0 +1,26 @@
+meta {
+  name: Report Post
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts/6/reports
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "reason": "Nội dung spam"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

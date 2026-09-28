@@ -46,7 +46,7 @@ export const UpdateForumPostSchema = z.object({
 
 // Schema response khi lấy danh sách posts (data + pagination)
 export const ForumPostListResponseSchema = z.object({
-  data: z.array(ForumPostSchema),
+  posts: z.array(ForumPostSchema),
   pagination: PaginationSchema,
 });
 

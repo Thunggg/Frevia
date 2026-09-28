@@ -1,0 +1,28 @@
+meta {
+  name: Edit Post
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/api/forums/posts/6
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "title": "Bài test edit - đã sửa",
+    "content": "Nội dung đã được cập nhật",
+    "categoryId": "2"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
