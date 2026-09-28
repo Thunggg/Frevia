@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import {
+  CreateForumCommentType,
   ForumCommentFilterType,
   ForumCommentListResponseType,
+  ForumCommentType,
 } from '@shared/types';
 import { ForumCommentRepository } from './forums-comment.repo';
-import { FailedToLoadForumCommentsException } from './forums-comment.error';
+import {
+  FailedToCreateForumCommentException,
+  FailedToLoadForumCommentsException,
+  ForumPostNotFoundException,
+} from './forums-comment.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
@@ -12,6 +18,30 @@ export class ForumCommentService {
   constructor(
     private readonly forumCommentRepository: ForumCommentRepository,
   ) {}
+
+  async createForumComment(
+    postId: number,
+    userId: number,
+    body: CreateForumCommentType,
+  ): Promise<ForumCommentType> {
+    try {
+      const post = await this.forumCommentRepository.findPostById(postId);
+      if (!post) {
+        throw ForumPostNotFoundException();
+      }
+
+      return await this.forumCommentRepository.createForumComment(
+        postId,
+        userId,
+        body.content,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToCreateForumCommentException();
+    }
+  }
 
   async getForumCommentLists(
     filter: ForumCommentFilterType,
@@ -21,18 +51,7 @@ export class ForumCommentService {
         await this.forumCommentRepository.getForumCommentLists(filter);
 
       return {
-        comments: comments.map((comment) => {
-          return {
-            ...comment,
-            user: {
-              id: comment.user.id,
-              profile: {
-                displayName: comment.user.profile?.displayName || '',
-                avatarUrl: comment.user.profile?.avatarUrl || '',
-              },
-            },
-          };
-        }),
+        comments,
         pagination: {
           page: filter.page,
           limit: filter.limit,

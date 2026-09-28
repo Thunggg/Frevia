@@ -1,10 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { ForumCommentFilterType } from '@shared/types';
+import { ForumCommentFilterType, ForumCommentType } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
 
 @Injectable()
 export class ForumCommentRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findPostById(postId: number): Promise<{ id: number } | null> {
+    return this.prisma.forumPost.findFirst({
+      where: {
+        id: postId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  // Comment vào post
+  async createForumComment(
+    postId: number,
+    userId: number,
+    content: string,
+  ): Promise<ForumCommentType> {
+    return this.prisma.forumComment.create({
+      data: {
+        postId,
+        userId,
+        content,
+      },
+      select: {
+        id: true,
+        postId: true,
+        userId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 
   async getForumCommentLists(filter: ForumCommentFilterType) {
     const { page, limit, postId } = filter;
@@ -14,6 +60,7 @@ export class ForumCommentRepository {
       deletedAt: null,
     };
 
+    //$transaction dùng để chạy 2 query cùng lúc để tối ưu hiệu năng
     const [comments, total] = await this.prisma.$transaction([
       this.prisma.forumComment.findMany({
         where,

@@ -7,10 +7,12 @@ export const ForumCommentSchema = z.object({
   postId: z.number(),
   user: z.object({
     id: z.number(),
-    profile: z.object({
-      displayName: z.string(),
-      avatarUrl: z.string(),
-    }),
+    profile: z
+      .object({
+        displayName: z.string().nullable(),
+        avatarUrl: z.string().nullable(),
+      })
+      .nullable(),
   }),
   content: z.string().min(1),
   createdAt: z.date(),
@@ -43,3 +45,11 @@ export type ForumCommentFilterType = z.infer<
 export type ForumCommentListResponseType = z.infer<
   typeof ForumCommentListResponseSchema
 >;
+
+export const CreateForumCommentSchema = z.object({
+  content: z.string().min(1),
+});
+
+export type CreateForumCommentType = z.infer<typeof CreateForumCommentSchema>;
+
+export const CreateForumCommentResponseSchema = ForumCommentSchema;

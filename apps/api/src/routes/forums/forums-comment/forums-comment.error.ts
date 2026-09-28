@@ -2,13 +2,21 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ManageForumCommentMessage } from '@shared/types';
+import { ManageForumCommentMessage, ManageForumPostMessage } from '@shared/types';
 
 export const ForumCommentNotFoundException = () =>
   new NotFoundException([
     {
       message: ManageForumCommentMessage.FORUM_COMMENT_NOT_FOUND,
       path: 'id',
+    },
+  ]);
+
+export const ForumPostNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: ManageForumPostMessage.FORUM_POST_NOT_FOUND,
+      path: 'postId',
     },
   ]);
 
