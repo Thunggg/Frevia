@@ -61,3 +61,5 @@ export const EditForumCommentSchema = z.object({
 export type EditForumCommentType = z.infer<typeof EditForumCommentSchema>;
 
 export const EditForumCommentResponseSchema = ForumCommentSchema;
+
+export const DeleteForumCommentResponseSchema = ForumCommentSchema;

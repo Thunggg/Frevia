@@ -118,6 +118,37 @@ export class ForumCommentRepository {
     });
   }
 
+  async softDeleteForumComment(id: number): Promise<ForumCommentType> {
+    return this.prisma.forumComment.update({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: {
+        id: true,
+        postId: true,
+        userId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getForumCommentLists(filter: ForumCommentFilterType) {
     const { page, limit, postId } = filter;
     const skip = (page - 1) * limit;

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -13,6 +14,7 @@ import { ForumCommentService } from './forums-comment.service';
 import {
   CreateForumCommentDto,
   CreateForumCommentResponseDto,
+  DeleteForumCommentResponseDto,
   EditForumCommentDto,
   EditForumCommentResponseDto,
   ForumCommentFilterDto,
@@ -69,6 +71,22 @@ export class ForumCommentController {
       id,
       userId,
       body,
+    );
+  }
+
+  @Delete(':postId/comments/:id')
+  @ZodSerializerDto(DeleteForumCommentResponseDto)
+  deleteForumComment(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.forumCommentService.deleteForumComment(
+      postId,
+      id,
+      userId,
+      roleName,
     );
   }
 }

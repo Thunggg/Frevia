@@ -5,10 +5,12 @@ import {
   ForumCommentFilterType,
   ForumCommentListResponseType,
   ForumCommentType,
+  RoleName,
 } from '@shared/types';
 import { ForumCommentRepository } from './forums-comment.repo';
 import {
   FailedToCreateForumCommentException,
+  FailedToDeleteForumCommentException,
   FailedToLoadForumCommentsException,
   FailedToUpdateForumCommentException,
   ForumCommentNotFoundException,
@@ -78,6 +80,41 @@ export class ForumCommentService {
         throw error;
       }
       throw FailedToUpdateForumCommentException();
+    }
+  }
+
+  async deleteForumComment(
+    postId: number,
+    id: number,
+    userId: number,
+    roleName: string,
+  ): Promise<ForumCommentType> {
+    try {
+      const existingComment =
+        await this.forumCommentRepository.findCommentById(id);
+
+      // kiểm tra comment có tồn tại không
+      if (!existingComment) {
+        throw ForumCommentNotFoundException();
+      }
+
+      // kiểm tra comment có thuộc post không
+      if (existingComment.postId !== postId) {
+        throw ForumCommentNotFoundException();
+      }
+
+      // kiểm tra người dùng có quyền xóa comment không (chủ comment hoặc admin)
+      if (existingComment.user.id !== userId && roleName !== RoleName.ADMIN) {
+        throw ForumCommentNotOwnedException();
+      }
+
+      // xóa mềm comment
+      return this.forumCommentRepository.softDeleteForumComment(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeleteForumCommentException();
     }
   }
 
