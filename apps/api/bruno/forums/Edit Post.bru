@@ -1,0 +1,28 @@
+meta {
+  name: Edit Post
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/api/forums/posts/1
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGVJZCI6Miwicm9sZU5hbWUiOiJGUkVFTEFOQ0VSIiwidXVpZCI6IjRjMGFlZjJkLWVlMjEtNDJjMS04MDMyLTI2MTRmZTFkZTA3NCIsImlhdCI6MTc4Mzc2NDQ2NCwiZXhwIjoxNzgzNzY4MDY0fQ.UnOthJkMNcBeCh7uXiBksvIvlFmIX4mdD67H3fHTe9w
+}
+
+body:json {
+  {
+    "title": "Bài test edit - đã sửa",
+    "content": "Nội dung đã được cập nhật",
+    "categoryId": "2"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
