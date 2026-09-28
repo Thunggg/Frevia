@@ -36,7 +36,6 @@ export function RegisterForm() {
   });
 
   async function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
-    console.log(payload);
     const res = await fetch(`${envConfig?.NEXT_PUBLIC_API_URL}/auth/register`, {
       method: "POST",
       headers: {

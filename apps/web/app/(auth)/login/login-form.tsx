@@ -21,8 +21,11 @@ import { LoginBodySchema } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { envConfig } from "../../../configs/validate-env";
+import { useAppContext } from "../../contexts/AppProvider";
 
 export function LoginForm() {
+  const { setAccessToken, setRefreshToken, accessToken } = useAppContext();
+
   const form = useForm<z.infer<typeof LoginBodySchema>>({
     resolver: zodResolver(LoginBodySchema),
     defaultValues: {
@@ -34,16 +37,32 @@ export function LoginForm() {
   async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
     const res = await fetch(`${envConfig?.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
-
     const data = await res.json();
 
     console.log(data);
     toast("Event has been created.");
+
+    // nếu login thành công thì set cookie cho next sever
+    await fetch("/api/auth", {
+      method: "POST",
+      body: JSON.stringify({
+        accessToken: data?.data?.accessToken,
+        refreshToken: data?.data?.refreshToken,
+      }),
+    }).then(async (res) => {
+      const result = await res.json();
+
+      setAccessToken(result?.accessToken);
+      setRefreshToken(result?.refreshToken);
+
+      console.log("token: ", accessToken);
+    });
   }
 
   return (
