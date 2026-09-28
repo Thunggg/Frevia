@@ -1,0 +1,25 @@
+meta {
+  name: Edit comment
+  type: http
+  seq: 13
+}
+
+patch {
+  url: {{baseUrl}}/api/forums/posts/2/comments/11
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+body:json {
+  {
+    "content": "Bài viết rất hay, cảm ơn bạn đã chia sẻ! hihi"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ForumCommentFilterType, ForumCommentType } from '@shared/types';
+import {
+  EditForumCommentType,
+  ForumCommentFilterType,
+  ForumCommentType,
+} from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
 
 @Injectable()
@@ -18,7 +22,34 @@ export class ForumCommentRepository {
     });
   }
 
-  // Comment vào post
+  async findCommentById(id: number): Promise<ForumCommentType | null> {
+    return this.prisma.forumComment.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        postId: true,
+        userId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async createForumComment(
     postId: number,
     userId: number,
@@ -29,6 +60,41 @@ export class ForumCommentRepository {
         postId,
         userId,
         content,
+      },
+      select: {
+        id: true,
+        postId: true,
+        userId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  // Sửa comment
+  async updateForumComment(
+    id: number,
+    data: EditForumCommentType,
+  ): Promise<ForumCommentType> {
+    return this.prisma.forumComment.update({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        content: data.content,
       },
       select: {
         id: true,

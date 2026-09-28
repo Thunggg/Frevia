@@ -1,8 +1,12 @@
 import {
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ManageForumCommentMessage, ManageForumPostMessage } from '@shared/types';
+import {
+  ManageForumCommentMessage,
+  ManageForumPostMessage,
+} from '@shared/types';
 
 export const ForumCommentNotFoundException = () =>
   new NotFoundException([
@@ -41,5 +45,21 @@ export const FailedToDeleteForumCommentException = () =>
     {
       message: ManageForumCommentMessage.FAILED_TO_DELETE_FORUM_COMMENT,
       path: 'deleteComment',
+    },
+  ]);
+
+export const ForumCommentNotOwnedException = () =>
+  new ForbiddenException([
+    {
+      message: ManageForumCommentMessage.FORUM_COMMENT_NOT_OWNER,
+      path: 'userId',
+    },
+  ]);
+
+export const FailedToUpdateForumCommentException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumCommentMessage.FAILED_TO_UPDATE_FORUM_COMMENT,
+      path: 'updateComment',
     },
   ]);

@@ -2,6 +2,8 @@ import { createZodDto } from 'nestjs-zod';
 import {
   CreateForumCommentSchema,
   CreateForumCommentResponseSchema,
+  EditForumCommentSchema,
+  EditForumCommentResponseSchema,
   ForumCommentFilterSchema,
   ForumCommentListResponseSchema,
 } from '@shared/types';
@@ -20,4 +22,12 @@ export class CreateForumCommentDto extends createZodDto(
 
 export class CreateForumCommentResponseDto extends createZodDto(
   CreateForumCommentResponseSchema,
+) {}
+
+export class EditForumCommentDto extends createZodDto(
+  EditForumCommentSchema,
+) {}
+
+export class EditForumCommentResponseDto extends createZodDto(
+  EditForumCommentResponseSchema,
 ) {}

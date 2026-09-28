@@ -53,3 +53,11 @@ export const CreateForumCommentSchema = z.object({
 export type CreateForumCommentType = z.infer<typeof CreateForumCommentSchema>;
 
 export const CreateForumCommentResponseSchema = ForumCommentSchema;
+
+export const EditForumCommentSchema = z.object({
+  content: z.string().min(1),
+});
+
+export type EditForumCommentType = z.infer<typeof EditForumCommentSchema>;
+
+export const EditForumCommentResponseSchema = ForumCommentSchema;

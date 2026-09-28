@@ -8,4 +8,5 @@ export const ManageForumCommentMessage = {
   FAILED_TO_DELETE_FORUM_COMMENT: "Error.FailedToDeleteForumComment",
   FORUM_COMMENT_LIKE_NOT_FOUND: "Error.ForumCommentLikeNotFound",
   FORUM_COMMENT_LIST_NOT_FOUND: "Error.ForumCommentListNotFound",
+  FORUM_COMMENT_NOT_OWNER: "Error.ForumCommentNotOwner",
 } as const;

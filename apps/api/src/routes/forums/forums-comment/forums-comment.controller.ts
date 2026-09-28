@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -12,11 +13,14 @@ import { ForumCommentService } from './forums-comment.service';
 import {
   CreateForumCommentDto,
   CreateForumCommentResponseDto,
+  EditForumCommentDto,
+  EditForumCommentResponseDto,
   ForumCommentFilterDto,
   ForumCommentListResponseDto,
 } from './forums-comment.dto';
 import type {
   CreateForumCommentType,
+  EditForumCommentType,
   ForumCommentFilterType,
 } from '@shared/types';
 import { IsPublic } from '../../../shared/decorators/auth.decorator';
@@ -49,5 +53,22 @@ export class ForumCommentController {
     body: CreateForumCommentType,
   ) {
     return this.forumCommentService.createForumComment(postId, userId, body);
+  }
+
+  @Patch(':postId/comments/:id')
+  @ZodSerializerDto(EditForumCommentResponseDto)
+  updateForumComment(
+    @UserActive('userId') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(EditForumCommentDto))
+    body: EditForumCommentType,
+  ) {
+    return this.forumCommentService.updateForumComment(
+      postId,
+      id,
+      userId,
+      body,
+    );
   }
 }
