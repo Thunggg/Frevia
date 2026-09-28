@@ -41,6 +41,21 @@ export class ForumRepository {
     });
   }
 
+  // Tìm xem category hiện tại có tồn tại không trước khi tạo post
+  async findForumCategoryById(
+    id: number,
+  ): Promise<Pick<ForumCategoryType, 'id'> | null> {
+    return this.prisma.forumCategory.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   async getForumCategoryById(
     id: number,
   ): Promise<

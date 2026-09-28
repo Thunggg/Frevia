@@ -28,6 +28,7 @@ export const ForumPostNotFoundException = () =>
       path: 'id',
     },
   ]);
+
 export const FailedToLoadForumPostsException = () =>
   new InternalServerErrorException([
     {
@@ -41,22 +42,6 @@ export const FailedToCreateForumPostException = () =>
     {
       message: ManageForumPostMessage.FAILED_TO_CREATE_FORUM_POST,
       path: 'createPost',
-    },
-  ]);
-
-export const EmptyPostTitleException = () =>
-  new InternalServerErrorException([
-    {
-      message: ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED,
-      path: 'title',
-    },
-  ]);
-
-export const EmptyPostContentException = () =>
-  new InternalServerErrorException([
-    {
-      message: ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED,
-      path: 'content',
     },
   ]);
 

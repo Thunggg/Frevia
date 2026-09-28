@@ -15,17 +15,19 @@ import {
   ForumCategoryDetailResponseDto,
   ForumCategoryListResponseDto,
   ForumPostListResponseDto,
+  ForumPostFilterDto,
+  CreateForumPostDto,
   CreateForumPostResponseDto,
   ViewForumPostDetailResponseDto,
+  UpdateForumPostDto,
   UpdateForumPostResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
-import { ForumPostFilterSchema } from '@shared/types';
-import { CreateForumPostSchema } from '@shared/types';
-import { UpdateForumPostSchema } from '@shared/types';
-import type { ForumPostFilterType } from '@shared/types';
-import type { CreateForumPostType } from '@shared/types';
-import type { UpdateForumPostType } from '@shared/types';
+import type {
+  ForumPostFilterType,
+  CreateForumPostType,
+  UpdateForumPostType,
+} from '@shared/types';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 
 @Controller('api/forums')
@@ -52,7 +54,7 @@ export class ForumController {
   getForumPostLists(
     // Sử dụng ZodValidationPipe để validate query params theo schema ForumPostFilterSchema
     // Có thể có filter hoặc không nhưng băt buộc phải có page và limit, nếu không có thì mặc định là page = 1, limit = 10
-    @Query(new ZodValidationPipe(ForumPostFilterSchema))
+    @Query(new ZodValidationPipe(ForumPostFilterDto))
     filter: ForumPostFilterType,
   ) {
     return this.forumService.getForumPostLists(filter);
@@ -69,7 +71,7 @@ export class ForumController {
   @ZodSerializerDto(CreateForumPostResponseDto)
   createForumPost(
     @UserActive('userId') userId: number,
-    @Body(new ZodValidationPipe(CreateForumPostSchema))
+    @Body(new ZodValidationPipe(CreateForumPostDto))
     body: CreateForumPostType,
   ) {
     return this.forumService.createForumPost(userId, body);
@@ -81,7 +83,7 @@ export class ForumController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
     // Lấy Body và Validate theo schema UpdateForumPostSchema
-    @Body(new ZodValidationPipe(UpdateForumPostSchema))
+    @Body(new ZodValidationPipe(UpdateForumPostDto))
     body: UpdateForumPostType,
   ) {
     return this.forumService.updateForumPost(id, userId, body);

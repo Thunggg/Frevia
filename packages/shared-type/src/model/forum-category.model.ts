@@ -16,13 +16,11 @@ export const ForumCategorySchema = z.object({
   updatedAt: z.date(),
 });
 
-export const ForumCategoryListResponseSchema = z.object({
-  data: z.array(ForumCategorySchema),
-});
+// Schema response khi lấy danh sách categories
+export const ForumCategoryListResponseSchema = z.array(ForumCategorySchema);
 
-export const ForumCategoryDetailResponseSchema = z.object({
-  data: ForumCategorySchema,
-});
+// Schema response khi lấy chi tiết category
+export const ForumCategoryDetailResponseSchema = ForumCategorySchema;
 
 export type ForumCategoryType = z.infer<typeof ForumCategorySchema>;
 export type ForumCategoryListResponseType = z.infer<

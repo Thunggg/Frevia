@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Schema cho ForumLike model
 export const ForumLikeSchema = z.object({
   id: z.number(),
   userId: z.number(),
@@ -9,9 +10,10 @@ export const ForumLikeSchema = z.object({
   createdAt: z.date(),
 });
 
-export const CreateForumLikeResponseSchema = ForumLikeSchema;
+// Schema cho ToggleLikeResponse response type
+export const ToggleLikeResponseSchema = z.object({
+  liked: z.boolean(),
+});
 
 export type ForumLikeType = z.infer<typeof ForumLikeSchema>;
-export type CreateForumLikeResponseType = z.infer<
-  typeof CreateForumLikeResponseSchema
->;
+export type ToggleLikeResponseType = z.infer<typeof ToggleLikeResponseSchema>;

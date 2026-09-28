@@ -2,9 +2,10 @@ import {
   ForumCategoryDetailResponseSchema,
   ForumCategoryListResponseSchema,
   ForumPostListResponseSchema,
+  ForumPostFilterSchema,
   CreateForumPostSchema,
   CreateForumPostResponseSchema,
-  ViewForumPostDetailResponseType,
+  ViewForumPostDetailResponseSchema,
   UpdateForumPostSchema,
   UpdateForumPostResponseSchema,
 } from '@shared/types';
@@ -23,6 +24,8 @@ export class ForumPostListResponseDto extends createZodDto(
   ForumPostListResponseSchema,
 ) {}
 
+export class ForumPostFilterDto extends createZodDto(ForumPostFilterSchema) {}
+
 export class CreateForumPostDto extends createZodDto(CreateForumPostSchema) {}
 
 export class CreateForumPostResponseDto extends createZodDto(
@@ -30,7 +33,7 @@ export class CreateForumPostResponseDto extends createZodDto(
 ) {}
 
 export class ViewForumPostDetailResponseDto extends createZodDto(
-  ViewForumPostDetailResponseType,
+  ViewForumPostDetailResponseSchema,
 ) {}
 
 export class UpdateForumPostDto extends createZodDto(UpdateForumPostSchema) {}

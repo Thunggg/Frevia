@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import {
   ForumCategoryListResponseType,
   ForumCategoryDetailResponseType,
@@ -13,9 +13,11 @@ import { ForumRepository } from './forums.repo';
 import {
   FailedToLoadForumCategoriesException,
   FailedToLoadForumPostsException,
+  FailedToCreateForumPostException,
   FailedToViewForumPostException,
   FailedToUpdateForumPostException,
   FailedToDeleteForumPostException,
+  ForumCategoryNotFoundException,
   ForumPostNotFoundException,
   ForumPostNotOwnedException,
 } from './forums.error';
@@ -33,9 +35,7 @@ export class ForumService {
       const categories = await this.forumRepository.getForumCategories();
 
       // Trả dữ liệu về theo đúng format của API
-      return {
-        data: categories,
-      };
+      return categories;
     } catch {
       // Nếu có lỗi khi truy vấn database thì trả về exception
       throw FailedToLoadForumCategoriesException();
@@ -47,9 +47,7 @@ export class ForumService {
   ): Promise<ForumCategoryDetailResponseType> {
     try {
       const category = await this.forumRepository.getForumCategoryById(id);
-      return {
-        data: category,
-      };
+      return category;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToLoadForumCategoriesException();
@@ -89,12 +87,38 @@ export class ForumService {
     userId: number,
     body: CreateForumPostType,
   ): Promise<ForumPostType> {
-    return this.forumRepository.createForumPost(
-      body.categoryId ?? null,
-      userId,
-      body.title,
-      body.content,
-    );
+    try {
+      // Kiểm tra category có tồn tại không, nếu không tồn tại thì báo lỗi
+      if (body.categoryId) {
+        const category = await this.forumRepository.findForumCategoryById(
+          body.categoryId,
+        );
+
+        // Nếu category không tồn tại thì ném lỗi ra ngoài
+        if (!category) {
+          throw ForumCategoryNotFoundException();
+        }
+      }
+
+      // Tạo post
+      return await this.forumRepository.createForumPost(
+        body.categoryId ?? null,
+        userId,
+        body.title,
+        body.content,
+      );
+    } catch (error) {
+      // Nếu là lỗi HttpException thì ném lỗi ra ngoài
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      // Nếu là lỗi PrismaClientKnownRequestError thì ném lỗi ra ngoài
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToCreateForumPostException();
+      }
+      // Ném lỗi ra ngoài
+      throw error;
+    }
   }
 
   async viewForumPostDetail(
@@ -102,9 +126,7 @@ export class ForumService {
   ): Promise<ViewForumPostDetailResponseType> {
     try {
       const post = await this.forumRepository.viewForumPostDetail(id);
-      return {
-        data: post,
-      };
+      return post;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToViewForumPostException();
