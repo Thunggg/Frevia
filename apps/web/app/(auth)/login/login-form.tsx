@@ -21,6 +21,7 @@ import { toast } from "@repo/ui/components/shadcn/sonner";
 import { LoginBodySchema } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+import { envConfig } from "../../../configs/validate-env";
 
 export function LoginForm() {
   const form = useForm<z.infer<typeof LoginBodySchema>>({
@@ -32,7 +33,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    const res = await fetch(`${envConfig?.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
