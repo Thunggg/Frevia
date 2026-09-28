@@ -1,0 +1,23 @@
+meta {
+  name: Create Post
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
+
+body:json {
+  {
+    "title": "Thử tạo bài post thứ 2",
+    "content": "Bài viết thứ 2",
+    "categoryId": 1
+  }
+}

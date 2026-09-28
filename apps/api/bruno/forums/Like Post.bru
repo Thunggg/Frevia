@@ -1,0 +1,19 @@
+meta {
+  name: Like Post
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts/:id/like
+  body: none
+  auth: require
+}
+
+params {
+  id: 2
+}
+
+settings {
+  encodeUrl: true
+}

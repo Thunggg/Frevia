@@ -1,0 +1,15 @@
+meta {
+  name: View Forum Category Detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/forums/categories/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../../../shared/shared.module';
 import { ForumController } from './forums.controller';
 import { ForumRepository } from './forums.repo';
 import { ForumService } from './forums.service';

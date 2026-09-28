@@ -1,0 +1,15 @@
+meta {
+  name: VIew Post Detail
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/forums/posts/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

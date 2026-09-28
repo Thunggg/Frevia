@@ -1,0 +1,40 @@
+import {
+  ForumCategoryDetailResponseSchema,
+  ForumCategoryListResponseSchema,
+  ForumPostListResponseSchema,
+  CreateForumPostSchema,
+  CreateForumPostResponseSchema,
+  ViewForumPostDetailResponseType,
+  UpdateForumPostSchema,
+  UpdateForumPostResponseSchema,
+} from '@shared/types';
+import { createZodDto } from 'nestjs-zod';
+
+// DTO cho response của API lấy danh sách forum categories
+export class ForumCategoryListResponseDto extends createZodDto(
+  ForumCategoryListResponseSchema,
+) {}
+
+export class ForumCategoryDetailResponseDto extends createZodDto(
+  ForumCategoryDetailResponseSchema,
+) {}
+
+export class ForumPostListResponseDto extends createZodDto(
+  ForumPostListResponseSchema,
+) {}
+
+export class CreateForumPostDto extends createZodDto(CreateForumPostSchema) {}
+
+export class CreateForumPostResponseDto extends createZodDto(
+  CreateForumPostResponseSchema,
+) {}
+
+export class ViewForumPostDetailResponseDto extends createZodDto(
+  ViewForumPostDetailResponseType,
+) {}
+
+export class UpdateForumPostDto extends createZodDto(UpdateForumPostSchema) {}
+
+export class UpdateForumPostResponseDto extends createZodDto(
+  UpdateForumPostResponseSchema,
+) {}
