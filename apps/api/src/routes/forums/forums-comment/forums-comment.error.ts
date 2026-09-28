@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   ManageForumCommentMessage,
+  ManageForumLikeMessage,
   ManageForumPostMessage,
 } from '@shared/types';
 
@@ -61,5 +62,13 @@ export const FailedToUpdateForumCommentException = () =>
     {
       message: ManageForumCommentMessage.FAILED_TO_UPDATE_FORUM_COMMENT,
       path: 'updateComment',
+    },
+  ]);
+
+export const FailedToLikeForumCommentException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumCommentMessage.FAILED_TO_LIKE_FORUM_COMMENT,
+      path: 'likeComment',
     },
   ]);

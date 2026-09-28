@@ -6,11 +6,13 @@ import {
   ForumCommentListResponseType,
   ForumCommentType,
   RoleName,
+  ToggleLikeCommentType,
 } from '@shared/types';
 import { ForumCommentRepository } from './forums-comment.repo';
 import {
   FailedToCreateForumCommentException,
   FailedToDeleteForumCommentException,
+  FailedToLikeForumCommentException,
   FailedToLoadForumCommentsException,
   FailedToUpdateForumCommentException,
   ForumCommentNotFoundException,
@@ -115,6 +117,60 @@ export class ForumCommentService {
         throw error;
       }
       throw FailedToDeleteForumCommentException();
+    }
+  }
+
+  // Like - Unlike comment trong bài post
+  async toggleLikeComment(
+    userId: number,
+    postId: number,
+    commentId: number,
+  ): Promise<ToggleLikeCommentType> {
+    try {
+      const existingComment =
+        await this.forumCommentRepository.findCommentById(commentId);
+
+      // kiểm tra comment có tồn tại không
+      if (!existingComment) {
+        throw ForumCommentNotFoundException();
+      }
+
+      // kiểm tra comment có thuộc post không
+      if (existingComment.postId !== postId) {
+        throw ForumCommentNotFoundException();
+      }
+
+      // kiểm tra user đã like comment chưa
+      const existingLike =
+        await this.forumCommentRepository.findLikeByUserAndComment(
+          userId,
+          postId,
+          commentId,
+        );
+
+      // nếu đã like thì unlike
+      if (existingLike) {
+        await this.forumCommentRepository.deleteCommentLike(
+          userId,
+          postId,
+          commentId,
+        );
+        return { liked: false };
+      }
+
+      // nếu chưa like thì like
+      await this.forumCommentRepository.createCommentLike(
+        userId,
+        postId,
+        commentId,
+      );
+      return { liked: true };
+    } catch (error) {
+      console.error(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToLikeForumCommentException();
     }
   }
 

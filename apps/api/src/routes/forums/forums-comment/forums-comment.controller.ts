@@ -19,6 +19,7 @@ import {
   EditForumCommentResponseDto,
   ForumCommentFilterDto,
   ForumCommentListResponseDto,
+  ToggleLikeCommentResponseDto,
 } from './forums-comment.dto';
 import type {
   CreateForumCommentType,
@@ -87,6 +88,20 @@ export class ForumCommentController {
       id,
       userId,
       roleName,
+    );
+  }
+
+  @Post(':postId/comments/:commentId/like')
+  @ZodSerializerDto(ToggleLikeCommentResponseDto)
+  toggleLikeComment(
+    @UserActive('userId') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ) {
+    return this.forumCommentService.toggleLikeComment(
+      userId,
+      postId,
+      commentId,
     );
   }
 }

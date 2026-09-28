@@ -191,4 +191,42 @@ export class ForumCommentRepository {
 
     return { comments, total };
   }
+
+  async findLikeByUserAndComment(
+    userId: number,
+    postId: number,
+    commentId: number,
+  ): Promise<{ id: number } | null> {
+    return this.prisma.forumLike.findFirst({
+      where: {
+        userId,
+        postId,
+        commentId,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  async createCommentLike(userId: number, postId: number, commentId: number) {
+    return this.prisma.forumLike.create({
+      data: {
+        userId,
+        postId,
+        commentId,
+        reactionType: 'like',
+      },
+    });
+  }
+
+  async deleteCommentLike(userId: number, postId: number, commentId: number) {
+    return this.prisma.forumLike.deleteMany({
+      where: {
+        userId,
+        postId,
+        commentId,
+      },
+    });
+  }
 }

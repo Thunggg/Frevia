@@ -7,6 +7,7 @@ import {
   EditForumCommentResponseSchema,
   ForumCommentFilterSchema,
   ForumCommentListResponseSchema,
+  ToggleLikeCommentSchema,
 } from '@shared/types';
 
 export class ForumCommentListResponseDto extends createZodDto(
@@ -35,4 +36,8 @@ export class EditForumCommentResponseDto extends createZodDto(
 
 export class DeleteForumCommentResponseDto extends createZodDto(
   DeleteForumCommentResponseSchema,
+) {}
+
+export class ToggleLikeCommentResponseDto extends createZodDto(
+  ToggleLikeCommentSchema,
 ) {}

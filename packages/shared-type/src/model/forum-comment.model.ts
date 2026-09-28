@@ -63,3 +63,10 @@ export type EditForumCommentType = z.infer<typeof EditForumCommentSchema>;
 export const EditForumCommentResponseSchema = ForumCommentSchema;
 
 export const DeleteForumCommentResponseSchema = ForumCommentSchema;
+
+// Schema cho toggle like comment
+export const ToggleLikeCommentSchema = z.object({
+  liked: z.boolean(),
+});
+
+export type ToggleLikeCommentType = z.infer<typeof ToggleLikeCommentSchema>;
