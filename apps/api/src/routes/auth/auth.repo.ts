@@ -237,4 +237,21 @@ export class AuthRepository {
       },
     });
   }
+
+  async findUserById(userId: number) {
+    return this.prisma.user.findUnique({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+      include: {
+        userRoles: {
+          include: { role: true },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
+      },
+    });
+  }
 }

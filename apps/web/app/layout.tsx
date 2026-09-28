@@ -1,9 +1,7 @@
 import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { cookies } from "next/headers";
 import { ThemeProvider } from "./components/theme-provider";
-import { AppProvider } from "./contexts/AppProvider";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -25,9 +23,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken");
-  const refreshToken = cookieStore.get("refreshToken");
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -38,12 +33,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppProvider
-            initialAccessToken={accessToken?.value || ""}
-            initialRefreshToken={refreshToken?.value || ""}
-          >
-            {children}
-          </AppProvider>
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>

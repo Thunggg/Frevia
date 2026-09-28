@@ -5,12 +5,14 @@ const envSchema = z.object({
   NEXT_PUBLIC_API_URL: z.string(),
   ACCESS_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
   REFRESH_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
+  NODE_ENV: z.string(),
 });
 
 const envParsed = envSchema.safeParse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  NODE_ENV: process.env.NODE_ENV,
 });
 
 if (envParsed.success === false) {

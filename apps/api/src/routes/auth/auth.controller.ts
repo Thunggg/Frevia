@@ -1,8 +1,5 @@
-import { Body, Controller, Get, Ip, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
-import ms from 'ms';
+import { Body, Controller, Get, Ip, Post } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { envConfig } from '../../shared/config/validate-env';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { UserAgent } from '../../shared/decorators/user-agent.decorators';
@@ -43,7 +40,6 @@ export class AuthController {
   @ZodSerializerDto(LoginResponseDto)
   async login(
     @Body() body: LoginBodyDTO,
-    @Res({ passthrough: true }) res: Response,
     @UserAgent() userAgent: string,
     @Ip() ipAddress: string,
   ) {
@@ -51,24 +47,6 @@ export class AuthController {
       ...body,
       userAgent,
       ipAddress,
-    });
-
-    res.cookie('accessToken', result.accessToken, {
-      httpOnly: true,
-      secure: false, // nếu true thì cookie chỉ gửi được qua https
-      sameSite: 'strict', // Cookie chỉ được gửi nếu người dùng đang ở đúng website đó.
-      expires: new Date(
-        (Date.now() + ms(envConfig.ACCESS_TOKEN_EXPIRES_IN)) as string,
-      ),
-    });
-
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      expires: new Date(
-        (Date.now() + ms(envConfig.REFRESH_TOKEN_EXPIRES_IN)) as string,
-      ),
     });
 
     return result;
@@ -105,8 +83,8 @@ export class AuthController {
     return this.authService.forgotPassword(body);
   }
 
-  @Get('test')
-  test() {
-    return { message: 'Hello' };
+  @Get('me')
+  getMe(@UserActive('userId') userId: number) {
+    return this.authService.getMe(userId);
   }
 }
