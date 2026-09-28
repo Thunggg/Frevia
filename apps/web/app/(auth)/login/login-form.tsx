@@ -31,7 +31,17 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof LoginBodySchema>) {
+  async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
     console.log(data);
     toast("Event has been created.");
   }
