@@ -4,6 +4,8 @@ import { ToggleLikeResponseType } from '@shared/types';
 import {
   ForumPostNotFoundException,
   FailedToLikeForumPostException,
+  ForumLikeNotFoundException,
+  FailedToViewForumLikeDetailException,
 } from './forums-like.error';
 
 @Injectable()
@@ -41,6 +43,24 @@ export class ForumLikeService {
         throw error;
       }
       throw FailedToLikeForumPostException();
+    }
+  }
+
+  // Xem tất cả người dùng đã like post
+  async viewForumLikeDetail(postId: number) {
+    try {
+      const likes = await this.forumLikeRepository.viewForumLikeDetail(postId);
+      // Nếu không có ai like thì ném lỗi ra ngoài
+      if (likes.length === 0) {
+        throw ForumLikeNotFoundException();
+      }
+      // Trả về danh sách người dùng đã like post
+      return likes;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'NotFoundException') {
+        throw error;
+      }
+      throw FailedToViewForumLikeDetailException();
     }
   }
 }

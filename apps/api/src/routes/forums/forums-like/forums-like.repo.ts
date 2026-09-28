@@ -50,4 +50,31 @@ export class ForumLikeRepository {
       },
     });
   }
+
+  async viewForumLikeDetail(postId: number) {
+    return this.prisma.forumLike.findMany({
+      where: {
+        postId,
+      },
+      select: {
+        id: true,
+        userId: true,
+        postId: true,
+        commentId: true,
+        reactionType: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
