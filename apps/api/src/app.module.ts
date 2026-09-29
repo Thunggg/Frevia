@@ -15,7 +15,14 @@ import { ForumCommentModule } from './routes/forums/forums-comment/forums-commen
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
 
 @Module({
-  imports: [SharedModule, AuthModule, ForumModule, ForumLikeModule, ForumCommentModule, ForumReportModule],
+  imports: [
+    SharedModule,
+    AuthModule,
+    ForumModule,
+    ForumLikeModule,
+    ForumCommentModule,
+    ForumReportModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

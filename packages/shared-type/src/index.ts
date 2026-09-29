@@ -16,3 +16,5 @@ export * from "./model/forum-comment.model";
 export * from "./message/manage-forum-comment.message";
 export * from "./model/forum-report.model";
 export * from "./message/manage-forum-report.message";
+export * from "./message/profile.message";
+export * from "./model/profile.model";
