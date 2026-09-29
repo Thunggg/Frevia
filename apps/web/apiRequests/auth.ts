@@ -1,8 +1,10 @@
 import {
   LoginBodyType,
   LoginResType,
+  MessageResType,
   RegisterBodyType,
-  UserType,
+  RegisterResType,
+  SendOTPBodyType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -10,7 +12,9 @@ export const authApiRequest = {
   login: (body: LoginBodyType) =>
     http.post<LoginResType>("/api/auth/login", body, false),
 
-  register: (body: RegisterBodyType) => http.post("/api/auth/register", body),
+  register: (body: RegisterBodyType) =>
+    http.post<RegisterResType>("/api/auth/register", body),
 
-  me: () => http.get<UserType>("/api/auth/me"),
+  sendOtp: (body: SendOTPBodyType) =>
+    http.post<MessageResType>("/api/auth/otp", body),
 };

@@ -14,7 +14,7 @@ export class ApiFail extends Error {
 export const request = async <T>(
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   url: string,
-  body?: string,
+  body?: object,
   isRequestToProxyAPI: boolean = true,
 ): Promise<ApiResponse<T>> => {
   // chuẩn hóa lại url người dùng gửi lên
@@ -44,17 +44,17 @@ export const http = {
     return request<T>("GET", url, undefined, isRequestToProxyAPI);
   },
 
-  post: <T>(url: string, body: string, isRequestToProxyAPI: boolean = true) => {
+  post: <T>(url: string, body: object, isRequestToProxyAPI: boolean = true) => {
     return request<T>("POST", url, body, isRequestToProxyAPI);
   },
 
-  put: <T>(url: string, body: string, isRequestToProxyAPI: boolean = true) => {
+  put: <T>(url: string, body: object, isRequestToProxyAPI: boolean = true) => {
     return request<T>("PUT", url, body, isRequestToProxyAPI);
   },
 
   patch: <T>(
     url: string,
-    body: string,
+    body: object,
     isRequestToProxyAPI: boolean = true,
   ) => {
     return request<T>("PATCH", url, body, isRequestToProxyAPI);

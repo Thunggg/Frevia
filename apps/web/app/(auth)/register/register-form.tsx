@@ -31,7 +31,7 @@ import {
   RadioGroupItem,
 } from "@repo/ui/components/shadcn/radio-group";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   InputGroup,
   InputGroupAddon,
@@ -41,6 +41,19 @@ import {
 
 export function RegisterForm() {
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (countdown <= 0) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countdown]);
 
   const form = useForm<z.infer<typeof RegisterBodySchema>>({
     resolver: zodResolver(RegisterBodySchema),
@@ -70,6 +83,33 @@ export function RegisterForm() {
         });
       } else {
         toastError({ message: "Register failed" });
+      }
+    }
+  }
+
+  async function sendOtp() {
+    try {
+      const email = form.getValues("email");
+
+      if (!email) {
+        toastError({ message: "Email is required" });
+        return;
+      }
+
+      const res = await authApiRequest.sendOtp({
+        email,
+        type: "EMAIL_VERIFICATION",
+      });
+
+      console.log(res);
+
+      if (res.success) {
+        toastSuccess({ message: res.data.message });
+        setCountdown(30);
+      }
+    } catch (error: unknown) {
+      if (error instanceof ApiFail) {
+        handleErrorApi({ error: error.response, setError: form.setError });
       }
     }
   }
@@ -184,11 +224,20 @@ export function RegisterForm() {
                       {...field}
                       placeholder="OTP Code"
                       maxLength={6}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, ""); // Loại bỏ mọi ký tự không phải số
+                        field.onChange(value);
+                      }}
                       aria-invalid={fieldState.invalid}
                     />
                     <InputGroupAddon align="inline-end">
-                      <InputGroupButton type="button" variant="secondary">
-                        Send OTP
+                      <InputGroupButton
+                        type="button"
+                        variant="secondary"
+                        onClick={() => sendOtp()}
+                        disabled={countdown > 0}
+                      >
+                        {countdown > 0 ? `Resend in ${countdown}s` : "Send OTP"}
                       </InputGroupButton>
                     </InputGroupAddon>
                   </InputGroup>
@@ -263,7 +312,11 @@ export function RegisterForm() {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="form-rhf-demo" disabled={isTermsAccepted}>
+          <Button
+            type="submit"
+            form="form-rhf-demo"
+            disabled={!isTermsAccepted}
+          >
             Submit
           </Button>
         </Field>
