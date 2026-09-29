@@ -7,7 +7,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
-import { IsPublic } from '../../../shared/decorators/auth.decorator';
+import { IsPublic } from '../../shared/decorators/auth.decorator';
 import {
   FreelancerProfileDetailResponseDto,
   UpdateFreelancerProfileDto,
@@ -15,7 +15,7 @@ import {
 } from './profile.dto';
 import { ProfileService } from './profile.service';
 import type { UpdateFreelancerProfileType } from '@shared/types';
-import { UserActive } from '../../../shared/decorators/user-active.decorators';
+import { UserActive } from '../../shared/decorators/user-active.decorators';
 
 @Controller('profiles')
 export class ProfileController {
