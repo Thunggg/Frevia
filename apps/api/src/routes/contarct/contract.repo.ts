@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
+import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType, UploadContractFileBodyType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -169,6 +169,17 @@ export class ContractRepository {
     return this.prisma.sharedFile.findMany({
       where: { contractId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async createSharedFile(contractId: number, uploaderId: number, data: UploadContractFileBodyType) {
+    return this.prisma.sharedFile.create({
+      data: {
+        contractId,
+        uploaderId,
+        fileUrl: data.fileUrl,
+        fileName: data.fileName,
+      },
     });
   }
 }

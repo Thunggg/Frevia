@@ -25,4 +25,5 @@ export const ManageContractMessage = {
   FAILED_TO_LOAD_CONTRACT: 'Error.FailedToLoadContract',
 
   FILE_NOT_FOUND: 'Error.ContractFileNotFound',
+  FAILED_TO_UPLOAD_FILE: 'Error.FailedToUploadContractFile',
 } as const;

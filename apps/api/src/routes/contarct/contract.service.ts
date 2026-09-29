@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
+import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType, UploadContractFileBodyType } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ContractRepository } from './contract.repo';
 import {
@@ -16,6 +16,7 @@ import {
   FailedToCreateContractException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
+  FailedToUploadContractFileException,
   TermsLockedException,
 } from './contract.error';
 
@@ -258,6 +259,18 @@ export class ContractService {
         throw error;
       }
       throw FailedToLoadContractException();
+    }
+  }
+
+  async uploadContractFile(contractId: number, requestUserId: number, data: UploadContractFileBodyType) {
+    try {
+      await this._verifyContractAccess(contractId, requestUserId);
+      return await this.contractRepository.createSharedFile(contractId, requestUserId, data);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUploadContractFileException();
     }
   }
 }

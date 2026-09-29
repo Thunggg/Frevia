@@ -10,6 +10,8 @@ import {
   SignContractResponseSchema,
   UpdateContractTermsBodySchema,
   UpdateContractTermsResponseSchema,
+  UploadContractFileBodySchema,
+  UploadContractFileResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -28,3 +30,6 @@ export class GetContractsResponseDTO extends createZodDto(GetContractsResponseSc
 export class GetContractDetailResponseDTO extends createZodDto(GetContractDetailResponseSchema) { }
 
 export class GetContractFilesResponseDTO extends createZodDto(GetContractFilesResponseSchema) { }
+
+export class UploadContractFileBodyDTO extends createZodDto(UploadContractFileBodySchema) { }
+export class UploadContractFileResponseDTO extends createZodDto(UploadContractFileResponseSchema) { }

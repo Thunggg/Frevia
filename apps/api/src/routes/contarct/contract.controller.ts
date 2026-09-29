@@ -22,9 +22,11 @@ import {
   SignContractResponseDTO,
   UpdateContractTermsBodyDTO,
   UpdateContractTermsResponseDTO,
+  UploadContractFileBodyDTO,
+  UploadContractFileResponseDTO,
 } from './contract.dto';
 import { ContractService } from './contract.service';
-import type { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
+import type { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType, UploadContractFileBodyType } from '@shared/types';
 
 @Controller('api/contracts')
 export class ContractController {
@@ -105,5 +107,15 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.getContractFiles(id, userId);
+  }
+
+  @Post(':id/files')
+  @ZodSerializerDto(UploadContractFileResponseDTO)
+  uploadContractFile(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+    @Body() body: UploadContractFileBodyDTO,
+  ) {
+    return this.contractService.uploadContractFile(id, userId, body as UploadContractFileBodyType);
   }
 }

@@ -81,3 +81,8 @@ export const ContractFileNotFoundException = () =>
   new NotFoundException([
     { message: ManageContractMessage.FILE_NOT_FOUND, path: 'fileId' },
   ]);
+
+export const FailedToUploadContractFileException = () =>
+  new InternalServerErrorException([
+    { message: ManageContractMessage.FAILED_TO_UPLOAD_FILE, path: '' },
+  ]);
