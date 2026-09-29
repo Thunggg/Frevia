@@ -4,6 +4,8 @@ import {
   AddPortfolioSchema,
   AddPortfolioResponseSchema,
   PortfolioItemSchema,
+  UpdatePortfolioSchema,
+  UpdatePortfolioResponseSchema,
 } from '@shared/types';
 
 export class PortfolioItemListResponseDto extends createZodDto(
@@ -18,4 +20,10 @@ export class AddPortfolioResponseDto extends createZodDto(
 
 export class PortfolioItemResponseDto extends createZodDto(
   PortfolioItemSchema,
+) {}
+
+export class UpdatePortfolioDto extends createZodDto(UpdatePortfolioSchema) {}
+
+export class UpdatePortfolioResponseDto extends createZodDto(
+  UpdatePortfolioResponseSchema,
 ) {}

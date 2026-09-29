@@ -29,3 +29,11 @@ export const PortfolioNotFoundException = () =>
   new NotFoundException([
     { message: PortfolioMessage.PORTFOLIO_NOT_FOUND, path: 'id' },
   ]);
+
+export const UnableToUpdatePortfolioException = () =>
+  new InternalServerErrorException([
+    {
+      message: PortfolioMessage.PORTFOLIO_FAILED_TO_UPDATE,
+      path: 'portfolios',
+    },
+  ]);

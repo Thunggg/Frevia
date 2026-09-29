@@ -6,8 +6,9 @@ import {
   UnableToLoadPortfoliosException,
   PortfolioForbiddenException,
   PortfolioNotFoundException,
+  UnableToUpdatePortfolioException,
 } from './portfolio.error';
-import { RoleName, AddPortfolioType } from '@shared/types';
+import { RoleName, AddPortfolioType, UpdatePortfolioType } from '@shared/types';
 
 @Injectable()
 export class PortfolioService {
@@ -99,6 +100,31 @@ export class PortfolioService {
         throw error;
       }
       throw UnableToLoadPortfoliosException();
+    }
+  }
+
+  async updatePortfolio(
+    portfolioId: number,
+    currentUserId: number,
+    data: UpdatePortfolioType,
+  ) {
+    try {
+      const portfolio =
+        await this.portfolioRepository.findPortfolioWithProfile(portfolioId);
+      if (!portfolio) {
+        throw PortfolioNotFoundException();
+      }
+
+      if (portfolio.freelancerProfile.profile.userId !== currentUserId) {
+        throw PortfolioForbiddenException();
+      }
+
+      return await this.portfolioRepository.updatePortfolio(portfolioId, data);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw UnableToUpdatePortfolioException();
     }
   }
 }

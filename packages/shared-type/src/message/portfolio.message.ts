@@ -5,4 +5,5 @@ export const PortfolioMessage = {
   PORTFOLIO_TITLE_REQUIRED: "Portfolio title is required.",
   PORTFOLIO_FORBIDDEN: "You can only edit your own portfolios.",
   PORTFOLIO_NOT_FOUND: "Portfolio not found.",
+  PORTFOLIO_FAILED_TO_UPDATE: "Unable to update portfolio. Please try again later.",
 } as const;

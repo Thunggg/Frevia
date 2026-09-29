@@ -34,3 +34,20 @@ export const AddPortfolioResponseSchema = PortfolioItemSchema;
 
 export type AddPortfolioType = z.infer<typeof AddPortfolioSchema>;
 export type AddPortfolioResponseType = z.infer<typeof AddPortfolioResponseSchema>;
+
+export const UpdatePortfolioSchema = z.object({
+  title: z
+    .string({ message: PortfolioMessage.PORTFOLIO_TITLE_REQUIRED })
+    .min(1, PortfolioMessage.PORTFOLIO_TITLE_REQUIRED)
+    .max(255),
+  description: z.string().nullable().optional(),
+  mediaUrls: z.array(z.string()).optional(),
+  projectUrl: z.string().nullable().optional(),
+});
+
+export const UpdatePortfolioResponseSchema = PortfolioItemSchema;
+
+export type UpdatePortfolioType = z.infer<typeof UpdatePortfolioSchema>;
+export type UpdatePortfolioResponseType = z.infer<
+  typeof UpdatePortfolioResponseSchema
+>;

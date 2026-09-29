@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddPortfolioType } from '@shared/types';
+import { AddPortfolioType, UpdatePortfolioType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -72,6 +72,38 @@ export class PortfolioRepository {
       where: {
         id: portfolioId,
         deletedAt: null,
+      },
+    });
+  }
+
+  async findPortfolioWithProfile(portfolioId: number) {
+    return this.prisma.portfolioItem.findFirst({
+      where: {
+        id: portfolioId,
+        deletedAt: null,
+      },
+      include: {
+        freelancerProfile: {
+          include: {
+            profile: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updatePortfolio(portfolioId: number, data: UpdatePortfolioType) {
+    return this.prisma.portfolioItem.update({
+      where: {
+        id: portfolioId,
+      },
+      data: {
+        title: data.title,
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
+        ...(data.mediaUrls !== undefined && { mediaUrls: data.mediaUrls }),
+        ...(data.projectUrl !== undefined && { projectUrl: data.projectUrl }),
       },
     });
   }
