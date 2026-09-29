@@ -22,4 +22,5 @@ export const ManageContractMessage = {
 
   FAILED_TO_CREATE_CONTRACT: 'Error.FailedToCreateContract',
   FAILED_TO_UPDATE_CONTRACT: 'Error.FailedToUpdateContract',
+  FAILED_TO_LOAD_CONTRACT: 'Error.FailedToLoadContract',
 } as const;

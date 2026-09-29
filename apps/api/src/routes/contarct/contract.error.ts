@@ -71,3 +71,8 @@ export const FailedToUpdateContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_UPDATE_CONTRACT, path: '' },
   ]);
+
+export const FailedToLoadContractException = () =>
+  new InternalServerErrorException([
+    { message: ManageContractMessage.FAILED_TO_LOAD_CONTRACT, path: '' },
+  ]);

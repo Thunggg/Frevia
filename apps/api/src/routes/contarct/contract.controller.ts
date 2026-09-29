@@ -15,6 +15,7 @@ import {
   CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
+  GetContractDetailResponseDTO,
   GetContractsQueryDTO,
   GetContractsResponseDTO,
   SignContractResponseDTO,
@@ -85,5 +86,14 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.getContracts(query as GetContractsQueryType, userId);
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(GetContractDetailResponseDTO)
+  getContractDetail(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.getContractDetail(id, userId);
   }
 }

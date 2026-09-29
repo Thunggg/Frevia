@@ -140,3 +140,6 @@ export const GetContractsResponseSchema = z.object({
 export type GetContractsQueryType = z.infer<typeof GetContractsQuerySchema>;
 export type GetContractsResponseType = z.infer<typeof GetContractsResponseSchema>;
 
+export const GetContractDetailResponseSchema = ContractSchema;
+export type GetContractDetailResponseType = z.infer<typeof GetContractDetailResponseSchema>;
+

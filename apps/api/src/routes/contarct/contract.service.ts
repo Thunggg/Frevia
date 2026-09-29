@@ -14,6 +14,7 @@ import {
   ContractNotInPendingSignException,
   ContractNotFoundException,
   FailedToCreateContractException,
+  FailedToLoadContractException,
   FailedToUpdateContractException,
   TermsLockedException,
 } from './contract.error';
@@ -207,7 +208,30 @@ export class ContractService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error.FailedToLoadContracts', 500);
+      throw FailedToLoadContractException();
+    }
+  }
+
+  async getContractDetail(contractId: number, requestUserId: number) {
+    try {
+      const contract = await this.contractRepository.findContractById(contractId);
+      if (!contract) {
+        throw ContractNotFoundException();
+      }
+
+      const isClient = contract.clientId === requestUserId;
+      const isFreelancer = contract.freelancerId === requestUserId;
+
+      if (!isClient && !isFreelancer) {
+        throw ContractForbiddenException();
+      }
+
+      return contract;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToLoadContractException();
     }
   }
 }
