@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  Post,
 } from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
@@ -13,9 +14,14 @@ import {
   UpdateFreelancerProfileDto,
   UpdateFreelancerProfileResponseDto,
   FreelancerSkillListResponseDto,
+  AddFreelancerSkillDto,
+  AddFreelancerSkillResponseDto,
 } from './profile.dto';
 import { ProfileService } from './profile.service';
-import type { UpdateFreelancerProfileType } from '@shared/types';
+import type {
+  UpdateFreelancerProfileType,
+  AddFreelancerSkillType,
+} from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 
 @Controller('profiles')
@@ -45,5 +51,16 @@ export class ProfileController {
   @ZodSerializerDto(FreelancerSkillListResponseDto)
   async getFreelancerSkills(@Param('id', ParseIntPipe) id: number) {
     return this.profileService.getFreelancerSkills(id);
+  }
+
+  @Post(':id/skills')
+  @ZodSerializerDto(AddFreelancerSkillResponseDto)
+  async addFreelancerSkill(
+    @UserActive('userId') currentUserId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(AddFreelancerSkillDto))
+    body: AddFreelancerSkillType,
+  ) {
+    return this.profileService.addFreelancerSkill(id, currentUserId, body);
   }
 }

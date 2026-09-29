@@ -3,6 +3,8 @@ import {
   UpdateFreelancerProfileSchema,
   UpdateFreelancerProfileResponseSchema,
   FreelancerSkillListResponseSchema,
+  AddFreelancerSkillSchema,
+  AddFreelancerSkillResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -20,4 +22,12 @@ export class UpdateFreelancerProfileResponseDto extends createZodDto(
 
 export class FreelancerSkillListResponseDto extends createZodDto(
   FreelancerSkillListResponseSchema,
+) {}
+
+export class AddFreelancerSkillDto extends createZodDto(
+  AddFreelancerSkillSchema,
+) {}
+
+export class AddFreelancerSkillResponseDto extends createZodDto(
+  AddFreelancerSkillResponseSchema,
 ) {}

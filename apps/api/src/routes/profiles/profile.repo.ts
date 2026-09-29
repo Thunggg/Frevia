@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateFreelancerProfileType } from '@shared/types';
+import {
+  UpdateFreelancerProfileType,
+  AddFreelancerSkillType,
+} from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -90,6 +93,47 @@ export class ProfileRepository {
         skillName: true,
         proficiencyLevel: true,
       },
+    });
+  }
+
+  async findSkillByNameAndProfileId(profileId: number, skillName: string) {
+    return this.prisma.freelancerSkill.findFirst({
+      where: {
+        skillName: {
+          equals: skillName,
+          mode: 'insensitive',
+        },
+        freelancerProfile: {
+          profileId,
+        },
+      },
+    });
+  }
+
+  async addSkillToProfile(
+    profileId: number,
+    skillData: AddFreelancerSkillType,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      let freelancerProfile = await tx.freelancerProfile.findUnique({
+        where: { profileId },
+      });
+
+      if (!freelancerProfile) {
+        freelancerProfile = await tx.freelancerProfile.create({
+          data: {
+            profileId,
+          },
+        });
+      }
+
+      return tx.freelancerSkill.create({
+        data: {
+          freelancerProfileId: freelancerProfile.id,
+          skillName: skillData.skillName,
+          proficiencyLevel: skillData.proficiencyLevel,
+        },
+      });
     });
   }
 }

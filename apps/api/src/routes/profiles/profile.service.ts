@@ -1,5 +1,8 @@
 import { Injectable, HttpException } from '@nestjs/common';
-import { UpdateFreelancerProfileType } from '@shared/types';
+import {
+  UpdateFreelancerProfileType,
+  AddFreelancerSkillType,
+} from '@shared/types';
 import { ProfileRepository } from './profile.repo';
 import {
   FreelancerProfileNotFoundException,
@@ -7,6 +10,7 @@ import {
   FailedToLoadProfileException,
   FailedToUpdateProfileException,
   FreelancerSkillsNotFoundException,
+  FreelancerSkillDuplicateException,
 } from './profile.error';
 import { RoleName } from '@shared/types';
 
@@ -100,6 +104,47 @@ export class ProfileService {
         throw error;
       }
       throw FailedToLoadProfileException();
+    }
+  }
+
+  async addFreelancerSkill(
+    profileId: number,
+    currentUserId: number,
+    data: AddFreelancerSkillType,
+  ) {
+    try {
+      const profile =
+        await this.profileRepository.findFreelancerProfileById(profileId);
+      if (!profile) {
+        throw FreelancerProfileNotFoundException();
+      }
+
+      const isFreelancer = profile.user.userRoles.some(
+        (ur) => ur.role.name === RoleName.FREELANCER,
+      );
+      if (!isFreelancer) {
+        throw FreelancerProfileNotFoundException();
+      }
+
+      if (profile.userId !== currentUserId) {
+        throw ProfileForbiddenException();
+      }
+
+      const existingSkill =
+        await this.profileRepository.findSkillByNameAndProfileId(
+          profileId,
+          data.skillName,
+        );
+      if (existingSkill) {
+        throw FreelancerSkillDuplicateException();
+      }
+
+      return await this.profileRepository.addSkillToProfile(profileId, data);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateProfileException();
     }
   }
 }

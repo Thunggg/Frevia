@@ -69,3 +69,22 @@ export type FreelancerSkillType = z.infer<typeof FreelancerSkillSchema>;
 export type FreelancerSkillListResponseType = z.infer<
   typeof FreelancerSkillListResponseSchema
 >;
+
+export const AddFreelancerSkillSchema = z.object({
+  skillName: z
+    .string({ message: ProfileMessage.SKILL_NAME_REQUIRED })
+    .min(1, ProfileMessage.SKILL_NAME_REQUIRED)
+    .max(100),
+  proficiencyLevel: z
+    .number({ message: ProfileMessage.PROFICIENCY_LEVEL_REQUIRED })
+    .int()
+    .min(1, ProfileMessage.PROFICIENCY_LEVEL_RANGE)
+    .max(10, ProfileMessage.PROFICIENCY_LEVEL_RANGE),
+});
+
+export const AddFreelancerSkillResponseSchema = FreelancerSkillSchema;
+
+export type AddFreelancerSkillType = z.infer<typeof AddFreelancerSkillSchema>;
+export type AddFreelancerSkillResponseType = z.infer<
+  typeof AddFreelancerSkillResponseSchema
+>;

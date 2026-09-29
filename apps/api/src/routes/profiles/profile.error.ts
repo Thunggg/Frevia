@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
@@ -42,5 +43,13 @@ export const FreelancerSkillsNotFoundException = () =>
     {
       message: ProfileMessage.SKILLS_NOT_FOUND,
       path: 'skills',
+    },
+  ]);
+
+export const FreelancerSkillDuplicateException = () =>
+  new BadRequestException([
+    {
+      message: ProfileMessage.DUPLICATE_SKILL,
+      path: 'skillName',
     },
   ]);
