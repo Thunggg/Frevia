@@ -3,6 +3,8 @@ import {
   CompleteContractResponseSchema,
   CreateContractBodySchema,
   CreateContractResponseSchema,
+  GetContractsQuerySchema,
+  GetContractsResponseSchema,
   SignContractResponseSchema,
   UpdateContractTermsBodySchema,
   UpdateContractTermsResponseSchema,
@@ -18,3 +20,6 @@ export class UpdateContractTermsResponseDTO extends createZodDto(UpdateContractT
 export class CompleteContractResponseDTO extends createZodDto(CompleteContractResponseSchema) { }
 export class SignContractResponseDTO extends createZodDto(SignContractResponseSchema) { }
 export class CancelContractResponseDTO extends createZodDto(CancelContractResponseSchema) { }
+
+export class GetContractsQueryDTO extends createZodDto(GetContractsQuerySchema) { }
+export class GetContractsResponseDTO extends createZodDto(GetContractsResponseSchema) { }

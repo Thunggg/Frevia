@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/types';
+import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ContractRepository } from './contract.repo';
 import {
@@ -197,6 +197,17 @@ export class ContractService {
         throw error;
       }
       throw FailedToUpdateContractException();
+    }
+  }
+
+  async getContracts(query: GetContractsQueryType, requestUserId: number) {
+    try {
+      return await this.contractRepository.findContracts(query, requestUserId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error.FailedToLoadContracts', 500);
     }
   }
 }

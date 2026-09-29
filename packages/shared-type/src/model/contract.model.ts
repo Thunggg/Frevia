@@ -113,7 +113,30 @@ export type CompleteContractResponseType = z.infer<typeof CompleteContractRespon
 
 export const SignContractResponseSchema = ContractSchema;
 export type SignContractResponseType = z.infer<typeof SignContractResponseSchema>;
-
 export const CancelContractResponseSchema = ContractSchema;
 export type CancelContractResponseType = z.infer<typeof CancelContractResponseSchema>;
+
+export const ContractPaginationSchema = z.object({
+  page: z.number().int().min(1),
+  limit: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+});
+
+export const GetContractsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).default(10),
+  status: ContractStatusEnum.optional(),
+  jobId: z.coerce.number().int().positive().optional(),
+  clientId: z.coerce.number().int().positive().optional(),
+  freelancerId: z.coerce.number().int().positive().optional(),
+});
+
+export const GetContractsResponseSchema = z.object({
+  data: z.array(ContractSchema),
+  pagination: ContractPaginationSchema,
+});
+
+export type GetContractsQueryType = z.infer<typeof GetContractsQuerySchema>;
+export type GetContractsResponseType = z.infer<typeof GetContractsResponseSchema>;
 

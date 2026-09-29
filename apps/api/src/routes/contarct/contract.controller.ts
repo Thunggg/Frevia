@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
@@ -13,12 +15,14 @@ import {
   CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
+  GetContractsQueryDTO,
+  GetContractsResponseDTO,
   SignContractResponseDTO,
   UpdateContractTermsBodyDTO,
   UpdateContractTermsResponseDTO,
 } from './contract.dto';
 import { ContractService } from './contract.service';
-import type { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/types';
+import type { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
 
 @Controller('api/contracts')
 export class ContractController {
@@ -72,5 +76,14 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.cancelContract(id, userId);
+  }
+
+  @Get()
+  @ZodSerializerDto(GetContractsResponseDTO)
+  getContracts(
+    @Query() query: GetContractsQueryDTO,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.getContracts(query as GetContractsQueryType, userId);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/types';
+import { CreateContractBodyType, GetContractsQueryType, UpdateContractTermsBodyType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ContractRepository {
@@ -120,5 +121,47 @@ export class ContractRepository {
       where: { id },
       data: { status: 'CANCELLED' },
     });
+  }
+
+  async findContracts(query: GetContractsQueryType, requestUserId: number) {
+    const { page, limit, status, jobId, clientId, freelancerId } = query;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.ContractWhereInput = {
+      deletedAt: null,
+      ...(status && { status }),
+      ...(jobId && { jobId }),
+      OR: [
+        { clientId: requestUserId },
+        { freelancerId: requestUserId },
+      ],
+    };
+
+    if (clientId) {
+      where.clientId = clientId;
+    }
+    if (freelancerId) {
+      where.freelancerId = freelancerId;
+    }
+
+    const [total, data] = await Promise.all([
+      this.prisma.contract.count({ where }),
+      this.prisma.contract.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
