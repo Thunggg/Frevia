@@ -96,11 +96,6 @@ export function RegisterForm() {
     try {
       const email = form.getValues("email");
 
-      if (!email) {
-        toastError({ message: "Email is required" });
-        return;
-      }
-
       const res = await authApiRequest.sendOtp({
         email,
         type: "EMAIL_VERIFICATION",
