@@ -21,13 +21,13 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { LoginBodySchema } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { authApiRequest } from "../../apiRequests/auth";
+import { authApiRequest } from "@/apiRequests/auth";
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
   toastError,
   toastSuccess,
-} from "../../../../../packages/ui/src/components/shadcn/toast";
+} from "@repo/ui/components/shadcn/toast";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);

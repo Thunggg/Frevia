@@ -4,7 +4,7 @@ import {
   RegisterBodyType,
   UserType,
 } from "@shared/types";
-import { http } from "../lib/http";
+import { http } from "@/lib/http";
 
 export const authApiRequest = {
   login: (body: LoginBodyType) =>

@@ -20,7 +20,7 @@ import { toast } from "@repo/ui/components/shadcn/sonner";
 import { RegisterBodySchema, RoleName } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { authApiRequest } from "../../apiRequests/auth";
+import { authApiRequest } from "@/apiRequests/auth";
 
 export function RegisterForm() {
   const form = useForm<z.infer<typeof RegisterBodySchema>>({

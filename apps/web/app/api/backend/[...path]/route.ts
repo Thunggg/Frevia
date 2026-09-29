@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { envConfig } from "../../../../configs/validate-env"; // chỉnh lại path cho khớp project
+import { envConfig } from "@/configs/validate-env";
 
 const NEST_API = envConfig?.NESTJS_API_URL;
 
