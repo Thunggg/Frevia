@@ -1,13 +1,26 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
-import { CreateContractBodyDTO, CreateContractResponseDTO } from './contract.dto';
+import {
+  CreateContractBodyDTO,
+  CreateContractResponseDTO,
+  UpdateContractTermsBodyDTO,
+  UpdateContractTermsResponseDTO,
+} from './contract.dto';
 import { ContractService } from './contract.service';
-import type { CreateContractBodyType } from '@shared/types';
+import type { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/types';
 
 @Controller('api/contracts')
 export class ContractController {
   constructor(private readonly contractService: ContractService) { }
+
   @Post()
   @ZodSerializerDto(CreateContractResponseDTO)
   createContract(
@@ -15,5 +28,19 @@ export class ContractController {
     @Body() body: CreateContractBodyDTO,
   ) {
     return this.contractService.createContract(userId, body as CreateContractBodyType);
+  }
+
+  @Patch(':id/terms')
+  @ZodSerializerDto(UpdateContractTermsResponseDTO)
+  updateContractTerms(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+    @Body() body: UpdateContractTermsBodyDTO,
+  ) {
+    return this.contractService.updateContractTerms(
+      id,
+      userId,
+      body as UpdateContractTermsBodyType,
+    );
   }
 }

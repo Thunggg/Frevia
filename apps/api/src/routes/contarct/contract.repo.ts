@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateContractBodyType } from '@shared/types';
+import { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
 export class ContractRepository {
   constructor(private readonly prisma: PrismaService) { }
-
 
   async findJobById(jobId: number) {
     return this.prisma.job.findUnique({
@@ -14,7 +13,6 @@ export class ContractRepository {
     });
   }
 
-
   async findUserById(userId: number) {
     return this.prisma.user.findUnique({
       where: { id: userId, deletedAt: null },
@@ -22,11 +20,16 @@ export class ContractRepository {
     });
   }
 
-
   async findContractByJobId(jobId: number) {
     return this.prisma.contract.findUnique({
       where: { jobId },
       select: { id: true },
+    });
+  }
+
+  async findContractById(id: number) {
+    return this.prisma.contract.findUnique({
+      where: { id, deletedAt: null },
     });
   }
 
@@ -52,7 +55,28 @@ export class ContractRepository {
         terms: terms ?? null,
         escrowContractAddress: escrowContractAddress ?? null,
         expiresAt: expiresAt ? new Date(expiresAt) : null,
-        // status, paymentStatus, signedByClient, signedByFreelancer đều có default trong schema
+      },
+    });
+  }
+
+  async updateContractTerms(
+    id: number,
+    data: UpdateContractTermsBodyType,
+    resetFreelancerSignature: boolean,
+  ) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: {
+        ...(data.terms !== undefined && { terms: data.terms }),
+        ...(data.totalAmount !== undefined && { totalAmount: data.totalAmount }),
+        ...(data.depositPercent !== undefined && { depositPercent: data.depositPercent }),
+        ...(data.escrowContractAddress !== undefined && {
+          escrowContractAddress: data.escrowContractAddress,
+        }),
+        ...(data.expiresAt !== undefined && {
+          expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+        }),
+        ...(resetFreelancerSignature && { signedByFreelancer: false }),
       },
     });
   }

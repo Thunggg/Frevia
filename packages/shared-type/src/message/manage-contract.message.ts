@@ -14,6 +14,9 @@ export const ManageContractMessage = {
   FREELANCER_NOT_FOUND: 'Error.ContractFreelancerNotFound',
   FORBIDDEN: 'Error.ContractForbidden',
 
+  CONTRACT_NOT_IN_PENDING_SIGN: 'Error.ContractNotInPendingSign',
+  TERMS_LOCKED_AFTER_BOTH_SIGNED: 'Error.ContractTermsLockedAfterBothSigned',
+
   FAILED_TO_CREATE_CONTRACT: 'Error.FailedToCreateContract',
-  FAILED_TO_LOAD_CONTRACT: 'Error.FailedToLoadContract',
+  FAILED_TO_UPDATE_CONTRACT: 'Error.FailedToUpdateContract',
 } as const;

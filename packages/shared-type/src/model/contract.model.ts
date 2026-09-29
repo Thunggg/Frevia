@@ -11,7 +11,6 @@ export const ContractStatusEnum = z.enum([
 
 export const PaymentStatusEnum = z.enum(['PENDING', 'PAID']);
 
-
 export const ContractSchema = z.object({
   id: z.number(),
   jobId: z.number(),
@@ -31,7 +30,6 @@ export const ContractSchema = z.object({
   expiresAt: z.date().nullable(),
   deletedAt: z.date().nullable(),
 });
-
 
 export const CreateContractBodySchema = z.object({
   jobId: z.number(ManageContractMessage.JOB_ID_REQUIRED).int().positive(),
@@ -74,6 +72,38 @@ export const CreateContractResponseSchema = ContractSchema;
 
 export type ContractType = z.infer<typeof ContractSchema>;
 export type CreateContractBodyType = z.infer<typeof CreateContractBodySchema>;
-export type CreateContractResponseType = z.infer<
-  typeof CreateContractResponseSchema
->;
+export type CreateContractResponseType = z.infer<typeof CreateContractResponseSchema>;
+
+export const UpdateContractTermsBodySchema = z.object({
+  terms: z.string().optional(),
+
+  totalAmount: z
+    .number()
+    .positive(ManageContractMessage.TOTAL_AMOUNT_POSITIVE)
+    .optional(),
+
+  depositPercent: z
+    .number()
+    .min(0, ManageContractMessage.DEPOSIT_PERCENT_RANGE)
+    .max(100, ManageContractMessage.DEPOSIT_PERCENT_RANGE)
+    .optional(),
+
+  escrowContractAddress: z.string().max(42).optional(),
+
+  expiresAt: z
+    .string()
+    .datetime(ManageContractMessage.EXPIRES_AT_FUTURE)
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return new Date(val) > new Date();
+      },
+      { message: ManageContractMessage.EXPIRES_AT_FUTURE },
+    ),
+});
+
+export const UpdateContractTermsResponseSchema = ContractSchema;
+
+export type UpdateContractTermsBodyType = z.infer<typeof UpdateContractTermsBodySchema>;
+export type UpdateContractTermsResponseType = z.infer<typeof UpdateContractTermsResponseSchema>;

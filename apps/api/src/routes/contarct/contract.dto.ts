@@ -1,13 +1,13 @@
 import {
   CreateContractBodySchema,
   CreateContractResponseSchema,
+  UpdateContractTermsBodySchema,
+  UpdateContractTermsResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
-export class CreateContractBodyDTO extends createZodDto(
-  CreateContractBodySchema,
-) {}
+export class CreateContractBodyDTO extends createZodDto(CreateContractBodySchema) { }
+export class CreateContractResponseDTO extends createZodDto(CreateContractResponseSchema) { }
 
-export class CreateContractResponseDTO extends createZodDto(
-  CreateContractResponseSchema,
-) {}
+export class UpdateContractTermsBodyDTO extends createZodDto(UpdateContractTermsBodySchema) { }
+export class UpdateContractTermsResponseDTO extends createZodDto(UpdateContractTermsResponseSchema) { }

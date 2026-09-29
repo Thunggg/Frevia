@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
@@ -8,10 +9,7 @@ import { ManageContractMessage } from '@shared/types';
 
 export const ContractAlreadyExistsException = () =>
   new ConflictException([
-    {
-      message: ManageContractMessage.CONTRACT_ALREADY_EXISTS_FOR_JOB,
-      path: 'jobId',
-    },
+    { message: ManageContractMessage.CONTRACT_ALREADY_EXISTS_FOR_JOB, path: 'jobId' },
   ]);
 
 export const ContractNotFoundException = () =>
@@ -31,10 +29,7 @@ export const ContractClientNotFoundException = () =>
 
 export const ContractFreelancerNotFoundException = () =>
   new NotFoundException([
-    {
-      message: ManageContractMessage.FREELANCER_NOT_FOUND,
-      path: 'freelancerId',
-    },
+    { message: ManageContractMessage.FREELANCER_NOT_FOUND, path: 'freelancerId' },
   ]);
 
 export const ContractForbiddenException = () =>
@@ -42,12 +37,22 @@ export const ContractForbiddenException = () =>
     { message: ManageContractMessage.FORBIDDEN, path: 'clientId' },
   ]);
 
+export const ContractNotInPendingSignException = () =>
+  new BadRequestException([
+    { message: ManageContractMessage.CONTRACT_NOT_IN_PENDING_SIGN, path: 'status' },
+  ]);
+
+export const TermsLockedException = () =>
+  new BadRequestException([
+    { message: ManageContractMessage.TERMS_LOCKED_AFTER_BOTH_SIGNED, path: 'status' },
+  ]);
+
 export const FailedToCreateContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_CREATE_CONTRACT, path: '' },
   ]);
 
-export const FailedToLoadContractException = () =>
+export const FailedToUpdateContractException = () =>
   new InternalServerErrorException([
-    { message: ManageContractMessage.FAILED_TO_LOAD_CONTRACT, path: '' },
+    { message: ManageContractMessage.FAILED_TO_UPDATE_CONTRACT, path: '' },
   ]);
