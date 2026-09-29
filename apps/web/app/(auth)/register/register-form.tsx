@@ -38,8 +38,11 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@repo/ui/components/shadcn/input-group";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
+  const router = useRouter();
+
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
@@ -73,6 +76,8 @@ export function RegisterForm() {
 
       if (res.success) {
         toastSuccess({ message: "Register successful" });
+        form.reset();
+        router.push("/login");
       }
     } catch (error: unknown) {
       if (error instanceof ApiFail) {
@@ -100,8 +105,6 @@ export function RegisterForm() {
         email,
         type: "EMAIL_VERIFICATION",
       });
-
-      console.log(res);
 
       if (res.success) {
         toastSuccess({ message: res.data.message });

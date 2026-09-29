@@ -23,17 +23,17 @@ export const UserBannedException = () =>
 
 export const InvalidVerificationCodeException = () =>
   new UnprocessableEntityException([
-    { message: AuthMessage.INVALID_VERIFICATION_CODE, path: 'code' },
+    { message: AuthMessage.INVALID_VERIFICATION_CODE, path: 'otpCode' },
   ]);
 
 export const OTPExpiredException = () =>
   new UnprocessableEntityException([
-    { message: AuthMessage.OTP_EXPIRED, path: 'code' },
+    { message: AuthMessage.OTP_EXPIRED, path: 'otpCode' },
   ]);
 
 export const TooManyAttemptsException = () =>
   new UnprocessableEntityException([
-    { message: AuthMessage.TOO_MANY_ATTEMPTS, path: 'code' },
+    { message: AuthMessage.TOO_MANY_ATTEMPTS, path: 'otpCode' },
   ]);
 
 export const FailedToSendOTPException = () =>
