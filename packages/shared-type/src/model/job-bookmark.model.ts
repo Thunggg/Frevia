@@ -29,9 +29,12 @@ export const ViewBookmarkedJobResponseSchema = z.object({
     totalPages: z.number().int().min(0),
   }),
 });
+export const BookmarkJobBodySchema = JobBookmarkSchema.pick({
+  jobId: true,
+});
 
 export type JobBookmarkType = z.infer<typeof JobBookmarkSchema>;
-
+export type BookmarkJobBodyType = z.infer<typeof BookmarkJobBodySchema>;
 export type ViewBookmarkedJobFilterType = z.infer<
   typeof ViewBookmarkedJobFilterSchema
 >;

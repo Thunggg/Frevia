@@ -1,9 +1,13 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
-import type { ViewBookmarkedJobFilterType } from '@shared/types';
+import type {
+  BookmarkJobBodyType,
+  ViewBookmarkedJobFilterType,
+} from '@shared/types';
 
 import {
+  BookmarkJobBodyDto,
   ViewBookmarkedJobQueryDto,
   ViewBookmarkedJobResponseDto,
 } from './manage-job.dto';
@@ -18,10 +22,23 @@ export class ManageJobController {
   @ZodSerializerDto(ViewBookmarkedJobResponseDto)
   viewBookmarkedJob(
     @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
 
     @Query(new ZodValidationPipe(ViewBookmarkedJobQueryDto))
     query: ViewBookmarkedJobFilterType,
   ) {
-    return this.manageJobService.viewBookmarkedJob(userId, query);
+    return this.manageJobService.viewBookmarkedJob(userId, roleName, query);
+  }
+
+  @Post('bookmarks')
+  bookmarkJob(
+    @UserActive('userId')
+    userId: number,
+    @UserActive('roleName') roleName: string,
+
+    @Body(new ZodValidationPipe(BookmarkJobBodyDto))
+    body: BookmarkJobBodyType,
+  ) {
+    return this.manageJobService.bookmarkJob(userId, roleName, body);
   }
 }

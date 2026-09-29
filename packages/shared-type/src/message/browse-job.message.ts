@@ -12,4 +12,5 @@ export const BrowseJobMessage = {
   FAILED_TO_BOOKMARK_JOB: "Error.FailedToBookmarkJob",
 
   FAILED_TO_REMOVE_BOOKMARK: "Error.FailedToRemoveBookmark",
+  JOB_ALREADY_BOOKMARKED: "Job already bookmarked",
 } as const;

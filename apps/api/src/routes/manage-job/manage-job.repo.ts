@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { JobType, ViewBookmarkedJobFilterType } from '@shared/types';
+import {
+  JobBookmarkType,
+  JobType,
+  ViewBookmarkedJobFilterType,
+} from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
 
@@ -83,5 +87,40 @@ export class ManageJobRepository {
       })),
       total,
     };
+  }
+
+  async findJobById(id: number): Promise<Pick<JobType, 'id'> | null> {
+    return this.prisma.job.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  async findBookmark(
+    userId: number,
+    jobId: number,
+  ): Promise<JobBookmarkType | null> {
+    return this.prisma.jobBookmark.findUnique({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+  }
+
+  async bookmarkJob(userId: number, jobId: number): Promise<JobBookmarkType> {
+    return this.prisma.jobBookmark.create({
+      data: {
+        userId,
+        jobId,
+      },
+    });
   }
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +12,14 @@ export const BookmarkNotFoundException = () =>
 
 export const JobAlreadyBookmarkedException = () =>
   new BadRequestException(ManageJobMessage.JOB_ALREADY_BOOKMARKED);
+
+export const BookmarkJobOnlyForFreelancerException = () =>
+  new ForbiddenException([
+    {
+      message: ManageJobMessage.BOOKMARK_JOB_ONLY_FOR_FREELANCER,
+      path: 'roleName',
+    },
+  ]);
 
 export const JobNotFoundException = () =>
   new NotFoundException(ManageJobMessage.JOB_NOT_FOUND);
