@@ -24,10 +24,9 @@ import * as z from "zod";
 import { authApiRequest } from "@/apiRequests/auth";
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import {
-  toastError,
-  toastSuccess,
-} from "@repo/ui/components/shadcn/toast";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { handleErrorApi } from "@/lib/utils";
+import { ApiFail } from "@/lib/http";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,32 +43,19 @@ export function LoginForm() {
     try {
       const res = await authApiRequest.login(payload);
 
-      if (!res.success && res.error.details) {
-        res.error.details?.forEach((error: any) => {
-          form.setError(error.path as keyof z.infer<typeof LoginBodySchema>, {
-            type: "server",
-            message: error.message,
-          });
+      if (res.success) {
+        toastSuccess({ message: "Login successful" });
+      }
+    } catch (error: unknown) {
+      if (error instanceof ApiFail) {
+        handleErrorApi({
+          error: error.response,
+          setError: form.setError,
+          duration: 3000,
         });
-      } else if (
-        !res.success &&
-        (!res.error.details || res.error.details.length === 0)
-      ) {
-        toastSuccess("Login successful");
       } else {
-        toastError("Login failed");
+        toastError({ message: "Login failed", duration: 3000 });
       }
-    } catch (error: any) {
-      const res = error.response;
-      if (!res.success && res.error.details) {
-        res.error.details?.forEach((error: any) => {
-          form.setError(error.path as keyof z.infer<typeof LoginBodySchema>, {
-            type: "server",
-            message: error.message,
-          });
-        });
-      }
-      toastError(res.error.message);
     }
   }
 

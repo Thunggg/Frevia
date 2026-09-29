@@ -17,18 +17,36 @@ const successStyle = {
     "light-dark(var(--color-green-600), var(--color-green-400))",
 } as React.CSSProperties;
 
-export function toastError(message: string, className?: string) {
+export function toastError({
+  message,
+  className,
+  duration,
+}: {
+  message: string;
+  className?: string;
+  duration?: number;
+}) {
   return toast.error(message, {
     style: errorStyle,
     position: "top-right",
     className,
+    duration: duration || 3000,
   });
 }
 
-export function toastSuccess(message: string, className?: string) {
+export function toastSuccess({
+  message,
+  className,
+  duration,
+}: {
+  message: string;
+  className?: string;
+  duration?: number;
+}) {
   return toast.success(message, {
     style: successStyle,
     position: "top-right",
     className,
+    duration: duration || 3000,
   });
 }
