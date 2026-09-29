@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,4 +18,9 @@ export const NoPortfoliosAvailableException = () =>
 export const UnableToLoadPortfoliosException = () =>
   new InternalServerErrorException([
     { message: PortfolioMessage.UNABLE_TO_LOAD_PORTFOLIOS, path: 'portfolios' },
+  ]);
+
+export const PortfolioForbiddenException = () =>
+  new ForbiddenException([
+    { message: PortfolioMessage.PORTFOLIO_FORBIDDEN, path: 'userId' },
   ]);

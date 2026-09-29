@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PortfolioMessage } from "../message/portfolio.message";
 
 export const PortfolioItemSchema = z.object({
   id: z.number(),
@@ -18,3 +19,18 @@ export type PortfolioItemType = z.infer<typeof PortfolioItemSchema>;
 export type PortfolioItemListResponseType = z.infer<
   typeof PortfolioItemListResponseSchema
 >;
+
+export const AddPortfolioSchema = z.object({
+  title: z
+    .string({ message: PortfolioMessage.PORTFOLIO_TITLE_REQUIRED })
+    .min(1, PortfolioMessage.PORTFOLIO_TITLE_REQUIRED)
+    .max(255),
+  description: z.string().nullable().optional(),
+  mediaUrls: z.array(z.string()).optional(),
+  projectUrl: z.string().nullable().optional(),
+});
+
+export const AddPortfolioResponseSchema = PortfolioItemSchema;
+
+export type AddPortfolioType = z.infer<typeof AddPortfolioSchema>;
+export type AddPortfolioResponseType = z.infer<typeof AddPortfolioResponseSchema>;
