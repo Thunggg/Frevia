@@ -18,3 +18,6 @@ export * from "./model/forum-report.model";
 export * from "./message/manage-forum-report.message";
 export * from "./message/profile.message";
 export * from "./model/profile.model";
+export * from "./message/portfolio.message";
+export * from "./model/portfolio.model";
+
