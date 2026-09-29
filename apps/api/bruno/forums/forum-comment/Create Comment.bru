@@ -1,0 +1,26 @@
+meta {
+  name: Create Comment
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts/2/comments
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "content": "Bài viết rất hay, cảm ơn bạn đã chia sẻ! HEHEHEHE"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

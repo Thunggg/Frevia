@@ -19,3 +19,19 @@ export const FailedToLikeForumPostException = () =>
       path: 'likePost',
     },
   ]);
+
+export const FailedToViewForumLikeDetailException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumLikeMessage.FAILED_TO_VIEW_FORUM_LIKE_DETAIL,
+      path: 'viewForumLikeDetail',
+    },
+  ]);
+
+export const ForumLikeNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: ManageForumLikeMessage.FORUM_LIKE_NOT_FOUND,
+      path: 'likeId',
+    },
+  ]);

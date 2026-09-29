@@ -1,8 +1,12 @@
-import { Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { ForumLikeService } from './forums-like.service';
-import { ToggleLikeResponseDto } from './forums-like.dto';
+import {
+  ToggleLikeResponseDto,
+  ViewForumLikeDetailResponseDto,
+} from './forums-like.dto';
+import { IsPublic } from '../../../shared/decorators/auth.decorator';
 
 @Controller('api/forums/posts')
 export class ForumLikeController {
@@ -15,5 +19,12 @@ export class ForumLikeController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.forumLikeService.toggleLikePost(userId, id);
+  }
+
+  @Get(':id/like')
+  @IsPublic()
+  @ZodSerializerDto(ViewForumLikeDetailResponseDto)
+  viewForumLikeDetail(@Param('id', ParseIntPipe) postId: number) {
+    return this.forumLikeService.viewForumLikeDetail(postId);
   }
 }
