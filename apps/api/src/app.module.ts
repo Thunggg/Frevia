@@ -14,6 +14,7 @@ import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module'
 import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ManageJobModule } from './routes/manage-job/manage-job.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ForumReportModule } from './routes/forums/forums-reports/forums-reports
     ForumCommentModule,
     ForumReportModule,
     BrowseJobModule,
+    ManageJobModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,0 +1,27 @@
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { ManageJobMessage } from '@shared/types';
+
+export const BookmarkNotFoundException = () =>
+  new NotFoundException(ManageJobMessage.BOOKMARK_NOT_FOUND);
+
+export const JobAlreadyBookmarkedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_ALREADY_BOOKMARKED);
+
+export const JobNotFoundException = () =>
+  new NotFoundException(ManageJobMessage.JOB_NOT_FOUND);
+
+export const FailedToLoadBookmarkedJobsException = () =>
+  new InternalServerErrorException(
+    ManageJobMessage.FAILED_TO_LOAD_BOOKMARKED_JOBS,
+  );
+
+export const FailedToBookmarkJobException = () =>
+  new InternalServerErrorException(ManageJobMessage.FAILED_TO_BOOKMARK_JOB);
+
+export const FailedToRemoveBookmarkException = () =>
+  new InternalServerErrorException(ManageJobMessage.FAILED_TO_REMOVE_BOOKMARK);

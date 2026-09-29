@@ -6,4 +6,10 @@ export const BrowseJobMessage = {
 
   FAILED_TO_LOAD_JOB_LIST: "Error.FailedToLoadJobList",
   FAILED_TO_LOAD_JOB_DETAIL: "Error.FailedToLoadJobDetail",
+
+  FAILED_TO_LOAD_BOOKMARKED_JOBS: "Error.FailedToLoadBookmarkedJobs",
+
+  FAILED_TO_BOOKMARK_JOB: "Error.FailedToBookmarkJob",
+
+  FAILED_TO_REMOVE_BOOKMARK: "Error.FailedToRemoveBookmark",
 } as const;

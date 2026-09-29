@@ -1,0 +1,21 @@
+meta {
+  name: View List Bookmarked Job
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/manage-jobs/bookmarks?page=1&limit=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  limit: 10
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}

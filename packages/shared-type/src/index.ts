@@ -19,3 +19,5 @@ export * from "./message/manage-forum-comment.message";
 export * from "./model/forum-report.model";
 export * from "./message/manage-forum-report.message";
 export * from "./model/job-skill.model";
+export * from "./model/job-bookmark.model";
+export * from "./message/manage-job.message";
