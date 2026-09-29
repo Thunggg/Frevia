@@ -1,6 +1,7 @@
 import {
   CreateRoleBodySchema,
   CreateRoleResponseSchema,
+  DeleteRoleResponseSchema,
   RoleDetailResponseSchema,
   RoleListResponseSchema,
   UpdateRoleBodySchema,
@@ -24,4 +25,8 @@ export class UpdateRoleBodyDto extends createZodDto(UpdateRoleBodySchema) {}
 
 export class UpdateRoleResponseDto extends createZodDto(
   UpdateRoleResponseSchema,
+) {}
+
+export class DeleteRoleResponseDto extends createZodDto(
+  DeleteRoleResponseSchema,
 ) {}

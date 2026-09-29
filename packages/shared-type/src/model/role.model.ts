@@ -1,4 +1,5 @@
 import { ManageRoleMessage } from "../message/manage-role.message";
+import { MessageResSchema } from "./response.model";
 import { z } from "zod";
 
 export const RoleSchema = z.object({
@@ -44,6 +45,8 @@ export const UpdateRoleBodySchema = RoleSchema.pick({
 
 export const UpdateRoleResponseSchema = RoleListItemSchema;
 
+export const DeleteRoleResponseSchema = MessageResSchema;
+
 export type RoleType = z.infer<typeof RoleSchema>;
 export type RoleListItemType = z.infer<typeof RoleListItemSchema>;
 export type RoleListResponseType = z.infer<typeof RoleListResponseSchema>;
@@ -52,3 +55,4 @@ export type CreateRoleBodyType = z.infer<typeof CreateRoleBodySchema>;
 export type CreateRoleResponseType = z.infer<typeof CreateRoleResponseSchema>;
 export type UpdateRoleBodyType = z.infer<typeof UpdateRoleBodySchema>;
 export type UpdateRoleResponseType = z.infer<typeof UpdateRoleResponseSchema>;
+export type DeleteRoleResponseType = z.infer<typeof DeleteRoleResponseSchema>;

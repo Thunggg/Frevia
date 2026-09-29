@@ -61,3 +61,11 @@ export const FailedToUpdateRoleException = () =>
       path: 'roles',
     },
   ]);
+
+export const FailedToDeleteRoleException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageRoleMessage.FAILED_TO_DELETE_ROLE,
+      path: 'roles',
+    },
+  ]);

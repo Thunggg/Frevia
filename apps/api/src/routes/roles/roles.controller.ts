@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -11,6 +12,7 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import {
   CreateRoleBodyDto,
   CreateRoleResponseDto,
+  DeleteRoleResponseDto,
   RoleDetailResponseDto,
   RoleListResponseDto,
   UpdateRoleBodyDto,
@@ -47,5 +49,11 @@ export class RolesController {
     @Body() body: UpdateRoleBodyDto,
   ) {
     return this.rolesService.updateRole(id, body);
+  }
+
+  @Delete(':id')
+  @ZodSerializerDto(DeleteRoleResponseDto)
+  deleteRole(@Param('id', ParseIntPipe) id: number) {
+    return this.rolesService.deleteRole(id);
   }
 }

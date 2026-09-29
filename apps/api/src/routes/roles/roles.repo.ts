@@ -94,7 +94,7 @@ export class RolesRepository {
     body: UpdateRoleBodyType,
   ): Promise<UpdateRoleResponseType> {
     return this.prisma.role.update({
-      where: { id },
+      where: { id, deletedAt: null },
       data: {
         ...(body.name !== undefined ? { name: body.name } : {}),
         ...(body.description !== undefined
@@ -106,6 +106,15 @@ export class RolesRepository {
         name: true,
         description: true,
         createdAt: true,
+      },
+    });
+  }
+
+  async softDeleteRole(id: number): Promise<void> {
+    await this.prisma.role.update({
+      where: { id, deletedAt: null },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }
