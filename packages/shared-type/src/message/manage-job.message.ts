@@ -13,5 +13,6 @@ export const ManageJobMessage = {
 
   FAILED_TO_REMOVE_BOOKMARK: "Error.FailedToRemoveBookmark",
 
+  REMOVE_BOOKMARK_SUCCESS: "Remove bookmark successfully",
   INTERNAL_ERROR: "Error.Internal",
 } as const;

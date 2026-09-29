@@ -123,4 +123,18 @@ export class ManageJobRepository {
       },
     });
   }
+
+  async removeBookmark(
+    userId: number,
+    jobId: number,
+  ): Promise<JobBookmarkType> {
+    return this.prisma.jobBookmark.delete({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+  }
 }

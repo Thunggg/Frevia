@@ -10,9 +10,12 @@ import {
 import { ManageJobRepository } from './manage-job.repo';
 import {
   BookmarkJobOnlyForFreelancerException,
+  BookmarkNotFoundException,
+  FailedToRemoveBookmarkException,
   JobAlreadyBookmarkedException,
   JobNotFoundException,
 } from './manage-job.error';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class ManageJobService {
@@ -68,5 +71,26 @@ export class ManageJobService {
     }
 
     await this.manageJobRepository.bookmarkJob(userId, body.jobId);
+  }
+
+  async removeBookmark(userId: number, jobId: number): Promise<void> {
+    try {
+      const bookmark = await this.manageJobRepository.findBookmark(
+        userId,
+        jobId,
+      );
+
+      if (!bookmark) {
+        throw BookmarkNotFoundException();
+      }
+
+      await this.manageJobRepository.removeBookmark(userId, jobId);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToRemoveBookmarkException();
+      }
+
+      throw error;
+    }
   }
 }

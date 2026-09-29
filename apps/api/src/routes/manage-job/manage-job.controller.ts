@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
 import type {
@@ -40,5 +49,16 @@ export class ManageJobController {
     body: BookmarkJobBodyType,
   ) {
     return this.manageJobService.bookmarkJob(userId, roleName, body);
+  }
+
+  @Delete('bookmarks/:jobId')
+  removeBookmark(
+    @UserActive('userId')
+    userId: number,
+
+    @Param('jobId', ParseIntPipe)
+    jobId: number,
+  ) {
+    return this.manageJobService.removeBookmark(userId, jobId);
   }
 }
