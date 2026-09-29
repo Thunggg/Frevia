@@ -9,6 +9,7 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
+  CancelContractResponseDTO,
   CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
@@ -62,5 +63,14 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.signContract(id, userId);
+  }
+
+  @Patch(':id/cancel')
+  @ZodSerializerDto(CancelContractResponseDTO)
+  cancelContract(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.cancelContract(id, userId);
   }
 }

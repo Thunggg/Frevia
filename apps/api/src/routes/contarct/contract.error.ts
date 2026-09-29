@@ -57,6 +57,11 @@ export const AlreadySignedException = () =>
     { message: ManageContractMessage.ALREADY_SIGNED, path: 'signedBy' },
   ]);
 
+export const CannotCancelActiveContractException = () =>
+  new BadRequestException([
+    { message: ManageContractMessage.CANNOT_CANCEL_ACTIVE_CONTRACT, path: 'status' },
+  ]);
+
 export const FailedToCreateContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_CREATE_CONTRACT, path: '' },

@@ -114,4 +114,11 @@ export class ContractRepository {
       },
     });
   }
+
+  async cancelContract(id: number) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+    });
+  }
 }

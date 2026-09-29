@@ -18,6 +18,7 @@ export const ManageContractMessage = {
   TERMS_LOCKED_AFTER_BOTH_SIGNED: 'Error.ContractTermsLockedAfterBothSigned',
   CONTRACT_NOT_ACTIVE: 'Error.ContractNotActive',
   ALREADY_SIGNED: 'Error.ContractAlreadySigned',
+  CANNOT_CANCEL_ACTIVE_CONTRACT: 'Error.ContractCannotCancelActive',
 
   FAILED_TO_CREATE_CONTRACT: 'Error.FailedToCreateContract',
   FAILED_TO_UPDATE_CONTRACT: 'Error.FailedToUpdateContract',

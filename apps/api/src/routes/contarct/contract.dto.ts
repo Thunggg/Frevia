@@ -1,4 +1,5 @@
 import {
+  CancelContractResponseSchema,
   CompleteContractResponseSchema,
   CreateContractBodySchema,
   CreateContractResponseSchema,
@@ -16,3 +17,4 @@ export class UpdateContractTermsResponseDTO extends createZodDto(UpdateContractT
 
 export class CompleteContractResponseDTO extends createZodDto(CompleteContractResponseSchema) { }
 export class SignContractResponseDTO extends createZodDto(SignContractResponseSchema) { }
+export class CancelContractResponseDTO extends createZodDto(CancelContractResponseSchema) { }

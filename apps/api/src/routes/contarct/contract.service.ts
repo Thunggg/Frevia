@@ -4,6 +4,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ContractRepository } from './contract.repo';
 import {
   AlreadySignedException,
+  CannotCancelActiveContractException,
   ContractAlreadyExistsException,
   ContractClientNotFoundException,
   ContractForbiddenException,
@@ -163,6 +164,34 @@ export class ContractService {
       }
 
       return updatedContract;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateContractException();
+    }
+  }
+
+  async cancelContract(contractId: number, requestUserId: number) {
+    try {
+      const contract = await this.contractRepository.findContractById(contractId);
+      if (!contract) {
+        throw ContractNotFoundException();
+      }
+
+      if (contract.clientId !== requestUserId) {
+        throw ContractForbiddenException();
+      }
+
+      if (contract.status === 'ACTIVE') {
+        throw CannotCancelActiveContractException();
+      }
+
+      if (contract.status !== 'PENDING_SIGN') {
+        throw ContractNotInPendingSignException();
+      }
+
+      return await this.contractRepository.cancelContract(contractId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
