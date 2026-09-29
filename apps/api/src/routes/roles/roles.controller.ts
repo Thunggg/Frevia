@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -12,6 +13,8 @@ import {
   CreateRoleResponseDto,
   RoleDetailResponseDto,
   RoleListResponseDto,
+  UpdateRoleBodyDto,
+  UpdateRoleResponseDto,
 } from './roles.dto';
 import { RolesService } from './roles.service';
 
@@ -35,5 +38,14 @@ export class RolesController {
   @ZodSerializerDto(CreateRoleResponseDto)
   createRole(@Body() body: CreateRoleBodyDto) {
     return this.rolesService.createRole(body);
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(UpdateRoleResponseDto)
+  updateRole(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateRoleBodyDto,
+  ) {
+    return this.rolesService.updateRole(id, body);
   }
 }
