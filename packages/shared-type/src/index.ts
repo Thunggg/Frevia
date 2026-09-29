@@ -19,3 +19,4 @@ export * from "./message/manage-forum-report.message";
 export * from "./type/google-type";
 export * from "./constants/oauth.constant";
 export * from "./model/role.model";
+export * from "./message/manage-role.message";

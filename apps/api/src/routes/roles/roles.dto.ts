@@ -1,4 +1,6 @@
 import {
+  CreateRoleBodySchema,
+  CreateRoleResponseSchema,
   RoleDetailResponseSchema,
   RoleListResponseSchema,
 } from '@shared/types';
@@ -8,4 +10,10 @@ export class RoleListResponseDto extends createZodDto(RoleListResponseSchema) {}
 
 export class RoleDetailResponseDto extends createZodDto(
   RoleDetailResponseSchema,
+) {}
+
+export class CreateRoleBodyDto extends createZodDto(CreateRoleBodySchema) {}
+
+export class CreateRoleResponseDto extends createZodDto(
+  CreateRoleResponseSchema,
 ) {}
