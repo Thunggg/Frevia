@@ -9,6 +9,7 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
+  CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
   UpdateContractTermsBodyDTO,
@@ -42,5 +43,14 @@ export class ContractController {
       userId,
       body as UpdateContractTermsBodyType,
     );
+  }
+
+  @Patch(':id/complete')
+  @ZodSerializerDto(CompleteContractResponseDTO)
+  completeContract(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.completeContract(id, userId);
   }
 }

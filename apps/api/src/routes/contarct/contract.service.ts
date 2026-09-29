@@ -8,6 +8,7 @@ import {
   ContractForbiddenException,
   ContractFreelancerNotFoundException,
   ContractJobNotFoundException,
+  ContractNotActiveException,
   ContractNotInPendingSignException,
   ContractNotFoundException,
   FailedToCreateContractException,
@@ -90,6 +91,30 @@ export class ContractService {
         body,
         resetFreelancerSignature,
       );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateContractException();
+    }
+  }
+
+  async completeContract(contractId: number, requestUserId: number) {
+    try {
+      const contract = await this.contractRepository.findContractById(contractId);
+      if (!contract) {
+        throw ContractNotFoundException();
+      }
+
+      if (contract.clientId !== requestUserId) {
+        throw ContractForbiddenException();
+      }
+
+      if (contract.status !== 'ACTIVE') {
+        throw ContractNotActiveException();
+      }
+
+      return await this.contractRepository.completeContract(contractId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

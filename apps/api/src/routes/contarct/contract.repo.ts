@@ -80,4 +80,14 @@ export class ContractRepository {
       },
     });
   }
+
+  async completeContract(id: number) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: {
+        status: 'COMPLETED',
+        completedAt: new Date(),
+      },
+    });
+  }
 }

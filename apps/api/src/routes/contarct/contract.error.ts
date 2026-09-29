@@ -47,6 +47,11 @@ export const TermsLockedException = () =>
     { message: ManageContractMessage.TERMS_LOCKED_AFTER_BOTH_SIGNED, path: 'status' },
   ]);
 
+export const ContractNotActiveException = () =>
+  new BadRequestException([
+    { message: ManageContractMessage.CONTRACT_NOT_ACTIVE, path: 'status' },
+  ]);
+
 export const FailedToCreateContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_CREATE_CONTRACT, path: '' },

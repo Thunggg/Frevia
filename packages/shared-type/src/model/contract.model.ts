@@ -107,3 +107,7 @@ export const UpdateContractTermsResponseSchema = ContractSchema;
 
 export type UpdateContractTermsBodyType = z.infer<typeof UpdateContractTermsBodySchema>;
 export type UpdateContractTermsResponseType = z.infer<typeof UpdateContractTermsResponseSchema>;
+
+export const CompleteContractResponseSchema = ContractSchema;
+export type CompleteContractResponseType = z.infer<typeof CompleteContractResponseSchema>;
+
