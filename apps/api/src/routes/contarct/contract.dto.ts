@@ -2,6 +2,7 @@ import {
   CompleteContractResponseSchema,
   CreateContractBodySchema,
   CreateContractResponseSchema,
+  SignContractResponseSchema,
   UpdateContractTermsBodySchema,
   UpdateContractTermsResponseSchema,
 } from '@shared/types';
@@ -14,3 +15,4 @@ export class UpdateContractTermsBodyDTO extends createZodDto(UpdateContractTerms
 export class UpdateContractTermsResponseDTO extends createZodDto(UpdateContractTermsResponseSchema) { }
 
 export class CompleteContractResponseDTO extends createZodDto(CompleteContractResponseSchema) { }
+export class SignContractResponseDTO extends createZodDto(SignContractResponseSchema) { }

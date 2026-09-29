@@ -17,6 +17,7 @@ export const ManageContractMessage = {
   CONTRACT_NOT_IN_PENDING_SIGN: 'Error.ContractNotInPendingSign',
   TERMS_LOCKED_AFTER_BOTH_SIGNED: 'Error.ContractTermsLockedAfterBothSigned',
   CONTRACT_NOT_ACTIVE: 'Error.ContractNotActive',
+  ALREADY_SIGNED: 'Error.ContractAlreadySigned',
 
   FAILED_TO_CREATE_CONTRACT: 'Error.FailedToCreateContract',
   FAILED_TO_UPDATE_CONTRACT: 'Error.FailedToUpdateContract',

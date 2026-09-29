@@ -12,6 +12,7 @@ import {
   CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
+  SignContractResponseDTO,
   UpdateContractTermsBodyDTO,
   UpdateContractTermsResponseDTO,
 } from './contract.dto';
@@ -52,5 +53,14 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.completeContract(id, userId);
+  }
+
+  @Patch(':id/sign')
+  @ZodSerializerDto(SignContractResponseDTO)
+  signContract(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.signContract(id, userId);
   }
 }

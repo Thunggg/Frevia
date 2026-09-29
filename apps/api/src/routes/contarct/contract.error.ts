@@ -52,6 +52,11 @@ export const ContractNotActiveException = () =>
     { message: ManageContractMessage.CONTRACT_NOT_ACTIVE, path: 'status' },
   ]);
 
+export const AlreadySignedException = () =>
+  new ConflictException([
+    { message: ManageContractMessage.ALREADY_SIGNED, path: 'signedBy' },
+  ]);
+
 export const FailedToCreateContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_CREATE_CONTRACT, path: '' },

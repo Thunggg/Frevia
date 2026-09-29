@@ -90,4 +90,28 @@ export class ContractRepository {
       },
     });
   }
+
+  async signContractAsClient(id: number) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: { signedByClient: true },
+    });
+  }
+
+  async signContractAsFreelancer(id: number) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: { signedByFreelancer: true },
+    });
+  }
+
+  async activateContract(id: number) {
+    return this.prisma.contract.update({
+      where: { id },
+      data: {
+        status: 'ACTIVE',
+        signedAt: new Date(),
+      },
+    });
+  }
 }

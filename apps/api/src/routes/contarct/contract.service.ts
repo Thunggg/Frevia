@@ -3,6 +3,7 @@ import { CreateContractBodyType, UpdateContractTermsBodyType } from '@shared/typ
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ContractRepository } from './contract.repo';
 import {
+  AlreadySignedException,
   ContractAlreadyExistsException,
   ContractClientNotFoundException,
   ContractForbiddenException,
@@ -115,6 +116,53 @@ export class ContractService {
       }
 
       return await this.contractRepository.completeContract(contractId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateContractException();
+    }
+  }
+
+  async signContract(contractId: number, requestUserId: number) {
+    try {
+      const contract = await this.contractRepository.findContractById(contractId);
+      if (!contract) {
+        throw ContractNotFoundException();
+      }
+
+      const isClient = contract.clientId === requestUserId;
+      const isFreelancer = contract.freelancerId === requestUserId;
+
+      if (!isClient && !isFreelancer) {
+        throw ContractForbiddenException();
+      }
+
+      if (contract.status !== 'PENDING_SIGN') {
+        throw ContractNotInPendingSignException();
+      }
+
+      if (isClient && contract.signedByClient) {
+        throw AlreadySignedException();
+      }
+
+      if (isFreelancer && contract.signedByFreelancer) {
+        throw AlreadySignedException();
+      }
+
+      let updatedContract = isClient
+        ? await this.contractRepository.signContractAsClient(contractId)
+        : await this.contractRepository.signContractAsFreelancer(contractId);
+
+      const bothSigned =
+        (isClient ? true : contract.signedByClient) &&
+        (isFreelancer ? true : contract.signedByFreelancer);
+
+      if (bothSigned) {
+        updatedContract = await this.contractRepository.activateContract(contractId);
+      }
+
+      return updatedContract;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
