@@ -18,6 +18,9 @@ export const RoleListItemSchema = RoleSchema.pick({
 
 export const RoleListResponseSchema = z.array(RoleListItemSchema);
 
+export const RoleDetailResponseSchema = RoleListItemSchema;
+
 export type RoleType = z.infer<typeof RoleSchema>;
 export type RoleListItemType = z.infer<typeof RoleListItemSchema>;
 export type RoleListResponseType = z.infer<typeof RoleListResponseSchema>;
+export type RoleDetailResponseType = z.infer<typeof RoleDetailResponseSchema>;

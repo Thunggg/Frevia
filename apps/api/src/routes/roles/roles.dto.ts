@@ -1,4 +1,11 @@
-import { RoleListResponseSchema } from '@shared/types';
+import {
+  RoleDetailResponseSchema,
+  RoleListResponseSchema,
+} from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
 export class RoleListResponseDto extends createZodDto(RoleListResponseSchema) {}
+
+export class RoleDetailResponseDto extends createZodDto(
+  RoleDetailResponseSchema,
+) {}

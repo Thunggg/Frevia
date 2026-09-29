@@ -1,0 +1,20 @@
+meta {
+  name: View role list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/roles
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
