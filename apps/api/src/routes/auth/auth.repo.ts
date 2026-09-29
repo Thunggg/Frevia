@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import {
   EmailVerificationType,
+  OauthProvider,
+  RoleType,
   TypeOfVerificationCode,
   UserType,
 } from '@shared/types';
@@ -21,6 +23,20 @@ export class AuthRepository {
       where: {
         email,
         deletedAt: null,
+      },
+    });
+  }
+
+  async findUserByEmailIncludeRoles(
+    email: string,
+  ): Promise<(UserType & { userRoles: { role: RoleType }[] }) | null> {
+    return this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+      include: {
+        userRoles: {
+          include: { role: true },
+          orderBy: { isPrimary: 'desc' },
+        },
       },
     });
   }
@@ -100,6 +116,49 @@ export class AuthRepository {
       }),
     ]);
     return createdUser;
+  }
+
+  async createUserAndRegisterGoogle(user: {
+    email: string;
+    fullName: string;
+    roleId: number;
+  }): Promise<
+    UserType & {
+      userRoles: {
+        role: RoleType;
+      }[];
+    }
+  > {
+    return await this.prisma.user.create({
+      data: {
+        email: user.email,
+        userRoles: {
+          create: {
+            roleId: user.roleId,
+            isPrimary: true,
+          },
+        },
+        profile: {
+          create: {
+            displayName: user.fullName,
+          },
+        },
+        isBanned: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
+      },
+    });
   }
 
   async upsertVerificationCode(data: {
@@ -251,6 +310,25 @@ export class AuthRepository {
             isPrimary: 'desc',
           },
         },
+      },
+    });
+  }
+
+  async createOauthAccount({
+    userId,
+    provider,
+    providerUserId,
+  }: {
+    userId: number;
+    provider: (typeof OauthProvider)[keyof typeof OauthProvider];
+    providerUserId: string;
+  }) {
+    return await this.prisma.oauthAccount.create({
+      data: {
+        userId,
+        provider,
+        providerUserId,
+        createdAt: new Date(),
       },
     });
   }

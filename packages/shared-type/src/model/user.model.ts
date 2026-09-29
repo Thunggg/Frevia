@@ -144,6 +144,10 @@ export const ForgotPasswordBodySchema = z
     }
   });
 
+export const GetAuthorizationUrlResSchema = z.object({
+  url: z.url("Error.InvalidUrl"),
+});
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -160,3 +164,7 @@ export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
 export type LogoutBodySchemaType = z.infer<typeof LogoutBodySchema>;
 
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
+
+export type GetAuthorizationUrlResType = z.infer<
+  typeof GetAuthorizationUrlResSchema
+>;

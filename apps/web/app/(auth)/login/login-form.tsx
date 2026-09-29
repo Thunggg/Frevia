@@ -64,6 +64,16 @@ export function LoginForm() {
     }
   }
 
+  async function clickGoogleLogin() {
+    const res = await authApiRequest.getGoogleLink();
+
+    if (res.success) {
+      window.location.href = res.data.url;
+    } else {
+      toastError({ message: "Failed to get Google link", duration: 3000 });
+    }
+  }
+
   return (
     <Card className="w-full max-w-xl p-10 bg-color-card-foreground">
       {/* Card Header */}
@@ -194,6 +204,7 @@ export function LoginForm() {
           <Button
             variant="outline"
             type="button"
+            onClick={() => clickGoogleLogin()}
             className="h-11 font-medium  w-full cursor-pointer"
           >
             {/* Bạn có thể thay bằng SVG thực tế của Google */}

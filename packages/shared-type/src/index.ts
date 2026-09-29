@@ -16,3 +16,6 @@ export * from "./model/forum-comment.model";
 export * from "./message/manage-forum-comment.message";
 export * from "./model/forum-report.model";
 export * from "./message/manage-forum-report.message";
+export * from "./type/google-type";
+export * from "./constants/oauth.constant";
+export * from "./model/role.model";

@@ -1,5 +1,6 @@
 import {
   ForgotPasswordBodyType,
+  GetAuthorizationUrlResType,
   LoginBodyType,
   LoginResType,
   MessageResType,
@@ -21,4 +22,7 @@ export const authApiRequest = {
 
   forgotPassword: (body: ForgotPasswordBodyType) =>
     http.post<MessageResType>("/api/auth/forgot-password", body),
+
+  getGoogleLink: () =>
+    http.get<GetAuthorizationUrlResType>("/api/auth/google-link"),
 };
