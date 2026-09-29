@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -12,6 +13,8 @@ import { ZodSerializerDto } from 'nestjs-zod';
 
 import {
   CreateJobBodyDto,
+  UpdateJobBodyDto,
+  UpdateJobResponseDto,
   ViewBookmarkedJobQueryDto,
   ViewBookmarkedJobResponseDto,
 } from './manage-job.dto';
@@ -64,5 +67,20 @@ export class ManageJobController {
     @Body() body: CreateJobBodyDto,
   ) {
     return this.manageJobService.createJob(userId, body);
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(UpdateJobResponseDto)
+  updateJob(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @UserActive('userId')
+    userId: number,
+
+    @Body()
+    body: UpdateJobBodyDto,
+  ) {
+    return this.manageJobService.updateJob(userId, id, body);
   }
 }

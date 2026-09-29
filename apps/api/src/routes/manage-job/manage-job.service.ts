@@ -4,6 +4,7 @@ import {
   CreateJobBodyType,
   JobType,
   RoleName,
+  UpdateJobBodyType,
   ViewBookmarkedJobFilterType,
   ViewBookmarkedJobResponseType,
 } from '@shared/types';
@@ -14,6 +15,7 @@ import {
   BookmarkNotFoundException,
   FailedToCreateJobException,
   FailedToRemoveBookmarkException,
+  FailedToUpdateJobException,
   JobAlreadyBookmarkedException,
   JobNotFoundException,
 } from './manage-job.error';
@@ -99,6 +101,22 @@ export class ManageJobService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToCreateJobException();
+      }
+
+      throw error;
+    }
+  }
+
+  async updateJob(
+    userId: number,
+    jobId: number,
+    body: UpdateJobBodyType,
+  ): Promise<JobType> {
+    try {
+      return await this.manageJobRepository.updateJob(userId, jobId, body);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateJobException();
       }
 
       throw error;

@@ -77,17 +77,17 @@ export class ForumController {
     return this.forumService.createForumPost(userId, body);
   }
 
-  @Patch('posts/:id')
-  @ZodSerializerDto(UpdateForumPostResponseDto)
-  updateForumPost(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
-    // Lấy Body và Validate theo schema UpdateForumPostSchema
-    @Body(new ZodValidationnPipe(UpdateForumPostDto))
-    body: UpdateForumPostType,
-  ) {
-    return this.forumService.updateForumPost(id, userId, body);
-  }
+  // @Patch('posts/:id')
+  // @ZodSerializerDto(UpdateForumPostResponseDto)
+  // updateForumPost(
+  //   @UserActive('userId') userId: number,
+  //   @Param('id', ParseIntPipe) id: number,
+  //   // Lấy Body và Validate theo schema UpdateForumPostSchema
+  //   @Body(new ZodValidationnPipe(UpdateForumPostDto))
+  //   body: UpdateForumPostType,
+  // ) {
+  //   return this.forumService.updateForumPost(id, userId, body);
+  // }
 
   @Delete('posts/:id')
   deleteForumPost(

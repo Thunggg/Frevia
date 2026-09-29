@@ -58,6 +58,8 @@ export const ViewJobDetailResSchema = JobSchema.extend({
   skills: z.array(JobSkillSchema),
 });
 
+export const UpdateJobResponseSchema = JobSchema;
+
 export const CreateJobBodySchema = z
   .object({
     title: z
@@ -142,7 +144,9 @@ export const CreateJobBodySchema = z
       });
     }
   });
-
+export const UpdateJobBodySchema = CreateJobBodySchema;
+export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
+export type UpdateJobBodyType = z.infer<typeof UpdateJobBodySchema>;
 export type CreateJobBodyType = z.infer<typeof CreateJobBodySchema>;
 export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
 
