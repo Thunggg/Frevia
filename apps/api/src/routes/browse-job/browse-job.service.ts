@@ -1,25 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { ViewListJobFilterType, ViewListJobResponseType } from '@shared/types';
+import {
+  ViewJobDetailResType,
+  ViewListJobFilterType,
+  ViewListJobResponseType,
+} from '@shared/types';
 
 import { BrowseJobRepository } from './browse-job.repo';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import {
+  FailedToLoadJobDetailException,
+  FailedToLoadJobListException,
+} from './browse-job.error';
 
 @Injectable()
 export class BrowseJobService {
   constructor(private readonly browseJobRepository: BrowseJobRepository) {}
-
   async viewListJob(
     filter: ViewListJobFilterType,
   ): Promise<ViewListJobResponseType> {
-    const { jobs, total } = await this.browseJobRepository.getJobLists(filter);
+    try {
+      const { jobs, total } =
+        await this.browseJobRepository.getJobLists(filter);
 
-    return {
-      data: jobs,
-      pagination: {
-        page: filter.page,
-        limit: filter.limit,
-        total,
-        totalPages: Math.ceil(total / filter.limit),
-      },
-    };
+      return {
+        data: jobs,
+        pagination: {
+          page: filter.page,
+          limit: filter.limit,
+          total,
+          totalPages: Math.ceil(total / filter.limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadJobListException();
+      }
+
+      throw error;
+    }
+  }
+
+  async viewJobDetail(id: number): Promise<ViewJobDetailResType> {
+    try {
+      return await this.browseJobRepository.viewJobDetail(id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadJobDetailException();
+      }
+
+      throw error;
+    }
   }
 }

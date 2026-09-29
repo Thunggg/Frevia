@@ -1,0 +1,19 @@
+meta {
+  name: View Job Detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/jobs/{{jobId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+vars:pre-request {
+  jobId: 1
+}

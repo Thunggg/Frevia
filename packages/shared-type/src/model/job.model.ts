@@ -1,6 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { BrowseJobMessage } from '../message/browse-job.message';
+import { BrowseJobMessage } from "../message/browse-job.message";
+import { JobSkillSchema } from "./job-skill.model";
 
 export const JobSchema = z.object({
   id: z.number(),
@@ -9,22 +10,21 @@ export const JobSchema = z.object({
   description: z.string().nullable(),
   budgetMin: z.coerce.number().nullable(),
   budgetMax: z.coerce.number().nullable(),
-  budgetType: z.enum(['FIXED_PRICE']),
+  budgetType: z.enum(["FIXED_PRICE"]),
   deadline: z.date().nullable(),
   status: z.enum([
-    'DRAFT',
-    'OPEN',
-    'IN_PROGRESS',
-    'COMPLETED',
-    'CLOSED',
-    'CANCELLED',
+    "DRAFT",
+    "OPEN",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "CLOSED",
+    "CANCELLED",
   ]),
   featured: z.boolean(),
   expiryDate: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
-
 
 export const ViewListJobFilterSchema = z.object({
   page: z.coerce
@@ -41,7 +41,6 @@ export const ViewListJobFilterSchema = z.object({
     .default(10),
 });
 
-
 export const JobPaginationSchema = z.object({
   page: z.number(),
   limit: z.number(),
@@ -49,19 +48,19 @@ export const JobPaginationSchema = z.object({
   totalPages: z.number(),
 });
 
-
 export const ViewListJobResponseSchema = z.object({
   data: z.array(JobSchema),
   pagination: JobPaginationSchema,
 });
 
+export const ViewJobDetailResSchema = JobSchema.extend({
+  skills: z.array(JobSkillSchema),
+});
+
+export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
 
 export type JobType = z.infer<typeof JobSchema>;
 
-export type ViewListJobFilterType = z.infer<
-  typeof ViewListJobFilterSchema
->;
+export type ViewListJobFilterType = z.infer<typeof ViewListJobFilterSchema>;
 
-export type ViewListJobResponseType = z.infer<
-  typeof ViewListJobResponseSchema
->;
+export type ViewListJobResponseType = z.infer<typeof ViewListJobResponseSchema>;

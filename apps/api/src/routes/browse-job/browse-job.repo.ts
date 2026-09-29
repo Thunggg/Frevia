@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { JobType, ViewListJobFilterType } from '@shared/types';
+import { JobSkillType, JobType, ViewListJobFilterType } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
+import { JobStatus } from '@prisma/client';
+
+import { JobNotFoundException } from './browse-job.error';
 
 @Injectable()
 export class BrowseJobRepository {
@@ -59,6 +62,68 @@ export class BrowseJobRepository {
     return {
       jobs: normalizedJobs,
       total,
+    };
+  }
+
+  async viewJobDetail(id: number): Promise<
+    Pick<
+      JobType,
+      | 'id'
+      | 'clientId'
+      | 'title'
+      | 'description'
+      | 'budgetMin'
+      | 'budgetMax'
+      | 'budgetType'
+      | 'deadline'
+      | 'status'
+      | 'featured'
+      | 'expiryDate'
+      | 'createdAt'
+      | 'updatedAt'
+    > & {
+      skills: Pick<JobSkillType, 'id' | 'jobId' | 'skillName'>[];
+    }
+  > {
+    const job = await this.prisma.job.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+        status: JobStatus.OPEN,
+      },
+      select: {
+        id: true,
+        clientId: true,
+        title: true,
+        description: true,
+        budgetMin: true,
+        budgetMax: true,
+        budgetType: true,
+        deadline: true,
+        status: true,
+        featured: true,
+        expiryDate: true,
+        createdAt: true,
+        updatedAt: true,
+
+        skills: {
+          select: {
+            id: true,
+            jobId: true,
+            skillName: true,
+          },
+        },
+      },
+    });
+
+    if (!job) {
+      throw JobNotFoundException();
+    }
+
+    return {
+      ...job,
+      budgetMin: job.budgetMin !== null ? Number(job.budgetMin) : null,
+      budgetMax: job.budgetMax !== null ? Number(job.budgetMax) : null,
     };
   }
 }

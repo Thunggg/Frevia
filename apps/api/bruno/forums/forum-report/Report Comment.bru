@@ -1,0 +1,26 @@
+meta {
+  name: Report Comment
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts/2/comments/6/reports
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "reason": "Bình luận không phù hợp"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

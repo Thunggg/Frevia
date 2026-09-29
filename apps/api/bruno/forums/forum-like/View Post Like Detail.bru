@@ -1,0 +1,16 @@
+meta {
+  name: View Post Like Detail
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/forums/posts/4/like
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

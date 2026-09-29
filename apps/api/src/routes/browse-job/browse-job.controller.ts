@@ -1,6 +1,10 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 
-import { ViewListJobQueryDto, ViewListJobResponseDto } from './browse-job.dto';
+import {
+  ViewJobDetailResponseDto,
+  ViewListJobQueryDto,
+  ViewListJobResponseDto,
+} from './browse-job.dto';
 import { BrowseJobService } from './browse-job.service';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
@@ -18,5 +22,12 @@ export class BrowseJobController {
     query: ViewListJobFilterType,
   ) {
     return this.browseJobService.viewListJob(query);
+  }
+
+  @Get(':id')
+  @IsPublic()
+  @ZodSerializerDto(ViewJobDetailResponseDto)
+  viewJobDetail(@Param('id', ParseIntPipe) id: number) {
+    return this.browseJobService.viewJobDetail(id);
   }
 }

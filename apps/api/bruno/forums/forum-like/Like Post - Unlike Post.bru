@@ -1,0 +1,20 @@
+meta {
+  name: Like Post / Unlike Post
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/forums/posts/4/like
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

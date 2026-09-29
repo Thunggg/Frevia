@@ -21,6 +21,7 @@ import {
   ForumPostNotFoundException,
   ForumPostNotOwnedException,
 } from './forums.error';
+import { RoleName } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
@@ -65,7 +66,7 @@ export class ForumService {
         await this.forumRepository.getForumPostLists(filter);
 
       return {
-        data: posts,
+        posts,
         pagination: {
           // Trả về thông tin phân trang
           page: filter.page,
@@ -176,7 +177,7 @@ export class ForumService {
       }
 
       // Kiểm tra quyền sở hữu, chỉ owner và ADMIN mới có quyền xóa post
-      if (existingPost.userId !== userId && roleName !== 'ADMIN') {
+      if (existingPost.userId !== userId && roleName !== RoleName.ADMIN) {
         throw ForumPostNotOwnedException();
       }
 
