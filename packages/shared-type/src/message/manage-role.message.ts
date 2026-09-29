@@ -9,4 +9,5 @@
   FAILED_TO_LOAD_ROLE_DETAIL: "Error.FailedToLoadRoleDetail",
   FAILED_TO_CREATE_ROLE: "Error.FailedToCreateRole",
   FAILED_TO_UPDATE_ROLE: "Error.FailedToUpdateRole",
+  FAILED_TO_DELETE_ROLE: "Error.FailedToDeleteRole",
 } as const;

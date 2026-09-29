@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   CreateRoleBodyType,
   CreateRoleResponseType,
+  DeleteRoleResponseType,
   RoleDetailResponseType,
   RoleListResponseType,
   RoleName,
@@ -12,6 +13,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CannotModifySystemRoleException,
   FailedToCreateRoleException,
+  FailedToDeleteRoleException,
   FailedToLoadRoleDetailException,
   FailedToLoadRolesException,
   FailedToUpdateRoleException,
@@ -126,6 +128,26 @@ export class RolesService {
       if (error instanceof PrismaClientKnownRequestError) {
         this.logger.error(`Failed to update role: id=${id}`, error);
         throw FailedToUpdateRoleException();
+      }
+      throw error;
+    }
+  }
+
+  async deleteRole(id: number): Promise<DeleteRoleResponseType> {
+    try {
+      const role = await this.rolesRepository.findById(id);
+
+      if (this.isSystemRoleName(role.name)) {
+        throw CannotModifySystemRoleException();
+      }
+
+      await this.rolesRepository.softDeleteRole(id);
+      this.logger.log(`Role deleted successfully: id=${id}`);
+      return { message: 'Role deleted successfully' };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        this.logger.error(`Failed to delete role: id=${id}`, error);
+        throw FailedToDeleteRoleException();
       }
       throw error;
     }
