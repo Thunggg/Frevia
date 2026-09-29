@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JobStatus } from '@prisma/client';
 
 import {
   CreateJobBodyType,
@@ -317,5 +318,70 @@ export class ManageJobRepository {
         deletedAt: new Date(),
       },
     });
+  }
+
+  async changeJobStatus(
+    userId: number,
+    jobId: number,
+    status: JobStatus,
+  ): Promise<
+    Pick<
+      JobType,
+      | 'id'
+      | 'clientId'
+      | 'title'
+      | 'description'
+      | 'budgetMin'
+      | 'budgetMax'
+      | 'budgetType'
+      | 'deadline'
+      | 'status'
+      | 'featured'
+      | 'expiryDate'
+      | 'createdAt'
+      | 'updatedAt'
+    >
+  > {
+    const job = await this.prisma.job.findFirst({
+      where: {
+        id: jobId,
+        clientId: userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!job) {
+      throw JobNotFoundException();
+    }
+
+    const updatedJob = await this.prisma.job.update({
+      where: {
+        id: jobId,
+      },
+      data: {
+        status,
+      },
+      select: {
+        id: true,
+        clientId: true,
+        title: true,
+        description: true,
+        budgetMin: true,
+        budgetMax: true,
+        budgetType: true,
+        deadline: true,
+        status: true,
+        featured: true,
+        expiryDate: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return {
+      ...updatedJob,
+      budgetMin: updatedJob.budgetMin?.toNumber() ?? null,
+      budgetMax: updatedJob.budgetMax?.toNumber() ?? null,
+    };
   }
 }

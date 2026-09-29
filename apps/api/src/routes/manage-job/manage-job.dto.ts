@@ -2,6 +2,8 @@ import { createZodDto } from 'nestjs-zod';
 
 import {
   BookmarkJobBodySchema,
+  ChangeJobStatusBodySchema,
+  ChangeJobStatusResponseSchema,
   CreateJobBodySchema,
   UpdateJobBodySchema,
   UpdateJobResponseSchema,
@@ -23,4 +25,12 @@ export class CreateJobBodyDto extends createZodDto(CreateJobBodySchema) {}
 export class UpdateJobBodyDto extends createZodDto(UpdateJobBodySchema) {}
 export class UpdateJobResponseDto extends createZodDto(
   UpdateJobResponseSchema,
+) {}
+
+export class ChangeJobStatusBodyDto extends createZodDto(
+  ChangeJobStatusBodySchema,
+) {}
+
+export class ChangeJobStatusResponseDto extends createZodDto(
+  ChangeJobStatusResponseSchema,
 ) {}

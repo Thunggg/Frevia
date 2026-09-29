@@ -59,6 +59,7 @@ export const ViewJobDetailResSchema = JobSchema.extend({
 });
 
 export const UpdateJobResponseSchema = JobSchema;
+export const ChangeJobStatusResponseSchema = JobSchema;
 
 export const CreateJobBodySchema = z
   .object({
@@ -145,6 +146,15 @@ export const CreateJobBodySchema = z
     }
   });
 export const UpdateJobBodySchema = CreateJobBodySchema;
+
+export const ChangeJobStatusBodySchema = z
+  .object({
+    status: JobSchema.shape.status,
+  })
+  .strict();
+
+export type ChangeJobStatusBodyType = z.infer<typeof ChangeJobStatusBodySchema>;
+export type ChangeJobStatusResponseType = z.infer<typeof ChangeJobStatusResponseSchema>;
 export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
 export type UpdateJobBodyType = z.infer<typeof UpdateJobBodySchema>;
 export type CreateJobBodyType = z.infer<typeof CreateJobBodySchema>;

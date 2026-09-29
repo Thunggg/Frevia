@@ -1,0 +1,25 @@
+meta {
+  name: Change Job Status
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/manage-jobs/1/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "OPEN"
+  }
+}

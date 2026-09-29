@@ -12,6 +12,8 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 
 import {
+  ChangeJobStatusBodyDto,
+  ChangeJobStatusResponseDto,
   CreateJobBodyDto,
   UpdateJobBodyDto,
   UpdateJobResponseDto,
@@ -93,5 +95,20 @@ export class ManageJobController {
     userId: number,
   ) {
     return this.manageJobService.deleteJob(userId, id);
+  }
+
+  @Patch(':id/status')
+  @ZodSerializerDto(ChangeJobStatusResponseDto)
+  changeJobStatus(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @UserActive('userId')
+    userId: number,
+
+    @Body()
+    body: ChangeJobStatusBodyDto,
+  ) {
+    return this.manageJobService.changeJobStatus(userId, id, body);
   }
 }
