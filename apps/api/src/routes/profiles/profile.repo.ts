@@ -71,4 +71,25 @@ export class ProfileRepository {
       },
     });
   }
+
+  async findSkillsByProfileId(profileId: number) {
+    return this.prisma.freelancerSkill.findMany({
+      where: {
+        freelancerProfile: {
+          profileId,
+          profile: {
+            user: {
+              deletedAt: null,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        freelancerProfileId: true,
+        skillName: true,
+        proficiencyLevel: true,
+      },
+    });
+  }
 }

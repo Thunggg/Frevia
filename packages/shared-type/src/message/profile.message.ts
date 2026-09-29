@@ -5,4 +5,5 @@ export const ProfileMessage = {
   TITLE_REQUIRED: "Title is required.",
   FAILED_TO_LOAD_PROFILE: "Failed to load freelancer profile.",
   FAILED_TO_UPDATE_PROFILE: "Failed to update freelancer profile.",
+  SKILLS_NOT_FOUND: "No skills added yet.",
 } as const;

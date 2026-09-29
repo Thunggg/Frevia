@@ -36,3 +36,11 @@ export const FailedToUpdateProfileException = () =>
       path: 'profile',
     },
   ]);
+
+export const FreelancerSkillsNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: ProfileMessage.SKILLS_NOT_FOUND,
+      path: 'skills',
+    },
+  ]);

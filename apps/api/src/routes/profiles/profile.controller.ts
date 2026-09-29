@@ -12,6 +12,7 @@ import {
   FreelancerProfileDetailResponseDto,
   UpdateFreelancerProfileDto,
   UpdateFreelancerProfileResponseDto,
+  FreelancerSkillListResponseDto,
 } from './profile.dto';
 import { ProfileService } from './profile.service';
 import type { UpdateFreelancerProfileType } from '@shared/types';
@@ -37,5 +38,12 @@ export class ProfileController {
     body: UpdateFreelancerProfileType,
   ) {
     return this.profileService.updateFreelancerProfile(id, currentUserId, body);
+  }
+
+  @Get(':id/skills')
+  @IsPublic()
+  @ZodSerializerDto(FreelancerSkillListResponseDto)
+  async getFreelancerSkills(@Param('id', ParseIntPipe) id: number) {
+    return this.profileService.getFreelancerSkills(id);
   }
 }

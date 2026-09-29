@@ -6,6 +6,7 @@ import {
   ProfileForbiddenException,
   FailedToLoadProfileException,
   FailedToUpdateProfileException,
+  FreelancerSkillsNotFoundException,
 } from './profile.error';
 import { RoleName } from '@shared/types';
 
@@ -69,6 +70,36 @@ export class ProfileService {
         throw error;
       }
       throw FailedToUpdateProfileException();
+    }
+  }
+
+  async getFreelancerSkills(profileId: number) {
+    try {
+      const profile =
+        await this.profileRepository.findFreelancerProfileById(profileId);
+      if (!profile) {
+        throw FreelancerProfileNotFoundException();
+      }
+
+      const isFreelancer = profile.user.userRoles.some(
+        (ur) => ur.role.name === RoleName.FREELANCER,
+      );
+      if (!isFreelancer) {
+        throw FreelancerProfileNotFoundException();
+      }
+
+      const skills =
+        await this.profileRepository.findSkillsByProfileId(profileId);
+      if (!skills || skills.length === 0) {
+        throw FreelancerSkillsNotFoundException();
+      }
+
+      return skills;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToLoadProfileException();
     }
   }
 }
