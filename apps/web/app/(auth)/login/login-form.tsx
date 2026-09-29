@@ -27,6 +27,7 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { handleErrorApi } from "@/lib/utils";
 import { ApiFail } from "@/lib/http";
+import Link from "next/link";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -207,12 +208,12 @@ export function LoginForm() {
       <CardFooter className="p-0 mt-8 justify-center">
         <p className="text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <a
-            href="#"
-            className="font-semibold text-primary hover:text-primary/90"
+          <Link
+            href="/register"
+            className="text-primary hover:text-primary/90 font-semibold"
           >
             Sign Up
-          </a>
+          </Link>
         </p>
       </CardFooter>
     </Card>

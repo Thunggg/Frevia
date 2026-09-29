@@ -11,18 +11,37 @@ import {
 } from "@repo/ui/components/shadcn/card";
 import {
   Field,
+  FieldContent,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldTitle,
 } from "@repo/ui/components/shadcn/field";
 import { Input } from "@repo/ui/components/shadcn/input";
-import { toast } from "@repo/ui/components/shadcn/sonner";
 import { RegisterBodySchema, RoleName } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { authApiRequest } from "@/apiRequests/auth";
+import { handleErrorApi } from "@/lib/utils";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { ApiFail } from "@/lib/http";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@repo/ui/components/shadcn/radio-group";
+import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
+import { useState } from "react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@repo/ui/components/shadcn/input-group";
 
 export function RegisterForm() {
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
   const form = useForm<z.infer<typeof RegisterBodySchema>>({
     resolver: zodResolver(RegisterBodySchema),
     defaultValues: {
@@ -36,26 +55,22 @@ export function RegisterForm() {
   });
 
   async function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
-    const res = await authApiRequest.register(payload);
+    try {
+      const res = await authApiRequest.register(payload);
 
-    if (!res.success && res.error.details) {
-      res.error.details?.forEach((error) => {
-        form.setError(error.path as keyof z.infer<typeof RegisterBodySchema>, {
-          type: "server",
-          message: error.message,
+      if (res.success) {
+        toastSuccess({ message: "Register successful" });
+      }
+    } catch (error: unknown) {
+      if (error instanceof ApiFail) {
+        handleErrorApi({
+          error: error.response,
+          setError: form.setError,
+          duration: 3000,
         });
-      });
-    } else if (
-      !res.success &&
-      (!res.error.details || res.error.details.length === 0)
-    ) {
-      toast("Register failed: " + res.error.message, {
-        position: "top-right",
-      });
-    } else {
-      toast("Register successful", {
-        position: "top-right",
-      });
+      } else {
+        toastError({ message: "Register failed" });
+      }
     }
   }
 
@@ -98,7 +113,9 @@ export function RegisterForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-email">Email</FieldLabel>
+                  <FieldLabel htmlFor="form-rhf-demo-email">
+                    Email address
+                  </FieldLabel>
                   <Input
                     {...field}
                     id="form-rhf-demo-title"
@@ -162,19 +179,82 @@ export function RegisterForm() {
                   <FieldLabel htmlFor="form-rhf-demo-email">
                     Otp Code
                   </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-demo-title"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Login button not working on mobile"
-                    autoComplete="off"
-                  />
+                  <InputGroup>
+                    <InputGroupInput
+                      {...field}
+                      placeholder="OTP Code"
+                      maxLength={6}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton type="button" variant="secondary">
+                        Send OTP
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                  </InputGroup>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
+            <Controller
+              name="role"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-demo-email">Role</FieldLabel>
+                  <RadioGroup
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    className="max-w-sm"
+                  >
+                    <FieldLabel htmlFor="plus-plan">
+                      <Field orientation="horizontal">
+                        <FieldContent>
+                          <FieldTitle>Freelancer</FieldTitle>
+                          <FieldDescription>
+                            For freelancers who want to find jobs.
+                          </FieldDescription>
+                        </FieldContent>
+                        <RadioGroupItem
+                          checked={field.value === RoleName.FREELANCER}
+                          value={RoleName.FREELANCER}
+                          id="plus-plan"
+                        />
+                      </Field>
+                    </FieldLabel>
+                    <FieldLabel htmlFor="pro-plan">
+                      <Field orientation="horizontal">
+                        <FieldContent>
+                          <FieldTitle>Employer</FieldTitle>
+                          <FieldDescription>
+                            For employers who want to hire freelancers.
+                          </FieldDescription>
+                        </FieldContent>
+                        <RadioGroupItem value={RoleName.CLIENT} id="pro-plan" />
+                      </Field>
+                    </FieldLabel>
+                  </RadioGroup>
+                </Field>
+              )}
+            />
+            <FieldGroup className="w-56 cursor-pointer">
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="terms-checkbox-basic"
+                  name="terms-checkbox-basic"
+                  className="cursor-pointer"
+                  onClick={() => setIsTermsAccepted(!isTermsAccepted)}
+                />
+                <FieldLabel
+                  htmlFor="terms-checkbox-basic"
+                  className="cursor-pointer"
+                >
+                  Accept terms and conditions
+                </FieldLabel>
+              </Field>
+            </FieldGroup>
           </FieldGroup>
         </form>
       </CardContent>
@@ -183,7 +263,7 @@ export function RegisterForm() {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="form-rhf-demo">
+          <Button type="submit" form="form-rhf-demo" disabled={isTermsAccepted}>
             Submit
           </Button>
         </Field>
