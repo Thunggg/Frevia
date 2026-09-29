@@ -143,3 +143,20 @@ export type GetContractsResponseType = z.infer<typeof GetContractsResponseSchema
 export const GetContractDetailResponseSchema = ContractSchema;
 export type GetContractDetailResponseType = z.infer<typeof GetContractDetailResponseSchema>;
 
+export const SharedFileSchema = z.object({
+  id: z.number(),
+  contractId: z.number(),
+  uploaderId: z.number(),
+  fileUrl: z.string(),
+  fileName: z.string().nullable(),
+  createdAt: z.date(),
+  deletedAt: z.date().nullable(),
+});
+
+export const GetContractFilesResponseSchema = z.object({
+  data: z.array(SharedFileSchema),
+});
+
+export type SharedFileType = z.infer<typeof SharedFileSchema>;
+export type GetContractFilesResponseType = z.infer<typeof GetContractFilesResponseSchema>;
+

@@ -16,6 +16,7 @@ import {
   CreateContractBodyDTO,
   CreateContractResponseDTO,
   GetContractDetailResponseDTO,
+  GetContractFilesResponseDTO,
   GetContractsQueryDTO,
   GetContractsResponseDTO,
   SignContractResponseDTO,
@@ -95,5 +96,14 @@ export class ContractController {
     @UserActive('userId') userId: number,
   ) {
     return this.contractService.getContractDetail(id, userId);
+  }
+
+  @Get(':id/files')
+  @ZodSerializerDto(GetContractFilesResponseDTO)
+  getContractFiles(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.getContractFiles(id, userId);
   }
 }

@@ -234,4 +234,30 @@ export class ContractService {
       throw FailedToLoadContractException();
     }
   }
+
+  private async _verifyContractAccess(contractId: number, requestUserId: number) {
+    const contract = await this.contractRepository.findContractById(contractId);
+    if (!contract) {
+      throw ContractNotFoundException();
+    }
+    const isClient = contract.clientId === requestUserId;
+    const isFreelancer = contract.freelancerId === requestUserId;
+    if (!isClient && !isFreelancer) {
+      throw ContractForbiddenException();
+    }
+    return contract;
+  }
+
+  async getContractFiles(contractId: number, requestUserId: number) {
+    try {
+      await this._verifyContractAccess(contractId, requestUserId);
+      const files = await this.contractRepository.findSharedFiles(contractId);
+      return { data: files };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToLoadContractException();
+    }
+  }
 }

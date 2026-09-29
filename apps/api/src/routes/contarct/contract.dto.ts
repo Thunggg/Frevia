@@ -4,6 +4,7 @@ import {
   CreateContractBodySchema,
   CreateContractResponseSchema,
   GetContractDetailResponseSchema,
+  GetContractFilesResponseSchema,
   GetContractsQuerySchema,
   GetContractsResponseSchema,
   SignContractResponseSchema,
@@ -25,3 +26,5 @@ export class CancelContractResponseDTO extends createZodDto(CancelContractRespon
 export class GetContractsQueryDTO extends createZodDto(GetContractsQuerySchema) { }
 export class GetContractsResponseDTO extends createZodDto(GetContractsResponseSchema) { }
 export class GetContractDetailResponseDTO extends createZodDto(GetContractDetailResponseSchema) { }
+
+export class GetContractFilesResponseDTO extends createZodDto(GetContractFilesResponseSchema) { }

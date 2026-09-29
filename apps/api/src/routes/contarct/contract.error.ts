@@ -76,3 +76,8 @@ export const FailedToLoadContractException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_LOAD_CONTRACT, path: '' },
   ]);
+
+export const ContractFileNotFoundException = () =>
+  new NotFoundException([
+    { message: ManageContractMessage.FILE_NOT_FOUND, path: 'fileId' },
+  ]);

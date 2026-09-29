@@ -164,4 +164,11 @@ export class ContractRepository {
       },
     };
   }
+
+  async findSharedFiles(contractId: number) {
+    return this.prisma.sharedFile.findMany({
+      where: { contractId, deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
