@@ -16,7 +16,7 @@ datasource db {
 // ============================
 model Role {
   id          Int       @id @default(autoincrement())
-  name        RoleName
+  name        String    @db.VarChar(500)
   description String?
   createdAt   DateTime  @default(now())
   deletedAt   DateTime?
@@ -1040,12 +1040,6 @@ model DirectMessage {
 // ============================
 // ENUMS
 // ============================
-enum RoleName {
-  ADMIN
-  CLIENT
-  FREELANCER
-}
-
 enum JobStatus {
   DRAFT
   OPEN

@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { RoleDetailResponseType, RoleListItemType } from '@shared/types';
+import {
+  CreateRoleBodyType,
+  CreateRoleResponseType,
+  RoleDetailResponseType,
+  RoleListItemType,
+  RoleName,
+} from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { RoleNotFoundException } from './roles.error';
 
@@ -43,5 +49,38 @@ export class RolesRepository {
     }
 
     return role;
+  }
+
+  async findActiveByName(name: string): Promise<RoleListItemType | null> {
+    return this.prisma.role.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: 'insensitive',
+        },
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  async create(body: CreateRoleBodyType): Promise<CreateRoleResponseType> {
+    return this.prisma.role.create({
+      data: {
+        name: body.name,
+        description: body.description ?? null,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+      },
+    });
   }
 }
