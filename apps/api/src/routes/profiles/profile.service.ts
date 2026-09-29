@@ -1,150 +1,114 @@
-import { Injectable, HttpException } from '@nestjs/common';
-import {
-  UpdateFreelancerProfileType,
-  AddFreelancerSkillType,
-} from '@shared/types';
+import { Injectable } from '@nestjs/common';
 import { ProfileRepository } from './profile.repo';
 import {
+  UpdateFreelancerProfileDto,
+  AddFreelancerSkillDto,
+} from './profile.dto';
+import {
   FreelancerProfileNotFoundException,
-  ProfileForbiddenException,
-  FailedToLoadProfileException,
-  FailedToUpdateProfileException,
   FreelancerSkillsNotFoundException,
+  FreelancerSkillNotFoundException,
   FreelancerSkillDuplicateException,
+  ProfileForbiddenException,
+  SkillForbiddenException,
 } from './profile.error';
-import { RoleName } from '@shared/types';
 
 @Injectable()
 export class ProfileService {
   constructor(private readonly profileRepository: ProfileRepository) {}
 
-  async getFreelancerProfile(profileId: number) {
-    try {
-      const profile =
-        await this.profileRepository.findFreelancerProfileById(profileId);
-      if (!profile) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
-      if (!isFreelancer) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      return profile;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw FailedToLoadProfileException();
+  async viewProfile(profileId: number) {
+    const profile =
+      await this.profileRepository.findFreelancerProfileById(profileId);
+    if (!profile) {
+      throw FreelancerProfileNotFoundException();
     }
+    return profile;
   }
 
-  async updateFreelancerProfile(
+  async updateProfile(
     profileId: number,
     currentUserId: number,
-    data: UpdateFreelancerProfileType,
+    dto: UpdateFreelancerProfileDto,
   ) {
-    try {
-      const profile =
-        await this.profileRepository.findFreelancerProfileById(profileId);
-      if (!profile) {
-        throw FreelancerProfileNotFoundException();
-      }
+    const profile =
+      await this.profileRepository.findFreelancerProfileById(profileId);
+    if (!profile) {
+      throw FreelancerProfileNotFoundException();
+    }
 
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
-      if (!isFreelancer) {
-        throw FreelancerProfileNotFoundException();
-      }
+    if (profile.userId !== currentUserId) {
+      throw ProfileForbiddenException();
+    }
 
-      if (profile.userId !== currentUserId) {
-        throw ProfileForbiddenException();
-      }
+    return this.profileRepository.updateFreelancerProfile(profileId, {
+      displayName: dto.displayName,
+      title: dto.title,
+      bio: dto.bio,
+      availabilityStatus: dto.availabilityStatus,
+      education: dto.education,
+      certifications: dto.certifications,
+      languages: dto.languages,
+    });
+  }
 
-      return await this.profileRepository.updateFreelancerProfile(
+  async getSkills(profileId: number) {
+    const profile =
+      await this.profileRepository.findFreelancerProfileById(profileId);
+    if (!profile) {
+      throw FreelancerProfileNotFoundException();
+    }
+
+    const skills =
+      await this.profileRepository.findSkillsByProfileId(profileId);
+    if (skills.length === 0) {
+      throw FreelancerSkillsNotFoundException();
+    }
+    return skills;
+  }
+
+  async addSkill(
+    profileId: number,
+    currentUserId: number,
+    dto: AddFreelancerSkillDto,
+  ) {
+    const profile =
+      await this.profileRepository.findFreelancerProfileById(profileId);
+    if (!profile) {
+      throw FreelancerProfileNotFoundException();
+    }
+
+    if (profile.userId !== currentUserId) {
+      throw ProfileForbiddenException();
+    }
+
+    const existingSkill =
+      await this.profileRepository.findSkillByNameAndProfileId(
         profileId,
-        data,
+        dto.skillName,
       );
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw FailedToUpdateProfileException();
+    if (existingSkill) {
+      throw FreelancerSkillDuplicateException();
     }
+
+    return this.profileRepository.addSkillToProfile(
+      profileId,
+      dto.skillName,
+      dto.proficiencyLevel,
+    );
   }
 
-  async getFreelancerSkills(profileId: number) {
-    try {
-      const profile =
-        await this.profileRepository.findFreelancerProfileById(profileId);
-      if (!profile) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
-      if (!isFreelancer) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      const skills =
-        await this.profileRepository.findSkillsByProfileId(profileId);
-      if (!skills || skills.length === 0) {
-        throw FreelancerSkillsNotFoundException();
-      }
-
-      return skills;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw FailedToLoadProfileException();
+  async deleteSkill(skillId: number, currentUserId: number) {
+    const skill = await this.profileRepository.findSkillById(skillId);
+    if (!skill) {
+      throw FreelancerSkillNotFoundException();
     }
-  }
 
-  async addFreelancerSkill(
-    profileId: number,
-    currentUserId: number,
-    data: AddFreelancerSkillType,
-  ) {
-    try {
-      const profile =
-        await this.profileRepository.findFreelancerProfileById(profileId);
-      if (!profile) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
-      if (!isFreelancer) {
-        throw FreelancerProfileNotFoundException();
-      }
-
-      if (profile.userId !== currentUserId) {
-        throw ProfileForbiddenException();
-      }
-
-      const existingSkill =
-        await this.profileRepository.findSkillByNameAndProfileId(
-          profileId,
-          data.skillName,
-        );
-      if (existingSkill) {
-        throw FreelancerSkillDuplicateException();
-      }
-
-      return await this.profileRepository.addSkillToProfile(profileId, data);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw FailedToUpdateProfileException();
+    if (skill.freelancerProfile.profile.userId !== currentUserId) {
+      throw SkillForbiddenException();
     }
+
+    await this.profileRepository.deleteSkill(skillId);
+    return { message: 'Skill removed successfully.' };
   }
 }

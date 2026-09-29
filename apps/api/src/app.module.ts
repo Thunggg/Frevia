@@ -13,6 +13,7 @@ import { ForumModule } from './routes/forums/forums-post/forums.module';
 import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ProfilesModule } from './routes/profiles/profile.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ForumReportModule } from './routes/forums/forums-reports/forums-reports
     ForumLikeModule,
     ForumCommentModule,
     ForumReportModule,
+    ProfilesModule,
   ],
   controllers: [AppController],
   providers: [

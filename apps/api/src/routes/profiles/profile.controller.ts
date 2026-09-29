@@ -1,28 +1,23 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
-  Put,
   Post,
+  Put,
 } from '@nestjs/common';
-import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
+import { ZodSerializerDto } from 'nestjs-zod';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
+import { UserActive } from '../../shared/decorators/user-active.decorators';
+import { ProfileService } from './profile.service';
 import {
-  FreelancerProfileDetailResponseDto,
   UpdateFreelancerProfileDto,
-  UpdateFreelancerProfileResponseDto,
-  FreelancerSkillListResponseDto,
+  FreelancerProfileDetailDto,
   AddFreelancerSkillDto,
   AddFreelancerSkillResponseDto,
 } from './profile.dto';
-import { ProfileService } from './profile.service';
-import type {
-  UpdateFreelancerProfileType,
-  AddFreelancerSkillType,
-} from '@shared/types';
-import { UserActive } from '../../shared/decorators/user-active.decorators';
 
 @Controller('profiles')
 export class ProfileController {
@@ -30,37 +25,42 @@ export class ProfileController {
 
   @Get(':id')
   @IsPublic()
-  @ZodSerializerDto(FreelancerProfileDetailResponseDto)
-  async getFreelancerProfile(@Param('id', ParseIntPipe) id: number) {
-    return this.profileService.getFreelancerProfile(id);
+  @ZodSerializerDto(FreelancerProfileDetailDto)
+  async viewProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.profileService.viewProfile(id);
   }
 
   @Put(':id')
-  @ZodSerializerDto(UpdateFreelancerProfileResponseDto)
-  async updateFreelancerProfile(
-    @UserActive('userId') currentUserId: number,
+  @ZodSerializerDto(FreelancerProfileDetailDto)
+  async updateProfile(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ZodValidationPipe(UpdateFreelancerProfileDto))
-    body: UpdateFreelancerProfileType,
+    @UserActive('userId') currentUserId: number,
+    @Body() body: UpdateFreelancerProfileDto,
   ) {
-    return this.profileService.updateFreelancerProfile(id, currentUserId, body);
+    return this.profileService.updateProfile(id, currentUserId, body);
   }
 
   @Get(':id/skills')
   @IsPublic()
-  @ZodSerializerDto(FreelancerSkillListResponseDto)
-  async getFreelancerSkills(@Param('id', ParseIntPipe) id: number) {
-    return this.profileService.getFreelancerSkills(id);
+  async getSkills(@Param('id', ParseIntPipe) id: number) {
+    return this.profileService.getSkills(id);
   }
 
   @Post(':id/skills')
   @ZodSerializerDto(AddFreelancerSkillResponseDto)
-  async addFreelancerSkill(
-    @UserActive('userId') currentUserId: number,
+  async addSkill(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ZodValidationPipe(AddFreelancerSkillDto))
-    body: AddFreelancerSkillType,
+    @UserActive('userId') currentUserId: number,
+    @Body() body: AddFreelancerSkillDto,
   ) {
-    return this.profileService.addFreelancerSkill(id, currentUserId, body);
+    return this.profileService.addSkill(id, currentUserId, body);
+  }
+
+  @Delete('skills/:id')
+  async deleteSkill(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.deleteSkill(id, currentUserId);
   }
 }

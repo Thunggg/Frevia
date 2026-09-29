@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  UpdateFreelancerProfileType,
-  AddFreelancerSkillType,
-} from '@shared/types';
+import { AvailabilityStatus } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -10,7 +7,7 @@ export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
-    return this.prisma.profile.findFirst({
+    return this.prisma.profile.findUnique({
       where: {
         id: profileId,
         user: {
@@ -19,121 +16,123 @@ export class ProfileRepository {
       },
       include: {
         freelancerProfile: true,
-        user: {
-          include: {
-            userRoles: {
-              include: {
-                role: true,
-              },
-            },
-          },
-        },
       },
     });
   }
 
   async updateFreelancerProfile(
     profileId: number,
-    data: UpdateFreelancerProfileType,
+    data: {
+      displayName: string;
+      title: string;
+      bio?: string | null;
+      availabilityStatus?: AvailabilityStatus;
+      education?: any;
+      certifications?: any;
+      languages?: any;
+    },
   ) {
-    return this.prisma.profile.update({
-      where: {
-        id: profileId,
-      },
-      data: {
-        displayName: data.displayName,
-        ...(data.bio !== undefined && { bio: data.bio }),
-        ...(data.availabilityStatus !== undefined && {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Update Profile fields
+      await tx.profile.update({
+        where: { id: profileId },
+        data: {
+          displayName: data.displayName,
+          bio: data.bio ?? null,
           availabilityStatus: data.availabilityStatus,
-        }),
-        freelancerProfile: {
-          upsert: {
-            create: {
-              title: data.title,
-              education: data.education ?? null,
-              certifications: data.certifications ?? null,
-              languages: data.languages ?? null,
-            },
-            update: {
-              title: data.title,
-              ...(data.education !== undefined && {
-                education: data.education,
-              }),
-              ...(data.certifications !== undefined && {
-                certifications: data.certifications,
-              }),
-              ...(data.languages !== undefined && {
-                languages: data.languages,
-              }),
-            },
-          },
         },
-      },
-      include: {
-        freelancerProfile: true,
-      },
+      });
+
+      // 2. Upsert FreelancerProfile fields
+      await tx.freelancerProfile.upsert({
+        where: { profileId },
+        update: {
+          title: data.title,
+          education: data.education ?? null,
+          certifications: data.certifications ?? null,
+          languages: data.languages ?? null,
+        },
+        create: {
+          profileId,
+          title: data.title,
+          education: data.education ?? null,
+          certifications: data.certifications ?? null,
+          languages: data.languages ?? null,
+        },
+      });
+
+      // 3. Fetch the fully updated profile to return
+      return tx.profile.findUnique({
+        where: { id: profileId },
+        include: {
+          freelancerProfile: true,
+        },
+      });
     });
   }
 
   async findSkillsByProfileId(profileId: number) {
+    const freelancerProfile = await this.prisma.freelancerProfile.findUnique({
+      where: { profileId },
+    });
+    if (!freelancerProfile) return [];
     return this.prisma.freelancerSkill.findMany({
-      where: {
-        freelancerProfile: {
-          profileId,
-          profile: {
-            user: {
-              deletedAt: null,
-            },
-          },
-        },
-      },
-      select: {
-        id: true,
-        freelancerProfileId: true,
-        skillName: true,
-        proficiencyLevel: true,
-      },
+      where: { freelancerProfileId: freelancerProfile.id },
     });
   }
 
   async findSkillByNameAndProfileId(profileId: number, skillName: string) {
+    const freelancerProfile = await this.prisma.freelancerProfile.findUnique({
+      where: { profileId },
+    });
+    if (!freelancerProfile) return null;
     return this.prisma.freelancerSkill.findFirst({
       where: {
-        skillName: {
-          equals: skillName,
-          mode: 'insensitive',
-        },
-        freelancerProfile: {
-          profileId,
-        },
+        freelancerProfileId: freelancerProfile.id,
+        skillName,
       },
     });
   }
 
   async addSkillToProfile(
     profileId: number,
-    skillData: AddFreelancerSkillType,
+    skillName: string,
+    proficiencyLevel: number,
   ) {
-    return this.prisma.$transaction(async (tx) => {
-      let freelancerProfile = await tx.freelancerProfile.findUnique({
-        where: { profileId },
+    let freelancerProfile = await this.prisma.freelancerProfile.findUnique({
+      where: { profileId },
+    });
+    if (!freelancerProfile) {
+      freelancerProfile = await this.prisma.freelancerProfile.create({
+        data: { profileId },
       });
+    }
 
-      if (!freelancerProfile) {
-        freelancerProfile = await tx.freelancerProfile.create({
-          data: {
-            profileId,
+    return this.prisma.freelancerSkill.create({
+      data: {
+        freelancerProfileId: freelancerProfile.id,
+        skillName,
+        proficiencyLevel,
+      },
+    });
+  }
+
+  async findSkillById(skillId: number) {
+    return this.prisma.freelancerSkill.findUnique({
+      where: { id: skillId },
+      include: {
+        freelancerProfile: {
+          include: {
+            profile: true,
           },
-        });
-      }
-
-      return tx.freelancerSkill.create({
-        data: {
-          freelancerProfileId: freelancerProfile.id,
-          skillName: skillData.skillName,
-          proficiencyLevel: skillData.proficiencyLevel,
         },
-      });
+      },
+    });
+  }
+
+  async deleteSkill(skillId: number) {
+    return this.prisma.freelancerSkill.delete({
+      where: { id: skillId },
     });
   }
 }

@@ -17,6 +17,8 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "eslint": "^9.39.1",
     "tsup": "^8.0.0"
   },
   "dependencies": {}

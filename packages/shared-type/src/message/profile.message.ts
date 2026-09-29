@@ -10,4 +10,5 @@ export const ProfileMessage = {
   PROFICIENCY_LEVEL_REQUIRED: "Proficiency level is required.",
   PROFICIENCY_LEVEL_RANGE: "Proficiency level must be between 1 and 10.",
   DUPLICATE_SKILL: "This skill has already been added to your profile.",
+  SKILL_NOT_FOUND: "Skill not found or already deleted.",
 } as const;
