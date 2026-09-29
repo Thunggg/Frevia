@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  CreateJobBodyType,
   JobBookmarkType,
   JobType,
   ViewBookmarkedJobFilterType,
@@ -136,5 +137,72 @@ export class ManageJobRepository {
         },
       },
     });
+  }
+
+  async createJob(
+    clientId: number,
+    data: CreateJobBodyType,
+  ): Promise<
+    Pick<
+      JobType,
+      | 'id'
+      | 'clientId'
+      | 'title'
+      | 'description'
+      | 'budgetMin'
+      | 'budgetMax'
+      | 'budgetType'
+      | 'deadline'
+      | 'status'
+      | 'featured'
+      | 'expiryDate'
+      | 'createdAt'
+      | 'updatedAt'
+    >
+  > {
+    const job = await this.prisma.$transaction(async (tx) => {
+      const createdJob = await tx.job.create({
+        data: {
+          clientId,
+          title: data.title,
+          description: data.description,
+          budgetMin: data.budgetMin,
+          budgetMax: data.budgetMax,
+          budgetType: data.budgetType,
+          deadline: data.deadline,
+          expiryDate: data.expiryDate,
+        },
+        select: {
+          id: true,
+          clientId: true,
+          title: true,
+          description: true,
+          budgetMin: true,
+          budgetMax: true,
+          budgetType: true,
+          deadline: true,
+          status: true,
+          featured: true,
+          expiryDate: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      await tx.jobSkill.createMany({
+        data: data.skills.map((skillName) => ({
+          jobId: createdJob.id,
+          skillName,
+        })),
+      });
+
+      return createdJob;
+    });
+
+    return {
+      ...job,
+      budgetMin: job.budgetMin?.toNumber() ?? null,
+      budgetMax: job.budgetMax?.toNumber() ?? null,
+    };
   }
 }

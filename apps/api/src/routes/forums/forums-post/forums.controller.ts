@@ -83,7 +83,7 @@ export class ForumController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
     // Lấy Body và Validate theo schema UpdateForumPostSchema
-    @Body(new ZodValidationPipe(UpdateForumPostDto))
+    @Body(new ZodValidationnPipe(UpdateForumPostDto))
     body: UpdateForumPostType,
   ) {
     return this.forumService.updateForumPost(id, userId, body);

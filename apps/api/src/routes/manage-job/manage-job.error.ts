@@ -34,3 +34,6 @@ export const FailedToBookmarkJobException = () =>
 
 export const FailedToRemoveBookmarkException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_REMOVE_BOOKMARK);
+
+export const FailedToCreateJobException = () =>
+  new InternalServerErrorException(ManageJobMessage.FAILED_TO_CREATE_JOB);

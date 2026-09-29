@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  CreateJobBodyType,
+  JobType,
   RoleName,
   ViewBookmarkedJobFilterType,
   ViewBookmarkedJobResponseType,
@@ -10,6 +12,7 @@ import { ManageJobRepository } from './manage-job.repo';
 import {
   BookmarkJobOnlyForFreelancerException,
   BookmarkNotFoundException,
+  FailedToCreateJobException,
   FailedToRemoveBookmarkException,
   JobAlreadyBookmarkedException,
   JobNotFoundException,
@@ -84,6 +87,18 @@ export class ManageJobService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToRemoveBookmarkException();
+      }
+
+      throw error;
+    }
+  }
+
+  async createJob(userId: number, body: CreateJobBodyType): Promise<JobType> {
+    try {
+      return await this.manageJobRepository.createJob(userId, body);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToCreateJobException();
       }
 
       throw error;
