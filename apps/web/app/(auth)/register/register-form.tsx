@@ -20,7 +20,7 @@ import { toast } from "@repo/ui/components/shadcn/sonner";
 import { RegisterBodySchema, RoleName } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { envConfig } from "../../../configs/validate-env";
+import { authApiRequest } from "../../apiRequests/auth";
 
 export function RegisterForm() {
   const form = useForm<z.infer<typeof RegisterBodySchema>>({
@@ -36,18 +36,27 @@ export function RegisterForm() {
   });
 
   async function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
-    const res = await fetch(`${envConfig?.NEXT_PUBLIC_API_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const res = await authApiRequest.register(payload);
 
-    const data = await res.json();
-
-    console.log(data);
-    toast("Event has been created.");
+    if (!res.success && res.error.details) {
+      res.error.details?.forEach((error) => {
+        form.setError(error.path as keyof z.infer<typeof RegisterBodySchema>, {
+          type: "server",
+          message: error.message,
+        });
+      });
+    } else if (
+      !res.success &&
+      (!res.error.details || res.error.details.length === 0)
+    ) {
+      toast("Register failed: " + res.error.message, {
+        position: "top-right",
+      });
+    } else {
+      toast("Register successful", {
+        position: "top-right",
+      });
+    }
   }
 
   return (

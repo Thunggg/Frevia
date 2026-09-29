@@ -151,6 +151,7 @@ export type RegisterResType = z.infer<typeof RegisterResSchema>;
 export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;
 
 export type LoginBodyType = z.infer<typeof LoginBodySchema>;
+export type LoginResType = z.infer<typeof LoginResSchema>;
 
 export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
 
