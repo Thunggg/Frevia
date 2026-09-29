@@ -13,9 +13,10 @@ import { ForumModule } from './routes/forums/forums-post/forums.module';
 import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ContractModule } from './routes/contarct/contract.module';
 
 @Module({
-  imports: [SharedModule, AuthModule, ForumModule, ForumLikeModule, ForumCommentModule, ForumReportModule],
+  imports: [SharedModule, AuthModule, ForumModule, ForumLikeModule, ForumCommentModule, ForumReportModule, ContractModule],
   controllers: [AppController],
   providers: [
     AppService,
