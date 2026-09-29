@@ -5,7 +5,7 @@ import { envConfig } from "@/configs/validate-env";
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const nestRes = await fetch(`${envConfig?.NESTJS_API_URL}/auth/login`, {
+  const nestRes = await fetch(`${envConfig?.NESTJS_API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

@@ -24,9 +24,9 @@ const DEFAULT_EMAIL_AND_PASSWORD: Record<
     password: string;
   }
 > = {
-  ADMIN: { email: 'admin@gmail.com', password: '123456' },
-  FREELANCER: { email: 'freelancer@gmail.com', password: '123456' },
-  CLIENT: { email: 'client@gmail.com', password: '123456' },
+  ADMIN: { email: 'admin@gmail.com', password: 'Admin123!' },
+  FREELANCER: { email: 'freelancer@gmail.com', password: 'Freelancer123!' },
+  CLIENT: { email: 'client@gmail.com', password: 'Client123!' },
 };
 
 async function createAccountRole({

@@ -1,6 +1,7 @@
 import { envConfig } from "@/configs/validate-env";
 import ms, { StringValue } from "ms";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -38,5 +39,5 @@ export async function GET(request: Request) {
     ),
   });
 
-  return Response.json({ success: true });
+  return NextResponse.redirect(new URL("/", request.url));
 }

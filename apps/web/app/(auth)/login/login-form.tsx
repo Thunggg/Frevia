@@ -28,8 +28,10 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { handleErrorApi } from "@/lib/utils";
 import { ApiFail } from "@/lib/http";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,6 +50,7 @@ export function LoginForm() {
 
       if (res.success) {
         toastSuccess({ message: "Login successful" });
+        router.push("/");
       }
     } catch (error: unknown) {
       if (error instanceof ApiFail) {

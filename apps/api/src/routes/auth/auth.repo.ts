@@ -304,6 +304,12 @@ export class AuthRepository {
         deletedAt: null,
       },
       include: {
+        profile: {
+          select: {
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
         userRoles: {
           include: { role: true },
           orderBy: {

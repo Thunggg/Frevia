@@ -16,7 +16,7 @@ export async function POST() {
   // Server-to-server fetch KHÔNG tự gửi cookie của browser,
   // nên phải tự forward refreshToken qua header Cookie thủ công
   // (khớp với cách NestJS /auth/refresh đọc refresh token từ cookie cho web).
-  const nestRes = await fetch(`${envConfig?.NESTJS_API_URL}/auth/refresh`, {
+  const nestRes = await fetch(`${envConfig?.NESTJS_API_URL}/api/auth/refresh`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

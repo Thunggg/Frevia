@@ -8,7 +8,7 @@ export async function POST() {
   // Báo NestJS xoá refresh token trong DB (hard delete theo thiết kế của bạn),
   // không chặn việc xoá cookie phía Next kể cả khi bước này lỗi.
   if (accessToken) {
-    await fetch(`${envConfig?.NESTJS_API_URL}/auth/logout`, {
+    await fetch(`${envConfig?.NESTJS_API_URL}/api/auth/logout`, {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}` },
     }).catch(() => null);

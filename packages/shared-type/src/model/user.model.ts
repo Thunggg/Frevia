@@ -148,6 +148,24 @@ export const GetAuthorizationUrlResSchema = z.object({
   url: z.url("Error.InvalidUrl"),
 });
 
+export const GetMeProfileSchema = z.object({
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+});
+
+export const GetMeRoleSchema = z.object({
+  name: z.enum([RoleName.FREELANCER, RoleName.CLIENT, RoleName.ADMIN]),
+  isPrimary: z.boolean(),
+});
+
+export const GetMeResSchema = z.object({
+  id: z.number(),
+  email: z.email(),
+  isBanned: z.boolean(),
+  profile: GetMeProfileSchema.nullable(),
+  roles: z.array(GetMeRoleSchema),
+});
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -168,3 +186,5 @@ export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
 export type GetAuthorizationUrlResType = z.infer<
   typeof GetAuthorizationUrlResSchema
 >;
+
+export type GetMeResType = z.infer<typeof GetMeResSchema>;

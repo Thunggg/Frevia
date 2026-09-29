@@ -7,6 +7,7 @@ import { MessageResDTO } from '../../shared/dtos/response.dto';
 import {
   ForgotPasswordBodyDTO,
   GetAuthorizationUrlResponseDTO,
+  GetMeResponseDto,
   LoginBodyDTO,
   LoginResponseDto,
   LogoutBodyDTO,
@@ -107,7 +108,13 @@ export class AuthController {
         `http://localhost:3001/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
       );
     } catch (error) {
-      console.log(error);
+      throw error;
     }
+  }
+
+  @Get('me')
+  @ZodSerializerDto(GetMeResponseDto)
+  getMe(@UserActive('userId') userId: number) {
+    return this.authService.getMe(userId);
   }
 }

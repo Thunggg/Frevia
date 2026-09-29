@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
@@ -10,6 +10,7 @@ import {
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
   GoogleUserInfo,
+  GetMeResType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -20,6 +21,7 @@ import {
   SendOTPBodyType,
   TypeOfVerificationCode,
   UserType,
+  AuthMessage,
 } from '@shared/types';
 import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
@@ -476,6 +478,32 @@ export class AuthService {
     return verifycationOTP;
   }
 
+  async getMe(userId: number): Promise<GetMeResType> {
+    const user = await this.authRepository.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException([
+        { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+      ]);
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      isBanned: user.isBanned,
+      profile: user.profile
+        ? {
+            displayName: user.profile.displayName,
+            avatarUrl: user.profile.avatarUrl,
+          }
+        : null,
+      roles: user.userRoles.map((userRole) => ({
+        name: userRole.role.name as GetMeResType['roles'][number]['name'],
+        isPrimary: userRole.isPrimary,
+      })),
+    };
+  }
+
   getAuthorizationUrl(payload: {
     userAgent: string;
     ip: string;
@@ -522,8 +550,6 @@ export class AuthService {
 
       userAgent = clientInfor.userAgent;
       ip = clientInfor.ip;
-
-      console.log(userAgent, ip);
     } catch (error) {
       this.logger.error('Error parsing client information', error);
     }
@@ -561,18 +587,6 @@ export class AuthService {
         providerUserId: data.id as string,
       });
     }
-
-    // Tạo session
-    await this.authRepository.createSession({
-      userId: user.id,
-      refreshToken: tokens.refresh_token as string,
-      deviceInfo: userAgent,
-      ipAddress: ip,
-      expiresAt: addMilliseconds(
-        new Date(),
-        ms(envConfig.REFRESH_TOKEN_EXPIRES_IN as StringValue) as number,
-      ),
-    });
 
     const { accessToken, refreshToken } =
       await this.generateAccessAndRefreshTokens({
