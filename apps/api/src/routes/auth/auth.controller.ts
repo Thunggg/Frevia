@@ -110,9 +110,4 @@ export class AuthController {
       console.log(error);
     }
   }
-
-  @Get('me')
-  getMe(@UserActive('userId') userId: number) {
-    return this.authService.getMe(userId);
-  }
 }

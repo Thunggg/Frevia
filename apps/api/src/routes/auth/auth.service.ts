@@ -476,12 +476,6 @@ export class AuthService {
     return verifycationOTP;
   }
 
-  async getMe(userId: number) {
-    const user = await this.authRepository.findUserById(userId);
-
-    return user;
-  }
-
   getAuthorizationUrl(payload: {
     userAgent: string;
     ip: string;
