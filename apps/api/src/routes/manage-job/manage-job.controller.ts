@@ -83,4 +83,15 @@ export class ManageJobController {
   ) {
     return this.manageJobService.updateJob(userId, id, body);
   }
+
+  @Delete(':id')
+  deleteJob(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @UserActive('userId')
+    userId: number,
+  ) {
+    return this.manageJobService.deleteJob(userId, id);
+  }
 }

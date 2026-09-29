@@ -14,6 +14,7 @@ import {
   BookmarkJobOnlyForFreelancerException,
   BookmarkNotFoundException,
   FailedToCreateJobException,
+  FailedToDeleteJobException,
   FailedToRemoveBookmarkException,
   FailedToUpdateJobException,
   JobAlreadyBookmarkedException,
@@ -117,6 +118,18 @@ export class ManageJobService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateJobException();
+      }
+
+      throw error;
+    }
+  }
+
+  async deleteJob(userId: number, jobId: number): Promise<void> {
+    try {
+      await this.manageJobRepository.deleteJob(userId, jobId);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToDeleteJobException();
       }
 
       throw error;

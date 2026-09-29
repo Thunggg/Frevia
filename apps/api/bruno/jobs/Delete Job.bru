@@ -1,0 +1,14 @@
+meta {
+  name: Delete Job
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/manage-jobs/1
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

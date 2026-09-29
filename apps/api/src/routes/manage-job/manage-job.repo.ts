@@ -295,4 +295,27 @@ export class ManageJobRepository {
       budgetMax: updatedJob.budgetMax?.toNumber() ?? null,
     };
   }
+
+  async deleteJob(userId: number, jobId: number): Promise<void> {
+    const job = await this.prisma.job.findFirst({
+      where: {
+        id: jobId,
+        clientId: userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!job) {
+      throw JobNotFoundException();
+    }
+
+    await this.prisma.job.update({
+      where: {
+        id: jobId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
 }

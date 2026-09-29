@@ -40,3 +40,8 @@ export const FailedToCreateJobException = () =>
 
 export const FailedToUpdateJobException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_UPDATE_JOB);
+
+export const FailedToDeleteJobException = () =>
+  new InternalServerErrorException({
+    message: ManageJobMessage.FAILED_TO_DELETE_JOB,
+  });
