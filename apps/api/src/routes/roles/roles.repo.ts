@@ -4,7 +4,8 @@ import {
   CreateRoleResponseType,
   RoleDetailResponseType,
   RoleListItemType,
-  RoleName,
+  UpdateRoleBodyType,
+  UpdateRoleResponseType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { RoleNotFoundException } from './roles.error';
@@ -51,7 +52,10 @@ export class RolesRepository {
     return role;
   }
 
-  async findActiveByName(name: string): Promise<RoleListItemType | null> {
+  async findActiveByName(
+    name: string,
+    excludeId?: number,
+  ): Promise<RoleListItemType | null> {
     return this.prisma.role.findFirst({
       where: {
         name: {
@@ -59,6 +63,7 @@ export class RolesRepository {
           mode: 'insensitive',
         },
         deletedAt: null,
+        ...(excludeId ? { id: { not: excludeId } } : {}),
       },
       select: {
         id: true,
@@ -69,11 +74,32 @@ export class RolesRepository {
     });
   }
 
-  async create(body: CreateRoleBodyType): Promise<CreateRoleResponseType> {
+  async createRole(body: CreateRoleBodyType): Promise<CreateRoleResponseType> {
     return this.prisma.role.create({
       data: {
         name: body.name,
         description: body.description ?? null,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  async updateRole(
+    id: number,
+    body: UpdateRoleBodyType,
+  ): Promise<UpdateRoleResponseType> {
+    return this.prisma.role.update({
+      where: { id },
+      data: {
+        ...(body.name !== undefined ? { name: body.name } : {}),
+        ...(body.description !== undefined
+          ? { description: body.description }
+          : {}),
       },
       select: {
         id: true,

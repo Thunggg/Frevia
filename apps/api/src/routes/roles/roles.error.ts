@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -18,6 +19,14 @@ export const RoleAlreadyExistsException = () =>
     {
       message: ManageRoleMessage.ROLE_ALREADY_EXISTS,
       path: 'name',
+    },
+  ]);
+
+export const CannotModifySystemRoleException = () =>
+  new ForbiddenException([
+    {
+      message: ManageRoleMessage.CANNOT_MODIFY_SYSTEM_ROLE,
+      path: 'id',
     },
   ]);
 
@@ -41,6 +50,14 @@ export const FailedToCreateRoleException = () =>
   new InternalServerErrorException([
     {
       message: ManageRoleMessage.FAILED_TO_CREATE_ROLE,
+      path: 'roles',
+    },
+  ]);
+
+export const FailedToUpdateRoleException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageRoleMessage.FAILED_TO_UPDATE_ROLE,
       path: 'roles',
     },
   ]);
