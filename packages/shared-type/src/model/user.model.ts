@@ -54,7 +54,7 @@ export const RegisterBodySchema = z
       .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
   })
   .extend({
-    otpCode: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
+    code: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
     confirmPassword: z
       .string()
       .nonempty(AuthMessage.CONFIRM_PASSWORD_IS_REQUIRE),
@@ -121,11 +121,13 @@ export const LogoutBodySchema = SessionSchema.pick({
 export const ForgotPasswordBodySchema = z
   .object({
     email: z.email(AuthMessage.INVALID_EMAIL),
-    code: z.string().length(6),
+    code: z.string().length(6).min(6, AuthMessage.OTP_CODE_INVALID_FORMAT),
     newPassword: z
       .string()
       .min(8, AuthMessage.PASSWORD_TOO_SHORT)
-      .max(32, AuthMessage.PASSWORD_TOO_LONG),
+      .max(32, AuthMessage.PASSWORD_TOO_LONG)
+      .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
+      .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
     confirmNewPassword: z
       .string()
       .min(8, AuthMessage.PASSWORD_TOO_SHORT)

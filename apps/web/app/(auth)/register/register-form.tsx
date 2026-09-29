@@ -39,12 +39,16 @@ import {
   InputGroupInput,
 } from "@repo/ui/components/shadcn/input-group";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
 
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -64,7 +68,7 @@ export function RegisterForm() {
       email: "",
       password: "",
       confirmPassword: "",
-      otpCode: "",
+      code: "",
       fullName: "",
       role: RoleName.FREELANCER,
     },
@@ -72,6 +76,7 @@ export function RegisterForm() {
 
   async function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
     try {
+      setIsLoading(true);
       const res = await authApiRequest.register(payload);
 
       if (res.success) {
@@ -89,6 +94,8 @@ export function RegisterForm() {
       } else {
         toastError({ message: "Register failed" });
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -172,16 +179,32 @@ export function RegisterForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-email">
-                    Password
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-demo-title"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Login button not working on mobile"
-                    autoComplete="off"
-                  />
+                  <FieldLabel htmlFor="register-password">Password</FieldLabel>
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="register-password"
+                      type={showPassword ? "text" : "password"}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Enter your password"
+                      autoComplete="new-password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -193,16 +216,38 @@ export function RegisterForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-email">
+                  <FieldLabel htmlFor="register-confirm-password">
                     Confirm Password
                   </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-demo-title"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Login button not working on mobile"
-                    autoComplete="off"
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="register-confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Confirm your password"
+                      autoComplete="new-password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -210,7 +255,7 @@ export function RegisterForm() {
               )}
             />
             <Controller
-              name="otpCode"
+              name="code"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
@@ -254,7 +299,7 @@ export function RegisterForm() {
                   <RadioGroup
                     value={field.value}
                     onValueChange={field.onChange}
-                    className="max-w-sm"
+                    className="max-w-md"
                   >
                     <FieldLabel htmlFor="plus-plan">
                       <Field orientation="horizontal">
@@ -313,7 +358,7 @@ export function RegisterForm() {
           <Button
             type="submit"
             form="form-rhf-demo"
-            disabled={!isTermsAccepted}
+            disabled={!isTermsAccepted || isLoading}
           >
             Submit
           </Button>

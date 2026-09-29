@@ -1,4 +1,5 @@
 import {
+  ForgotPasswordBodyType,
   LoginBodyType,
   LoginResType,
   MessageResType,
@@ -17,4 +18,7 @@ export const authApiRequest = {
 
   sendOtp: (body: SendOTPBodyType) =>
     http.post<MessageResType>("/api/auth/otp", body),
+
+  forgotPassword: (body: ForgotPasswordBodyType) =>
+    http.post<MessageResType>("/api/auth/forgot-password", body),
 };

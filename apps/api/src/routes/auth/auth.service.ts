@@ -60,7 +60,7 @@ export class AuthService {
     Omit<UserType, 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   > {
     try {
-      const { email, otpCode, password, fullName, role } = body;
+      const { email, code, password, fullName, role } = body;
 
       this.logger.log(`Register attempt for email: ${email}`);
 
@@ -78,7 +78,7 @@ export class AuthService {
 
       // 2. Xác thực mã OTP
       await this.validateVerificationCode({
-        code: otpCode,
+        code,
         email,
         type: TypeOfVerificationCode.EMAIL_VERIFICATION,
       });
@@ -97,7 +97,7 @@ export class AuthService {
 
       const result = await this.authRepository.createUserAndRegister(
         {
-          code: otpCode,
+          code,
           type: TypeOfVerificationCode.EMAIL_VERIFICATION,
           email,
         },
@@ -409,6 +409,7 @@ export class AuthService {
       throw EmailNotFoundException();
     }
 
+    // Kiểm tra xem user có bị ban hay không
     if (user.isBanned) {
       this.logger.warn(`Banned user attempted forgot password: ${email}`);
       throw UserBannedException();

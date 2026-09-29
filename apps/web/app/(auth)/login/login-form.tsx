@@ -31,6 +31,7 @@ import Link from "next/link";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
     resolver: zodResolver(LoginBodySchema),
@@ -42,6 +43,7 @@ export function LoginForm() {
 
   async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
     try {
+      setIsLoading(true);
       const res = await authApiRequest.login(payload);
 
       if (res.success) {
@@ -57,6 +59,8 @@ export function LoginForm() {
       } else {
         toastError({ message: "Login failed", duration: 3000 });
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -144,12 +148,21 @@ export function LoginForm() {
             {/* Remember Me */}
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox id="remember" className="cursor-pointer" />
-              <Label
-                htmlFor="remember"
-                className="text-sm font-medium text-muted-foreground cursor-pointer"
-              >
-                Remember me
-              </Label>
+              <div className="flex items-center justify-between w-full space-x-2">
+                <Label
+                  htmlFor="remember"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
+                >
+                  Remember me
+                </Label>
+
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -157,6 +170,7 @@ export function LoginForm() {
               type="submit"
               form="form-rhf-demo"
               className="w-full mt-6 h-11 cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              disabled={isLoading}
             >
               Login
             </Button>
