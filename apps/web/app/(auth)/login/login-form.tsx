@@ -18,13 +18,16 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { toast } from "@repo/ui/components/shadcn/sonner";
 import { LoginBodySchema } from "@shared/types";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { authApiRequest } from "../../apiRequests/auth";
 import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import {
+  toastError,
+  toastSuccess,
+} from "../../../../../packages/ui/src/components/shadcn/toast";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,42 +41,42 @@ export function LoginForm() {
   });
 
   async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
-    const res = await authApiRequest.login(payload);
+    try {
+      const res = await authApiRequest.login(payload);
 
-    if (!res.success && res.error.details) {
-      res.error.details?.forEach(
-        (error: {
-          path: keyof z.infer<typeof LoginBodySchema>;
-          message: string;
-        }) => {
+      if (!res.success && res.error.details) {
+        res.error.details?.forEach((error: any) => {
           form.setError(error.path as keyof z.infer<typeof LoginBodySchema>, {
             type: "server",
             message: error.message,
           });
-        },
-      );
-    } else if (
-      !res.success &&
-      (!res.error.details || res.error.details.length === 0)
-    ) {
-      toast("Login failed: " + res.error.message, {
-        position: "top-right",
-      });
-    } else {
-      toast("Login successful", {
-        position: "top-right",
-      });
+        });
+      } else if (
+        !res.success &&
+        (!res.error.details || res.error.details.length === 0)
+      ) {
+        toastSuccess("Login successful");
+      } else {
+        toastError("Login failed");
+      }
+    } catch (error: any) {
+      const res = error.response;
+      if (!res.success && res.error.details) {
+        res.error.details?.forEach((error: any) => {
+          form.setError(error.path as keyof z.infer<typeof LoginBodySchema>, {
+            type: "server",
+            message: error.message,
+          });
+        });
+      }
+      toastError(res.error.message);
     }
   }
 
   return (
-    <Card className="w-full max-w-xl p-10 shadow-lg">
+    <Card className="w-full max-w-xl p-10 bg-color-card-foreground">
       {/* Card Header */}
       <CardHeader className="p-0 mb-8 flex flex-col items-center text-center">
-        {/* Icon màu xanh lá */}
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-600">
-          <LogIn className="h-7 w-7" />
-        </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Welcome Back!
         </h1>
