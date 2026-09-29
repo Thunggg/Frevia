@@ -15,11 +15,14 @@ export const request = async <T>(
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   url: string,
   body?: any,
+  isRequestToProxyAPI: boolean = true,
 ): Promise<ApiResponse<T>> => {
   // chuẩn hóa lại url người dùng gửi lên
-  const fullUrl = url.startsWith("/") ? url : `/${url}`;
+  const formatUrl = url.startsWith("/") ? url : `/${url}`;
 
-  const res = await fetch(`/api/backend` + fullUrl, {
+  const fullUrl = isRequestToProxyAPI ? `/api/backend${formatUrl}` : formatUrl;
+
+  const res = await fetch(fullUrl, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -37,23 +40,23 @@ export const request = async <T>(
 };
 
 export const http = {
-  get: <T>(url: string) => {
-    return request<T>("GET", url);
+  get: <T>(url: string, isRequestToProxyAPI: boolean = true) => {
+    return request<T>("GET", url, undefined, isRequestToProxyAPI);
   },
 
-  post: <T>(url: string, body: any) => {
-    return request<T>("POST", url, body);
+  post: <T>(url: string, body: any, isRequestToProxyAPI: boolean = true) => {
+    return request<T>("POST", url, body, isRequestToProxyAPI);
   },
 
-  put: <T>(url: string, body: any) => {
-    return request<T>("PUT", url, body);
+  put: <T>(url: string, body: any, isRequestToProxyAPI: boolean = true) => {
+    return request<T>("PUT", url, body, isRequestToProxyAPI);
   },
 
-  patch: <T>(url: string, body: any) => {
-    return request<T>("PATCH", url, body);
+  patch: <T>(url: string, body: any, isRequestToProxyAPI: boolean = true) => {
+    return request<T>("PATCH", url, body, isRequestToProxyAPI);
   },
 
-  delete: <T>(url: string) => {
-    return request<T>("DELETE", url);
+  delete: <T>(url: string, isRequestToProxyAPI: boolean = true) => {
+    return request<T>("DELETE", url, undefined, isRequestToProxyAPI);
   },
 };

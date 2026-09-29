@@ -34,8 +34,6 @@ export function LoginForm() {
   async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
     const res = await authApiRequest.login(payload);
 
-    console.log(res);
-
     if (!res.success && res.error.details) {
       res.error.details?.forEach((error) => {
         form.setError(error.path as keyof z.infer<typeof LoginBodySchema>, {
