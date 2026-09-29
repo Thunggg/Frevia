@@ -26,4 +26,6 @@ export const ManageContractMessage = {
 
   FILE_NOT_FOUND: 'Error.ContractFileNotFound',
   FAILED_TO_UPLOAD_FILE: 'Error.FailedToUploadContractFile',
+  FAILED_TO_DELETE_FILE: 'Error.FailedToDeleteContractFile',
+  FILE_FORBIDDEN: 'Error.ContractFileForbidden',
 } as const;

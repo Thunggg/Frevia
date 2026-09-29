@@ -3,6 +3,7 @@ import {
   CompleteContractResponseSchema,
   CreateContractBodySchema,
   CreateContractResponseSchema,
+  DeleteContractFileResponseSchema,
   GetContractDetailResponseSchema,
   GetContractFilesResponseSchema,
   GetContractsQuerySchema,
@@ -33,3 +34,4 @@ export class GetContractFilesResponseDTO extends createZodDto(GetContractFilesRe
 
 export class UploadContractFileBodyDTO extends createZodDto(UploadContractFileBodySchema) { }
 export class UploadContractFileResponseDTO extends createZodDto(UploadContractFileResponseSchema) { }
+export class DeleteContractFileResponseDTO extends createZodDto(DeleteContractFileResponseSchema) { }

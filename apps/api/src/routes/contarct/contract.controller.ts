@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -15,6 +16,7 @@ import {
   CompleteContractResponseDTO,
   CreateContractBodyDTO,
   CreateContractResponseDTO,
+  DeleteContractFileResponseDTO,
   GetContractDetailResponseDTO,
   GetContractFilesResponseDTO,
   GetContractsQueryDTO,
@@ -117,5 +119,15 @@ export class ContractController {
     @Body() body: UploadContractFileBodyDTO,
   ) {
     return this.contractService.uploadContractFile(id, userId, body as UploadContractFileBodyType);
+  }
+
+  @Delete(':id/files/:fileId')
+  @ZodSerializerDto(DeleteContractFileResponseDTO)
+  deleteContractFile(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('fileId', ParseIntPipe) fileId: number,
+    @UserActive('userId') userId: number,
+  ) {
+    return this.contractService.deleteContractFile(id, fileId, userId);
   }
 }

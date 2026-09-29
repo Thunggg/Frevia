@@ -86,3 +86,13 @@ export const FailedToUploadContractFileException = () =>
   new InternalServerErrorException([
     { message: ManageContractMessage.FAILED_TO_UPLOAD_FILE, path: '' },
   ]);
+
+export const FailedToDeleteContractFileException = () =>
+  new InternalServerErrorException([
+    { message: ManageContractMessage.FAILED_TO_DELETE_FILE, path: '' },
+  ]);
+
+export const ContractFileForbiddenException = () =>
+  new ForbiddenException([
+    { message: ManageContractMessage.FILE_FORBIDDEN, path: 'fileId' },
+  ]);

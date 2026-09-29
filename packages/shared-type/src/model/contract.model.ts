@@ -163,9 +163,13 @@ export const UploadContractFileBodySchema = z.object({
 });
 
 export const UploadContractFileResponseSchema = SharedFileSchema;
+export const DeleteContractFileResponseSchema = z.object({
+  success: z.boolean(),
+});
 
 export type SharedFileType = z.infer<typeof SharedFileSchema>;
 export type GetContractFilesResponseType = z.infer<typeof GetContractFilesResponseSchema>;
 export type UploadContractFileBodyType = z.infer<typeof UploadContractFileBodySchema>;
 export type UploadContractFileResponseType = z.infer<typeof UploadContractFileResponseSchema>;
+export type DeleteContractFileResponseType = z.infer<typeof DeleteContractFileResponseSchema>;
 

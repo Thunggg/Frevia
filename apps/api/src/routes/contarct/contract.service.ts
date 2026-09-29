@@ -11,9 +11,12 @@ import {
   ContractFreelancerNotFoundException,
   ContractJobNotFoundException,
   ContractNotActiveException,
+  ContractFileForbiddenException,
+  ContractFileNotFoundException,
   ContractNotInPendingSignException,
   ContractNotFoundException,
   FailedToCreateContractException,
+  FailedToDeleteContractFileException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
   FailedToUploadContractFileException,
@@ -271,6 +274,29 @@ export class ContractService {
         throw error;
       }
       throw FailedToUploadContractFileException();
+    }
+  }
+
+  async deleteContractFile(contractId: number, fileId: number, requestUserId: number) {
+    try {
+      await this._verifyContractAccess(contractId, requestUserId);
+      const file = await this.contractRepository.findSharedFileById(fileId);
+      
+      if (!file || file.contractId !== contractId) {
+        throw ContractFileNotFoundException();
+      }
+
+      if (file.uploaderId !== requestUserId) {
+        throw ContractFileForbiddenException();
+      }
+
+      await this.contractRepository.deleteSharedFile(fileId);
+      return { success: true };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeleteContractFileException();
     }
   }
 }

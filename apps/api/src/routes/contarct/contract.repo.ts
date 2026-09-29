@@ -182,4 +182,17 @@ export class ContractRepository {
       },
     });
   }
+
+  async findSharedFileById(fileId: number) {
+    return this.prisma.sharedFile.findUnique({
+      where: { id: fileId, deletedAt: null },
+    });
+  }
+
+  async deleteSharedFile(fileId: number) {
+    return this.prisma.sharedFile.update({
+      where: { id: fileId },
+      data: { deletedAt: new Date() },
+    });
+  }
 }
