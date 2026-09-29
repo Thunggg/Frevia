@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  BookmarkJobBodyType,
   RoleName,
   ViewBookmarkedJobFilterType,
   ViewBookmarkedJobResponseType,
@@ -51,26 +50,23 @@ export class ManageJobService {
   async bookmarkJob(
     userId: number,
     roleName: string,
-    body: BookmarkJobBodyType,
+    jobId: number,
   ): Promise<void> {
     this.assertFreelancerRole(roleName);
 
-    const job = await this.manageJobRepository.findJobById(body.jobId);
+    const job = await this.manageJobRepository.findJobById(jobId);
 
     if (!job) {
       throw JobNotFoundException();
     }
 
-    const bookmark = await this.manageJobRepository.findBookmark(
-      userId,
-      body.jobId,
-    );
+    const bookmark = await this.manageJobRepository.findBookmark(userId, jobId);
 
     if (bookmark) {
       throw JobAlreadyBookmarkedException();
     }
 
-    await this.manageJobRepository.bookmarkJob(userId, body.jobId);
+    await this.manageJobRepository.bookmarkJob(userId, jobId);
   }
 
   async removeBookmark(userId: number, jobId: number): Promise<void> {

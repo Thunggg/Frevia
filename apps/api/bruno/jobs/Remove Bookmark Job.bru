@@ -5,14 +5,19 @@ meta {
 }
 
 delete {
-  url: {{baseUrl}}/manage-jobs/bookmarks/{{jobId}}
+  url: {{baseUrl}}/api/manage-jobs/bookmarks/{{jobId}}
+  body: none
   auth: none
+}
+
+params:path {
+  jobId: 1
 }
 
 headers {
   Authorization: Bearer {{accessToken}}
 }
 
-params:path {
+vars:pre-request {
   jobId: 1
 }

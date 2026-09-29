@@ -5,18 +5,19 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/manage-jobs/bookmarks
-  body: json
+  url: {{baseUrl}}/api/manage-jobs/jobs/{{jobId}}/bookmark
+  body: none
   auth: none
+}
+
+params:path {
+  jobId: 4
 }
 
 headers {
   Authorization: Bearer {{accessToken}}
-  Content-Type: application/json
 }
 
-body:json {
-  {
-    "jobId": 4
-  }
+vars:pre-request {
+  jobId: 1
 }
