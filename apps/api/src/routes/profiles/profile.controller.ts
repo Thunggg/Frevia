@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { IsPublic } from '../../../shared/decorators/auth.decorator';
+import { IsPublic } from '../../shared/decorators/auth.decorator';
 import { FreelancerProfileDetailResponseDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
