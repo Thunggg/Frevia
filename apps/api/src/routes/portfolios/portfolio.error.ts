@@ -24,3 +24,8 @@ export const PortfolioForbiddenException = () =>
   new ForbiddenException([
     { message: PortfolioMessage.PORTFOLIO_FORBIDDEN, path: 'userId' },
   ]);
+
+export const PortfolioNotFoundException = () =>
+  new NotFoundException([
+    { message: PortfolioMessage.PORTFOLIO_NOT_FOUND, path: 'id' },
+  ]);

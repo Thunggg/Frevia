@@ -12,6 +12,7 @@ import {
   PortfolioItemListResponseDto,
   AddPortfolioDto,
   AddPortfolioResponseDto,
+  PortfolioItemResponseDto,
 } from './portfolio.dto';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 
@@ -33,5 +34,11 @@ export class PortfolioController {
     @Body() body: AddPortfolioDto,
   ) {
     return this.portfolioService.addPortfolio(id, currentUserId, body);
+  }
+
+  @Get('portfolios/:id')
+  @ZodSerializerDto(PortfolioItemResponseDto)
+  async getPortfolioDetail(@Param('id', ParseIntPipe) id: number) {
+    return this.portfolioService.getPortfolioDetail(id);
   }
 }

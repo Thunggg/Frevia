@@ -66,4 +66,13 @@ export class PortfolioRepository {
       });
     });
   }
+
+  async findPortfolioById(portfolioId: number) {
+    return this.prisma.portfolioItem.findFirst({
+      where: {
+        id: portfolioId,
+        deletedAt: null,
+      },
+    });
+  }
 }

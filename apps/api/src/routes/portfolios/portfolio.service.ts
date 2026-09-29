@@ -5,6 +5,7 @@ import {
   NoPortfoliosAvailableException,
   UnableToLoadPortfoliosException,
   PortfolioForbiddenException,
+  PortfolioNotFoundException,
 } from './portfolio.error';
 import { RoleName, AddPortfolioType } from '@shared/types';
 
@@ -77,6 +78,22 @@ export class PortfolioService {
         profileId,
         data,
       );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw UnableToLoadPortfoliosException();
+    }
+  }
+
+  async getPortfolioDetail(portfolioId: number) {
+    try {
+      const portfolio =
+        await this.portfolioRepository.findPortfolioById(portfolioId);
+      if (!portfolio) {
+        throw PortfolioNotFoundException();
+      }
+      return portfolio;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
