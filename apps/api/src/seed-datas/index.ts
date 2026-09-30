@@ -1,16 +1,14 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
-import { RoleName } from '@shared/types';
 import 'dotenv/config';
 import { HashingService } from '../shared/services/hashing.service';
+import { RoleName, type RoleNameType } from '@shared/types';
 
-// Kiểm tra xem có database url ko
 if (!process.env.DIRECT_URL) {
-  console.log('Cannot file DB URL');
+  console.log('Cannot find DB URL');
   process.exit(1);
 }
 
-// Khỏi tạo service và hash
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
 });
@@ -18,15 +16,18 @@ const prisma = new PrismaClient({
 const hashingService = new HashingService();
 
 const DEFAULT_EMAIL_AND_PASSWORD: Record<
-  keyof typeof RoleName,
+  RoleNameType,
   {
     email: string;
     password: string;
   }
 > = {
-  ADMIN: { email: 'admin@gmail.com', password: '123456' },
-  FREELANCER: { email: 'freelancer@gmail.com', password: '123456' },
-  CLIENT: { email: 'client@gmail.com', password: '123456' },
+  [RoleName.ADMIN]: { email: 'admin@gmail.com', password: 'Admin123!' },
+  [RoleName.FREELANCER]: {
+    email: 'freelancer@gmail.com',
+    password: 'Freelancer123!',
+  },
+  [RoleName.CLIENT]: { email: 'client@gmail.com', password: 'Client123!' },
 };
 
 async function createAccountRole({
@@ -34,7 +35,7 @@ async function createAccountRole({
   role,
 }: {
   email: string;
-  role: keyof typeof RoleName;
+  role: RoleNameType;
 }) {
   const accountIsExist = await prisma.user.findFirst({
     where: {
@@ -42,38 +43,45 @@ async function createAccountRole({
     },
   });
 
-  if (!accountIsExist) {
-    const accountRole = await prisma.role.findFirst({
-      where: {
-        name: role as any,
-      },
-    });
-
-    const newAccount = await prisma.user.create({
-      data: {
-        email,
-        password: (await hashingService.hash(
-          DEFAULT_EMAIL_AND_PASSWORD[role].password,
-        )) as string,
-        isBanned: false,
-        userRoles: {
-          create: {
-            roleId: accountRole!.id,
-          },
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    console.log('New account created: ', newAccount);
-  } else {
+  if (accountIsExist) {
     console.log('Account already exists: ', accountIsExist);
+    return;
   }
+
+  const accountRole = await prisma.role.findFirst({
+    where: {
+      name: role,
+      deletedAt: null,
+    },
+  });
+
+  if (!accountRole) {
+    console.log(`Role not found: ${role}`);
+    return;
+  }
+
+  const newAccount = await prisma.user.create({
+    data: {
+      email,
+      password: (await hashingService.hash(
+        DEFAULT_EMAIL_AND_PASSWORD[role].password,
+      )) as string,
+      isBanned: false,
+      userRoles: {
+        create: {
+          roleId: accountRole.id,
+          isPrimary: true,
+        },
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log('New account created: ', newAccount);
 }
 
 async function main() {
-  // Khởi tạo bảng roles
   const newRoles = await prisma.role.createMany({
     data: [
       { name: RoleName.ADMIN, description: 'Administrator role' },
@@ -84,21 +92,27 @@ async function main() {
   });
   console.log('New roles created: ', newRoles);
 
-  // Kiểm tra xem đã có tài khoản admin chưa
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.ADMIN.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.ADMIN].email,
     role: RoleName.ADMIN,
   });
 
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.FREELANCER.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.FREELANCER].email,
     role: RoleName.FREELANCER,
   });
 
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.CLIENT.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.CLIENT].email,
     role: RoleName.CLIENT,
   });
 }
 
-main();
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -21,3 +21,7 @@ export * from "./message/manage-forum-report.message";
 export * from "./model/job-skill.model";
 export * from "./model/job-bookmark.model";
 export * from "./message/manage-job.message";
+export * from "./type/google-type";
+export * from "./constants/oauth.constant";
+export * from "./model/role.model";
+export * from "./message/manage-role.message";

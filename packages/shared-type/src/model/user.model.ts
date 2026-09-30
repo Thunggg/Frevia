@@ -54,7 +54,7 @@ export const RegisterBodySchema = z
       .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
   })
   .extend({
-    otpCode: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
+    code: z.string().regex(/^\d{6}$/, AuthMessage.OTP_CODE_INVALID_FORMAT),
     confirmPassword: z
       .string()
       .nonempty(AuthMessage.CONFIRM_PASSWORD_IS_REQUIRE),
@@ -95,12 +95,7 @@ export const SendOTPSchema = EmailVerificationSchema.pick({
 
 export const LoginBodySchema = z.object({
   email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
-  password: z
-    .string()
-    .min(8, AuthMessage.PASSWORD_TOO_SHORT)
-    .max(32, AuthMessage.PASSWORD_TOO_LONG)
-    .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
-    .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
+  password: z.string().min(1, AuthMessage.PASSWORD_IS_REQUIRE),
 });
 
 export const LoginResSchema = z
@@ -121,11 +116,13 @@ export const LogoutBodySchema = SessionSchema.pick({
 export const ForgotPasswordBodySchema = z
   .object({
     email: z.email(AuthMessage.INVALID_EMAIL),
-    code: z.string().length(6),
+    code: z.string().length(6).min(6, AuthMessage.OTP_CODE_INVALID_FORMAT),
     newPassword: z
       .string()
       .min(8, AuthMessage.PASSWORD_TOO_SHORT)
-      .max(32, AuthMessage.PASSWORD_TOO_LONG),
+      .max(32, AuthMessage.PASSWORD_TOO_LONG)
+      .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
+      .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
     confirmNewPassword: z
       .string()
       .min(8, AuthMessage.PASSWORD_TOO_SHORT)
@@ -142,6 +139,28 @@ export const ForgotPasswordBodySchema = z
     }
   });
 
+export const GetAuthorizationUrlResSchema = z.object({
+  url: z.url("Error.InvalidUrl"),
+});
+
+export const GetMeProfileSchema = z.object({
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+});
+
+export const GetMeRoleSchema = z.object({
+  name: z.enum([RoleName.FREELANCER, RoleName.CLIENT, RoleName.ADMIN]),
+  isPrimary: z.boolean(),
+});
+
+export const GetMeResSchema = z.object({
+  id: z.number(),
+  email: z.email(),
+  isBanned: z.boolean(),
+  profile: GetMeProfileSchema.nullable(),
+  roles: z.array(GetMeRoleSchema),
+});
+
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -151,9 +170,16 @@ export type RegisterResType = z.infer<typeof RegisterResSchema>;
 export type SendOTPBodyType = z.infer<typeof SendOTPSchema>;
 
 export type LoginBodyType = z.infer<typeof LoginBodySchema>;
+export type LoginResType = z.infer<typeof LoginResSchema>;
 
 export type RefreshTokenBodySchemaType = z.infer<typeof RefreshTokenBodySchema>;
 
 export type LogoutBodySchemaType = z.infer<typeof LogoutBodySchema>;
 
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
+
+export type GetAuthorizationUrlResType = z.infer<
+  typeof GetAuthorizationUrlResSchema
+>;
+
+export type GetMeResType = z.infer<typeof GetMeResSchema>;

@@ -1,0 +1,24 @@
+meta {
+  name: Get authorization url
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/auth/google-link
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "admin@gmail.com",
+    "code": "712904",
+    "newPassword": "anhthuanquavip",
+    "confirmNewPassword": "anhthuanquavip"
+  }
+}

@@ -1,8 +1,10 @@
 export const RoleName = {
-  ADMIN: "ADMIN",
-  CLIENT: "CLIENT",
-  FREELANCER: "FREELANCER",
+  ADMIN: "Admin",
+  CLIENT: "Client",
+  FREELANCER: "Freelancer",
 } as const;
+
+export type RoleNameType = (typeof RoleName)[keyof typeof RoleName];
 
 export const HTTPMethod = {
   GET: "GET",
@@ -13,3 +15,5 @@ export const HTTPMethod = {
   OPTIONS: "OPTIONS",
   HEAD: "HEAD",
 } as const;
+
+export type HTTPMethodType = (typeof HTTPMethod)[keyof typeof HTTPMethod];

@@ -16,7 +16,7 @@ datasource db {
 // ============================
 model Role {
   id          Int       @id @default(autoincrement())
-  name        RoleName  @unique
+  name        String    @db.VarChar(500)
   description String?
   createdAt   DateTime  @default(now())
   deletedAt   DateTime?
@@ -72,21 +72,21 @@ model RolePermission {
 // 2. Authentication & User Core
 // ============================
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique @db.VarChar(255)
-  password String?   @db.VarChar(255) // Nullable cho OAuth users
-  isBanned      Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
+  id        Int       @id @default(autoincrement())
+  email     String    @unique @db.VarChar(255)
+  password  String?   @db.VarChar(255) // Nullable cho OAuth users
+  isBanned  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   // --- Auth / core ---
-  userRoles           UserRole[]
-  sessions            Session[]
-  oauthAccounts       OauthAccount[]
-  twoFactorAuth       TwoFactorAuth?
-  userSettings        UserSetting?
-  profile             Profile?
+  userRoles     UserRole[]
+  sessions      Session[]
+  oauthAccounts OauthAccount[]
+  twoFactorAuth TwoFactorAuth?
+  userSettings  UserSetting?
+  profile       Profile?
 
   // --- Verification / profile visits ---
   idVerificationDocuments IdVerificationDocument[] @relation("IdVerificationUser")
@@ -157,36 +157,36 @@ model User {
 }
 
 model VerificationCode {
-  id          Int                  @id @default(autoincrement())
-  email       String               @db.VarChar(500)
-  code        String               @db.VarChar(255) // lưu hash, không lưu plaintext
-  type        VerificationCodeType
-  attempts    Int                  @default(0)
-  expiresAt   DateTime
-  createdAt   DateTime             @default(now())
+  id        Int                  @id @default(autoincrement())
+  email     String               @db.VarChar(500)
+  code      String               @db.VarChar(255) // lưu hash, không lưu plaintext
+  type      VerificationCodeType
+  attempts  Int                  @default(0)
+  expiresAt DateTime
+  createdAt DateTime             @default(now())
 
   @@unique([email, type])
   @@index([expiresAt])
 }
 
 model Session {
-  id           Int       @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   userId       Int
-  refreshToken String    @unique @db.VarChar(512)
+  refreshToken String   @unique @db.VarChar(512)
   deviceInfo   String?
-  ipAddress    String?   @db.VarChar(45)
+  ipAddress    String?  @db.VarChar(45)
   expiresAt    DateTime
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 }
 
 model OauthAccount {
-  id             Int      @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   userId         Int
-  provider       String   @db.VarChar(50)
-  providerUserId String   @db.VarChar(255)
-  createdAt      DateTime @default(now())
+  provider       OauthProvider
+  providerUserId String        @db.VarChar(255)
+  createdAt      DateTime      @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
@@ -226,7 +226,7 @@ model Profile {
   onlineStatus             Boolean            @default(false)
   availabilityStatus       AvailabilityStatus @default(OFFLINE)
   profileCompletionPercent Int                @default(0)
-  walletAddress String? @db.VarChar(42)
+  walletAddress            String?            @db.VarChar(42)
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
 
@@ -1040,12 +1040,6 @@ model DirectMessage {
 // ============================
 // ENUMS
 // ============================
-enum RoleName {
-  ADMIN
-  CLIENT
-  FREELANCER
-}
-
 enum JobStatus {
   DRAFT
   OPEN
@@ -1218,4 +1212,8 @@ enum InvoiceStatus {
 enum VerificationCodeType {
   PASSWORD_RESET
   EMAIL_VERIFICATION
+}
+
+enum OauthProvider {
+  GOOGLE
 }

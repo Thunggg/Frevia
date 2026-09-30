@@ -12,7 +12,7 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
 });
 
-const CLIENT_EMAIL = 'client@gmail.com';
+const CLIENT_EMAIL = 'taitpce181632@fpt.edu.vn';
 
 async function main() {
   const clientUser = await prisma.user.findUnique({

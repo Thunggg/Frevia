@@ -12,7 +12,7 @@ export class SharedRoleRepository {
 
   async getClientRoleId() {
     if (this.clientRoleId) return this.clientRoleId;
-
+    console.log('Fetching client role id from database...');
     const role = await this.prisma.role.findFirst({
       where: { name: RoleName.CLIENT, deletedAt: null },
     });

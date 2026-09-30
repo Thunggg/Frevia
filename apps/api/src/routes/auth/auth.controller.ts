@@ -1,11 +1,15 @@
-import { Body, Controller, Get, Ip, Post } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Query, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
+import { envConfig } from '../../shared/config/validate-env';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { UserAgent } from '../../shared/decorators/user-agent.decorators';
 import { MessageResDTO } from '../../shared/dtos/response.dto';
 import {
   ForgotPasswordBodyDTO,
+  GetAuthorizationUrlResponseDTO,
+  GetMeResponseDto,
   LoginBodyDTO,
   LoginResponseDto,
   LogoutBodyDTO,
@@ -83,7 +87,29 @@ export class AuthController {
     return this.authService.forgotPassword(body);
   }
 
+  @Get('google-link')
+  @IsPublic()
+  @ZodSerializerDto(GetAuthorizationUrlResponseDTO)
+  getGoogleLink(@UserAgent() userAgent: string, @Ip() ip: string) {
+    return this.authService.getAuthorizationUrl({ userAgent, ip });
+  }
+
+  @Get('google/callback')
+  @IsPublic()
+  async googleCallback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Res() res: Response,
+  ) {
+    const data = await this.authService.googleCallback({ code, state });
+
+    return res.redirect(
+      `${envConfig.NEXT_URL}/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
+    );
+  }
+
   @Get('me')
+  @ZodSerializerDto(GetMeResponseDto)
   getMe(@UserActive('userId') userId: number) {
     return this.authService.getMe(userId);
   }

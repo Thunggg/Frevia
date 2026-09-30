@@ -1,5 +1,7 @@
 import {
   ForgotPasswordBodySchema,
+  GetAuthorizationUrlResSchema,
+  GetMeResSchema,
   LoginBodySchema,
   LoginResSchema,
   LogoutBodySchema,
@@ -27,3 +29,9 @@ export class LogoutBodyDTO extends createZodDto(LogoutBodySchema) {}
 export class ForgotPasswordBodyDTO extends createZodDto(
   ForgotPasswordBodySchema,
 ) {}
+
+export class GetAuthorizationUrlResponseDTO extends createZodDto(
+  GetAuthorizationUrlResSchema,
+) {}
+
+export class GetMeResponseDto extends createZodDto(GetMeResSchema) {}
