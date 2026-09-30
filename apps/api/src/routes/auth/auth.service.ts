@@ -600,12 +600,3 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 }
-// {
-//   id: '118389814231216508675',
-//   email: 'thuannguyen20041028@gmail.com',
-//   verified_email: true,
-//   name: 'Thuận Nguyễn',
-//   given_name: 'Thuận',
-//   family_name: 'Nguyễn',
-//   picture: 'https://lh3.googleusercontent.com/a/ACg8ocITheMMiGy_x10mdJz75Y0y_u1K6iLm2Hz6msMSQP4y3n-Ex_x7=s96-c'
-// }
