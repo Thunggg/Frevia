@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent } from "@repo/ui/components/shadcn/card";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -30,99 +30,45 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-import type { ForumCommentType, PaginationMeta } from "@shared/types";
-import { forumApiRequest } from "@/apiRequests/forum";
+import type { ForumCommentType } from "@shared/types";
+import {
+  useForumComments,
+  useCreateComment,
+  useUpdateComment,
+  useDeleteComment,
+  useToggleCommentLike,
+} from "@/hooks/use-forum";
 import { ReportDialog } from "./report-dialog";
 
 type CommentSectionProps = {
   postId: number;
-  initialComments: ForumCommentType[];
-  initialPagination: PaginationMeta;
   currentUserId: number | null;
-  onCountChange?: (total: number) => void;
 };
 
-export function CommentSection({
-  postId,
-  initialComments,
-  initialPagination,
-  currentUserId,
-  onCountChange,
-}: CommentSectionProps) {
-  const [comments, setComments] =
-    useState<ForumCommentType[]>(initialComments);
-  const [pagination, setPagination] = useState(initialPagination);
-  const [currentPage, setCurrentPage] = useState(1);
+export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
+  // lấy danh sách comments từ server
+  const { data: commentsData, isLoading } = useForumComments(postId, 1, 50);
+  const createComment = useCreateComment();
   const [newComment, setNewComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const isSubmitting = createComment.isPending;
 
-  const hasMore = currentPage < pagination.totalPages;
-
-  useEffect(() => {
-    onCountChange?.(pagination.total);
-  }, [pagination.total, onCountChange]);
-
-  const refetchAllPages = useCallback(
-    async (page: number) => {
-      const allComments: ForumCommentType[] = [];
-      let lastPagination = { page: 1, limit: pagination.limit, total: 0, totalPages: 0 };
-
-      for (let p = 1; p <= page; p++) {
-        const result = await forumApiRequest.getComments(postId, p, pagination.limit);
-        if (!result.success) break;
-        allComments.push(...result.data.comments);
-        lastPagination = result.data.pagination;
-      }
-
-      setComments(allComments);
-      setPagination(lastPagination);
-    },
-    [postId, pagination.limit],
-  );
-
-  const handleLoadMore = useCallback(async () => {
-    if (isLoadingMore || !hasMore) return;
-    setIsLoadingMore(true);
-
-    try {
-      const nextPage = currentPage + 1;
-      const result = await forumApiRequest.getComments(
-        postId,
-        nextPage,
-        pagination.limit,
-      );
-      if (result.success) {
-        setComments((prev) => [...prev, ...result.data.comments]);
-        setPagination(result.data.pagination);
-        setCurrentPage(nextPage);
-      }
-    } catch {
-      // silent fail
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [postId, currentPage, pagination.limit, isLoadingMore, hasMore]);
-
-  const handleSubmitComment = useCallback(async () => {
+  // Xử lý tạo comment mới
+  const handleSubmitComment = useCallback(() => {
     if (!newComment.trim() || isSubmitting) return;
-    setIsSubmitting(true);
 
-    try {
-      const result = await forumApiRequest.createComment(
-        postId,
-        newComment.trim(),
-      );
-      if (result.success) {
-        setNewComment("");
-        await refetchAllPages(currentPage);
-      }
-    } catch {
-      // silent fail
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [postId, newComment, isSubmitting, currentPage, refetchAllPages]);
+    createComment.mutate(
+      { postId, content: newComment.trim() },
+      {
+        onSuccess: () => {
+          // Xóa input sau khi tạo thành công
+          setNewComment("");
+        },
+      },
+    );
+  }, [postId, newComment, isSubmitting, createComment]);
+
+  const comments: ForumCommentType[] = commentsData?.comments ?? [];
+  const pagination = commentsData?.pagination;
 
   return (
     <div className="space-y-6">
@@ -130,9 +76,11 @@ export function CommentSection({
       <div className="flex items-center gap-2">
         <MessageSquare className="h-5 w-5 text-muted-foreground" />
         <h2 className="text-lg font-semibold text-foreground">Comments</h2>
-        <Badge variant="secondary" className="text-xs">
-          {pagination.total}
-        </Badge>
+        {pagination && (
+          <Badge variant="secondary" className="text-xs">
+            {pagination.total}
+          </Badge>
+        )}
       </div>
 
       {/* Create Comment Form */}
@@ -184,8 +132,27 @@ export function CommentSection({
         </CardContent>
       </Card>
 
+      {/* Loading skeleton khi đang fetch lần đầu */}
+      {isLoading && (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="py-4">
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 rounded bg-muted animate-pulse" />
+                    <div className="h-3 w-full rounded bg-muted animate-pulse" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
       {/* Comments List */}
-      {comments.length === 0 ? (
+      {!isLoading && comments.length === 0 && (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
@@ -199,7 +166,9 @@ export function CommentSection({
             </p>
           </CardContent>
         </Card>
-      ) : (
+      )}
+
+      {!isLoading && comments.length > 0 && (
         <div className="space-y-3">
           {comments.map((comment) => (
             <CommentItem
@@ -207,120 +176,60 @@ export function CommentSection({
               comment={comment}
               postId={postId}
               currentUserId={currentUserId}
-              onUpdated={async () => {
-                await refetchAllPages(currentPage);
-              }}
-              onDeleted={async () => {
-                await refetchAllPages(currentPage);
-              }}
             />
           ))}
-        </div>
-      )}
-
-      {/* Load More */}
-      {hasMore && (
-        <div className="flex justify-center pt-2">
-          <Button
-            variant="outline"
-            onClick={handleLoadMore}
-            disabled={isLoadingMore}
-            className="gap-2"
-          >
-            {isLoadingMore ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              <>
-                <MessageSquare className="h-4 w-4" />
-                Load more comments ({pagination.total - comments.length}{" "}
-                remaining)
-              </>
-            )}
-          </Button>
         </div>
       )}
     </div>
   );
 }
 
-/* ---------- Single Comment Item ---------- */
-
 function CommentItem({
   comment,
   postId,
   currentUserId,
-  onUpdated,
-  onDeleted,
 }: {
   comment: ForumCommentType;
   postId: number;
   currentUserId: number | null;
-  onUpdated: () => void;
-  onDeleted: () => void;
 }) {
-  const [liked, setLiked] = useState(comment.likedByMe);
-  const [likeCount, setLikeCount] = useState(comment.likeCount);
-  const [isLiking, setIsLiking] = useState(false);
+  const toggleLike = useToggleCommentLike(postId);
+  const updateComment = useUpdateComment();
+  const deleteComment = useDeleteComment();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
-  const [isSaving, setIsSaving] = useState(false);
 
   const isAuthor = currentUserId === comment.user.id;
 
-  const handleToggleLike = useCallback(async () => {
-    if (isLiking) return;
-    setIsLiking(true);
+  // lấy từ cache thay vì useState
+  // TanStack Query tự quản lý, không cần local like state riêng
+  const liked = comment.likedByMe;
+  const likeCount = comment.likeCount;
 
-    const previousLiked = liked;
-    const previousCount = likeCount;
+  // Xử lý toggle like
+  const handleToggleLike = useCallback(() => {
+    toggleLike.mutate(comment.id);
+  }, [toggleLike, comment.id]);
 
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+  // Xử lý lưu edit comment
+  const handleSaveEdit = useCallback(() => {
+    if (!editContent.trim() || updateComment.isPending) return;
 
-    try {
-      await forumApiRequest.toggleLikeComment(postId, comment.id);
-    } catch {
-      setLiked(previousLiked);
-      setLikeCount(previousCount);
-    } finally {
-      setIsLiking(false);
-    }
-  }, [liked, likeCount, isLiking, postId, comment.id]);
+    updateComment.mutate(
+      { postId, commentId: comment.id, content: editContent.trim() },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+        },
+      },
+    );
+  }, [postId, comment.id, editContent, updateComment]);
 
-  const handleSaveEdit = useCallback(async () => {
-    if (!editContent.trim() || isSaving) return;
-    setIsSaving(true);
-
-    try {
-      const result = await forumApiRequest.editComment(
-        postId,
-        comment.id,
-        editContent.trim(),
-      );
-      if (result.success) {
-        setIsEditing(false);
-        onUpdated();
-      }
-    } catch {
-      // silent fail
-    } finally {
-      setIsSaving(false);
-    }
-  }, [postId, comment.id, editContent, isSaving, onUpdated]);
-
-  const handleDelete = useCallback(async () => {
-    try {
-      const result = await forumApiRequest.deleteComment(postId, comment.id);
-      if (result.success) {
-        onDeleted();
-      }
-    } catch {
-      // silent fail
-    }
-  }, [postId, comment.id, onDeleted]);
+  // Xử lý xóa comment
+  const handleDelete = useCallback(() => {
+    deleteComment.mutate({ postId, commentId: comment.id });
+  }, [deleteComment, postId, comment.id]);
 
   return (
     <Card className="transition-colors hover:bg-muted/30">
@@ -332,9 +241,8 @@ function CommentItem({
               alt={comment.user?.profile?.displayName ?? "User"}
             />
             <AvatarFallback>
-              {comment.user?.profile?.displayName
-                ?.charAt(0)
-                ?.toUpperCase() ?? "?"}
+              {comment.user?.profile?.displayName?.charAt(0)?.toUpperCase() ??
+                "?"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -361,6 +269,7 @@ function CommentItem({
               )}
             </div>
 
+            {/* Nội dung comment - hiển thị textarea khi đang edit */}
             {isEditing ? (
               <div className="mt-2 space-y-2">
                 <textarea
@@ -368,16 +277,16 @@ function CommentItem({
                   onChange={(e) => setEditContent(e.target.value)}
                   rows={3}
                   className="w-full resize-none rounded-lg border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
-                  disabled={isSaving}
+                  disabled={updateComment.isPending}
                   autoFocus
                 />
                 <div className="flex items-center gap-2">
                   <Button
                     size="xs"
                     onClick={handleSaveEdit}
-                    disabled={!editContent.trim() || isSaving}
+                    disabled={!editContent.trim() || updateComment.isPending}
                   >
-                    {isSaving ? (
+                    {updateComment.isPending ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
                     ) : (
                       "Save"
@@ -390,7 +299,7 @@ function CommentItem({
                       setIsEditing(false);
                       setEditContent(comment.content);
                     }}
-                    disabled={isSaving}
+                    disabled={updateComment.isPending}
                   >
                     Cancel
                   </Button>
@@ -402,19 +311,19 @@ function CommentItem({
               </p>
             )}
 
+            {/* Action buttons: Like, Edit, Delete, Report */}
             <div className="mt-2 flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="xs"
                 className={`gap-1 ${liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground hover:text-foreground"}`}
                 onClick={handleToggleLike}
-                disabled={isLiking}
+                disabled={toggleLike.isPending}
               >
                 <Heart
                   className={`h-3.5 w-3.5 ${liked ? "fill-current" : ""}`}
                 />
-                {likeCount > 0 ? likeCount : ""}{" "}
-                {liked ? "Liked" : "Like"}
+                {likeCount > 0 ? likeCount : ""} {liked ? "Liked" : "Like"}
               </Button>
 
               {isAuthor && !isEditing && (

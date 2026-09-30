@@ -1,17 +1,15 @@
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import {
-  getForumCategoryDetailServer,
-  getForumPostsServer,
-  getTopInteractedPostsServer,
-} from "@/lib/get-forum-posts";
+import { envConfig } from "@/configs/validate-env";
+import type {
+  ApiResponse,
+  ForumCategoryDetailResponseType,
+} from "@shared/types";
+import { cookies } from "next/headers";
 import { getMeServer } from "@/lib/get-me";
-import { ForumPostList } from "./components/forum-post-list";
-import type { ForumPostFilterType } from "@shared/types";
+import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
 import Link from "next/link";
 import { Home, ArrowLeft, FileText, Calendar } from "lucide-react";
 import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Card, CardContent } from "@repo/ui/components/shadcn/card";
 
 type ForumCategoryDetailPageProps = {
   params: Promise<{ categoryId: string }>;
@@ -22,37 +20,6 @@ type ForumCategoryDetailPageProps = {
     myPosts?: string;
   }>;
 };
-
-function PostListSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="h-10 w-full max-w-md rounded-lg bg-muted animate-pulse" />
-        <div className="h-10 w-[100px] rounded-lg bg-muted animate-pulse" />
-      </div>
-      <div className="space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Card key={i}>
-            <CardContent className="py-5">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="h-5 w-3/5 rounded bg-muted animate-pulse" />
-                  <div className="h-5 w-12 rounded-full bg-muted animate-pulse" />
-                </div>
-                <div className="h-4 w-full rounded bg-muted animate-pulse" />
-                <div className="h-4 w-2/3 rounded bg-muted animate-pulse" />
-                <div className="flex items-center gap-3">
-                  <div className="h-4 w-24 rounded bg-muted animate-pulse" />
-                  <div className="h-4 w-20 rounded bg-muted animate-pulse" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const ForumCategoryDetailPage = async ({
   params,
@@ -67,10 +34,27 @@ const ForumCategoryDetailPage = async ({
     notFound();
   }
 
-  const [category, user, topPosts] = await Promise.all([
-    getForumCategoryDetailServer(categoryIdNum),
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  if (!accessToken || !envConfig?.NESTJS_API_URL) {
+    notFound();
+  }
+
+  const [category, user] = await Promise.all([
+    (async (): Promise<ForumCategoryDetailResponseType | null> => {
+      const res = await fetch(
+        `${envConfig.NESTJS_API_URL}/api/forums/categories/${categoryIdNum}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          cache: "no-store",
+        },
+      );
+      const data = (await res.json()) as ApiResponse<ForumCategoryDetailResponseType>;
+      if (!res.ok || !data.success) return null;
+      return data.data;
+    })(),
     getMeServer(),
-    getTopInteractedPostsServer(3),
   ]);
 
   if (!category) {
@@ -79,20 +63,12 @@ const ForumCategoryDetailPage = async ({
 
   const currentUserId = user?.id ?? null;
 
-  const filter: ForumPostFilterType = {
+  const filter = {
     page: Number(page) || 1,
     limit: Number(limit) || 10,
     categoryId: categoryIdNum,
     userId: myPosts === "1" && currentUserId ? currentUserId : undefined,
   };
-
-  const { posts, pagination } = await getForumPostsServer(filter);
-
-  const filteredPosts = search
-    ? posts.filter((post) =>
-        post.title.toLowerCase().includes(search.toLowerCase()),
-      )
-    : posts;
 
   return (
     <div className="min-h-screen bg-background">
@@ -139,40 +115,20 @@ const ForumCategoryDetailPage = async ({
                 </p>
               )}
             </div>
-
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="gap-1.5 px-3 py-1">
-                <FileText className="h-3.5 w-3.5" />
-                {pagination.total}{" "}
-                {pagination.total === 1 ? "post" : "posts"}
-              </Badge>
-              <Badge variant="outline" className="gap-1.5 px-3 py-1">
-                <Calendar className="h-3.5 w-3.5" />
-                {new Date(category.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </Badge>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <Suspense fallback={<PostListSkeleton />}>
-          <ForumPostList
-            posts={filteredPosts}
-            pagination={pagination}
-            categoryId={categoryIdNum}
-            categoryName={category.name}
-            currentSearch={search}
-            currentUserId={currentUserId}
-            isMyPosts={myPosts === "1"}
-            topPosts={topPosts}
-          />
-        </Suspense>
+        <ForumPostListWrapper
+          filter={filter}
+          categoryId={categoryIdNum}
+          categoryName={category.name}
+          currentSearch={search}
+          currentUserId={currentUserId}
+          isMyPosts={myPosts === "1"}
+        />
       </div>
     </div>
   );

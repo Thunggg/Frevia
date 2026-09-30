@@ -15,7 +15,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Plus } from "lucide-react";
-import { forumApiRequest } from "@/apiRequests/forum";
+import { useCreatePost } from "@/hooks/use-forum";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
 type CreatePostDialogProps = {
@@ -28,33 +28,36 @@ export function CreatePostDialog({
   categoryName,
 }: CreatePostDialogProps) {
   const router = useRouter();
+  const createPost = useCreatePost();
+
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = useCallback(async () => {
+  const isSubmitting = createPost.isPending;
+
+  const handleSubmit = useCallback(() => {
     if (!title.trim() || !content.trim() || isSubmitting) return;
-    setIsSubmitting(true);
 
-    try {
-      const result = await forumApiRequest.createPost({
+    createPost.mutate(
+      {
         categoryId,
         title: title.trim(),
         content: content.trim(),
-      });
-      if (result.success) {
-        setOpen(false);
-        setTitle("");
-        setContent("");
-        router.push(`/forum/${categoryId}/${result.data.id}`);
-      }
-    } catch {
-      // handled by http
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [categoryId, title, content, isSubmitting, router]);
+      },
+      {
+        onSuccess: (result) => {
+          setOpen(false);
+          setTitle("");
+          setContent("");
+          // Navigate đến post vừa tạo
+          if (result?.id) {
+            router.push(`/forum/${categoryId}/${result.id}`);
+          }
+        },
+      },
+    );
+  }, [categoryId, title, content, isSubmitting, createPost, router]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

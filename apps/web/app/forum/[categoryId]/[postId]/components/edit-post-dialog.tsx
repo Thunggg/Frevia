@@ -14,7 +14,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Pencil } from "lucide-react";
-import { forumApiRequest } from "@/apiRequests/forum";
+import { useUpdatePost } from "@/hooks/use-forum";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
 type EditPostDialogProps = {
@@ -30,11 +30,15 @@ export function EditPostDialog({
   initialContent,
   onUpdated,
 }: EditPostDialogProps) {
+  const updatePost = useUpdatePost();
+
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isSubmitting = updatePost.isPending;
+
+  // Khi mở dialog, reset về giá trị ban đầu
   const handleOpen = useCallback(
     (isOpen: boolean) => {
       setOpen(isOpen);
@@ -46,25 +50,23 @@ export function EditPostDialog({
     [initialTitle, initialContent],
   );
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(() => {
     if (!title.trim() || !content.trim() || isSubmitting) return;
-    setIsSubmitting(true);
 
-    try {
-      const result = await forumApiRequest.updatePost(postId, {
+    updatePost.mutate(
+      {
+        postId,
         title: title.trim(),
         content: content.trim(),
-      });
-      if (result.success) {
-        setOpen(false);
-        onUpdated?.(title.trim(), content.trim());
-      }
-    } catch {
-      // handled by http
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [postId, title, content, isSubmitting, onUpdated]);
+      },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          onUpdated?.(title.trim(), content.trim());
+        },
+      },
+    );
+  }, [postId, title, content, isSubmitting, updatePost, onUpdated]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>

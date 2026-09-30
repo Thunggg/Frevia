@@ -15,6 +15,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URL: z.string(),
+  NEXT_URL: z.string(),
 });
 
 const envParsed = envSchema.safeParse(process.env);

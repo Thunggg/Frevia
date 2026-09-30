@@ -1,11 +1,6 @@
 import { notFound } from "next/navigation";
-import {
-  getForumPostDetailServer,
-  getForumCommentsServer,
-  getForumPostLikesServer,
-} from "@/lib/get-forum-posts";
 import { getMeServer } from "@/lib/get-me";
-import { PostDetailView } from "./components/post-detail-view";
+import { PostDetailWrapper } from "./components/post-detail-wrapper";
 
 type PostDetailPageProps = {
   params: Promise<{ categoryId: string; postId: string }>;
@@ -26,25 +21,12 @@ const PostDetailPage = async ({ params }: PostDetailPageProps) => {
     notFound();
   }
 
-  const [post, commentsData, likes, user] = await Promise.all([
-    getForumPostDetailServer(postIdNum),
-    getForumCommentsServer(postIdNum, 1, 5),
-    getForumPostLikesServer(postIdNum),
-    getMeServer(),
-  ]);
-
-  if (!post) {
-    notFound();
-  }
-
+  const user = await getMeServer();
   const currentUserId = user?.id ?? null;
 
   return (
-    <PostDetailView
-      post={post}
-      initialComments={commentsData.comments}
-      initialPagination={commentsData.pagination}
-      likes={likes}
+    <PostDetailWrapper
+      postId={postIdNum}
       currentUserId={currentUserId}
     />
   );

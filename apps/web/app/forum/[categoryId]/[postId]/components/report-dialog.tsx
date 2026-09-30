@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,85 +14,80 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Flag, CheckCircle2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
+import { forumKeys } from "@/hooks/use-forum";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import type { ApiResponse } from "@shared/types";
+
+function extractData<T>(response: ApiResponse<T>): T {
+  if (response.success && "data" in response) {
+    return response.data;
+  }
+  throw new Error("Unexpected API error response");
+}
 
 type ReportDialogProps = {
   postId: number;
   commentId?: number;
-  hasReported?: boolean;
   trigger?: React.ReactNode;
-  onReported?: () => void;
 };
 
 export function ReportDialog({
   postId,
   commentId,
-  hasReported = false,
   trigger,
-  onReported,
 }: ReportDialogProps) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [reported, setReported] = useState(hasReported);
 
-  useEffect(() => {
-    if (hasReported) {
-      setReported(true);
-      return;
-    }
+  // Query: kiểm tra đã report chưa (chỉ fetch khi dialog mở)
+  const { data: reportStatus } = useQuery({
+    queryKey: commentId
+      ? ["forum", "report", "comment", postId, commentId]
+      : ["forum", "report", "post", postId],
+    queryFn: () =>
+      commentId
+        ? forumApiRequest
+            .checkCommentReported(postId, commentId)
+            .then(extractData)
+        : forumApiRequest.checkPostReported(postId).then(extractData),
+    select: (data) => data.reported ?? false,
+    enabled: open,
+    staleTime: Infinity, // Nếu đã report thì không cần check lại
+  });
 
-    let cancelled = false;
-    const check = commentId
-      ? forumApiRequest.checkCommentReported(postId, commentId)
-      : forumApiRequest.checkPostReported(postId);
+  const reported = reportStatus ?? false;
 
-    check
-      .then((result) => {
-        if (!cancelled && result.success && result.data.reported) {
-          setReported(true);
-          onReported?.();
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSubmit = useCallback(async () => {
-    if (!reason.trim() || isSubmitting) return;
-    setIsSubmitting(true);
-
-    try {
-      let result;
+  // Mutation: gửi report
+  const reportMutation = useMutation({
+    mutationFn: () => {
       if (commentId) {
-        result = await forumApiRequest.reportComment(
-          postId,
-          commentId,
-          reason.trim(),
-        );
-      } else {
-        result = await forumApiRequest.reportPost(postId, reason.trim());
+        return forumApiRequest.reportComment(postId, commentId, reason.trim());
       }
-      if (result.success) {
-        setReported(true);
-        setReason("");
-        toastSuccess({ message: "Report submitted successfully" });
-        onReported?.();
-        setTimeout(() => setOpen(false), 1500);
-      }
-    } catch (error: unknown) {
+      return forumApiRequest.reportPost(postId, reason.trim());
+    },
+    onSuccess: () => {
+      setReason("");
+      toastSuccess({ message: "Report submitted successfully" });
+
+      // Cập nhật cache report status
+      queryClient.setQueryData(
+        commentId
+          ? ["forum", "report", "comment", postId, commentId]
+          : ["forum", "report", "post", postId],
+        { reported: true },
+      );
+
+      setTimeout(() => setOpen(false), 1500);
+    },
+    onError: (error: unknown) => {
       const message =
         error instanceof Error ? error.message : "Failed to submit report";
       toastError({ message });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [postId, commentId, reason, isSubmitting, onReported]);
+    },
+  });
 
   const handleOpenChange = useCallback((isOpen: boolean) => {
     setOpen(isOpen);
@@ -101,6 +96,7 @@ export function ReportDialog({
     }
   }, []);
 
+  // Nếu đã report và dialog đang đóng → hiển thị badge "Reported"
   if (reported && !open) {
     return (
       <Button
@@ -155,7 +151,7 @@ export function ReportDialog({
               rows={4}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              disabled={isSubmitting}
+              disabled={reportMutation.isPending}
               className="resize-none"
             />
           </div>
@@ -165,17 +161,17 @@ export function ReportDialog({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            disabled={isSubmitting}
+            disabled={reportMutation.isPending}
           >
             {reported ? "Close" : "Cancel"}
           </Button>
           {!reported && (
             <Button
               variant="destructive"
-              onClick={handleSubmit}
-              disabled={!reason.trim() || isSubmitting}
+              onClick={() => reportMutation.mutate()}
+              disabled={!reason.trim() || reportMutation.isPending}
             >
-              {isSubmitting ? (
+              {reportMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Flag className="h-4 w-4" />

@@ -1,5 +1,8 @@
 "use client";
 
+import { useRegister, useSendOtp } from "@/hooks/use-auth";
+import { ApiFail } from "@/lib/http";
+import { handleErrorApi } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -9,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/shadcn/card";
+import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
   Field,
   FieldContent,
@@ -19,36 +23,34 @@ import {
   FieldTitle,
 } from "@repo/ui/components/shadcn/field";
 import { Input } from "@repo/ui/components/shadcn/input";
-import { RegisterBodySchema, RoleName } from "@shared/types";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-import { authApiRequest } from "@/apiRequests/auth";
-import { handleErrorApi } from "@/lib/utils";
-import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { ApiFail } from "@/lib/http";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@repo/ui/components/shadcn/radio-group";
-import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
-import { useEffect, useState } from "react";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from "@repo/ui/components/shadcn/input-group";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@repo/ui/components/shadcn/radio-group";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { RegisterBodySchema, RoleName } from "@shared/types";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
 
 export function RegisterForm() {
   const router = useRouter();
+
+  const registerMutation = useRegister();
+  const sendOtpMutation = useSendOtp();
 
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -74,49 +76,46 @@ export function RegisterForm() {
     },
   });
 
-  async function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
-    try {
-      setIsLoading(true);
-      const res = await authApiRequest.register(payload);
-
-      if (res.success) {
-        toastSuccess({ message: "Register successful" });
-        form.reset();
-        router.push("/login");
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiFail) {
-        handleErrorApi({
-          error: error.response,
-          setError: form.setError,
-          duration: 3000,
-        });
-      } else {
-        toastError({ message: "Register failed" });
-      }
-    } finally {
-      setIsLoading(false);
-    }
+  function onSubmit(payload: z.infer<typeof RegisterBodySchema>) {
+    registerMutation.mutate(payload, {
+      onSuccess: (response) => {
+        if (response.success) {
+          toastSuccess({ message: "Register successful" });
+          form.reset();
+          router.push("/login");
+        }
+      },
+      onError: (error) => {
+        if (error instanceof ApiFail) {
+          handleErrorApi({ error: error.response, setError: form.setError });
+        } else {
+          toastError({ message: "Register failed", duration: 3000 });
+        }
+      },
+    });
   }
 
-  async function sendOtp() {
-    try {
-      const email = form.getValues("email");
-
-      const res = await authApiRequest.sendOtp({
-        email,
+  function sendOtp() {
+    sendOtpMutation.mutate(
+      {
+        email: form.getValues("email"),
         type: "EMAIL_VERIFICATION",
-      });
-
-      if (res.success) {
-        toastSuccess({ message: res.data.message });
-        setCountdown(30);
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiFail) {
-        handleErrorApi({ error: error.response, setError: form.setError });
-      }
-    }
+      },
+      {
+        onSuccess: (response) => {
+          if (response.success) {
+            toastSuccess({ message: response.data.message });
+          }
+        },
+        onError: (error) => {
+          if (error instanceof ApiFail) {
+            handleErrorApi({ error: error.response, setError: form.setError });
+          } else {
+            toastError({ message: "Send OTP failed", duration: 3000 });
+          }
+        },
+      },
+    );
   }
 
   return (
@@ -280,7 +279,16 @@ export function RegisterForm() {
                         onClick={() => sendOtp()}
                         disabled={countdown > 0}
                       >
-                        {countdown > 0 ? `Resend in ${countdown}s` : "Send OTP"}
+                        {sendOtpMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Sending...</span>
+                          </>
+                        ) : countdown > 0 ? (
+                          `Resend in ${countdown}s`
+                        ) : (
+                          "Send OTP"
+                        )}
                       </InputGroupButton>
                     </InputGroupAddon>
                   </InputGroup>
@@ -358,9 +366,16 @@ export function RegisterForm() {
           <Button
             type="submit"
             form="form-rhf-demo"
-            disabled={!isTermsAccepted || isLoading}
+            disabled={!isTermsAccepted || registerMutation.isPending}
           >
-            Submit
+            {registerMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Submitting...</span>
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </Field>
       </CardFooter>

@@ -95,7 +95,7 @@ export const SendOTPSchema = EmailVerificationSchema.pick({
 
 export const LoginBodySchema = z.object({
   email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
-  password: z.string(),
+  password: z.string().min(1, AuthMessage.PASSWORD_IS_REQUIRE),
 });
 
 export const LoginResSchema = z

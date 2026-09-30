@@ -31,76 +31,62 @@ import {
   Tag,
   Trash2,
 } from "lucide-react";
-import type {
-  ViewForumPostDetailResponseType,
-  ForumCommentType,
-  PaginationMeta,
-  ForumLikeDetailResponseType,
-} from "@shared/types";
-import { forumApiRequest } from "@/apiRequests/forum";
+import type { ViewForumPostDetailResponseType } from "@shared/types";
+import {
+  useTogglePostLike,
+  useDeletePost,
+  useForumPostLikes,
+  useForumComments,
+} from "@/hooks/use-forum";
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
 import { ReportDialog } from "./report-dialog";
 
+// Props - chỉ nhận post và currentUserId, mọi thứ khác do Query quản lý
+
 type PostDetailViewProps = {
   post: ViewForumPostDetailResponseType;
-  initialComments: ForumCommentType[];
-  initialPagination: PaginationMeta;
-  likes: ForumLikeDetailResponseType;
   currentUserId: number | null;
 };
 
-export function PostDetailView({
-  post,
-  initialComments,
-  initialPagination,
-  likes,
-  currentUserId,
-}: PostDetailViewProps) {
+export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
   const router = useRouter();
   const isAuthor = currentUserId === post.userId;
 
-  const [liked, setLiked] = useState(() =>
-    currentUserId ? likes.some((l) => l.userId === currentUserId) : false,
-  );
-  const [likeCount, setLikeCount] = useState(likes.length);
-  const [isLiking, setIsLiking] = useState(false);
+  // Queries: likes và comments
+  const { data: likes } = useForumPostLikes(post.id);
+  const { data: commentsData } = useForumComments(post.id, 1, 50);
 
+  // Mutations: like post, xóa pos
+  const toggleLike = useTogglePostLike(post.id, currentUserId);
+  const deletePost = useDeletePost();
+
+  const liked =
+    currentUserId && likes
+      ? likes.some((l: { userId: number }) => l.userId === currentUserId)
+      : false;
+  const likeCount = likes?.length ?? 0;
+  const commentTotal = commentsData?.pagination.total ?? 0;
+
+  // Local UI state: hiển thị title/content sau khi edit
   const [displayTitle, setDisplayTitle] = useState(post.title);
   const [displayContent, setDisplayContent] = useState(post.content);
-  const [commentTotal, setCommentTotal] = useState(initialPagination.total);
 
-  const handleToggleLike = useCallback(async () => {
-    if (isLiking) return;
-    setIsLiking(true);
+  // Xử lý toggle like post
+  const handleToggleLike = useCallback(() => {
+    toggleLike.mutate();
+  }, [toggleLike]);
 
-    const previousLiked = liked;
-    const previousCount = likeCount;
-
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-
-    try {
-      await forumApiRequest.toggleLikePost(post.id);
-    } catch {
-      setLiked(previousLiked);
-      setLikeCount(previousCount);
-    } finally {
-      setIsLiking(false);
-    }
-  }, [liked, likeCount, isLiking, post.id]);
-
-  const handleDeletePost = useCallback(async () => {
-    try {
-      const result = await forumApiRequest.deletePost(post.id);
-      if (result.success) {
+  // Xử lý xóa post
+  const handleDeletePost = useCallback(() => {
+    deletePost.mutate(post.id, {
+      onSuccess: () => {
         router.push(`/forum/${post.category?.id ?? ""}`);
-      }
-    } catch {
-      // handled by http
-    }
-  }, [post.id, post.category?.id, router]);
+      },
+    });
+  }, [deletePost, post.id, post.category?.id, router]);
 
+  // Xử lý sau khi edit post thành công
   const handlePostUpdated = useCallback((title: string, content: string) => {
     setDisplayTitle(title);
     setDisplayContent(content);
@@ -108,10 +94,9 @@ export function PostDetailView({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Header với breadcrumb */}
       <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-          {/* Breadcrumb */}
           <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link
               href="/"
@@ -162,7 +147,7 @@ export function PostDetailView({
       {/* Content */}
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <article>
-          {/* Post Title */}
+          {/* Post Title + Action buttons */}
           <div className="flex items-start justify-between gap-4">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {displayTitle}
@@ -259,14 +244,14 @@ export function PostDetailView({
 
           <Separator className="my-6" />
 
-          {/* Actions Bar */}
+          {/* Actions Bar: Like + Comment count + Report */}
           <div className="flex items-center gap-4">
             <Button
               variant={liked ? "default" : "outline"}
               size="sm"
               className={`gap-2 ${liked ? "bg-red-500 hover:bg-red-600 text-white border-red-500" : ""}`}
               onClick={handleToggleLike}
-              disabled={isLiking}
+              disabled={toggleLike.isPending}
             >
               <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
               {likeCount} {likeCount === 1 ? "Like" : "Likes"}
@@ -281,15 +266,9 @@ export function PostDetailView({
           </div>
         </article>
 
-        {/* Comment Section */}
+        {/* Comment Section - tự fetch data bằng useForumComments query */}
         <div className="mt-10">
-          <CommentSection
-            postId={post.id}
-            initialComments={initialComments}
-            initialPagination={initialPagination}
-            currentUserId={currentUserId}
-            onCountChange={setCommentTotal}
-          />
+          <CommentSection postId={post.id} currentUserId={currentUserId} />
         </div>
       </div>
     </div>
