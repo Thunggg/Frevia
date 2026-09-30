@@ -5,9 +5,13 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/api/manage-jobs/4/status
+  url: {{baseUrl}}/manage-jobs/{{jobId}}/status
   body: json
   auth: bearer
+}
+
+vars:pre-request {
+  jobId: 1
 }
 
 headers {

@@ -39,8 +39,8 @@ const roleConfig = {
   CLIENT: {
     name: "Client",
     links: [
-      { href: "/post-job", label: "Post a Job" },
-      { href: "/my-jobs", label: "My Jobs" },
+      { href: "/projects", label: "Post a Job" },
+      { href: "/projects", label: "My Jobs" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -146,7 +146,7 @@ function ProfileDropdown({ role }: HeaderProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild><Link href="/profile"><UserRound />My Profile</Link></DropdownMenuItem>
         {role === "FREELANCER" && <><DropdownMenuItem asChild><Link href="/proposals"><FileText />My Proposals<span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">2</span></Link></DropdownMenuItem><DropdownMenuItem asChild><Link href="/bookmarks"><Bookmark />My Bookmarks</Link></DropdownMenuItem></>}
-        {role === "CLIENT" && <DropdownMenuItem asChild><Link href="/my-jobs"><FileText />My Jobs</Link></DropdownMenuItem>}
+        {role === "CLIENT" && <DropdownMenuItem asChild><Link href="/projects"><FileText />My Jobs</Link></DropdownMenuItem>}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild><Link href={role === "FREELANCER" ? "/client" : "/find-work"}><SwitchCamera />Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}</Link></DropdownMenuItem>
         <DropdownMenuItem asChild><Link href="/settings"><Settings />Settings</Link></DropdownMenuItem>

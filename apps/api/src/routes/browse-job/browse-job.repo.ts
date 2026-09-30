@@ -86,9 +86,13 @@ export class BrowseJobRepository {
       ...(skill && {
         skills: {
           some: {
-            skillName: {
-              contains: skill,
-              mode: Prisma.QueryMode.insensitive,
+            skill: {
+              is: {
+                name: {
+                  contains: skill,
+                  mode: Prisma.QueryMode.insensitive,
+                },
+              },
             },
           },
         },
@@ -163,9 +167,9 @@ export class BrowseJobRepository {
 
         skills: {
           select: {
-            id: true,
             jobId: true,
-            skillName: true,
+            skillId: true,
+            skill: { select: { name: true } },
           },
         },
       },

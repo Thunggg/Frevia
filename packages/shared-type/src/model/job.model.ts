@@ -4,6 +4,11 @@ import { BrowseJobMessage } from "../message/browse-job.message";
 import { ManageJobMessage } from "../message/manage-job.message";
 import { JobSkillSchema } from "./job-skill.model";
 
+const JobSkillNameSchema = z
+  .string()
+  .trim()
+  .min(1, ManageJobMessage.SKILL_NAME_REQUIRED)
+  .max(100, ManageJobMessage.SKILL_NAME_TOO_LONG);
 
 const QueryBooleanSchema = z.preprocess((value) => {
   if (value === "true") return true;
@@ -49,6 +54,8 @@ export const JobSchema = z.object({
   createdAt: z.date(),
 
   updatedAt: z.date(),
+
+  skills: z.array(JobSkillSchema).optional(),
 });
 
 export const CreateJobBodySchema = z
@@ -99,15 +106,7 @@ export const CreateJobBodySchema = z
       .nullable()
       .optional(),
 
-    skills: z
-      .array(
-        z
-          .string()
-          .trim()
-          .min(1, ManageJobMessage.SKILL_NAME_REQUIRED)
-          .max(100, ManageJobMessage.SKILL_NAME_TOO_LONG),
-      )
-      .min(1, ManageJobMessage.SKILLS_REQUIRED),
+    skills: z.array(JobSkillNameSchema).min(1, ManageJobMessage.SKILLS_REQUIRED),
   })
   .strict()
   .superRefine((data, ctx) => {
@@ -250,9 +249,15 @@ export type JobBudgetType = z.infer<typeof JobBudgetTypeSchema>;
 
 export type JobType = z.infer<typeof JobSchema>;
 
-export type CreateJobBodyType = z.infer<typeof CreateJobBodySchema>;
+/** Data before Zod coerces numbers and dates from an HTTP request. */
+export type CreateJobBodyInputType = z.input<typeof CreateJobBodySchema>;
 
-export type UpdateJobBodyType = z.infer<typeof UpdateJobBodySchema>;
+/** Validated data consumed by the service and repository layers. */
+export type CreateJobBodyType = z.output<typeof CreateJobBodySchema>;
+
+export type UpdateJobBodyInputType = z.input<typeof UpdateJobBodySchema>;
+
+export type UpdateJobBodyType = z.output<typeof UpdateJobBodySchema>;
 
 export type ChangeJobStatusBodyType = z.infer<
   typeof ChangeJobStatusBodySchema

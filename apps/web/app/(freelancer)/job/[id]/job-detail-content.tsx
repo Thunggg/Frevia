@@ -204,9 +204,9 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
               <div className="mt-4 flex flex-wrap gap-2">
                 {job.skills.length ? (
                   job.skills.map((skill) => (
-                    <Badge key={skill.id} variant="secondary">
+                    <Badge key={skill.skillId} variant="secondary">
                       <CheckCircle2 className="mr-1 size-3.5" />
-                      {skill.skillName}
+                      {skill.skill.name}
                     </Badge>
                   ))
                 ) : (

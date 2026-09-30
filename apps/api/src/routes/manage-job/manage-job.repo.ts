@@ -8,6 +8,7 @@ import {
   UpdateJobBodyType,
   ViewJobDetailResType,
   ViewBookmarkedJobParsedFilterType,
+  ViewListJobParsedFilterType,
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -59,9 +60,9 @@ export class ManageJobRepository {
               ...jobSelect,
               skills: {
                 select: {
-                  id: true,
                   jobId: true,
-                  skillName: true,
+                  skillId: true,
+                  skill: { select: { name: true } },
                 },
               },
             },
@@ -85,6 +86,41 @@ export class ManageJobRepository {
       jobs: bookmarks.map(({ job }) => this.normalizeJob(job)),
       total,
     };
+  }
+
+  async getClientJobLists(
+    clientId: number,
+    filter: ViewListJobParsedFilterType,
+  ): Promise<{ jobs: JobType[]; total: number }> {
+    const { page, limit, status, search, sortBy, order } = filter;
+    const where = {
+      clientId,
+      deletedAt: null,
+      ...(status && { status }),
+      ...(search && {
+        title: { contains: search, mode: Prisma.QueryMode.insensitive },
+      }),
+    } satisfies Prisma.JobWhereInput;
+    const [jobs, total] = await this.prisma.$transaction([
+      this.prisma.job.findMany({
+        where,
+        select: {
+          ...jobSelect,
+          skills: {
+            select: {
+              jobId: true,
+              skillId: true,
+              skill: { select: { name: true } },
+            },
+          },
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { [sortBy]: order },
+      }),
+      this.prisma.job.count({ where }),
+    ]);
+    return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
   async findJobById(id: number): Promise<Pick<JobType, 'id'> | null> {
@@ -143,6 +179,7 @@ export class ManageJobRepository {
         data: {
           clientId,
           title: data.title,
+          slug: this.createJobSlug(data.title),
           description: data.description,
           budgetMin: data.budgetMin,
           budgetMax: data.budgetMax,
@@ -154,12 +191,7 @@ export class ManageJobRepository {
         select: jobSelect,
       });
 
-      await tx.jobSkill.createMany({
-        data: data.skills.map((skillName) => ({
-          jobId: createdJob.id,
-          skillName,
-        })),
-      });
+      await this.replaceJobSkills(tx, createdJob.id, data.skills);
 
       return createdJob;
     });
@@ -199,12 +231,7 @@ export class ManageJobRepository {
         },
       });
 
-      await tx.jobSkill.createMany({
-        data: data.skills.map((skillName) => ({
-          jobId,
-          skillName,
-        })),
-      });
+      await this.replaceJobSkills(tx, jobId, data.skills);
 
       return job;
     });
@@ -284,5 +311,41 @@ export class ManageJobRepository {
 
       budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
     };
+  }
+
+  private async replaceJobSkills(
+    tx: Prisma.TransactionClient,
+    jobId: number,
+    skillNames: string[],
+  ): Promise<void> {
+    const skills = await Promise.all(
+      skillNames.map((name) =>
+        tx.skill.upsert({
+          where: { name },
+          update: {},
+          create: { name, slug: this.slugify(name) },
+          select: { id: true },
+        }),
+      ),
+    );
+
+    await tx.jobSkill.createMany({
+      data: skills.map((skill) => ({ jobId, skillId: skill.id })),
+      skipDuplicates: true,
+    });
+  }
+
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  private createJobSlug(title: string): string {
+    return `${this.slugify(title)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
   }
 }

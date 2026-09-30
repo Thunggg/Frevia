@@ -5,9 +5,13 @@ meta {
 }
 
 delete {
-  url: {{baseUrl}}/api/manage-jobs/5
+  url: {{baseUrl}}/manage-jobs/{{jobId}}
   body: none
   auth: bearer
+}
+
+vars:pre-request {
+  jobId: 1
 }
 
 auth:bearer {

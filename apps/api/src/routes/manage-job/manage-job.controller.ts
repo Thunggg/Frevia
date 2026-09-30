@@ -19,6 +19,8 @@ import {
   UpdateJobResponseDto,
   ViewBookmarkedJobQueryDto,
   ViewBookmarkedJobResponseDto,
+  ViewClientJobQueryDto,
+  ViewClientJobResponseDto,
 } from './manage-job.dto';
 import { ManageJobService } from './manage-job.service';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
@@ -26,6 +28,16 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 @Controller('manage-jobs')
 export class ManageJobController {
   constructor(private readonly manageJobService: ManageJobService) {}
+
+  @Get()
+  @ZodSerializerDto(ViewClientJobResponseDto)
+  viewClientJobs(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Query() query: ViewClientJobQueryDto,
+  ) {
+    return this.manageJobService.viewClientJobs(userId, roleName, query);
+  }
 
   @Get('bookmarks')
   @ZodSerializerDto(ViewBookmarkedJobResponseDto)

@@ -10,6 +10,8 @@ import {
   UpdateJobBodyType,
   ViewBookmarkedJobParsedFilterType,
   ViewBookmarkedJobResponseType,
+  ViewListJobParsedFilterType,
+  ViewListJobResponseType,
 } from '@shared/types';
 
 import {
@@ -77,6 +79,22 @@ export class ManageJobService {
     }
 
     await this.manageJobRepository.bookmarkJob(userId, jobId);
+  }
+
+  async viewClientJobs(
+    userId: number,
+    roleName: string,
+    filter: ViewListJobParsedFilterType,
+  ): Promise<ViewListJobResponseType> {
+    if (roleName !== RoleName.CLIENT) {
+      throw BookmarkJobOnlyForFreelancerException();
+    }
+
+    const { jobs, total } = await this.manageJobRepository.getClientJobLists(userId, filter);
+    return {
+      data: jobs,
+      pagination: { page: filter.page, limit: filter.limit, total, totalPages: Math.ceil(total / filter.limit) },
+    };
   }
 
   async getBookmarkStatus(

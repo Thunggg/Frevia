@@ -5,7 +5,7 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/api/manage-jobs/2
+  url: {{baseUrl}}/manage-jobs/{{jobId}}
   body: json
   auth: bearer
 }
@@ -23,17 +23,20 @@ body:json {
     "title": "Senior React Native Developer Needed",
     "description": "We are looking for an experienced React Native developer to build and maintain a cross-platform mobile application.",
     "budgetMin": 1000,
-    "budgetMax": 250000,
+    "budgetMax": 2500,
     "budgetType": "FIXED_PRICE",
     "deadline": "2026-09-30T23:59:59.000Z",
     "expiryDate": "2026-09-20T23:59:59.000Z",
     "skills": [
       "React Native",
-  //     "Expo",
       "TypeScript",
       "NestJS"
     ]
   }
+}
+
+vars:pre-request {
+  jobId: 1
 }
 
 tests {

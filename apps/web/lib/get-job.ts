@@ -169,6 +169,15 @@ export async function getBookmarkedJobsServer(
   );
 }
 
+export async function getClientJobsServer(
+  params: ViewListJobFilterType = {},
+): Promise<ViewListJobResponseType | null> {
+  return jobServerFetch<ViewListJobResponseType>(
+    `/api/manage-jobs${buildQueryString(params)}`,
+    { requireAuth: true },
+  );
+}
+
 export async function getBookmarkStatusServer(
   jobId: number | string,
 ): Promise<BookmarkStatus | null> {

@@ -118,7 +118,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
                           <span className="flex items-center gap-1"><Clock className="size-4" /> {job.budgetType.replaceAll("_", " ")}</span>
                         </div>
                         <div className="mt-3 flex flex-wrap gap-2">
-                          {job.skills.map((skill) => <Badge key={skill.id} variant="secondary" className="text-xs">{skill.skillName}</Badge>)}
+                          {job.skills.map((skill) => <Badge key={skill.skillId} variant="secondary" className="text-xs">{skill.skill.name}</Badge>)}
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-row gap-2 sm:flex-col sm:items-end">
