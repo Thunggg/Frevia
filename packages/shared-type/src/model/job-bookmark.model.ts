@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { JobBudgetTypeSchema, JobSchema, JobStatusSchema } from "./job.model";
+import {
+  JobBudgetTypeSchema,
+  JobStatusSchema,
+  ViewJobDetailResSchema,
+} from "./job.model";
 
 /**
  * Parse query boolean chính xác:
@@ -81,7 +85,7 @@ export const ViewBookmarkedJobFilterSchema = z
   });
 
 export const ViewBookmarkedJobResponseSchema = z.object({
-  data: z.array(JobSchema),
+  data: z.array(ViewJobDetailResSchema),
 
   pagination: z.object({
     page: z.number().int().min(1),

@@ -6,6 +6,7 @@ import {
   JobBookmarkType,
   JobType,
   UpdateJobBodyType,
+  ViewJobDetailResType,
   ViewBookmarkedJobParsedFilterType,
 } from '@shared/types';
 
@@ -36,7 +37,7 @@ export class ManageJobRepository {
     userId: number,
     filter: ViewBookmarkedJobParsedFilterType,
   ): Promise<{
-    jobs: JobType[];
+    jobs: ViewJobDetailResType[];
     total: number;
   }> {
     const { page, limit } = filter;
@@ -54,7 +55,16 @@ export class ManageJobRepository {
 
         select: {
           job: {
-            select: jobSelect,
+            select: {
+              ...jobSelect,
+              skills: {
+                select: {
+                  id: true,
+                  jobId: true,
+                  skillName: true,
+                },
+              },
+            },
           },
         },
 
