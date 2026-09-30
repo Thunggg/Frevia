@@ -96,21 +96,16 @@ export class AuthController {
 
   @Get('google/callback')
   @IsPublic()
-  @ZodSerializerDto(LoginResponseDto)
   async googleCallback(
     @Query('code') code: string,
     @Query('state') state: string,
     @Res() res: Response,
   ) {
-    try {
-      const data = await this.authService.googleCallback({ code, state });
+    const data = await this.authService.googleCallback({ code, state });
 
-      return res.redirect(
-        `${envConfig.NEXT_URL}/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
-      );
-    } catch (error) {
-      throw error;
-    }
+    return res.redirect(
+      `${envConfig.NEXT_URL}/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
+    );
   }
 
   @Get('me')

@@ -1,3 +1,4 @@
+import { envConfig } from "@/configs/validate-env";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -12,7 +13,7 @@ const isAuthRoute = (pathname: string) => {
 };
 
 // hàm này để kiểm tra xem đã login và có access và refresh token không
-const isAuthenticated = async (request: NextRequest) => {
+const isAuthenticated = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
@@ -28,18 +29,16 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authenticated = await isAuthenticated(request);
+  const authenticated = await isAuthenticated();
 
   // nếu chưa đăng nhập và ko phải protected route thì redirect về login
   if (!authenticated && !isAuthRoute(pathname)) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/login", envConfig!.APP_URL));
   }
 
   // (Tuỳ chọn) Đã login → không cho vào /login nữa
   if (authenticated && isAuthRoute(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/", envConfig!.APP_URL));
   }
 }
 
