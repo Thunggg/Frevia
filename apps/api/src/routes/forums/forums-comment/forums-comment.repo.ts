@@ -22,7 +22,7 @@ export class ForumCommentRepository {
     });
   }
 
-  async findCommentById(id: number): Promise<ForumCommentType | null> {
+  async findCommentById(id: number) {
     return this.prisma.forumComment.findFirst({
       where: {
         id,
@@ -55,7 +55,7 @@ export class ForumCommentRepository {
     userId: number,
     content: string,
   ): Promise<ForumCommentType> {
-    return this.prisma.forumComment.create({
+    const comment = await this.prisma.forumComment.create({
       data: {
         postId,
         userId,
@@ -64,7 +64,6 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -81,6 +80,7 @@ export class ForumCommentRepository {
         },
       },
     });
+    return { ...comment, likeCount: 0, likedByMe: false };
   }
 
   // Sửa comment
@@ -88,7 +88,7 @@ export class ForumCommentRepository {
     id: number,
     data: EditForumCommentType,
   ): Promise<ForumCommentType> {
-    return this.prisma.forumComment.update({
+    const comment = await this.prisma.forumComment.update({
       where: {
         id,
         deletedAt: null,
@@ -99,7 +99,6 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -116,10 +115,11 @@ export class ForumCommentRepository {
         },
       },
     });
+    return { ...comment, likeCount: 0, likedByMe: false };
   }
 
   async softDeleteForumComment(id: number): Promise<ForumCommentType> {
-    return this.prisma.forumComment.update({
+    const comment = await this.prisma.forumComment.update({
       where: {
         id,
         deletedAt: null,
@@ -130,7 +130,6 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -147,10 +146,11 @@ export class ForumCommentRepository {
         },
       },
     });
+    return { ...comment, likeCount: 0, likedByMe: false };
   }
 
   async getForumCommentLists(filter: ForumCommentFilterType) {
-    const { page, limit, postId } = filter;
+    const { page, limit, postId, userId } = filter;
     const skip = (page - 1) * limit;
     const where = {
       postId,
@@ -178,6 +178,19 @@ export class ForumCommentRepository {
               },
             },
           },
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
+          ...(userId
+            ? {
+                likes: {
+                  where: { userId },
+                  select: { id: true },
+                },
+              }
+            : {}),
         },
         skip,
         take: limit,
@@ -188,7 +201,19 @@ export class ForumCommentRepository {
       this.prisma.forumComment.count({ where }),
     ]);
 
-    return { comments, total };
+    return {
+      comments: comments.map((c) => ({
+        id: c.id,
+        postId: c.postId,
+        content: c.content,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        user: c.user,
+        likeCount: c._count.likes,
+        likedByMe: userId ? (c as any).likes.length > 0 : false,
+      })),
+      total,
+    };
   }
 
   // Kiểm tra người dùng đã like comment chưa

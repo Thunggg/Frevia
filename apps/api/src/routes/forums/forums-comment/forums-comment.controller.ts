@@ -26,24 +26,26 @@ import type {
   EditForumCommentType,
   ForumCommentFilterType,
 } from '@shared/types';
-import { IsPublic } from '../../../shared/decorators/auth.decorator';
+import { OptionalAuth } from '../../../shared/decorators/auth.decorator';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 
-@Controller('api/forums/posts')
+@Controller('forums/posts')
 export class ForumCommentController {
   constructor(private readonly forumCommentService: ForumCommentService) {}
 
   @Get(':postId/comments')
-  @IsPublic()
+  @OptionalAuth()
   @ZodSerializerDto(ForumCommentListResponseDto)
   getForumCommentLists(
     @Param('postId', ParseIntPipe) postId: number,
     @Query(new ZodValidationPipe(ForumCommentFilterDto))
     filter: ForumCommentFilterType,
+    @UserActive('userId') userId?: number,
   ) {
     return this.forumCommentService.getForumCommentLists({
       ...filter,
       postId,
+      userId,
     });
   }
 

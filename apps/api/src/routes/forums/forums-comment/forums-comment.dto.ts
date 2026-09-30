@@ -26,9 +26,7 @@ export class CreateForumCommentResponseDto extends createZodDto(
   CreateForumCommentResponseSchema,
 ) {}
 
-export class EditForumCommentDto extends createZodDto(
-  EditForumCommentSchema,
-) {}
+export class EditForumCommentDto extends createZodDto(EditForumCommentSchema) {}
 
 export class EditForumCommentResponseDto extends createZodDto(
   EditForumCommentResponseSchema,

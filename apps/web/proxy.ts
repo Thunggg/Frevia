@@ -12,7 +12,7 @@ const isAuthRoute = (pathname: string) => {
 };
 
 // hàm này để kiểm tra xem đã login và có access và refresh token không
-const isAuthenticated = async (request: NextRequest) => {
+const isAuthenticated = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
@@ -28,7 +28,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authenticated = await isAuthenticated(request);
+  const authenticated = await isAuthenticated();
 
   // nếu chưa đăng nhập và ko phải protected route thì redirect về login
   if (!authenticated && !isAuthRoute(pathname)) {

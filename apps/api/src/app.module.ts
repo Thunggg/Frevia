@@ -13,6 +13,7 @@ import { ForumModule } from './routes/forums/forums-post/forums.module';
 import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { RolesModule } from './routes/roles/roles.module';
     ForumLikeModule,
     ForumCommentModule,
     ForumReportModule,
+    ForumAdminModule,
     RolesModule,
   ],
   controllers: [AppController],
