@@ -1,31 +1,108 @@
 import { Injectable } from '@nestjs/common';
-import { JobSkillType, JobType, ViewListJobFilterType } from '@shared/types';
+import type {
+  JobType,
+  ViewJobDetailResType,
+  ViewListJobParsedFilterType,
+} from '@shared/types';
+import { JobStatus, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../shared/services/prisma.service';
-import { JobStatus } from '@prisma/client';
-
 import { JobNotFoundException } from './browse-job.error';
 
 @Injectable()
 export class BrowseJobRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getJobLists(filter: ViewListJobFilterType): Promise<{
+  async getJobLists(filter: ViewListJobParsedFilterType): Promise<{
     jobs: JobType[];
     total: number;
   }> {
-    const { page, limit } = filter;
-
-    const skip = (page - 1) * limit;
+    const {
+      page,
+      limit,
+      search,
+      budgetType,
+      budgetMin,
+      budgetMax,
+      createdAfter,
+      skill,
+      featured,
+      clientId,
+      sortBy,
+      order,
+    } = filter;
 
     const where = {
       deletedAt: null,
-      status: 'OPEN' as const,
-    };
+      status: JobStatus.OPEN,
+
+      ...(search && {
+        OR: [
+          {
+            title: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          },
+          // {
+          //   description: {
+          //     contains: search,
+          //     mode: Prisma.QueryMode.insensitive,
+          //   },
+          // },
+          // {
+          //   skills: {
+          //     some: {
+          //       skillName: {
+          //         contains: search,
+          //         mode: Prisma.QueryMode.insensitive,
+          //       },
+          //     },
+          //   },
+          // },
+        ],
+      }),
+
+      ...(budgetType && { budgetType }),
+
+      ...(budgetMin !== undefined && {
+        budgetMin: {
+          gte: budgetMin,
+        },
+      }),
+
+      ...(budgetMax !== undefined && {
+        budgetMax: {
+          lte: budgetMax,
+        },
+      }),
+
+      ...(createdAfter && {
+        createdAt: {
+          gte: createdAfter,
+        },
+      }),
+
+      ...(skill && {
+        skills: {
+          some: {
+            skillName: {
+              contains: skill,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          },
+        },
+      }),
+
+      ...(featured !== undefined && { featured }),
+
+      ...(clientId !== undefined && { clientId }),
+    } satisfies Prisma.JobWhereInput;
 
     const [jobs, total] = await this.prisma.$transaction([
       this.prisma.job.findMany({
         where,
+
         select: {
           id: true,
           clientId: true,
@@ -41,10 +118,12 @@ export class BrowseJobRepository {
           createdAt: true,
           updatedAt: true,
         },
-        skip,
+
+        skip: (page - 1) * limit,
         take: limit,
+
         orderBy: {
-          createdAt: 'desc',
+          [sortBy]: order,
         },
       }),
 
@@ -53,44 +132,20 @@ export class BrowseJobRepository {
       }),
     ]);
 
-    const normalizedJobs: JobType[] = jobs.map((job) => ({
-      ...job,
-      budgetMin: job.budgetMin !== null ? Number(job.budgetMin) : null,
-      budgetMax: job.budgetMax !== null ? Number(job.budgetMax) : null,
-    }));
-
     return {
-      jobs: normalizedJobs,
+      jobs: jobs.map((job) => this.normalizeJob(job)),
       total,
     };
   }
 
-  async viewJobDetail(id: number): Promise<
-    Pick<
-      JobType,
-      | 'id'
-      | 'clientId'
-      | 'title'
-      | 'description'
-      | 'budgetMin'
-      | 'budgetMax'
-      | 'budgetType'
-      | 'deadline'
-      | 'status'
-      | 'featured'
-      | 'expiryDate'
-      | 'createdAt'
-      | 'updatedAt'
-    > & {
-      skills: Pick<JobSkillType, 'id' | 'jobId' | 'skillName'>[];
-    }
-  > {
+  async viewJobDetail(id: number): Promise<ViewJobDetailResType> {
     const job = await this.prisma.job.findFirst({
       where: {
         id,
         deletedAt: null,
         status: JobStatus.OPEN,
       },
+
       select: {
         id: true,
         clientId: true,
@@ -120,10 +175,25 @@ export class BrowseJobRepository {
       throw JobNotFoundException();
     }
 
+    return this.normalizeJob(job);
+  }
+
+  private normalizeJob<
+    T extends {
+      budgetMin: Prisma.Decimal | number | null;
+      budgetMax: Prisma.Decimal | number | null;
+    },
+  >(
+    job: T,
+  ): Omit<T, 'budgetMin' | 'budgetMax'> & {
+    budgetMin: number | null;
+    budgetMax: number | null;
+  } {
     return {
       ...job,
-      budgetMin: job.budgetMin !== null ? Number(job.budgetMin) : null,
-      budgetMax: job.budgetMax !== null ? Number(job.budgetMax) : null,
+      budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+
+      budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
     };
   }
 }

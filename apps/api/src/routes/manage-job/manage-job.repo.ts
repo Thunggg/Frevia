@@ -1,16 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { JobStatus } from '@prisma/client';
+import { JobStatus, Prisma } from '@prisma/client';
 
 import {
   CreateJobBodyType,
   JobBookmarkType,
   JobType,
   UpdateJobBodyType,
-  ViewBookmarkedJobFilterType,
+  ViewBookmarkedJobParsedFilterType,
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
 import { JobNotFoundException } from './manage-job.error';
+
+const jobSelect = {
+  id: true,
+  clientId: true,
+  title: true,
+  description: true,
+  budgetMin: true,
+  budgetMax: true,
+  budgetType: true,
+  deadline: true,
+  status: true,
+  featured: true,
+  expiryDate: true,
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.JobSelect;
 
 @Injectable()
 export class ManageJobRepository {
@@ -18,63 +34,35 @@ export class ManageJobRepository {
 
   async getBookmarkedJobLists(
     userId: number,
-    filter: ViewBookmarkedJobFilterType,
+    filter: ViewBookmarkedJobParsedFilterType,
   ): Promise<{
-    jobs: Pick<
-      JobType,
-      | 'id'
-      | 'clientId'
-      | 'title'
-      | 'description'
-      | 'budgetMin'
-      | 'budgetMax'
-      | 'budgetType'
-      | 'deadline'
-      | 'status'
-      | 'featured'
-      | 'expiryDate'
-      | 'createdAt'
-      | 'updatedAt'
-    >[];
+    jobs: JobType[];
     total: number;
   }> {
     const { page, limit } = filter;
-
-    const skip = (page - 1) * limit;
 
     const where = {
       userId,
       job: {
         deletedAt: null,
       },
-    };
+    } satisfies Prisma.JobBookmarkWhereInput;
 
     const [bookmarks, total] = await this.prisma.$transaction([
       this.prisma.jobBookmark.findMany({
         where,
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: 'desc',
-        },
+
         select: {
           job: {
-            select: {
-              id: true,
-              clientId: true,
-              title: true,
-              description: true,
-              budgetMin: true,
-              budgetMax: true,
-              budgetType: true,
-              deadline: true,
-              status: true,
-              featured: true,
-              expiryDate: true,
-              createdAt: true,
-              updatedAt: true,
-            },
+            select: jobSelect,
           },
+        },
+
+        skip: (page - 1) * limit,
+        take: limit,
+
+        orderBy: {
+          createdAt: 'desc',
         },
       }),
 
@@ -84,11 +72,7 @@ export class ManageJobRepository {
     ]);
 
     return {
-      jobs: bookmarks.map(({ job }) => ({
-        ...job,
-        budgetMin: job.budgetMin?.toNumber() ?? null,
-        budgetMax: job.budgetMax?.toNumber() ?? null,
-      })),
+      jobs: bookmarks.map(({ job }) => this.normalizeJob(job)),
       total,
     };
   }
@@ -99,6 +83,7 @@ export class ManageJobRepository {
         id,
         deletedAt: null,
       },
+
       select: {
         id: true,
       },
@@ -142,27 +127,7 @@ export class ManageJobRepository {
     });
   }
 
-  async createJob(
-    clientId: number,
-    data: CreateJobBodyType,
-  ): Promise<
-    Pick<
-      JobType,
-      | 'id'
-      | 'clientId'
-      | 'title'
-      | 'description'
-      | 'budgetMin'
-      | 'budgetMax'
-      | 'budgetType'
-      | 'deadline'
-      | 'status'
-      | 'featured'
-      | 'expiryDate'
-      | 'createdAt'
-      | 'updatedAt'
-    >
-  > {
+  async createJob(clientId: number, data: CreateJobBodyType): Promise<JobType> {
     const job = await this.prisma.$transaction(async (tx) => {
       const createdJob = await tx.job.create({
         data: {
@@ -175,21 +140,8 @@ export class ManageJobRepository {
           deadline: data.deadline,
           expiryDate: data.expiryDate,
         },
-        select: {
-          id: true,
-          clientId: true,
-          title: true,
-          description: true,
-          budgetMin: true,
-          budgetMax: true,
-          budgetType: true,
-          deadline: true,
-          status: true,
-          featured: true,
-          expiryDate: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+
+        select: jobSelect,
       });
 
       await tx.jobSkill.createMany({
@@ -202,52 +154,22 @@ export class ManageJobRepository {
       return createdJob;
     });
 
-    return {
-      ...job,
-      budgetMin: job.budgetMin?.toNumber() ?? null,
-      budgetMax: job.budgetMax?.toNumber() ?? null,
-    };
+    return this.normalizeJob(job);
   }
 
   async updateJob(
     userId: number,
     jobId: number,
     data: UpdateJobBodyType,
-  ): Promise<
-    Pick<
-      JobType,
-      | 'id'
-      | 'clientId'
-      | 'title'
-      | 'description'
-      | 'budgetMin'
-      | 'budgetMax'
-      | 'budgetType'
-      | 'deadline'
-      | 'status'
-      | 'featured'
-      | 'expiryDate'
-      | 'createdAt'
-      | 'updatedAt'
-    >
-  > {
-    const job = await this.prisma.job.findFirst({
-      where: {
-        id: jobId,
-        clientId: userId,
-        deletedAt: null,
-      },
-    });
-
-    if (!job) {
-      throw JobNotFoundException();
-    }
+  ): Promise<JobType> {
+    await this.checkJobOwner(userId, jobId);
 
     const updatedJob = await this.prisma.$transaction(async (tx) => {
       const job = await tx.job.update({
         where: {
           id: jobId,
         },
+
         data: {
           title: data.title,
           description: data.description,
@@ -257,21 +179,8 @@ export class ManageJobRepository {
           deadline: data.deadline,
           expiryDate: data.expiryDate,
         },
-        select: {
-          id: true,
-          clientId: true,
-          title: true,
-          description: true,
-          budgetMin: true,
-          budgetMax: true,
-          budgetType: true,
-          deadline: true,
-          status: true,
-          featured: true,
-          expiryDate: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+
+        select: jobSelect,
       });
 
       await tx.jobSkill.deleteMany({
@@ -290,30 +199,17 @@ export class ManageJobRepository {
       return job;
     });
 
-    return {
-      ...updatedJob,
-      budgetMin: updatedJob.budgetMin?.toNumber() ?? null,
-      budgetMax: updatedJob.budgetMax?.toNumber() ?? null,
-    };
+    return this.normalizeJob(updatedJob);
   }
 
   async deleteJob(userId: number, jobId: number): Promise<void> {
-    const job = await this.prisma.job.findFirst({
-      where: {
-        id: jobId,
-        clientId: userId,
-        deletedAt: null,
-      },
-    });
-
-    if (!job) {
-      throw JobNotFoundException();
-    }
+    await this.checkJobOwner(userId, jobId);
 
     await this.prisma.job.update({
       where: {
         id: jobId,
       },
+
       data: {
         deletedAt: new Date(),
       },
@@ -324,64 +220,59 @@ export class ManageJobRepository {
     userId: number,
     jobId: number,
     status: JobStatus,
-  ): Promise<
-    Pick<
-      JobType,
-      | 'id'
-      | 'clientId'
-      | 'title'
-      | 'description'
-      | 'budgetMin'
-      | 'budgetMax'
-      | 'budgetType'
-      | 'deadline'
-      | 'status'
-      | 'featured'
-      | 'expiryDate'
-      | 'createdAt'
-      | 'updatedAt'
-    >
-  > {
+  ): Promise<JobType> {
+    await this.checkJobOwner(userId, jobId);
+
+    const updatedJob = await this.prisma.job.update({
+      where: {
+        id: jobId,
+      },
+
+      data: {
+        status,
+      },
+
+      select: jobSelect,
+    });
+
+    return this.normalizeJob(updatedJob);
+  }
+
+  private async checkJobOwner(userId: number, jobId: number): Promise<void> {
     const job = await this.prisma.job.findFirst({
       where: {
         id: jobId,
         clientId: userId,
         deletedAt: null,
       },
+
+      select: {
+        id: true,
+      },
     });
 
     if (!job) {
       throw JobNotFoundException();
     }
+  }
 
-    const updatedJob = await this.prisma.job.update({
-      where: {
-        id: jobId,
-      },
-      data: {
-        status,
-      },
-      select: {
-        id: true,
-        clientId: true,
-        title: true,
-        description: true,
-        budgetMin: true,
-        budgetMax: true,
-        budgetType: true,
-        deadline: true,
-        status: true,
-        featured: true,
-        expiryDate: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
+  private normalizeJob<
+    T extends {
+      budgetMin: Prisma.Decimal | number | null;
+      budgetMax: Prisma.Decimal | number | null;
+    },
+  >(
+    job: T,
+  ): Omit<T, 'budgetMin' | 'budgetMax'> & {
+    budgetMin: number | null;
+    budgetMax: number | null;
+  } {
     return {
-      ...updatedJob,
-      budgetMin: updatedJob.budgetMin?.toNumber() ?? null,
-      budgetMax: updatedJob.budgetMax?.toNumber() ?? null,
+      ...job,
+
+      budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+
+      budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
     };
   }
 }

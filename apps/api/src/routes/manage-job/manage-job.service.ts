@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 import {
-  CreateJobBodyType,
   ChangeJobStatusBodyType,
   ChangeJobStatusResponseType,
+  CreateJobBodyType,
   JobType,
   RoleName,
   UpdateJobBodyType,
-  ViewBookmarkedJobFilterType,
+  ViewBookmarkedJobParsedFilterType,
   ViewBookmarkedJobResponseType,
 } from '@shared/types';
 
-import { ManageJobRepository } from './manage-job.repo';
 import {
   BookmarkJobOnlyForFreelancerException,
   BookmarkNotFoundException,
@@ -23,13 +23,13 @@ import {
   JobAlreadyBookmarkedException,
   JobNotFoundException,
 } from './manage-job.error';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { ManageJobRepository } from './manage-job.repo';
 
 @Injectable()
 export class ManageJobService {
   constructor(private readonly manageJobRepository: ManageJobRepository) {}
 
-  private assertFreelancerRole(roleName: string) {
+  private assertFreelancerRole(roleName: string): void {
     if (roleName !== RoleName.FREELANCER) {
       throw BookmarkJobOnlyForFreelancerException();
     }
@@ -38,7 +38,7 @@ export class ManageJobService {
   async viewBookmarkedJob(
     userId: number,
     roleName: string,
-    filter: ViewBookmarkedJobFilterType,
+    filter: ViewBookmarkedJobParsedFilterType,
   ): Promise<ViewBookmarkedJobResponseType> {
     this.assertFreelancerRole(roleName);
 
@@ -47,6 +47,7 @@ export class ManageJobService {
 
     return {
       data: jobs,
+
       pagination: {
         page: filter.page,
         limit: filter.limit,

@@ -1,65 +1,55 @@
 import { z } from "zod";
 
 import { BrowseJobMessage } from "../message/browse-job.message";
-import { JobSkillSchema } from "./job-skill.model";
 import { ManageJobMessage } from "../message/manage-job.message";
+import { JobSkillSchema } from "./job-skill.model";
+
+
+const QueryBooleanSchema = z.preprocess((value) => {
+  if (value === "true") return true;
+  if (value === "false") return false;
+
+  return value;
+}, z.boolean());
+
+export const JobStatusSchema = z.enum([
+  "DRAFT",
+  "OPEN",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CLOSED",
+  "CANCELLED",
+]);
+
+export const JobBudgetTypeSchema = z.enum(["FIXED_PRICE"]);
 
 export const JobSchema = z.object({
   id: z.number(),
+
   clientId: z.number(),
+
   title: z.string().max(255),
+
   description: z.string().nullable(),
+
   budgetMin: z.coerce.number().nullable(),
+
   budgetMax: z.coerce.number().nullable(),
-  budgetType: z.enum(["FIXED_PRICE"]),
+
+  budgetType: JobBudgetTypeSchema,
+
   deadline: z.date().nullable(),
-  status: z.enum([
-    "DRAFT",
-    "OPEN",
-    "IN_PROGRESS",
-    "COMPLETED",
-    "CLOSED",
-    "CANCELLED",
-  ]),
+
+  status: JobStatusSchema,
+
   featured: z.boolean(),
+
   expiryDate: z.date().nullable(),
+
   createdAt: z.date(),
+
   updatedAt: z.date(),
 });
-
-export const ViewListJobFilterSchema = z.object({
-  page: z.coerce
-    .number()
-    .int(BrowseJobMessage.INVALID_PAGE)
-    .min(1, BrowseJobMessage.INVALID_PAGE)
-    .default(1),
-
-  limit: z.coerce
-    .number()
-    .int(BrowseJobMessage.INVALID_LIMIT)
-    .min(1, BrowseJobMessage.INVALID_LIMIT)
-    .max(20, BrowseJobMessage.INVALID_LIMIT)
-    .default(10),
-});
-
-export const JobPaginationSchema = z.object({
-  page: z.number(),
-  limit: z.number(),
-  total: z.number(),
-  totalPages: z.number(),
-});
-
-export const ViewListJobResponseSchema = z.object({
-  data: z.array(JobSchema),
-  pagination: JobPaginationSchema,
-});
-
-export const ViewJobDetailResSchema = JobSchema.extend({
-  skills: z.array(JobSkillSchema),
-});
-
-export const UpdateJobResponseSchema = JobSchema;
-export const ChangeJobStatusResponseSchema = JobSchema;
 
 export const CreateJobBodySchema = z
   .object({
@@ -93,9 +83,7 @@ export const CreateJobBodySchema = z
       .nullable()
       .optional(),
 
-    budgetType: z.enum(["FIXED_PRICE"], {
-      error: ManageJobMessage.BUDGET_TYPE_INVALID,
-    }),
+    budgetType: JobBudgetTypeSchema,
 
     deadline: z.coerce
       .date({
@@ -145,23 +133,151 @@ export const CreateJobBodySchema = z
       });
     }
   });
+
 export const UpdateJobBodySchema = CreateJobBodySchema;
 
 export const ChangeJobStatusBodySchema = z
   .object({
-    status: JobSchema.shape.status,
+    status: JobStatusSchema,
   })
   .strict();
 
-export type ChangeJobStatusBodyType = z.infer<typeof ChangeJobStatusBodySchema>;
-export type ChangeJobStatusResponseType = z.infer<typeof ChangeJobStatusResponseSchema>;
-export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
-export type UpdateJobBodyType = z.infer<typeof UpdateJobBodySchema>;
-export type CreateJobBodyType = z.infer<typeof CreateJobBodySchema>;
-export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
+
+
+export const ViewListJobFilterSchema = z
+  .object({
+    page: z.coerce
+      .number()
+      .int(BrowseJobMessage.INVALID_PAGE)
+      .min(1, BrowseJobMessage.INVALID_PAGE)
+      .default(1),
+
+    limit: z.coerce
+      .number()
+      .int(BrowseJobMessage.INVALID_LIMIT)
+      .min(1, BrowseJobMessage.INVALID_LIMIT)
+      .max(20, BrowseJobMessage.INVALID_LIMIT)
+      .default(10),
+
+    search: z
+      .string()
+      .trim()
+      .max(255)
+      .optional()
+      .transform((value) => value || undefined),
+
+
+    status: JobStatusSchema.optional(),
+
+    budgetType: JobBudgetTypeSchema.optional(),
+
+ 
+    budgetMin: z.coerce.number().min(0).optional(),
+
+    budgetMax: z.coerce.number().min(0).optional(),
+
+    createdAfter: z.coerce.date().optional(),
+
+ 
+    skill: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .transform((value) => value || undefined),
+
+    featured: QueryBooleanSchema.optional(),
+
+
+    clientId: z.coerce.number().int().positive().optional(),
+
+    sortBy: z
+      .enum([
+        "createdAt",
+        "updatedAt",
+        "title",
+        "budgetMin",
+        "budgetMax",
+        "deadline",
+        "expiryDate",
+      ])
+      .default("createdAt"),
+
+    order: z.enum(["asc", "desc"]).default("desc"),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.budgetMin !== undefined &&
+      data.budgetMax !== undefined &&
+      data.budgetMin > data.budgetMax
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["budgetMax"],
+        message:
+          ManageJobMessage.BUDGET_MAX_MUST_BE_GREATER_THAN_BUDGET_MIN,
+      });
+    }
+  });
+
+export const JobPaginationSchema = z.object({
+  page: z.number(),
+
+  limit: z.number(),
+
+  total: z.number(),
+
+  totalPages: z.number(),
+});
+
+export const ViewListJobResponseSchema = z.object({
+  data: z.array(JobSchema),
+
+  pagination: JobPaginationSchema,
+});
+
+export const ViewJobDetailResSchema = JobSchema.extend({
+  skills: z.array(JobSkillSchema),
+});
+
+export const UpdateJobResponseSchema = JobSchema;
+
+export const ChangeJobStatusResponseSchema = JobSchema;
+
+export type JobStatusType = z.infer<typeof JobStatusSchema>;
+
+export type JobBudgetType = z.infer<typeof JobBudgetTypeSchema>;
 
 export type JobType = z.infer<typeof JobSchema>;
 
-export type ViewListJobFilterType = z.infer<typeof ViewListJobFilterSchema>;
+export type CreateJobBodyType = z.infer<typeof CreateJobBodySchema>;
 
-export type ViewListJobResponseType = z.infer<typeof ViewListJobResponseSchema>;
+export type UpdateJobBodyType = z.infer<typeof UpdateJobBodySchema>;
+
+export type ChangeJobStatusBodyType = z.infer<
+  typeof ChangeJobStatusBodySchema
+>;
+
+export type ViewListJobFilterType = z.input<
+  typeof ViewListJobFilterSchema
+>;
+
+export type ViewListJobParsedFilterType = z.output<
+  typeof ViewListJobFilterSchema
+>;
+
+export type ViewListJobResponseType = z.infer<
+  typeof ViewListJobResponseSchema
+>;
+
+export type ViewJobDetailResType = z.infer<
+  typeof ViewJobDetailResSchema
+>;
+
+export type UpdateJobResponseType = z.infer<
+  typeof UpdateJobResponseSchema
+>;
+
+export type ChangeJobStatusResponseType = z.infer<
+  typeof ChangeJobStatusResponseSchema
+>;
