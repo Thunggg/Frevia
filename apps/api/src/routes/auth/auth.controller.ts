@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Ip, Post, Query, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
+import { envConfig } from '../../shared/config/validate-env';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { UserAgent } from '../../shared/decorators/user-agent.decorators';
@@ -18,7 +20,6 @@ import {
   SendOTPResponseDTO,
 } from './auth.dto';
 import { AuthService } from './auth.service';
-import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -105,7 +106,7 @@ export class AuthController {
       const data = await this.authService.googleCallback({ code, state });
 
       return res.redirect(
-        `http://localhost:3001/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
+        `${envConfig.NEXT_URL}/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
       );
     } catch (error) {
       throw error;
