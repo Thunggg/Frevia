@@ -178,6 +178,15 @@ export async function getClientJobsServer(
   );
 }
 
+export async function getClientJobDetailServer(
+  jobId: number | string,
+): Promise<ViewJobDetailResType | null> {
+  return jobServerFetch<ViewJobDetailResType>(
+    `/api/manage-jobs/${encodeURIComponent(String(jobId))}`,
+    { requireAuth: true },
+  );
+}
+
 export async function getBookmarkStatusServer(
   jobId: number | string,
 ): Promise<BookmarkStatus | null> {

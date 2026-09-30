@@ -12,6 +12,7 @@ import {
   ViewBookmarkedJobResponseType,
   ViewListJobParsedFilterType,
   ViewListJobResponseType,
+  ViewJobDetailResType,
 } from '@shared/types';
 
 import {
@@ -95,6 +96,28 @@ export class ManageJobService {
       data: jobs,
       pagination: { page: filter.page, limit: filter.limit, total, totalPages: Math.ceil(total / filter.limit) },
     };
+  }
+
+  async searchSkills(roleName: string, search?: string) {
+    if (roleName !== RoleName.CLIENT) {
+      throw BookmarkJobOnlyForFreelancerException();
+    }
+
+    return this.manageJobRepository.searchSkills(search);
+  }
+
+  async viewClientJobDetail(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<ViewJobDetailResType> {
+    if (roleName !== RoleName.CLIENT) {
+      throw BookmarkJobOnlyForFreelancerException();
+    }
+
+    const job = await this.manageJobRepository.getClientJobDetail(userId, jobId);
+    if (!job) throw JobNotFoundException();
+    return job;
   }
 
   async getBookmarkStatus(

@@ -4,12 +4,6 @@ import { BrowseJobMessage } from "../message/browse-job.message";
 import { ManageJobMessage } from "../message/manage-job.message";
 import { JobSkillSchema } from "./job-skill.model";
 
-const JobSkillNameSchema = z
-  .string()
-  .trim()
-  .min(1, ManageJobMessage.SKILL_NAME_REQUIRED)
-  .max(100, ManageJobMessage.SKILL_NAME_TOO_LONG);
-
 const QueryBooleanSchema = z.preprocess((value) => {
   if (value === "true") return true;
   if (value === "false") return false;
@@ -106,7 +100,9 @@ export const CreateJobBodySchema = z
       .nullable()
       .optional(),
 
-    skills: z.array(JobSkillNameSchema).min(1, ManageJobMessage.SKILLS_REQUIRED),
+    skills: z
+      .array(z.number().int().positive(ManageJobMessage.SKILL_NAME_REQUIRED))
+      .min(1, ManageJobMessage.SKILLS_REQUIRED),
   })
   .strict()
   .superRefine((data, ctx) => {

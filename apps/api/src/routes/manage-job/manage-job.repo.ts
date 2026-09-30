@@ -316,22 +316,35 @@ export class ManageJobRepository {
   private async replaceJobSkills(
     tx: Prisma.TransactionClient,
     jobId: number,
-    skillNames: string[],
+    skillIds: number[],
   ): Promise<void> {
-    const skills = await Promise.all(
-      skillNames.map((name) =>
-        tx.skill.upsert({
-          where: { name },
-          update: {},
-          create: { name, slug: this.slugify(name) },
-          select: { id: true },
-        }),
-      ),
-    );
-
     await tx.jobSkill.createMany({
-      data: skills.map((skill) => ({ jobId, skillId: skill.id })),
+      data: skillIds.map((skillId) => ({ jobId, skillId })),
       skipDuplicates: true,
+    });
+  }
+
+  async getClientJobDetail(
+    clientId: number,
+    jobId: number,
+  ): Promise<ViewJobDetailResType | null> {
+    const job = await this.prisma.job.findFirst({
+      where: { id: jobId, clientId, deletedAt: null },
+      select: { ...jobSelect, skills: { select: { jobId: true, skillId: true, skill: { select: { name: true } } } } },
+    });
+
+    return job ? this.normalizeJob(job) : null;
+  }
+
+  async searchSkills(search?: string): Promise<Array<{ id: number; name: string }>> {
+    return this.prisma.skill.findMany({
+      where: {
+        isActive: true,
+        ...(search && { name: { contains: search, mode: Prisma.QueryMode.insensitive } }),
+      },
+      select: { id: true, name: true },
+      take: 10,
+      orderBy: { name: 'asc' },
     });
   }
 

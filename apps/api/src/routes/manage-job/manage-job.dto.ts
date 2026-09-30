@@ -11,6 +11,7 @@ import {
   ViewBookmarkedJobResponseSchema,
   ViewListJobFilterSchema,
   ViewListJobResponseSchema,
+  ViewJobDetailResSchema,
 } from '@shared/types';
 
 export class ViewBookmarkedJobQueryDto extends createZodDto(
@@ -24,6 +25,8 @@ export class ViewBookmarkedJobResponseDto extends createZodDto(
 export class ViewClientJobQueryDto extends createZodDto(ViewListJobFilterSchema) {}
 
 export class ViewClientJobResponseDto extends createZodDto(ViewListJobResponseSchema) {}
+
+export class ViewJobDetailResponseDto extends createZodDto(ViewJobDetailResSchema) {}
 
 export class BookmarkJobBodyDto extends createZodDto(BookmarkJobBodySchema) {}
 

@@ -1,13 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { Edit2, Plus, Trash2 } from "lucide-react";
+import { Edit2, Eye, Plus, Trash2 } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import jobApiRequest from "@/apiRequests/job";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Card, CardContent } from "@repo/ui/components/shadcn/card";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { JobType, JobStatusType } from "@shared/types";
 import { PostJobForm } from "./post-job-form";
@@ -16,6 +18,7 @@ export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
   const [jobs, setJobs] = useState(initialJobs);
   const [editingJob, setEditingJob] = useState<JobType | undefined>();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(null);
   const saveJob = (job: JobType) =>
     setJobs((current) =>
       current.some((item) => item.id === job.id)
@@ -79,6 +82,7 @@ export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
                   </p>
                 </div>
                 <div className="flex gap-2">
+                  <Button variant="outline" size="sm" asChild><Link href={`/projects/${job.id}`}><Eye className="mr-1 size-4" />View</Link></Button>
                   <select
                     value={job.status}
                     className="rounded-md border bg-background px-2 text-sm"
@@ -112,7 +116,7 @@ export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
                     variant="outline"
                     size="sm"
                     className="text-destructive"
-                    onClick={() => deleteJob(job.id)}
+                    onClick={() => setPendingDeleteJobId(job.id)}
                   >
                     <Trash2 className="mr-1 size-4" />
                     Delete
@@ -134,6 +138,12 @@ export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
         onSaved={saveJob}
         job={editingJob}
       />
+      <AlertDialog open={pendingDeleteJobId !== null} onOpenChange={(open) => !open && setPendingDeleteJobId(null)}>
+        <AlertDialogContent showCloseButton={false}>
+          <AlertDialogHeader><AlertDialogTitle>Delete this job?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+          <AlertDialogFooter><AlertDialogCancel render={<Button variant="outline" />}>Cancel</AlertDialogCancel><Button variant="destructive" onClick={() => { if (pendingDeleteJobId) deleteJob(pendingDeleteJobId); setPendingDeleteJobId(null); }}>Delete job</Button></AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Footer />
     </div>
   );

@@ -50,6 +50,12 @@ const jobApiRequest = {
       `/api/manage-jobs/jobs/${jobId}/bookmark`,
     );
   },
+
+  searchSkills(search: string) {
+    return http.get<Array<{ id: number; name: string }>>(
+      `/api/manage-jobs/skills?search=${encodeURIComponent(search)}`,
+    );
+  },
 };
 
 export default jobApiRequest;

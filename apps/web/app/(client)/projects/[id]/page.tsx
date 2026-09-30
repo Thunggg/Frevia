@@ -1,10 +1,10 @@
-import { ProjectDetailContent } from './project-detail-content'
+import { notFound } from "next/navigation";
+import { getClientJobDetailServer } from "@/lib/get-job";
+import { ProjectDetailContent } from "./project-detail-content";
 
-interface ProjectDetailPageProps {
-  params: Promise<{ id: string }>
-}
-
-export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
-  const { id } = await params
-  return <ProjectDetailContent projectId={id} />
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const job = await getClientJobDetailServer(id);
+  if (!job) notFound();
+  return <ProjectDetailContent job={job} />;
 }
