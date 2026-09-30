@@ -2,13 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Bookmark, BriefcaseBusiness, Clock, DollarSign, MapPin, X } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import jobApiRequest from "@/apiRequests/job";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Card, CardContent } from "@repo/ui/components/shadcn/card";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -16,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/shadcn/select";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { ViewBookmarkedJobResponseType } from "@shared/types";
 
 type BookmarksContentProps = {
@@ -43,18 +55,26 @@ function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
 
 export function BookmarksContent({ initialJobs, pagination }: BookmarksContentProps) {
   const router = useRouter();
+  const [pendingRemoveJobId, setPendingRemoveJobId] = useState<number | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const removeBookmark = async (jobId: number) => {
-    const response = await fetch(`/api/backend/api/manage-jobs/bookmarks/${jobId}`, {
-      method: "DELETE",
-    });
-
-    if (response.ok) router.refresh();
+    setIsRemoving(true);
+    try {
+      await jobApiRequest.removeBookmark(jobId);
+      toastSuccess({ message: "Bookmark removed" });
+      setPendingRemoveJobId(null);
+      router.refresh();
+    } catch {
+      toastError({ message: "Unable to remove bookmark. Please try again." });
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
+      <Header role="FREELANCER" />
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <nav className="text-sm text-muted-foreground">
@@ -103,7 +123,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
                       </div>
                       <div className="flex shrink-0 flex-row gap-2 sm:flex-col sm:items-end">
                         <Button asChild><Link href={`/job/${job.id}`}><BriefcaseBusiness className="mr-2 size-4" />Apply Now</Link></Button>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => removeBookmark(job.id)}><X className="mr-1 size-4" />Remove</Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setPendingRemoveJobId(job.id)}><X className="mr-1 size-4" />Remove</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -117,6 +137,31 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
           )}
         </div>
       </main>
+      <AlertDialog
+        open={pendingRemoveJobId !== null}
+        onOpenChange={(open) => !open && setPendingRemoveJobId(null)}
+      >
+        <AlertDialogContent showCloseButton={false}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This job will be removed from your Saved Jobs list. You can save it again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel render={<Button variant="outline" />} disabled={isRemoving}>
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              variant="destructive"
+              disabled={isRemoving}
+              onClick={() => pendingRemoveJobId && removeBookmark(pendingRemoveJobId)}
+            >
+              {isRemoving ? "Removing..." : "Remove"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Footer />
     </div>
   );

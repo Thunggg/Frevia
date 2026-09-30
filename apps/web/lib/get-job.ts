@@ -16,6 +16,8 @@ type ServerFetchOptions = {
   requireAuth?: boolean;
 };
 
+type BookmarkStatus = { isBookmarked: boolean };
+
 function buildQueryString(params: object): string {
   const searchParams = new URLSearchParams();
 
@@ -164,5 +166,17 @@ export async function getBookmarkedJobsServer(
     {
       requireAuth: true,
     },
+  );
+}
+
+export async function getBookmarkStatusServer(
+  jobId: number | string,
+): Promise<BookmarkStatus | null> {
+  const normalizedJobId = String(jobId).trim();
+  if (!normalizedJobId) return null;
+
+  return jobServerFetch<BookmarkStatus>(
+    `/api/manage-jobs/jobs/${encodeURIComponent(normalizedJobId)}/bookmark`,
+    { requireAuth: true },
   );
 }

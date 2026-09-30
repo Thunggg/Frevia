@@ -1,22 +1,55 @@
-import { ViewListJobFilterType, ViewListJobResponseType } from "@shared/types";
+import type {
+  ChangeJobStatusBodyType,
+  ChangeJobStatusResponseType,
+  CreateJobBodyType,
+  JobType,
+  UpdateJobBodyType,
+  UpdateJobResponseType,
+} from "@shared/types";
+
 import { http } from "@/lib/http";
 
-const buildJobListUrl = (filter?: ViewListJobFilterType) => {
-  const params = new URLSearchParams();
+const jobApiRequest = {
+  createJob(body: CreateJobBodyType) {
+    return http.post<JobType>("/api/manage-jobs", body);
+  },
 
-  if (filter?.page !== undefined) {
-    params.set("page", String(filter.page));
-  }
+  updateJob(jobId: number, body: UpdateJobBodyType) {
+    return http.patch<UpdateJobResponseType>(
+      `/api/manage-jobs/${jobId}`,
+      body,
+    );
+  },
 
-  if (filter?.limit !== undefined) {
-    params.set("limit", String(filter.limit));
-  }
+  deleteJob(jobId: number) {
+    return http.delete<void>(`/api/manage-jobs/${jobId}`);
+  },
 
-  const queryString = params.toString();
-  return queryString ? `/api/jobs?${queryString}` : "/api/jobs";
+  changeJobStatus(jobId: number, body: ChangeJobStatusBodyType) {
+    return http.patch<ChangeJobStatusResponseType>(
+      `/api/manage-jobs/${jobId}/status`,
+      body,
+    );
+  },
+
+  bookmarkJob(jobId: number) {
+    return http.post<void>(
+      `/api/manage-jobs/jobs/${jobId}/bookmark`,
+      {},
+    );
+  },
+
+  removeBookmark(jobId: number) {
+    return http.delete<void>(
+      `/api/manage-jobs/bookmarks/${jobId}`,
+    );
+  },
+
+  getBookmarkStatus(jobId: number) {
+    return http.get<{ isBookmarked: boolean }>(
+      `/api/manage-jobs/jobs/${jobId}/bookmark`,
+    );
+  },
 };
 
-export const browseJobApiRequest = {
-  viewListJob: (filter?: ViewListJobFilterType) =>
-    http.get<ViewListJobResponseType>(buildJobListUrl(filter)),
-};
+export default jobApiRequest;

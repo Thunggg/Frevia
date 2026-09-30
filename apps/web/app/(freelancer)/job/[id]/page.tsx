@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getJobDetailServer } from "@/lib/get-job";
+import { getBookmarkStatusServer, getJobDetailServer } from "@/lib/get-job";
 import { JobDetailContent } from "./job-detail-content";
 
 type JobDetailPageProps = {
@@ -15,11 +15,19 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound();
   }
 
-  const job = await getJobDetailServer(jobId);
+  const [job, bookmarkStatus] = await Promise.all([
+    getJobDetailServer(jobId),
+    getBookmarkStatusServer(jobId),
+  ]);
 
   if (!job) {
     notFound();
   }
 
-  return <JobDetailContent job={job} />;
+  return (
+    <JobDetailContent
+      job={job}
+      initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
+    />
+  );
 }

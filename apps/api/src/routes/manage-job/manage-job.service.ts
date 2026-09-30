@@ -79,6 +79,18 @@ export class ManageJobService {
     await this.manageJobRepository.bookmarkJob(userId, jobId);
   }
 
+  async getBookmarkStatus(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<{ isBookmarked: boolean }> {
+    this.assertFreelancerRole(roleName);
+
+    const bookmark = await this.manageJobRepository.findBookmark(userId, jobId);
+
+    return { isBookmarked: Boolean(bookmark) };
+  }
+
   async removeBookmark(userId: number, jobId: number): Promise<void> {
     try {
       const bookmark = await this.manageJobRepository.findBookmark(

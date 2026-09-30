@@ -1,223 +1,185 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Menu, X, Bell, ChevronDown, UserRound } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  Bell,
+  Bookmark,
+  ChevronDown,
+  FileText,
+  LogOut,
+  Menu,
+  Search,
+  Settings,
+  SwitchCamera,
+  UserRound,
+  X,
+} from "lucide-react";
 
-// TODO: Thay bằng dữ liệu user thật (lấy từ session/auth của bạn)
-// avatarUrl để null/undefined nếu user chưa có ảnh đại diện -> sẽ hiện icon mặc định
-const currentUser: { name: string; avatarUrl?: string | null } = {
-  name: "Freelancer",
-  avatarUrl: null,
+import { Avatar, AvatarFallback } from "@repo/ui/components/shadcn/avatar";
+import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/shadcn/dropdown-menu";
+
+export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
+
+export type HeaderProps = {
+  role: UserRole;
 };
 
-export function Header() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
+const roleConfig = {
+  CLIENT: {
+    name: "Client",
+    links: [
+      { href: "/post-job", label: "Post a Job" },
+      { href: "/my-jobs", label: "My Jobs" },
+      { href: "/forum", label: "Forum" },
+    ],
+  },
+  FREELANCER: {
+    name: "Freelancer",
+    links: [
+      { href: "/find-work", label: "Find Work" },
+      { href: "/proposals", label: "Proposals" },
+      { href: "/forum", label: "Forum" },
+    ],
+  },
+} as const;
 
-  const showAvatarImage = Boolean(currentUser.avatarUrl) && !avatarError;
+function Logo() {
+  return (
+    <Link href="/" className="flex shrink-0 items-center gap-2 text-xl font-bold text-[#4fae2e]">
+      <Image src="/Logo.png" alt="Frevia logo" width={28} height={28} className="size-7 object-contain" priority />
+      Frevia
+    </Link>
+  );
+}
 
-  useEffect(() => {
-    const keyword = searchParams.get("keyword") ?? "";
-    setSearchQuery(keyword);
-  }, [searchParams]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const params = new URLSearchParams(searchParams.toString());
-
-    const trimmedKeyword = searchQuery.trim();
-
-    if (trimmedKeyword) {
-      params.set("keyword", trimmedKeyword);
-    } else {
-      params.delete("keyword");
-    }
-
-    params.set("page", "1");
-
-    router.push(`/find-work?${params.toString()}`);
-  };
-
-  const navLinks = [
-    { href: "/find-work", label: "Find Work" },
-    { href: "/proposals", label: "Proposals" },
-    { href: "/forum", label: "Forum" },
-  ];
+function HeaderNavigation({ role, mobile = false }: HeaderProps & { mobile?: boolean }) {
+  const pathname = usePathname();
+  const links = role === "GUEST" ? [] : roleConfig[role].links;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#eaf8df] dark:bg-[#12331f]">
-      <nav className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 shrink-0 font-bold text-xl text-[#4fae2e]"
-        >
-          <Image
-            src="/Logo.png"
-            alt="Frevia logo"
-            width={28}
-            height={28}
-            className="h-7 w-7 object-contain"
-            priority
-          />
-          Frevia
-        </Link>
-
-        {/* Search Bar */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden flex-1 max-w-md md:block"
-        >
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search for projects, skills..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border-0 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4fae2e]/30"
-            />
-          </div>
-        </form>
-
-        {/* Navigation Links */}
-        <div className="hidden items-center gap-6 sm:flex">
-          {navLinks.map((link, idx) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-colors ${
-                idx === 0
-                  ? "text-[#4fae2e] underline underline-offset-4 decoration-2"
-                  : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Right side: Notifications + User */}
-        <div className="flex items-center gap-4 ml-auto">
-          {/* Notification bell */}
-          <button
-            aria-label="Notifications"
-            className="relative hidden p-2 rounded-full hover:bg-black/5 sm:inline-flex"
+    <div className={mobile ? "space-y-1" : "hidden items-center gap-6 md:flex"}>
+      {links.map((link) => {
+        const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`block text-sm font-medium transition-colors ${
+              isActive ? "text-[#4fae2e] underline decoration-2 underline-offset-4" : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
+            }`}
           >
-            <Bell className="h-5 w-5 text-gray-700 dark:text-gray-200" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-green-500 ring-2 ring-[#eaf8df]" />
-          </button>
+            {link.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
 
-          {/* User avatar + dropdown */}
-          <div className="relative hidden sm:block">
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-2"
-            >
-              {showAvatarImage ? (
-                <Image
-                  src={currentUser.avatarUrl as string}
-                  alt="User avatar"
-                  width={32}
-                  height={32}
-                  onError={() => setAvatarError(true)}
-                  className="h-8 w-8 rounded-full object-cover border border-white"
-                />
-              ) : (
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-white">
-                  <UserRound className="h-5 w-5 text-gray-400" />
-                </span>
-              )}
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {currentUser.name}
-              </span>
-              <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-            </button>
+function HeaderSearch() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState("");
 
-            {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-44 rounded-md border border-border bg-background py-1 shadow-lg">
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
-                  onClick={() => setIsUserMenuOpen(false)}
-                >
-                  Profile
-                </Link>
-                <Link
-                  href="/settings"
-                  className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
-                  onClick={() => setIsUserMenuOpen(false)}
-                >
-                  Settings
-                </Link>
-                <Link
-                  href="/logout"
-                  className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
-                  onClick={() => setIsUserMenuOpen(false)}
-                >
-                  Log Out
-                </Link>
-              </div>
-            )}
-          </div>
+  useEffect(() => setQuery(searchParams.get("keyword") ?? ""), [searchParams]);
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="sm:hidden p-2 rounded-md hover:bg-black/5 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-5 w-5 text-gray-800" />
-            ) : (
-              <Menu className="h-5 w-5 text-gray-800" />
-            )}
-          </button>
-        </div>
-      </nav>
+  return (
+    <form
+      className="hidden max-w-md flex-1 md:block"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const params = new URLSearchParams(searchParams.toString());
+        const keyword = query.trim();
+        keyword ? params.set("keyword", keyword) : params.delete("keyword");
+        params.set("page", "1");
+        router.push(`/find-work?${params.toString()}`);
+      }}
+    >
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search for projects, skills..."
+          className="w-full rounded-full border-0 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 shadow-sm outline-none ring-[#4fae2e]/30 focus:ring-2"
+        />
+      </div>
+    </form>
+  );
+}
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="sm:hidden border-t border-black/10 bg-[#eaf8df] p-4 space-y-3">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="block text-sm font-medium text-gray-700 hover:text-[#4fae2e] transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="pt-3 border-t border-black/10 flex items-center gap-2">
-            {showAvatarImage ? (
-              <Image
-                src={currentUser.avatarUrl as string}
-                alt="User avatar"
-                width={28}
-                height={28}
-                onError={() => setAvatarError(true)}
-                className="h-7 w-7 rounded-full object-cover"
-              />
-            ) : (
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white border border-gray-200">
-                <UserRound className="h-4 w-4 text-gray-400" />
-              </span>
-            )}
-            <span className="text-sm font-medium text-gray-800">
-              {currentUser.name}
-            </span>
-          </div>
-        </div>
-      )}
+function ProfileDropdown({ role }: HeaderProps) {
+  const router = useRouter();
+  const profile = roleConfig[role as Exclude<UserRole, "GUEST">];
+
+  const logout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="hidden items-center gap-2 rounded-full outline-none ring-[#4fae2e]/30 focus:ring-2 sm:flex" aria-label="Open profile menu">
+          <Avatar><AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback></Avatar>
+          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{profile.name}</span>
+          <ChevronDown className="size-4 text-gray-600 dark:text-gray-300" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-72 p-2">
+        <DropdownMenuLabel className="flex items-center gap-3 px-3 py-4">
+          <Avatar size="lg"><AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback></Avatar>
+          <div><p className="text-lg font-semibold text-foreground">{profile.name}</p><p className="font-normal text-muted-foreground">{role === "FREELANCER" ? "Freelancer" : "Client"}</p></div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild><Link href="/profile"><UserRound />My Profile</Link></DropdownMenuItem>
+        {role === "FREELANCER" && <><DropdownMenuItem asChild><Link href="/proposals"><FileText />My Proposals<span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">2</span></Link></DropdownMenuItem><DropdownMenuItem asChild><Link href="/bookmarks"><Bookmark />My Bookmarks</Link></DropdownMenuItem></>}
+        {role === "CLIENT" && <DropdownMenuItem asChild><Link href="/my-jobs"><FileText />My Jobs</Link></DropdownMenuItem>}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild><Link href={role === "FREELANCER" ? "/client" : "/find-work"}><SwitchCamera />Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link href="/settings"><Settings />Settings</Link></DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" onSelect={logout}><LogOut />Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function HeaderActions({ role }: HeaderProps) {
+  if (role === "GUEST") {
+    return <div className="ml-auto flex items-center gap-2"><Button variant="ghost" asChild><Link href="/login">Log in</Link></Button><Button asChild><Link href="/register">Sign up</Link></Button></div>;
+  }
+
+  return <div className="ml-auto flex items-center gap-3"><Button variant="ghost" size="icon" className="hidden rounded-full sm:inline-flex" aria-label="Notifications"><Bell className="size-5" /></Button><ProfileDropdown role={role} /></div>;
+}
+
+export function Header({ role }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-black/10 bg-[#eaf8df] dark:bg-[#12331f]">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <Logo />
+        {role === "FREELANCER" && <HeaderSearch />}
+        <HeaderNavigation role={role} />
+        <HeaderActions role={role} />
+        <button onClick={() => setIsMenuOpen((open) => !open)} className="rounded-md p-2 hover:bg-black/5 md:hidden" aria-label="Toggle menu">
+          {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </button>
+      </div>
+      {isMenuOpen && <div className="space-y-3 border-t border-black/10 bg-[#eaf8df] p-4 md:hidden"><HeaderNavigation role={role} mobile /><div className="border-t border-black/10 pt-3 text-sm font-medium text-muted-foreground">{role === "GUEST" ? "Welcome to Frevia" : roleConfig[role].name}</div></div>}
     </header>
   );
 }

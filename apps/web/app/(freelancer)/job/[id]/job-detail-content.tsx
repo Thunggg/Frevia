@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   Bookmark,
   Building2,
@@ -11,8 +14,19 @@ import {
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import jobApiRequest from "@/apiRequests/job";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
   Card,
   CardContent,
@@ -23,6 +37,7 @@ import type { ViewJobDetailResType } from "@shared/types";
 
 type JobDetailContentProps = {
   job: ViewJobDetailResType;
+  initialIsBookmarked: boolean;
 };
 
 function formatBudget(job: ViewJobDetailResType) {
@@ -58,7 +73,10 @@ function formatPostedTime(value: string | Date) {
   return `Posted ${Math.floor(hours / 24)} days ago`;
 }
 
-export function JobDetailContent({ job }: JobDetailContentProps) {
+export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentProps) {
+  const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const clientDetails = [
     ["Jobs Posted", "Not available"],
     ["Hire Rate", "Not available"],
@@ -66,9 +84,42 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
     ["Member Since", "Not available"],
   ];
 
+  const toggleBookmark = async () => {
+    if (isBookmarked) {
+      setIsRemoveDialogOpen(true);
+      return;
+    }
+
+    setIsBookmarkLoading(true);
+
+    try {
+      await jobApiRequest.bookmarkJob(job.id);
+      setIsBookmarked(true);
+      toastSuccess({ message: "Job saved to bookmarks" });
+    } catch {
+      toastError({ message: "Unable to update bookmark. Please try again." });
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
+
+  const removeBookmark = async () => {
+    setIsBookmarkLoading(true);
+    try {
+      await jobApiRequest.removeBookmark(job.id);
+      setIsBookmarked(false);
+      setIsRemoveDialogOpen(false);
+      toastSuccess({ message: "Bookmark removed" });
+    } catch {
+      toastError({ message: "Unable to remove bookmark. Please try again." });
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
+      <Header role="FREELANCER" />
 
       <main className="flex-1">
         <section className="border-b bg-secondary/30">
@@ -122,8 +173,14 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
               </div>
 
               <div className="flex shrink-0 gap-2">
-                <Button size="icon" variant="outline" aria-label="Save job">
-                  <Bookmark className="size-4" />
+                <Button
+                  size="icon"
+                  variant={isBookmarked ? "default" : "outline"}
+                  aria-label={isBookmarked ? "Remove bookmark" : "Save job"}
+                  disabled={isBookmarkLoading}
+                  onClick={toggleBookmark}
+                >
+                  <Bookmark className={isBookmarked ? "size-4 fill-current" : "size-4"} />
                 </Button>
                 <Button>Apply Now</Button>
               </div>
@@ -196,6 +253,24 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
           </aside>
         </div>
       </main>
+      <AlertDialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+        <AlertDialogContent showCloseButton={false}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This job will be removed from your Saved Jobs list. You can save it again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel render={<Button variant="outline" />} disabled={isBookmarkLoading}>
+              Cancel
+            </AlertDialogCancel>
+            <Button variant="destructive" disabled={isBookmarkLoading} onClick={removeBookmark}>
+              {isBookmarkLoading ? "Removing..." : "Remove"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

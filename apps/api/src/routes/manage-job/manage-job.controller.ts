@@ -50,6 +50,15 @@ export class ManageJobController {
     return this.manageJobService.bookmarkJob(userId, roleName, jobId);
   }
 
+  @Get('jobs/:jobId/bookmark')
+  getBookmarkStatus(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('jobId', ParseIntPipe) jobId: number,
+  ) {
+    return this.manageJobService.getBookmarkStatus(userId, roleName, jobId);
+  }
+
   @Delete('bookmarks/:jobId')
   removeBookmark(
     @UserActive('userId')
