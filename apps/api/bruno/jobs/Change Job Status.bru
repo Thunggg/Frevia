@@ -5,17 +5,17 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/api/manage-jobs/1/status
+  url: {{baseUrl}}/api/manage-jobs/4/status
   body: json
   auth: bearer
 }
 
-auth:bearer {
-  token: {{accessToken}}
-}
-
 headers {
   Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 body:json {

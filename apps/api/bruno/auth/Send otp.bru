@@ -5,15 +5,15 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/auth/otp
+  url: {{baseUrl}}/api/auth/otp
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "email": "admin@gmail.com",
-    "type": "PASSWORD_RESET"
+    "email": "tp.tai1314@gmail.com",
+    "type": "EMAIL_VERIFICATION"
   }
 }
 
