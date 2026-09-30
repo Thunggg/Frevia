@@ -109,6 +109,7 @@ export class BrowseJobRepository {
 
         select: {
           id: true,
+          slug: true,
           clientId: true,
           title: true,
           description: true,
@@ -142,16 +143,17 @@ export class BrowseJobRepository {
     };
   }
 
-  async viewJobDetail(id: number): Promise<ViewJobDetailResType> {
+  async viewJobDetail(slug: string): Promise<ViewJobDetailResType> {
     const job = await this.prisma.job.findFirst({
       where: {
-        id,
+        slug,
         deletedAt: null,
         status: JobStatus.OPEN,
       },
 
       select: {
         id: true,
+        slug: true,
         clientId: true,
         title: true,
         description: true,

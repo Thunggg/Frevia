@@ -22,15 +22,22 @@ export class ViewBookmarkedJobResponseDto extends createZodDto(
   ViewBookmarkedJobResponseSchema,
 ) {}
 
-export class ViewClientJobQueryDto extends createZodDto(ViewListJobFilterSchema) {}
+export class ViewClientJobQueryDto extends createZodDto(
+  ViewListJobFilterSchema,
+) {}
 
-export class ViewClientJobResponseDto extends createZodDto(ViewListJobResponseSchema) {}
+export class ViewClientJobResponseDto extends createZodDto(
+  ViewListJobResponseSchema,
+) {}
 
-export class ViewJobDetailResponseDto extends createZodDto(ViewJobDetailResSchema) {}
+export class ViewJobDetailResponseDto extends createZodDto(
+  ViewJobDetailResSchema,
+) {}
 
 export class BookmarkJobBodyDto extends createZodDto(BookmarkJobBodySchema) {}
 
 export class CreateJobBodyDto extends createZodDto(CreateJobBodySchema) {}
+
 export class UpdateJobBodyDto extends createZodDto(UpdateJobBodySchema) {}
 export class UpdateJobResponseDto extends createZodDto(
   UpdateJobResponseSchema,

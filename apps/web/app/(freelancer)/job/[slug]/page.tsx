@@ -4,20 +4,19 @@ import { getBookmarkStatusServer, getJobDetailServer } from "@/lib/get-job";
 import { JobDetailContent } from "./job-detail-content";
 
 type JobDetailPageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
-  const { id } = await params;
-  const jobId = Number(id);
+  const { slug } = await params;
 
-  if (!Number.isSafeInteger(jobId) || jobId <= 0) {
+  if (!slug.trim()) {
     notFound();
   }
 
   const [job, bookmarkStatus] = await Promise.all([
-    getJobDetailServer(jobId),
-    getBookmarkStatusServer(jobId),
+    getJobDetailServer(slug),
+    getBookmarkStatusServer(slug),
   ]);
 
   if (!job) {

@@ -25,6 +25,8 @@ export const JobBudgetTypeSchema = z.enum(["FIXED_PRICE"]);
 export const JobSchema = z.object({
   id: z.number(),
 
+  slug: z.string(),
+
   clientId: z.number(),
 
   title: z.string().max(255),

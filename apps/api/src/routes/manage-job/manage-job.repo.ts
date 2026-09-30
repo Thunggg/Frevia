@@ -16,6 +16,7 @@ import { JobNotFoundException } from './manage-job.error';
 
 const jobSelect = {
   id: true,
+  slug: true,
   clientId: true,
   title: true,
   description: true,
@@ -123,10 +124,10 @@ export class ManageJobRepository {
     return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
-  async findJobById(id: number): Promise<Pick<JobType, 'id'> | null> {
+  async findJobBySlug(slug: string): Promise<Pick<JobType, 'id'> | null> {
     return this.prisma.job.findFirst({
       where: {
-        id,
+        slug,
         deletedAt: null,
       },
 
@@ -330,17 +331,30 @@ export class ManageJobRepository {
   ): Promise<ViewJobDetailResType | null> {
     const job = await this.prisma.job.findFirst({
       where: { id: jobId, clientId, deletedAt: null },
-      select: { ...jobSelect, skills: { select: { jobId: true, skillId: true, skill: { select: { name: true } } } } },
+      select: {
+        ...jobSelect,
+        skills: {
+          select: {
+            jobId: true,
+            skillId: true,
+            skill: { select: { name: true } },
+          },
+        },
+      },
     });
 
     return job ? this.normalizeJob(job) : null;
   }
 
-  async searchSkills(search?: string): Promise<Array<{ id: number; name: string }>> {
+  async searchSkills(
+    search?: string,
+  ): Promise<Array<{ id: number; name: string }>> {
     return this.prisma.skill.findMany({
       where: {
         isActive: true,
-        ...(search && { name: { contains: search, mode: Prisma.QueryMode.insensitive } }),
+        ...(search && {
+          name: { contains: search, mode: Prisma.QueryMode.insensitive },
+        }),
       },
       select: { id: true, name: true },
       take: 10,
@@ -358,7 +372,7 @@ export class ManageJobRepository {
       .replace(/^-|-$/g, '');
   }
 
-  private createJobSlug(title: string): string {
-    return `${this.slugify(title)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  private createSlug(title: string, id: number) {
+    return `${this.slugify(title)}-${id}`;
   }
 }

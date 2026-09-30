@@ -15,10 +15,7 @@ const jobApiRequest = {
   },
 
   updateJob(jobId: number, body: UpdateJobBodyType) {
-    return http.patch<UpdateJobResponseType>(
-      `/api/manage-jobs/${jobId}`,
-      body,
-    );
+    return http.patch<UpdateJobResponseType>(`/api/manage-jobs/${jobId}`, body);
   },
 
   deleteJob(jobId: number) {
@@ -32,22 +29,17 @@ const jobApiRequest = {
     );
   },
 
-  bookmarkJob(jobId: number) {
-    return http.post<void>(
-      `/api/manage-jobs/jobs/${jobId}/bookmark`,
-      {},
-    );
+  bookmarkJob(slug: string) {
+    return http.post<void>(`/api/manage-jobs/jobs/${encodeURIComponent(slug)}/bookmark`, {});
   },
 
-  removeBookmark(jobId: number) {
-    return http.delete<void>(
-      `/api/manage-jobs/bookmarks/${jobId}`,
-    );
+  removeBookmark(slug: string) {
+    return http.delete<void>(`/api/manage-jobs/bookmarks/${encodeURIComponent(slug)}`);
   },
 
-  getBookmarkStatus(jobId: number) {
+  getBookmarkStatus(slug: string) {
     return http.get<{ isBookmarked: boolean }>(
-      `/api/manage-jobs/jobs/${jobId}/bookmark`,
+      `/api/manage-jobs/jobs/${encodeURIComponent(slug)}/bookmark`,
     );
   },
 

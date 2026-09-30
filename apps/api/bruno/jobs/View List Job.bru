@@ -5,14 +5,15 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/jobs
+  url: {{baseUrl}}/jobs?page=1&limit=5
   body: none
   auth: none
 }
 
 params:query {
   page: 1
-  limit: 10
+  limit: 5
+  ~search: landing page
 }
 
 headers {

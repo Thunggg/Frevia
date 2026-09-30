@@ -63,23 +63,26 @@ export class ManageJobService {
   async bookmarkJob(
     userId: number,
     roleName: string,
-    jobId: number,
+    slug: string,
   ): Promise<void> {
     this.assertFreelancerRole(roleName);
 
-    const job = await this.manageJobRepository.findJobById(jobId);
+    const job = await this.manageJobRepository.findJobBySlug(slug);
 
     if (!job) {
       throw JobNotFoundException();
     }
 
-    const bookmark = await this.manageJobRepository.findBookmark(userId, jobId);
+    const bookmark = await this.manageJobRepository.findBookmark(
+      userId,
+      job.id,
+    );
 
     if (bookmark) {
       throw JobAlreadyBookmarkedException();
     }
 
-    await this.manageJobRepository.bookmarkJob(userId, jobId);
+    await this.manageJobRepository.bookmarkJob(userId, job.id);
   }
 
   async viewClientJobs(
@@ -91,10 +94,18 @@ export class ManageJobService {
       throw BookmarkJobOnlyForFreelancerException();
     }
 
-    const { jobs, total } = await this.manageJobRepository.getClientJobLists(userId, filter);
+    const { jobs, total } = await this.manageJobRepository.getClientJobLists(
+      userId,
+      filter,
+    );
     return {
       data: jobs,
-      pagination: { page: filter.page, limit: filter.limit, total, totalPages: Math.ceil(total / filter.limit) },
+      pagination: {
+        page: filter.page,
+        limit: filter.limit,
+        total,
+        totalPages: Math.ceil(total / filter.limit),
+      },
     };
   }
 
@@ -115,7 +126,10 @@ export class ManageJobService {
       throw BookmarkJobOnlyForFreelancerException();
     }
 
-    const job = await this.manageJobRepository.getClientJobDetail(userId, jobId);
+    const job = await this.manageJobRepository.getClientJobDetail(
+      userId,
+      jobId,
+    );
     if (!job) throw JobNotFoundException();
     return job;
   }
@@ -123,27 +137,42 @@ export class ManageJobService {
   async getBookmarkStatus(
     userId: number,
     roleName: string,
-    jobId: number,
+    slug: string,
   ): Promise<{ isBookmarked: boolean }> {
     this.assertFreelancerRole(roleName);
 
-    const bookmark = await this.manageJobRepository.findBookmark(userId, jobId);
+    const job = await this.manageJobRepository.findJobBySlug(slug);
+
+    if (!job) {
+      throw JobNotFoundException();
+    }
+
+    const bookmark = await this.manageJobRepository.findBookmark(
+      userId,
+      job.id,
+    );
 
     return { isBookmarked: Boolean(bookmark) };
   }
 
-  async removeBookmark(userId: number, jobId: number): Promise<void> {
+  async removeBookmark(userId: number, slug: string): Promise<void> {
     try {
+      const job = await this.manageJobRepository.findJobBySlug(slug);
+
+      if (!job) {
+        throw JobNotFoundException();
+      }
+
       const bookmark = await this.manageJobRepository.findBookmark(
         userId,
-        jobId,
+        job.id,
       );
 
       if (!bookmark) {
         throw BookmarkNotFoundException();
       }
 
-      await this.manageJobRepository.removeBookmark(userId, jobId);
+      await this.manageJobRepository.removeBookmark(userId, job.id);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToRemoveBookmarkException();

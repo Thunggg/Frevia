@@ -93,7 +93,7 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
     setIsBookmarkLoading(true);
 
     try {
-      await jobApiRequest.bookmarkJob(job.id);
+      await jobApiRequest.bookmarkJob(job.slug);
       setIsBookmarked(true);
       toastSuccess({ message: "Job saved to bookmarks" });
     } catch {
@@ -106,7 +106,7 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
   const removeBookmark = async () => {
     setIsBookmarkLoading(true);
     try {
-      await jobApiRequest.removeBookmark(job.id);
+      await jobApiRequest.removeBookmark(job.slug);
       setIsBookmarked(false);
       setIsRemoveDialogOpen(false);
       toastSuccess({ message: "Bookmark removed" });

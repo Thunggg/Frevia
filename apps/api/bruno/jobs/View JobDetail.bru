@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/jobs/{{jobId}}
+  url: {{baseUrl}}/jobs/{{slug}}
   body: none
   auth: none
 }
@@ -15,5 +15,10 @@ headers {
 }
 
 vars:pre-request {
-  jobId: 8
+  jobId: '''
+    private createSlug(title: string, id: number) {
+        return `${this.slugify(title)}-${id}`;
+    }
+  '''
+  slug: e-commerce-website
 }

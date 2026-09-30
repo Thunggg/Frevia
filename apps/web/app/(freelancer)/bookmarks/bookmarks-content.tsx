@@ -55,15 +55,15 @@ function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
 
 export function BookmarksContent({ initialJobs, pagination }: BookmarksContentProps) {
   const router = useRouter();
-  const [pendingRemoveJobId, setPendingRemoveJobId] = useState<number | null>(null);
+  const [pendingRemoveJobSlug, setPendingRemoveJobSlug] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-  const removeBookmark = async (jobId: number) => {
+  const removeBookmark = async (slug: string) => {
     setIsRemoving(true);
     try {
-      await jobApiRequest.removeBookmark(jobId);
+      await jobApiRequest.removeBookmark(slug);
       toastSuccess({ message: "Bookmark removed" });
-      setPendingRemoveJobId(null);
+      setPendingRemoveJobSlug(null);
       router.refresh();
     } catch {
       toastError({ message: "Unable to remove bookmark. Please try again." });
@@ -109,7 +109,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
                           <Badge variant={availability.isExpiring ? "destructive" : "secondary"} className={availability.isExpiring ? "" : "bg-primary/10 text-primary"}>{availability.label}</Badge>
                           <span className="text-muted-foreground">{formatPostedTime(job.createdAt)}</span>
                         </div>
-                        <Link href={`/job/${job.id}`} className="mt-2 block w-fit text-xl font-bold hover:text-primary">
+                        <Link href={`/job/${job.slug}`} className="mt-2 block w-fit text-xl font-bold hover:text-primary">
                           {job.title}
                         </Link>
                         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
@@ -122,8 +122,8 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-row gap-2 sm:flex-col sm:items-end">
-                        <Button asChild><Link href={`/job/${job.id}`}><BriefcaseBusiness className="mr-2 size-4" />Apply Now</Link></Button>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setPendingRemoveJobId(job.id)}><X className="mr-1 size-4" />Remove</Button>
+                        <Button asChild><Link href={`/job/${job.slug}`}><BriefcaseBusiness className="mr-2 size-4" />Apply Now</Link></Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setPendingRemoveJobSlug(job.slug)}><X className="mr-1 size-4" />Remove</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -138,8 +138,8 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
         </div>
       </main>
       <AlertDialog
-        open={pendingRemoveJobId !== null}
-        onOpenChange={(open) => !open && setPendingRemoveJobId(null)}
+        open={pendingRemoveJobSlug !== null}
+        onOpenChange={(open) => !open && setPendingRemoveJobSlug(null)}
       >
         <AlertDialogContent showCloseButton={false}>
           <AlertDialogHeader>
@@ -155,7 +155,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
             <Button
               variant="destructive"
               disabled={isRemoving}
-              onClick={() => pendingRemoveJobId && removeBookmark(pendingRemoveJobId)}
+              onClick={() => pendingRemoveJobSlug && removeBookmark(pendingRemoveJobSlug)}
             >
               {isRemoving ? "Removing..." : "Remove"}
             </Button>

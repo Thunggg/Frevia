@@ -136,19 +136,19 @@ export async function getJobsServer(
 
 /**
  * UC-03.02
- * GET /api/jobs/:jobId
+ * GET /api/jobs/:slug
  */
 export async function getJobDetailServer(
-  jobId: number | string,
+  slug: string,
 ): Promise<ViewJobDetailResType | null> {
-  const normalizedJobId = String(jobId).trim();
+  const normalizedSlug = slug.trim();
 
-  if (!normalizedJobId) {
+  if (!normalizedSlug) {
     return null;
   }
 
   return jobServerFetch<ViewJobDetailResType>(
-    `/api/jobs/${encodeURIComponent(normalizedJobId)}`,
+    `/api/jobs/${encodeURIComponent(normalizedSlug)}`,
   );
 }
 
@@ -188,13 +188,13 @@ export async function getClientJobDetailServer(
 }
 
 export async function getBookmarkStatusServer(
-  jobId: number | string,
+  slug: string,
 ): Promise<BookmarkStatus | null> {
-  const normalizedJobId = String(jobId).trim();
-  if (!normalizedJobId) return null;
+  const normalizedSlug = slug.trim();
+  if (!normalizedSlug) return null;
 
   return jobServerFetch<BookmarkStatus>(
-    `/api/manage-jobs/jobs/${encodeURIComponent(normalizedJobId)}/bookmark`,
+    `/api/manage-jobs/jobs/${encodeURIComponent(normalizedSlug)}/bookmark`,
     { requireAuth: true },
   );
 }

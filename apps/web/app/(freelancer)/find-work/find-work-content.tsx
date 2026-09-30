@@ -219,7 +219,7 @@ export function FindWorkContent({
                       <CardContent className="p-6">
                         {job.featured && <Badge className="mb-3">Featured</Badge>}
                         <Link
-                          href={`/job/${job.id}`}
+                          href={`/job/${job.slug}`}
                           className="hover:text-primary transition-colors"
                         >
                           <h3 className="text-lg font-semibold mb-2">{job.title}</h3>
@@ -252,7 +252,7 @@ export function FindWorkContent({
                             </p>
                           </div>
                           <Button size="sm" asChild>
-                            <Link href={`/job/${job.id}`}>View details</Link>
+                            <Link href={`/job/${job.slug}`}>View details</Link>
                           </Button>
                         </div>
                       </CardContent>

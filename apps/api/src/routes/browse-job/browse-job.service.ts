@@ -42,9 +42,9 @@ export class BrowseJobService {
     }
   }
 
-  async viewJobDetail(id: number): Promise<ViewJobDetailResType> {
+  async viewJobDetail(slug: string): Promise<ViewJobDetailResType> {
     try {
-      return await this.browseJobRepository.viewJobDetail(id);
+      return await this.browseJobRepository.viewJobDetail(slug);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToLoadJobDetailException();

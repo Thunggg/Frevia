@@ -48,16 +48,6 @@ export class ManageJobController {
     return this.manageJobService.viewClientJobs(userId, roleName, query);
   }
 
-  @Get(':id')
-  @ZodSerializerDto(ViewJobDetailResponseDto)
-  viewClientJobDetail(
-    @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return this.manageJobService.viewClientJobDetail(userId, roleName, id);
-  }
-
   @Get('bookmarks')
   @ZodSerializerDto(ViewBookmarkedJobResponseDto)
   viewBookmarkedJob(
@@ -69,36 +59,44 @@ export class ManageJobController {
     return this.manageJobService.viewBookmarkedJob(userId, roleName, query);
   }
 
-  @Post('jobs/:jobId/bookmark')
+  @Post('jobs/:slug/bookmark')
   bookmarkJob(
     @UserActive('userId')
     userId: number,
     @UserActive('roleName') roleName: string,
 
-    @Param('jobId', ParseIntPipe)
-    jobId: number,
+    @Param('slug') slug: string,
   ) {
-    return this.manageJobService.bookmarkJob(userId, roleName, jobId);
+    return this.manageJobService.bookmarkJob(userId, roleName, slug);
   }
 
-  @Get('jobs/:jobId/bookmark')
+  @Get('jobs/:slug/bookmark')
   getBookmarkStatus(
     @UserActive('userId') userId: number,
     @UserActive('roleName') roleName: string,
-    @Param('jobId', ParseIntPipe) jobId: number,
+    @Param('slug') slug: string,
   ) {
-    return this.manageJobService.getBookmarkStatus(userId, roleName, jobId);
+    return this.manageJobService.getBookmarkStatus(userId, roleName, slug);
   }
 
-  @Delete('bookmarks/:jobId')
+  @Delete('bookmarks/:slug')
   removeBookmark(
     @UserActive('userId')
     userId: number,
 
-    @Param('jobId', ParseIntPipe)
-    jobId: number,
+    @Param('slug') slug: string,
   ) {
-    return this.manageJobService.removeBookmark(userId, jobId);
+    return this.manageJobService.removeBookmark(userId, slug);
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(ViewJobDetailResponseDto)
+  viewClientJobDetail(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.manageJobService.viewClientJobDetail(userId, roleName, id);
   }
 
   @Post()
