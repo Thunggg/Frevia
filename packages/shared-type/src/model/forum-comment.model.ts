@@ -105,6 +105,7 @@ export const ForumAdminCommentSchema = z.object({
   post: z.object({
     id: z.number(),
     title: z.string(),
+    categoryId: z.number().nullable(),
   }),
 });
 

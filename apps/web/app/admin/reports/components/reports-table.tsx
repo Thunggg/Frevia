@@ -310,6 +310,7 @@ export function ReportsTable({
                   Report ID: {viewingReport.id} · Post ID:{" "}
                   {viewingReport.postId ?? "N/A"}
                 </p>
+
               </div>
             </div>
           )}

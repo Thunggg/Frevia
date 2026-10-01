@@ -7,10 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { REQUEST_USER_KEY } from '@shared/types';
 import { Request } from 'express';
-import {
-  IS_PUBLIC_KEY,
-  IS_OPTIONAL_AUTH_KEY,
-} from '../decorators/auth.decorator';
+import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { TokenService } from '../services/token.service';
 
 @Injectable()
@@ -30,27 +27,19 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const isOptionalAuth = this.reflector.getAllAndOverride<boolean>(
-      IS_OPTIONAL_AUTH_KEY,
-      [context.getHandler(), context.getClass()],
-    );
-
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
-    if (token) {
-      try {
-        const payload = await this.tokenService.verifyAccessToken(token);
-        request[REQUEST_USER_KEY] = payload;
-      } catch {
-        if (!isOptionalAuth) {
-          throw new UnauthorizedException();
-        }
-      }
-    } else if (!isOptionalAuth) {
+    if (!token) {
       throw new UnauthorizedException();
     }
 
+    try {
+      const payload = await this.tokenService.verifyAccessToken(token);
+      request[REQUEST_USER_KEY] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
     return true;
   }
 

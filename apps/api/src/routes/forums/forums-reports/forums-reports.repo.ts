@@ -136,6 +136,7 @@ export class ForumReportRepository {
             select: {
               id: true,
               title: true,
+              categoryId: true,
             },
           },
           comment: {

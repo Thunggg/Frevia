@@ -89,6 +89,7 @@ export class ForumAdminRepository {
             select: {
               id: true,
               title: true,
+              categoryId: true,
             },
           },
         },

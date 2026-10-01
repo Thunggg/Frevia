@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 import { adminApiRequest } from "@/apiRequests/admin";
 import {
   Table,
@@ -41,7 +40,6 @@ import { toastSuccess, toastError } from "@repo/ui/components/shadcn/toast";
 import {
   Trash2,
   Eye,
-  ExternalLink,
   Calendar,
   User,
   MessageSquare,
@@ -253,15 +251,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                   Comment ID: {viewingComment.id} · Post ID:{" "}
                   {viewingComment.postId}
                 </p>
-                <Link
-                  href={`/forum/general/${viewingComment.postId}`}
-                  target="_blank"
-                >
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                    View Post
-                  </Button>
-                </Link>
+
               </div>
             </div>
           )}
