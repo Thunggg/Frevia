@@ -3,6 +3,8 @@ import {
   ForumCategoryType,
   ForumPostFilterType,
   ForumPostType,
+  ForumTopActiveUserType,
+  ForumTopPostType,
   UpdateForumPostType,
 } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
@@ -15,15 +17,14 @@ import {
 export class ForumRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Lấy danh sách tất cả forum categories đang active
+  // Lấy danh sách tất cả forum categories đang active kèm số lượng posts
   async getForumCategories(): Promise<
-    // Chỉ lấy các trường id, name, description, createdAt, updatedAt
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
+      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
     >[]
   > {
-    return this.prisma.forumCategory.findMany({
+    const categories = await this.prisma.forumCategory.findMany({
       where: {
         deletedAt: null,
       },
@@ -33,12 +34,105 @@ export class ForumRepository {
         description: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
       },
       orderBy: {
-        // Sắp xếp theo name tăng dần (bảng chữ cái)
         name: 'asc',
       },
     });
+
+    return categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt,
+      postCount: c._count.posts,
+    }));
+  }
+
+  // Lấy top forum categories có nhiều posts nhất
+  async getTopForumCategories(
+    limit: number = 3,
+  ): Promise<
+    Pick<
+      ForumCategoryType,
+      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+    >[]
+  > {
+    const categories = await this.prisma.forumCategory.findMany({
+      where: {
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+      orderBy: {
+        posts: { _count: 'desc' },
+      },
+      take: limit,
+    });
+
+    return categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt,
+      postCount: c._count.posts,
+    }));
+  }
+
+  // Lấy top người dùng hoạt động nhiều nhất (dựa trên số bài viết)
+  async getTopActiveUsers(
+    limit: number = 5,
+  ): Promise<ForumTopActiveUserType[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        deletedAt: null,
+        isBanned: false,
+      },
+      select: {
+        id: true,
+        profile: {
+          select: {
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+        _count: {
+          select: {
+            forumPosts: { where: { deletedAt: null } },
+            forumComments: { where: { deletedAt: null } },
+          },
+        },
+      },
+      orderBy: {
+        forumPosts: { _count: 'desc' },
+      },
+      take: limit,
+    });
+
+    return users.map((u) => ({
+      id: u.id,
+      displayName: u.profile?.displayName ?? null,
+      avatarUrl: u.profile?.avatarUrl ?? null,
+      postCount: u._count.forumPosts,
+      commentCount: u._count.forumComments,
+    }));
   }
 
   // Tìm xem category hiện tại có tồn tại không trước khi tạo post
@@ -61,7 +155,7 @@ export class ForumRepository {
   ): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
+      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
     >
   > {
     // DÙng findFirst để tìm kiếm forum category theo id và deletedAt = null (chỉ lấy các category đang active)
@@ -76,6 +170,11 @@ export class ForumRepository {
         description: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
       },
     });
 
@@ -83,21 +182,29 @@ export class ForumRepository {
       throw ForumCategoryNotFoundException();
     }
 
-    return forumCategory;
+    return {
+      id: forumCategory.id,
+      name: forumCategory.name,
+      description: forumCategory.description,
+      createdAt: forumCategory.createdAt,
+      updatedAt: forumCategory.updatedAt,
+      postCount: forumCategory._count.posts,
+    };
   }
 
   async getForumPostLists(filter: ForumPostFilterType) {
-    // filter chứa các thông tin để lọc danh sách forum posts theo categoryId, userId, page, limit
-    const { page, limit, categoryId, userId } = filter;
+    const { page, limit, categoryId, userId, search } = filter;
     const skip = (page - 1) * limit;
     const where = {
       deletedAt: null,
-      // Nếu categoryId hoặc userId được truyền vào thì thêm điều kiện lọc vào where
       ...(categoryId !== undefined && {
         categoryId,
       }),
       ...(userId !== undefined && {
         userId,
+      }),
+      ...(search && {
+        title: { contains: search, mode: 'insensitive' as const },
       }),
     };
     // Sử dụng transaction để thực hiện 2 truy vấn cùng lúc: lấy danh sách forum posts và đếm tổng số forum posts thỏa mãn điều kiện lọc
@@ -113,6 +220,17 @@ export class ForumRepository {
           content: true,
           createdAt: true,
           updatedAt: true,
+          user: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  displayName: true,
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
         },
         skip,
         take: limit,
@@ -265,5 +383,70 @@ export class ForumRepository {
         updatedAt: true,
       },
     });
+  }
+
+  async getTopInteractedPosts(limit: number = 3): Promise<ForumTopPostType[]> {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const posts = await this.prisma.forumPost.findMany({
+      where: {
+        deletedAt: null,
+        createdAt: { gte: oneWeekAgo },
+      },
+      select: {
+        id: true,
+        categoryId: true,
+        userId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: { where: { deletedAt: null } },
+          },
+        },
+      },
+      orderBy: [
+        { likes: { _count: 'desc' } },
+        { comments: { _count: 'desc' } },
+        { createdAt: 'desc' },
+      ],
+      take: limit,
+    });
+
+    return posts.map((p) => ({
+      id: p.id,
+      categoryId: p.categoryId,
+      userId: p.userId,
+      title: p.title,
+      content: p.content,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+      likeCount: p._count.likes,
+      commentCount: p._count.comments,
+      interactionScore: p._count.likes + p._count.comments,
+      user: p.user,
+      category: p.category,
+    }));
   }
 }

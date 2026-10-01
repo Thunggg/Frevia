@@ -46,6 +46,7 @@ export const ForumReportListResponseSchema = z.object({
         .object({
           id: z.number(),
           title: z.string(),
+          categoryId: z.number().nullable(),
         })
         .nullable(),
       comment: z

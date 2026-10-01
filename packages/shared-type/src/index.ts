@@ -1,6 +1,7 @@
 export * from "./constants/profile.constant";
 export * from "./constants/role.constant";
 export * from "./constants/token.constant";
+export * from "./constants/report-status.constant";
 export * from "./message/auth.message";
 export * from "./message/manage-forum.message";
 export * from "./model/forum-category.model";
