@@ -48,6 +48,11 @@ export class ManageJobRepository {
       userId,
       job: {
         deletedAt: null,
+        status: JobStatus.OPEN,
+        client: {
+          isBanned: false,
+          deletedAt: null,
+        },
       },
     } satisfies Prisma.JobBookmarkWhereInput;
 
@@ -129,6 +134,11 @@ export class ManageJobRepository {
       where: {
         slug,
         deletedAt: null,
+        status: JobStatus.OPEN,
+        client: {
+          isBanned: false,
+          deletedAt: null,
+        },
       },
 
       select: {
@@ -372,7 +382,9 @@ export class ManageJobRepository {
       .replace(/^-|-$/g, '');
   }
 
-  private createSlug(title: string, id: number) {
-    return `${this.slugify(title)}-${id}`;
+  private createJobSlug(title: string): string {
+    return `${this.slugify(title)}-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 7)}`;
   }
 }

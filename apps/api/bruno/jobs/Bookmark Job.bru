@@ -5,15 +5,15 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/manage-jobs/jobs/{{jobId}}/bookmark
+  url: {{baseUrl}}/manage-jobs/jobs/{{jobSlug}}/bookmark
   body: none
-  auth: none
+  auth: bearer
 }
 
-headers {
-  Authorization: Bearer {{accessToken}}
+auth:bearer {
+  token: {{accessToken}}
 }
 
 vars:pre-request {
-  jobId: e-commerce-website
+  jobSlug: e-commerce-website
 }

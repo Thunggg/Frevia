@@ -108,11 +108,11 @@ export const CreateJobBodySchema = z
   })
   .strict()
   .superRefine((data, ctx) => {
+    const now = new Date();
+
     if (
-      data.budgetMin !== null &&
-      data.budgetMax !== null &&
-      data.budgetMin !== undefined &&
-      data.budgetMax !== undefined &&
+      data.budgetMin != null &&
+      data.budgetMax != null &&
       data.budgetMin > data.budgetMax
     ) {
       ctx.addIssue({
@@ -122,7 +122,23 @@ export const CreateJobBodySchema = z
       });
     }
 
-    if (data.deadline && data.expiryDate && data.expiryDate > data.deadline) {
+    if (data.expiryDate && data.expiryDate <= now) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["expiryDate"],
+        message: ManageJobMessage.EXPIRY_DATE_MUST_BE_IN_FUTURE,
+      });
+    }
+
+    if (data.deadline && data.deadline <= now) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["deadline"],
+        message: ManageJobMessage.DEADLINE_MUST_BE_IN_FUTURE,
+      });
+    }
+
+    if (data.deadline && data.expiryDate && data.expiryDate >= data.deadline) {
       ctx.addIssue({
         code: "custom",
         path: ["expiryDate"],
@@ -138,8 +154,6 @@ export const ChangeJobStatusBodySchema = z
     status: JobStatusSchema,
   })
   .strict();
-
-
 
 export const ViewListJobFilterSchema = z
   .object({
@@ -163,19 +177,16 @@ export const ViewListJobFilterSchema = z
       .optional()
       .transform((value) => value || undefined),
 
-
     status: JobStatusSchema.optional(),
 
     budgetType: JobBudgetTypeSchema.optional(),
 
- 
     budgetMin: z.coerce.number().min(0).optional(),
 
     budgetMax: z.coerce.number().min(0).optional(),
 
     createdAfter: z.coerce.date().optional(),
 
- 
     skill: z
       .string()
       .trim()
@@ -184,7 +195,6 @@ export const ViewListJobFilterSchema = z
       .transform((value) => value || undefined),
 
     featured: QueryBooleanSchema.optional(),
-
 
     clientId: z.coerce.number().int().positive().optional(),
 
@@ -211,8 +221,7 @@ export const ViewListJobFilterSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["budgetMax"],
-        message:
-          ManageJobMessage.BUDGET_MAX_MUST_BE_GREATER_THAN_BUDGET_MIN,
+        message: ManageJobMessage.BUDGET_MAX_MUST_BE_GREATER_THAN_BUDGET_MIN,
       });
     }
   });
@@ -257,29 +266,19 @@ export type UpdateJobBodyInputType = z.input<typeof UpdateJobBodySchema>;
 
 export type UpdateJobBodyType = z.output<typeof UpdateJobBodySchema>;
 
-export type ChangeJobStatusBodyType = z.infer<
-  typeof ChangeJobStatusBodySchema
->;
+export type ChangeJobStatusBodyType = z.infer<typeof ChangeJobStatusBodySchema>;
 
-export type ViewListJobFilterType = z.input<
-  typeof ViewListJobFilterSchema
->;
+export type ViewListJobFilterType = z.input<typeof ViewListJobFilterSchema>;
 
 export type ViewListJobParsedFilterType = z.output<
   typeof ViewListJobFilterSchema
 >;
 
-export type ViewListJobResponseType = z.infer<
-  typeof ViewListJobResponseSchema
->;
+export type ViewListJobResponseType = z.infer<typeof ViewListJobResponseSchema>;
 
-export type ViewJobDetailResType = z.infer<
-  typeof ViewJobDetailResSchema
->;
+export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
 
-export type UpdateJobResponseType = z.infer<
-  typeof UpdateJobResponseSchema
->;
+export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
 
 export type ChangeJobStatusResponseType = z.infer<
   typeof ChangeJobStatusResponseSchema

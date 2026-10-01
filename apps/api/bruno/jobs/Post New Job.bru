@@ -7,11 +7,14 @@ meta {
 post {
   url: {{baseUrl}}/manage-jobs
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 headers {
-  Authorization: Bearer {{accessToken}}
   Content-Type: application/json
 }
 
@@ -25,16 +28,9 @@ body:json {
     "deadline": "2026-10-15T23:59:59.000Z",
     "expiryDate": "2026-08-15T23:59:59.000Z",
     "skills": [
-      "React Native",
-      "TypeScript",
-      "NestJS",
-      "Redux Toolkit",
-      "React Navigation",
-      "Firebase",
-      "Socket.IO",
-      "REST API",
-      "Stripe",
-      "Git"
+      1,
+      2,
+      3
     ]
   }
 }

@@ -14,14 +14,13 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound();
   }
 
-  const [job, bookmarkStatus] = await Promise.all([
-    getJobDetailServer(slug),
-    getBookmarkStatusServer(slug),
-  ]);
+  const job = await getJobDetailServer(slug);
 
   if (!job) {
     notFound();
   }
+
+  const bookmarkStatus = await getBookmarkStatusServer(slug);
 
   return (
     <JobDetailContent

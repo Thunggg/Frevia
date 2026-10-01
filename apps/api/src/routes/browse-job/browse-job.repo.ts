@@ -35,6 +35,10 @@ export class BrowseJobRepository {
     const where = {
       deletedAt: null,
       status: JobStatus.OPEN,
+      client: {
+        isBanned: false,
+        deletedAt: null,
+      },
 
       ...(search && {
         OR: [
@@ -65,17 +69,10 @@ export class BrowseJobRepository {
 
       ...(budgetType && { budgetType }),
 
-      ...(budgetMin !== undefined && {
-        budgetMin: {
-          gte: budgetMin,
-        },
-      }),
+      // Include jobs whose offered budget range overlaps the selected range.
+      ...(budgetMin !== undefined && { budgetMax: { gte: budgetMin } }),
 
-      ...(budgetMax !== undefined && {
-        budgetMax: {
-          lte: budgetMax,
-        },
-      }),
+      ...(budgetMax !== undefined && { budgetMin: { lte: budgetMax } }),
 
       ...(createdAfter && {
         createdAt: {
@@ -149,6 +146,10 @@ export class BrowseJobRepository {
         slug,
         deletedAt: null,
         status: JobStatus.OPEN,
+        client: {
+          isBanned: false,
+          deletedAt: null,
+        },
       },
 
       select: {

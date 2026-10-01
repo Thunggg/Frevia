@@ -5,15 +5,15 @@ meta {
 }
 
 delete {
-  url: {{baseUrl}}/manage-jobs/bookmarks/{{jobId}}
+  url: {{baseUrl}}/manage-jobs/bookmarks/{{jobSlug}}
   body: none
-  auth: none
+  auth: bearer
 }
 
-headers {
-  Authorization: Bearer {{accessToken}}
+auth:bearer {
+  token: {{accessToken}}
 }
 
 vars:pre-request {
-  jobId: 1
+  jobSlug: e-commerce-website
 }

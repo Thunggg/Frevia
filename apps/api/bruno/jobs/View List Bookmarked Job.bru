@@ -5,17 +5,29 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/manage-jobs/bookmarks?page=1&limit=10
+  url: {{baseUrl}}/manage-jobs/bookmarks?page=1&limit=10&sortBy=createdAt&order=desc
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:query {
   page: 1
   limit: 10
+  ~search: React
+  ~status: OPEN
+  ~budgetType: FIXED_PRICE
+  ~budgetMin: 500
+  ~budgetMax: 2500
+  ~skill: React
+  ~featured: false
+  sortBy: createdAt
+  order: desc
 }
 
 headers {
-  Content-Type: application/json
-  Authorization: Bearer {{accessToken}}
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }

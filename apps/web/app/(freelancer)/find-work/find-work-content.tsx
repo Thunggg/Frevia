@@ -33,6 +33,7 @@ type FindWorkContentProps = {
   initialKeyword?: string;
   initialBudget?: string;
   initialTime?: string;
+  initialSort?: string;
 };
 
 export function FindWorkContent({
@@ -41,6 +42,7 @@ export function FindWorkContent({
   initialKeyword = "",
   initialBudget = "all",
   initialTime = "all",
+  initialSort = "newest",
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,7 +83,7 @@ export function FindWorkContent({
     return `$${job.budgetMin} - $${job.budgetMax}`;
   };
 
-  const updateFilter = (name: "budget" | "time", value: string) => {
+  const updateFilter = (name: "budget" | "time" | "sort", value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value === "all") {
@@ -133,7 +135,7 @@ export function FindWorkContent({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pb-6 border-b">
+              <div className="grid grid-cols-2 gap-3 pb-6 border-b sm:grid-cols-4">
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
@@ -194,13 +196,20 @@ export function FindWorkContent({
                       ? `${pagination.total}+ results`
                       : "No results"}
                 </p>
-                <Select defaultValue="relevance">
+                <Select
+                  value={initialSort}
+                  onValueChange={(value) => value && updateFilter("sort", value)}
+                >
                   <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="relevance">Sort: Relevance</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
+                    <SelectItem value="newest">Mới nhất</SelectItem>
+                    <SelectItem value="oldest">Cũ nhất</SelectItem>
+                    <SelectItem value="title-asc">Tên: A → Z</SelectItem>
+                    <SelectItem value="title-desc">Tên: Z → A</SelectItem>
+                    <SelectItem value="budget-low">Ngân sách: thấp → cao</SelectItem>
+                    <SelectItem value="budget-high">Ngân sách: cao → thấp</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

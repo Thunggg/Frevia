@@ -6,6 +6,7 @@ type FindWorkSearchParams = Promise<{
   page?: string;
   budget?: string;
   time?: string;
+  sort?: string;
 }>;
 
 type FindWorkPageProps = {
@@ -19,6 +20,17 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
   const keyword = params.keyword?.trim() || undefined;
   const budget = params.budget ?? "all";
   const time = params.time ?? "all";
+  const sort = params.sort ?? "newest";
+
+  const sortOptions = {
+    newest: { sortBy: "createdAt", order: "desc" },
+    oldest: { sortBy: "createdAt", order: "asc" },
+    "title-asc": { sortBy: "title", order: "asc" },
+    "title-desc": { sortBy: "title", order: "desc" },
+    "budget-low": { sortBy: "budgetMin", order: "asc" },
+    "budget-high": { sortBy: "budgetMax", order: "desc" },
+  } as const;
+  const selectedSort = sortOptions[sort as keyof typeof sortOptions] ?? sortOptions.newest;
 
   const budgetRanges: Record<string, { budgetMin?: number; budgetMax?: number }> = {
     "under-500": { budgetMax: 500 },
@@ -43,6 +55,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     search: keyword,
     ...budgetRanges[budget],
     createdAfter,
+    ...selectedSort,
   });
 
   const jobs = result?.data ?? [];
@@ -57,6 +70,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
       initialKeyword={keyword ?? ""}
       initialBudget={budgetRanges[budget] ? budget : "all"}
       initialTime={timeRange ? time : "all"}
+      initialSort={sortOptions[sort as keyof typeof sortOptions] ? sort : "newest"}
     />
   );
 }

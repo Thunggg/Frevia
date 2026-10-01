@@ -15,10 +15,5 @@ headers {
 }
 
 vars:pre-request {
-  jobId: '''
-    private createSlug(title: string, id: number) {
-        return `${this.slugify(title)}-${id}`;
-    }
-  '''
   slug: e-commerce-website
 }

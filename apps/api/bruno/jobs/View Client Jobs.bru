@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/manage-jobs?page=1&limit=10
+  url: {{baseUrl}}/manage-jobs?page=1&limit=10&sortBy=createdAt&order=desc
   body: none
   auth: bearer
 }
@@ -17,6 +17,10 @@ auth:bearer {
 params:query {
   page: 1
   limit: 10
+  ~search: React
+  ~status: OPEN
+  sortBy: createdAt
+  order: desc
 }
 
 headers {
