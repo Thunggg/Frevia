@@ -1,5 +1,8 @@
 "use client";
 
+import { useForgotPassword, useSendOtp } from "@/hooks/use-auth";
+import { ApiFail } from "@/lib/http";
+import { handleErrorApi } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -27,23 +30,21 @@ import {
   ForgotPasswordBodySchema,
   TypeOfVerificationCode,
 } from "@shared/types";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-import { useEffect, useState } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authApiRequest } from "@/apiRequests/auth";
-import { handleErrorApi } from "@/lib/utils";
-import { ApiFail } from "@/lib/http";
-import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
   const [countdown, setCountdown] = useState(0);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const sendOtpMutation = useSendOtp();
+  const forgotPasswordMutation = useForgotPassword();
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -67,56 +68,46 @@ export function ForgotPasswordForm() {
     },
   });
 
-  async function onSubmit(payload: z.infer<typeof ForgotPasswordBodySchema>) {
-    try {
-      setIsLoading(true);
-      const res = await authApiRequest.forgotPassword(payload);
-
-      if (res.success) {
-        toastSuccess({
-          message: res.data.message ?? "Password reset successful",
-        });
+  function onSubmit(payload: z.infer<typeof ForgotPasswordBodySchema>) {
+    forgotPasswordMutation.mutate(payload, {
+      onSuccess: (response) => {
+        if (response.success) {
+          toastSuccess({ message: response.data.message });
+        }
         form.reset();
         router.push("/login");
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiFail) {
-        handleErrorApi({
-          error: error.response,
-          setError: form.setError,
-          duration: 3000,
-        });
-      } else {
-        toastError({ message: "Reset password failed" });
-      }
-    } finally {
-      setIsLoading(false);
-    }
+      },
+      onError: (error) => {
+        if (error instanceof ApiFail) {
+          handleErrorApi({ error: error.response, setError: form.setError });
+        } else {
+          toastError({ message: "Reset password failed", duration: 3000 });
+        }
+      },
+    });
   }
 
-  async function sendOtp() {
-    try {
-      setIsSendingOtp(true);
-      const email = form.getValues("email");
-
-      const res = await authApiRequest.sendOtp({
-        email,
+  function sendOtp() {
+    sendOtpMutation.mutate(
+      {
+        email: form.getValues("email"),
         type: TypeOfVerificationCode.PASSWORD_RESET,
-      });
-
-      if (res.success) {
-        toastSuccess({ message: res.data.message });
-        setCountdown(30);
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiFail) {
-        handleErrorApi({ error: error.response, setError: form.setError });
-      } else {
-        toastError({ message: "Send OTP failed" });
-      }
-    } finally {
-      setIsSendingOtp(false);
-    }
+      },
+      {
+        onSuccess: (response) => {
+          if (response.success) {
+            toastSuccess({ message: response.data.message });
+          }
+        },
+        onError: (error) => {
+          if (error instanceof ApiFail) {
+            handleErrorApi({ error: error.response, setError: form.setError });
+          } else {
+            toastError({ message: "Send OTP failed", duration: 3000 });
+          }
+        },
+      },
+    );
   }
 
   return (
@@ -262,9 +253,18 @@ export function ForgotPasswordForm() {
                         type="button"
                         variant="secondary"
                         onClick={() => sendOtp()}
-                        disabled={countdown > 0 || isSendingOtp}
+                        disabled={countdown > 0 || sendOtpMutation.isPending}
                       >
-                        {countdown > 0 ? `Resend in ${countdown}s` : "Send OTP"}
+                        {sendOtpMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Sending...</span>
+                          </>
+                        ) : countdown > 0 ? (
+                          `Resend in ${countdown}s`
+                        ) : (
+                          "Send OTP"
+                        )}
                       </InputGroupButton>
                     </InputGroupAddon>
                   </InputGroup>
@@ -285,7 +285,7 @@ export function ForgotPasswordForm() {
           <Button
             type="submit"
             form="forgot-password-form"
-            disabled={isLoading}
+            disabled={forgotPasswordMutation.isPending}
           >
             Submit
           </Button>

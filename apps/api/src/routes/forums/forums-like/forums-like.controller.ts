@@ -8,7 +8,7 @@ import {
 } from './forums-like.dto';
 import { IsPublic } from '../../../shared/decorators/auth.decorator';
 
-@Controller('api/forums/posts')
+@Controller('forums/posts')
 export class ForumLikeController {
   constructor(private readonly forumLikeService: ForumLikeService) {}
 

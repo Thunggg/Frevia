@@ -1,5 +1,8 @@
 "use client";
 
+import { useGoogleLink, useLogin } from "@/hooks/use-auth";
+import { ApiFail } from "@/lib/http";
+import { handleErrorApi } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -8,6 +11,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@repo/ui/components/shadcn/card";
+import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
   Field,
   FieldError,
@@ -15,25 +19,23 @@ import {
   FieldLabel,
 } from "@repo/ui/components/shadcn/field";
 import { Input } from "@repo/ui/components/shadcn/input";
-import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
-import { Separator } from "@repo/ui/components/shadcn/separator";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { LoginBodySchema } from "@shared/types";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-import { authApiRequest } from "@/apiRequests/auth";
-import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { handleErrorApi } from "@/lib/utils";
-import { ApiFail } from "@/lib/http";
+import { LoginBodySchema } from "@shared/types";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
 
 export function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const loginMutation = useLogin();
+  const googleLinkMutation = useGoogleLink();
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
     resolver: zodResolver(LoginBodySchema),
@@ -43,38 +45,39 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
-    try {
-      setIsLoading(true);
-      const res = await authApiRequest.login(payload);
-
-      if (res.success) {
-        toastSuccess({ message: "Login successful" });
-        router.push("/");
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiFail) {
-        handleErrorApi({
-          error: error.response,
-          setError: form.setError,
-          duration: 3000,
-        });
-      } else {
-        toastError({ message: "Login failed", duration: 3000 });
-      }
-    } finally {
-      setIsLoading(false);
-    }
+  function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
+    loginMutation.mutate(payload, {
+      onSuccess: (response) => {
+        if (response.success) {
+          toastSuccess({ message: "Login successful" });
+          router.push("/");
+        }
+      },
+      onError: (error) => {
+        if (error instanceof ApiFail) {
+          handleErrorApi({
+            error: error.response,
+            setError: form.setError,
+            duration: 3000,
+          });
+        } else {
+          toastError({ message: "Login failed", duration: 3000 });
+        }
+      },
+    });
   }
 
-  async function clickGoogleLogin() {
-    const res = await authApiRequest.getGoogleLink();
-
-    if (res.success) {
-      window.location.href = res.data.url;
-    } else {
-      toastError({ message: "Failed to get Google link", duration: 3000 });
-    }
+  function clickGoogleLogin() {
+    googleLinkMutation.mutate(undefined, {
+      onSuccess: (response) => {
+        if (response.success) {
+          window.location.href = response.data.url;
+        }
+      },
+      onError: () => {
+        toastError({ message: "Failed to get Google link", duration: 3000 });
+      },
+    });
   }
 
   return (
@@ -183,9 +186,16 @@ export function LoginForm() {
               type="submit"
               form="form-rhf-demo"
               className="w-full mt-6 h-11 cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
             >
-              Login
+              {loginMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
           </FieldGroup>
         </form>
@@ -208,6 +218,7 @@ export function LoginForm() {
             variant="outline"
             type="button"
             onClick={() => clickGoogleLogin()}
+            disabled={googleLinkMutation.isPending}
             className="h-11 font-medium  w-full cursor-pointer"
           >
             {/* Bạn có thể thay bằng SVG thực tế của Google */}

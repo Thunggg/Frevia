@@ -15,6 +15,7 @@ import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
 import { ManageJobModule } from './routes/manage-job/manage-job.module';
+import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { RolesModule } from './routes/roles/roles.module';
     ForumReportModule,
     BrowseJobModule,
     ManageJobModule,
+    ForumAdminModule,
     RolesModule,
   ],
   controllers: [AppController],

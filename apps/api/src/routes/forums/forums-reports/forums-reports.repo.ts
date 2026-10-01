@@ -100,11 +100,18 @@ export class ForumReportRepository {
   }
 
   // Tìm danh sách report
-  async getReportList(page: number, limit: number) {
+  async getReportList(page: number, limit: number, status?: string, search?: string) {
     const skip = (page - 1) * limit;
+    const where = {
+      ...(status && { status: status.toUpperCase() as ReportStatus }),
+      ...(search && {
+        reason: { contains: search, mode: 'insensitive' as const },
+      }),
+    };
 
     const [reports, total] = await this.prisma.$transaction([
       this.prisma.forumReport.findMany({
+        where,
         select: {
           id: true,
           reporterId: true,
@@ -129,6 +136,7 @@ export class ForumReportRepository {
             select: {
               id: true,
               title: true,
+              categoryId: true,
             },
           },
           comment: {
@@ -144,7 +152,7 @@ export class ForumReportRepository {
           createdAt: 'desc',
         },
       }),
-      this.prisma.forumReport.count(),
+      this.prisma.forumReport.count({ where }),
     ]);
 
     return { reports, total };

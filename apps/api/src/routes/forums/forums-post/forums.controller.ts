@@ -14,6 +14,8 @@ import { IsPublic } from '../../../shared/decorators/auth.decorator';
 import {
   ForumCategoryDetailResponseDto,
   ForumCategoryListResponseDto,
+  ForumCategoryTopListResponseDto,
+  ForumTopActiveUserListResponseDto,
   ForumPostListResponseDto,
   ForumPostFilterDto,
   CreateForumPostDto,
@@ -21,6 +23,7 @@ import {
   ViewForumPostDetailResponseDto,
   UpdateForumPostDto,
   UpdateForumPostResponseDto,
+  ForumTopPostListResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
 import type {
@@ -29,8 +32,13 @@ import type {
   UpdateForumPostType,
 } from '@shared/types';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
+import { z } from 'zod';
 
-@Controller('api/forums')
+const TopLimitSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(10).default(3),
+});
+
+@Controller('forums')
 export class ForumController {
   constructor(private readonly forumService: ForumService) {}
 
@@ -39,6 +47,24 @@ export class ForumController {
   @ZodSerializerDto(ForumCategoryListResponseDto)
   getForumCategories() {
     return this.forumService.getForumCategories();
+  }
+
+  @Get('categories/top')
+  @IsPublic()
+  @ZodSerializerDto(ForumCategoryTopListResponseDto)
+  getTopForumCategories(
+    @Query(new ZodValidationPipe(TopLimitSchema)) query: { limit: number },
+  ) {
+    return this.forumService.getTopForumCategories(query.limit);
+  }
+
+  @Get('users/top')
+  @IsPublic()
+  @ZodSerializerDto(ForumTopActiveUserListResponseDto)
+  getTopActiveUsers(
+    @Query(new ZodValidationPipe(TopLimitSchema)) query: { limit: number },
+  ) {
+    return this.forumService.getTopActiveUsers(query.limit);
   }
 
   @Get('categories/:id')
@@ -58,6 +84,15 @@ export class ForumController {
     filter: ForumPostFilterType,
   ) {
     return this.forumService.getForumPostLists(filter);
+  }
+
+  @Get('posts/top')
+  @IsPublic()
+  @ZodSerializerDto(ForumTopPostListResponseDto)
+  getTopInteractedPosts(
+    @Query(new ZodValidationPipe(TopLimitSchema)) query: { limit: number },
+  ) {
+    return this.forumService.getTopInteractedPosts(query.limit);
   }
 
   @Get('posts/:id')

@@ -100,10 +100,24 @@ export class ForumReportService {
     }
   }
 
+  async checkReportedByUser(
+    reporterId: number,
+    postId: number | null,
+    commentId: number | null,
+  ): Promise<{ id: number } | null> {
+    return this.forumReportRepository.findExistingReport(
+      reporterId,
+      postId,
+      commentId,
+    );
+  }
+
   async getForumReportLists(
     roleName: string,
     page: number,
     limit: number,
+    status?: string,
+    search?: string,
   ): Promise<ForumReportListResponseType> {
     try {
       if (roleName !== RoleName.ADMIN) {
@@ -113,6 +127,8 @@ export class ForumReportService {
       const { reports, total } = await this.forumReportRepository.getReportList(
         page,
         limit,
+        status,
+        search,
       );
 
       return {

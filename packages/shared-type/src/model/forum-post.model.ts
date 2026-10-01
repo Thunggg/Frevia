@@ -12,12 +12,13 @@ export const ForumPostSchema = z.object({
   updatedAt: z.date(),
 });
 
-// Schema cho filter query params (page, limit, categoryId, userId)
+// Schema cho filter query params (page, limit, categoryId, userId, search)
 export const ForumPostFilterSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).default(10),
   categoryId: z.coerce.number().int().positive().optional(),
   userId: z.coerce.number().int().positive().optional(),
+  search: z.string().optional(),
 });
 
 // Schema cho phân trang (pagination)
@@ -44,9 +45,22 @@ export const UpdateForumPostSchema = z.object({
 
 // --- Response Schemas ---
 
+// Schema response khi lấy danh sách posts (data + pagination), bao gồm user info
+export const ForumPostWithUserSchema = ForumPostSchema.extend({
+  user: z.object({
+    id: z.number(),
+    profile: z
+      .object({
+        displayName: z.string().nullable(),
+        avatarUrl: z.string().nullable(),
+      })
+      .nullable(),
+  }),
+});
+
 // Schema response khi lấy danh sách posts (data + pagination)
 export const ForumPostListResponseSchema = z.object({
-  posts: z.array(ForumPostSchema),
+  posts: z.array(ForumPostWithUserSchema),
   pagination: PaginationSchema,
 });
 
@@ -82,8 +96,35 @@ export const ViewForumPostDetailResponseSchema = z.object({
   }),
 });
 
+// Schema cho top posts (most interactions in last week)
+export const ForumTopPostSchema = ForumPostSchema.extend({
+  likeCount: z.number(),
+  commentCount: z.number(),
+  interactionScore: z.number(),
+  user: z.object({
+    id: z.number(),
+    profile: z
+      .object({
+        displayName: z.string().nullable(),
+        avatarUrl: z.string().nullable(),
+      })
+      .nullable(),
+  }),
+  category: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+    })
+    .nullable(),
+});
+
+export const ForumTopPostListResponseSchema = z.array(ForumTopPostSchema);
+
 // Type của ForumPost
 export type ForumPostType = z.infer<typeof ForumPostSchema>;
+
+// Type của ForumPost bao gồm user info
+export type ForumPostWithUserType = z.infer<typeof ForumPostWithUserSchema>;
 
 // Type của filter query params
 export type ForumPostFilterType = z.infer<typeof ForumPostFilterSchema>;
@@ -113,3 +154,38 @@ export type UpdateForumPostResponseType = z.infer<
 export type ViewForumPostDetailResponseType = z.infer<
   typeof ViewForumPostDetailResponseSchema
 >;
+
+// Type của top posts response
+export type ForumTopPostType = z.infer<typeof ForumTopPostSchema>;
+export type ForumTopPostListResponseType = z.infer<
+  typeof ForumTopPostListResponseSchema
+>;
+
+// --- Admin Schemas ---
+
+export const ForumAdminStatsSchema = z.object({
+  totalCategories: z.number(),
+  totalPosts: z.number(),
+  totalComments: z.number(),
+  totalReports: z.number(),
+  pendingReports: z.number(),
+  totalUsers: z.number(),
+  recentPosts: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      createdAt: z.date(),
+      user: z.object({
+        id: z.number(),
+        profile: z
+          .object({
+            displayName: z.string().nullable(),
+            avatarUrl: z.string().nullable(),
+          })
+          .nullable(),
+      }),
+    }),
+  ),
+});
+
+export type ForumAdminStatsType = z.infer<typeof ForumAdminStatsSchema>;
