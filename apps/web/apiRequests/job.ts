@@ -30,11 +30,16 @@ const jobApiRequest = {
   },
 
   bookmarkJob(slug: string) {
-    return http.post<void>(`/api/manage-jobs/jobs/${encodeURIComponent(slug)}/bookmark`, {});
+    return http.post<void>(
+      `/api/manage-jobs/jobs/${encodeURIComponent(slug)}/bookmark`,
+      {},
+    );
   },
 
   removeBookmark(slug: string) {
-    return http.delete<void>(`/api/manage-jobs/bookmarks/${encodeURIComponent(slug)}`);
+    return http.delete<void>(
+      `/api/manage-jobs/bookmarks/${encodeURIComponent(slug)}`,
+    );
   },
 
   getBookmarkStatus(slug: string) {

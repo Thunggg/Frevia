@@ -367,7 +367,7 @@ export class ManageJobRepository {
         }),
       },
       select: { id: true, name: true },
-      take: 10,
+      take: 50,
       orderBy: { name: 'asc' },
     });
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Edit2, Eye, Plus, Trash2 } from "lucide-react";
 import { Header } from "@/components/header";
@@ -14,7 +15,13 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { JobType, JobStatusType } from "@shared/types";
 import { PostJobForm } from "./post-job-form";
 
-export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
+type ProjectsContentProps = {
+  initialJobs: JobType[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+};
+
+export function ProjectsContent({ initialJobs, pagination }: ProjectsContentProps) {
+  const router = useRouter();
   const [jobs, setJobs] = useState(initialJobs);
   const [editingJob, setEditingJob] = useState<JobType | undefined>();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -131,6 +138,27 @@ export function ProjectsContent({ initialJobs }: { initialJobs: JobType[] }) {
             </p>
           )}
         </div>
+        {pagination.totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <Button
+              variant="outline"
+              disabled={pagination.page <= 1}
+              onClick={() => router.push(`/projects?page=${pagination.page - 1}`)}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {pagination.page} of {pagination.totalPages}
+            </span>
+            <Button
+              variant="outline"
+              disabled={pagination.page >= pagination.totalPages}
+              onClick={() => router.push(`/projects?page=${pagination.page + 1}`)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </main>
       <PostJobForm
         open={isFormOpen}
