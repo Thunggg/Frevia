@@ -2,12 +2,15 @@ import { Injectable, HttpException } from '@nestjs/common';
 import {
   ForumCategoryListResponseType,
   ForumCategoryDetailResponseType,
+  ForumCategoryTopListResponseType,
+  ForumTopActiveUserListResponseType,
   ForumPostListResponseType,
   ForumPostFilterType,
   CreateForumPostType,
   ForumPostType,
   ViewForumPostDetailResponseType,
   UpdateForumPostType,
+  ForumTopPostListResponseType,
 } from '@shared/types';
 import { ForumRepository } from './forums.repo';
 import {
@@ -39,6 +42,31 @@ export class ForumService {
       return categories;
     } catch {
       // Nếu có lỗi khi truy vấn database thì trả về exception
+      throw FailedToLoadForumCategoriesException();
+    }
+  }
+
+  // Lấy top forum categories có nhiều posts nhất
+  async getTopForumCategories(
+    limit: number = 3,
+  ): Promise<ForumCategoryTopListResponseType> {
+    try {
+      const categories =
+        await this.forumRepository.getTopForumCategories(limit);
+      return categories;
+    } catch {
+      throw FailedToLoadForumCategoriesException();
+    }
+  }
+
+  // Lấy top người dùng hoạt động nhiều nhất
+  async getTopActiveUsers(
+    limit: number = 5,
+  ): Promise<ForumTopActiveUserListResponseType> {
+    try {
+      const users = await this.forumRepository.getTopActiveUsers(limit);
+      return users;
+    } catch {
       throw FailedToLoadForumCategoriesException();
     }
   }
@@ -187,6 +215,16 @@ export class ForumService {
         throw FailedToDeleteForumPostException();
       }
       throw error;
+    }
+  }
+
+  async getTopInteractedPosts(
+    limit: number = 3,
+  ): Promise<ForumTopPostListResponseType> {
+    try {
+      return await this.forumRepository.getTopInteractedPosts(limit);
+    } catch {
+      throw FailedToLoadForumPostsException();
     }
   }
 }

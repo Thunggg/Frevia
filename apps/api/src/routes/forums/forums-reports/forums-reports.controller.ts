@@ -19,7 +19,7 @@ import {
   ForumReportListResponseDto,
 } from './forums-reports.dto';
 
-@Controller('api/forums')
+@Controller('forums')
 export class ForumReportController {
   constructor(private readonly forumReportService: ForumReportService) {}
 
@@ -55,6 +55,33 @@ export class ForumReportController {
     );
   }
 
+  @Get('posts/:postId/is-reported')
+  async checkPostReported(
+    @UserActive('userId') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    const report = await this.forumReportService.checkReportedByUser(
+      userId,
+      postId,
+      null,
+    );
+    return { reported: !!report };
+  }
+
+  @Get('posts/:postId/comments/:commentId/is-reported')
+  async checkCommentReported(
+    @UserActive('userId') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ) {
+    const report = await this.forumReportService.checkReportedByUser(
+      userId,
+      postId,
+      commentId,
+    );
+    return { reported: !!report };
+  }
+
   @Get('reports')
   @ZodSerializerDto(ForumReportListResponseDto)
   getForumReportLists(
@@ -62,11 +89,15 @@ export class ForumReportController {
     @UserActive('roleName') roleName: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Query('status') status: string,
+    @Query('search') search: string,
   ) {
     return this.forumReportService.getForumReportLists(
       roleName,
       Number(page) || 1,
       Number(limit) || 10,
+      status || undefined,
+      search || undefined,
     );
   }
 

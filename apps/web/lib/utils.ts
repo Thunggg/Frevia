@@ -8,6 +8,7 @@ export const handleErrorApi = ({
   duration,
 }: {
   error: ApiError;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setError: UseFormSetError<any>;
   duration?: number;
 }) => {
