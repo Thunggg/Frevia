@@ -332,10 +332,15 @@ model ProfileVisitLog {
 // ============================
 // 4. Jobs
 // ============================
+// ============================
+// 4. Jobs
+// ============================
+
 model Job {
   id          Int        @id @default(autoincrement())
   clientId    Int
   title       String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(300)
   description String?
   budgetMin   Decimal?   @db.Decimal(10, 2)
   budgetMax   Decimal?   @db.Decimal(10, 2)
@@ -355,20 +360,34 @@ model Job {
   proposals        Proposal[]
   contract         Contract?
 
-  @@index([clientId])
-  @@index([status])
-  @@index([createdAt])
+  @@index([status, deletedAt, createdAt])
+  @@index([clientId, deletedAt, createdAt])
+  @@index([budgetType])
+}
+
+model Skill {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  jobs JobSkill[]
+
+  @@index([isActive])
 }
 
 model JobSkill {
-  id        Int    @id @default(autoincrement())
-  jobId     Int
-  skillName String @db.VarChar(100)
+  jobId   Int
+  skillId Int
 
-  job Job @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  job   Job   @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
-  @@index([jobId])
-  @@index([skillName])
+  @@id([jobId, skillId])
+  @@index([skillId])
 }
 
 model JobBookmark {
