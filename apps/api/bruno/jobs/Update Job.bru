@@ -1,0 +1,55 @@
+meta {
+  name: Edit Job
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/manage-jobs/{{jobId}}
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "title": "Senior React Native Developer Needed",
+    "description": "We are looking for an experienced React Native developer to build and maintain a cross-platform mobile application.",
+    "budgetMin": 1000,
+    "budgetMax": 2500,
+    "budgetType": "FIXED_PRICE",
+    "deadline": "2026-09-30T23:59:59.000Z",
+    "expiryDate": "2026-09-20T23:59:59.000Z",
+    "skills": [1, 2, 3]
+  }
+}
+
+vars:pre-request {
+  jobId: 1
+}
+
+tests {
+  test("Status should be 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Success should be true", function() {
+    expect(res.getBody().success).to.equal(true);
+  });
+  
+  test("Title updated", function() {
+    expect(res.getBody().data.title).to.equal("Senior React Native Developer Needed");
+  });
+  
+  test("Budget updated", function() {
+    expect(res.getBody().data.budgetMin).to.equal(1000);
+    expect(res.getBody().data.budgetMax).to.equal(2500);
+  });
+}

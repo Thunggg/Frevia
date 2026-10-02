@@ -1,0 +1,19 @@
+meta {
+  name: Remove Bookmark
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/manage-jobs/bookmarks/{{jobSlug}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  jobSlug: e-commerce-website
+}
