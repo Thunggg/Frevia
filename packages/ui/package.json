@@ -7,7 +7,8 @@
     "./components/shadcn/toast": "./src/components/shadcn/toast.ts",
     "./styles/*": "./src/styles/*",
     "./lib/utils": "./src/lib/utils.ts",
-    "./postcss.config": "./postcss.config.mjs"
+    "./postcss.config": "./postcss.config.mjs",
+    "./hooks/use-mobile": "./src/hooks/use-mobile.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
