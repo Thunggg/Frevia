@@ -13,7 +13,7 @@ const prisma = new PrismaClient({
   }),
 });
 
-const CLIENT_EMAIL = 'taitpce181632@fpt.edu.vn';
+const CLIENT_EMAIL = 'client@gmail.com';
 
 const skills = [
   'HTML',
