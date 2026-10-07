@@ -17,6 +17,8 @@ import { ForumReportModule } from './routes/forums/forums-reports/forums-reports
 import { ManageJobModule } from './routes/manage-job/manage-job.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
+import { ContractModule } from './routes/contract/contract.module';
+import { SharedFileModule } from './routes/shared-file/shared-file.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { RolesModule } from './routes/roles/roles.module';
     ManageJobModule,
     ForumAdminModule,
     RolesModule,
+    ContractModule,
+    SharedFileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -52,4 +56,4 @@ import { RolesModule } from './routes/roles/roles.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
