@@ -21,3 +21,5 @@ export * from "./type/google-type";
 export * from "./constants/oauth.constant";
 export * from "./model/role.model";
 export * from "./message/manage-role.message";
+export * from "./model/conversation.model";
+export * from "./message/manage-conversation.message";

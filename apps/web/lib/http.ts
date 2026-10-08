@@ -60,7 +60,11 @@ export const http = {
     return request<T>("PATCH", url, body, isRequestToProxyAPI);
   },
 
-  delete: <T>(url: string, isRequestToProxyAPI: boolean = true) => {
-    return request<T>("DELETE", url, undefined, isRequestToProxyAPI);
+  delete: <T>(
+    url: string,
+    body?: object,
+    isRequestToProxyAPI: boolean = true,
+  ) => {
+    return request<T>("DELETE", url, body, isRequestToProxyAPI);
   },
 };

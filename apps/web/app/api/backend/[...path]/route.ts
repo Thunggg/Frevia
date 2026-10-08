@@ -15,20 +15,26 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
   // Giữ nguyên query string
   const { search } = new URL(request.url);
 
-  // Không phải mọi method đều có body -> tránh request.json() throw khi body rỗng
+  // Giữ nguyên Content-Type (quan trọng với multipart/form-data upload).
+  // Nếu không có header, không gửi header Content-Type nào xuống backend
+  // để backend tự nhận diện.
+  const contentType = request.headers.get("content-type");
+
+  // Không phải mọi method đều có body -> tránh đọc body khi rỗng.
+  // Đọc dưới dạng binary (arrayBuffer) để không làm hỏng file upload.
   const hasBody = !["GET", "DELETE"].includes(request.method);
-  const rawBody = hasBody ? await request.text() : undefined;
+  const rawBody = hasBody ? await request.arrayBuffer() : undefined;
 
   const nestRes = await fetch(`${NEST_API}/${fullPath}${search}`, {
     method: request.method,
     headers: {
-      "Content-Type": "application/json",
+      ...(contentType ? { "Content-Type": contentType } : {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
-    body: rawBody || undefined,
+    body: hasBody ? (rawBody as ArrayBuffer) : undefined,
   });
 
-  const responseBody = await nestRes.text();
+  const responseBody = await nestRes.arrayBuffer();
 
   // Chỉ forward Content-Type, KHÔNG forward nguyên res.headers
   // (content-encoding/content-length của NestJS có thể làm browser

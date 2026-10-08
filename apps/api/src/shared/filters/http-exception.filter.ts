@@ -6,7 +6,7 @@ import {
   HttpExceptionBody,
   Logger,
 } from '@nestjs/common';
-import { ApiError } from '@shared/types';
+import { ApiError, ManageConversationMessage } from '@shared/types';
 import { Response } from 'express';
 import { ZodSerializationException } from 'nestjs-zod';
 import { ZodError } from 'zod';
@@ -15,6 +15,12 @@ interface ValidationIssue {
   message: string;
   path: string;
 }
+
+// Multer ném lỗi này khi file vượt quá giới hạn dung lượng
+const isMulterFileSizeError = (exception: unknown): boolean =>
+  exception instanceof Error &&
+  'code' in exception &&
+  (exception as { code?: string }).code === 'LIMIT_FILE_SIZE';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -45,6 +51,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
 
       response.status(exception.getStatus()).json(apiRes);
+    } else if (isMulterFileSizeError(exception)) {
+      const apiRes: ApiError = {
+        success: false,
+        error: {
+          code: '413',
+          message: ManageConversationMessage.FILE_TOO_LARGE,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      response.status(413).json(apiRes);
     } else {
       const apiRes: ApiError = {
         success: false,

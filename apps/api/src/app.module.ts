@@ -15,6 +15,7 @@ import { ForumCommentModule } from './routes/forums/forums-comment/forums-commen
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
+import { ConversationModule } from './routes/conversations/conversations.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RolesModule } from './routes/roles/roles.module';
     ForumReportModule,
     ForumAdminModule,
     RolesModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [
