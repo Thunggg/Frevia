@@ -332,10 +332,15 @@ model ProfileVisitLog {
 // ============================
 // 4. Jobs
 // ============================
+// ============================
+// 4. Jobs
+// ============================
+
 model Job {
   id          Int        @id @default(autoincrement())
   clientId    Int
   title       String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(300)
   description String?
   budgetMin   Decimal?   @db.Decimal(10, 2)
   budgetMax   Decimal?   @db.Decimal(10, 2)
@@ -355,20 +360,34 @@ model Job {
   proposals        Proposal[]
   contract         Contract?
 
-  @@index([clientId])
-  @@index([status])
-  @@index([createdAt])
+  @@index([status, deletedAt, createdAt])
+  @@index([clientId, deletedAt, createdAt])
+  @@index([budgetType])
+}
+
+model Skill {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  jobs JobSkill[]
+
+  @@index([isActive])
 }
 
 model JobSkill {
-  id        Int    @id @default(autoincrement())
-  jobId     Int
-  skillName String @db.VarChar(100)
+  jobId   Int
+  skillId Int
 
-  job Job @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  job   Job   @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
-  @@index([jobId])
-  @@index([skillName])
+  @@id([jobId, skillId])
+  @@index([skillId])
 }
 
 model JobBookmark {
@@ -433,6 +452,7 @@ model Proposal {
   job         Job                  @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancer  User                 @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   attachments ProposalAttachment[]
+  contract    Contract?
 
   // NOTE: cần raw SQL migration cho partial unique index:
   // CREATE UNIQUE INDEX idx_active_proposals ON "Proposal" ("jobId", "freelancerId") WHERE "deletedAt" IS NULL;
@@ -468,25 +488,24 @@ model ProposalAttachment {
 // 6. Contracts
 // ============================
 model Contract {
-  id                    Int            @id @default(autoincrement())
-  jobId                 Int            @unique
-  clientId              Int
-  freelancerId          Int
-  escrowContractAddress String?        @db.VarChar(42)
-  terms                 String?
-  totalAmount           Decimal        @db.Decimal(10, 2) // Giá trị hợp đồng cố định
-  depositPercent        Decimal        @default(0) @db.Decimal(5, 2) // Phần trăm cọc, vd 10.00
-  status                ContractStatus @default(PENDING_SIGN)
-  paymentStatus         PaymentStatus  @default(PENDING)
-  signedByClient        Boolean        @default(false)
-  signedByFreelancer    Boolean        @default(false)
-  createdAt             DateTime       @default(now())
-  signedAt              DateTime?
-  completedAt           DateTime?
-  expiresAt             DateTime? // Hết hạn tự động cho trạng thái PENDING_SIGN
-  deletedAt             DateTime?
+  id             Int            @id @default(autoincrement())
+  jobId          Int            @unique
+  proposalId     Int            @unique
+  clientId       Int
+  freelancerId   Int
+  terms          String?
+  totalAmount    Decimal        @db.Decimal(10, 2)
+  status         ContractStatus @default(PENDING_SIGN)
+  signedByClient Boolean        @default(false)
+  signedByFreelancer Boolean    @default(false)
+  createdAt      DateTime       @default(now())
+  signedAt       DateTime?
+  completedAt    DateTime?
+  expiresAt      DateTime?
+  deletedAt      DateTime?
 
   job                    Job                     @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  proposal               Proposal                @relation(fields: [proposalId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   client                 User                    @relation("ContractClient", fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancer             User                    @relation("ContractFreelancer", fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   milestones             Milestone[]
@@ -498,7 +517,6 @@ model Contract {
   projectProgressUpdates ProjectProgressUpdate[]
   sharedFiles            SharedFile[]
 
-  // NOTE: paymentStatus chỉ được chuyển thành PAID khi contract.status = COMPLETED (áp dụng ở application layer).
   @@index([clientId])
   @@index([freelancerId])
   @@index([status])
@@ -991,8 +1009,9 @@ model SharedFile {
   id         Int       @id @default(autoincrement())
   contractId Int
   uploaderId Int
-  fileUrl    String    @db.VarChar(500)
-  fileName   String?   @db.VarChar(255)
+  fileUrl    String
+  publicId   String
+  fileName   String?
   createdAt  DateTime  @default(now())
   deletedAt  DateTime?
 
@@ -1000,6 +1019,7 @@ model SharedFile {
   uploader User     @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   @@index([contractId])
+  @@index([uploaderId])
 }
 
 // ============================

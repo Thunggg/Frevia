@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "dev": "nest start --watch",
+    "dev": "infisical run --env=dev --path=/api -- nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "tsx ./src/seed-datas/index.ts"
+    "seed": "tsx ./src/seed-datas/index.ts",
+    "seed:jobs": "tsx ./src/seed-datas/seed-jobs.ts",
+    "seed:proposals": "tsx ./src/seed-datas/seed-proposals.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -53,7 +55,7 @@
     "@nestjs/testing": "^11.0.1",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
-    "@types/multer": "^2.0.0",
+    "@types/multer": "^2.2.0",
     "@types/node": "^24.13.2",
     "@types/supertest": "^7.0.0",
     "eslint": "^9.18.0",
