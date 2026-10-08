@@ -54,7 +54,7 @@ export function ReportDialog({
             .then(extractData)
         : forumApiRequest.checkPostReported(postId).then(extractData),
     select: (data) => data.reported ?? false,
-    enabled: open,
+    enabled: true,
     staleTime: Infinity, // Nếu đã report thì không cần check lại
   });
 

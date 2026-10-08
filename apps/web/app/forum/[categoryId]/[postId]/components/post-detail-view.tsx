@@ -41,6 +41,7 @@ import {
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
 import { ReportDialog } from "./report-dialog";
+import { PostLikesDialog } from "./post-likes-dialog";
 
 // Props - chỉ nhận post và currentUserId, mọi thứ khác do Query quản lý
 
@@ -254,8 +255,9 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
               disabled={toggleLike.isPending}
             >
               <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-              {likeCount} {likeCount === 1 ? "Like" : "Likes"}
             </Button>
+
+            <PostLikesDialog postId={post.id} count={likeCount} />
 
             <Badge variant="secondary" className="gap-1.5 px-3 py-1">
               <MessageSquare className="h-3.5 w-3.5" />
