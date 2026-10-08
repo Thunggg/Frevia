@@ -1,0 +1,16 @@
+export const ManageConversationMessage = {
+  CONVERSATION_NOT_FOUND: "Error.ConversationNotFound",
+  CONVERSATION_ACCESS_DENIED: "Error.ConversationAccessDenied",
+  MESSAGE_NOT_FOUND: "Error.MessageNotFound",
+  MESSAGE_ACCESS_DENIED: "Error.MessageAccessDenied",
+  FAILED_TO_LOAD_CONVERSATIONS: "Error.FailedToLoadConversations",
+  FAILED_TO_CREATE_CONVERSATION: "Error.FailedToCreateConversation",
+  FAILED_TO_SEND_MESSAGE: "Error.FailedToSendMessage",
+  FAILED_TO_MARK_AS_READ: "Error.FailedToMarkAsRead",
+  FAILED_TO_HIDE_CONVERSATION: "Error.FailedToHideConversation",
+  FAILED_TO_PIN_CONVERSATION: "Error.FailedToPinConversation",
+  FAILED_TO_DELETE_MESSAGE: "Error.FailedToDeleteMessage",
+  FAILED_TO_UPLOAD_FILE: "Error.FailedToUploadFile",
+  FILE_TOO_LARGE: "Error.FileTooLarge",
+  FILE_TYPE_NOT_ALLOWED: "Error.FileTypeNotAllowed",
+} as const;

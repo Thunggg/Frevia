@@ -1031,6 +1031,11 @@ model Conversation {
   participant2 Int
   createdAt    DateTime  @default(now())
   deletedAt    DateTime?
+  // Trạng thái riêng theo từng người: hide (xóa bên phía mình) và pin (ghim)
+  participant1HiddenAt DateTime?
+  participant2HiddenAt DateTime?
+  participant1PinnedAt DateTime?
+  participant2PinnedAt DateTime?
 
   participantOne User            @relation("ConversationParticipant1", fields: [participant1], references: [id], onDelete: Restrict, onUpdate: NoAction)
   participantTwo User            @relation("ConversationParticipant2", fields: [participant2], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -1046,6 +1051,11 @@ model DirectMessage {
   conversationId Int
   senderId       Int
   message        String
+  // File đính kèm (nullable: tin nhắn chỉ có text)
+  fileUrl    String?  @db.VarChar(500)
+  fileName   String?  @db.VarChar(255)
+  fileSize   Int?
+  fileType   String?  @db.VarChar(100)
   isRead         Boolean   @default(false)
   createdAt      DateTime  @default(now())
   deletedAt      DateTime?

@@ -100,7 +100,12 @@ export class ForumReportRepository {
   }
 
   // Tìm danh sách report
-  async getReportList(page: number, limit: number, status?: string, search?: string) {
+  async getReportList(
+    page: number,
+    limit: number,
+    status?: string,
+    search?: string,
+  ) {
     const skip = (page - 1) * limit;
     const where = {
       ...(status && { status: status.toUpperCase() as ReportStatus }),

@@ -168,6 +168,10 @@ export class ForumReportService {
         throw ForumReportNotFoundException();
       }
 
+      if (existingReport.postId === null) {
+        throw ForumReportNotFoundException();
+      }
+
       return await this.forumReportRepository.updateReportStatus(
         reportId,
         status,
