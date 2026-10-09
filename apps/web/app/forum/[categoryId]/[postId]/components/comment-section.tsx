@@ -84,8 +84,8 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
       </div>
 
       {/* Create Comment Form */}
-      <Card>
-        <CardContent className="pt-4">
+      <Card className="border-border/60">
+        <CardContent className="pt-4 pb-4">
           <div className="flex gap-3">
             <Avatar size="sm" className="mt-0.5">
               <AvatarFallback>Y</AvatarFallback>
@@ -96,7 +96,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={3}
-                className="w-full resize-none rounded-lg border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+                className="w-full resize-none rounded-lg border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50"
                 disabled={isSubmitting}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -117,7 +117,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   size="sm"
                   onClick={handleSubmitComment}
                   disabled={!newComment.trim() || isSubmitting}
-                  className="gap-1.5"
+                  className="gap-1.5 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
                 >
                   {isSubmitting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -232,8 +232,8 @@ function CommentItem({
   }, [deleteComment, postId, comment.id]);
 
   return (
-    <Card className="transition-colors hover:bg-muted/30">
-      <CardContent className="py-4">
+    <Card className="transition-colors hover:bg-muted/20 border-border/60">
+      <CardContent className="pt-4 pb-3">
         <div className="flex gap-3">
           <Avatar size="sm">
             <AvatarImage
@@ -276,7 +276,7 @@ function CommentItem({
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   rows={3}
-                  className="w-full resize-none rounded-lg border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
+                  className="w-full resize-none rounded-lg border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                   disabled={updateComment.isPending}
                   autoFocus
                 />
@@ -312,18 +312,23 @@ function CommentItem({
             )}
 
             {/* Action buttons: Like, Edit, Delete, Report */}
-            <div className="mt-2 flex items-center gap-1">
+            <div className="mt-2.5 flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="xs"
-                className={`gap-1 ${liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground hover:text-foreground"}`}
+                className={
+                  liked
+                    ? "!text-red-500 hover:!text-red-600 hover:!bg-red-50 gap-1"
+                    : "text-muted-foreground hover:text-red-500 hover:bg-red-50 gap-1"
+                }
                 onClick={handleToggleLike}
                 disabled={toggleLike.isPending}
               >
                 <Heart
-                  className={`h-3.5 w-3.5 ${liked ? "fill-current" : ""}`}
+                  className={`h-3.5 w-3.5 transition-transform ${liked ? "fill-current scale-110" : ""}`}
                 />
-                {likeCount > 0 ? likeCount : ""} {liked ? "Liked" : "Like"}
+                {likeCount > 0 && <span className="text-xs tabular-nums">{likeCount}</span>}
+                <span className="text-xs">{liked ? "Liked" : "Like"}</span>
               </Button>
 
               {isAuthor && !isEditing && (

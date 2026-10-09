@@ -44,6 +44,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { NewConversationDialog } from "./new-conversation-dialog";
 
 function formatTime(createdAt?: string | Date | null): string {
@@ -128,7 +129,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   };
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-r">
+    <aside className="flex w-80 shrink-0 flex-col border-r bg-white">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
@@ -137,7 +138,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
         </h2>
         <NewConversationDialog
           trigger={
-            <Button variant="outline" size="icon" className="h-8 w-8">
+            <Button variant="outline" size="icon" className="h-8 w-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
               <Plus className="h-4 w-4" />
               <span className="sr-only">New conversation</span>
             </Button>
@@ -148,8 +149,19 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
       {/* List */}
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center py-10">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          <div className="space-y-1 p-2">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-lg px-3 py-3">
+                <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
+                  <Skeleton className="h-3.5 w-44" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : !conversations || conversations.length === 0 ? (
           <div className="px-6 py-10 text-center">
@@ -178,8 +190,8 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                 >
                   <Link
                     href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/60 ${
-                      isActive ? "bg-muted/80" : ""
+                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-emerald-50/80 ${
+                      isActive ? "!bg-emerald-50 border-r-[3px] !border-r-emerald-500" : ""
                     }`}
                   >
                     <Avatar className="mt-0.5">
@@ -229,7 +241,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                           )}
                         </p>
                         {conversation.unreadCount > 0 && (
-                          <Badge className="shrink-0 rounded-full bg-red-500 px-1.5 py-0 text-xs text-white">
+                          <Badge className="shrink-0 rounded-full bg-emerald-500 px-1.5 py-0 text-xs text-white">
                             {conversation.unreadCount}
                           </Badge>
                         )}

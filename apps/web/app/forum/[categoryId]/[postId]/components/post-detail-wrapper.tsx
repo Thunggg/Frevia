@@ -25,7 +25,7 @@ export function PostDetailWrapper({
   if (isLoadingPost || isLoadingComments || isLoadingLikes) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent">
+        <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
           <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
             <div className="h-4 w-48 rounded bg-muted animate-pulse mb-5" />
             <div className="h-4 w-32 rounded bg-muted animate-pulse mb-4" />

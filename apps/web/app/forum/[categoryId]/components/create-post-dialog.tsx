@@ -62,7 +62,7 @@ export function CreatePostDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-1.5">
+        <Button className="gap-1.5 !bg-emerald-600 !text-white hover:!bg-emerald-700">
           <Plus className="h-4 w-4" />
           New Post
         </Button>

@@ -26,7 +26,7 @@ export function ConversationsShell({
 
   return (
     <ConversationSocketContext.Provider value={socketValue}>
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen bg-white">
         <ConversationList currentUserId={currentUserId} />
         <div className="min-w-0 flex-1">{children}</div>
       </div>

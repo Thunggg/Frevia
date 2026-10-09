@@ -70,7 +70,7 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
               {likers.map((liker) => (
                 <li
                   key={liker.id}
-                  className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted"
+                  className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
                 >
                   <Avatar>
                     <AvatarImage
