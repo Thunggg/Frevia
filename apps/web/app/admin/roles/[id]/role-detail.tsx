@@ -1,17 +1,20 @@
 "use client";
 
+import { DeleteRoleDialog } from "../components/delete-role-dialog";
 import { UpdateRoleDialog } from "../components/update-role-dialog";
 import { useRole } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { RoleName } from "@shared/types";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SYSTEM_ROLE_NAMES = new Set<string>(Object.values(RoleName));
 
 export function RoleDetail({ roleId }: { roleId: number }) {
+  const router = useRouter();
   const { data: role, isLoading, isError } = useRole(roleId);
 
   if (isLoading) {
@@ -51,6 +54,20 @@ export function RoleDetail({ roleId }: { roleId: number }) {
               <Button size="sm" className="gap-1.5">
                 <Pencil className="h-4 w-4" />
                 Edit
+              </Button>
+            }
+          />
+          <DeleteRoleDialog
+            role={role}
+            onDeleted={() => router.push("/admin/roles")}
+            trigger={
+              <Button
+                size="sm"
+                variant="destructive"
+                className="gap-1.5"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
               </Button>
             }
           />

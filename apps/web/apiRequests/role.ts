@@ -1,6 +1,7 @@
 import type {
   CreateRoleBodyType,
   CreateRoleResponseType,
+  DeleteRoleResponseType,
   RoleDetailResponseType,
   RoleListResponseType,
   UpdateRoleBodyType,
@@ -15,4 +16,6 @@ export const roleApiRequest = {
     http.post<CreateRoleResponseType>("/api/roles", body),
   updateRole: (id: number, body: UpdateRoleBodyType) =>
     http.patch<UpdateRoleResponseType>(`/api/roles/${id}`, body),
+  deleteRole: (id: number) =>
+    http.delete<DeleteRoleResponseType>(`/api/roles/${id}`),
 };

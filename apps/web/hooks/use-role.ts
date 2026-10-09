@@ -60,3 +60,16 @@ export function useUpdateRole() {
     },
   });
 }
+
+export function useDeleteRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      roleApiRequest.deleteRole(id).then(extractData),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      queryClient.removeQueries({ queryKey: roleKeys.detail(id) });
+    },
+  });
+}

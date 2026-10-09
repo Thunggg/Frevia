@@ -1,6 +1,7 @@
 "use client";
 
 import { CreateRoleDialog } from "./create-role-dialog";
+import { DeleteRoleDialog } from "./delete-role-dialog";
 import { UpdateRoleDialog } from "./update-role-dialog";
 import { useRoles } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -53,7 +54,7 @@ export function RolesTable() {
                 <TableHead>Description</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="w-28 text-right">Actions</TableHead>
+                <TableHead className="w-36 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -102,6 +103,7 @@ export function RolesTable() {
                             </Link>
                           </Button>
                           <UpdateRoleDialog role={role} />
+                          <DeleteRoleDialog role={role} />
                         </div>
                       </TableCell>
                     </TableRow>
