@@ -27,6 +27,14 @@ function isSystemRole(name: string) {
   return SYSTEM_ROLE_NAMES.has(name.trim().toLowerCase());
 }
 
+function getDeleteRoleErrorMessage(error: unknown): string {
+  if (!(error instanceof ApiFail)) {
+    return "Failed to delete role";
+  }
+
+  return error.response.error.details?.[0]?.message || error.message;
+}
+
 type DeleteRoleDialogProps = {
   role: RoleListItemType;
   trigger?: ReactNode;
@@ -49,11 +57,7 @@ export function DeleteRoleDialog({
         onDeleted?.();
       },
       onError: (error) => {
-        if (error instanceof ApiFail) {
-          toastError({ message: error.message });
-        } else {
-          toastError({ message: "Failed to delete role" });
-        }
+        toastError({ message: getDeleteRoleErrorMessage(error) });
       },
     });
   }
@@ -79,8 +83,8 @@ export function DeleteRoleDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete role</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete &quot;{role.name}&quot;? This role
-            will be removed from the list.
+            Are you sure you want to delete &quot;{role.name}&quot;? If any
+            users still have this role, you must reassign them first.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

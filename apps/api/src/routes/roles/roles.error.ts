@@ -69,3 +69,11 @@ export const FailedToDeleteRoleException = () =>
       path: 'roles',
     },
   ]);
+
+export const RoleInUseException = () =>
+  new ConflictException([
+    {
+      message: ManageRoleMessage.ROLE_IN_USE,
+      path: 'id',
+    },
+  ]);

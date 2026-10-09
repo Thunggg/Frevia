@@ -10,4 +10,5 @@
   FAILED_TO_CREATE_ROLE: "Error.FailedToCreateRole",
   FAILED_TO_UPDATE_ROLE: "Error.FailedToUpdateRole",
   FAILED_TO_DELETE_ROLE: "Error.FailedToDeleteRole",
+  ROLE_IN_USE: "Error.RoleInUse",
 } as const;

@@ -118,4 +118,10 @@ export class RolesRepository {
       },
     });
   }
+
+  async countAssignedUsers(roleId: number): Promise<number> {
+    return this.prisma.userRole.count({
+      where: { roleId },
+    });
+  }
 }

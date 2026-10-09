@@ -18,6 +18,7 @@ import {
   FailedToLoadRolesException,
   FailedToUpdateRoleException,
   RoleAlreadyExistsException,
+  RoleInUseException,
 } from './roles.error';
 import { RolesRepository } from './roles.repo';
 
@@ -28,8 +29,11 @@ export class RolesService {
   constructor(private readonly rolesRepository: RolesRepository) {}
 
   private isSystemRoleName(name: string): boolean {
-    return Object.values(RoleName).some(
-      (systemName) => systemName.toLowerCase() === name.trim().toLowerCase(),
+    const normalizedName = name.trim().toLowerCase();
+    return (
+      normalizedName === RoleName.ADMIN.toLowerCase() ||
+      normalizedName === RoleName.CLIENT.toLowerCase() ||
+      normalizedName === RoleName.FREELANCER.toLowerCase()
     );
   }
 
@@ -139,6 +143,13 @@ export class RolesService {
 
       if (this.isSystemRoleName(role.name)) {
         throw CannotModifySystemRoleException();
+      }
+
+      const assignedUserCount =
+        await this.rolesRepository.countAssignedUsers(id);
+
+      if (assignedUserCount > 0) {
+        throw RoleInUseException();
       }
 
       await this.rolesRepository.softDeleteRole(id);
