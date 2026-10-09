@@ -1,0 +1,33 @@
+import { roleApiRequest } from "@/apiRequests/role";
+import type { ApiResponse } from "@shared/types";
+import { useQuery } from "@tanstack/react-query";
+
+function extractData<T>(response: ApiResponse<T>): T {
+  if (response.success && "data" in response) {
+    return response.data;
+  }
+  throw new Error("Unexpected API error response");
+}
+
+export const roleKeys = {
+  all: ["roles"] as const,
+  lists: () => [...roleKeys.all, "list"] as const,
+  detail: (id: number) => [...roleKeys.all, "detail", id] as const,
+};
+
+export function useRoles() {
+  return useQuery({
+    queryKey: roleKeys.lists(),
+    queryFn: () => roleApiRequest.getRoles().then(extractData),
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useRole(id: number) {
+  return useQuery({
+    queryKey: roleKeys.detail(id),
+    queryFn: () => roleApiRequest.getRole(id).then(extractData),
+    enabled: id > 0,
+    staleTime: 2 * 60 * 1000,
+  });
+}
