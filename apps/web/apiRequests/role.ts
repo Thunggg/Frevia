@@ -3,6 +3,8 @@ import type {
   CreateRoleResponseType,
   RoleDetailResponseType,
   RoleListResponseType,
+  UpdateRoleBodyType,
+  UpdateRoleResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -11,4 +13,6 @@ export const roleApiRequest = {
   getRole: (id: number) => http.get<RoleDetailResponseType>(`/api/roles/${id}`),
   createRole: (body: CreateRoleBodyType) =>
     http.post<CreateRoleResponseType>("/api/roles", body),
+  updateRole: (id: number, body: UpdateRoleBodyType) =>
+    http.patch<UpdateRoleResponseType>(`/api/roles/${id}`, body),
 };

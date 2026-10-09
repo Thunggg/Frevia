@@ -1,11 +1,12 @@
 "use client";
 
+import { UpdateRoleDialog } from "../components/update-role-dialog";
 import { useRole } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { RoleName } from "@shared/types";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
 const SYSTEM_ROLE_NAMES = new Set<string>(Object.values(RoleName));
@@ -43,9 +44,20 @@ export function RoleDetail({ roleId }: { roleId: number }) {
           <h1 className="text-3xl font-bold tracking-tight">{role.name}</h1>
           <p className="text-muted-foreground mt-1">Role detail</p>
         </div>
-        <Badge variant={isSystem ? "secondary" : "outline"}>
-          {isSystem ? "System" : "Custom"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <UpdateRoleDialog
+            role={role}
+            trigger={
+              <Button size="sm" className="gap-1.5">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            }
+          />
+          <Badge variant={isSystem ? "secondary" : "outline"}>
+            {isSystem ? "System" : "Custom"}
+          </Badge>
+        </div>
       </div>
 
       <div className="rounded-lg border bg-card p-6 space-y-4">

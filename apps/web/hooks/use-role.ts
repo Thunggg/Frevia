@@ -1,5 +1,9 @@
 import { roleApiRequest } from "@/apiRequests/role";
-import type { ApiResponse, CreateRoleBodyType } from "@shared/types";
+import type {
+  ApiResponse,
+  CreateRoleBodyType,
+  UpdateRoleBodyType,
+} from "@shared/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function extractData<T>(response: ApiResponse<T>): T {
@@ -40,6 +44,19 @@ export function useCreateRole() {
       roleApiRequest.createRole(body).then(extractData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, body }: { id: number; body: UpdateRoleBodyType }) =>
+      roleApiRequest.updateRole(id, body).then(extractData),
+    onSuccess: (role) => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: roleKeys.detail(role.id) });
     },
   });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { CreateRoleDialog } from "./create-role-dialog";
+import { UpdateRoleDialog } from "./update-role-dialog";
 import { useRoles } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -52,7 +53,7 @@ export function RolesTable() {
                 <TableHead>Description</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="w-24 text-right">Actions</TableHead>
+                <TableHead className="w-28 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -89,7 +90,7 @@ export function RolesTable() {
                         {new Date(role.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center justify-end">
+                        <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -100,6 +101,7 @@ export function RolesTable() {
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
+                          <UpdateRoleDialog role={role} />
                         </div>
                       </TableCell>
                     </TableRow>
