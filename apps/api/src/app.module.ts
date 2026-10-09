@@ -11,11 +11,15 @@ import { MyZodValidationPipe } from './shared/pipes/custom-zod-validation.pipes'
 import { SharedModule } from './shared/shared.module';
 import { ForumModule } from './routes/forums/forums-post/forums.module';
 import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
+import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ManageJobModule } from './routes/manage-job/manage-job.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
 import { ConversationModule } from './routes/conversations/conversations.module';
+import { ContractModule } from './routes/contract/contract.module';
+import { SharedFileModule } from './routes/shared-file/shared-file.module';
 
 @Module({
   imports: [
@@ -25,9 +29,13 @@ import { ConversationModule } from './routes/conversations/conversations.module'
     ForumLikeModule,
     ForumCommentModule,
     ForumReportModule,
+    BrowseJobModule,
+    ManageJobModule,
     ForumAdminModule,
     RolesModule,
     ConversationModule,
+    ContractModule,
+    SharedFileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -50,4 +58,4 @@ import { ConversationModule } from './routes/conversations/conversations.module'
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

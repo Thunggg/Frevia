@@ -1,0 +1,33 @@
+meta {
+  name: View List Bookmarked Job
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/manage-jobs/bookmarks?page=1&limit=10&sortBy=createdAt&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: React
+  ~status: OPEN
+  ~budgetType: FIXED_PRICE
+  ~budgetMin: 500
+  ~budgetMax: 2500
+  ~skill: React
+  ~featured: false
+  sortBy: createdAt
+  order: desc
+}
+
+headers {
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

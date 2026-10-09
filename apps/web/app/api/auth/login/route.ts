@@ -1,6 +1,6 @@
+import { envConfig } from "@/configs/validate-env";
 import ms, { StringValue } from "ms";
 import { cookies } from "next/headers";
-import { envConfig } from "@/configs/validate-env";
 
 export async function POST(request: Request) {
   const body = await request.json();

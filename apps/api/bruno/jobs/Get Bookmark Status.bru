@@ -1,0 +1,23 @@
+meta {
+  name: Get Bookmark Status
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/manage-jobs/jobs/{{jobSlug}}/bookmark
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+vars:pre-request {
+  jobSlug: e-commerce-website
+}

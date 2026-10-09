@@ -1,0 +1,30 @@
+meta {
+  name: View List Job
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/jobs?page=1&limit=10&budgetMin=500&budgetMax=2500&sortBy=title&order=asc
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: React
+  ~budgetType: FIXED_PRICE
+  ~budgetMin: 500
+  ~budgetMax: 2500
+  ~createdAfter: 2026-01-01T00:00:00.000Z
+  ~skill: React
+  ~featured: false
+  ~clientId: 1
+  sortBy: title
+  order: asc
+}
+
+headers {
+  Accept: application/json
+}
