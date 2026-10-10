@@ -10,11 +10,6 @@ export const PermissionSchema = z.object({
     .trim()
     .min(1, ManagePermissionMessage.PERMISSION_NAME_REQUIRED)
     .max(500, ManagePermissionMessage.PERMISSION_NAME_TOO_LONG),
-  description: z
-    .string()
-    .trim()
-    .max(500, ManagePermissionMessage.PERMISSION_DESCRIPTION_TOO_LONG)
-    .nullable(),
   path: z
     .string()
     .trim()
@@ -40,7 +35,6 @@ export const PermissionSchema = z.object({
 export const PermissionListItemSchema = PermissionSchema.pick({
   id: true,
   name: true,
-  description: true,
   path: true,
   method: true,
   module: true,
@@ -53,12 +47,10 @@ export const PermissionDetailResponseSchema = PermissionListItemSchema;
 
 export const CreatePermissionBodySchema = PermissionSchema.pick({
   name: true,
-  description: true,
   path: true,
   method: true,
   module: true,
 }).partial({
-  description: true,
   module: true,
 });
 
@@ -66,7 +58,6 @@ export const CreatePermissionResponseSchema = PermissionListItemSchema;
 
 export const UpdatePermissionBodySchema = PermissionSchema.pick({
   name: true,
-  description: true,
   path: true,
   method: true,
   module: true,

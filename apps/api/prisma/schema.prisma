@@ -40,7 +40,6 @@ model UserRole {
 model Permission {
   id          Int        @id @default(autoincrement())
   name        String     @db.VarChar(500)
-  description String?
   path        String     @db.VarChar(1000)
   method      HttpMethod
   module      String?    @default("") @db.VarChar(500)

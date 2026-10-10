@@ -3,7 +3,6 @@ export const ManagePermissionMessage = {
   PERMISSION_ALREADY_EXISTS: "Error.PermissionAlreadyExists",
   PERMISSION_NAME_REQUIRED: "Error.PermissionNameRequired",
   PERMISSION_NAME_TOO_LONG: "Error.PermissionNameTooLong",
-  PERMISSION_DESCRIPTION_TOO_LONG: "Error.PermissionDescriptionTooLong",
   PERMISSION_PATH_REQUIRED: "Error.PermissionPathRequired",
   PERMISSION_PATH_TOO_LONG: "Error.PermissionPathTooLong",
   PERMISSION_METHOD_REQUIRED: "Error.PermissionMethodRequired",

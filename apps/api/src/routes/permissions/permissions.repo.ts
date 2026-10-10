@@ -11,7 +11,6 @@ import { PermissionNotFoundException } from './permissions.error';
 const permissionSelect = {
   id: true,
   name: true,
-  description: true,
   path: true,
   method: true,
   module: true,
@@ -67,7 +66,6 @@ export class PermissionsRepository {
     return this.prisma.permission.create({
       data: {
         name: body.name,
-        description: body.description ?? null,
         path: body.path,
         method: body.method,
         module: body.module ?? '',
