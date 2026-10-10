@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import {
@@ -15,6 +16,8 @@ import {
   DeleteRoleResponseDto,
   RoleDetailResponseDto,
   RoleListResponseDto,
+  SetRolePermissionsBodyDto,
+  SetRolePermissionsResponseDto,
   UpdateRoleBodyDto,
   UpdateRoleResponseDto,
 } from './roles.dto';
@@ -49,6 +52,15 @@ export class RolesController {
     @Body() body: UpdateRoleBodyDto,
   ) {
     return this.rolesService.updateRole(id, body);
+  }
+
+  @Put(':id/permissions')
+  @ZodSerializerDto(SetRolePermissionsResponseDto)
+  setRolePermissions(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: SetRolePermissionsBodyDto,
+  ) {
+    return this.rolesService.setRolePermissions(id, body);
   }
 
   @Delete(':id')

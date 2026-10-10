@@ -1,0 +1,30 @@
+meta {
+  name: Set role permissions
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{baseUrl}}/roles/1/permissions
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "permissionIds": [2, 3]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

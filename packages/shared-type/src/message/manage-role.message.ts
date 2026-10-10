@@ -11,4 +11,6 @@
   FAILED_TO_UPDATE_ROLE: "Error.FailedToUpdateRole",
   FAILED_TO_DELETE_ROLE: "Error.FailedToDeleteRole",
   ROLE_IN_USE: "Error.RoleInUse",
+  INVALID_PERMISSION_IDS: "Error.InvalidPermissionIds",
+  FAILED_TO_SET_ROLE_PERMISSIONS: "Error.FailedToSetRolePermissions",
 } as const;

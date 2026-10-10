@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateRoleBodyType,
   CreateRoleResponseType,
+  PermissionListItemType,
   RoleDetailResponseType,
   RoleListItemType,
   UpdateRoleBodyType,
@@ -9,6 +10,22 @@ import {
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { RoleNotFoundException } from './roles.error';
+
+const roleListSelect = {
+  id: true,
+  name: true,
+  description: true,
+  createdAt: true,
+} as const;
+
+const permissionSelect = {
+  id: true,
+  name: true,
+  path: true,
+  method: true,
+  module: true,
+  createdAt: true,
+} as const;
 
 @Injectable()
 export class RolesRepository {
@@ -19,12 +36,7 @@ export class RolesRepository {
       where: {
         deletedAt: null,
       },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
-      },
+      select: roleListSelect,
       orderBy: {
         id: 'asc',
       },
@@ -38,10 +50,19 @@ export class RolesRepository {
         deletedAt: null,
       },
       select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
+        ...roleListSelect,
+        rolePermissions: {
+          where: {
+            permission: {
+              deletedAt: null,
+            },
+          },
+          select: {
+            permission: {
+              select: permissionSelect,
+            },
+          },
+        },
       },
     });
 
@@ -49,7 +70,15 @@ export class RolesRepository {
       throw RoleNotFoundException();
     }
 
-    return role;
+    return {
+      id: role.id,
+      name: role.name,
+      description: role.description,
+      createdAt: role.createdAt,
+      permissions: role.rolePermissions.map(
+        (item) => item.permission as PermissionListItemType,
+      ),
+    };
   }
 
   async findActiveByName(
@@ -65,12 +94,7 @@ export class RolesRepository {
         deletedAt: null,
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
-      },
+      select: roleListSelect,
     });
   }
 
@@ -80,12 +104,7 @@ export class RolesRepository {
         name: body.name,
         description: body.description ?? null,
       },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
-      },
+      select: roleListSelect,
     });
   }
 
@@ -101,12 +120,7 @@ export class RolesRepository {
           ? { description: body.description }
           : {}),
       },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        createdAt: true,
-      },
+      select: roleListSelect,
     });
   }
 
@@ -123,5 +137,41 @@ export class RolesRepository {
     return this.prisma.userRole.count({
       where: { roleId },
     });
+  }
+
+  async findActivePermissionIds(ids: number[]): Promise<number[]> {
+    if (ids.length === 0) return [];
+
+    const permissions = await this.prisma.permission.findMany({
+      where: {
+        id: { in: ids },
+        deletedAt: null,
+      },
+      select: { id: true },
+    });
+
+    return permissions.map((item) => item.id);
+  }
+
+  async replaceRolePermissions(
+    roleId: number,
+    permissionIds: number[],
+  ): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.rolePermission.deleteMany({
+        where: { roleId },
+      }),
+      ...(permissionIds.length > 0
+        ? [
+            this.prisma.rolePermission.createMany({
+              data: permissionIds.map((permissionId) => ({
+                roleId,
+                permissionId,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
+    ]);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
@@ -75,5 +76,21 @@ export const RoleInUseException = () =>
     {
       message: ManageRoleMessage.ROLE_IN_USE,
       path: 'id',
+    },
+  ]);
+
+export const InvalidPermissionIdsException = () =>
+  new BadRequestException([
+    {
+      message: ManageRoleMessage.INVALID_PERMISSION_IDS,
+      path: 'permissionIds',
+    },
+  ]);
+
+export const FailedToSetRolePermissionsException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageRoleMessage.FAILED_TO_SET_ROLE_PERMISSIONS,
+      path: 'permissionIds',
     },
   ]);
