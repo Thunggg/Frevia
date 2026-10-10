@@ -1,6 +1,4 @@
 import {
-  CreatePermissionBodySchema,
-  CreatePermissionResponseSchema,
   PermissionDetailResponseSchema,
   PermissionListResponseSchema,
 } from '@shared/types';
@@ -12,12 +10,4 @@ export class PermissionListResponseDto extends createZodDto(
 
 export class PermissionDetailResponseDto extends createZodDto(
   PermissionDetailResponseSchema,
-) {}
-
-export class CreatePermissionBodyDto extends createZodDto(
-  CreatePermissionBodySchema,
-) {}
-
-export class CreatePermissionResponseDto extends createZodDto(
-  CreatePermissionResponseSchema,
 ) {}

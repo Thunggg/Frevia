@@ -1,16 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
-  CreatePermissionBodyDto,
-  CreatePermissionResponseDto,
   PermissionDetailResponseDto,
   PermissionListResponseDto,
 } from './permissions.dto';
@@ -30,14 +20,5 @@ export class PermissionsController {
   @ZodSerializerDto(PermissionDetailResponseDto)
   getPermissionById(@Param('id', ParseIntPipe) id: number) {
     return this.permissionsService.getPermissionById(id);
-  }
-
-  @Post()
-  @ZodSerializerDto(CreatePermissionResponseDto)
-  createPermission(
-    @Body() body: CreatePermissionBodyDto,
-    @UserActive('userId') userId: number,
-  ) {
-    return this.permissionsService.createPermission(body, userId);
   }
 }

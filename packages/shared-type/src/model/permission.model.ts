@@ -1,6 +1,5 @@
 import { HttpMethod } from "../constants/http-method.constant";
 import { ManagePermissionMessage } from "../message/manage-permission.message";
-import { MessageResSchema } from "./response.model";
 import { z } from "zod";
 
 export const PermissionSchema = z.object({
@@ -45,28 +44,6 @@ export const PermissionListResponseSchema = z.array(PermissionListItemSchema);
 
 export const PermissionDetailResponseSchema = PermissionListItemSchema;
 
-export const CreatePermissionBodySchema = PermissionSchema.pick({
-  name: true,
-  path: true,
-  method: true,
-  module: true,
-}).partial({
-  module: true,
-});
-
-export const CreatePermissionResponseSchema = PermissionListItemSchema;
-
-export const UpdatePermissionBodySchema = PermissionSchema.pick({
-  name: true,
-  path: true,
-  method: true,
-  module: true,
-}).partial();
-
-export const UpdatePermissionResponseSchema = PermissionListItemSchema;
-
-export const DeletePermissionResponseSchema = MessageResSchema;
-
 export type PermissionType = z.infer<typeof PermissionSchema>;
 export type PermissionListItemType = z.infer<typeof PermissionListItemSchema>;
 export type PermissionListResponseType = z.infer<
@@ -74,19 +51,4 @@ export type PermissionListResponseType = z.infer<
 >;
 export type PermissionDetailResponseType = z.infer<
   typeof PermissionDetailResponseSchema
->;
-export type CreatePermissionBodyType = z.infer<
-  typeof CreatePermissionBodySchema
->;
-export type CreatePermissionResponseType = z.infer<
-  typeof CreatePermissionResponseSchema
->;
-export type UpdatePermissionBodyType = z.infer<
-  typeof UpdatePermissionBodySchema
->;
-export type UpdatePermissionResponseType = z.infer<
-  typeof UpdatePermissionResponseSchema
->;
-export type DeletePermissionResponseType = z.infer<
-  typeof DeletePermissionResponseSchema
 >;

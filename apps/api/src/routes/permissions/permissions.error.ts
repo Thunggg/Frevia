@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,14 +9,6 @@ export const PermissionNotFoundException = () =>
     {
       message: ManagePermissionMessage.PERMISSION_NOT_FOUND,
       path: 'id',
-    },
-  ]);
-
-export const PermissionAlreadyExistsException = () =>
-  new ConflictException([
-    {
-      message: ManagePermissionMessage.PERMISSION_ALREADY_EXISTS,
-      path: 'name',
     },
   ]);
 
@@ -34,13 +25,5 @@ export const FailedToLoadPermissionDetailException = () =>
     {
       message: ManagePermissionMessage.FAILED_TO_LOAD_PERMISSION_DETAIL,
       path: 'id',
-    },
-  ]);
-
-export const FailedToCreatePermissionException = () =>
-  new InternalServerErrorException([
-    {
-      message: ManagePermissionMessage.FAILED_TO_CREATE_PERMISSION,
-      path: 'permissions',
     },
   ]);

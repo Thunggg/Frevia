@@ -1,6 +1,5 @@
 export const ManagePermissionMessage = {
   PERMISSION_NOT_FOUND: "Error.PermissionNotFound",
-  PERMISSION_ALREADY_EXISTS: "Error.PermissionAlreadyExists",
   PERMISSION_NAME_REQUIRED: "Error.PermissionNameRequired",
   PERMISSION_NAME_TOO_LONG: "Error.PermissionNameTooLong",
   PERMISSION_PATH_REQUIRED: "Error.PermissionPathRequired",
@@ -10,8 +9,4 @@ export const ManagePermissionMessage = {
   PERMISSION_MODULE_TOO_LONG: "Error.PermissionModuleTooLong",
   FAILED_TO_LOAD_PERMISSIONS: "Error.FailedToLoadPermissions",
   FAILED_TO_LOAD_PERMISSION_DETAIL: "Error.FailedToLoadPermissionDetail",
-  FAILED_TO_CREATE_PERMISSION: "Error.FailedToCreatePermission",
-  FAILED_TO_UPDATE_PERMISSION: "Error.FailedToUpdatePermission",
-  FAILED_TO_DELETE_PERMISSION: "Error.FailedToDeletePermission",
-  PERMISSION_IN_USE: "Error.PermissionInUse",
 } as const;

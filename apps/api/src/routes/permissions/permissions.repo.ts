@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreatePermissionBodyType,
-  CreatePermissionResponseType,
-  PermissionDetailResponseType,
-  PermissionListItemType,
-} from '@shared/types';
+import { PermissionDetailResponseType, PermissionListItemType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { PermissionNotFoundException } from './permissions.error';
 
@@ -40,38 +35,5 @@ export class PermissionsRepository {
     }
 
     return permission;
-  }
-
-  async findActiveByName(
-    name: string,
-    excludeId?: number,
-  ): Promise<PermissionListItemType | null> {
-    return this.prisma.permission.findFirst({
-      where: {
-        name: {
-          equals: name,
-          mode: 'insensitive',
-        },
-        deletedAt: null,
-        ...(excludeId ? { id: { not: excludeId } } : {}),
-      },
-      select: permissionSelect,
-    });
-  }
-
-  async createPermission(
-    body: CreatePermissionBodyType,
-    createdById: number,
-  ): Promise<CreatePermissionResponseType> {
-    return this.prisma.permission.create({
-      data: {
-        name: body.name,
-        path: body.path,
-        method: body.method,
-        module: body.module ?? '',
-        createdById,
-      },
-      select: permissionSelect,
-    });
   }
 }
