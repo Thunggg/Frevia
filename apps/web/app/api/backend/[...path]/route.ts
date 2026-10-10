@@ -1,5 +1,6 @@
-import { cookies } from "next/headers";
 import { envConfig } from "@/configs/validate-env";
+import { refreshAuthTokens } from "@/lib/auth-session";
+import { cookies } from "next/headers";
 
 const NEST_API = envConfig?.NESTJS_API_URL;
 
@@ -7,7 +8,7 @@ type RouteContext = { params: Promise<{ path: string[] }> };
 
 const proxyHandler = async (request: Request, { params }: RouteContext) => {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+  let accessToken = cookieStore.get("accessToken")?.value;
 
   const { path } = await params;
   const fullPath = path.join("/");
@@ -25,14 +26,27 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
   const hasBody = !["GET", "DELETE"].includes(request.method);
   const rawBody = hasBody ? await request.arrayBuffer() : undefined;
 
-  const nestRes = await fetch(`${NEST_API}/${fullPath}${search}`, {
-    method: request.method,
-    headers: {
-      ...(contentType ? { "Content-Type": contentType } : {}),
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    body: hasBody ? (rawBody as ArrayBuffer) : undefined,
-  });
+  // Hàm forward để forward request đến backend
+  const forward = (token: string | undefined) =>
+    fetch(`${NEST_API}/${fullPath}${search}`, {
+      method: request.method,
+      headers: {
+        ...(contentType ? { "Content-Type": contentType } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: hasBody ? (rawBody as ArrayBuffer) : undefined,
+    });
+
+  let nestRes = await forward(accessToken);
+
+  // Access hết hạn / invalid → refresh 1 lần rồi retry request gốc
+  if (nestRes.status === 401 && !fullPath.includes("auth/refresh-token")) {
+    const tokens = await refreshAuthTokens(cookieStore);
+    if (tokens) {
+      accessToken = tokens.accessToken;
+      nestRes = await forward(accessToken);
+    }
+  }
 
   const responseBody = await nestRes.arrayBuffer();
 
