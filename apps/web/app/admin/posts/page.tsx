@@ -1,22 +1,9 @@
 import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
+import forumServerRequest from "@/apiRequests/forum.server";
 import { PostsTable } from "./components/posts-table";
 import { SearchBar } from "../components/search-bar";
 import { CategoryFilter } from "../components/category-filter";
-
-async function getCategories() {
-  const { cookies } = await import("next/headers");
-  const { envConfig } = await import("@/configs/validate-env");
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  if (!accessToken || !envConfig?.NESTJS_API_URL) return [];
-  const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-  });
-  const data = await res.json();
-  return data.success ? data.data : [];
-}
 
 export default async function AdminPostsPage({
   searchParams,
@@ -31,7 +18,7 @@ export default async function AdminPostsPage({
 
   const [data, categories] = await Promise.all([
     adminServerRequest.getPosts(page, limit, search, categoryId),
-    getCategories(),
+    forumServerRequest.getCategories(),
   ]);
 
   return (

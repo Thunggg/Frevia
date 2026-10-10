@@ -1,15 +1,10 @@
 import { notFound } from "next/navigation";
-import { envConfig } from "@/configs/validate-env";
-import type {
-  ApiResponse,
-  ForumCategoryDetailResponseType,
-} from "@shared/types";
-import { cookies } from "next/headers";
+import Link from "next/link";
+import { Home, ArrowLeft } from "lucide-react";
+
+import forumServerRequest from "@/apiRequests/forum.server";
 import { getMeServer } from "@/lib/get-me";
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
-import Link from "next/link";
-import { Home, ArrowLeft, FileText, Calendar } from "lucide-react";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 
 type ForumCategoryDetailPageProps = {
   params: Promise<{ categoryId: string }>;
@@ -34,26 +29,8 @@ const ForumCategoryDetailPage = async ({
     notFound();
   }
 
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  if (!accessToken || !envConfig?.NESTJS_API_URL) {
-    notFound();
-  }
-
   const [category, user] = await Promise.all([
-    (async (): Promise<ForumCategoryDetailResponseType | null> => {
-      const res = await fetch(
-        `${envConfig.NESTJS_API_URL}/api/forums/categories/${categoryIdNum}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          cache: "no-store",
-        },
-      );
-      const data = (await res.json()) as ApiResponse<ForumCategoryDetailResponseType>;
-      if (!res.ok || !data.success) return null;
-      return data.data;
-    })(),
+    forumServerRequest.getCategoryById(categoryIdNum),
     getMeServer(),
   ]);
 
@@ -72,10 +49,8 @@ const ForumCategoryDetailPage = async ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header Section */}
       <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          {/* Breadcrumb */}
           <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link
               href="/"
@@ -119,7 +94,6 @@ const ForumCategoryDetailPage = async ({
         </div>
       </div>
 
-      {/* Content */}
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <ForumPostListWrapper
           filter={filter}
