@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminDetailSkeleton } from "../../components/table-skeleton";
 import { usePermission } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -23,11 +24,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const { data: permission, isLoading, isError } = usePermission(permissionId);
 
   if (isLoading) {
-    return (
-      <p className="text-sm text-muted-foreground py-12 text-center">
-        Loading permission...
-      </p>
-    );
+    return <AdminDetailSkeleton />;
   }
 
   if (isError || !permission) {
