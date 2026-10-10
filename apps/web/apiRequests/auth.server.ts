@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { envConfig } from "@/configs/validate-env";
 import type { ApiResponse, GetMeResType } from "@shared/types";
 
-/** Server-side auth reads (RSC). Client auth stays in `apiRequests/auth.ts`. */
 const authServerRequest = {
   async getMe(): Promise<GetMeResType | null> {
     const accessToken = (await cookies()).get("accessToken")?.value;
