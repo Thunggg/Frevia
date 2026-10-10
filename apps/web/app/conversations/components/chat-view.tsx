@@ -27,6 +27,7 @@ import { Bubble, BubbleContent } from "@repo/ui/components/shadcn/bubble";
 import { Marker, MarkerContent, MarkerIcon } from "@repo/ui/components/shadcn/marker";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError } from "@repo/ui/components/shadcn/toast";
 import {
   ArrowLeft,
@@ -296,8 +297,31 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
       {/* Messages */}
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {isLoading ? (
-          <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          <div className="flex h-full items-center justify-center px-4 py-8">
+            <div className="w-full max-w-md space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
+                >
+                  <div
+                    className={`flex items-end gap-2 ${i % 2 === 0 ? "" : "flex-row-reverse"}`}
+                  >
+                    {i % 2 === 0 && (
+                      <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+                    )}
+                    <div className="space-y-1.5">
+                      <Skeleton
+                        className={`h-10 rounded-2xl ${i % 2 === 0 ? "rounded-bl-sm w-48" : "rounded-br-sm w-40"}`}
+                      />
+                      <Skeleton
+                        className={`h-3 ${i % 2 === 0 ? "w-16" : "w-12 ml-auto"}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : !messages || messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
@@ -312,7 +336,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             const isMine = message.senderId === currentUserId;
             const hasFile = Boolean(message.fileUrl);
             const bubbleClassName = isMine
-              ? "*:data-[slot=bubble-content]:!bg-blue-600 *:data-[slot=bubble-content]:!text-white"
+              ? "*:data-[slot=bubble-content]:!bg-emerald-600 *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
               : undefined;
 
             return (
@@ -487,7 +511,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             type="submit"
             size="icon"
             disabled={!input.trim()}
-            className="shrink-0 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-600/50 disabled:text-white"
+            className="shrink-0 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
           >
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>

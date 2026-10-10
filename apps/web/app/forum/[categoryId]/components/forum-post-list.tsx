@@ -179,7 +179,7 @@ export function ForumPostList({
             <Button
               variant={isMyPosts ? "default" : "outline"}
               size="sm"
-              className="gap-1.5"
+              className={`gap-1.5 ${isMyPosts ? "!bg-emerald-600 !text-white hover:!bg-emerald-700" : ""}`}
               onClick={toggleMyPosts}
             >
               <User className="h-3.5 w-3.5" />
@@ -212,7 +212,7 @@ export function ForumPostList({
         {/* Trending Posts - Left sidebar */}
         {showTrending && (
           <div className="order-2 lg:order-1">
-            <div className="sticky top-24 rounded-xl border bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-yellow-500/5 p-5">
+            <div className="sticky top-24 overflow-hidden rounded-xl border border-orange-200/60 bg-gradient-to-br from-orange-50 via-amber-50/40 to-yellow-50/30 p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Flame className="h-5 w-5 text-orange-500" />
                 <h3 className="text-sm font-semibold text-foreground">
@@ -220,7 +220,7 @@ export function ForumPostList({
                 </h3>
                 <Badge
                   variant="secondary"
-                  className="ml-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] px-1.5 py-0"
+                  className="ml-1 bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 text-[10px] px-1.5 py-0"
                 >
                   HOT
                 </Badge>
@@ -230,18 +230,18 @@ export function ForumPostList({
                   <Link
                     key={post.id}
                     href={`/forum/${categoryId}/${post.id}`}
-                    className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-orange-500/5"
+                    className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-orange-50/80"
                   >
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-xs font-bold text-orange-600 dark:text-orange-400">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-xs font-bold text-orange-700">
                       {index + 1}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium leading-snug text-foreground group-hover:text-orange-600 dark:group-hover:text-orange-400 line-clamp-2">
+                      <p className="text-sm font-medium leading-snug text-foreground group-hover:text-orange-700 line-clamp-2">
                         {post.title}
                       </p>
                       <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
+                          <Heart className="h-3 w-3 text-red-400" />
                           {post.likeCount}
                         </span>
                         <span className="inline-flex items-center gap-1">
@@ -249,7 +249,7 @@ export function ForumPostList({
                           {post.commentCount}
                         </span>
                         <span className="inline-flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3" />
+                          <TrendingUp className="h-3 w-3 text-emerald-500" />
                           {post.interactionScore}
                         </span>
                       </div>
@@ -326,12 +326,12 @@ export function ForumPostList({
                   href={`/forum/${categoryId}/${post.id}`}
                   className="block"
                 >
-                  <Card className="group transition-all duration-200 hover:border-primary/20 hover:shadow-sm">
+                  <Card className="group transition-all duration-200 hover:border-emerald-200 hover:shadow-md hover:shadow-emerald-50">
                     <CardContent className="py-5">
                       <div className="space-y-3">
                         {/* Title + Badge */}
                         <div className="flex items-start justify-between gap-3">
-                          <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
+                          <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-emerald-700 transition-colors">
                             {post.title}
                           </h3>
                           <Badge

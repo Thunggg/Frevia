@@ -99,15 +99,10 @@ export function ReportDialog({
   // Nếu đã report và dialog đang đóng → hiển thị badge "Reported"
   if (reported && !open) {
     return (
-      <Button
-        variant="ghost"
-        size="xs"
-        disabled
-        className="gap-1 text-green-600"
-      >
+      <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Reported
-      </Button>
+      </span>
     );
   }
 
@@ -118,7 +113,7 @@ export function ReportDialog({
           <Button
             variant="ghost"
             size="xs"
-            className="gap-1 text-muted-foreground hover:text-orange-500"
+            className="gap-1 text-muted-foreground hover:!text-amber-600"
           >
             <Flag className="h-3.5 w-3.5" />
             Report
@@ -137,7 +132,7 @@ export function ReportDialog({
 
         {reported ? (
           <div className="flex flex-col items-center gap-3 py-6">
-            <CheckCircle2 className="h-12 w-12 text-green-500" />
+            <CheckCircle2 className="h-12 w-12 text-amber-500" />
             <p className="text-sm text-muted-foreground">
               You have already reported this content. Our team will review it.
             </p>

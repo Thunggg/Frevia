@@ -59,7 +59,7 @@ export function ForumCategoryView({
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent">
+      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
           {/* Breadcrumb */}
           <nav className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ export function ForumCategoryView({
             {/* Stats */}
             <div className="flex gap-6">
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
                   <Folder className="h-4 w-4" />
                 </div>
                 <div>
@@ -99,7 +99,7 @@ export function ForumCategoryView({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-600">
                   <MessageSquare className="h-4 w-4" />
                 </div>
                 <div>
@@ -150,13 +150,13 @@ export function ForumCategoryView({
                     href={`/forum/${category.id}`}
                     className="group block"
                   >
-                    <Card className="h-full transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
+                    <Card className="h-full transition-all duration-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50">
                       <CardHeader className="pb-3">
                         <CardTitle className="flex items-center justify-between text-base">
-                          <span className="group-hover:text-primary transition-colors">
+                          <span className="group-hover:text-emerald-700 transition-colors">
                             {category.name}
                           </span>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-emerald-600" />
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -243,8 +243,8 @@ export function ForumCategoryView({
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10">
-                      <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100">
+                      <TrendingUp className="h-4 w-4 text-emerald-600" />
                     </div>
                     Most Active Users
                   </CardTitle>

@@ -96,7 +96,7 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header với breadcrumb */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent">
+      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
           <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link
@@ -245,26 +245,40 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
 
           <Separator className="my-6" />
 
-          {/* Actions Bar: Like + Comment count + Report */}
-          <div className="flex items-center gap-4">
+          {/* Actions Bar */}
+          <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xs">
             <Button
-              variant={liked ? "default" : "outline"}
+              variant="ghost"
               size="sm"
-              className={`gap-2 ${liked ? "bg-red-500 hover:bg-red-600 text-white border-red-500" : ""}`}
               onClick={handleToggleLike}
               disabled={toggleLike.isPending}
+              className={
+                liked
+                  ? "!text-red-500 hover:!text-red-600 hover:!bg-red-50 gap-1.5 px-3"
+                  : "text-muted-foreground hover:text-red-500 hover:bg-red-50 gap-1.5 px-3"
+              }
             >
-              <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+              <Heart className={`h-[18px] w-[18px] transition-transform ${liked ? "fill-current scale-110" : ""}`} />
+              <span className="text-sm font-medium tabular-nums">{likeCount}</span>
             </Button>
 
+            <div className="h-5 w-px bg-border" />
+
+            <div className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground">
+              <MessageSquare className="h-[18px] w-[18px]" />
+              <span className="text-sm font-medium tabular-nums">{commentTotal}</span>
+            </div>
+
+            {!isAuthor && currentUserId && (
+              <>
+                <div className="h-5 w-px bg-border" />
+                <ReportDialog postId={post.id} />
+              </>
+            )}
+          </div>
+
+          <div className="mt-2">
             <PostLikesDialog postId={post.id} count={likeCount} />
-
-            <Badge variant="secondary" className="gap-1.5 px-3 py-1">
-              <MessageSquare className="h-3.5 w-3.5" />
-              {commentTotal} {commentTotal === 1 ? "comment" : "comments"}
-            </Badge>
-
-            {!isAuthor && currentUserId && <ReportDialog postId={post.id} />}
           </div>
         </article>
 
