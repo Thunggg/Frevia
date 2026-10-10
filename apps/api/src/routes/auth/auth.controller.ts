@@ -72,12 +72,10 @@ export class AuthController {
   }
 
   @Post('logout')
+  @IsPublic()
   @ZodSerializerDto(MessageResDTO)
-  async logout(
-    @Body() body: LogoutBodyDTO,
-    @UserActive('userId') userId: number,
-  ) {
-    return await this.authService.logout(body.refreshToken as string, userId);
+  async logout(@Body() body: LogoutBodyDTO) {
+    return await this.authService.logout(body.refreshToken as string);
   }
 
   @Post('forgot-password')

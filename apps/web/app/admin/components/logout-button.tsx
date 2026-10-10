@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authApiRequest } from "@/apiRequests/auth";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { LogOut } from "lucide-react";
 
@@ -13,17 +12,9 @@ export function LogoutButton() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      await authApiRequest.me(); // ensure we're logged in
+      await fetch("/api/auth/logout", { method: "POST" });
     } catch {
-      // ignore
-    }
-    try {
-      document.cookie =
-        "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      document.cookie =
-        "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    } catch {
-      // ignore
+      // ignore — vẫn điều hướng về login
     }
     router.push("/login");
     router.refresh();

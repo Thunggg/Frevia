@@ -384,8 +384,11 @@ export class AuthService {
     }
   }
 
-  async logout(refreshToken: string, userId: number): Promise<MessageResType> {
+  async logout(refreshToken: string): Promise<MessageResType> {
     try {
+      const { userId } =
+        await this.tokenService.verifyRefreshToken(refreshToken);
+
       this.logger.log(`Logout request: userId=${userId}`);
       await this.authRepository.deleteSessionByRefreshToken({
         refreshToken,
@@ -403,6 +406,8 @@ export class AuthService {
       } else if (error instanceof PrismaClientValidationError) {
         this.logger.error('PrismaClientValidationError during logout', error);
         throw ServerErrorException();
+      } else if (error instanceof JsonWebTokenError) {
+        throw RefreshTokenRevokedException();
       }
       throw error;
     }
