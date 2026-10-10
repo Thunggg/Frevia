@@ -5,13 +5,18 @@ import { envConfig } from "@/configs/validate-env";
 export async function POST() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  // Báo NestJS xoá refresh token trong DB (hard delete theo thiết kế của bạn),
-  // không chặn việc xoá cookie phía Next kể cả khi bước này lỗi.
-  if (accessToken) {
+  // Nest yêu cầu body { refreshToken } + Bearer access (AuthGuard).
+  // Không chặn xoá cookie phía Next kể cả khi Nest lỗi.
+  if (accessToken && refreshToken) {
     await fetch(`${envConfig?.NESTJS_API_URL}/api/auth/logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken }),
     }).catch(() => null);
   }
 

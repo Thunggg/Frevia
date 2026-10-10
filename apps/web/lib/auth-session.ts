@@ -16,34 +16,65 @@ export function setAuthCookies(
   cookieStore: CookieStore,
   tokens: RefreshedTokens,
 ) {
-  const accessTtl = ms(
-    envConfig?.ACCESS_TOKEN_EXPIRES_IN as StringValue,
-  ) as number;
-  const refreshTtl = ms(
-    envConfig?.REFRESH_TOKEN_EXPIRES_IN as StringValue,
-  ) as number;
-
-  cookieStore.set("accessToken", tokens.accessToken, {
-    httpOnly: true,
-    secure: envConfig?.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(Date.now() + accessTtl),
-  });
-
-  cookieStore.set("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    secure: envConfig?.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(Date.now() + refreshTtl),
-  });
+  cookieStore.set(
+    "accessToken",
+    tokens.accessToken,
+    authCookieBaseOptions("access"),
+  );
+  cookieStore.set(
+    "refreshToken",
+    tokens.refreshToken,
+    authCookieBaseOptions("refresh"),
+  );
 }
 
 // Hàm để xóa các cookies accessToken và refreshToken
 export function clearAuthCookies(cookieStore: CookieStore) {
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
+}
+
+/** Cookie options dùng chung (Route Handler + middleware response). */
+export function authCookieBaseOptions(kind: "access" | "refresh") {
+  const ttl = ms(
+    (kind === "access"
+      ? envConfig?.ACCESS_TOKEN_EXPIRES_IN
+      : envConfig?.REFRESH_TOKEN_EXPIRES_IN) as StringValue,
+  ) as number;
+
+  return {
+    httpOnly: true as const,
+    secure: envConfig?.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: Math.floor(ttl / 1000),
+    expires: new Date(Date.now() + ttl),
+  };
+}
+
+// Decode access token và kiểm tra xem token có cần refresh không
+export function accessTokenNeedsRefresh(
+  accessToken: string | undefined,
+): boolean {
+  if (!accessToken) return true;
+  try {
+    const segment = accessToken.split(".")[1];
+    if (!segment) return true;
+
+    // Decode base64
+    const base64 = segment.replace(/-/g, "+").replace(/_/g, "/");
+
+    // Parse payload
+    const payload = JSON.parse(atob(base64)) as { exp?: number };
+
+    // Kiểm tra xem exp có phải là number không
+    if (typeof payload.exp !== "number") return true;
+
+    // Yêu cầu refresh nếu token hết hạn trước 10s
+    return payload.exp * 1000 <= Date.now() + 10_000;
+  } catch {
+    return true;
+  }
 }
 
 // Hàm để exchange refresh token
