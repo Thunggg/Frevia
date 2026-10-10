@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import {
   PermissionDetailResponseDto,
+  PermissionFilterDto,
   PermissionListResponseDto,
 } from './permissions.dto';
 import { PermissionsService } from './permissions.service';
@@ -12,8 +13,8 @@ export class PermissionsController {
 
   @Get()
   @ZodSerializerDto(PermissionListResponseDto)
-  getPermissions() {
-    return this.permissionsService.getPermissions();
+  getPermissions(@Query() query: PermissionFilterDto) {
+    return this.permissionsService.getPermissions(query);
   }
 
   @Get(':id')
