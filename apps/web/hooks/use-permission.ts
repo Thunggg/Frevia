@@ -1,6 +1,6 @@
 import { permissionApiRequest } from "@/apiRequests/permission";
 import type { ApiResponse, PermissionFilterType } from "@shared/types";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 function extractData<T>(response: ApiResponse<T>): T {
   if (response.success && "data" in response) {
@@ -32,6 +32,7 @@ export function usePermissions(filter: Partial<PermissionFilterType> = {}) {
     queryKey: permissionKeys.list(normalized),
     queryFn: () =>
       permissionApiRequest.getPermissions(normalized).then(extractData),
+    placeholderData: keepPreviousData,
     staleTime: 2 * 60 * 1000,
   });
 }

@@ -111,7 +111,7 @@ export function PermissionsTable() {
     setSearchInput(searchParam);
   }, [searchParam]);
 
-  const { data, isLoading, isError } = usePermissions({
+  const { data, isLoading, isFetching, isError } = usePermissions({
     page,
     limit: PAGE_SIZE,
     search: searchParam || undefined,
@@ -273,13 +273,17 @@ export function PermissionsTable() {
         <p className="text-sm text-muted-foreground py-12 text-center">
           Loading permissions...
         </p>
-      ) : isError ? (
+      ) : isError && !data ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
           Failed to load permissions. Please try again.
         </p>
       ) : (
         <>
-          <div className="rounded-lg border bg-card">
+          <div
+            className={`rounded-lg border bg-card transition-opacity ${
+              isFetching ? "opacity-60" : "opacity-100"
+            }`}
+          >
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
