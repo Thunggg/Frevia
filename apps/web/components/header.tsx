@@ -73,7 +73,7 @@ function HeaderNavigation({ role, mobile = false }: HeaderProps & { mobile?: boo
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
         return (
           <Link
-            key={link.href}
+            key={link.label}
             href={link.href}
             className={`block text-sm font-medium transition-colors ${
               isActive ? "text-[#4fae2e] underline decoration-2 underline-offset-4" : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
