@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import {
   ManageForumCommentMessage,
-  ManageForumLikeMessage,
   ManageForumPostMessage,
 } from '@shared/types';
 

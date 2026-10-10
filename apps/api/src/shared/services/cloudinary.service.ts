@@ -8,10 +8,17 @@ export class CloudinaryService {
 
   constructor() {
     cloudinary.config({
-      cloud_name: envConfig.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
+      cloud_name:
+        envConfig.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
       api_key: envConfig.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_KEY,
-      api_secret: envConfig.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET,
+      api_secret:
+        envConfig.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET,
     });
+  }
+
+  isConfigured() {
+    const apiKey = envConfig.CLOUDINARY_API_KEY;
+    return Boolean(apiKey && !apiKey.toLowerCase().startsWith('dummy'));
   }
 
   async uploadFile(
@@ -28,8 +35,11 @@ export class CloudinaryService {
         },
         (error, result) => {
           if (error) {
-            this.logger.error(`Cloudinary upload error: ${error.message}`, error.stack);
-            return reject(error);
+            this.logger.error(
+              `Cloudinary upload error: ${error.message}`,
+              error.stack,
+            );
+            return reject(new Error(error.message, { cause: error }));
           }
           if (!result) {
             return reject(new Error('Cloudinary upload returned empty result'));
@@ -41,7 +51,6 @@ export class CloudinaryService {
       uploadStream.end(file.buffer);
     });
   }
-
 
   async deleteFile(publicId: string): Promise<any> {
     try {
@@ -58,7 +67,10 @@ export class CloudinaryService {
 
       return result;
     } catch (error) {
-      this.logger.error(`Cloudinary delete error for publicId ${publicId}:`, error);
+      this.logger.error(
+        `Cloudinary delete error for publicId ${publicId}:`,
+        error,
+      );
       throw error;
     }
   }

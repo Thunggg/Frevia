@@ -24,6 +24,9 @@ const freelancerModules = [
   'CONTRACTS',
   'CONVERSATIONS',
   'FORUMS',
+  'PROFILES',
+  'IDENTITY-VERIFICATIONS',
+  'SOCIAL-LINKS',
 ];
 const clientModules = [
   'AUTH',
@@ -32,6 +35,9 @@ const clientModules = [
   'CONTRACTS',
   'CONVERSATIONS',
   'FORUMS',
+  'CLIENTS',
+  'SOCIAL-LINKS',
+  'FAVORITES',
 ];
 
 type AvailableRoute = {

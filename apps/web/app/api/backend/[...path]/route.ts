@@ -2,16 +2,29 @@ import { envConfig } from "@/configs/validate-env";
 import { refreshAuthTokens } from "@/lib/auth-session";
 import { cookies } from "next/headers";
 
-const NEST_API = envConfig?.NESTJS_API_URL;
+const nestApiUrl = envConfig?.NESTJS_API_URL.replace(/\/$/, "");
+const NEST_API = nestApiUrl?.endsWith("/api")
+  ? nestApiUrl.slice(0, -4)
+  : nestApiUrl;
 
 type RouteContext = { params: Promise<{ path: string[] }> };
 
 const proxyHandler = async (request: Request, { params }: RouteContext) => {
+  if (!NEST_API) {
+    return Response.json(
+      { success: false, error: { message: "Backend API is not configured." } },
+      { status: 500 },
+    );
+  }
+
   const cookieStore = await cookies();
   let accessToken = cookieStore.get("accessToken")?.value;
 
   const { path } = await params;
   const fullPath = path.join("/");
+  const backendPath = fullPath.startsWith("api/")
+    ? fullPath
+    : `api/${fullPath}`;
 
   // Giữ nguyên query string
   const { search } = new URL(request.url);
@@ -28,7 +41,7 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
 
   // Hàm forward để forward request đến backend
   const forward = (token: string | undefined) =>
-    fetch(`${NEST_API}/${fullPath}${search}`, {
+    fetch(`${NEST_API}/${backendPath}${search}`, {
       method: request.method,
       headers: {
         ...(contentType ? { "Content-Type": contentType } : {}),

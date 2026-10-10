@@ -16,7 +16,6 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Flag, CheckCircle2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
-import { forumKeys } from "@/hooks/use-forum";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { ApiResponse } from "@shared/types";
 

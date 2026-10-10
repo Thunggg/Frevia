@@ -7,7 +7,6 @@
     "paths": {
       "@repo/ui/*": ["./src/*"]
     },
-    "ignoreDeprecations": "6.0",
     "strictNullChecks": true
   },
   "include": ["src"],
