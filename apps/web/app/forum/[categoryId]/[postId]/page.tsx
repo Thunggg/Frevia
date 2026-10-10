@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getMeServer } from "@/lib/get-me";
+import authServerRequest from "@/apiRequests/auth.server";
 import { PostDetailWrapper } from "./components/post-detail-wrapper";
 
 type PostDetailPageProps = {
@@ -21,7 +21,7 @@ const PostDetailPage = async ({ params }: PostDetailPageProps) => {
     notFound();
   }
 
-  const user = await getMeServer();
+  const user = await authServerRequest.getMe();
   const currentUserId = user?.id ?? null;
 
   return (

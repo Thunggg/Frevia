@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 import { envConfig } from "@/configs/validate-env";
-import { getMeServer } from "@/lib/get-me";
+import authServerRequest from "@/apiRequests/auth.server";
 import { ConversationsShell } from "./components/conversations-shell";
 
 type ConversationsLayoutProps = {
@@ -11,7 +11,7 @@ type ConversationsLayoutProps = {
 const ConversationsLayout = async ({ children }: ConversationsLayoutProps) => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value ?? null;
-  const user = await getMeServer();
+  const user = await authServerRequest.getMe();
 
   return (
     <ConversationsShell

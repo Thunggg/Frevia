@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
-import { Home, ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 
+import authServerRequest from "@/apiRequests/auth.server";
 import forumServerRequest from "@/apiRequests/forum.server";
-import { getMeServer } from "@/lib/get-me";
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
 
 type ForumCategoryDetailPageProps = {
@@ -31,7 +31,7 @@ const ForumCategoryDetailPage = async ({
 
   const [category, user] = await Promise.all([
     forumServerRequest.getCategoryById(categoryIdNum),
-    getMeServer(),
+    authServerRequest.getMe(),
   ]);
 
   if (!category) {

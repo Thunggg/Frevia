@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getMeServer } from "@/lib/get-me";
+import authServerRequest from "@/apiRequests/auth.server";
 import { ChatView } from "../components/chat-view";
 
 type ConversationDetailPageProps = {
@@ -16,7 +16,7 @@ const ConversationDetailPage = async ({
     notFound();
   }
 
-  const user = await getMeServer();
+  const user = await authServerRequest.getMe();
   const currentUserId = user?.id ?? null;
 
   return (
