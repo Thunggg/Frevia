@@ -12,6 +12,7 @@ import {
 import {
   ArrowLeft,
   FileText,
+  KeyRound,
   LayoutDashboard,
   MessageSquare,
   Shield,
@@ -43,6 +44,11 @@ const navItems: NavItem[] = [
     title: "Roles",
     href: "/admin/roles",
     icon: UsersRound,
+  },
+  {
+    title: "Permissions",
+    href: "/admin/permissions",
+    icon: KeyRound,
   },
 ];
 
