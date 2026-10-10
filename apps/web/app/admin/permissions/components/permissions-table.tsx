@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminTableSkeleton } from "../../components/table-skeleton";
 import { usePermissions } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/shadcn/select";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import {
   Table,
   TableBody,
@@ -270,9 +272,17 @@ export function PermissionsTable() {
       )}
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground py-12 text-center">
-          Loading permissions...
-        </p>
+        <div className="space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <Skeleton className="h-9 w-full max-w-sm" />
+            <Skeleton className="h-9 w-[140px]" />
+            <Skeleton className="h-9 w-[180px]" />
+          </div>
+          <AdminTableSkeleton
+            columns={["w-16", "w-24", "", "w-28", "w-28", "w-20"]}
+            rows={10}
+          />
+        </div>
       ) : isError && !data ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
           Failed to load permissions. Please try again.

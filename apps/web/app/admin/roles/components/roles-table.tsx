@@ -3,6 +3,7 @@
 import { CreateRoleDialog } from "./create-role-dialog";
 import { DeleteRoleDialog } from "./delete-role-dialog";
 import { UpdateRoleDialog } from "./update-role-dialog";
+import { AdminTableSkeleton } from "../../components/table-skeleton";
 import { useRoles } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -37,9 +38,10 @@ export function RolesTable() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground py-12 text-center">
-          Loading roles...
-        </p>
+        <AdminTableSkeleton
+          columns={["w-16", "w-40", "", "w-24", "w-28", "w-36"]}
+          rows={6}
+        />
       ) : isError ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
           Failed to load roles. Please try again.

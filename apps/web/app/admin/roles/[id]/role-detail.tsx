@@ -2,6 +2,7 @@
 
 import { DeleteRoleDialog } from "../components/delete-role-dialog";
 import { UpdateRoleDialog } from "../components/update-role-dialog";
+import { AdminDetailSkeleton } from "../../components/table-skeleton";
 import { useRole } from "@/hooks/use-role";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -18,11 +19,7 @@ export function RoleDetail({ roleId }: { roleId: number }) {
   const { data: role, isLoading, isError } = useRole(roleId);
 
   if (isLoading) {
-    return (
-      <p className="text-sm text-muted-foreground py-12 text-center">
-        Loading role...
-      </p>
-    );
+    return <AdminDetailSkeleton />;
   }
 
   if (isError || !role) {
