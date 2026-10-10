@@ -44,7 +44,7 @@ export function RoleDetail({ roleId }: { roleId: number }) {
           <h1 className="text-3xl font-bold tracking-tight">{role.name}</h1>
           <p className="text-muted-foreground mt-1">Role detail</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           <UpdateRoleDialog
             role={role}
             trigger={
@@ -58,11 +58,7 @@ export function RoleDetail({ roleId }: { roleId: number }) {
             role={role}
             onDeleted={() => router.push("/admin/roles")}
             trigger={
-              <Button
-                size="sm"
-                variant="destructive"
-                className="gap-1.5"
-              >
+              <Button size="sm" variant="destructive" className="gap-1.5">
                 <Trash2 className="h-4 w-4" />
                 Delete
               </Button>
