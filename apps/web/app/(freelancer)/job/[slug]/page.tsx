@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getBookmarkStatusServer, getJobDetailServer } from "@/lib/get-job";
+import jobServerRequest from "@/apiRequests/job.server";
 import { JobDetailContent } from "./job-detail-content";
 
 type JobDetailPageProps = {
@@ -14,13 +14,13 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound();
   }
 
-  const job = await getJobDetailServer(slug);
+  const job = await jobServerRequest.getJobDetail(slug);
 
   if (!job) {
     notFound();
   }
 
-  const bookmarkStatus = await getBookmarkStatusServer(slug);
+  const bookmarkStatus = await jobServerRequest.getBookmarkStatus(slug);
 
   return (
     <JobDetailContent

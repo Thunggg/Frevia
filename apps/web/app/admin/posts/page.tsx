@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getAdminPostsServer } from "@/lib/get-admin-data";
+import adminServerRequest from "@/apiRequests/admin.server";
 import { PostsTable } from "./components/posts-table";
 import { SearchBar } from "../components/search-bar";
 import { CategoryFilter } from "../components/category-filter";
@@ -30,7 +30,7 @@ export default async function AdminPostsPage({
   const categoryId = params.categoryId ? Number(params.categoryId) : undefined;
 
   const [data, categories] = await Promise.all([
-    getAdminPostsServer(page, limit, search, categoryId),
+    adminServerRequest.getPosts(page, limit, search, categoryId),
     getCategories(),
   ]);
 

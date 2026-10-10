@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   TrendingUp,
 } from "lucide-react";
-import { getAdminStatsServer } from "@/lib/get-admin-data";
+import adminServerRequest from "@/apiRequests/admin.server";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import Link from "next/link";
 
@@ -64,7 +64,7 @@ const statCards = [
 ];
 
 export default async function AdminDashboardPage() {
-  const stats = await getAdminStatsServer();
+  const stats = await adminServerRequest.getStats();
 
   if (!stats) {
     return (

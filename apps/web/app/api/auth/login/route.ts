@@ -1,5 +1,5 @@
 import { envConfig } from "@/configs/validate-env";
-import ms, { StringValue } from "ms";
+import { setAuthCookies } from "@/lib/auth-session";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
@@ -18,27 +18,9 @@ export async function POST(request: Request) {
   }
 
   const cookieStore = await cookies();
-
-  cookieStore.set("accessToken", data.data.accessToken, {
-    httpOnly: true,
-    secure: envConfig?.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(
-      Date.now() +
-        (ms(envConfig?.ACCESS_TOKEN_EXPIRES_IN as StringValue) as number),
-    ),
-  });
-
-  cookieStore.set("refreshToken", data.data.refreshToken, {
-    httpOnly: true,
-    secure: envConfig?.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(
-      Date.now() +
-        (ms(envConfig?.REFRESH_TOKEN_EXPIRES_IN as StringValue) as number),
-    ),
+  setAuthCookies(cookieStore, {
+    accessToken: data.data.accessToken,
+    refreshToken: data.data.refreshToken,
   });
 
   // Không trả token về client — client chỉ cần biết login thành công hay chưa

@@ -1,4 +1,4 @@
-import { getJobsServer } from "@/lib/get-job";
+import jobServerRequest from "@/apiRequests/job.server";
 import { FindWorkContent } from "./find-work-content";
 
 type FindWorkSearchParams = Promise<{
@@ -49,7 +49,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
-  const result = await getJobsServer({
+  const result = await jobServerRequest.getJobs({
     page,
     limit: 10,
     search: keyword,

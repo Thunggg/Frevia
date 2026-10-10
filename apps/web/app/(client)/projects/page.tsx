@@ -1,4 +1,4 @@
-import { getClientJobsServer } from "@/lib/get-job";
+import jobServerRequest from "@/apiRequests/job.server";
 import { ProjectsContent } from "./projects-content";
 
 export default async function ProjectsPage({
@@ -9,7 +9,7 @@ export default async function ProjectsPage({
   const { page: pageParam } = await searchParams;
   const parsedPage = Number(pageParam);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const result = await getClientJobsServer({ page, limit: 10 });
+  const result = await jobServerRequest.getClientJobs({ page, limit: 10 });
 
   return (
     <ProjectsContent

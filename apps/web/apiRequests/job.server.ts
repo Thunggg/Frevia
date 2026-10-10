@@ -16,8 +16,6 @@ type ServerFetchOptions = {
   requireAuth?: boolean;
 };
 
-type BookmarkStatus = { isBookmarked: boolean };
-
 function buildQueryString(params: object): string {
   const searchParams = new URLSearchParams();
 
@@ -36,7 +34,6 @@ function buildQueryString(params: object): string {
           searchParams.append(key, String(item));
         }
       }
-
       continue;
     }
 
@@ -55,7 +52,6 @@ function buildQueryString(params: object): string {
   }
 
   const queryString = searchParams.toString();
-
   return queryString ? `?${queryString}` : "";
 }
 
@@ -67,12 +63,10 @@ async function jobServerFetch<T>(
 
   if (!envConfig?.NESTJS_API_URL) {
     console.error("NESTJS_API_URL is not configured");
-
     return null;
   }
 
   const cookieStore = await cookies();
-
   const accessToken =
     cookieStore.get("accessToken")?.value ??
     cookieStore.get("access_token")?.value;
@@ -82,119 +76,85 @@ async function jobServerFetch<T>(
   }
 
   try {
-    const response = await fetch(`${envConfig?.NESTJS_API_URL}${url}`, {
+    const response = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
       method: "GET",
-
       headers: {
         Accept: "application/json",
-
-        ...(accessToken
-          ? {
-              Authorization: `Bearer ${accessToken}`,
-            }
-          : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-
       cache: "no-store",
     });
 
     const contentType = response.headers.get("content-type");
-
     if (!contentType?.includes("application/json")) {
       console.error(`Job API returned non-JSON response: ${url}`);
-
       return null;
     }
 
     const responseData = (await response.json()) as ApiResponse<T>;
-
     if (!response.ok || !responseData.success) {
       console.error(`Job API request failed: ${url}`, responseData);
-
       return null;
     }
 
     return responseData.data;
   } catch (error) {
     console.error(`Failed to fetch job API: ${url}`, error);
-
     return null;
   }
 }
 
 /**
- * UC-03.01
- * GET /api/jobs
+ * Server-side job reads (RSC).
+ * Client mutations stay in `apiRequests/job.ts`.
  */
-export async function getJobsServer(
-  params: ViewListJobFilterType = {},
-): Promise<ViewListJobResponseType | null> {
-  const queryString = buildQueryString(params);
+const jobServerRequest = {
+  /** UC-03.01 GET /api/jobs */
+  getJobs(params: ViewListJobFilterType = {}) {
+    return jobServerFetch<ViewListJobResponseType>(
+      `/api/jobs${buildQueryString(params)}`,
+    );
+  },
 
-  return jobServerFetch<ViewListJobResponseType>(`/api/jobs${queryString}`);
-}
+  /** UC-03.02 GET /api/jobs/:slug */
+  getJobDetail(slug: string) {
+    const normalizedSlug = slug.trim();
+    if (!normalizedSlug) return Promise.resolve(null);
+    return jobServerFetch<ViewJobDetailResType>(
+      `/api/jobs/${encodeURIComponent(normalizedSlug)}`,
+    );
+  },
 
-/**
- * UC-03.02
- * GET /api/jobs/:slug
- */
-export async function getJobDetailServer(
-  slug: string,
-): Promise<ViewJobDetailResType | null> {
-  const normalizedSlug = slug.trim();
+  /** UC-06.06 GET /api/manage-jobs/bookmarks */
+  getBookmarkedJobs(params: ViewBookmarkedJobFilterType = {}) {
+    return jobServerFetch<ViewBookmarkedJobResponseType>(
+      `/api/manage-jobs/bookmarks${buildQueryString(params)}`,
+      { requireAuth: true },
+    );
+  },
 
-  if (!normalizedSlug) {
-    return null;
-  }
+  getClientJobs(params: ViewListJobFilterType = {}) {
+    return jobServerFetch<ViewListJobResponseType>(
+      `/api/manage-jobs${buildQueryString(params)}`,
+      { requireAuth: true },
+    );
+  },
 
-  return jobServerFetch<ViewJobDetailResType>(
-    `/api/jobs/${encodeURIComponent(normalizedSlug)}`,
-  );
-}
+  getClientJobDetail(jobId: number | string) {
+    return jobServerFetch<ViewJobDetailResType>(
+      `/api/manage-jobs/${encodeURIComponent(String(jobId))}`,
+      { requireAuth: true },
+    );
+  },
 
-/**
- * UC-06.06
- * GET /api/manage-jobs/bookmarks
- */
-export async function getBookmarkedJobsServer(
-  params: ViewBookmarkedJobFilterType = {},
-): Promise<ViewBookmarkedJobResponseType | null> {
-  const queryString = buildQueryString(params);
+  getBookmarkStatus(slug: string) {
+    const normalizedSlug = slug.trim();
+    if (!normalizedSlug) return Promise.resolve(null);
+    return jobServerFetch<{ isBookmarked: boolean }>(
+      `/api/manage-jobs/jobs/${encodeURIComponent(normalizedSlug)}/bookmark`,
+      { requireAuth: true },
+    );
+  },
+};
 
-  return jobServerFetch<ViewBookmarkedJobResponseType>(
-    `/api/manage-jobs/bookmarks${queryString}`,
-    {
-      requireAuth: true,
-    },
-  );
-}
-
-export async function getClientJobsServer(
-  params: ViewListJobFilterType = {},
-): Promise<ViewListJobResponseType | null> {
-  return jobServerFetch<ViewListJobResponseType>(
-    `/api/manage-jobs${buildQueryString(params)}`,
-    { requireAuth: true },
-  );
-}
-
-export async function getClientJobDetailServer(
-  jobId: number | string,
-): Promise<ViewJobDetailResType | null> {
-  return jobServerFetch<ViewJobDetailResType>(
-    `/api/manage-jobs/${encodeURIComponent(String(jobId))}`,
-    { requireAuth: true },
-  );
-}
-
-export async function getBookmarkStatusServer(
-  slug: string,
-): Promise<BookmarkStatus | null> {
-  const normalizedSlug = slug.trim();
-  if (!normalizedSlug) return null;
-
-  return jobServerFetch<BookmarkStatus>(
-    `/api/manage-jobs/jobs/${encodeURIComponent(normalizedSlug)}/bookmark`,
-    { requireAuth: true },
-  );
-}
+export default jobServerRequest;

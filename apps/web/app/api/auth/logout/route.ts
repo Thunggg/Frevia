@@ -1,3 +1,4 @@
+import { clearAuthCookies } from "@/lib/auth-session";
 import { cookies } from "next/headers";
 import { envConfig } from "@/configs/validate-env";
 
@@ -14,8 +15,7 @@ export async function POST() {
     }).catch(() => null);
   }
 
-  cookieStore.delete("accessToken");
-  cookieStore.delete("refreshToken");
+  clearAuthCookies(cookieStore);
 
   return Response.json({ success: true });
 }
