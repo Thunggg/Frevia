@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   PermissionDetailResponseType,
+  PermissionFilterType,
   PermissionListResponseType,
 } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
@@ -16,9 +17,23 @@ export class PermissionsService {
 
   constructor(private readonly permissionsRepository: PermissionsRepository) {}
 
-  async getPermissions(): Promise<PermissionListResponseType> {
+  async getPermissions(
+    filter: PermissionFilterType,
+  ): Promise<PermissionListResponseType> {
     try {
-      return await this.permissionsRepository.findAll();
+      const { permissions, total, modules } =
+        await this.permissionsRepository.findAll(filter);
+
+      return {
+        permissions,
+        pagination: {
+          page: filter.page,
+          limit: filter.limit,
+          total,
+          totalPages: Math.ceil(total / filter.limit) || 0,
+        },
+        modules,
+      };
     } catch (error) {
       this.logger.error('Failed to load permissions', error);
       throw FailedToLoadPermissionsException();

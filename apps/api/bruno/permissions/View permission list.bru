@@ -5,9 +5,19 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/permissions
+  url: {{baseUrl}}/permissions?page=1&limit=10
   body: none
   auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: 
+  ~method: GET
+  ~module: PERMISSIONS
+  ~sortBy: id
+  ~order: asc
 }
 
 auth:bearer {

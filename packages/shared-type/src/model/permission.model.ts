@@ -1,5 +1,6 @@
 import { HttpMethod } from "../constants/http-method.constant";
 import { ManagePermissionMessage } from "../message/manage-permission.message";
+import { PaginationSchema } from "./forum-post.model";
 import { z } from "zod";
 
 export const PermissionSchema = z.object({
@@ -40,12 +41,35 @@ export const PermissionListItemSchema = PermissionSchema.pick({
   createdAt: true,
 });
 
-export const PermissionListResponseSchema = z.array(PermissionListItemSchema);
+export const PermissionFilterSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  search: z.string().trim().optional(),
+  method: z
+    .enum([
+      HttpMethod.GET,
+      HttpMethod.POST,
+      HttpMethod.PUT,
+      HttpMethod.PATCH,
+      HttpMethod.DELETE,
+    ])
+    .optional(),
+  module: z.string().trim().optional(),
+  sortBy: z.enum(["id", "createdAt"]).default("id"),
+  order: z.enum(["asc", "desc"]).default("asc"),
+});
+
+export const PermissionListResponseSchema = z.object({
+  permissions: z.array(PermissionListItemSchema),
+  pagination: PaginationSchema,
+  modules: z.array(z.string()),
+});
 
 export const PermissionDetailResponseSchema = PermissionListItemSchema;
 
 export type PermissionType = z.infer<typeof PermissionSchema>;
 export type PermissionListItemType = z.infer<typeof PermissionListItemSchema>;
+export type PermissionFilterType = z.infer<typeof PermissionFilterSchema>;
 export type PermissionListResponseType = z.infer<
   typeof PermissionListResponseSchema
 >;
