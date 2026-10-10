@@ -14,6 +14,7 @@ export const permissionKeys = {
   lists: () => [...permissionKeys.all, "list"] as const,
   list: (filter: Partial<PermissionFilterType>) =>
     [...permissionKeys.lists(), filter] as const,
+  allItems: () => [...permissionKeys.all, "all"] as const,
   detail: (id: number) => [...permissionKeys.all, "detail", id] as const,
 };
 
@@ -34,6 +35,16 @@ export function usePermissions(filter: Partial<PermissionFilterType> = {}) {
       permissionApiRequest.getPermissions(normalized).then(extractData),
     placeholderData: keepPreviousData,
     staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useAllPermissions(enabled = true) {
+  return useQuery({
+    queryKey: permissionKeys.allItems(),
+    queryFn: () =>
+      permissionApiRequest.getAllPermissions().then(extractData),
+    enabled,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

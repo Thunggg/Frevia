@@ -4,6 +4,8 @@ import type {
   DeleteRoleResponseType,
   RoleDetailResponseType,
   RoleListResponseType,
+  SetRolePermissionsBodyType,
+  SetRolePermissionsResponseType,
   UpdateRoleBodyType,
   UpdateRoleResponseType,
 } from "@shared/types";
@@ -16,6 +18,11 @@ export const roleApiRequest = {
     http.post<CreateRoleResponseType>("/api/roles", body),
   updateRole: (id: number, body: UpdateRoleBodyType) =>
     http.patch<UpdateRoleResponseType>(`/api/roles/${id}`, body),
+  setRolePermissions: (id: number, body: SetRolePermissionsBodyType) =>
+    http.put<SetRolePermissionsResponseType>(
+      `/api/roles/${id}/permissions`,
+      body,
+    ),
   deleteRole: (id: number) =>
     http.delete<DeleteRoleResponseType>(`/api/roles/${id}`),
 };

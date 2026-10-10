@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Shield,
+  UserCog,
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -49,6 +50,11 @@ const navItems: NavItem[] = [
     title: "Permissions",
     href: "/admin/permissions",
     icon: KeyRound,
+  },
+  {
+    title: "Assign Role",
+    href: "/admin/assign-role",
+    icon: UserCog,
   },
 ];
 
