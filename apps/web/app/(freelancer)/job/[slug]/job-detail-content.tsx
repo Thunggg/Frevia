@@ -1,20 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
+  ArrowLeft,
   Bookmark,
-  Building2,
   CalendarDays,
-  CheckCircle2,
   Clock,
   DollarSign,
-  MapPin,
+  Loader2,
 } from "lucide-react";
 
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
 import jobApiRequest from "@/apiRequests/job";
+import { Footer } from "@/components/footer";
+import { Header, type UserRole } from "@/components/header";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -27,16 +27,11 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
 import type { ViewJobDetailResType } from "@shared/types";
 
 type JobDetailContentProps = {
   job: ViewJobDetailResType;
+  role: UserRole;
   initialIsBookmarked: boolean;
 };
 
@@ -50,7 +45,7 @@ function formatBudget(job: ViewJobDetailResType) {
 
 function formatDate(value: string | Date | null) {
   if (!value) {
-    return "Not specified";
+    return "Not set";
   }
 
   return new Intl.DateTimeFormat("en-US", {
@@ -66,41 +61,61 @@ function formatPostedTime(value: string | Date) {
     Math.floor((Date.now() - new Date(value).getTime()) / (60 * 60 * 1000)),
   );
 
-  if (hours < 24) {
-    return `Posted ${hours || "just"} ${hours ? "hours" : "now"} ago`;
-  }
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours}h ago`;
 
-  return `Posted ${Math.floor(hours / 24)} days ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
-export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentProps) {
+function formatBudgetType(value: string) {
+  return value.replaceAll("_", " ");
+}
+
+export function JobDetailContent({
+  job,
+  role,
+  initialIsBookmarked,
+}: JobDetailContentProps) {
+  const router = useRouter();
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
-  const clientDetails = [
-    ["Jobs Posted", "Not available"],
-    ["Hire Rate", "Not available"],
-    ["Total Spent", "Not available"],
-    ["Member Since", "Not available"],
-  ];
+  const canBookmark = role === "FREELANCER";
 
-  const toggleBookmark = async () => {
-    if (isBookmarked) {
-      setIsRemoveDialogOpen(true);
+  const requireFreelancer = (action: () => void) => {
+    if (role === "GUEST") {
+      router.push("/login");
       return;
     }
-
-    setIsBookmarkLoading(true);
-
-    try {
-      await jobApiRequest.bookmarkJob(job.slug);
-      setIsBookmarked(true);
-      toastSuccess({ message: "Job saved to bookmarks" });
-    } catch {
-      toastError({ message: "Unable to update bookmark. Please try again." });
-    } finally {
-      setIsBookmarkLoading(false);
+    if (role !== "FREELANCER") {
+      toastError({ message: "Switch to a freelancer account to continue." });
+      return;
     }
+    action();
+  };
+
+  const toggleBookmark = () => {
+    requireFreelancer(() => {
+      if (isBookmarked) {
+        setIsRemoveDialogOpen(true);
+        return;
+      }
+
+      void (async () => {
+        setIsBookmarkLoading(true);
+        try {
+          await jobApiRequest.bookmarkJob(job.slug);
+          setIsBookmarked(true);
+          toastSuccess({ message: "Job saved to bookmarks" });
+        } catch {
+          toastError({
+            message: "Unable to update bookmark. Please try again.",
+          });
+        } finally {
+          setIsBookmarkLoading(false);
+        }
+      })();
+    });
   };
 
   const removeBookmark = async () => {
@@ -117,97 +132,159 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
     }
   };
 
+  const handleApply = () => {
+    requireFreelancer(() => {
+      toastError({
+        message: "Applying to jobs is not available yet.",
+      });
+    });
+  };
+
+  const summaryRows = [
+    { label: "Budget", value: formatBudget(job) },
+    { label: "Budget type", value: formatBudgetType(job.budgetType) },
+    { label: "Posted", value: formatPostedTime(job.createdAt) },
+    { label: "Deadline", value: formatDate(job.deadline) },
+    { label: "Expires", value: formatDate(job.expiryDate) },
+    { label: "Status", value: job.status.replaceAll("_", " ") },
+  ];
+
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Header role="FREELANCER" />
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
+      <Header role={role} />
 
       <main className="flex-1">
-        <section className="border-b bg-secondary/30">
-          <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-foreground/60">
               <nav className="flex min-w-0 items-center gap-2">
-                <Link href="/" className="hover:text-foreground">
+                <Link href="/" className="transition-colors hover:text-[#4fae2e]">
                   Home
                 </Link>
-                <span>/</span>
-                <Link href="/find-work" className="hover:text-foreground">
+                <span className="text-foreground/35">/</span>
+                <Link
+                  href="/find-work"
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
                   Find Work
                 </Link>
-                <span>/</span>
-                <span className="truncate text-foreground">{job.title}</span>
+                <span className="text-foreground/35">/</span>
+                <span className="truncate font-medium text-foreground">
+                  {job.title}
+                </span>
               </nav>
               <Link
                 href="/find-work"
-                className="shrink-0 hover:text-foreground"
+                className="inline-flex items-center gap-1.5 font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
               >
-                ← Back to Jobs
+                <ArrowLeft className="size-4" />
+                Back to jobs
               </Link>
             </div>
 
-            <div className="mt-6 flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
-              <div>
+            <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 max-w-3xl">
                 <div className="mb-4 flex flex-wrap gap-2">
-                  {job.featured && <Badge>Featured</Badge>}
-                  <Badge variant="outline">{job.budgetType.replaceAll("_", " ")}</Badge>
+                  {job.featured ? (
+                    <Badge className="bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
+                      Featured
+                    </Badge>
+                  ) : null}
+                  <Badge
+                    variant="outline"
+                    className="border-[#4fae2e]/35 bg-background/50"
+                  >
+                    {formatBudgetType(job.budgetType)}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="border-border bg-background/50"
+                  >
+                    {job.status.replaceAll("_", " ")}
+                  </Badge>
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+
+                <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                   {job.title}
                 </h1>
-                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="size-4" /> Remote (Worldwide)
+
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-foreground/70 dark:text-foreground/75">
+                  <span className="inline-flex items-center gap-1.5">
+                    <DollarSign className="size-4 text-[#4fae2e]" />
+                    {formatBudget(job)}
                   </span>
-                  <span className="flex items-center gap-1.5 text-primary">
-                    <DollarSign className="size-4" /> {formatBudget(job)}
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="size-4 text-[#4fae2e]" />
+                    {formatPostedTime(job.createdAt)}
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <Building2 className="size-4" /> Client #{job.clientId}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="size-4" /> {formatPostedTime(job.createdAt)}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-destructive">
-                    <CalendarDays className="size-4" /> Deadline: {formatDate(job.deadline)}
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="size-4 text-[#4fae2e]" />
+                    Deadline {formatDate(job.deadline)}
                   </span>
                 </div>
               </div>
 
-              <div className="flex shrink-0 gap-2">
+              <div className="flex shrink-0 flex-wrap gap-2 lg:pt-1">
+                {canBookmark || role === "GUEST" ? (
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="size-11 border-[#4fae2e]/35 bg-background/60"
+                    aria-label={
+                      isBookmarked ? "Remove bookmark" : "Save job"
+                    }
+                    disabled={isBookmarkLoading}
+                    onClick={toggleBookmark}
+                  >
+                    {isBookmarkLoading ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Bookmark
+                        className={`size-4 ${
+                          isBookmarked
+                            ? "fill-[#4fae2e] text-[#4fae2e]"
+                            : ""
+                        }`}
+                      />
+                    )}
+                  </Button>
+                ) : null}
                 <Button
-                  size="icon"
-                  variant={isBookmarked ? "default" : "outline"}
-                  aria-label={isBookmarked ? "Remove bookmark" : "Save job"}
-                  disabled={isBookmarkLoading}
-                  onClick={toggleBookmark}
+                  className="h-11 bg-[#4fae2e] px-6 font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+                  onClick={handleApply}
                 >
-                  <Bookmark className={isBookmarked ? "size-4 fill-current" : "size-4"} />
+                  Apply now
                 </Button>
-                <Button>Apply Now</Button>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-8">
-          <article className="lg:col-span-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-12">
+          <article className="lg:col-span-8">
             <section>
-              <h2 className="text-2xl font-bold">Job Description</h2>
-              <p className="mt-5 whitespace-pre-wrap text-[15px] leading-7 text-muted-foreground">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                Job description
+              </h2>
+              <p className="mt-4 whitespace-pre-wrap text-[15px] leading-7 text-muted-foreground">
                 {job.description ?? "No description provided yet."}
               </p>
             </section>
 
-            <section className="mt-10">
-              <h3 className="text-sm font-bold uppercase tracking-wide">
-                Skills Required
-              </h3>
+            <section className="mt-10 border-t border-border pt-10">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                Skills required
+              </h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {job.skills.length ? (
                   job.skills.map((skill) => (
-                    <Badge key={skill.skillId} variant="secondary">
-                      <CheckCircle2 className="mr-1 size-3.5" />
+                    <Link
+                      key={skill.skillId}
+                      href={`/find-work?keyword=${encodeURIComponent(skill.skill.name)}`}
+                      className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
+                    >
                       {skill.skill.name}
-                    </Badge>
+                    </Link>
                   ))
                 ) : (
                   <p className="text-sm text-muted-foreground">
@@ -218,54 +295,67 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
             </section>
           </article>
 
-          <aside>
-            <Card className="sticky top-24 border-border shadow-sm">
-              <CardHeader className="border-b pb-4">
-                <CardTitle className="text-xl">About the Client</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5 pt-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-14 items-center justify-center rounded-lg border bg-secondary text-primary">
-                    <Building2 className="size-7" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Client #{job.clientId}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Client information is limited
-                    </p>
-                  </div>
-                </div>
+          <aside className="lg:col-span-4">
+            <div className="sticky top-20 space-y-4 rounded-xl border border-border bg-background p-5 sm:p-6">
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                Project summary
+              </h2>
 
-                <dl className="divide-y border-y">
-                  {clientDetails.map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between py-3 text-sm">
-                      <dt className="text-muted-foreground">{label}</dt>
-                      <dd className="font-medium">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
+              <dl className="divide-y divide-border border-y border-border">
+                {summaryRows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-center justify-between gap-4 py-3 text-sm"
+                  >
+                    <dt className="text-muted-foreground">{row.label}</dt>
+                    <dd className="text-right font-medium text-foreground">
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-                <Button className="w-full" variant="outline" disabled>
-                  View Client Profile
+              <div className="border-t border-border pt-4">
+                <p className="text-sm font-medium text-foreground">Client</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  View the client profile for more context before you apply.
+                </p>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="mt-3 h-11 w-full"
+                >
+                  <Link href={`/clients/${job.clientId}`}>
+                    View client profile
+                  </Link>
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </aside>
         </div>
       </main>
-      <AlertDialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+
+      <AlertDialog
+        open={isRemoveDialogOpen}
+        onOpenChange={setIsRemoveDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
             <AlertDialogDescription>
-              This job will be removed from your Saved Jobs list. You can save it again later.
+              This job will be removed from your saved jobs. You can save it
+              again later.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isBookmarkLoading}>
               Cancel
             </AlertDialogCancel>
-            <Button variant="destructive" disabled={isBookmarkLoading} onClick={removeBookmark}>
+            <Button
+              variant="destructive"
+              disabled={isBookmarkLoading}
+              onClick={removeBookmark}
+            >
               {isBookmarkLoading ? "Removing..." : "Remove"}
             </Button>
           </AlertDialogFooter>
