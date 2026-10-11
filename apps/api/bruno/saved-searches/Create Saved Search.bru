@@ -1,0 +1,34 @@
+meta {
+  name: Create Saved Search
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/saved-searches
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "React Native jobs",
+    "searchParams": {
+      "search": "React Native",
+      "skills": ["React Native", "TypeScript"],
+      "budgetMin": 1000,
+      "budgetMax": 5000,
+      "sortBy": "createdAt",
+      "order": "desc"
+    }
+  }
+}

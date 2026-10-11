@@ -45,48 +45,48 @@ export class SharedFileService {
 
       throw FailedToLoadSharedFilesException();
     }
+  } // thêm dòng này
 
-    async uploadSharedFile(
-        userId: number,
-        roleName: string,
-        contractId: number,
-        file: Express.Multer.File,
-    ) {
-        try {
+  async uploadSharedFile(
+    userId: number,
+    roleName: string,
+    contractId: number,
+    file: Express.Multer.File,
+  ) {
+    try {
+      const contract =
+        await this.sharedFileRepository.findContractById(contractId);
+      if (!contract) {
+        throw ContractNotFoundException();
+      }
 
-            const contract = await this.sharedFileRepository.findContractById(contractId);
-            if (!contract) {
-                throw ContractNotFoundException();
-            }
+      const isParticipant =
+        contract.clientId === userId ||
+        contract.freelancerId === userId ||
+        roleName === RoleName.ADMIN;
 
-            const isParticipant =
-                contract.clientId === userId ||
-                contract.freelancerId === userId ||
-                roleName === RoleName.ADMIN;
+      if (!isParticipant) {
+        throw SharedFileForbiddenException();
+      }
 
-            if (!isParticipant) {
-                throw SharedFileForbiddenException();
-            }
+      const cloudinaryResult = await this.cloudinaryService.uploadFile(
+        file,
+        `frevia/contracts/${contractId}`,
+      );
 
-            const cloudinaryResult = await this.cloudinaryService.uploadFile(
-                file,
-                `frevia/contracts/${contractId}`,
-            );
+      return await this.sharedFileRepository.create({
+        contractId,
+        uploaderId: userId,
+        fileUrl: cloudinaryResult.secure_url,
+        publicId: cloudinaryResult.public_id,
+        fileName: file.originalname,
+      });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
 
-            return await this.sharedFileRepository.create({
-                contractId,
-                uploaderId: userId,
-                fileUrl: cloudinaryResult.secure_url,
-                publicId: cloudinaryResult.public_id,
-                fileName: file.originalname,
-            });
-        } catch (error) {
-            if (error instanceof HttpException) {
-                throw error;
-            }
-
-            throw FailedToUploadSharedFileException();
-        }
+      throw FailedToUploadSharedFileException();
     }
   }
 

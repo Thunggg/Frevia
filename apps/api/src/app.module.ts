@@ -28,6 +28,7 @@ import { MilestoneModule } from './routes/milestone/milestone.module';
 import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
 import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
+import { SavedSearchModule } from './routes/saved-search/saved-search.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AccountProfileModule } from './routes/account-profile/account-profile.m
     MilestoneFileModule,
     MilestoneSubmissionModule,
     AccountProfileModule,
+    SavedSearchModule,
   ],
   controllers: [AppController],
   providers: [

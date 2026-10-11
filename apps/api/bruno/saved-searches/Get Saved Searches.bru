@@ -1,0 +1,19 @@
+meta {
+  name: Get Saved Searches
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/saved-searches
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+}
