@@ -28,6 +28,7 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { RevokeSessionDialog } from "./revoke-session-dialog";
 import {
   SessionDetailDialog,
   ViewSessionButton,
@@ -280,7 +281,7 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                       </button>
                     </TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="w-14 text-right">Actions</TableHead>
+                    <TableHead className="w-24 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -314,17 +315,35 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                             {formatDate(session.expiresAt)}
                           </TableCell>
                           <TableCell>
-                            <Badge
-                              variant={expired ? "destructive" : "secondary"}
-                            >
-                              {expired ? "Expired" : "Active"}
-                            </Badge>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {session.isCurrent && (
+                                <Badge variant="default">Current</Badge>
+                              )}
+                              <Badge
+                                variant={expired ? "destructive" : "secondary"}
+                              >
+                                {expired ? "Expired" : "Active"}
+                              </Badge>
+                            </div>
                           </TableCell>
                           <TableCell className="text-right">
-                            <ViewSessionButton
-                              sessionId={session.id}
-                              onView={setDetailSessionId}
-                            />
+                            <div className="inline-flex items-center justify-end gap-1">
+                              <ViewSessionButton
+                                sessionId={session.id}
+                                onView={setDetailSessionId}
+                              />
+                              <RevokeSessionDialog
+                                sessionId={session.id}
+                                deviceInfo={session.deviceInfo}
+                                isCurrent={session.isCurrent}
+                                isExpired={expired}
+                                onRevoked={() => {
+                                  if (detailSessionId === session.id) {
+                                    setDetailSessionId(null);
+                                  }
+                                }}
+                              />
+                            </div>
                           </TableCell>
                         </TableRow>
                       );

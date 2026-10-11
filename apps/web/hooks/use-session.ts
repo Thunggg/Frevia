@@ -1,6 +1,11 @@
 import { sessionApiRequest } from "@/apiRequests/session";
 import type { ApiResponse, SessionFilterType } from "@shared/types";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 function extractData<T>(response: ApiResponse<T>): T {
   if (response.success && "data" in response) {
@@ -28,8 +33,7 @@ export function useSessions(filter: Partial<SessionFilterType> = {}) {
 
   return useQuery({
     queryKey: sessionKeys.list(normalized),
-    queryFn: () =>
-      sessionApiRequest.getSessions(normalized).then(extractData),
+    queryFn: () => sessionApiRequest.getSessions(normalized).then(extractData),
     placeholderData: keepPreviousData,
     staleTime: 2 * 60 * 1000,
   });
@@ -41,5 +45,18 @@ export function useSession(id: number, enabled = true) {
     queryFn: () => sessionApiRequest.getSession(id).then(extractData),
     enabled: enabled && id > 0,
     staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useRevokeSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      sessionApiRequest.revokeSession(id).then(extractData),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: sessionKeys.lists() });
+      queryClient.removeQueries({ queryKey: sessionKeys.detail(id) });
+    },
   });
 }

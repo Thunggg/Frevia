@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import {
   SessionDetailResponseType,
   SessionFilterType,
   SessionListItemType,
 } from '@shared/types';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { SessionNotFoundException } from './sessions.error';
+import {
+  SessionAlreadyExpiredException,
+  SessionNotFoundException,
+} from './sessions.error';
 
 const sessionSelect = {
   id: true,
@@ -24,6 +27,7 @@ export class SessionsRepository {
   async findAllByUserId(
     userId: number,
     filter: SessionFilterType,
+    currentSessionId?: number,
   ): Promise<{
     sessions: SessionListItemType[];
     total: number;
@@ -50,7 +54,9 @@ export class SessionsRepository {
       }),
     };
 
-    const [sessions, total] = await this.prisma.$transaction([
+    // rows: danh sách các session
+    // total: tổng số session
+    const [rows, total] = await this.prisma.$transaction([
       this.prisma.session.findMany({
         where,
         select: sessionSelect,
@@ -61,12 +67,19 @@ export class SessionsRepository {
       this.prisma.session.count({ where }),
     ]);
 
+    // Gắn isCurrent để UI biết session nào đang dùng
+    const sessions = rows.map((row) => ({
+      ...row,
+      isCurrent: currentSessionId != null && row.id === currentSessionId,
+    }));
+
     return { sessions, total };
   }
 
   async findByIdForUser(
     id: number,
     userId: number,
+    currentSessionId?: number,
   ): Promise<SessionDetailResponseType> {
     const session = await this.prisma.session.findFirst({
       where: { id, userId },
@@ -77,6 +90,31 @@ export class SessionsRepository {
       throw SessionNotFoundException();
     }
 
-    return session;
+    return {
+      ...session,
+      isCurrent: currentSessionId != null && session.id === currentSessionId,
+    };
+  }
+
+  /**
+   * Xóa session của đúng user.
+   * - Không tìm thấy → 404
+   * - Đã hết hạn → 400 (BR-02)
+   */
+  async deleteActiveByIdForUser(id: number, userId: number): Promise<void> {
+    const session = await this.prisma.session.findFirst({
+      where: { id, userId },
+      select: { id: true, expiresAt: true },
+    });
+
+    if (!session) {
+      throw SessionNotFoundException();
+    }
+
+    if (session.expiresAt.getTime() <= Date.now()) {
+      throw SessionAlreadyExpiredException();
+    }
+
+    await this.prisma.session.delete({ where: { id: session.id } });
   }
 }

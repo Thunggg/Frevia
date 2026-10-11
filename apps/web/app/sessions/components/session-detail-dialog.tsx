@@ -67,29 +67,23 @@ export function SessionDetailDialog({
           <div className="space-y-4 py-2">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm text-muted-foreground">Status</span>
-              <Badge variant={expired ? "destructive" : "secondary"}>
-                {expired ? "Expired" : "Active"}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {session.isCurrent && <Badge variant="default">Current</Badge>}
+                <Badge variant={expired ? "destructive" : "secondary"}>
+                  {expired ? "Expired" : "Active"}
+                </Badge>
+              </div>
             </div>
             <DetailRow label="ID" value={String(session.id)} mono />
             <DetailRow label="User ID" value={String(session.userId)} mono />
-            <DetailRow
-              label="Device"
-              value={session.deviceInfo || "—"}
-            />
+            <DetailRow label="Device" value={session.deviceInfo || "—"} />
             <DetailRow
               label="IP Address"
               value={session.ipAddress || "—"}
               mono
             />
-            <DetailRow
-              label="Created"
-              value={formatDate(session.createdAt)}
-            />
-            <DetailRow
-              label="Expires"
-              value={formatDate(session.expiresAt)}
-            />
+            <DetailRow label="Created" value={formatDate(session.createdAt)} />
+            <DetailRow label="Expires" value={formatDate(session.expiresAt)} />
           </div>
         )}
       </DialogContent>

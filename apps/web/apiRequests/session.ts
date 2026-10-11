@@ -1,9 +1,10 @@
+import { http } from "@/lib/http";
 import type {
+  RevokeSessionResponseType,
   SessionDetailResponseType,
   SessionFilterType,
   SessionListResponseType,
 } from "@shared/types";
-import { http } from "@/lib/http";
 
 function buildQueryString(
   params: Record<string, string | number | undefined>,
@@ -31,4 +32,6 @@ export const sessionApiRequest = {
   },
   getSession: (id: number) =>
     http.get<SessionDetailResponseType>(`/api/sessions/${id}`),
+  revokeSession: (id: number) =>
+    http.delete<RevokeSessionResponseType>(`/api/sessions/${id}`),
 };
