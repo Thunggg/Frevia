@@ -69,6 +69,7 @@ const roleConfig: Record<
     links: [
       { href: "/find-work", label: "Find Work" },
       { href: "/bookmarks", label: "Bookmarks" },
+      { href: "/saved-searches", label: "Saved searches" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -250,6 +251,12 @@ function ProfileDropdown({ role }: HeaderProps) {
               <Link href="/bookmarks" className="cursor-pointer">
                 <Bookmark className="size-4 text-muted-foreground" />
                 My Bookmarks
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/saved-searches" className="cursor-pointer">
+                <Search className="size-4 text-muted-foreground" />
+                Saved searches
               </Link>
             </DropdownMenuItem>
           </>

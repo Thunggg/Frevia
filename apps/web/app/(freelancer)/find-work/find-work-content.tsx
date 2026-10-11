@@ -40,7 +40,8 @@ import {
 } from "@repo/ui/components/shadcn/sheet";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { ViewListJobResponseType } from "@shared/types";
+import type { SavedSearchType, ViewListJobResponseType } from "@shared/types";
+import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
 
 type JobItem = ViewListJobResponseType["data"][number];
 
@@ -58,6 +59,7 @@ type FindWorkContentProps = {
   initialTime?: string;
   initialSort?: string;
   initialBookmarkedSlugs?: string[];
+  initialSavedSearches?: SavedSearchType[];
 };
 
 const BUDGET_LABELS: Record<string, string> = {
@@ -125,6 +127,7 @@ export function FindWorkContent({
   initialTime = "all",
   initialSort = "newest",
   initialBookmarkedSlugs = [],
+  initialSavedSearches = [],
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -149,6 +152,9 @@ export function FindWorkContent({
     totalPages: 0,
   };
   const canBookmark = role === "FREELANCER";
+  const currentSearchParams = Object.fromEntries(
+    Array.from(searchParams.entries()).filter(([, value]) => value !== ""),
+  );
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -190,6 +196,29 @@ export function FindWorkContent({
     event.preventDefault();
     event.stopPropagation();
     updateParams({ keyword: skillName });
+  };
+
+  const applySavedSearch = (id: string) => {
+    const savedSearch = initialSavedSearches.find(
+      (search) => search.id === Number(id),
+    );
+    if (!savedSearch) return;
+
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(savedSearch.searchParams)) {
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+      ) {
+        params.set(key, String(value));
+      }
+    }
+
+    const query = params.toString();
+    startTransition(() => {
+      router.push(query ? `/find-work?${query}` : "/find-work");
+    });
   };
 
   const toggleBookmark = async (slug: string, event: MouseEvent) => {
@@ -340,8 +369,29 @@ export function FindWorkContent({
         <div className="sticky top-15 z-30 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
           <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="hidden w-full max-w-3xl grid-cols-3 gap-3 lg:grid">
-                {filterControls}
+              <div className="hidden w-full max-w-6xl items-center gap-3 lg:flex">
+                <div className="grid flex-1 grid-cols-4 gap-3">
+                  {filterControls}
+                  <Select onValueChange={applySavedSearch}>
+                    <SelectTrigger className="h-11 w-full bg-background">
+                      <SelectValue placeholder="Saved searches" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {initialSavedSearches.length ? (
+                        initialSavedSearches.map((savedSearch) => (
+                          <SelectItem key={savedSearch.id} value={String(savedSearch.id)}>
+                            {savedSearch.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>
+                          No saved searches yet
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {canBookmark ? <SaveSearchDialog searchParams={currentSearchParams} /> : null}
               </div>
 
               <div className="flex items-center justify-between gap-3 lg:hidden">
@@ -370,13 +420,32 @@ export function FindWorkContent({
                       Show results
                     </Button>
                   </SheetContent>
-                </Sheet>
-              </div>
+                  </Sheet>
+                  <Select onValueChange={applySavedSearch}>
+                    <SelectTrigger className="h-11 w-auto min-w-40 bg-background">
+                      <SelectValue placeholder="Saved" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {initialSavedSearches.length ? (
+                        initialSavedSearches.map((savedSearch) => (
+                          <SelectItem key={savedSearch.id} value={String(savedSearch.id)}>
+                            {savedSearch.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>
+                          No saved searches yet
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {canBookmark ? <SaveSearchDialog searchParams={currentSearchParams} /> : null}
+                </div>
 
-              <p className="hidden text-sm text-muted-foreground lg:block">
-                {resultsLabel}
-              </p>
-            </div>
+               <p className="hidden text-sm text-muted-foreground lg:block">
+                 {resultsLabel}
+               </p>
+             </div>
 
             {hasActiveFilters ? (
               <div className="flex flex-wrap items-center gap-2">
