@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { Card, CardContent } from "@repo/ui/components/shadcn/card";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Separator } from "@repo/ui/components/shadcn/separator";
+import { useCallback, useState } from "react";
+import Link from "next/link";
 import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@repo/ui/components/shadcn/avatar";
+  Heart,
+  Inbox,
+  Loader2,
+  MessageSquare,
+  Pencil,
+  Send,
+  Trash2,
+} from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,22 +24,21 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import {
-  Heart,
-  Send,
-  Loader2,
-  MessageSquare,
-  Inbox,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
+import { Button } from "@repo/ui/components/shadcn/button";
 import type { ForumCommentType } from "@shared/types";
+
 import {
-  useForumComments,
   useCreateComment,
-  useUpdateComment,
   useDeleteComment,
+  useForumComments,
   useToggleCommentLike,
+  useUpdateComment,
 } from "@/hooks/use-forum";
+
 import { ReportDialog } from "./report-dialog";
 
 type CommentSectionProps = {
@@ -45,14 +46,23 @@ type CommentSectionProps = {
   currentUserId: number | null;
 };
 
+const brandButtonClass =
+  "gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]";
+
+function formatDate(value: string | Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
 export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
-  // lấy danh sách comments từ server
   const { data: commentsData, isLoading } = useForumComments(postId, 1, 50);
   const createComment = useCreateComment();
   const [newComment, setNewComment] = useState("");
   const isSubmitting = createComment.isPending;
 
-  // Xử lý tạo comment mới
   const handleSubmitComment = useCallback(() => {
     if (!newComment.trim() || isSubmitting) return;
 
@@ -60,7 +70,6 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
       { postId, content: newComment.trim() },
       {
         onSuccess: () => {
-          // Xóa input sau khi tạo thành công
           setNewComment("");
         },
       },
@@ -72,20 +81,20 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Section Header */}
       <div className="flex items-center gap-2">
-        <MessageSquare className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-semibold text-foreground">Comments</h2>
-        {pagination && (
-          <Badge variant="secondary" className="text-xs">
+        <MessageSquare className="size-5 text-[#4fae2e]" />
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          Comments
+        </h2>
+        {pagination ? (
+          <span className="rounded-full bg-[#eaf8df] px-2 py-0.5 text-xs font-medium text-[#4fae2e] dark:bg-[#12331f]">
             {pagination.total}
-          </Badge>
-        )}
+          </span>
+        ) : null}
       </div>
 
-      {/* Create Comment Form */}
-      <Card className="border-border/60">
-        <CardContent className="pt-4 pb-4">
+      {currentUserId ? (
+        <div className="rounded-xl border border-border p-4 sm:p-5">
           <div className="flex gap-3">
             <Avatar size="sm" className="mt-0.5">
               <AvatarFallback>Y</AvatarFallback>
@@ -96,7 +105,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={3}
-                className="w-full resize-none rounded-lg border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50"
+                className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4fae2e]/30 disabled:opacity-50"
                 disabled={isSubmitting}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -105,10 +114,10 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   }
                 }}
               />
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <p className="text-xs text-muted-foreground">
                   Press{" "}
-                  <kbd className="rounded border bg-muted px-1 py-0.5 text-[10px] font-medium">
+                  <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[10px] font-medium">
                     Ctrl+Enter
                   </kbd>{" "}
                   to submit
@@ -117,69 +126,73 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   size="sm"
                   onClick={handleSubmitComment}
                   disabled={!newComment.trim() || isSubmitting}
-                  className="gap-1.5 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
+                  className={brandButtonClass}
                 >
                   {isSubmitting ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <Loader2 className="size-3.5 animate-spin" />
                   ) : (
-                    <Send className="h-3.5 w-3.5" />
+                    <Send className="size-3.5" />
                   )}
                   Comment
                 </Button>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center sm:px-6">
+          <p className="text-sm text-muted-foreground">
+            <Link
+              href="/login"
+              className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+            >
+              Log in
+            </Link>{" "}
+            to join the discussion.
+          </p>
+        </div>
+      )}
 
-      {/* Loading skeleton khi đang fetch lần đầu */}
-      {isLoading && (
-        <div className="space-y-3">
+      {isLoading ? (
+        <div className="divide-y divide-border border-y border-border">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
-              <CardContent className="py-4">
-                <div className="flex gap-3">
-                  <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-1/3 rounded bg-muted animate-pulse" />
-                    <div className="h-3 w-full rounded bg-muted animate-pulse" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Comments List */}
-      {!isLoading && comments.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
-              <Inbox className="h-6 w-6 text-muted-foreground" />
+            <div key={i} className="flex gap-3 px-1 py-5">
+              <div className="size-8 shrink-0 animate-pulse rounded-full bg-muted" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                <div className="h-3 w-4/5 animate-pulse rounded bg-muted" />
+              </div>
             </div>
-            <p className="text-sm font-medium text-foreground">
-              No comments yet
-            </p>
-            <p className="mt-1 text-center text-sm text-muted-foreground">
-              Be the first to share your thoughts.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {!isLoading && comments.length > 0 && (
-        <div className="space-y-3">
-          {comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              postId={postId}
-              currentUserId={currentUserId}
-            />
           ))}
         </div>
-      )}
+      ) : null}
+
+      {!isLoading && comments.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+            <Inbox className="size-6" />
+          </div>
+          <p className="text-sm font-medium text-foreground">No comments yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Be the first to share your thoughts.
+          </p>
+        </div>
+      ) : null}
+
+      {!isLoading && comments.length > 0 ? (
+        <ul className="divide-y divide-border border-y border-border">
+          {comments.map((comment) => (
+            <li key={comment.id}>
+              <CommentItem
+                comment={comment}
+                postId={postId}
+                currentUserId={currentUserId}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
@@ -201,18 +214,17 @@ function CommentItem({
   const [editContent, setEditContent] = useState(comment.content);
 
   const isAuthor = currentUserId === comment.user.id;
-
-  // lấy từ cache thay vì useState
-  // TanStack Query tự quản lý, không cần local like state riêng
   const liked = comment.likedByMe;
   const likeCount = comment.likeCount;
+  const wasEdited =
+    new Date(comment.updatedAt).getTime() !==
+    new Date(comment.createdAt).getTime();
 
-  // Xử lý toggle like
   const handleToggleLike = useCallback(() => {
+    if (!currentUserId) return;
     toggleLike.mutate(comment.id);
-  }, [toggleLike, comment.id]);
+  }, [toggleLike, comment.id, currentUserId]);
 
-  // Xử lý lưu edit comment
   const handleSaveEdit = useCallback(() => {
     if (!editContent.trim() || updateComment.isPending) return;
 
@@ -226,162 +238,159 @@ function CommentItem({
     );
   }, [postId, comment.id, editContent, updateComment]);
 
-  // Xử lý xóa comment
   const handleDelete = useCallback(() => {
     deleteComment.mutate({ postId, commentId: comment.id });
   }, [deleteComment, postId, comment.id]);
 
   return (
-    <Card className="transition-colors hover:bg-muted/20 border-border/60">
-      <CardContent className="pt-4 pb-3">
-        <div className="flex gap-3">
-          <Avatar size="sm">
-            <AvatarImage
-              src={comment.user?.profile?.avatarUrl ?? undefined}
-              alt={comment.user?.profile?.displayName ?? "User"}
-            />
-            <AvatarFallback>
-              {comment.user?.profile?.displayName?.charAt(0)?.toUpperCase() ??
-                "?"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">
-                {comment.user?.profile?.displayName ??
-                  `User #${comment.user.id}`}
-              </span>
-              <Separator orientation="vertical" className="h-3" />
-              <span className="text-xs text-muted-foreground">
-                {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              {comment.updatedAt !== comment.createdAt && (
-                <>
-                  <Separator orientation="vertical" className="h-3" />
-                  <span className="text-xs text-muted-foreground italic">
-                    edited
-                  </span>
-                </>
-              )}
-            </div>
+    <div className="px-1 py-5 sm:px-2">
+      <div className="flex gap-3">
+        <Avatar size="sm">
+          <AvatarImage
+            src={comment.user?.profile?.avatarUrl ?? undefined}
+            alt={comment.user?.profile?.displayName ?? "User"}
+          />
+          <AvatarFallback>
+            {comment.user?.profile?.displayName?.charAt(0)?.toUpperCase() ??
+              "?"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-sm font-medium text-foreground">
+              {comment.user?.profile?.displayName ?? `User #${comment.user.id}`}
+            </span>
+            <span className="text-foreground/35">·</span>
+            <span className="text-xs text-muted-foreground">
+              {formatDate(comment.createdAt)}
+            </span>
+            {wasEdited ? (
+              <>
+                <span className="text-foreground/35">·</span>
+                <span className="text-xs italic text-muted-foreground">
+                  edited
+                </span>
+              </>
+            ) : null}
+          </div>
 
-            {/* Nội dung comment - hiển thị textarea khi đang edit */}
-            {isEditing ? (
-              <div className="mt-2 space-y-2">
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  rows={3}
-                  className="w-full resize-none rounded-lg border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+          {isEditing ? (
+            <div className="mt-2 space-y-2">
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                rows={3}
+                className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4fae2e]/30"
+                disabled={updateComment.isPending}
+                autoFocus
+              />
+              <div className="flex items-center gap-2">
+                <Button
+                  size="xs"
+                  onClick={handleSaveEdit}
+                  disabled={!editContent.trim() || updateComment.isPending}
+                  className={brandButtonClass}
+                >
+                  {updateComment.isPending ? (
+                    <Loader2 className="size-3 animate-spin" />
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditContent(comment.content);
+                  }}
                   disabled={updateComment.isPending}
-                  autoFocus
-                />
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="xs"
-                    onClick={handleSaveEdit}
-                    disabled={!editContent.trim() || updateComment.isPending}
-                  >
-                    {updateComment.isPending ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      "Save"
-                    )}
-                  </Button>
-                  <Button
-                    size="xs"
-                    variant="ghost"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setEditContent(comment.content);
-                    }}
-                    disabled={updateComment.isPending}
-                  >
-                    Cancel
-                  </Button>
-                </div>
+                >
+                  Cancel
+                </Button>
               </div>
-            ) : (
-              <p className="mt-1.5 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                {comment.content}
-              </p>
-            )}
+            </div>
+          ) : (
+            <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+              {comment.content}
+            </p>
+          )}
 
-            {/* Action buttons: Like, Edit, Delete, Report */}
-            <div className="mt-2.5 flex items-center gap-1">
+          <div className="mt-2.5 flex flex-wrap items-center gap-1">
+            {currentUserId ? (
               <Button
                 variant="ghost"
                 size="xs"
                 className={
                   liked
-                    ? "!text-red-500 hover:!text-red-600 hover:!bg-red-50 gap-1"
-                    : "text-muted-foreground hover:text-red-500 hover:bg-red-50 gap-1"
+                    ? "gap-1 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
+                    : "gap-1 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-[#12331f]/40"
                 }
                 onClick={handleToggleLike}
                 disabled={toggleLike.isPending}
               >
                 <Heart
-                  className={`h-3.5 w-3.5 transition-transform ${liked ? "fill-current scale-110" : ""}`}
+                  className={`size-3.5 transition-transform ${
+                    liked ? "scale-110 fill-current" : ""
+                  }`}
                 />
-                {likeCount > 0 && <span className="text-xs tabular-nums">{likeCount}</span>}
+                {likeCount > 0 ? (
+                  <span className="text-xs tabular-nums">{likeCount}</span>
+                ) : null}
                 <span className="text-xs">{liked ? "Liked" : "Like"}</span>
               </Button>
+            ) : null}
 
-              {isAuthor && !isEditing && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    className="gap-1 text-muted-foreground hover:text-foreground"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="xs"
-                        className="gap-1 text-muted-foreground hover:text-red-500"
+            {isAuthor && !isEditing ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className="gap-1 text-muted-foreground hover:text-foreground"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Pencil className="size-3.5" />
+                  Edit
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      className="gap-1 text-muted-foreground hover:text-red-500"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this comment? This
+                        action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        className="bg-destructive text-white hover:bg-destructive/90"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
                         Delete
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Comment</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete this comment? This
-                          action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDelete}
-                          className="bg-destructive text-white hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </>
-              )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
+            ) : null}
 
-              {!isAuthor && currentUserId && !isEditing && (
-                <ReportDialog postId={postId} commentId={comment.id} />
-              )}
-            </div>
+            {!isAuthor && currentUserId && !isEditing ? (
+              <ReportDialog postId={postId} commentId={comment.id} />
+            ) : null}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
