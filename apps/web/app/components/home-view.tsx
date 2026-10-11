@@ -62,9 +62,14 @@ export function HomeView({ user }: HomeViewProps) {
   const headline = isLoggedIn
     ? `Welcome back, ${displayName}`
     : "Work finds the right people";
+  const headlineWords = headline.split(/\s+/).filter(Boolean);
   const subtext = isLoggedIn
     ? "Continue where you left off: projects, freelancers, or the community forum."
     : "Hire freelancers, find paid work, and grow with a community that stays calm and clear.";
+
+  const wordBaseMs = 120;
+  const wordStepMs = 72;
+  const afterHeadlineMs = wordBaseMs + headlineWords.length * wordStepMs + 60;
 
   return (
     <div
@@ -94,19 +99,32 @@ export function HomeView({ user }: HomeViewProps) {
             </div>
 
             <h1
-              className={`${styles.display} mt-8 text-[2.15rem] leading-[1.15] tracking-tight text-foreground sm:text-5xl sm:leading-[1.12] lg:text-[3.25rem] ${styles.reveal} ${styles.revealDelay2}`}
+              className={`${styles.display} mt-8 text-[2.15rem] leading-[1.15] tracking-tight text-foreground sm:text-5xl sm:leading-[1.12] lg:text-[3.25rem]`}
             >
-              {headline}
+              {headlineWords.map((word, i) => (
+                <span
+                  key={`${word}-${i}`}
+                  className={styles.headlineWord}
+                  style={{
+                    animationDelay: `${wordBaseMs + i * wordStepMs}ms`,
+                  }}
+                >
+                  {word}
+                  {i < headlineWords.length - 1 ? "\u00A0" : null}
+                </span>
+              ))}
             </h1>
 
             <p
-              className={`mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75 ${styles.reveal} ${styles.revealDelay3}`}
+              className={`mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75 ${styles.reveal}`}
+              style={{ animationDelay: `${afterHeadlineMs}ms` }}
             >
               {subtext}
             </p>
 
             <div
-              className={`mt-9 flex flex-wrap items-center justify-center gap-3 ${styles.reveal} ${styles.revealDelay4}`}
+              className={`mt-9 flex flex-wrap items-center justify-center gap-3 ${styles.reveal}`}
+              style={{ animationDelay: `${afterHeadlineMs + 110}ms` }}
             >
               <Button
                 asChild
@@ -138,7 +156,8 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
 
           <div
-            className={`mx-auto w-full max-w-5xl px-4 pb-10 sm:px-6 sm:pb-14 ${styles.reveal} ${styles.revealDelay5}`}
+            className={`mx-auto w-full max-w-5xl px-4 pb-10 sm:px-6 sm:pb-14 ${styles.reveal}`}
+            style={{ animationDelay: `${afterHeadlineMs + 220}ms` }}
           >
             <HeroSlider />
           </div>

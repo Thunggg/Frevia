@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import styles from "./home-view.module.css";
 
@@ -21,29 +21,50 @@ const SLIDES = [
   },
 ] as const;
 
-const AUTO_MS = 5500;
+export const HERO_AUTO_MS = 5500;
 
 export function HeroSlider() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [cycle, setCycle] = useState(0);
+  const remainingRef = useRef(HERO_AUTO_MS);
 
   const goTo = useCallback((next: number) => {
+    remainingRef.current = HERO_AUTO_MS;
     setIndex(((next % SLIDES.length) + SLIDES.length) % SLIDES.length);
+    setCycle((c) => c + 1);
   }, []);
 
   const prev = useCallback(() => goTo(index - 1), [goTo, index]);
   const next = useCallback(() => goTo(index + 1), [goTo, index]);
 
   useEffect(() => {
-    if (paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    setReducedMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    );
+  }, []);
 
-    const id = window.setInterval(() => {
+  useEffect(() => {
+    remainingRef.current = HERO_AUTO_MS;
+  }, [cycle]);
+
+  useEffect(() => {
+    if (paused || reducedMotion) return;
+
+    const start = Date.now();
+    const wait = remainingRef.current;
+    const id = window.setTimeout(() => {
+      remainingRef.current = HERO_AUTO_MS;
       setIndex((current) => (current + 1) % SLIDES.length);
-    }, AUTO_MS);
+      setCycle((c) => c + 1);
+    }, wait);
 
-    return () => window.clearInterval(id);
-  }, [paused]);
+    return () => {
+      window.clearTimeout(id);
+      remainingRef.current = Math.max(0, wait - (Date.now() - start));
+    };
+  }, [paused, reducedMotion, cycle]);
 
   return (
     <div
@@ -57,19 +78,22 @@ export function HeroSlider() {
         }
       }}
     >
-      <div className={styles.heroSliderViewport} aria-roledescription="carousel">
-        <div
-          className={styles.heroSliderTrack}
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
-          {SLIDES.map((slide, i) => (
+      <div
+        className={styles.heroSliderViewport}
+        aria-roledescription="carousel"
+      >
+        {SLIDES.map((slide, i) => {
+          const active = i === index;
+          return (
             <div
               key={slide.src}
-              className={styles.heroSlide}
-              aria-hidden={i !== index}
+              className={`${styles.heroSlide} ${
+                active ? styles.heroSlideActive : ""
+              }`}
+              aria-hidden={!active}
             >
               <Image
-                key={i === index ? `live-${index}` : slide.src}
+                key={active ? `live-${index}-${cycle}` : slide.src}
                 src={slide.src}
                 alt={slide.alt}
                 width={1600}
@@ -77,12 +101,12 @@ export function HeroSlider() {
                 priority={i === 0}
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 className={`${styles.heroPhoto} ${
-                  i === index ? styles.heroPhotoLive : ""
+                  active && !reducedMotion ? styles.heroPhotoLive : ""
                 }`}
               />
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
       <button
@@ -103,19 +127,33 @@ export function HeroSlider() {
       </button>
 
       <div className={styles.heroSliderDots} role="tablist" aria-label="Slides">
-        {SLIDES.map((slide, i) => (
-          <button
-            key={slide.src}
-            type="button"
-            role="tab"
-            aria-selected={i === index}
-            aria-label={`Show slide ${i + 1}`}
-            className={`${styles.heroSliderDot} ${
-              i === index ? styles.heroSliderDotActive : ""
-            }`}
-            onClick={() => goTo(i)}
-          />
-        ))}
+        {SLIDES.map((slide, i) => {
+          const active = i === index;
+          return (
+            <button
+              key={slide.src}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              aria-label={`Show slide ${i + 1}`}
+              className={`${styles.heroSliderDot} ${
+                active ? styles.heroSliderDotActive : ""
+              }`}
+              onClick={() => goTo(i)}
+            >
+              {active && !reducedMotion ? (
+                <span
+                  key={`progress-${cycle}`}
+                  className={styles.heroSliderDotProgress}
+                  style={{
+                    animationDuration: `${HERO_AUTO_MS}ms`,
+                    animationPlayState: paused ? "paused" : "running",
+                  }}
+                />
+              ) : null}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
