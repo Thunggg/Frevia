@@ -85,6 +85,46 @@ export class ForumService {
     }
   }
 
+  async getForumCategoryBySlug(
+    slug: string,
+  ): Promise<ForumCategoryDetailResponseType> {
+    try {
+      const category = await this.forumRepository.findForumCategoryBySlug(slug);
+      if (!category) {
+        throw ForumCategoryNotFoundException();
+      }
+      return await this.forumRepository.getForumCategoryById(category.id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadForumCategoriesException();
+      }
+      throw error;
+    }
+  }
+
+  async getForumPostBySlug(
+    slug: string,
+  ): Promise<ViewForumPostDetailResponseType> {
+    try {
+      const post = await this.forumRepository.findForumPostBySlug(slug);
+      if (!post) {
+        throw ForumPostNotFoundException();
+      }
+      return await this.forumRepository.viewForumPostDetail(post.id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToViewForumPostException();
+      }
+      throw error;
+    }
+  }
+
   async getForumPostLists(
     // Sử dụng filter để lọc danh sách forum posts theo categoryId, userId, page, limit
     filter: ForumPostFilterType,

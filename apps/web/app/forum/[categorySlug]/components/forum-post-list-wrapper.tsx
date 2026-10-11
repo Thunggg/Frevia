@@ -11,6 +11,7 @@ import { ForumPostList } from "./forum-post-list";
 type ForumPostListWrapperProps = {
   filter: ForumPostFilterType;
   categoryId: number;
+  categorySlug: string;
   categoryName: string;
   currentSearch?: string;
   currentUserId: number | null;
@@ -73,6 +74,7 @@ function ListSkeleton() {
 export function ForumPostListWrapper({
   filter,
   categoryId,
+  categorySlug,
   categoryName,
   currentSearch,
   currentUserId,
@@ -108,6 +110,7 @@ export function ForumPostListWrapper({
         posts={filteredPosts}
         pagination={pagination}
         categoryId={categoryId}
+        categorySlug={categorySlug}
         categoryName={categoryName}
         currentSearch={currentSearch}
         currentUserId={currentUserId}

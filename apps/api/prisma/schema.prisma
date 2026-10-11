@@ -780,6 +780,7 @@ model ReviewResponse {
 model ForumCategory {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(280)
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -795,6 +796,7 @@ model ForumPost {
   categoryId Int?
   userId     Int
   title      String    @db.VarChar(255)
+  slug       String    @unique @db.VarChar(320)
   content    String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

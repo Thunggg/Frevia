@@ -5,12 +5,13 @@ import authServerRequest from "@/apiRequests/auth.server";
 import forumServerRequest from "@/apiRequests/forum.server";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { extractIdFromSlug } from "@/lib/slug-utils";
 import { RoleName } from "@shared/types";
 
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
 
 type ForumCategoryDetailPageProps = {
-  params: Promise<{ categoryId: string }>;
+  params: Promise<{ categorySlug: string }>;
   searchParams: Promise<{
     page?: string;
     limit?: string;
@@ -37,11 +38,11 @@ export default async function ForumCategoryDetailPage({
   params,
   searchParams,
 }: ForumCategoryDetailPageProps) {
-  const { categoryId: categoryIdParam } = await params;
+  const { categorySlug } = await params;
   const { page, limit, search, myPosts } = await searchParams;
-  const categoryId = Number(categoryIdParam);
+  const categoryId = extractIdFromSlug(categorySlug);
 
-  if (!Number.isInteger(categoryId) || categoryId <= 0) {
+  if (!categoryId) {
     notFound();
   }
 
@@ -109,6 +110,7 @@ export default async function ForumCategoryDetailPage({
           <ForumPostListWrapper
             filter={filter}
             categoryId={category.id}
+            categorySlug={category.slug}
             categoryName={category.name}
             currentSearch={search}
             currentUserId={currentUserId}

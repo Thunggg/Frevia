@@ -86,7 +86,7 @@ export function ForumCategoryView({
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    href={`/forum/${category.id}`}
+                        href={`/forum/${category.slug}-${category.id}`}
                     className="group flex items-start gap-4 px-1 py-5 transition-colors hover:bg-[#f9fcf7]/60 sm:items-center sm:py-6 dark:hover:bg-white/[0.02]"
                   >
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
@@ -126,7 +126,7 @@ export function ForumCategoryView({
                   {topCategories.map((category) => (
                     <li key={category.id}>
                       <Link
-                        href={`/forum/${category.id}`}
+                    href={`/forum/${category.slug}-${category.id}`}
                         className="group flex items-center justify-between py-3 transition-colors hover:text-[#4fae2e]"
                       >
                         <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">

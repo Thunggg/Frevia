@@ -3,12 +3,15 @@
 import Link from "next/link";
 
 import { useForumPost } from "@/hooks/use-forum";
+import { buildSlugId } from "@/lib/slug-utils";
 
 import { PostDetailView } from "./post-detail-view";
 
 type PostDetailWrapperProps = {
   postId: number;
   categoryId: number;
+  categorySlug: string;
+  postSlug: string;
   currentUserId: number | null;
 };
 
@@ -125,6 +128,8 @@ function PostDetailSkeleton() {
 export function PostDetailWrapper({
   postId,
   categoryId,
+  categorySlug,
+  postSlug,
   currentUserId,
 }: PostDetailWrapperProps) {
   const { data: post, isLoading: isLoadingPost } = useForumPost(postId);
@@ -141,7 +146,7 @@ export function PostDetailWrapper({
           This post may have been deleted or the link is incorrect.
         </p>
         <Link
-          href={`/forum/${categoryId}`}
+          href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
           className="mt-6 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
         >
           Back to category
@@ -154,6 +159,7 @@ export function PostDetailWrapper({
     <PostDetailView
       post={post}
       categoryId={categoryId}
+      categorySlug={categorySlug}
       currentUserId={currentUserId}
     />
   );

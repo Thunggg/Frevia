@@ -12,6 +12,7 @@ import {
   ForumCategoryNotFoundException,
   ForumPostNotFoundException,
 } from './forums.error';
+import { createCategorySlug, createPostSlug } from './forums.slug';
 
 @Injectable()
 export class ForumRepository {
@@ -21,7 +22,7 @@ export class ForumRepository {
   async getForumCategories(): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
     >[]
   > {
     const categories = await this.prisma.forumCategory.findMany({
@@ -31,6 +32,7 @@ export class ForumRepository {
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         createdAt: true,
         updatedAt: true,
@@ -48,6 +50,7 @@ export class ForumRepository {
     return categories.map((c) => ({
       id: c.id,
       name: c.name,
+      slug: c.slug,
       description: c.description,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
@@ -61,7 +64,7 @@ export class ForumRepository {
   ): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
     >[]
   > {
     const categories = await this.prisma.forumCategory.findMany({
@@ -71,6 +74,7 @@ export class ForumRepository {
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         createdAt: true,
         updatedAt: true,
@@ -89,6 +93,7 @@ export class ForumRepository {
     return categories.map((c) => ({
       id: c.id,
       name: c.name,
+      slug: c.slug,
       description: c.description,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
@@ -155,7 +160,7 @@ export class ForumRepository {
   ): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
     >
   > {
     // DÙng findFirst để tìm kiếm forum category theo id và deletedAt = null (chỉ lấy các category đang active)
@@ -167,6 +172,7 @@ export class ForumRepository {
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         createdAt: true,
         updatedAt: true,
@@ -185,11 +191,26 @@ export class ForumRepository {
     return {
       id: forumCategory.id,
       name: forumCategory.name,
+      slug: forumCategory.slug,
       description: forumCategory.description,
       createdAt: forumCategory.createdAt,
       updatedAt: forumCategory.updatedAt,
       postCount: forumCategory._count.posts,
     };
+  }
+
+  async findForumCategoryBySlug(
+    slug: string,
+  ): Promise<Pick<ForumCategoryType, 'id'> | null> {
+    return this.prisma.forumCategory.findFirst({
+      where: {
+        slug,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 
   async getForumPostLists(filter: ForumPostFilterType) {
@@ -217,6 +238,7 @@ export class ForumRepository {
           categoryId: true,
           userId: true,
           title: true,
+          slug: true,
           content: true,
           createdAt: true,
           updatedAt: true,
@@ -254,6 +276,7 @@ export class ForumRepository {
         categoryId: p.categoryId,
         userId: p.userId,
         title: p.title,
+        slug: p.slug,
         content: p.content,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
@@ -271,11 +294,14 @@ export class ForumRepository {
     title: string,
     content: string,
   ): Promise<ForumPostType> {
+    const slug = createPostSlug(title);
+
     return this.prisma.forumPost.create({
       data: {
         categoryId,
         userId,
         title,
+        slug,
         content,
       },
       select: {
@@ -283,6 +309,7 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -301,15 +328,17 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
 
-        // Lấy ID và tên Category của post hiện tại
+        // Lấy ID, tên và slug Category của post hiện tại
         category: {
           select: {
             id: true,
             name: true,
+            slug: true,
           },
         },
 
@@ -346,9 +375,24 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
+      },
+    });
+  }
+
+  async findForumPostBySlug(
+    slug: string,
+  ): Promise<Pick<ForumPostType, 'id'> | null> {
+    return this.prisma.forumPost.findFirst({
+      where: {
+        slug,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
       },
     });
   }
@@ -367,6 +411,7 @@ export class ForumRepository {
           categoryId: data.categoryId,
         }),
         title: data.title,
+        slug: createPostSlug(data.title),
         content: data.content,
       },
       select: {
@@ -374,6 +419,7 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -395,6 +441,7 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -420,6 +467,7 @@ export class ForumRepository {
         categoryId: true,
         userId: true,
         title: true,
+        slug: true,
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -438,6 +486,7 @@ export class ForumRepository {
           select: {
             id: true,
             name: true,
+            slug: true,
           },
         },
         _count: {
@@ -460,6 +509,7 @@ export class ForumRepository {
       categoryId: p.categoryId,
       userId: p.userId,
       title: p.title,
+      slug: p.slug,
       content: p.content,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,

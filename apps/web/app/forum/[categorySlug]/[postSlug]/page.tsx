@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { extractIdFromSlug } from "@/lib/slug-utils";
 import { RoleName } from "@shared/types";
 
 import { PostDetailWrapper } from "./components/post-detail-wrapper";
 
 type PostDetailPageProps = {
-  params: Promise<{ categoryId: string; postId: string }>;
+  params: Promise<{ categorySlug: string; postSlug: string }>;
 };
 
 function resolveHeaderRole(
@@ -26,16 +27,11 @@ function resolveHeaderRole(
 }
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
-  const { categoryId: categoryIdParam, postId: postIdParam } = await params;
-  const categoryId = Number(categoryIdParam);
-  const postId = Number(postIdParam);
+  const { categorySlug, postSlug } = await params;
+  const categoryId = extractIdFromSlug(categorySlug);
+  const postId = extractIdFromSlug(postSlug);
 
-  if (
-    !Number.isInteger(categoryId) ||
-    categoryId <= 0 ||
-    !Number.isInteger(postId) ||
-    postId <= 0
-  ) {
+  if (!categoryId || !postId) {
     notFound();
   }
 
@@ -50,6 +46,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         <PostDetailWrapper
           postId={postId}
           categoryId={categoryId}
+          categorySlug={categorySlug}
+          postSlug={postSlug}
           currentUserId={currentUserId}
         />
       </main>
