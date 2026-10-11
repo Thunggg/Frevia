@@ -35,6 +35,7 @@ import {
   useForumPostLikes,
   useTogglePostLike,
 } from "@/hooks/use-forum";
+import { buildSlugId } from "@/lib/slug-utils";
 
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
@@ -45,6 +46,7 @@ import { RelatedPostsSidebar } from "./related-posts-sidebar";
 type PostDetailViewProps = {
   post: ViewForumPostDetailResponseType;
   categoryId: number;
+  categorySlug: string;
   currentUserId: number | null;
 };
 
@@ -59,6 +61,7 @@ function formatDate(value: string | Date) {
 export function PostDetailView({
   post,
   categoryId,
+  categorySlug,
   currentUserId,
 }: PostDetailViewProps) {
   const router = useRouter();
@@ -93,10 +96,10 @@ export function PostDetailView({
   const handleDeletePost = useCallback(() => {
     deletePost.mutate(post.id, {
       onSuccess: () => {
-        router.push(`/forum/${resolvedCategoryId}`);
+        router.push(`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`);
       },
     });
-  }, [deletePost, post.id, resolvedCategoryId, router]);
+  }, [deletePost, post.id, categorySlug, resolvedCategoryId, router]);
 
   const handlePostUpdated = useCallback((title: string, content: string) => {
     setDisplayTitle(title);
@@ -123,7 +126,7 @@ export function PostDetailView({
             </Link>
             <span className="mx-2 text-foreground/25">/</span>
             <Link
-              href={`/forum/${resolvedCategoryId}`}
+              href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
               className="transition-colors hover:text-[#4fae2e]"
             >
               {categoryName}
@@ -137,7 +140,7 @@ export function PostDetailView({
           <p className="mt-4 text-[13px] text-foreground/50">
             Discussion in{" "}
             <Link
-              href={`/forum/${resolvedCategoryId}`}
+              href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
               className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
             >
               {categoryName}
@@ -275,6 +278,7 @@ export function PostDetailView({
             <div className="lg:sticky lg:top-20">
               <RelatedPostsSidebar
                 categoryId={resolvedCategoryId}
+                categorySlug={categorySlug}
                 currentPostId={post.id}
               />
             </div>

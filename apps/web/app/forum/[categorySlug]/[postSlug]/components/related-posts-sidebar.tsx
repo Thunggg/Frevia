@@ -10,9 +10,11 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 
 import { useForumPosts } from "@/hooks/use-forum";
+import { buildSlugId } from "@/lib/slug-utils";
 
 type RelatedPostsSidebarProps = {
   categoryId: number;
+  categorySlug: string;
   currentPostId: number;
 };
 
@@ -25,6 +27,7 @@ function formatDate(value: string | Date) {
 
 export function RelatedPostsSidebar({
   categoryId,
+  categorySlug,
   currentPostId,
 }: RelatedPostsSidebarProps) {
   const { data, isLoading } = useForumPosts({
@@ -65,7 +68,7 @@ export function RelatedPostsSidebar({
         {posts.map((post) => (
           <Link
             key={post.id}
-            href={`/forum/${categoryId}/${post.id}`}
+            href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
             className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-[#4fae2e]/5"
           >
             <Avatar size="sm" className="mt-0.5">
@@ -96,7 +99,7 @@ export function RelatedPostsSidebar({
         ))}
       </div>
       <Link
-        href={`/forum/${categoryId}`}
+        href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
         className="mt-3 block rounded-lg py-2 text-center text-[12px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/5 hover:text-[#3f9225]"
       >
         View all posts →

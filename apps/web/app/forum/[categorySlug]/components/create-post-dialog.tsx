@@ -17,10 +17,12 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Plus } from "lucide-react";
 import { useCreatePost } from "@/hooks/use-forum";
+import { buildSlugId } from "@/lib/slug-utils";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
 type CreatePostDialogProps = {
   categoryId: number;
+  categorySlug: string;
   categoryName: string;
   currentUserId: number | null;
 };
@@ -30,6 +32,7 @@ const brandButtonClass =
 
 export function CreatePostDialog({
   categoryId,
+  categorySlug,
   categoryName,
   currentUserId,
 }: CreatePostDialogProps) {
@@ -56,13 +59,13 @@ export function CreatePostDialog({
           setOpen(false);
           setTitle("");
           setContent("");
-          if (result?.id) {
-            router.push(`/forum/${categoryId}/${result.id}`);
+          if (result?.id && result?.slug) {
+            router.push(`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`);
           }
         },
       },
     );
-  }, [categoryId, title, content, isSubmitting, createPost, router]);
+  }, [categoryId, categorySlug, title, content, isSubmitting, createPost, router]);
 
   if (!currentUserId) {
     return (

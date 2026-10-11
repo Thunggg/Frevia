@@ -42,12 +42,15 @@ import type {
   PaginationMeta,
 } from "@shared/types";
 
+import { buildSlugId } from "@/lib/slug-utils";
+
 import { CreatePostDialog } from "./create-post-dialog";
 
 type ForumPostListProps = {
   posts: ForumPostWithUserType[];
   pagination: PaginationMeta;
   categoryId: number;
+  categorySlug: string;
   categoryName: string;
   currentSearch?: string;
   currentUserId: number | null;
@@ -74,6 +77,7 @@ export function ForumPostList({
   posts,
   pagination,
   categoryId,
+  categorySlug,
   categoryName,
   currentSearch,
   currentUserId,
@@ -102,10 +106,10 @@ export function ForumPostList({
       }
 
       startTransition(() => {
-        router.push(`/forum/${categoryId}?${params.toString()}`);
+        router.push(`/forum/${buildSlugId(categorySlug, categoryId)}?${params.toString()}`);
       });
     },
-    [router, categoryId, limit],
+    [router, categoryId, categorySlug, limit],
   );
 
   const handleSearchSubmit = useCallback(
@@ -208,6 +212,7 @@ export function ForumPostList({
           ) : null}
           <CreatePostDialog
             categoryId={categoryId}
+            categorySlug={categorySlug}
             categoryName={categoryName}
             currentUserId={currentUserId}
           />
@@ -276,7 +281,7 @@ export function ForumPostList({
                 {topPosts.map((post, index) => (
                   <li key={post.id}>
                     <Link
-                      href={`/forum/${post.categoryId ?? categoryId}/${post.id}`}
+                      href={`/forum/${buildSlugId(categorySlug, post.categoryId ?? categoryId)}/${buildSlugId(post.slug, post.id)}`}
                       className="group flex items-start gap-3 rounded-lg px-2.5 py-2.5 transition-colors hover:bg-[#f9fcf7]/60 dark:hover:bg-white/[0.02]"
                     >
                       <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[#4fae2e]/8 text-[11px] font-semibold text-[#4fae2e]/70">
@@ -364,7 +369,7 @@ export function ForumPostList({
                 {posts.map((post) => (
                   <Link
                     key={post.id}
-                    href={`/forum/${categoryId}/${post.id}`}
+                    href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
                     className="group block rounded-xl border border-border/40 bg-background px-5 py-5 transition-all hover:border-[#4fae2e]/20 hover:bg-[#f9fcf7]/60 hover:shadow-sm sm:py-6 dark:hover:bg-white/[0.02]"
                   >
                     <h3 className="text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-base">

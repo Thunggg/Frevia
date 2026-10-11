@@ -68,6 +68,13 @@ export class ForumController {
     return this.forumService.getForumCategoryById(id);
   }
 
+  @Get('categories/by-slug/:slug')
+  @IsPublic()
+  @ZodSerializerDto(ForumCategoryDetailResponseDto)
+  getForumCategoryBySlug(@Param('slug') slug: string) {
+    return this.forumService.getForumCategoryBySlug(slug);
+  }
+
   @Get('posts')
   @IsPublic()
   @ZodSerializerDto(ForumPostListResponseDto)
@@ -98,6 +105,13 @@ export class ForumController {
   @ZodSerializerDto(ViewForumPostDetailResponseDto)
   viewForumPostDetail(@Param('id', ParseIntPipe) id: number) {
     return this.forumService.viewForumPostDetail(id);
+  }
+
+  @Get('posts/by-slug/:slug')
+  @IsPublic()
+  @ZodSerializerDto(ViewForumPostDetailResponseDto)
+  getForumPostBySlug(@Param('slug') slug: string) {
+    return this.forumService.getForumPostBySlug(slug);
   }
 
   @Post('posts')
