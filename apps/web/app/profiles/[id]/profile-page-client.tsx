@@ -697,19 +697,17 @@ export function ProfilePageClient({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="about" className="mt-5 space-y-5">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>About me</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
-                      {profile.bio ||
-                        "This freelancer has not added a bio yet."}
-                    </p>
-                  </CardContent>
-                </Card>
-                <div className="grid gap-5 md:grid-cols-2">
+              <TabsContent value="about" className="mt-5 space-y-8">
+                <section>
+                  <h3 className="text-base font-semibold tracking-tight text-foreground">
+                    About me
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
+                    {profile.bio ||
+                      "This freelancer has not added a bio yet."}
+                  </p>
+                </section>
+                <div className="grid gap-8 md:grid-cols-2">
                   <DetailListCard
                     icon={GraduationCap}
                     title="Education"
@@ -732,224 +730,227 @@ export function ProfilePageClient({
               </TabsContent>
 
               <TabsContent value="skills" className="mt-5">
-                <Card>
-                  <CardHeader className="flex-row items-center justify-between">
-                    <div>
-                      <CardTitle>Professional skills</CardTitle>
-                      <CardDescription>
-                        Skill names and proficiency levels.
-                      </CardDescription>
-                    </div>
-                    {isOwner ? (
-                      <Button
-                        size="sm"
-                        onClick={() => setSkillEditorOpen(true)}
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      Professional skills
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Skill names and proficiency levels.
+                    </p>
+                  </div>
+                  {isOwner ? (
+                    <Button
+                      size="sm"
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={() => setSkillEditorOpen(true)}
+                    >
+                      <Plus /> Add skill
+                    </Button>
+                  ) : null}
+                </div>
+                {skills.length === 0 ? (
+                  <div className="mt-5">
+                    <SectionEmpty
+                      title="No skills added yet"
+                      description={
+                        isOwner
+                          ? "Add your first skill to help clients understand your expertise."
+                          : "This freelancer has not added any skills."
+                      }
+                    />
+                  </div>
+                ) : (
+                  <ul className="mt-5 divide-y divide-border border-y border-border">
+                    {skills.map((skill) => (
+                      <li
+                        key={skill.id}
+                        className="flex items-center gap-4 px-1 py-4 sm:px-2"
                       >
-                        <Plus /> Add skill
-                      </Button>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    {skills.length === 0 ? (
-                      <SectionEmpty
-                        title="No skills added yet"
-                        description={
-                          isOwner
-                            ? "Add your first skill to help clients understand your expertise."
-                            : "This freelancer has not added any skills."
-                        }
-                      />
-                    ) : (
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {skills.map((skill) => (
-                          <div key={skill.id} className="rounded-xl border p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="font-semibold">
-                                  {skill.skillName}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {getProficiencyLabel(skill.proficiencyLevel)}{" "}
-                                  · {skill.proficiencyLevel}/10
-                                </p>
-                              </div>
-                              {isOwner ? (
-                                <Button
-                                  variant="ghost"
-                                  size="icon-sm"
-                                  aria-label={`Delete ${skill.skillName}`}
-                                  onClick={() => setSkillToDelete(skill)}
-                                >
-                                  <Trash2 className="text-destructive" />
-                                </Button>
-                              ) : null}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-semibold text-foreground">
+                                {skill.skillName}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {getProficiencyLabel(skill.proficiencyLevel)} ·{" "}
+                                {skill.proficiencyLevel}/10
+                              </p>
                             </div>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                              <div
-                                className="h-full rounded-full bg-[#4fae2e]"
-                                style={{
-                                  width: `${skill.proficiencyLevel * 10}%`,
-                                }}
-                              />
-                            </div>
+                            {isOwner ? (
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                aria-label={`Delete ${skill.skillName}`}
+                                onClick={() => setSkillToDelete(skill)}
+                              >
+                                <Trash2 className="text-destructive" />
+                              </Button>
+                            ) : null}
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full rounded-full bg-[#4fae2e]"
+                              style={{
+                                width: `${skill.proficiencyLevel * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </TabsContent>
 
               <TabsContent value="portfolio" className="mt-5">
-                <Card>
-                  <CardHeader className="flex-row items-center justify-between">
-                    <div>
-                      <CardTitle>Portfolio</CardTitle>
-                      <CardDescription>
-                        Selected projects, work samples and technologies.
-                      </CardDescription>
-                    </div>
-                    {isOwner ? (
-                      <Button
-                        size="sm"
-                        onClick={() => openPortfolioEditor("new")}
-                      >
-                        <Plus /> Add portfolio
-                      </Button>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    {portfolios.length === 0 ? (
-                      <SectionEmpty
-                        title="No portfolios available"
-                        description={
-                          isOwner
-                            ? "Showcase your work by adding a portfolio project."
-                            : "This freelancer has not published a portfolio yet."
-                        }
-                      />
-                    ) : (
-                      <div className="grid gap-5 md:grid-cols-2">
-                        {portfolios.map((portfolio) => (
-                          <article
-                            key={portfolio.id}
-                            className="group overflow-hidden rounded-xl border bg-background"
-                          >
-                            <button
-                              type="button"
-                              className="block w-full text-left"
-                              onClick={() =>
-                                void showPortfolioDetail(portfolio)
-                              }
-                            >
-                              <div
-                                className="h-44 bg-[#eaf8df] bg-cover bg-center transition-transform group-hover:scale-[1.01] dark:bg-[#12331f]"
-                                style={
-                                  portfolio.mediaUrls[0]
-                                    ? {
-                                        backgroundImage: `url(${portfolio.mediaUrls[0]})`,
-                                      }
-                                    : undefined
-                                }
-                              />
-                              <div className="p-4">
-                                <h3 className="font-semibold group-hover:text-primary">
-                                  {portfolio.title}
-                                </h3>
-                                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                                  {portfolio.description ||
-                                    "No description provided."}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-1.5">
-                                  {portfolio.technologies
-                                    .slice(0, 4)
-                                    .map((technology) => (
-                                      <Badge
-                                        key={technology}
-                                        variant="secondary"
-                                      >
-                                        {technology}
-                                      </Badge>
-                                    ))}
-                                </div>
-                              </div>
-                            </button>
-                            {isOwner ? (
-                              <div className="flex justify-end gap-2 border-t p-3">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => openPortfolioEditor(portfolio)}
-                                >
-                                  <Pencil /> Edit
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-destructive"
-                                  onClick={() =>
-                                    setPortfolioToDelete(portfolio)
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      Portfolio
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Selected projects, work samples and technologies.
+                    </p>
+                  </div>
+                  {isOwner ? (
+                    <Button
+                      size="sm"
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={() => openPortfolioEditor("new")}
+                    >
+                      <Plus /> Add portfolio
+                    </Button>
+                  ) : null}
+                </div>
+                {portfolios.length === 0 ? (
+                  <div className="mt-5">
+                    <SectionEmpty
+                      title="No portfolios available"
+                      description={
+                        isOwner
+                          ? "Showcase your work by adding a portfolio project."
+                          : "This freelancer has not published a portfolio yet."
+                      }
+                    />
+                  </div>
+                ) : (
+                  <ul className="mt-5 divide-y divide-border border-y border-border">
+                    {portfolios.map((portfolio) => (
+                      <li key={portfolio.id} className="py-5">
+                        <button
+                          type="button"
+                          className="group flex w-full flex-col gap-4 text-left sm:flex-row"
+                          onClick={() => void showPortfolioDetail(portfolio)}
+                        >
+                          <div
+                            className="h-36 w-full shrink-0 rounded-lg bg-[#eaf8df] bg-cover bg-center sm:h-28 sm:w-40 dark:bg-[#12331f]"
+                            style={
+                              portfolio.mediaUrls[0]
+                                ? {
+                                    backgroundImage: `url(${portfolio.mediaUrls[0]})`,
                                   }
-                                >
-                                  <Trash2 /> Delete
-                                </Button>
-                              </div>
-                            ) : null}
-                          </article>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                                : undefined
+                            }
+                          />
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
+                              {portfolio.title}
+                            </h3>
+                            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                              {portfolio.description ||
+                                "No description provided."}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                              {portfolio.technologies
+                                .slice(0, 4)
+                                .map((technology) => (
+                                  <Badge
+                                    key={technology}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#12331f]"
+                                  >
+                                    {technology}
+                                  </Badge>
+                                ))}
+                            </div>
+                          </div>
+                        </button>
+                        {isOwner ? (
+                          <div className="mt-3 flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openPortfolioEditor(portfolio)}
+                            >
+                              <Pencil /> Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive"
+                              onClick={() => setPortfolioToDelete(portfolio)}
+                            >
+                              <Trash2 /> Delete
+                            </Button>
+                          </div>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </TabsContent>
             </Tabs>
 
-            <aside className="space-y-5">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Profile strength</CardTitle>
-                  <CardDescription>{completion}% complete</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-[#4fae2e]"
-                      style={{ width: `${completion}%` }}
-                    />
-                  </div>
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Complete your bio, professional details, skills and
-                    portfolio to stand out.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">At a glance</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
+            <aside className="space-y-6">
+              <div className="rounded-xl border border-border p-5 sm:p-6">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  Profile strength
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {completion}% complete
+                </p>
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-[#4fae2e]"
+                    style={{ width: `${completion}%` }}
+                  />
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Complete your bio, professional details, skills and portfolio
+                  to stand out.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border p-5 sm:p-6">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  At a glance
+                </h3>
+                <ul className="mt-4 divide-y divide-border text-sm">
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <CheckCircle2 className="size-4" /> Availability
+                      <CheckCircle2 className="size-4 text-[#4fae2e]" />{" "}
+                      Availability
                     </span>
                     <span className="font-medium capitalize">
                       {profile.availabilityStatus.toLowerCase()}
                     </span>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  </li>
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
                       <Award className="size-4 text-[#4fae2e]" /> Skills
                     </span>
                     <span className="font-medium">{skills.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  </li>
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <BriefcaseBusiness className="size-4" /> Projects
+                      <BriefcaseBusiness className="size-4 text-[#4fae2e]" />{" "}
+                      Projects
                     </span>
                     <span className="font-medium">{portfolios.length}</span>
-                  </div>
-                </CardContent>
-              </Card>
+                  </li>
+                </ul>
+              </div>
             </aside>
           </div>
         </div>
@@ -1405,27 +1406,23 @@ function DetailListCard({
   empty: string;
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Icon className="size-4 text-[#4fae2e]" /> {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {items?.length ? (
-          <ul className="space-y-2">
-            {items.map((item) => (
-              <li key={item} className="flex gap-2 text-sm">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">{empty}</p>
-        )}
-      </CardContent>
-    </Card>
+    <section>
+      <h3 className="flex items-center gap-2 text-base font-semibold tracking-tight text-foreground">
+        <Icon className="size-4 text-[#4fae2e]" /> {title}
+      </h3>
+      {items?.length ? (
+        <ul className="mt-3 divide-y divide-border border-y border-border">
+          {items.map((item) => (
+            <li key={item} className="flex gap-2 py-2.5 text-sm">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-muted-foreground">{empty}</p>
+      )}
+    </section>
   );
 }
 

@@ -15,7 +15,6 @@ import {
   Menu,
   MonitorSmartphone,
   Search,
-  Settings,
   ShieldCheck,
   SwitchCamera,
   UserRound,
@@ -67,7 +66,7 @@ const roleConfig: Record<
     name: "Freelancer",
     links: [
       { href: "/find-work", label: "Find Work" },
-      { href: "/proposals", label: "Proposals" },
+      { href: "/bookmarks", label: "Bookmarks" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -230,15 +229,6 @@ function ProfileDropdown({ role }: HeaderProps) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/proposals">
-                <FileText />
-                My Proposals
-                <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                  2
-                </span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
               <Link href="/bookmarks">
                 <Bookmark />
                 My Bookmarks
@@ -279,12 +269,6 @@ function ProfileDropdown({ role }: HeaderProps) {
           <Link href="/sessions">
             <MonitorSmartphone />
             Sessions
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">
-            <Settings />
-            Settings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

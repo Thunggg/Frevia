@@ -129,7 +129,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   };
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-r border-border bg-background">
+    <aside className="flex h-full w-full flex-col border-r border-border bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#12331f]/40">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
