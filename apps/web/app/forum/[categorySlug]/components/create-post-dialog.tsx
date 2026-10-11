@@ -16,6 +16,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Plus } from "lucide-react";
+import { toast } from "@repo/ui/components/shadcn/sonner";
 import { useCreatePost } from "@/hooks/use-forum";
 import { buildSlugId } from "@/lib/slug-utils";
 import { RichTextEditor } from "@/components/rich-text-editor";
@@ -60,12 +61,29 @@ export function CreatePostDialog({
           setTitle("");
           setContent("");
           if (result?.id && result?.slug) {
-            router.push(`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`);
+            router.push(
+              `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,
+            );
           }
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Something went wrong. Please try again.",
+          );
         },
       },
     );
-  }, [categoryId, categorySlug, title, content, isSubmitting, createPost, router]);
+  }, [
+    categoryId,
+    categorySlug,
+    title,
+    content,
+    isSubmitting,
+    createPost,
+    router,
+  ]);
 
   if (!currentUserId) {
     return (
