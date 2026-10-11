@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { NavMain, type NavItem } from "./nav-main";
+import { LogoutButton } from "./logout-button";
 
 const navItems: NavItem[] = [
   {
@@ -29,16 +30,12 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Posts",
-    href: "/admin/posts",
-    icon: FileText,
-  },
-  {
     title: "Forum",
     icon: MessageSquare,
     children: [
       { title: "Comments", href: "/admin/comments" },
       { title: "Reports", href: "/admin/reports" },
+      { title: "Posts", href: "/admin/posts" },
     ],
   },
   {
@@ -83,13 +80,16 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
+          {/* <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/forum">
                 <ArrowLeft />
                 <span>Back to Forum</span>
               </Link>
             </SidebarMenuButton>
+          </SidebarMenuItem> */}
+          <SidebarMenuItem>
+            <LogoutButton />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
