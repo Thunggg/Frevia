@@ -9,6 +9,7 @@ import type {
   ForumPostListResponseType,
   ForumAdminCommentListResponseType,
   ForumReportListResponseType,
+  IdentityVerificationAdminListResponseType,
 } from "@shared/types";
 
 function buildQueryString(
@@ -99,6 +100,24 @@ const adminServerRequest = {
     return (
       result ?? {
         reports: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getIdentityVerifications(
+    page: number = 1,
+    limit: number = 10,
+    status?: string,
+    search?: string,
+  ): Promise<IdentityVerificationAdminListResponseType> {
+    const query = buildQueryString({ page, limit, status, search });
+    const result = await adminServerFetch<IdentityVerificationAdminListResponseType>(
+      `/api/admin/identity-verifications${query}`,
+    );
+    return (
+      result ?? {
+        documents: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

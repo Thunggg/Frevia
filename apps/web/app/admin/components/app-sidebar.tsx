@@ -6,12 +6,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
-  ArrowLeft,
-  FileText,
+  IdCard,
   KeyRound,
   LayoutDashboard,
   MessageSquare,
@@ -19,7 +17,6 @@ import {
   UserCog,
   UsersRound,
 } from "lucide-react";
-import Link from "next/link";
 import { NavMain, type NavItem } from "./nav-main";
 import { LogoutButton } from "./logout-button";
 
@@ -52,6 +49,11 @@ const navItems: NavItem[] = [
     title: "Assign Role",
     href: "/admin/assign-role",
     icon: UserCog,
+  },
+  {
+    title: "ID Verification",
+    href: "/admin/identity-verifications",
+    icon: IdCard,
   },
 ];
 

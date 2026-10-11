@@ -4,6 +4,8 @@ import {
   ForumAdminCommentListResponseType,
   ForumReportListResponseType,
   ForumReportType,
+  IdentityVerificationAdminDetailType,
+  IdentityVerificationAdminListResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -67,5 +69,40 @@ export const adminApiRequest = {
     http.patch<ForumReportType>(
       `/api/forums/reports/${reportId}/status`,
       { status },
+    ),
+
+  getIdentityVerifications: (
+    page: number = 1,
+    limit: number = 10,
+    status?: string,
+    search?: string,
+  ) => {
+    const query = buildQueryString({ page, limit, status, search });
+    return http.get<IdentityVerificationAdminListResponseType>(
+      `/api/admin/identity-verifications${query}`,
+    );
+  },
+
+  getIdentityVerificationDetail: (id: number) =>
+    http.get<IdentityVerificationAdminDetailType>(
+      `/api/admin/identity-verifications/${id}`,
+    ),
+
+  approveIdentityVerification: (
+    id: number,
+    reviewNotes?: string | null,
+  ) =>
+    http.patch<IdentityVerificationAdminDetailType>(
+      `/api/admin/identity-verifications/${id}/approve`,
+      { reviewNotes: reviewNotes ?? null },
+    ),
+
+  rejectIdentityVerification: (
+    id: number,
+    reviewNotes?: string | null,
+  ) =>
+    http.patch<IdentityVerificationAdminDetailType>(
+      `/api/admin/identity-verifications/${id}/reject`,
+      { reviewNotes: reviewNotes ?? null },
     ),
 };

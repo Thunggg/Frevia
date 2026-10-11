@@ -25,7 +25,7 @@ export const SocialPlatform = {
   OTHER: "OTHER",
 } as const;
 
-const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
+export const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
 export const DocumentTypeSchema = z.nativeEnum(DocumentType);
 export const VerificationStatusSchema = z.nativeEnum(VerificationStatus);
 export const SocialPlatformSchema = z.nativeEnum(SocialPlatform);
