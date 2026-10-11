@@ -24,6 +24,9 @@ import { SessionsModule } from './routes/sessions/sessions.module';
 import { ConversationModule } from './routes/conversations/conversations.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
+import { MilestoneModule } from './routes/milestone/milestone.module';
+import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
+import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
 
 @Module({
@@ -45,6 +48,9 @@ import { AccountProfileModule } from './routes/account-profile/account-profile.m
     ConversationModule,
     ContractModule,
     SharedFileModule,
+    MilestoneModule,
+    MilestoneFileModule,
+    MilestoneSubmissionModule,
     AccountProfileModule,
   ],
   controllers: [AppController],
