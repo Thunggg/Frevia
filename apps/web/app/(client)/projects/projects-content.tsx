@@ -132,7 +132,7 @@ export function ProjectsContent({
             <ul className="divide-y divide-border border-y border-border">
               {jobs.map((job) => (
                 <li key={job.id}>
-                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/5/35">
+                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/[0.04]">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-lg font-semibold tracking-tight text-foreground">

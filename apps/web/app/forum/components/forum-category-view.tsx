@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LayoutGrid } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
@@ -88,6 +88,9 @@ export function ForumCategoryView({
 
             {categories.length === 0 ? (
               <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                  <LayoutGrid className="size-7" />
+                </div>
                 <p className="text-lg font-medium text-foreground">
                   No categories yet
                 </p>
@@ -101,7 +104,7 @@ export function ForumCategoryView({
                   <li key={category.id}>
                     <Link
                       href={`/forum/${category.id}`}
-                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/5/35"
+                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/4"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">

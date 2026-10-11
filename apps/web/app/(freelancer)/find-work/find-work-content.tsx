@@ -14,6 +14,7 @@ import {
   Clock,
   DollarSign,
   Loader2,
+  SearchX,
   SlidersHorizontal,
   X,
 } from "lucide-react";
@@ -407,6 +408,9 @@ export function FindWorkContent({
             <JobListSkeleton />
           ) : jobs.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                <SearchX className="size-7" />
+              </div>
               <p className="text-lg font-medium text-foreground">
                 No projects match these filters
               </p>
@@ -414,8 +418,7 @@ export function FindWorkContent({
                 Try a broader budget or time range, or clear your search.
               </p>
               <Button
-                variant="outline"
-                className="mt-6"
+                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                 onClick={clearAllFilters}
               >
                 Clear filters
@@ -434,7 +437,7 @@ export function FindWorkContent({
                 return (
                   <li key={job.id}>
                     <div
-                      className={`py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-white/5/35 ${
+                      className={`py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-white/4 ${
                         job.featured
                           ? "border-l-2 border-l-[#4fae2e] pl-4 sm:pl-5"
                           : "pl-0 sm:pl-1"

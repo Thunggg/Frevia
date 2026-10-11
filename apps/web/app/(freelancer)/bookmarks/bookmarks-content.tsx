@@ -123,7 +123,7 @@ export function BookmarksContent({
                 const availability = getAvailability(job);
                 return (
                   <li key={job.id}>
-                    <div className="flex flex-col justify-between gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:px-5 sm:py-7 dark:hover:bg-white/5/35">
+                    <div className="flex flex-col justify-between gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:px-5 sm:py-7 dark:hover:bg-white/[0.04]">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2 text-xs">
                           <Badge

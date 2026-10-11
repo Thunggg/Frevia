@@ -345,8 +345,7 @@ export function ForumPostList({
                 </p>
                 {hasActiveFilters ? (
                   <Button
-                    variant="outline"
-                    className="mt-6"
+                    className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                     onClick={clearAllFilters}
                   >
                     Clear filters
@@ -359,7 +358,7 @@ export function ForumPostList({
                   <li key={post.id}>
                     <Link
                       href={`/forum/${categoryId}/${post.id}`}
-                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-white/5/35"
+                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-white/4"
                     >
                       <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-lg">
                         {post.title}

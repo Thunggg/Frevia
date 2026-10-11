@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
   Heart,
-  Inbox,
   Loader2,
   MessageSquare,
   Pencil,
@@ -169,13 +168,13 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
       ) : null}
 
       {!isLoading && comments.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
-          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-            <Inbox className="size-6" />
+        <div className="rounded-xl border border-dashed border-border px-6 py-14 text-center">
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+            <MessageSquare className="size-7" />
           </div>
-          <p className="text-sm font-medium text-foreground">No comments yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Be the first to share your thoughts.
+          <p className="text-lg font-medium text-foreground">No comments yet</p>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+            Be the first to share a tip, question, or experience.
           </p>
         </div>
       ) : null}

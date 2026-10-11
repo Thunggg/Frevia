@@ -527,7 +527,7 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                 <ul className="divide-y divide-border border-y border-border">
                   {favorites.map((favorite) => (
                     <li key={favorite.freelancerId}>
-                      <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/5/35">
+                      <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
                         <div className="min-w-0 flex-1">
                           <p className="text-lg font-semibold tracking-tight text-foreground">
                             {favorite.profile.displayName ?? "Freelancer"}
@@ -578,15 +578,21 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                 </ul>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                  <Heart className="mx-auto size-9 text-[#4fae2e]" />
-                  <p className="mt-3 font-medium text-foreground">
+                  <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                    <Heart className="size-7" />
+                  </div>
+                  <p className="text-lg font-medium text-foreground">
                     No favorite freelancers yet
                   </p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                    Open a freelancer profile and tap Add to favorites to keep
+                    them here.
+                  </p>
                   <Button
-                    className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                     asChild
                   >
-                    <Link href="/find-work">Discover freelancers</Link>
+                    <Link href="/forum">Visit Forum</Link>
                   </Button>
                 </div>
               )}

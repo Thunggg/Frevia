@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  MonitorSmartphone,
+  Search,
+  X,
+} from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import type { HeaderProps } from "@/components/header";
@@ -22,6 +29,14 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/shadcn/pagination";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/components/shadcn/table";
 
 import { RevokeSessionDialog } from "./revoke-session-dialog";
 import {
@@ -110,14 +125,10 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
     setSearchInput(searchParam);
   }, [searchParam]);
 
-  // cập nhật params trong url mà không reload trang
   const updateParams = useCallback(
     (updates: Record<string, string | null>) => {
-      // tạo mới một URLSearchParams mới từ searchParams hiện tại
-      // và cập nhật các params mới
       const params = new URLSearchParams(searchParams.toString());
 
-      // vòng lặp qua các params mới và cập nhật chúng
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === "") {
           params.delete(key);
@@ -126,7 +137,6 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
         }
       }
 
-      // chuyển hướng đến URL mới
       const qs = params.toString();
       router.push(qs ? `${pathname}?${qs}` : pathname);
     },
@@ -172,6 +182,27 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
     );
   };
 
+  const SortableHead = ({
+    column,
+    children,
+    className = "",
+  }: {
+    column: SortBy;
+    children: ReactNode;
+    className?: string;
+  }) => (
+    <TableHead className={className}>
+      <button
+        type="button"
+        className="inline-flex items-center font-medium text-muted-foreground transition-colors hover:text-foreground"
+        onClick={() => toggleSort(column)}
+      >
+        {children}
+        <SortIcon column={column} />
+      </button>
+    </TableHead>
+  );
+
   const applySearch = () => {
     updateParams({
       search: searchInput.trim() || null,
@@ -203,225 +234,280 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <form
-          className="mb-6 flex max-w-md gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            applySearch();
-          }}
-        >
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search device or IP..."
-              className="h-11 pl-9"
-            />
-          </div>
-          {searchParam ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11"
-              onClick={() => {
-                setSearchInput("");
-                updateParams({ search: null, page: "1" });
-              }}
-              aria-label="Clear search"
-            >
-              <X className="size-4" />
-            </Button>
-          ) : null}
-          <Button
-            type="submit"
-            className="h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
+          <form
+            className="mb-6 flex max-w-md gap-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              applySearch();
+            }}
           >
-            Search
-          </Button>
-        </form>
-
-        {isError ? (
-          <p className="py-12 text-center text-sm text-muted-foreground">
-            Failed to load sessions. Please try again.
-          </p>
-        ) : isLoading ? (
-          <div className="divide-y divide-border border-y border-border">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="px-3 py-5 sm:px-5">
-                <Skeleton className="h-5 w-1/3" />
-                <Skeleton className="mt-3 h-4 w-2/3" />
-                <Skeleton className="mt-2 h-4 w-1/2" />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div
-            className={isFetching ? "opacity-60 transition-opacity" : undefined}
-          >
-            {sessions.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                <p className="text-lg font-medium text-foreground">
-                  No sessions found
-                </p>
-                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                  {searchParam
-                    ? "Try a different search."
-                    : "Signed-in devices will show up here."}
-                </p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-border border-y border-border">
-                {sessions.map((session) => {
-                  const expired = isExpired(session.expiresAt);
-                  return (
-                    <li key={session.id}>
-                      <div className="flex flex-col gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-6 dark:hover:bg-white/5/35">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold tracking-tight text-foreground">
-                              {session.deviceInfo || "Unknown device"}
-                            </p>
-                            {session.isCurrent ? (
-                              <Badge className="border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
-                                Current
-                              </Badge>
-                            ) : null}
-                            <Badge
-                              variant={expired ? "destructive" : "secondary"}
-                              className={
-                                expired
-                                  ? ""
-                                  : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                              }
-                            >
-                              {expired ? "Expired" : "Active"}
-                            </Badge>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                            <span className="font-mono text-xs">
-                              IP: {session.ipAddress || "—"}
-                            </span>
-                            <button
-                              type="button"
-                              className="inline-flex items-center gap-1 hover:text-foreground"
-                              onClick={() => toggleSort("createdAt")}
-                            >
-                              Created {formatDate(session.createdAt)}
-                              <SortIcon column="createdAt" />
-                            </button>
-                            <button
-                              type="button"
-                              className="inline-flex items-center gap-1 hover:text-foreground"
-                              onClick={() => toggleSort("expiresAt")}
-                            >
-                              Expires {formatDate(session.expiresAt)}
-                              <SortIcon column="expiresAt" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-1">
-                          <ViewSessionButton
-                            sessionId={session.id}
-                            onView={setDetailSessionId}
-                          />
-                          <RevokeSessionDialog
-                            sessionId={session.id}
-                            deviceInfo={session.deviceInfo}
-                            isCurrent={session.isCurrent}
-                            isExpired={expired}
-                            onRevoked={() => {
-                              if (detailSessionId === session.id) {
-                                setDetailSessionId(null);
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-
-            <SessionDetailDialog
-              sessionId={detailSessionId}
-              open={detailOpen}
-              onOpenChange={(open) => {
-                if (!open) setDetailSessionId(null);
-              }}
-            />
-
-            {pagination.totalPages > 1 ? (
-              <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <p className="text-sm text-muted-foreground">
-                  Page {pagination.page} of {pagination.totalPages} (
-                  {pagination.total} total)
-                </p>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href="#"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          if (page > 1) {
-                            updateParams({ page: String(page - 1) });
-                          }
-                        }}
-                        aria-disabled={page <= 1}
-                        className={
-                          page <= 1
-                            ? "pointer-events-none opacity-50"
-                            : undefined
-                        }
-                      />
-                    </PaginationItem>
-                    {getPageNumbers(page, pagination.totalPages).map(
-                      (item, index) =>
-                        item === "..." ? (
-                          <PaginationItem key={`ellipsis-${index}`}>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        ) : (
-                          <PaginationItem key={item}>
-                            <PaginationLink
-                              href="#"
-                              isActive={item === page}
-                              onClick={(event) => {
-                                event.preventDefault();
-                                updateParams({ page: String(item) });
-                              }}
-                            >
-                              {item}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ),
-                    )}
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          if (page < pagination.totalPages) {
-                            updateParams({ page: String(page + 1) });
-                          }
-                        }}
-                        aria-disabled={page >= pagination.totalPages}
-                        className={
-                          page >= pagination.totalPages
-                            ? "pointer-events-none opacity-50"
-                            : undefined
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Search device or IP..."
+                className="h-11 pl-9"
+              />
+            </div>
+            {searchParam ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11"
+                onClick={() => {
+                  setSearchInput("");
+                  updateParams({ search: null, page: "1" });
+                }}
+                aria-label="Clear search"
+              >
+                <X className="size-4" />
+              </Button>
             ) : null}
-          </div>
-        )}
+            <Button
+              type="submit"
+              className="h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
+            >
+              Search
+            </Button>
+          </form>
+
+          {isError ? (
+            <p className="py-12 text-center text-sm text-muted-foreground">
+              Failed to load sessions. Please try again.
+            </p>
+          ) : isLoading ? (
+            <div className="overflow-hidden rounded-xl border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>Device</TableHead>
+                    <TableHead>IP</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Expires</TableHead>
+                    <TableHead className="w-28 text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-40" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-32" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-32" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="ml-auto h-8 w-20" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div
+              className={
+                isFetching ? "opacity-60 transition-opacity" : undefined
+              }
+            >
+              {sessions.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                  <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                    <MonitorSmartphone className="size-7" />
+                  </div>
+                  <p className="text-lg font-medium text-foreground">
+                    {searchParam
+                      ? "No sessions match your search"
+                      : "No sessions yet"}
+                  </p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                    {searchParam
+                      ? "Try a different device name or clear your search."
+                      : "Devices you sign in on will appear here."}
+                  </p>
+                  {searchParam ? (
+                    <Button
+                      className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={() => updateParams({ search: null, page: "1" })}
+                    >
+                      Clear search
+                    </Button>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-[#eaf8df]/40 hover:bg-[#eaf8df]/40 dark:bg-muted/40 dark:hover:bg-muted/40">
+                        <SortableHead column="id">Device</SortableHead>
+                        <TableHead>IP address</TableHead>
+                        <TableHead>Status</TableHead>
+                        <SortableHead column="createdAt">Created</SortableHead>
+                        <SortableHead column="expiresAt">Expires</SortableHead>
+                        <TableHead className="w-28 text-right">
+                          Actions
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {sessions.map((session) => {
+                        const expired = isExpired(session.expiresAt);
+                        return (
+                          <TableRow
+                            key={session.id}
+                            className="hover:bg-[#eaf8df]/35 dark:hover:bg-white/4"
+                          >
+                            <TableCell className="min-w-48">
+                              <div className="flex flex-col gap-1.5">
+                                <span className="font-medium text-foreground">
+                                  {session.deviceInfo || "Unknown device"}
+                                </span>
+                                {session.isCurrent ? (
+                                  <Badge className="w-fit border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
+                                    Current
+                                  </Badge>
+                                ) : null}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                              {session.ipAddress || "—"}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  expired ? "destructive" : "secondary"
+                                }
+                                className={
+                                  expired
+                                    ? ""
+                                    : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
+                                }
+                              >
+                                {expired ? "Expired" : "Active"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                              {formatDate(session.createdAt)}
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                              {formatDate(session.expiresAt)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="inline-flex items-center justify-end gap-1">
+                                <ViewSessionButton
+                                  sessionId={session.id}
+                                  onView={setDetailSessionId}
+                                />
+                                <RevokeSessionDialog
+                                  sessionId={session.id}
+                                  deviceInfo={session.deviceInfo}
+                                  isCurrent={session.isCurrent}
+                                  isExpired={expired}
+                                  onRevoked={() => {
+                                    if (detailSessionId === session.id) {
+                                      setDetailSessionId(null);
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              <SessionDetailDialog
+                sessionId={detailSessionId}
+                open={detailOpen}
+                onOpenChange={(open) => {
+                  if (!open) setDetailSessionId(null);
+                }}
+              />
+
+              {pagination.totalPages > 1 ? (
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                  <p className="text-sm text-muted-foreground">
+                    Page {pagination.page} of {pagination.totalPages} (
+                    {pagination.total} total)
+                  </p>
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href="#"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            if (page > 1) {
+                              updateParams({ page: String(page - 1) });
+                            }
+                          }}
+                          aria-disabled={page <= 1}
+                          className={
+                            page <= 1
+                              ? "pointer-events-none opacity-50"
+                              : undefined
+                          }
+                        />
+                      </PaginationItem>
+                      {getPageNumbers(page, pagination.totalPages).map(
+                        (item, index) =>
+                          item === "..." ? (
+                            <PaginationItem key={`ellipsis-${index}`}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          ) : (
+                            <PaginationItem key={item}>
+                              <PaginationLink
+                                href="#"
+                                isActive={item === page}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  updateParams({ page: String(item) });
+                                }}
+                              >
+                                {item}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ),
+                      )}
+                      <PaginationItem>
+                        <PaginationNext
+                          href="#"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            if (page < pagination.totalPages) {
+                              updateParams({ page: String(page + 1) });
+                            }
+                          }}
+                          aria-disabled={page >= pagination.totalPages}
+                          className={
+                            page >= pagination.totalPages
+                              ? "pointer-events-none opacity-50"
+                              : undefined
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

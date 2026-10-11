@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Bell,
   Bookmark,
   ChevronDown,
   FileText,
@@ -319,14 +318,6 @@ function HeaderActions({ role }: HeaderProps) {
   return (
     <div className="ml-auto flex items-center gap-1 sm:gap-3">
       <ThemeToggle />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="hidden rounded-full text-foreground hover:bg-black/5 sm:inline-flex dark:hover:bg-white/10"
-        aria-label="Notifications"
-      >
-        <Bell className="size-5" />
-      </Button>
       <ProfileDropdown role={role} />
     </div>
   );

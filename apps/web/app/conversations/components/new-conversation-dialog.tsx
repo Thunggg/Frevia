@@ -36,7 +36,7 @@ export function NewConversationDialog({
     const id = Number(participantId);
 
     if (!Number.isInteger(id) || id <= 0) {
-      toastError({ message: "Please enter a valid user ID" });
+      toastError({ message: "Enter a whole number greater than zero." });
       return;
     }
 
@@ -48,7 +48,9 @@ export function NewConversationDialog({
       },
       onError: (error: unknown) => {
         const message =
-          error instanceof Error ? error.message : "Failed to start conversation";
+          error instanceof Error
+            ? error.message
+            : "Failed to start conversation";
         toastError({ message });
       },
     });
@@ -65,7 +67,10 @@ export function NewConversationDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button
+            size="sm"
+            className="gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928]"
+          >
             <Plus className="h-4 w-4" />
             New conversation
           </Button>
@@ -73,9 +78,10 @@ export function NewConversationDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>New Conversation</DialogTitle>
+          <DialogTitle>Start a conversation</DialogTitle>
           <DialogDescription>
-            Enter the user ID of the person you want to message.
+            Open a private chat with another Frevia user. You’ll need their
+            numeric user ID for now.
           </DialogDescription>
         </DialogHeader>
 
@@ -85,7 +91,8 @@ export function NewConversationDialog({
             id="participant-id"
             type="number"
             min={1}
-            placeholder="e.g. 123"
+            inputMode="numeric"
+            placeholder="e.g. 42"
             value={participantId}
             onChange={(e) => setParticipantId(e.target.value)}
             disabled={createConversation.isPending}
@@ -93,6 +100,11 @@ export function NewConversationDialog({
               if (e.key === "Enter") handleSubmit();
             }}
           />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Tip: open someone’s profile — the number in the URL (for example{" "}
+            <span className="font-medium text-foreground">/profiles/42</span>)
+            is their user ID.
+          </p>
         </div>
 
         <DialogFooter>
@@ -104,8 +116,9 @@ export function NewConversationDialog({
             Cancel
           </Button>
           <Button
+            className="bg-[#4fae2e] text-white hover:bg-[#459928]"
             onClick={handleSubmit}
-            disabled={!participantId || createConversation.isPending}
+            disabled={!participantId.trim() || createConversation.isPending}
           >
             {createConversation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -131,14 +131,17 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   return (
     <aside className="flex h-full w-full flex-col border-r border-border bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#1a1c1a]/40">
+      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-muted/60">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <MessageSquare className="h-5 w-5 text-[#4fae2e]" />
           Messages
         </h2>
         <NewConversationDialog
           trigger={
-            <Button variant="outline" size="icon" className="h-8 w-8 border-[#4fae2e]/30 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5">
+            <Button
+              size="icon"
+              className="h-8 w-8 bg-[#4fae2e] text-white hover:bg-[#459928]"
+            >
               <Plus className="h-4 w-4" />
               <span className="sr-only">New conversation</span>
             </Button>
@@ -164,14 +167,27 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
             ))}
           </div>
         ) : !conversations || conversations.length === 0 ? (
-          <div className="px-6 py-10 text-center">
-            <MessageSquare className="mx-auto mb-3 h-8 w-8 text-muted-foreground/50" />
-            <p className="text-sm text-muted-foreground">
-              No conversations yet.
+          <div className="px-6 py-14 text-center">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+              <MessageSquare className="size-7" />
+            </div>
+            <p className="text-lg font-medium text-foreground">
+              No conversations yet
             </p>
-            <p className="mt-1 text-xs text-muted-foreground/70">
-              Start a new conversation to send a message.
+            <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
+              Start a chat with another user to keep proposals and project talk
+              in one place.
             </p>
+            <div className="mt-6 flex justify-center">
+              <NewConversationDialog
+                trigger={
+                  <Button className="bg-[#4fae2e] text-white hover:bg-[#459928]">
+                    <Plus className="mr-1.5 size-4" />
+                    Start a chat
+                  </Button>
+                }
+              />
+            </div>
           </div>
         ) : (
           <ul className="divide-y">
