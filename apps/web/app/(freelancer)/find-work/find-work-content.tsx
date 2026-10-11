@@ -2,16 +2,11 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Clock, DollarSign, MapPin } from "lucide-react";
-import { Header } from "@/components/header";
+import { ArrowRight, Clock, DollarSign } from "lucide-react";
+
 import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import {
   Select,
@@ -36,6 +31,10 @@ type FindWorkContentProps = {
   initialSort?: string;
 };
 
+function stripHtml(value: string) {
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export function FindWorkContent({
   initialJobs,
   initialPagination,
@@ -54,22 +53,12 @@ export function FindWorkContent({
     totalPages: 0,
   };
 
-  const trendingSkills = ["UI Design", "React", "Python", "Copywriting", "SEO"];
-
-  const categories = [
-    { name: "Design & Creative", count: 1284 },
-    { name: "Development & IT", count: 886 },
-    { name: "Sales & Marketing", count: 432 },
-    { name: "Writing & Translation", count: 280 },
-  ];
-
   const formatPostedTime = (value: string | Date) => {
     const diffMs = Date.now() - new Date(value).getTime();
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
-    if (diffHours < 24) {
-      return `${diffHours}h ago`;
-    }
+    if (diffHours < 1) return "Just now";
+    if (diffHours < 24) return `${diffHours}h ago`;
 
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}d ago`;
@@ -83,254 +72,219 @@ export function FindWorkContent({
     return `$${job.budgetMin} - $${job.budgetMax}`;
   };
 
-  const updateFilter = (name: "budget" | "time" | "sort", value: string) => {
+  const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (value === "all") {
-      params.delete(name);
-    } else {
-      params.set(name, value);
+    for (const [name, value] of Object.entries(updates)) {
+      if (value === null || value === "all") {
+        params.delete(name);
+      } else {
+        params.set(name, value);
+      }
     }
 
-    params.set("page", "1");
-    router.push(`/find-work?${params.toString()}`);
+    if (!("page" in updates)) {
+      params.set("page", "1");
+    }
+
+    const query = params.toString();
+    router.push(query ? `/find-work?${query}` : "/find-work");
   };
 
+  const updateFilter = (name: "budget" | "time" | "sort", value: string) => {
+    updateParams({ [name]: value });
+  };
+
+  const goToPage = (page: number) => {
+    updateParams({ page: String(page) });
+  };
+
+  const resultsLabel = initialKeyword
+    ? `Results for "${initialKeyword}"`
+    : pagination.total > 0
+      ? `${pagination.total} open project${pagination.total === 1 ? "" : "s"}`
+      : "No open projects";
+
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role="FREELANCER" />
 
       <main className="flex-1">
-        <div className="border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <nav className="text-sm text-muted-foreground">
-              <Link href="/" className="hover:text-foreground">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
                 Home
               </Link>
-              <span className="mx-2">/</span>
-              <span className="text-foreground font-medium">Find Work</span>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">Find Work</span>
             </nav>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Find Work
+            </h1>
+            <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
+              Browse open projects and apply to work that fits your skills.
+            </p>
           </div>
-        </div>
+        </section>
 
-        <div className="bg-secondary border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold mb-2">Find Work</h1>
-              <p className="text-lg text-muted-foreground">
-                Find the perfect project that matches your skills
-              </p>
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="grid w-full grid-cols-1 gap-3 sm:max-w-xl sm:grid-cols-2">
+              <Select
+                value={initialBudget}
+                onValueChange={(value) => value && updateFilter("budget", value)}
+              >
+                <SelectTrigger className="h-11 w-full bg-background">
+                  <SelectValue placeholder="Budget" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Any budget</SelectItem>
+                  <SelectItem value="under-500">Under $500</SelectItem>
+                  <SelectItem value="500-1000">$500 - $1,000</SelectItem>
+                  <SelectItem value="1000-5000">$1,000 - $5,000</SelectItem>
+                  <SelectItem value="5000-plus">$5,000+</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={initialTime}
+                onValueChange={(value) => value && updateFilter("time", value)}
+              >
+                <SelectTrigger className="h-11 w-full bg-background">
+                  <SelectValue placeholder="Posted" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Any time</SelectItem>
+                  <SelectItem value="today">Posted today</SelectItem>
+                  <SelectItem value="last-3-days">Last 3 days</SelectItem>
+                  <SelectItem value="last-7-days">Last 7 days</SelectItem>
+                  <SelectItem value="last-30-days">Last 30 days</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Badge variant="outline">📁 Custom Websites</Badge>
-              <Badge variant="outline">💻 Web Application</Badge>
-              <Link href="#" className="text-primary hover:text-primary/80">
-                View all
-              </Link>
+            <div className="flex items-center justify-between gap-4 sm:justify-end">
+              <p className="text-sm text-muted-foreground">{resultsLabel}</p>
+              <Select
+                value={initialSort}
+                onValueChange={(value) => value && updateFilter("sort", value)}
+              >
+                <SelectTrigger className="h-11 w-44 bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                  <SelectItem value="title-asc">Title: A to Z</SelectItem>
+                  <SelectItem value="title-desc">Title: Z to A</SelectItem>
+                  <SelectItem value="budget-low">Budget: low to high</SelectItem>
+                  <SelectItem value="budget-high">Budget: high to low</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="grid grid-cols-2 gap-3 pb-6 border-b sm:grid-cols-4">
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="design">Design</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Service" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={initialBudget}
-                  onValueChange={(value) => value && updateFilter("budget", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Budget" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Any budget</SelectItem>
-                    <SelectItem value="under-500">Under $500</SelectItem>
-                    <SelectItem value="500-1000">$500 - $1,000</SelectItem>
-                    <SelectItem value="1000-5000">$1,000 - $5,000</SelectItem>
-                    <SelectItem value="5000-plus">$5,000+</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={initialTime}
-                  onValueChange={(value) => value && updateFilter("time", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Any time</SelectItem>
-                    <SelectItem value="today">Posted today</SelectItem>
-                    <SelectItem value="last-3-days">Last 3 days</SelectItem>
-                    <SelectItem value="last-7-days">Last 7 days</SelectItem>
-                    <SelectItem value="last-30-days">Last 30 days</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex justify-between items-center mb-6">
-                <p className="text-sm text-muted-foreground">
-                  {initialKeyword
-                    ? `Showing results for "${initialKeyword}"`
-                    : pagination.total > 0
-                      ? `${pagination.total}+ results`
-                      : "No results"}
+          <div className="mt-2">
+            {jobs.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                <p className="text-lg font-medium text-foreground">
+                  No projects match these filters
                 </p>
-                <Select
-                  value={initialSort}
-                  onValueChange={(value) => value && updateFilter("sort", value)}
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                  Try a broader budget or time range, or clear your search from
+                  the header.
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-6"
+                  onClick={() => router.push("/find-work")}
                 >
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">Mới nhất</SelectItem>
-                    <SelectItem value="oldest">Cũ nhất</SelectItem>
-                    <SelectItem value="title-asc">Tên: A → Z</SelectItem>
-                    <SelectItem value="title-desc">Tên: Z → A</SelectItem>
-                    <SelectItem value="budget-low">Ngân sách: thấp → cao</SelectItem>
-                    <SelectItem value="budget-high">Ngân sách: cao → thấp</SelectItem>
-                  </SelectContent>
-                </Select>
+                  Clear filters
+                </Button>
               </div>
+            ) : (
+              <ul className="divide-y divide-border">
+                {jobs.map((job) => {
+                  const preview = job.description
+                    ? stripHtml(job.description)
+                    : "No description provided yet.";
 
-              <div className="space-y-4">
-                {jobs.length === 0 ? (
-                  <div className="rounded-lg border p-6 text-sm text-muted-foreground">
-                    No jobs found.
-                  </div>
-                ) : (
-                  jobs.map((job) => (
-                    <Card
-                      key={job.id}
-                      className={job.featured ? "border-primary bg-secondary/50" : ""}
-                    >
-                      <CardContent className="p-6">
-                        {job.featured && <Badge className="mb-3">Featured</Badge>}
-                        <Link
-                          href={`/job/${job.slug}`}
-                          className="hover:text-primary transition-colors"
-                        >
-                          <h3 className="text-lg font-semibold mb-2">{job.title}</h3>
-                        </Link>
+                  return (
+                    <li key={job.id}>
+                      <Link
+                        href={`/job/${job.slug}`}
+                        className={`group block py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-[#12331f]/35 ${
+                          job.featured
+                            ? "border-l-2 border-l-[#4fae2e] pl-4 sm:pl-5"
+                            : "pl-0 sm:pl-1"
+                        }`}
+                      >
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {job.featured ? (
+                                <Badge className="bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
+                                  Featured
+                                </Badge>
+                              ) : null}
+                              <h2 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
+                                {job.title}
+                              </h2>
+                            </div>
 
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge variant="outline" className="gap-1">
-                            <MapPin className="size-3" />
-                            Remote
-                          </Badge>
-                          <Badge variant="outline" className="gap-1">
-                            <DollarSign className="size-3" />
-                            {getBudgetText(job)}
-                          </Badge>
-                          <Badge variant="outline" className="gap-1">
-                            <Clock className="size-3" />
-                            {formatPostedTime(job.createdAt)}
-                          </Badge>
-                        </div>
+                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                              <span className="inline-flex items-center gap-1.5">
+                                <DollarSign className="size-3.5 text-[#4fae2e]" />
+                                {getBudgetText(job)}
+                                <span className="text-foreground/40">·</span>
+                                {job.budgetType}
+                              </span>
+                              <span className="inline-flex items-center gap-1.5">
+                                <Clock className="size-3.5 text-[#4fae2e]" />
+                                {formatPostedTime(job.createdAt)}
+                              </span>
+                            </div>
 
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {job.description ?? "No description provided yet."}
-                        </p>
-
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-semibold">{getBudgetText(job)}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {job.budgetType}
+                            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                              {preview}
                             </p>
                           </div>
-                          <Button size="sm" asChild>
-                            <Link href={`/job/${job.slug}`}>View details</Link>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </div>
 
-              <Button variant="outline" className="w-full">
-                Load More
+                          <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-[#4fae2e] transition-transform group-hover:translate-x-0.5">
+                            View details
+                            <ArrowRight className="size-4" />
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {pagination.totalPages > 1 ? (
+            <div className="mt-8 flex items-center justify-center gap-3 border-t border-border pt-8">
+              <Button
+                variant="outline"
+                disabled={pagination.page <= 1}
+                onClick={() => goToPage(pagination.page - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+              <Button
+                variant="outline"
+                disabled={pagination.page >= pagination.totalPages}
+                onClick={() => goToPage(pagination.page + 1)}
+              >
+                Next
               </Button>
             </div>
-
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Never miss a job</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    Get notified when new jobs match your skills
-                  </p>
-                  <Button className="w-full" size="sm">
-                    Set Job Alert
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Trending Skills</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {trendingSkills.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary/10"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Categories</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {categories.map((category) => (
-                    <div
-                      key={category.name}
-                      className="flex justify-between text-sm"
-                    >
-                      <span className="hover:text-primary cursor-pointer">
-                        {category.name}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {category.count}
-                      </span>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          ) : null}
         </div>
       </main>
 
