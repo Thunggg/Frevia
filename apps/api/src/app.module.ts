@@ -19,6 +19,9 @@ import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.modu
 import { RolesModule } from './routes/roles/roles.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
+import { MilestoneModule } from './routes/milestone/milestone.module';
+import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
+import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { SharedFileModule } from './routes/shared-file/shared-file.module';
     RolesModule,
     ContractModule,
     SharedFileModule,
+    MilestoneModule,
+    MilestoneFileModule,
+    MilestoneSubmissionModule,
   ],
   controllers: [AppController],
   providers: [

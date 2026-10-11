@@ -11,6 +11,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
+import { buildUploadFilePipe } from '../../shared/config/file-upload.config';
 import {
     DeleteSharedFileResponseDTO,
     GetSharedFilesResponseDTO,
@@ -45,7 +46,7 @@ export class SharedFileController {
         @UserActive('userId') userId: number,
         @UserActive('roleName') roleName: string,
         @Param('contractId', ParseIntPipe) contractId: number,
-        @UploadedFile() file?: Express.Multer.File,
+        @UploadedFile(buildUploadFilePipe()) file: Express.Multer.File,
     ) {
         return this.sharedFileService.uploadSharedFile(
             userId,

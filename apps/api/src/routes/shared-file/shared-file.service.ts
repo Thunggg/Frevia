@@ -53,12 +53,9 @@ export class SharedFileService {
         userId: number,
         roleName: string,
         contractId: number,
-        file?: Express.Multer.File,
+        file: Express.Multer.File,
     ) {
         try {
-            if (!file) {
-                throw SharedFileRequiredException();
-            }
 
             const contract = await this.sharedFileRepository.findContractById(contractId);
             if (!contract) {
