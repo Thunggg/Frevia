@@ -16,7 +16,19 @@ const prisma = new PrismaClient({
   }),
 });
 
-/** Module gán cho Freelancer / Client (Admin nhận tất cả). */
+/**
+ * Module gán theo role (Admin nhận tất cả).
+ *
+ * Profile / account surfaces:
+ * - PROFILES: freelancer profile + skills + portfolios (`/api/profiles/...`)
+ * - CLIENTS: client company profile (`/api/clients/...`)
+ * - IDENTITY-VERIFICATIONS: freelancer KYC docs
+ * - SOCIAL-LINKS: both roles
+ * - FAVORITES: client saved freelancers (`/api/favorites/freelancers`)
+ *
+ * Cross-read: CLIENT cũng có PROFILES, FREELANCER cũng có CLIENTS
+ * (GET public vẫn bypass guard; module đủ cho các thao tác auth-required).
+ */
 const freelancerModules = [
   'AUTH',
   'SESSIONS',
@@ -26,9 +38,11 @@ const freelancerModules = [
   'CONVERSATIONS',
   'FORUMS',
   'PROFILES',
+  'CLIENTS',
   'IDENTITY-VERIFICATIONS',
   'SOCIAL-LINKS',
 ];
+
 const clientModules = [
   'AUTH',
   'SESSIONS',
@@ -38,6 +52,7 @@ const clientModules = [
   'CONVERSATIONS',
   'FORUMS',
   'CLIENTS',
+  'PROFILES',
   'SOCIAL-LINKS',
   'FAVORITES',
 ];
@@ -79,6 +94,17 @@ async function updateRolePermissions(
   console.log(`Updated role ${roleName}: ${permissionIds.length} permissions`);
 }
 
+function resolveModule(path: string): string {
+  const segments = path.split('/').filter(Boolean);
+  // Bỏ global prefix `api` khi lấy module (vd /api/roles → ROLES)
+  const moduleSegment =
+    segments[0]?.toLowerCase() === 'api' ? segments[1] : segments[0];
+
+  return String(moduleSegment ?? 'APP')
+    .toUpperCase()
+    .replace(/:/g, '');
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: false });
   // Phải khớp main.ts — không có prefix thì seed ra /permissions,
@@ -104,19 +130,11 @@ async function bootstrap() {
 
       if (!Object.values(HttpMethod).includes(method)) return undefined;
 
-      const segments = path.split('/').filter(Boolean);
-      // Bỏ global prefix `api` khi lấy module (vd /api/roles → ROLE/ROLES)
-      const moduleSegment =
-        segments[0]?.toLowerCase() === 'api' ? segments[1] : segments[0];
-      const moduleName = String(moduleSegment ?? 'APP')
-        .toUpperCase()
-        .replace(/:/g, '');
-
       return {
         path,
         method,
         name: `${method} ${path}`,
-        module: moduleName,
+        module: resolveModule(path),
       };
     })
     .filter((item: AvailableRoute | undefined): item is AvailableRoute =>
@@ -124,6 +142,16 @@ async function bootstrap() {
     );
 
   console.log(`Discovered ${availableRoutes.length} routes from Nest router`);
+
+  const profileRelated = availableRoutes.filter((route) =>
+    ['PROFILES', 'CLIENTS', 'IDENTITY-VERIFICATIONS', 'SOCIAL-LINKS', 'FAVORITES'].includes(
+      route.module,
+    ),
+  );
+  console.log(
+    `Profile-related routes (${profileRelated.length}):`,
+    profileRelated.map((route) => route.name).sort(),
+  );
 
   let changed = false;
 
@@ -166,10 +194,39 @@ async function bootstrap() {
       skipDuplicates: true,
     });
     console.log('Created permissions:', created.count);
+    for (const route of permissionToCreate) {
+      console.log(`  + ${route.name} [${route.module}]`);
+    }
+  }
+
+  // Permission đã có nhưng name/module lệch → cập nhật
+  const permissionToUpdate = availableRoutes.filter((route) => {
+    const existing = permissionInDBMap[`${route.method}-${route.path}`];
+    if (!existing) return false;
+    return existing.name !== route.name || existing.module !== route.module;
+  });
+
+  if (permissionToUpdate.length > 0) {
+    changed = true;
+    for (const route of permissionToUpdate) {
+      await prisma.permission.updateMany({
+        where: {
+          method: route.method,
+          path: route.path,
+          deletedAt: null,
+        },
+        data: {
+          name: route.name,
+          module: route.module,
+        },
+      });
+      console.log(`  ~ ${route.name} [${route.module}]`);
+    }
+    console.log('Updated permissions:', permissionToUpdate.length);
   }
 
   if (!changed) {
-    console.log('No records need updating or deleting.');
+    console.log('No permission records need creating, updating, or deleting.');
   }
 
   const updatedPermissionInDb = await prisma.permission.findMany({
@@ -185,6 +242,27 @@ async function bootstrap() {
   const clientPermissionIds = updatedPermissionInDb
     .filter((item) => clientModules.includes(item.module ?? ''))
     .map((item) => item.id);
+
+  const freelancerProfileCount = updatedPermissionInDb.filter(
+    (item) =>
+      freelancerModules.includes(item.module ?? '') &&
+      ['PROFILES', 'CLIENTS', 'IDENTITY-VERIFICATIONS', 'SOCIAL-LINKS'].includes(
+        item.module ?? '',
+      ),
+  ).length;
+
+  const clientProfileCount = updatedPermissionInDb.filter(
+    (item) =>
+      clientModules.includes(item.module ?? '') &&
+      ['PROFILES', 'CLIENTS', 'SOCIAL-LINKS', 'FAVORITES'].includes(
+        item.module ?? '',
+      ),
+  ).length;
+
+  console.log(
+    `Freelancer profile-related permissions: ${freelancerProfileCount}`,
+  );
+  console.log(`Client profile-related permissions: ${clientProfileCount}`);
 
   await Promise.all([
     updateRolePermissions(adminPermissionIds, RoleName.ADMIN),
