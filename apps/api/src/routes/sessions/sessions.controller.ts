@@ -1,7 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
-import { SessionFilterDto, SessionListResponseDto } from './sessions.dto';
+import {
+  SessionDetailResponseDto,
+  SessionFilterDto,
+  SessionListResponseDto,
+} from './sessions.dto';
 import { SessionsService } from './sessions.service';
 
 @Controller('sessions')
@@ -15,5 +19,14 @@ export class SessionsController {
     @Query() query: SessionFilterDto,
   ) {
     return this.sessionsService.getMySessions(userId, query);
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(SessionDetailResponseDto)
+  getMySessionById(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.sessionsService.getMySessionById(id, userId);
   }
 }

@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  SessionDetailResponseType,
   SessionFilterType,
   SessionListResponseType,
 } from '@shared/types';
-import { FailedToLoadSessionsException } from './sessions.error';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import {
+  FailedToLoadSessionDetailException,
+  FailedToLoadSessionsException,
+} from './sessions.error';
 import { SessionsRepository } from './sessions.repo';
 
 @Injectable()
@@ -32,6 +37,24 @@ export class SessionsService {
     } catch (error) {
       this.logger.error(`Failed to load sessions for userId=${userId}`, error);
       throw FailedToLoadSessionsException();
+    }
+  }
+
+  async getMySessionById(
+    id: number,
+    userId: number,
+  ): Promise<SessionDetailResponseType> {
+    try {
+      return await this.sessionsRepository.findByIdForUser(id, userId);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        this.logger.error(
+          `Failed to load session detail: id=${id}, userId=${userId}`,
+          error,
+        );
+        throw FailedToLoadSessionDetailException();
+      }
+      throw error;
     }
   }
 }

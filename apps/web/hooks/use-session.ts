@@ -14,6 +14,7 @@ export const sessionKeys = {
   lists: () => [...sessionKeys.all, "list"] as const,
   list: (filter: Partial<SessionFilterType>) =>
     [...sessionKeys.lists(), filter] as const,
+  detail: (id: number) => [...sessionKeys.all, "detail", id] as const,
 };
 
 export function useSessions(filter: Partial<SessionFilterType> = {}) {
@@ -30,6 +31,15 @@ export function useSessions(filter: Partial<SessionFilterType> = {}) {
     queryFn: () =>
       sessionApiRequest.getSessions(normalized).then(extractData),
     placeholderData: keepPreviousData,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useSession(id: number, enabled = true) {
+  return useQuery({
+    queryKey: sessionKeys.detail(id),
+    queryFn: () => sessionApiRequest.getSession(id).then(extractData),
+    enabled: enabled && id > 0,
     staleTime: 2 * 60 * 1000,
   });
 }

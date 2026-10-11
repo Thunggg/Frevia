@@ -28,6 +28,10 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import {
+  SessionDetailDialog,
+  ViewSessionButton,
+} from "./session-detail-dialog";
 
 const PAGE_SIZE = 10;
 
@@ -103,6 +107,8 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
   const order: SortOrder = orderParam === "asc" ? "asc" : "desc";
 
   const [searchInput, setSearchInput] = useState(searchParam);
+  const [detailSessionId, setDetailSessionId] = useState<number | null>(null);
+  const detailOpen = detailSessionId !== null;
 
   useEffect(() => {
     setSearchInput(searchParam);
@@ -274,13 +280,14 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                       </button>
                     </TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="w-14 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sessions.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={6}
+                        colSpan={7}
                         className="py-10 text-center text-muted-foreground"
                       >
                         No sessions found
@@ -313,6 +320,12 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                               {expired ? "Expired" : "Active"}
                             </Badge>
                           </TableCell>
+                          <TableCell className="text-right">
+                            <ViewSessionButton
+                              sessionId={session.id}
+                              onView={setDetailSessionId}
+                            />
+                          </TableCell>
                         </TableRow>
                       );
                     })
@@ -320,6 +333,14 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                 </TableBody>
               </Table>
             </div>
+
+            <SessionDetailDialog
+              sessionId={detailSessionId}
+              open={detailOpen}
+              onOpenChange={(open) => {
+                if (!open) setDetailSessionId(null);
+              }}
+            />
 
             {pagination.totalPages > 1 && (
               <div className="mt-4 flex items-center justify-between gap-4">
