@@ -64,14 +64,11 @@ export function ProjectsContent({ initialJobs, pagination }: ProjectsContentProp
               Create and manage your posted jobs
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setEditingJob(undefined);
-              setIsFormOpen(true);
-            }}
-          >
-            <Plus className="mr-2 size-4" />
-            Post a job
+          <Button asChild>
+            <Link href="/projects/new">
+              <Plus className="mr-2 size-4" />
+              Post a job
+            </Link>
           </Button>
         </div>
         <div className="space-y-3">

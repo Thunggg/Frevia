@@ -39,12 +39,28 @@ export type HeaderProps = {
   role: UserRole;
 };
 
-const roleConfig = {
+type NavLink = {
+  href: string;
+  label: string;
+  /** Exact pathname match only (e.g. /projects/new). */
+  exact?: boolean;
+  /** Paths under matchPath that should not activate this link. */
+  excludePaths?: string[];
+};
+
+const roleConfig: Record<
+  Exclude<UserRole, "GUEST">,
+  { name: string; links: NavLink[] }
+> = {
   CLIENT: {
     name: "Client",
     links: [
-      { href: "/projects", label: "Post a Job" },
-      { href: "/projects", label: "My Jobs" },
+      { href: "/projects/new", label: "Post a Job", exact: true },
+      {
+        href: "/projects",
+        label: "My Jobs",
+        excludePaths: ["/projects/new"],
+      },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -56,7 +72,24 @@ const roleConfig = {
       { href: "/forum", label: "Forum" },
     ],
   },
-} as const;
+};
+
+function isNavLinkActive(link: NavLink, pathname: string) {
+  if (link.exact) {
+    return pathname === link.href;
+  }
+
+  const pathMatches =
+    pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+  if (!pathMatches) return false;
+
+  if (link.excludePaths?.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
+    return false;
+  }
+
+  return true;
+}
 
 function Logo() {
   return (
@@ -87,8 +120,7 @@ function HeaderNavigation({
   return (
     <div className={mobile ? "space-y-1" : "hidden items-center gap-6 md:flex"}>
       {links.map((link) => {
-        const isActive =
-          pathname === link.href || pathname.startsWith(`${link.href}/`);
+        const isActive = isNavLinkActive(link, pathname);
         return (
           <Link
             key={link.label}
