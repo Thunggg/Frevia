@@ -218,8 +218,8 @@ export function FindWorkContent({
     } catch {
       toastError({
         message: isBookmarked
-          ? "Unable to remove bookmark. Please try again."
-          : "Unable to update bookmark. Please try again.",
+          ? "Couldn't remove bookmark. Try again."
+          : "Couldn't update bookmark. Try again.",
       });
     } finally {
       setPendingBookmarkSlug(null);

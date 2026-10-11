@@ -175,9 +175,13 @@ function SectionEmpty({
 }) {
   return (
     <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
-      <UserRound className="mx-auto size-8 text-[#4fae2e]" />
-      <h3 className="mt-3 font-semibold">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+        <UserRound className="size-7" />
+      </div>
+      <p className="text-lg font-medium text-foreground">{title}</p>
+      <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+        {description}
+      </p>
     </div>
   );
 }
@@ -246,7 +250,7 @@ export function ProfilePageClient({
         !skillsResponse.success ||
         !portfoliosResponse.success
       ) {
-        throw new Error("Unable to load freelancer profile.");
+        throw new Error("Couldn't load freelancer profile.");
       }
 
       setProfile(profileResponse.data);
@@ -261,7 +265,7 @@ export function ProfilePageClient({
       setLoadError(
         getErrorMessage(
           error,
-          "Unable to load profile details. Please try again later.",
+          "Couldn't load profile. Try again.",
         ),
       );
     } finally {
@@ -286,7 +290,7 @@ export function ProfilePageClient({
       });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, "Unable to update favorites."),
+        message: getErrorMessage(error, "Couldn't update favorites. Try again."),
       });
     } finally {
       setPendingAction(null);
@@ -1309,8 +1313,13 @@ export function ProfilePageClient({
                         />
                       ))
                     ) : (
-                      <div className="col-span-full flex h-40 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
-                        No media attached.
+                      <div className="col-span-full flex h-40 flex-col items-center justify-center rounded-xl border border-dashed border-border px-4 text-center">
+                        <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                          <UserRound className="size-6" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          No media attached.
+                        </p>
                       </div>
                     )}
                   </div>

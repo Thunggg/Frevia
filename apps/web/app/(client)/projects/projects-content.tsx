@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Edit2, Eye, Plus, Trash2 } from "lucide-react";
+import { Briefcase, Edit2, Eye, Plus, Trash2 } from "lucide-react";
 
 import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
@@ -61,7 +61,7 @@ export function ProjectsContent({
       setJobs((current) => current.filter((job) => job.id !== jobId));
       toastSuccess({ message: "Job deleted" });
     } catch {
-      toastError({ message: "Unable to delete job" });
+      toastError({ message: "Couldn't delete job. Try again." });
     }
   };
 
@@ -74,7 +74,7 @@ export function ProjectsContent({
       );
       toastSuccess({ message: "Job status updated" });
     } catch {
-      toastError({ message: "Unable to update status" });
+      toastError({ message: "Couldn't update status. Try again." });
     }
   };
 
@@ -132,7 +132,7 @@ export function ProjectsContent({
             <ul className="divide-y divide-border border-y border-border">
               {jobs.map((job) => (
                 <li key={job.id}>
-                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/[0.04]">
+                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-lg font-semibold tracking-tight text-foreground">
@@ -206,6 +206,9 @@ export function ProjectsContent({
             </ul>
           ) : (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                <Briefcase className="size-7" />
+              </div>
               <p className="text-lg font-medium text-foreground">
                 No jobs posted yet
               </p>
@@ -267,13 +270,14 @@ export function ProjectsContent({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this job?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone.
+              This permanently removes the job listing. Freelancers will no
+              longer see it in Find Work.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button
-              variant="destructive"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 if (pendingDeleteJobId) deleteJob(pendingDeleteJobId);
                 setPendingDeleteJobId(null);

@@ -190,7 +190,7 @@ export function JobDetailContent({
           toastSuccess({ message: "Job saved to bookmarks" });
         } catch {
           toastError({
-            message: "Unable to update bookmark. Please try again.",
+            message: "Couldn't update bookmark. Try again.",
           });
         } finally {
           setIsBookmarkLoading(false);
@@ -207,7 +207,7 @@ export function JobDetailContent({
       setIsRemoveDialogOpen(false);
       toastSuccess({ message: "Bookmark removed" });
     } catch {
-      toastError({ message: "Unable to remove bookmark. Please try again." });
+      toastError({ message: "Couldn't remove bookmark. Try again." });
     } finally {
       setIsBookmarkLoading(false);
     }
@@ -454,7 +454,7 @@ export function JobDetailContent({
                   </div>
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground">
-                      {clientLoading ? "Loading..." : clientName}
+                      {clientLoading ? "Loading…" : clientName}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Client on Frevia
@@ -484,8 +484,7 @@ export function JobDetailContent({
           <AlertDialogHeader>
             <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
             <AlertDialogDescription>
-              This job will be removed from your saved jobs. You can save it
-              again later.
+              This job leaves your Bookmarks. You can save it again anytime.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -493,11 +492,11 @@ export function JobDetailContent({
               Cancel
             </AlertDialogCancel>
             <Button
-              variant="destructive"
+              className="bg-destructive text-white hover:bg-destructive/90"
               disabled={isBookmarkLoading}
               onClick={removeBookmark}
             >
-              {isBookmarkLoading ? "Removing..." : "Remove"}
+              {isBookmarkLoading ? "Removing…" : "Remove"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

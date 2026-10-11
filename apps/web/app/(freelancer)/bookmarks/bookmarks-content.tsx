@@ -76,7 +76,7 @@ export function BookmarksContent({
       setPendingRemoveJobSlug(null);
       router.refresh();
     } catch {
-      toastError({ message: "Unable to remove bookmark. Please try again." });
+      toastError({ message: "Couldn't remove bookmark. Try again." });
     } finally {
       setIsRemoving(false);
     }
@@ -246,20 +246,20 @@ export function BookmarksContent({
           <AlertDialogHeader>
             <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
             <AlertDialogDescription>
-              This job will be removed from your Saved Jobs list. You can save
-              it again later.
+              This job leaves your Bookmarks. You can save it again anytime from
+              Find Work.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isRemoving}>Cancel</AlertDialogCancel>
             <Button
-              variant="destructive"
+              className="bg-destructive text-white hover:bg-destructive/90"
               disabled={isRemoving}
               onClick={() =>
                 pendingRemoveJobSlug && removeBookmark(pendingRemoveJobSlug)
               }
             >
-              {isRemoving ? "Removing..." : "Remove"}
+              {isRemoving ? "Removing…" : "Remove"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

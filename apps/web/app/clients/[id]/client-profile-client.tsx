@@ -49,7 +49,7 @@ export function ClientProfileClient({
       setError(
         cause instanceof ApiFail
           ? cause.message
-          : "Unable to load client profile.",
+          : "Couldn't load client profile.",
       );
     } finally {
       setLoading(false);
@@ -108,13 +108,17 @@ export function ClientProfileClient({
             </div>
           ) : error || !profile ? (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <Building2 className="mx-auto size-12 text-[#4fae2e]" />
-              <h2 className="mt-4 text-xl font-semibold text-foreground">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                <Building2 className="size-7" />
+              </div>
+              <h2 className="text-lg font-medium text-foreground">
                 Client profile unavailable
               </h2>
-              <p className="mt-2 text-muted-foreground">{error}</p>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                {error || "Couldn't load this profile. Try again."}
+              </p>
               <Button
-                className="mt-5 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                 onClick={() => void load()}
               >
                 <RefreshCw className="mr-2 size-4" />

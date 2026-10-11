@@ -101,7 +101,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
         }
       },
       onError: (error) => {
-        toastError({ message: error.message || "Failed to delete conversation" });
+        toastError({ message: error.message || "Couldn't delete chat. Try again." });
       },
       onSettled: () => setConversationToDelete(null),
     });
@@ -111,7 +111,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     if (markRead.isPending) return;
     markRead.mutate(conversationId, {
       onError: (error) => {
-        toastError({ message: error.message || "Failed to mark as read" });
+        toastError({ message: error.message || "Couldn't mark as read. Try again." });
       },
     });
   };
@@ -122,7 +122,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
       { conversationId, pinned: !pinned },
       {
         onError: (error) => {
-          toastError({ message: error.message || "Failed to update pin" });
+          toastError({ message: error.message || "Couldn't update pin. Try again." });
         },
       },
     );
@@ -331,22 +331,21 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
             <AlertDialogDescription>
-              This conversation will be deleted only on your side. The other
-              person will not be affected.
+              Removes this chat from your list only. The other person keeps
+              their copy.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
+              className="bg-destructive text-white hover:bg-destructive/90"
               onClick={(e) => {
                 e.preventDefault();
                 handleDelete();
               }}
             >
-              {deleting && (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              )}
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -275,7 +275,7 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
 
           {isError ? (
             <p className="py-12 text-center text-sm text-muted-foreground">
-              Failed to load sessions. Please try again.
+              Couldn&apos;t load sessions. Try again.
             </p>
           ) : isLoading ? (
             <div className="overflow-hidden rounded-xl border border-border">

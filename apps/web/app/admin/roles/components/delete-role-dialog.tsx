@@ -29,7 +29,7 @@ function isSystemRole(name: string) {
 
 function getDeleteRoleErrorMessage(error: unknown): string {
   if (!(error instanceof ApiFail)) {
-    return "Failed to delete role";
+    return "Couldn't delete role. Try again.";
   }
 
   return error.response.error.details?.[0]?.message || error.message;
@@ -81,10 +81,10 @@ export function DeleteRoleDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete role</AlertDialogTitle>
+          <AlertDialogTitle>Delete role?</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete &quot;{role.name}&quot;? If any
-            users still have this role, you must reassign them first.
+            Delete &quot;{role.name}&quot; permanently. If anyone still has this
+            role, reassign them first.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -94,12 +94,12 @@ export function DeleteRoleDialog({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={deleteRole.isPending}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90"
           >
-            {deleteRole.isPending && (
+            {deleteRole.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
-            )}
-            Delete
+            ) : null}
+            Delete role
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
