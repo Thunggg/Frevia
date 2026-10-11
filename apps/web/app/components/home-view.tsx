@@ -66,15 +66,6 @@ export function HomeView({ user }: HomeViewProps) {
     ? "Continue where you left off: projects, freelancers, or the community forum."
     : "Hire freelancers, find paid work, and grow with a community that stays calm and clear.";
 
-  const secondHeadline = isClient
-    ? "Your work deserves the right people"
-    : "Your skills deserve the right projects";
-  const secondBody = isClient
-    ? "Post a job, review proposals, and keep projects moving with freelancers you can trust."
-    : "Browse open projects, save what fits, and apply when you are ready.";
-  const secondHref = isClient ? "/projects/new" : "/find-work";
-  const secondLabel = isClient ? "Post a job" : "Browse jobs";
-
   return (
     <div
       className={`${display.variable} flex min-h-dvh flex-col bg-background font-sans`}
@@ -190,32 +181,6 @@ export function HomeView({ user }: HomeViewProps) {
               <div className="mt-10">
                 <SkillsHighlight />
               </div>
-            </RevealOnScroll>
-          </div>
-        </section>
-
-        <section className="border-b border-border bg-background">
-          <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
-            <RevealOnScroll>
-              <h2
-                className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]`}
-              >
-                {secondHeadline}
-              </h2>
-            </RevealOnScroll>
-            <RevealOnScroll delayMs={90}>
-              <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
-                {secondBody}
-              </p>
-            </RevealOnScroll>
-            <RevealOnScroll delayMs={160}>
-              <Button
-                asChild
-                size="lg"
-                className={`${styles.ctaPrimary} mt-9 min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]`}
-              >
-                <Link href={secondHref}>{secondLabel}</Link>
-              </Button>
             </RevealOnScroll>
           </div>
         </section>
