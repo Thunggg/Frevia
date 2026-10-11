@@ -8,6 +8,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import type {
+  CreateForumReportType,
+  UpdateReportStatusType,
+} from '@shared/types';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { ForumReportService } from './forums-reports.service';
@@ -29,7 +33,7 @@ export class ForumReportController {
     @UserActive('userId') userId: number,
     @Param('postId', ParseIntPipe) postId: number,
     @Body(new ZodValidationPipe(CreateForumReportDto))
-    body: CreateForumReportDto,
+    body: CreateForumReportType,
   ) {
     return this.forumReportService.createPostReport(
       userId,
@@ -45,7 +49,7 @@ export class ForumReportController {
     @Param('postId', ParseIntPipe) postId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
     @Body(new ZodValidationPipe(CreateForumReportDto))
-    body: CreateForumReportDto,
+    body: CreateForumReportType,
   ) {
     return this.forumReportService.createCommentReport(
       userId,
@@ -108,7 +112,7 @@ export class ForumReportController {
     @UserActive('roleName') roleName: string,
     @Param('reportId', ParseIntPipe) reportId: number,
     @Body(new ZodValidationPipe(UpdateReportStatusDto))
-    body: UpdateReportStatusDto,
+    body: UpdateReportStatusType,
   ) {
     return this.forumReportService.updateReportStatus(
       reportId,

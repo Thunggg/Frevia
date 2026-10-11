@@ -64,14 +64,11 @@ export function ProjectsContent({ initialJobs, pagination }: ProjectsContentProp
               Create and manage your posted jobs
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setEditingJob(undefined);
-              setIsFormOpen(true);
-            }}
-          >
-            <Plus className="mr-2 size-4" />
-            Post a job
+          <Button asChild>
+            <Link href="/projects/new">
+              <Plus className="mr-2 size-4" />
+              Post a job
+            </Link>
           </Button>
         </div>
         <div className="space-y-3">
@@ -167,9 +164,9 @@ export function ProjectsContent({ initialJobs, pagination }: ProjectsContentProp
         job={editingJob}
       />
       <AlertDialog open={pendingDeleteJobId !== null} onOpenChange={(open) => !open && setPendingDeleteJobId(null)}>
-        <AlertDialogContent showCloseButton={false}>
+        <AlertDialogContent>
           <AlertDialogHeader><AlertDialogTitle>Delete this job?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
-          <AlertDialogFooter><AlertDialogCancel render={<Button variant="outline" />}>Cancel</AlertDialogCancel><Button variant="destructive" onClick={() => { if (pendingDeleteJobId) deleteJob(pendingDeleteJobId); setPendingDeleteJobId(null); }}>Delete job</Button></AlertDialogFooter>
+          <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><Button variant="destructive" onClick={() => { if (pendingDeleteJobId) deleteJob(pendingDeleteJobId); setPendingDeleteJobId(null); }}>Delete job</Button></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
       <Footer />

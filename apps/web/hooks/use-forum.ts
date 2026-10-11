@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
 import type {
+  ForumCommentListResponseType,
   ForumPostFilterType,
   ForumLikeDetailResponseType,
 } from "@shared/types";
@@ -359,25 +360,31 @@ export function useToggleCommentLike(postId: number) {
         queryKey: forumKeys.comments(postId),
       });
 
-      const previousData = queryClient.getQueryData(forumKeys.comments(postId));
+      const previousData =
+        queryClient.getQueryData<ForumCommentListResponseType>(
+          forumKeys.comments(postId),
+        );
 
       // Cập nhật comment's like state trong cache
-      queryClient.setQueryData(forumKeys.comments(postId), (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          comments: old.comments.map((comment: any) => {
-            if (comment.id !== commentId) return comment;
-            return {
-              ...comment,
-              likedByMe: !comment.likedByMe,
-              likeCount: comment.likedByMe
-                ? comment.likeCount - 1
-                : comment.likeCount + 1,
-            };
-          }),
-        };
-      });
+      queryClient.setQueryData<ForumCommentListResponseType>(
+        forumKeys.comments(postId),
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            comments: old.comments.map((comment) => {
+              if (comment.id !== commentId) return comment;
+              return {
+                ...comment,
+                likedByMe: !comment.likedByMe,
+                likeCount: comment.likedByMe
+                  ? comment.likeCount - 1
+                  : comment.likeCount + 1,
+              };
+            }),
+          };
+        },
+      );
 
       return { previousData };
     },

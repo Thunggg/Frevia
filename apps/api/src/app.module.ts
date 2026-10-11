@@ -14,6 +14,8 @@ import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module'
 import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ProfilesModule } from './routes/profiles/profile.module';
+import { PortfoliosModule } from './routes/portfolios/portfolio.module';
 import { ManageJobModule } from './routes/manage-job/manage-job.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
@@ -22,6 +24,7 @@ import { SessionsModule } from './routes/sessions/sessions.module';
 import { ConversationModule } from './routes/conversations/conversations.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
+import { AccountProfileModule } from './routes/account-profile/account-profile.module';
 
 @Module({
   imports: [
@@ -31,6 +34,8 @@ import { SharedFileModule } from './routes/shared-file/shared-file.module';
     ForumLikeModule,
     ForumCommentModule,
     ForumReportModule,
+    ProfilesModule,
+    PortfoliosModule,
     BrowseJobModule,
     ManageJobModule,
     ForumAdminModule,
@@ -40,6 +45,7 @@ import { SharedFileModule } from './routes/shared-file/shared-file.module';
     ConversationModule,
     ContractModule,
     SharedFileModule,
+    AccountProfileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -62,4 +68,4 @@ import { SharedFileModule } from './routes/shared-file/shared-file.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

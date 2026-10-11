@@ -1,0 +1,26 @@
+meta {
+  name: Add Skill
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/profiles/1/skills
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "skillName": "Figma",
+    "proficiencyLevel": 9
+  }
+}

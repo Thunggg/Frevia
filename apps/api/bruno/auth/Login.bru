@@ -16,16 +16,16 @@ headers {
 
 body:json {
   {
-    "email": "admin@gmail.com",
-    "password": "Admin123!"
+    "email": "{{demoEmail}}",
+    "password": "{{demoPassword}}"
   }
 }
 
 script:post-response {
   const body = res.body.data;
-  const isSuccess = res.body.success
-    if (isSuccess && body.accessToken) {
-      bru.setEnvVar("accessToken", body.accessToken);
-      bru.setEnvVar("refreshToken", body.refreshToken);
-    }
+  const isSuccess = res.body.success;
+  if (isSuccess && body.accessToken) {
+    bru.setEnvVar("accessToken", body.accessToken);
+    bru.setEnvVar("refreshToken", body.refreshToken);
+  }
 }

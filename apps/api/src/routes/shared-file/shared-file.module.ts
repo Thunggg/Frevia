@@ -5,8 +5,8 @@ import { SharedFileService } from './shared-file.service';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [SharedFileController],
-    providers: [SharedFileService, SharedFileRepository],
+  imports: [SharedModule],
+  controllers: [SharedFileController],
+  providers: [SharedFileService, SharedFileRepository],
 })
-export class SharedFileModule { }
+export class SharedFileModule {}

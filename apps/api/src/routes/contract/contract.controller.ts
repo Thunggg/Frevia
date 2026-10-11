@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
@@ -14,11 +23,15 @@ import {
   UpdateContractResponseDTO,
 } from './contract.dto';
 import { ContractService } from './contract.service';
-import type { CreateContractBodyType, GetContractListQueryType, UpdateContractBodyType } from '@shared/types';
+import type {
+  CreateContractBodyType,
+  GetContractListQueryType,
+  UpdateContractBodyType,
+} from '@shared/types';
 
 @Controller('contracts')
 export class ContractController {
-  constructor(private readonly contractService: ContractService) { }
+  constructor(private readonly contractService: ContractService) {}
 
   @Get()
   @ZodSerializerDto(GetContractListResponseDTO)
@@ -27,7 +40,11 @@ export class ContractController {
     @UserActive('roleName') roleName: string,
     @Query() query: GetContractListQueryDTO,
   ) {
-    return this.contractService.getContractList(userId, roleName, query as GetContractListQueryType);
+    return this.contractService.getContractList(
+      userId,
+      roleName,
+      query as GetContractListQueryType,
+    );
   }
 
   @Get(':id')
@@ -46,7 +63,10 @@ export class ContractController {
     @UserActive('userId') userId: number,
     @Body() body: CreateContractBodyDTO,
   ) {
-    return this.contractService.createContract(userId, body as CreateContractBodyType);
+    return this.contractService.createContract(
+      userId,
+      body as CreateContractBodyType,
+    );
   }
 
   @Patch(':id')
@@ -56,7 +76,11 @@ export class ContractController {
     @Param('id', ParseIntPipe) contractId: number,
     @Body() body: UpdateContractBodyDTO,
   ) {
-    return this.contractService.updateContract(userId, contractId, body as UpdateContractBodyType);
+    return this.contractService.updateContract(
+      userId,
+      contractId,
+      body as UpdateContractBodyType,
+    );
   }
 
   @Patch(':id/sign')
@@ -76,7 +100,6 @@ export class ContractController {
   ) {
     return this.contractService.completeContract(userId, contractId);
   }
-
 
   @Patch(':id/cancel')
   @ZodSerializerDto(CancelContractResponseDTO)

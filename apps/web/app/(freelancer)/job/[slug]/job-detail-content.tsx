@@ -254,7 +254,7 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
         </div>
       </main>
       <AlertDialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
-        <AlertDialogContent showCloseButton={false}>
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -262,7 +262,7 @@ export function JobDetailContent({ job, initialIsBookmarked }: JobDetailContentP
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel render={<Button variant="outline" />} disabled={isBookmarkLoading}>
+            <AlertDialogCancel disabled={isBookmarkLoading}>
               Cancel
             </AlertDialogCancel>
             <Button variant="destructive" disabled={isBookmarkLoading} onClick={removeBookmark}>

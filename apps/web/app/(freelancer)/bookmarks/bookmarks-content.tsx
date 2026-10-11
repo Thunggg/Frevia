@@ -141,7 +141,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
         open={pendingRemoveJobSlug !== null}
         onOpenChange={(open) => !open && setPendingRemoveJobSlug(null)}
       >
-        <AlertDialogContent showCloseButton={false}>
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -149,7 +149,7 @@ export function BookmarksContent({ initialJobs, pagination }: BookmarksContentPr
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel render={<Button variant="outline" />} disabled={isRemoving}>
+            <AlertDialogCancel disabled={isRemoving}>
               Cancel
             </AlertDialogCancel>
             <Button

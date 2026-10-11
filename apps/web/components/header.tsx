@@ -10,9 +10,13 @@ import {
   ChevronDown,
   FileText,
   LogOut,
+  Heart,
+  Link2,
   Menu,
   MonitorSmartphone,
   Search,
+  Settings,
+  ShieldCheck,
   SwitchCamera,
   UserRound,
   X,
@@ -35,12 +39,28 @@ export type HeaderProps = {
   role: UserRole;
 };
 
-const roleConfig = {
+type NavLink = {
+  href: string;
+  label: string;
+  /** Exact pathname match only (e.g. /projects/new). */
+  exact?: boolean;
+  /** Paths under matchPath that should not activate this link. */
+  excludePaths?: string[];
+};
+
+const roleConfig: Record<
+  Exclude<UserRole, "GUEST">,
+  { name: string; links: NavLink[] }
+> = {
   CLIENT: {
     name: "Client",
     links: [
-      { href: "/projects", label: "Post a Job" },
-      { href: "/projects", label: "My Jobs" },
+      { href: "/projects/new", label: "Post a Job", exact: true },
+      {
+        href: "/projects",
+        label: "My Jobs",
+        excludePaths: ["/projects/new"],
+      },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -52,31 +72,63 @@ const roleConfig = {
       { href: "/forum", label: "Forum" },
     ],
   },
-} as const;
+};
+
+function isNavLinkActive(link: NavLink, pathname: string) {
+  if (link.exact) {
+    return pathname === link.href;
+  }
+
+  const pathMatches =
+    pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+  if (!pathMatches) return false;
+
+  if (link.excludePaths?.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
+    return false;
+  }
+
+  return true;
+}
 
 function Logo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 text-xl font-bold text-[#4fae2e]">
-      <Image src="/Logo.png" alt="Frevia logo" width={28} height={28} className="size-7 object-contain" priority />
+    <Link
+      href="/"
+      className="flex shrink-0 items-center gap-2 text-xl font-bold text-[#4fae2e]"
+    >
+      <Image
+        src="/Logo.png"
+        alt="Frevia logo"
+        width={28}
+        height={28}
+        className="size-7 object-contain"
+        priority
+      />
       Frevia
     </Link>
   );
 }
 
-function HeaderNavigation({ role, mobile = false }: HeaderProps & { mobile?: boolean }) {
+function HeaderNavigation({
+  role,
+  mobile = false,
+}: HeaderProps & { mobile?: boolean }) {
   const pathname = usePathname();
   const links = role === "GUEST" ? [] : roleConfig[role].links;
 
   return (
     <div className={mobile ? "space-y-1" : "hidden items-center gap-6 md:flex"}>
       {links.map((link) => {
-        const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+        const isActive = isNavLinkActive(link, pathname);
         return (
           <Link
             key={link.label}
             href={link.href}
             className={`block text-sm font-medium transition-colors ${
-              isActive ? "text-[#4fae2e] underline decoration-2 underline-offset-4" : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
+              isActive
+                ? "text-[#4fae2e] underline decoration-2 underline-offset-4"
+                : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
             }`}
           >
             {link.label}
@@ -101,7 +153,11 @@ function HeaderSearch() {
         event.preventDefault();
         const params = new URLSearchParams(searchParams.toString());
         const keyword = query.trim();
-        keyword ? params.set("keyword", keyword) : params.delete("keyword");
+        if (keyword) {
+          params.set("keyword", keyword);
+        } else {
+          params.delete("keyword");
+        }
         params.set("page", "1");
         router.push(`/find-work?${params.toString()}`);
       }}
@@ -132,26 +188,111 @@ function ProfileDropdown({ role }: HeaderProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="hidden items-center gap-2 rounded-full outline-none ring-[#4fae2e]/30 focus:ring-2 sm:flex" aria-label="Open profile menu">
-          <Avatar><AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback></Avatar>
-          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{profile.name}</span>
+        <button
+          className="hidden items-center gap-2 rounded-full outline-none ring-[#4fae2e]/30 focus:ring-2 sm:flex"
+          aria-label="Open profile menu"
+        >
+          <Avatar>
+            <AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback>
+          </Avatar>
+          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
+            {profile.name}
+          </span>
           <ChevronDown className="size-4 text-gray-600 dark:text-gray-300" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72 p-2">
         <DropdownMenuLabel className="flex items-center gap-3 px-3 py-4">
-          <Avatar size="lg"><AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback></Avatar>
-          <div><p className="text-lg font-semibold text-foreground">{profile.name}</p><p className="font-normal text-muted-foreground">{role === "FREELANCER" ? "Freelancer" : "Client"}</p></div>
+          <Avatar size="lg">
+            <AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="text-lg font-semibold text-foreground">
+              {profile.name}
+            </p>
+            <p className="font-normal text-muted-foreground">
+              {role === "FREELANCER" ? "Freelancer" : "Client"}
+            </p>
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild><Link href="/profile"><UserRound />My Profile</Link></DropdownMenuItem>
-        {role === "FREELANCER" && <><DropdownMenuItem asChild><Link href="/proposals"><FileText />My Proposals<span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">2</span></Link></DropdownMenuItem><DropdownMenuItem asChild><Link href="/bookmarks"><Bookmark />My Bookmarks</Link></DropdownMenuItem></>}
-        {role === "CLIENT" && <DropdownMenuItem asChild><Link href="/projects"><FileText />My Jobs</Link></DropdownMenuItem>}
+        <DropdownMenuItem asChild>
+          <Link href="/account-profile">
+            <UserRound />
+            Profile settings
+          </Link>
+        </DropdownMenuItem>
+        {role === "FREELANCER" && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/account-profile">
+                <ShieldCheck />
+                Identity verification
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/proposals">
+                <FileText />
+                My Proposals
+                <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                  2
+                </span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/bookmarks">
+                <Bookmark />
+                My Bookmarks
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        {role === "CLIENT" && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/projects">
+                <FileText />
+                My Jobs
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/account-profile">
+                <Heart />
+                Favorite freelancers
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        <DropdownMenuItem asChild>
+          <Link href="/account-profile">
+            <Link2 />
+            Social links
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild><Link href={role === "FREELANCER" ? "/client" : "/find-work"}><SwitchCamera />Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}</Link></DropdownMenuItem>
-        <DropdownMenuItem asChild><Link href="/sessions"><MonitorSmartphone />Sessions</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={role === "FREELANCER" ? "/client" : "/find-work"}>
+            <SwitchCamera />
+            Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/sessions">
+            <MonitorSmartphone />
+            Sessions
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings">
+            <Settings />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onSelect={logout}><LogOut />Logout</DropdownMenuItem>
+        <DropdownMenuItem variant="destructive" onSelect={logout}>
+          <LogOut />
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -159,10 +300,31 @@ function ProfileDropdown({ role }: HeaderProps) {
 
 function HeaderActions({ role }: HeaderProps) {
   if (role === "GUEST") {
-    return <div className="ml-auto flex items-center gap-2"><Button variant="ghost" asChild><Link href="/login">Log in</Link></Button><Button asChild><Link href="/register">Sign up</Link></Button></div>;
+    return (
+      <div className="ml-auto flex items-center gap-2">
+        <Button variant="ghost" asChild>
+          <Link href="/login">Log in</Link>
+        </Button>
+        <Button asChild>
+          <Link href="/register">Sign up</Link>
+        </Button>
+      </div>
+    );
   }
 
-  return <div className="ml-auto flex items-center gap-3"><Button variant="ghost" size="icon" className="hidden rounded-full sm:inline-flex" aria-label="Notifications"><Bell className="size-5" /></Button><ProfileDropdown role={role} /></div>;
+  return (
+    <div className="ml-auto flex items-center gap-3">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="hidden rounded-full sm:inline-flex"
+        aria-label="Notifications"
+      >
+        <Bell className="size-5" />
+      </Button>
+      <ProfileDropdown role={role} />
+    </div>
+  );
 }
 
 export function Header({ role }: HeaderProps) {
@@ -175,11 +337,22 @@ export function Header({ role }: HeaderProps) {
         {role === "FREELANCER" && <HeaderSearch />}
         <HeaderNavigation role={role} />
         <HeaderActions role={role} />
-        <button onClick={() => setIsMenuOpen((open) => !open)} className="rounded-md p-2 hover:bg-black/5 md:hidden" aria-label="Toggle menu">
+        <button
+          onClick={() => setIsMenuOpen((open) => !open)}
+          className="rounded-md p-2 hover:bg-black/5 md:hidden"
+          aria-label="Toggle menu"
+        >
           {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
-      {isMenuOpen && <div className="space-y-3 border-t border-black/10 bg-[#eaf8df] p-4 md:hidden"><HeaderNavigation role={role} mobile /><div className="border-t border-black/10 pt-3 text-sm font-medium text-muted-foreground">{role === "GUEST" ? "Welcome to Frevia" : roleConfig[role].name}</div></div>}
+      {isMenuOpen && (
+        <div className="space-y-3 border-t border-black/10 bg-[#eaf8df] p-4 md:hidden">
+          <HeaderNavigation role={role} mobile />
+          <div className="border-t border-black/10 pt-3 text-sm font-medium text-muted-foreground">
+            {role === "GUEST" ? "Welcome to Frevia" : roleConfig[role].name}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

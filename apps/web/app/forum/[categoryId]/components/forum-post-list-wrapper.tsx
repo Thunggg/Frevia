@@ -3,11 +3,7 @@
 import { Suspense } from "react";
 import { useForumPosts, useForumTopPosts } from "@/hooks/use-forum";
 import { ForumPostList } from "./forum-post-list";
-import type {
-  ForumPostFilterType,
-  ForumPostWithUserType,
-  ForumTopPostType,
-} from "@shared/types";
+import type { ForumPostFilterType, ForumPostWithUserType } from "@shared/types";
 import { Card, CardContent } from "@repo/ui/components/shadcn/card";
 
 type ForumPostListWrapperProps = {

@@ -1,0 +1,84 @@
+/* Home motion: MOTION_INTENSITY 4 — opacity/transform only, reduced-motion safe */
+
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes home-drift {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(-1.5%, 1%, 0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  animation: home-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.revealDelay1 {
+  animation-delay: 80ms;
+}
+
+.revealDelay2 {
+  animation-delay: 160ms;
+}
+
+.revealDelay3 {
+  animation-delay: 240ms;
+}
+
+.revealDelay4 {
+  animation-delay: 320ms;
+}
+
+.heroMedia {
+  animation: home-fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.heroMediaImg {
+  animation: home-drift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.sectionReveal {
+  opacity: 0;
+  animation: home-fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .revealDelay1,
+  .revealDelay2,
+  .revealDelay3,
+  .revealDelay4,
+  .heroMedia,
+  .sectionReveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .heroMediaImg {
+    animation: none;
+    will-change: auto;
+  }
+}
