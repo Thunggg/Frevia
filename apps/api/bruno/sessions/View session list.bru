@@ -1,0 +1,28 @@
+meta {
+  name: View session list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/sessions?page=1&limit=10
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: 
+  ~sortBy: createdAt
+  ~order: desc
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

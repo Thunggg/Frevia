@@ -19,6 +19,7 @@ const prisma = new PrismaClient({
 /** Module gán cho Freelancer / Client (Admin nhận tất cả). */
 const freelancerModules = [
   'AUTH',
+  'SESSIONS',
   'JOBS',
   'MANAGE-JOBS',
   'CONTRACTS',
@@ -27,6 +28,7 @@ const freelancerModules = [
 ];
 const clientModules = [
   'AUTH',
+  'SESSIONS',
   'JOBS',
   'MANAGE-JOBS',
   'CONTRACTS',
