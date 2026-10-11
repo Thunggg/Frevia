@@ -12,6 +12,7 @@ import {
   Heart,
   Link2,
   Menu,
+  MessageSquare,
   MonitorSmartphone,
   Search,
   ShieldCheck,
@@ -20,7 +21,7 @@ import {
   X,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@repo/ui/components/shadcn/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/shadcn/avatar";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   DropdownMenu,
@@ -31,6 +32,9 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationBell } from "@/components/notification-bell";
+import { ContactDialog } from "@/components/contact-dialog";
+import { useMe } from "@/hooks/use-auth";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -41,9 +45,7 @@ export type HeaderProps = {
 type NavLink = {
   href: string;
   label: string;
-  /** Exact pathname match only (e.g. /projects/new). */
   exact?: boolean;
-  /** Paths under matchPath that should not activate this link. */
   excludePaths?: string[];
 };
 
@@ -73,23 +75,16 @@ const roleConfig: Record<
 };
 
 function isNavLinkActive(link: NavLink, pathname: string) {
-  if (link.exact) {
-    return pathname === link.href;
-  }
-
+  if (link.exact) return pathname === link.href;
   const pathMatches =
     pathname === link.href || pathname.startsWith(`${link.href}/`);
-
   if (!pathMatches) return false;
-
   if (
     link.excludePaths?.some(
       (path) => pathname === path || pathname.startsWith(`${path}/`),
     )
-  ) {
+  )
     return false;
-  }
-
   return true;
 }
 
@@ -97,17 +92,19 @@ function Logo() {
   return (
     <Link
       href="/"
-      className="flex shrink-0 items-center gap-2 text-xl font-bold text-[#4fae2e]"
+      className="flex shrink-0 items-center gap-2.5"
     >
       <Image
         src="/Logo.png"
         alt="Frevia logo"
-        width={28}
-        height={28}
-        className="size-7 object-contain"
+        width={26}
+        height={26}
+        className="size-[26px] object-contain"
         priority
       />
-      Frevia
+      <span className="text-lg font-bold tracking-tight text-[#4fae2e]">
+        Frevia
+      </span>
     </Link>
   );
 }
@@ -121,7 +118,7 @@ function HeaderNavigation({
   const links = role === "GUEST" ? [] : roleConfig[role].links;
 
   return (
-    <div className={mobile ? "space-y-1" : "hidden items-center gap-6 md:flex"}>
+    <div className={mobile ? "space-y-0.5" : "hidden items-center gap-1 md:flex"}>
       {links.map((link) => {
         const isActive = isNavLinkActive(link, pathname);
         return (
@@ -129,12 +126,12 @@ function HeaderNavigation({
             key={link.label}
             href={link.href}
             onClick={onNavigate}
-            className={`block rounded-md text-sm font-medium transition-colors ${
-              mobile ? "px-2 py-2" : ""
+            className={`rounded-lg text-[13px] font-medium transition-all duration-150 ${
+              mobile ? "block px-3 py-2" : "px-3 py-1.5"
             } ${
               isActive
-                ? "text-[#4fae2e] underline decoration-2 underline-offset-4"
-                : "text-foreground/75 hover:text-[#4fae2e] dark:text-foreground/85 dark:hover:text-[#5bc03a]"
+                ? "bg-[#4fae2e]/10 text-[#4fae2e] dark:bg-[#4fae2e]/15"
+                : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06] dark:hover:text-foreground/90"
             }`}
           >
             {link.label}
@@ -173,12 +170,12 @@ function HeaderSearch({
       }}
     >
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search for projects, skills..."
-          className="w-full rounded-full border border-transparent bg-white py-2 pl-10 pr-4 text-sm text-foreground shadow-sm outline-none ring-[#4fae2e]/30 placeholder:text-muted-foreground focus:ring-2 dark:border-white/10 dark:bg-muted dark:text-foreground dark:shadow-none dark:ring-[#4fae2e]/40"
+          className="h-9 w-full rounded-lg border border-border/60 bg-white/60 pl-9 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 transition-colors focus:border-[#4fae2e]/50 focus:bg-white focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:text-foreground dark:placeholder:text-white/30 dark:focus:border-[#4fae2e]/40 dark:focus:bg-white/[0.06] dark:focus:ring-[#4fae2e]/15"
         />
       </div>
     </form>
@@ -188,6 +185,9 @@ function HeaderSearch({
 function ProfileDropdown({ role }: HeaderProps) {
   const router = useRouter();
   const profile = roleConfig[role as Exclude<UserRole, "GUEST">];
+  const { data: me } = useMe();
+  const displayName = me?.profile?.displayName || profile.name;
+  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -199,50 +199,56 @@ function ProfileDropdown({ role }: HeaderProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="hidden items-center gap-2 rounded-full outline-none ring-[#4fae2e]/30 focus:ring-2 sm:flex"
+          className="hidden items-center gap-2 rounded-full px-1.5 py-1 outline-none transition-colors hover:bg-black/[0.04] focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 dark:hover:bg-white/[0.06] sm:flex"
           aria-label="Open profile menu"
         >
-          <Avatar>
-            <AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback>
+          <Avatar className="size-8">
+            {me?.profile?.avatarUrl && <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />}
+            <AvatarFallback className="bg-[#4fae2e]/10 text-[11px] font-semibold text-[#4fae2e]">
+              {initial}
+            </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium text-foreground">
-            {profile.name}
+          <span className="max-w-[100px] truncate text-[13px] font-medium text-foreground/80">
+            {displayName}
           </span>
-          <ChevronDown className="size-4 text-muted-foreground" />
+          <ChevronDown className="size-3.5 text-muted-foreground" strokeWidth={2} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 p-2">
-        <DropdownMenuLabel className="flex items-center gap-3 px-3 py-4">
+      <DropdownMenuContent align="end" className="w-64 p-1.5">
+        <DropdownMenuLabel className="flex items-center gap-3 px-2.5 py-3">
           <Avatar size="lg">
-            <AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback>
+            {me?.profile?.avatarUrl && <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />}
+            <AvatarFallback className="bg-[#4fae2e]/10 text-sm font-semibold text-[#4fae2e]">
+              {initial}
+            </AvatarFallback>
           </Avatar>
-          <div>
-            <p className="text-lg font-semibold text-foreground">
-              {profile.name}
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-foreground">
+              {displayName}
             </p>
-            <p className="font-normal text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {role === "FREELANCER" ? "Freelancer" : "Client"}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/account-profile">
-            <UserRound />
+          <Link href="/account-profile" className="cursor-pointer">
+            <UserRound className="size-4 text-muted-foreground" />
             Profile settings
           </Link>
         </DropdownMenuItem>
         {role === "FREELANCER" && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/account-profile">
-                <ShieldCheck />
+              <Link href="/account-profile" className="cursor-pointer">
+                <ShieldCheck className="size-4 text-muted-foreground" />
                 Identity verification
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/bookmarks">
-                <Bookmark />
+              <Link href="/bookmarks" className="cursor-pointer">
+                <Bookmark className="size-4 text-muted-foreground" />
                 My Bookmarks
               </Link>
             </DropdownMenuItem>
@@ -251,41 +257,41 @@ function ProfileDropdown({ role }: HeaderProps) {
         {role === "CLIENT" && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/projects">
-                <FileText />
+              <Link href="/projects" className="cursor-pointer">
+                <FileText className="size-4 text-muted-foreground" />
                 My Jobs
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/account-profile">
-                <Heart />
+              <Link href="/account-profile" className="cursor-pointer">
+                <Heart className="size-4 text-muted-foreground" />
                 Favorite freelancers
               </Link>
             </DropdownMenuItem>
           </>
         )}
         <DropdownMenuItem asChild>
-          <Link href="/account-profile">
-            <Link2 />
+          <Link href="/account-profile" className="cursor-pointer">
+            <Link2 className="size-4 text-muted-foreground" />
             Social links
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={role === "FREELANCER" ? "/client" : "/find-work"}>
-            <SwitchCamera />
+          <Link href={role === "FREELANCER" ? "/client" : "/find-work"} className="cursor-pointer">
+            <SwitchCamera className="size-4 text-muted-foreground" />
             Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/sessions">
-            <MonitorSmartphone />
+          <Link href="/sessions" className="cursor-pointer">
+            <MonitorSmartphone className="size-4 text-muted-foreground" />
             Sessions
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onSelect={logout}>
-          <LogOut />
+        <DropdownMenuItem variant="destructive" onSelect={logout} className="cursor-pointer">
+          <LogOut className="size-4" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -296,18 +302,19 @@ function ProfileDropdown({ role }: HeaderProps) {
 function HeaderActions({ role }: HeaderProps) {
   if (role === "GUEST") {
     return (
-      <div className="ml-auto flex items-center gap-1 sm:gap-2">
+      <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
+        <ContactDialog />
         <ThemeToggle />
         <Button
           variant="ghost"
           asChild
-          className="hidden text-foreground hover:bg-black/5 hover:text-foreground sm:inline-flex dark:hover:bg-white/10"
+          className="hidden h-8 px-3 text-[13px] font-medium text-foreground/70 hover:text-foreground sm:inline-flex"
         >
           <Link href="/login">Log in</Link>
         </Button>
         <Button
           asChild
-          className="hidden bg-[#4fae2e] text-white hover:bg-[#459928] sm:inline-flex dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+          className="hidden h-8 rounded-lg bg-[#4fae2e] px-4 text-[13px] font-semibold text-white shadow-sm shadow-[#4fae2e]/20 hover:bg-[#459928] hover:shadow-md hover:shadow-[#4fae2e]/25 sm:inline-flex dark:hover:bg-[#5bc03a]"
         >
           <Link href="/register">Get started</Link>
         </Button>
@@ -316,7 +323,9 @@ function HeaderActions({ role }: HeaderProps) {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-1 sm:gap-3">
+    <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+      <ContactDialog />
+      <NotificationBell />
       <ThemeToggle />
       <ProfileDropdown role={role} />
     </div>
@@ -328,33 +337,38 @@ export function Header({ role }: HeaderProps) {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#4fae2e]/15 bg-[#eaf8df] text-foreground dark:border-white/10 dark:bg-[#161716]">
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-[#eaf8df]/80 backdrop-blur-xl text-foreground dark:border-white/[0.06] dark:bg-[#161716]/80">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
         <Logo />
         {role === "FREELANCER" && <HeaderSearch />}
         <HeaderNavigation role={role} />
         <HeaderActions role={role} />
         <button
           onClick={() => setIsMenuOpen((open) => !open)}
-          className="rounded-md p-2 text-foreground hover:bg-black/5 md:hidden dark:hover:bg-white/10"
+          className="rounded-full p-2 text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground md:hidden dark:hover:bg-white/[0.06]"
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
         >
-          {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          {isMenuOpen ? (
+            <X className="size-5" />
+          ) : (
+            <Menu className="size-5" />
+          )}
         </button>
       </div>
       {isMenuOpen && (
-        <div className="space-y-3 border-t border-[#4fae2e]/15 bg-[#eaf8df] p-4 md:hidden dark:border-white/10 dark:bg-[#161716]">
+        <div className="space-y-2 border-t border-border/40 bg-[#eaf8df]/95 p-4 backdrop-blur-xl md:hidden dark:border-white/[0.06] dark:bg-[#161716]/95">
           {role === "FREELANCER" && (
             <HeaderSearch className="block w-full" />
           )}
           <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
           {role === "GUEST" ? (
-            <div className="flex flex-col gap-2 border-t border-[#4fae2e]/15 pt-3 dark:border-[#4fae2e]/25">
+            <div className="flex flex-col gap-2 border-t border-border/40 pt-3 dark:border-white/[0.06]">
+              <ContactDialog />
               <Button
                 variant="outline"
                 asChild
-                className="w-full border-[#4fae2e]/35 bg-transparent dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
+                className="h-9 w-full border-border/60 bg-transparent text-[13px] font-medium dark:border-white/10"
               >
                 <Link href="/login" onClick={closeMenu}>
                   Log in
@@ -362,7 +376,7 @@ export function Header({ role }: HeaderProps) {
               </Button>
               <Button
                 asChild
-                className="w-full bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+                className="h-9 w-full rounded-lg bg-[#4fae2e] text-[13px] font-semibold text-white shadow-sm shadow-[#4fae2e]/20 hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
               >
                 <Link href="/register" onClick={closeMenu}>
                   Get started
@@ -370,8 +384,18 @@ export function Header({ role }: HeaderProps) {
               </Button>
             </div>
           ) : (
-            <div className="border-t border-[#4fae2e]/15 pt-3 text-sm font-medium text-muted-foreground dark:border-[#4fae2e]/25">
-              {roleConfig[role].name}
+            <div className="space-y-1 border-t border-border/40 pt-3 dark:border-white/[0.06]">
+              <Link
+                href="/conversations"
+                onClick={closeMenu}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
+              >
+                <MessageSquare className="size-4 text-muted-foreground" />
+                Conversations
+              </Link>
+              <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
+                {roleConfig[role].name}
+              </div>
             </div>
           )}
         </div>

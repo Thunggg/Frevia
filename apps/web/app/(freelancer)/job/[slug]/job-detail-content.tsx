@@ -10,6 +10,7 @@ import {
   CalendarDays,
   Clock,
   Loader2,
+  MessageSquare,
 } from "lucide-react";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
@@ -132,6 +133,7 @@ export function JobDetailContent({
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [clientName, setClientName] = useState<string | null>(null);
+  const [clientAvatar, setClientAvatar] = useState<string | null>(null);
   const [clientLoading, setClientLoading] = useState(true);
   const canBookmark = role === "FREELANCER";
   const deadlineUrgency = getDeadlineUrgency(job.deadline);
@@ -150,9 +152,11 @@ export function JobDetailContent({
             response.data.displayName ??
             `Client #${job.clientId}`,
         );
+        setClientAvatar(response.data.avatarUrl ?? null);
       } catch {
         if (!active) return;
         setClientName(`Client #${job.clientId}`);
+        setClientAvatar(null);
       } finally {
         if (active) setClientLoading(false);
       }
@@ -449,9 +453,18 @@ export function JobDetailContent({
               <div className="border-t border-border pt-4">
                 <p className="text-sm font-medium text-foreground">Client</p>
                 <div className="mt-3 flex items-center gap-3">
-                  <div className="flex size-11 items-center justify-center rounded-full bg-[#eaf8df] text-sm font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                    {clientLoading ? "…" : clientInitial}
-                  </div>
+                  {clientAvatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={clientAvatar}
+                      alt={clientName ?? "Client"}
+                      className="size-11 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-11 items-center justify-center rounded-full bg-[#eaf8df] text-sm font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      {clientLoading ? "…" : clientInitial}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground">
                       {clientLoading ? "Loading…" : clientName}
@@ -466,6 +479,20 @@ export function JobDetailContent({
                     View client profile
                   </Link>
                 </Button>
+                {canBookmark || role === "GUEST" ? (
+                  <Button
+                    variant="outline"
+                    className="mt-2 h-11 w-full gap-2 border-[#4fae2e]/35 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                    onClick={() => {
+                      requireFreelancer(() => {
+                        router.push(`/conversations/new?participantId=${job.clientId}`);
+                      });
+                    }}
+                  >
+                    <MessageSquare className="size-4" />
+                    Connect with client
+                  </Button>
+                ) : null}
               </div>
             </div>
           </aside>

@@ -1,7 +1,11 @@
 import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
+import { envConfig } from "@/configs/validate-env";
+import authServerRequest from "@/apiRequests/auth.server";
+import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 
@@ -25,6 +29,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -34,7 +42,15 @@ export default async function RootLayout({
           defaultTheme="light"
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <NotificationProvider
+              socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+              token={token}
+              currentUserId={user?.id ?? null}
+            >
+              {children}
+            </NotificationProvider>
+          </QueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>

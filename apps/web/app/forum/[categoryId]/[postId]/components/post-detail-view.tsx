@@ -40,6 +40,7 @@ import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
 import { PostLikesDialog } from "./post-likes-dialog";
 import { ReportDialog } from "./report-dialog";
+import { RelatedPostsSidebar } from "./related-posts-sidebar";
 
 type PostDetailViewProps = {
   post: ViewForumPostDetailResponseType;
@@ -107,33 +108,33 @@ export function PostDetailView({
 
   return (
     <div>
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <nav className="text-sm text-foreground/60">
+      <section className="border-b border-border/40 bg-background">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <nav className="text-[13px] text-muted-foreground/60">
             <Link href="/" className="transition-colors hover:text-[#4fae2e]">
               Home
             </Link>
-            <span className="mx-2 text-foreground/35">/</span>
+            <span className="mx-2 text-foreground/25">/</span>
             <Link
               href="/forum"
               className="transition-colors hover:text-[#4fae2e]"
             >
               Forum
             </Link>
-            <span className="mx-2 text-foreground/35">/</span>
+            <span className="mx-2 text-foreground/25">/</span>
             <Link
               href={`/forum/${resolvedCategoryId}`}
               className="transition-colors hover:text-[#4fae2e]"
             >
               {categoryName}
             </Link>
-            <span className="mx-2 text-foreground/35">/</span>
-            <span className="max-w-[180px] truncate font-medium text-foreground sm:max-w-[280px]">
+            <span className="mx-2 text-foreground/25">/</span>
+            <span className="max-w-[180px] truncate font-medium text-foreground/80 sm:max-w-[280px]">
               {displayTitle}
             </span>
           </nav>
 
-          <p className="mt-4 text-sm text-foreground/65">
+          <p className="mt-4 text-[13px] text-foreground/50">
             Discussion in{" "}
             <Link
               href={`/forum/${resolvedCategoryId}`}
@@ -145,12 +146,13 @@ export function PostDetailView({
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <article>
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              {displayTitle}
-            </h1>
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div className="flex flex-col gap-10 lg:flex-row">
+          <article className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                {displayTitle}
+              </h1>
             {isAuthor ? (
               <div className="flex shrink-0 items-center gap-1">
                 <EditPostDialog
@@ -205,17 +207,17 @@ export function PostDetailView({
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-sm font-medium text-foreground/80">
                 {post.user?.profile?.displayName ?? `User #${post.userId}`}
               </p>
-              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-muted-foreground/50">
                 <span className="inline-flex items-center gap-1">
-                  <Calendar className="size-3 text-[#4fae2e]" />
+                  <Calendar className="size-3 text-[#4fae2e]/60" />
                   {formatDate(post.createdAt)}
                 </span>
                 {wasEdited ? (
                   <>
-                    <span className="text-foreground/35">·</span>
+                    <span className="text-foreground/20">·</span>
                     <span>Edited {formatDate(post.updatedAt)}</span>
                   </>
                 ) : null}
@@ -228,7 +230,7 @@ export function PostDetailView({
             dangerouslySetInnerHTML={{ __html: displayContent }}
           />
 
-          <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border py-3">
+          <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border/40 py-3">
             <Button
               variant="ghost"
               size="sm"
@@ -236,8 +238,8 @@ export function PostDetailView({
               disabled={toggleLike.isPending}
               className={
                 liked
-                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
-                  : "gap-1.5 px-3 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-white/5/40"
+                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#4fae2e]/5 hover:text-[#3f9225] dark:hover:bg-[#4fae2e]/10"
+                  : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
               }
             >
               <Heart
@@ -263,10 +265,20 @@ export function PostDetailView({
           <div className="mt-2">
             <PostLikesDialog postId={post.id} count={likeCount} />
           </div>
+
+          <div className="mt-10">
+            <CommentSection postId={post.id} currentUserId={currentUserId} />
+          </div>
         </article>
 
-        <div className="mt-10">
-          <CommentSection postId={post.id} currentUserId={currentUserId} />
+          <aside className="w-full shrink-0 lg:w-72 lg:pt-10">
+            <div className="lg:sticky lg:top-20">
+              <RelatedPostsSidebar
+                categoryId={resolvedCategoryId}
+                currentPostId={post.id}
+              />
+            </div>
+          </aside>
         </div>
       </div>
     </div>

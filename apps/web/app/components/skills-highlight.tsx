@@ -22,9 +22,8 @@ const SKILLS = [
   "Motion",
 ] as const;
 
-/** How many skills appear “found” at once */
 const FOUND_COUNT = 3;
-const CYCLE_MS = 2400;
+const CYCLE_MS = 2800;
 
 export function SkillsHighlight() {
   const [offset, setOffset] = useState(0);
@@ -40,7 +39,7 @@ export function SkillsHighlight() {
       setOffset((current) => (current + FOUND_COUNT) % SKILLS.length);
     }, CYCLE_MS);
 
-    return () => window.clearInterval(id);
+    return () => clearInterval(id);
   }, []);
 
   const found = new Set<number>();
@@ -53,21 +52,20 @@ export function SkillsHighlight() {
   }
 
   return (
-    <ul className={styles.skillsGrid} aria-label="Freelance skill categories">
+    <div className={styles.skillsGrid}>
       {SKILLS.map((skill, index) => {
         const isFound = found.has(index);
         return (
-          <li key={skill}>
-            <span
-              className={`${styles.skillChip} ${
-                isFound ? styles.skillFound : ""
-              }`}
-            >
-              {skill}
-            </span>
-          </li>
+          <span
+            key={skill}
+            className={`${styles.skillChip} ${
+              isFound ? styles.skillFound : ""
+            }`}
+          >
+            {skill}
+          </span>
         );
       })}
-    </ul>
+    </div>
   );
 }

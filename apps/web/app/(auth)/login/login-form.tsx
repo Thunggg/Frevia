@@ -83,14 +83,16 @@ export function LoginForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="email">Email address</FieldLabel>
+                <FieldLabel className="text-[13px] font-medium text-foreground/70">
+                  Email address
+                </FieldLabel>
                 <Input
                   {...field}
                   id="email"
                   type="email"
                   placeholder="you@company.com"
                   autoComplete="email"
-                  className="h-11"
+                  className="h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
                   aria-invalid={fieldState.invalid}
                 />
                 {fieldState.invalid && (
@@ -105,7 +107,9 @@ export function LoginForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <FieldLabel className="text-[13px] font-medium text-foreground/70">
+                  Password
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     {...field}
@@ -113,13 +117,13 @@ export function LoginForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    className="h-11 pr-10"
+                    className="h-11 border-border/60 bg-white/60 pr-10 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
                     aria-invalid={fieldState.invalid}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -141,14 +145,14 @@ export function LoginForm() {
               <Checkbox id="remember" />
               <Label
                 htmlFor="remember"
-                className="cursor-pointer text-sm font-medium text-muted-foreground"
+                className="cursor-pointer text-[13px] text-muted-foreground/70"
               >
                 Remember me
               </Label>
             </div>
             <Link
               href="/forgot-password"
-              className="text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+              className="text-[13px] font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
             >
               Forgot password?
             </Link>
@@ -157,7 +161,7 @@ export function LoginForm() {
           <Button
             type="submit"
             form="login-form"
-            className="mt-1 h-11 w-full bg-[#4fae2e] font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+            className="mt-1 h-11 w-full rounded-lg bg-[#4fae2e] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#459928] hover:shadow-md active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
             disabled={loginMutation.isPending}
           >
             {loginMutation.isPending ? (
@@ -177,7 +181,7 @@ export function LoginForm() {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-3 text-muted-foreground">
+          <span className="bg-background px-3 text-[11px] tracking-wider text-muted-foreground/50">
             Or continue with
           </span>
         </div>
@@ -188,7 +192,7 @@ export function LoginForm() {
         type="button"
         onClick={() => clickGoogleLogin()}
         disabled={googleLinkMutation.isPending}
-        className="h-11 w-full font-medium active:scale-[0.99]"
+        className="h-11 w-full rounded-lg border-border/60 bg-white/60 text-[14px] font-medium transition-all dark:border-white/10 dark:bg-white/[0.03] active:scale-[0.99]"
       >
         <svg className="mr-2 size-4" viewBox="0 0 24 24" aria-hidden>
           <path
@@ -211,7 +215,7 @@ export function LoginForm() {
         Google
       </Button>
 
-      <p className="mt-8 text-center text-sm text-muted-foreground">
+      <p className="mt-8 text-center text-[13px] text-muted-foreground/60">
         Don&apos;t have an account?{" "}
         <Link
           href="/register"

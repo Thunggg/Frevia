@@ -7,6 +7,7 @@ export const ForumPostSchema = z.object({
   categoryId: z.number().nullable(),
   userId: z.number(),
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  slug: z.string(),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -78,6 +79,7 @@ export const ViewForumPostDetailResponseSchema = z.object({
   categoryId: z.number().nullable(),
   userId: z.number(),
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  slug: z.string(),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -85,6 +87,7 @@ export const ViewForumPostDetailResponseSchema = z.object({
     .object({
       id: z.number(),
       name: z.string(),
+      slug: z.string(),
     })
     .nullable(),
   user: z.object({
@@ -116,6 +119,7 @@ export const ForumTopPostSchema = ForumPostSchema.extend({
     .object({
       id: z.number(),
       name: z.string(),
+      slug: z.string(),
     })
     .nullable(),
 });

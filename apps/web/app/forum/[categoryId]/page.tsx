@@ -37,17 +37,16 @@ export default async function ForumCategoryDetailPage({
   params,
   searchParams,
 }: ForumCategoryDetailPageProps) {
-  const { categoryId } = await params;
+  const { categoryId: categoryIdParam } = await params;
   const { page, limit, search, myPosts } = await searchParams;
+  const categoryId = Number(categoryIdParam);
 
-  const categoryIdNum = Number(categoryId);
-
-  if (Number.isNaN(categoryIdNum) || categoryIdNum <= 0) {
+  if (!Number.isInteger(categoryId) || categoryId <= 0) {
     notFound();
   }
 
   const [category, user] = await Promise.all([
-    forumServerRequest.getCategoryById(categoryIdNum),
+    forumServerRequest.getCategoryById(categoryId),
     authServerRequest.getMe(),
   ]);
 
@@ -61,7 +60,7 @@ export default async function ForumCategoryDetailPage({
   const filter = {
     page: Number(page) || 1,
     limit: Number(limit) || 10,
-    categoryId: categoryIdNum,
+    categoryId: category.id,
     userId: myPosts === "1" && currentUserId ? currentUserId : undefined,
   };
 
@@ -70,21 +69,21 @@ export default async function ForumCategoryDetailPage({
       <Header role={role} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+        <section className="border-b border-border/40 bg-background">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-            <nav className="text-sm text-foreground/60">
+            <nav className="text-[13px] text-muted-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
                 Home
               </Link>
-              <span className="mx-2 text-foreground/35">/</span>
+              <span className="mx-2 text-foreground/25">/</span>
               <Link
                 href="/forum"
                 className="transition-colors hover:text-[#4fae2e]"
               >
                 Forum
               </Link>
-              <span className="mx-2 text-foreground/35">/</span>
-              <span className="max-w-[220px] truncate font-medium text-foreground">
+              <span className="mx-2 text-foreground/25">/</span>
+              <span className="max-w-[220px] truncate font-medium text-foreground/80">
                 {category.name}
               </span>
             </nav>
@@ -93,12 +92,12 @@ export default async function ForumCategoryDetailPage({
               {category.name}
             </h1>
             {category.description ? (
-              <p className="mt-2 max-w-2xl text-base text-foreground/70 dark:text-foreground/75">
+              <p className="mt-2.5 max-w-2xl text-[15px] leading-relaxed text-foreground/50 dark:text-foreground/60">
                 {category.description}
               </p>
             ) : null}
-            <p className="mt-3 text-sm text-foreground/65">
-              <span className="font-semibold text-foreground">
+            <p className="mt-3 text-sm text-foreground/50">
+              <span className="font-semibold text-foreground/70">
                 {category.postCount}
               </span>{" "}
               {category.postCount === 1 ? "post" : "posts"}
@@ -109,7 +108,7 @@ export default async function ForumCategoryDetailPage({
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <ForumPostListWrapper
             filter={filter}
-            categoryId={categoryIdNum}
+            categoryId={category.id}
             categoryName={category.name}
             currentSearch={search}
             currentUserId={currentUserId}

@@ -1,11 +1,12 @@
 import { authApiRequest } from "@/apiRequests/auth";
 import {
   ForgotPasswordBodyType,
+  GetMeResType,
   LoginBodyType,
   RegisterBodyType,
   SendOTPBodyType,
 } from "@shared/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const useLogin = () => {
   return useMutation({
@@ -38,4 +39,13 @@ function useForgotPassword() {
   });
 }
 
-export { useForgotPassword, useGoogleLink, useLogin, useRegister, useSendOtp };
+function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: () => authApiRequest.me().then((res) => (res.success ? res.data : null)),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+}
+
+export { useForgotPassword, useGoogleLink, useLogin, useMe, useRegister, useSendOtp };

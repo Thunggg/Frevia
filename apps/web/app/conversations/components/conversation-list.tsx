@@ -152,16 +152,21 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
       {/* List */}
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="space-y-1 p-2">
+          <div className="space-y-0 divide-y">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 rounded-lg px-3 py-3">
-                <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center justify-between">
+              <div key={i} className="flex items-start gap-3 px-4 py-3">
+                <Skeleton className="mt-0.5 size-10 shrink-0 rounded-full" />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex items-baseline justify-between gap-2">
                     <Skeleton className="h-4 w-28" />
                     <Skeleton className="h-3 w-12" />
                   </div>
-                  <Skeleton className="h-3.5 w-44" />
+                  <div className="flex items-center justify-between gap-2">
+                    <Skeleton className="h-3.5 w-44" />
+                    {i % 3 === 0 && (
+                      <Skeleton className="size-5 shrink-0 rounded-full" />
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -206,7 +211,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                 >
                   <Link
                     href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-[#eaf8df]/80 dark:hover:bg-white/5/50 ${
+                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.04] ${
                       isActive ? "!bg-[#eaf8df] border-r-[3px] !border-r-[#4fae2e] dark:!bg-[#222422]" : ""
                     }`}
                   >
@@ -257,7 +262,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                           )}
                         </p>
                         {conversation.unreadCount > 0 && (
-                          <Badge className="shrink-0 rounded-full bg-[#4fae2e] px-1.5 py-0 text-xs text-white hover:bg-[#4fae2e]">
+                          <Badge className="shrink-0 rounded-full bg-red-500 px-1.5 py-0 text-xs text-white hover:bg-red-500">
                             {conversation.unreadCount}
                           </Badge>
                         )}
