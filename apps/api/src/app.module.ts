@@ -18,6 +18,7 @@ import { ManageJobModule } from './routes/manage-job/manage-job.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
 import { PermissionsModule } from './routes/permissions/permissions.module';
+import { SessionsModule } from './routes/sessions/sessions.module';
 import { ConversationModule } from './routes/conversations/conversations.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
@@ -35,6 +36,7 @@ import { SharedFileModule } from './routes/shared-file/shared-file.module';
     ForumAdminModule,
     RolesModule,
     PermissionsModule,
+    SessionsModule,
     ConversationModule,
     ContractModule,
     SharedFileModule,

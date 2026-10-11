@@ -11,8 +11,8 @@ import {
   FileText,
   LogOut,
   Menu,
+  MonitorSmartphone,
   Search,
-  Settings,
   SwitchCamera,
   UserRound,
   X,
@@ -73,7 +73,7 @@ function HeaderNavigation({ role, mobile = false }: HeaderProps & { mobile?: boo
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
         return (
           <Link
-            key={link.href}
+            key={link.label}
             href={link.href}
             className={`block text-sm font-medium transition-colors ${
               isActive ? "text-[#4fae2e] underline decoration-2 underline-offset-4" : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
@@ -149,7 +149,7 @@ function ProfileDropdown({ role }: HeaderProps) {
         {role === "CLIENT" && <DropdownMenuItem asChild><Link href="/projects"><FileText />My Jobs</Link></DropdownMenuItem>}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild><Link href={role === "FREELANCER" ? "/client" : "/find-work"}><SwitchCamera />Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}</Link></DropdownMenuItem>
-        <DropdownMenuItem asChild><Link href="/settings"><Settings />Settings</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link href="/sessions"><MonitorSmartphone />Sessions</Link></DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={logout}><LogOut />Logout</DropdownMenuItem>
       </DropdownMenuContent>
