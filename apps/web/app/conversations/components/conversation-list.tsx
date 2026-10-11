@@ -129,16 +129,16 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   };
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-r bg-white">
+    <aside className="flex w-80 shrink-0 flex-col border-r border-border bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#12331f]/40">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <MessageSquare className="h-5 w-5" />
+          <MessageSquare className="h-5 w-5 text-[#4fae2e]" />
           Messages
         </h2>
         <NewConversationDialog
           trigger={
-            <Button variant="outline" size="icon" className="h-8 w-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
+            <Button variant="outline" size="icon" className="h-8 w-8 border-[#4fae2e]/30 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]">
               <Plus className="h-4 w-4" />
               <span className="sr-only">New conversation</span>
             </Button>
@@ -190,8 +190,8 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                 >
                   <Link
                     href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-emerald-50/80 ${
-                      isActive ? "!bg-emerald-50 border-r-[3px] !border-r-emerald-500" : ""
+                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-[#eaf8df]/80 dark:hover:bg-[#12331f]/50 ${
+                      isActive ? "!bg-[#eaf8df] border-r-[3px] !border-r-[#4fae2e] dark:!bg-[#12331f]" : ""
                     }`}
                   >
                     <Avatar className="mt-0.5">
@@ -241,7 +241,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                           )}
                         </p>
                         {conversation.unreadCount > 0 && (
-                          <Badge className="shrink-0 rounded-full bg-emerald-500 px-1.5 py-0 text-xs text-white">
+                          <Badge className="shrink-0 rounded-full bg-[#4fae2e] px-1.5 py-0 text-xs text-white hover:bg-[#4fae2e]">
                             {conversation.unreadCount}
                           </Badge>
                         )}

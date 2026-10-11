@@ -22,7 +22,6 @@ import {
   Plus,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   Trash2,
   UserRound,
 } from "lucide-react";
@@ -175,8 +174,8 @@ function SectionEmpty({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-dashed bg-muted/20 px-6 py-12 text-center">
-      <Sparkles className="mx-auto size-8 text-muted-foreground" />
+    <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
+      <UserRound className="mx-auto size-8 text-[#4fae2e]" />
       <h3 className="mt-3 font-semibold">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
     </div>
@@ -579,50 +578,60 @@ export function ProfilePageClient({
   const freelancer = profile.freelancerProfile;
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/20">
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
       <main className="flex-1">
-        <div className="border-b bg-background">
-          <nav className="mx-auto flex max-w-7xl gap-2 px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
-            <Link href="/" className="hover:text-foreground">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-foreground">Freelancer profile</span>
-          </nav>
-        </div>
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">
+                Freelancer profile
+              </span>
+            </nav>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {profile.displayName ?? "Unnamed freelancer"}
+            </h1>
+            <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
+              {freelancer?.title ?? "Professional title not added"}
+            </p>
+          </div>
+        </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <Card className="overflow-hidden py-0">
+          <div className="overflow-hidden rounded-xl border border-border">
             <div
-              className="h-44 bg-gradient-to-br from-emerald-700 via-emerald-600 to-lime-500 bg-cover bg-center"
+              className="h-44 bg-[#12331f] bg-cover bg-center dark:bg-[#0c2416]"
               style={
                 profile.coverUrl
                   ? { backgroundImage: `url(${profile.coverUrl})` }
                   : undefined
               }
             />
-            <CardContent className="relative px-6 pb-7 sm:px-8">
+            <div className="relative px-6 pb-7 sm:px-8">
               <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                  <Avatar className="-mt-14 size-28 border-4 border-background shadow-lg">
+                  <Avatar className="-mt-14 size-28 border-4 border-background shadow-sm">
                     {profile.avatarUrl ? (
                       <AvatarImage
                         src={profile.avatarUrl}
                         alt={profile.displayName ?? "Freelancer"}
                       />
                     ) : null}
-                    <AvatarFallback className="bg-emerald-100 text-2xl font-bold text-emerald-700">
+                    <AvatarFallback className="bg-[#eaf8df] text-2xl font-bold text-[#4fae2e] dark:bg-[#12331f]">
                       {getInitials(profile.displayName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="pb-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-3xl font-bold tracking-tight">
+                      <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                         {profile.displayName ?? "Unnamed freelancer"}
-                      </h1>
+                      </h2>
                       {freelancer?.idVerified ? (
-                        <Badge className="gap-1">
+                        <Badge className="gap-1 border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
                           <ShieldCheck className="size-3" /> Verified
                         </Badge>
                       ) : null}
@@ -633,7 +642,7 @@ export function ProfilePageClient({
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline" className="gap-1.5">
                         <span
-                          className={`size-2 rounded-full ${profile.availabilityStatus === AvailabilityStatus.AVAILABLE ? "bg-emerald-500" : "bg-amber-500"}`}
+                          className={`size-2 rounded-full ${profile.availabilityStatus === AvailabilityStatus.AVAILABLE ? "bg-[#4fae2e]" : "bg-amber-500"}`}
                         />
                         {profile.availabilityStatus.toLowerCase()}
                       </Badge>
@@ -644,12 +653,20 @@ export function ProfilePageClient({
                   </div>
                 </div>
                 {isOwner ? (
-                  <Button onClick={openProfileEditor}>
+                  <Button
+                    className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    onClick={openProfileEditor}
+                  >
                     <Pencil /> Edit profile
                   </Button>
                 ) : headerRole === "CLIENT" ? (
                   <Button
                     variant={isFavorite ? "default" : "outline"}
+                    className={
+                      isFavorite
+                        ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        : ""
+                    }
                     onClick={() => void toggleFavorite()}
                     disabled={pendingAction === "favorite"}
                   >
@@ -662,8 +679,8 @@ export function ProfilePageClient({
                   </Button>
                 ) : null}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
             <Tabs defaultValue="about" className="min-w-0">
@@ -769,7 +786,7 @@ export function ProfilePageClient({
                             </div>
                             <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
                               <div
-                                className="h-full rounded-full bg-emerald-500"
+                                className="h-full rounded-full bg-[#4fae2e]"
                                 style={{
                                   width: `${skill.proficiencyLevel * 10}%`,
                                 }}
@@ -826,7 +843,7 @@ export function ProfilePageClient({
                               }
                             >
                               <div
-                                className="h-44 bg-gradient-to-br from-emerald-100 to-lime-100 bg-cover bg-center transition-transform group-hover:scale-[1.01] dark:from-emerald-950 dark:to-zinc-900"
+                                className="h-44 bg-[#eaf8df] bg-cover bg-center transition-transform group-hover:scale-[1.01] dark:bg-[#12331f]"
                                 style={
                                   portfolio.mediaUrls[0]
                                     ? {
@@ -896,7 +913,7 @@ export function ProfilePageClient({
                 <CardContent>
                   <div className="h-2 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full rounded-full bg-emerald-500"
+                      className="h-full rounded-full bg-[#4fae2e]"
                       style={{ width: `${completion}%` }}
                     />
                   </div>
@@ -921,7 +938,7 @@ export function ProfilePageClient({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <Sparkles className="size-4" /> Skills
+                      <Award className="size-4 text-[#4fae2e]" /> Skills
                     </span>
                     <span className="font-medium">{skills.length}</span>
                   </div>
@@ -1391,7 +1408,7 @@ function DetailListCard({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <Icon className="size-4 text-emerald-600" /> {title}
+          <Icon className="size-4 text-[#4fae2e]" /> {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -1399,7 +1416,7 @@ function DetailListCard({
           <ul className="space-y-2">
             {items.map((item) => (
               <li key={item} className="flex gap-2 text-sm">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
                 <span>{item}</span>
               </li>
             ))}

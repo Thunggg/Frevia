@@ -4,8 +4,8 @@ import { NewConversationDialog } from "./components/new-conversation-dialog";
 const ConversationsPage = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-      <div className="rounded-full bg-emerald-50 p-4">
-        <MessageSquare className="h-10 w-10 text-emerald-500" />
+      <div className="rounded-full bg-[#eaf8df] p-4 dark:bg-[#12331f]">
+        <MessageSquare className="h-10 w-10 text-[#4fae2e]" />
       </div>
       <div>
         <h1 className="text-xl font-semibold text-foreground">

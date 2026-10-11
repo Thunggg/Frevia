@@ -336,7 +336,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             const isMine = message.senderId === currentUserId;
             const hasFile = Boolean(message.fileUrl);
             const bubbleClassName = isMine
-              ? "*:data-[slot=bubble-content]:!bg-emerald-600 *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
+              ? "*:data-[slot=bubble-content]:!bg-[#4fae2e] *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
               : undefined;
 
             return (
@@ -511,7 +511,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             type="submit"
             size="icon"
             disabled={!input.trim()}
-            className="shrink-0 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
+            className="shrink-0 !bg-[#4fae2e] !text-white hover:!bg-[#459928] disabled:!bg-[#4fae2e]/50 disabled:!text-white"
           >
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>
