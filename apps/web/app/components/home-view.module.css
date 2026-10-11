@@ -1,9 +1,9 @@
-/* Home landing motion — calm Kaizen-style (MOTION ~3) */
+/* Home landing motion — Kaizen calm + Cofounder-inspired (MOTION ~5–6) */
 
 @keyframes home-fade-up {
   from {
     opacity: 0;
-    transform: translateY(0.6rem);
+    transform: translateY(0.75rem);
   }
   to {
     opacity: 1;
@@ -17,6 +17,38 @@
   }
   to {
     transform: translate3d(0, -0.4%, 0);
+  }
+}
+
+@keyframes partner-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+
+@keyframes hero-ken {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.045) translate3d(-0.6%, -0.4%, 0);
+  }
+}
+
+@keyframes skill-found-in {
+  from {
+    opacity: 0.55;
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    box-shadow: 0 0 0 1.5px rgba(79, 174, 46, 0.55);
+    transform: scale(1);
   }
 }
 
@@ -49,11 +81,11 @@
 
 .reveal {
   opacity: 0;
-  animation: home-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: home-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .revealDelay1 {
-  animation-delay: 60ms;
+  animation-delay: 40ms;
 }
 
 .revealDelay2 {
@@ -61,17 +93,48 @@
 }
 
 .revealDelay3 {
-  animation-delay: 220ms;
+  animation-delay: 260ms;
 }
 
 .revealDelay4 {
-  animation-delay: 300ms;
-}
-
-.revealDelay5 {
   animation-delay: 380ms;
 }
 
+.revealDelay5 {
+  animation-delay: 520ms;
+}
+
+/* —— CTAs —— */
+.ctaPrimary,
+.ctaSecondary {
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.28s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(79, 174, 46, 0.28);
+}
+
+.ctaSecondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(18, 51, 31, 0.08);
+}
+
+:global(.dark) .ctaSecondary:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.ctaPrimary:active,
+.ctaSecondary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+/* —— Hero slider —— */
 .heroSlider {
   position: relative;
 }
@@ -100,6 +163,7 @@
   position: relative;
   flex: 0 0 100%;
   min-width: 0;
+  overflow: hidden;
 }
 
 .heroPhoto {
@@ -108,6 +172,13 @@
   height: auto;
   object-fit: cover;
   aspect-ratio: 16 / 10;
+  transform: scale(1);
+  transform-origin: center center;
+}
+
+.heroPhotoLive {
+  animation: hero-ken 5.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  will-change: transform;
 }
 
 .heroSliderNav {
@@ -139,6 +210,7 @@
 
 .heroSliderNav:hover {
   background: #fff;
+  transform: translateY(-50%) scale(1.05);
 }
 
 :global(.dark) .heroSliderNav:hover {
@@ -192,12 +264,87 @@
   will-change: transform;
 }
 
+/* —— Partners —— */
+.partnersRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem 2.5rem;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 2.5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .partnersRow {
+    gap: 1.5rem 3rem;
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.partnerLogo {
+  display: block;
+  height: 2rem;
+  width: auto;
+  animation: partner-drift 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* —— Skills “found” —— */
+.skillsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.skillChip {
+  display: inline-block;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: color-mix(in srgb, var(--foreground) 48%, transparent);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  transition:
+    color 0.35s ease,
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global(.dark) .skillChip {
+  color: color-mix(in srgb, var(--foreground) 42%, transparent);
+}
+
+.skillFound {
+  color: var(--foreground);
+  border-color: rgba(79, 174, 46, 0.55);
+  background: rgba(79, 174, 46, 0.08);
+  box-shadow: 0 0 0 1px rgba(79, 174, 46, 0.12);
+  animation: skill-found-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global(.dark) .skillFound {
+  border-color: rgba(79, 174, 46, 0.65);
+  background: rgba(79, 174, 46, 0.14);
+}
+
+/* —— Scroll reveal —— */
 .scrollReveal {
   opacity: 0;
-  transform: translateY(0.85rem);
+  transform: translateY(0.9rem);
   transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .scrollVisible {
@@ -223,9 +370,26 @@
     transform: none;
   }
 
-  .heroIllustration {
+  .heroIllustration,
+  .partnerLogo,
+  .heroPhotoLive {
     animation: none;
     will-change: auto;
+  }
+
+  .heroPhotoLive {
+    transform: none;
+  }
+
+  .ctaPrimary:hover,
+  .ctaSecondary:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .ctaPrimary:active,
+  .ctaSecondary:active {
+    transform: none;
   }
 
   .heroSliderTrack {
@@ -240,5 +404,9 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .skillFound {
+    animation: none;
   }
 }

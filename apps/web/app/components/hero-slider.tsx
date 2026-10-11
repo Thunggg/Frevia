@@ -69,13 +69,16 @@ export function HeroSlider() {
               aria-hidden={i !== index}
             >
               <Image
+                key={i === index ? `live-${index}` : slide.src}
                 src={slide.src}
                 alt={slide.alt}
                 width={1600}
                 height={1000}
                 priority={i === 0}
                 sizes="(max-width: 1024px) 100vw, 1024px"
-                className={styles.heroPhoto}
+                className={`${styles.heroPhoto} ${
+                  i === index ? styles.heroPhotoLive : ""
+                }`}
               />
             </div>
           ))}

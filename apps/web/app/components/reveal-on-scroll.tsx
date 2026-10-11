@@ -1,17 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import styles from "./home-view.module.css";
 
 type RevealOnScrollProps = {
   children: ReactNode;
   className?: string;
+  /** Stagger delay in ms once visible */
+  delayMs?: number;
 };
 
 export function RevealOnScroll({
   children,
   className = "",
+  delayMs = 0,
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -32,7 +35,7 @@ export function RevealOnScroll({
           observer.disconnect();
         }
       },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.16, rootMargin: "0px 0px -6% 0px" },
     );
 
     observer.observe(node);
@@ -47,8 +50,15 @@ export function RevealOnScroll({
     .filter(Boolean)
     .join(" ");
 
+  const style: CSSProperties | undefined =
+    delayMs > 0
+      ? {
+          transitionDelay: visible ? `${delayMs}ms` : "0ms",
+        }
+      : undefined;
+
   return (
-    <div ref={ref} className={classes}>
+    <div ref={ref} className={classes} style={style}>
       {children}
     </div>
   );

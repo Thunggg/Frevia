@@ -9,6 +9,7 @@ import { RoleName, type GetMeResType } from "@shared/types";
 
 import { HeroSlider } from "./hero-slider";
 import { RevealOnScroll } from "./reveal-on-scroll";
+import { SkillsHighlight } from "./skills-highlight";
 import styles from "./home-view.module.css";
 
 const display = Fraunces({
@@ -119,7 +120,7 @@ export function HomeView({ user }: HomeViewProps) {
               <Button
                 asChild
                 size="lg"
-                className="min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] active:scale-[0.98] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+                className={`${styles.ctaPrimary} min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]`}
               >
                 <Link href={primaryHref}>{primaryLabel}</Link>
               </Button>
@@ -128,7 +129,7 @@ export function HomeView({ user }: HomeViewProps) {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
+                  className={`${styles.ctaSecondary} min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15`}
                 >
                   <Link href="/login">Log in</Link>
                 </Button>
@@ -137,7 +138,7 @@ export function HomeView({ user }: HomeViewProps) {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
+                  className={`${styles.ctaSecondary} min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15`}
                 >
                   <Link href="/forum">Visit Forum</Link>
                 </Button>
@@ -153,67 +154,98 @@ export function HomeView({ user }: HomeViewProps) {
         </section>
 
         <section className="border-b border-border bg-background">
-          <RevealOnScroll>
-            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-6 px-4 py-10 text-foreground sm:gap-x-12 sm:px-6 md:gap-x-14">
-              {PARTNERS.map((partner) => (
-                // eslint-disable-next-line @next/next/no-img-element -- SVG wordmarks need currentColor via img
+          <div className={styles.partnersRow}>
+            {PARTNERS.map((partner, i) => (
+              <RevealOnScroll key={partner.src} delayMs={i * 70}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- SVG wordmarks need currentColor via img */}
                 <img
-                  key={partner.src}
                   src={partner.src}
                   alt={partner.alt}
                   width={partner.width}
                   height={32}
-                  className="h-8 w-auto opacity-50 grayscale dark:opacity-60 dark:invert"
+                  className={`${styles.partnerLogo} opacity-50 grayscale dark:opacity-60 dark:invert`}
+                  style={{ animationDelay: `${i * 0.6}s` }}
                 />
-              ))}
-            </div>
-          </RevealOnScroll>
+              </RevealOnScroll>
+            ))}
+          </div>
         </section>
 
         <section className="border-b border-border bg-background">
-          <RevealOnScroll>
-            <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+          <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
+            <RevealOnScroll>
+              <h2
+                className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
+              >
+                Skills that get found
+              </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={90}>
+              <p className="mx-auto mt-4 max-w-[42ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
+                Categories clients search for — highlighted as they surface on
+                Frevia.
+              </p>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={160}>
+              <div className="mt-10">
+                <SkillsHighlight />
+              </div>
+            </RevealOnScroll>
+          </div>
+        </section>
+
+        <section className="border-b border-border bg-background">
+          <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+            <RevealOnScroll>
               <h2
                 className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]`}
               >
                 {secondHeadline}
               </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={90}>
               <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
                 {secondBody}
               </p>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={160}>
               <Button
                 asChild
                 size="lg"
-                className="mt-9 min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] active:scale-[0.98] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+                className={`${styles.ctaPrimary} mt-9 min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]`}
               >
                 <Link href={secondHref}>{secondLabel}</Link>
               </Button>
-            </div>
-          </RevealOnScroll>
+            </RevealOnScroll>
+          </div>
         </section>
 
         <section className="bg-[#f4faf0] dark:bg-[#1a1c1a]">
-          <RevealOnScroll>
-            <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+          <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+            <RevealOnScroll>
               <h2
                 className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
               >
                 Talk shop in the community
               </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={90}>
               <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
                 Ask questions, share tips, and learn from freelancers and
                 clients building on Frevia.
               </p>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={160}>
               <Button
                 asChild
                 size="lg"
                 variant="outline"
-                className="mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
+                className={`${styles.ctaSecondary} mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15`}
               >
                 <Link href="/forum">Visit Forum</Link>
               </Button>
-            </div>
-          </RevealOnScroll>
+            </RevealOnScroll>
+          </div>
         </section>
       </main>
 
