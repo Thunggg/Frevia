@@ -8,8 +8,7 @@ import { cookies } from "next/headers";
 import { getMeServer } from "@/lib/get-me";
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
 import Link from "next/link";
-import { Home, ArrowLeft, FileText, Calendar } from "lucide-react";
-import { Badge } from "@repo/ui/components/shadcn/badge";
+import { ArrowLeft } from "lucide-react";
 
 type ForumCategoryDetailPageProps = {
   params: Promise<{ categoryId: string }>;
@@ -71,17 +70,16 @@ const ForumCategoryDetailPage = async ({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/50">
       {/* Header Section */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
+      <div className="border-b bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           {/* Breadcrumb */}
-          <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
+          <nav className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link
               href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              className="transition-colors hover:text-foreground"
             >
-              <Home className="h-3.5 w-3.5" />
               Home
             </Link>
             <span className="text-muted-foreground/50">/</span>
@@ -101,20 +99,27 @@ const ForumCategoryDetailPage = async ({
             <div>
               <Link
                 href="/forum"
-                className="mb-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="mb-2 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 Back to categories
               </Link>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                 {category.name}
               </h1>
               {category.description && (
-                <p className="mt-2 max-w-2xl text-muted-foreground">
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
                   {category.description}
                 </p>
               )}
             </div>
+
+            <dl>
+              <dd className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+                {category.postCount}
+              </dd>
+              <dt className="mt-0.5 text-xs text-muted-foreground">Posts</dt>
+            </dl>
           </div>
         </div>
       </div>

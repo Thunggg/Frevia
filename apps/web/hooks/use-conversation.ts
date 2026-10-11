@@ -49,12 +49,13 @@ function sortByLastMessage(items: GetConversationsResponseType) {
  * Lấy danh sách hội thoại của user hiện tại.
  * Mỗi hội thoại kèm tin nhắn cuối (preview) và số tin nhắn chưa đọc.
  */
-export function useConversations() {
+export function useConversations(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: conversationKeys.list(),
     queryFn: () =>
       conversationApiRequest.getConversations().then(extractData),
     staleTime: 30 * 1000,
+    enabled: options?.enabled ?? true,
   });
 }
 

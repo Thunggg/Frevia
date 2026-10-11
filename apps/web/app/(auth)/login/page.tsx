@@ -1,10 +1,17 @@
+import type { Metadata } from "next";
+import { AuthShell } from "../auth-shell";
 import { LoginForm } from "./login-form";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Sign in to your Frevia account.",
+};
 
 const LoginPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <AuthShell>
       <LoginForm />
-    </div>
+    </AuthShell>
   );
 };
 

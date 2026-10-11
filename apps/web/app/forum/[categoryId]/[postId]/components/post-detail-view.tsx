@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import {
@@ -23,7 +22,6 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import {
-  Home,
   ArrowLeft,
   Heart,
   MessageSquare,
@@ -94,16 +92,15 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/50">
       {/* Header với breadcrumb */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
+      <div className="border-b bg-background">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
           <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link
               href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+              className="transition-colors hover:text-foreground"
             >
-              <Home className="h-3.5 w-3.5" />
               Home
             </Link>
             <span className="text-muted-foreground/50">/</span>
@@ -136,10 +133,13 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
 
           <div className="flex items-center gap-2">
             {post.category && (
-              <Badge variant="secondary" className="gap-1.5">
+              <Link
+                href={`/forum/${post.category.id}`}
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary transition-colors hover:bg-primary/15"
+              >
                 <Tag className="h-3 w-3" />
                 {post.category.name}
-              </Badge>
+              </Link>
             )}
           </div>
         </div>
@@ -147,10 +147,10 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
 
       {/* Content */}
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <article>
+        <article className="rounded-lg border bg-card p-5 sm:p-6">
           {/* Post Title + Action buttons */}
           <div className="flex items-start justify-between gap-4">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
               {displayTitle}
             </h1>
             {isAuthor && (
@@ -246,7 +246,7 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
           <Separator className="my-6" />
 
           {/* Actions Bar */}
-          <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xs">
+          <div className="flex items-center gap-3 rounded-lg border bg-background px-4 py-2.5">
             <Button
               variant="ghost"
               size="sm"

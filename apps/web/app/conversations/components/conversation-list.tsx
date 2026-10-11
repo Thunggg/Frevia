@@ -14,7 +14,6 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   DropdownMenu,
@@ -42,9 +41,11 @@ import {
   Pin,
   PinOff,
   Plus,
+  Search,
   Trash2,
 } from "lucide-react";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
+import type { ConversationType } from "@shared/types";
 import { NewConversationDialog } from "./new-conversation-dialog";
 
 function formatTime(createdAt?: string | Date | null): string {
@@ -86,6 +87,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const [conversationToDelete, setConversationToDelete] = useState<
     number | null
   >(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const deleting = hideConversation.isPending;
 
@@ -128,22 +130,193 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     );
   };
 
+  const trimmedQuery = searchQuery.trim().toLowerCase();
+  const filteredConversations = (conversations ?? []).filter((conversation) => {
+    if (!trimmedQuery) return true;
+    const name = (
+      conversation.otherUser.profile?.displayName ??
+      `User #${conversation.otherUser.id}`
+    ).toLowerCase();
+    const message = (conversation.lastMessage?.message ?? "").toLowerCase();
+    return name.includes(trimmedQuery) || message.includes(trimmedQuery);
+  });
+
+  const pinnedConversations = filteredConversations.filter(
+    (c) => c.pinnedAt,
+  );
+  const otherConversations = filteredConversations.filter(
+    (c) => !c.pinnedAt,
+  );
+
+  const renderItem = (conversation: ConversationType) => {
+    const displayName =
+      conversation.otherUser.profile?.displayName ??
+      `User #${conversation.otherUser.id}`;
+    const avatarUrl = conversation.otherUser.profile?.avatarUrl ?? undefined;
+    const isActive = pathname === `/conversations/${conversation.id}`;
+
+    return (
+      <li key={conversation.id} className="group relative flex items-center">
+        <Link
+          href={`/conversations/${conversation.id}`}
+          className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/50 ${
+            isActive ? "border-r-[3px] border-r-primary bg-primary/5" : ""
+          }`}
+        >
+          <Avatar className="mt-0.5">
+            <AvatarImage src={avatarUrl} alt={displayName} />
+            <AvatarFallback>
+              {displayName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-2">
+              <p
+                className={`truncate text-sm ${
+                  isActive
+                    ? "font-semibold text-primary"
+                    : "font-semibold text-foreground"
+                }`}
+              >
+                {conversation.pinnedAt && (
+                  <Pin className="mr-1 inline-block h-3 w-3 shrink-0 -translate-y-px text-muted-foreground" />
+                )}
+                {displayName}
+              </p>
+              {conversation.lastMessage && (
+                <span className="shrink-0 text-[11px] text-muted-foreground">
+                  {formatTime(conversation.lastMessage.createdAt)}
+                </span>
+              )}
+            </div>
+
+            <div className="mt-0.5 flex items-center justify-between gap-2">
+              <p className="min-w-0 flex-1 truncate text-[13px] text-muted-foreground">
+                {conversation.lastMessage ? (
+                  <>
+                    {conversation.lastMessage.senderId === currentUserId && (
+                      <span className="font-medium text-foreground/70">
+                        You:{" "}
+                      </span>
+                    )}
+                    {conversation.lastMessage.fileUrl ? (
+                      <span className="inline-flex items-center gap-1">
+                        <Paperclip className="h-3 w-3 shrink-0" />
+                        {conversation.lastMessage.fileName ?? "Attachment"}
+                      </span>
+                    ) : (
+                      conversation.lastMessage.message
+                    )}
+                  </>
+                ) : (
+                  "No messages yet"
+                )}
+              </p>
+              {conversation.unreadCount > 0 && (
+                <span className="flex h-[18px] min-w-[18px] shrink-0 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold tabular-nums text-white">
+                  {conversation.unreadCount}
+                </span>
+              )}
+            </div>
+          </div>
+        </Link>
+
+        {/* Menu "..." với các action */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 bg-background/80 text-muted-foreground opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 focus:opacity-100"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <Ellipsis className="h-4 w-4" />
+              <span className="sr-only">More actions</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              disabled={pinConversation.isPending}
+              onSelect={() =>
+                handleTogglePin(
+                  conversation.id,
+                  Boolean(conversation.pinnedAt),
+                )
+              }
+            >
+              {conversation.pinnedAt ? <PinOff /> : <Pin />}
+              {conversation.pinnedAt ? "Unpin" : "Pin"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={conversation.unreadCount === 0 || markRead.isPending}
+              onSelect={() => handleMarkAsRead(conversation.id)}
+            >
+              <CheckCheck />
+              Mark as read
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={deleting}
+              onSelect={() => setConversationToDelete(conversation.id)}
+            >
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </li>
+    );
+  };
+
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-r bg-white">
+    <aside className="flex w-80 shrink-0 flex-col border-r bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-4 py-3">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <MessageSquare className="h-5 w-5" />
+        <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+          <MessageSquare className="h-4.5 w-4.5" />
           Messages
+          {!isLoading && conversations && conversations.length > 0 && (
+            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-primary">
+              {conversations.length}
+            </span>
+          )}
         </h2>
         <NewConversationDialog
           trigger={
-            <Button variant="outline" size="icon" className="h-8 w-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
+            <Button variant="outline" size="icon" className="h-8 w-8">
               <Plus className="h-4 w-4" />
               <span className="sr-only">New conversation</span>
             </Button>
           }
         />
+      </div>
+
+      {/* Search */}
+      <div className="border-b p-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search messages..."
+            className="h-9 w-full rounded-lg border bg-background pl-8 pr-8 text-[13px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
 
       {/* List */}
@@ -173,134 +346,42 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
               Start a new conversation to send a message.
             </p>
           </div>
+        ) : filteredConversations.length === 0 ? (
+          <div className="px-6 py-10 text-center">
+            <Search className="mx-auto mb-3 h-7 w-7 text-muted-foreground/50" />
+            <p className="text-sm font-medium text-foreground">
+              No results found
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              No conversations match &quot;{searchQuery}&quot;.
+            </p>
+          </div>
         ) : (
-          <ul className="divide-y">
-            {conversations.map((conversation) => {
-              const displayName =
-                conversation.otherUser.profile?.displayName ??
-                `User #${conversation.otherUser.id}`;
-              const avatarUrl =
-                conversation.otherUser.profile?.avatarUrl ?? undefined;
-              const isActive = pathname === `/conversations/${conversation.id}`;
+          <>
+            {pinnedConversations.length > 0 && (
+              <section>
+                <p className="px-4 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Pinned
+                </p>
+                <ul className="divide-y">
+                  {pinnedConversations.map(renderItem)}
+                </ul>
+              </section>
+            )}
 
-              return (
-                <li
-                  key={conversation.id}
-                  className="group relative flex items-center"
-                >
-                  <Link
-                    href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-emerald-50/80 ${
-                      isActive ? "!bg-emerald-50 border-r-[3px] !border-r-emerald-500" : ""
-                    }`}
-                  >
-                    <Avatar className="mt-0.5">
-                      <AvatarImage src={avatarUrl} alt={displayName} />
-                      <AvatarFallback>
-                        {displayName.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <p className="truncate text-sm font-semibold text-foreground">
-                          {conversation.pinnedAt && (
-                            <Pin className="mr-1 inline-block h-3 w-3 shrink-0 -translate-y-px text-muted-foreground" />
-                          )}
-                          {displayName}
-                        </p>
-                        {conversation.lastMessage && (
-                          <span className="shrink-0 text-xs text-muted-foreground">
-                            {formatTime(conversation.lastMessage.createdAt)}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="mt-0.5 flex items-center justify-between gap-2">
-                        <p className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
-                          {conversation.lastMessage ? (
-                            <>
-                              {conversation.lastMessage.senderId ===
-                                currentUserId && (
-                                <span className="font-medium text-foreground/70">
-                                  You:{" "}
-                                </span>
-                              )}
-                              {conversation.lastMessage.fileUrl ? (
-                                <span className="inline-flex items-center gap-1">
-                                  <Paperclip className="h-3 w-3 shrink-0" />
-                                  {conversation.lastMessage.fileName ??
-                                    "Attachment"}
-                                </span>
-                              ) : (
-                                conversation.lastMessage.message
-                              )}
-                            </>
-                          ) : (
-                            "No messages yet"
-                          )}
-                        </p>
-                        {conversation.unreadCount > 0 && (
-                          <Badge className="shrink-0 rounded-full bg-emerald-500 px-1.5 py-0 text-xs text-white">
-                            {conversation.unreadCount}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-
-                  {/* Menu "..." với các action */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                      >
-                        <Ellipsis className="h-4 w-4" />
-                        <span className="sr-only">More actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        disabled={pinConversation.isPending}
-                        onSelect={() =>
-                          handleTogglePin(
-                            conversation.id,
-                            Boolean(conversation.pinnedAt),
-                          )
-                        }
-                      >
-                        {conversation.pinnedAt ? <PinOff /> : <Pin />}
-                        {conversation.pinnedAt ? "Unpin" : "Pin"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={conversation.unreadCount === 0 || markRead.isPending}
-                        onSelect={() => handleMarkAsRead(conversation.id)}
-                      >
-                        <CheckCheck />
-                        Mark as read
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        disabled={deleting}
-                        onSelect={() =>
-                          setConversationToDelete(conversation.id)
-                        }
-                      >
-                        <Trash2 />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </li>
-              );
-            })}
-          </ul>
+            {otherConversations.length > 0 && (
+              <section>
+                {pinnedConversations.length > 0 && (
+                  <p className="border-t px-4 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    All messages
+                  </p>
+                )}
+                <ul className="divide-y">
+                  {otherConversations.map(renderItem)}
+                </ul>
+              </section>
+            )}
+          </>
         )}
       </div>
 

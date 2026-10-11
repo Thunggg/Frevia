@@ -2,11 +2,11 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 
 export default function ForumCategoryLoading() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/50">
       {/* Header skeleton */}
-      <div className="border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
+      <div className="border-b bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          <Skeleton className="mb-5 h-4 w-56" />
+          <Skeleton className="mb-6 h-4 w-56" />
           <div className="space-y-3">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-9 w-72" />

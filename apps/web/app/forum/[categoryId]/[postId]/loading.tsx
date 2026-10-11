@@ -2,7 +2,7 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 
 export default function PostDetailLoading() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/50">
       {/* Header skeleton */}
       <div className="border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">

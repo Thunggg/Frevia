@@ -335,9 +335,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
           messages.map((message) => {
             const isMine = message.senderId === currentUserId;
             const hasFile = Boolean(message.fileUrl);
-            const bubbleClassName = isMine
-              ? "*:data-[slot=bubble-content]:!bg-emerald-600 *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
-              : undefined;
 
             return (
               <Message key={message.id} align={isMine ? "end" : "start"}>
@@ -353,10 +350,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                 )}
                 <MessageContent>
                   {hasFile ? (
-                    <Bubble
-                      variant={isMine ? "default" : "muted"}
-                      className={bubbleClassName}
-                    >
+                    <Bubble variant={isMine ? "default" : "muted"}>
                       <BubbleContent className="whitespace-pre-wrap">
                         {isImageType(message.fileType) ? (
                           <a
@@ -379,7 +373,11 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                             rel="noreferrer"
                             className="flex items-center gap-3"
                           >
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                            <span
+                              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${
+                                isMine ? "bg-white/15" : "bg-muted"
+                              }`}
+                            >
                               <FileText className="h-5 w-5" />
                             </span>
                             <span className="min-w-0">
@@ -407,10 +405,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                       {message.message.trim()}
                     </span>
                   ) : (
-                    <Bubble
-                      variant={isMine ? "default" : "muted"}
-                      className={bubbleClassName}
-                    >
+                    <Bubble variant={isMine ? "default" : "muted"}>
                       <BubbleContent className="whitespace-pre-wrap">
                         {message.message}
                       </BubbleContent>
@@ -511,7 +506,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             type="submit"
             size="icon"
             disabled={!input.trim()}
-            className="shrink-0 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
+            className="shrink-0"
           >
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>

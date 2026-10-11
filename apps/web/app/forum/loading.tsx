@@ -2,32 +2,24 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 
 export default function ForumLoading() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/50">
       {/* Hero skeleton */}
-      <div className="border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <div className="border-b bg-background">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <Skeleton className="mb-6 h-4 w-48" />
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-3">
               <Skeleton className="h-9 w-64" />
               <Skeleton className="h-4 w-96 max-w-full" />
             </div>
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-9 w-9 rounded-lg" />
-                <div className="space-y-1.5">
-                  <Skeleton className="h-5 w-8" />
+            <dl className="flex items-center gap-8">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="space-y-1.5">
+                  <Skeleton className="h-7 w-10" />
                   <Skeleton className="h-3 w-16" />
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-9 w-9 rounded-lg" />
-                <div className="space-y-1.5">
-                  <Skeleton className="h-5 w-8" />
-                  <Skeleton className="h-3 w-12" />
-                </div>
-              </div>
-            </div>
+              ))}
+            </dl>
           </div>
         </div>
       </div>

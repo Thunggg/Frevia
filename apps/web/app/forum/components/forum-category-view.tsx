@@ -1,73 +1,72 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
-import { Badge } from "@repo/ui/components/shadcn/badge";
+import type {
+  ForumCategoryListResponseType,
+  ForumCategoryTopListResponseType,
+  ForumTopActiveUserListResponseType,
+  ForumTopPostType,
+} from "@shared/types";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import type {
-  ForumCategoryListResponseType,
-  ForumCategoryTopListResponseType,
-  ForumTopActiveUserListResponseType,
-} from "@shared/types";
-import {
-  Folder,
-  ArrowRight,
-  Trophy,
-  FileText,
-  Home,
-  MessageSquare,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react";
+import { ArrowUpRight, FolderOpen, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 type ForumCategoryViewProps = {
   categories: ForumCategoryListResponseType;
   topCategories: ForumCategoryTopListResponseType;
   topUsers: ForumTopActiveUserListResponseType;
+  topPosts: ForumTopPostType[];
 };
 
-const rankColors = [
-  "text-yellow-600 dark:text-yellow-400",
-  "text-gray-500 dark:text-gray-400",
-  "text-amber-700 dark:text-amber-500",
+const monograms = [
+  "bg-primary/10 text-primary",
+  "bg-emerald-500/10 text-emerald-700",
+  "bg-teal-500/10 text-teal-700",
+  "bg-lime-600/10 text-lime-700",
 ];
-const rankBgColors = [
-  "bg-yellow-100 dark:bg-yellow-500/15",
-  "bg-gray-100 dark:bg-gray-500/15",
-  "bg-amber-100 dark:bg-amber-500/15",
-];
+
+function formatDate(date: string | Date): string {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatRelativeTime(date: string | Date): string {
+  const then = new Date(date).getTime();
+  const minutes = Math.floor((Date.now() - then) / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return formatDate(date);
+}
 
 export function ForumCategoryView({
   categories,
   topCategories,
   topUsers,
+  topPosts,
 }: ForumCategoryViewProps) {
   const hasTopCategories = topCategories.length > 0;
   const hasTopUsers = topUsers.length > 0;
+  const hasTopPosts = topPosts.length > 0;
 
   const totalPosts = categories.reduce((sum, c) => sum + c.postCount, 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          {/* Breadcrumb */}
-          <nav className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-            >
-              <Home className="h-3.5 w-3.5" />
+    <div className="min-h-screen bg-muted/50">
+      {/* Page header */}
+      <div className="border-b bg-background">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <nav className="mb-6 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">
               Home
             </Link>
             <span className="text-muted-foreground/50">/</span>
@@ -76,115 +75,94 @@ export function ForumCategoryView({
 
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 Community Forum
               </h1>
-              <p className="mt-2 text-muted-foreground">
+              <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-muted-foreground">
                 Browse categories, join discussions, and connect with the
                 community.
               </p>
             </div>
 
-            {/* Stats */}
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                  <Folder className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold leading-none text-foreground">
-                    {categories.length}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Categories</p>
-                </div>
+            <dl className="flex items-center gap-8">
+              <div>
+                <dd className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+                  {categories.length}
+                </dd>
+                <dt className="mt-0.5 text-[11px] text-muted-foreground">
+                  Categories
+                </dt>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-600">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold leading-none text-foreground">
-                    {totalPosts}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Posts</p>
-                </div>
+              <div className="h-10 w-px bg-border" />
+              <div>
+                <dd className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+                  {totalPosts}
+                </dd>
+                <dt className="mt-0.5 text-[11px] text-muted-foreground">
+                  Posts
+                </dt>
               </div>
-            </div>
+            </dl>
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="flex flex-col gap-8 lg:flex-row">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
           {/* Left: All Categories */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">
-                All Categories
-              </h2>
-              <Badge variant="secondary" className="text-xs">
-                {categories.length} total
-              </Badge>
-            </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              All categories
+            </h2>
 
             {categories.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-                    <Folder className="h-7 w-7 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground">
-                    No categories yet
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Categories will appear here once they are created.
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-card py-16">
+                <FolderOpen className="mb-3 h-7 w-7 text-muted-foreground/60" />
+                <p className="text-sm font-medium text-foreground">
+                  No categories yet
+                </p>
+                <p className="mt-1 text-[13px] text-muted-foreground">
+                  Categories will appear here once they are created.
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {categories.map((category) => (
+                {categories.map((category, index) => (
                   <Link
                     key={category.id}
                     href={`/forum/${category.id}`}
                     className="group block"
                   >
-                    <Card className="h-full transition-all duration-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-base">
-                          <span className="group-hover:text-emerald-700 transition-colors">
+                    <article className="flex h-full flex-col rounded-lg border bg-card p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <span
+                          className={`flex size-9 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ${monograms[index % monograms.length]}`}
+                          aria-hidden="true"
+                        >
+                          {category.name.charAt(0).toUpperCase()}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
                             {category.name}
-                          </span>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-emerald-600" />
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <p className="line-clamp-2 text-sm text-muted-foreground">
-                          {category.description ?? "No description provided."}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <Badge
-                            variant="secondary"
-                            className="gap-1 text-xs font-normal"
-                          >
-                            <FileText className="h-3 w-3" />
-                            {category.postCount}{" "}
-                            {category.postCount === 1 ? "post" : "posts"}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(category.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
-                          </span>
+                          </h3>
+                          <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                            {category.description ?? "No description provided."}
+                          </p>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground/40 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                      </div>
+
+                      <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+                        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-primary">
+                          {category.postCount}{" "}
+                          {category.postCount === 1 ? "discussion" : "discussions"}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">
+                          {formatDate(category.createdAt)}
+                        </span>
+                      </div>
+                    </article>
                   </Link>
                 ))}
               </div>
@@ -192,117 +170,104 @@ export function ForumCategoryView({
           </div>
 
           {/* Right: Sidebar */}
-          <div className="w-full shrink-0 space-y-6 lg:w-80">
-            {/* Top Categories */}
-            {hasTopCategories && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-yellow-500/10">
-                      <Trophy className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                    </div>
-                    Top Categories
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {topCategories.map((category, index) => (
-                    <Link
-                      key={category.id}
-                      href={`/forum/${category.id}`}
-                      className="group block"
-                    >
-                      <div className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-                        <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${rankBgColors[index] ?? "bg-muted"} ${rankColors[index] ?? "text-muted-foreground"}`}
-                        >
-                          {index === 0 ? (
-                            <Trophy className="h-3.5 w-3.5" />
-                          ) : (
-                            index + 1
-                          )}
+          <aside className="w-full shrink-0 space-y-5 lg:w-72">
+            {hasTopPosts && (
+              <section>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Top Discussions
+                </h2>
+                <ol className="divide-y divide-border rounded-lg border bg-card">
+                  {topPosts.map((post, index) => (
+                    <li key={post.id}>
+                      <Link
+                        href={`/forum/${post.category?.id ?? ""}/${post.id}`}
+                        className="group flex items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/50"
+                      >
+                        <span className="w-4 shrink-0 pt-0.5 text-right text-xs font-semibold tabular-nums text-muted-foreground">
+                          {index + 1}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                            {category.name}
+                          <p className="line-clamp-2 text-[13px] font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
+                            {post.title}
                           </p>
-                          <p className="text-xs text-muted-foreground">
-                            {category.postCount}{" "}
-                            {category.postCount === 1 ? "post" : "posts"}
-                          </p>
+                          <div className="mt-1 flex items-center gap-2.5 text-[11px] text-muted-foreground">
+                            <span className="inline-flex items-center gap-1">
+                              <MessageSquare className="h-3 w-3" />
+                              {post.commentCount}
+                            </span>
+                            <span>{formatRelativeTime(post.createdAt)}</span>
+                          </div>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                    </Link>
+                      </Link>
+                    </li>
                   ))}
-                </CardContent>
-              </Card>
+                </ol>
+              </section>
             )}
 
-            {/* Top Active Users */}
+            {hasTopCategories && (
+              <section>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Popular Topics
+                </h2>
+                <ol className="divide-y divide-border rounded-lg border bg-card">
+                  {topCategories.map((category, index) => (
+                    <li key={category.id}>
+                      <Link
+                        href={`/forum/${category.id}`}
+                        className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50"
+                      >
+                        <span className="w-4 shrink-0 text-right text-xs font-semibold tabular-nums text-muted-foreground">
+                          {index + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground transition-colors group-hover:text-primary">
+                          {category.name}
+                        </span>
+                        <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+                          {category.postCount}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
             {hasTopUsers && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100">
-                      <TrendingUp className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    Most Active Users
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  {topUsers.map((user, index) => (
-                    <div
+              <section>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Active Users
+                </h2>
+                <ul className="divide-y divide-border rounded-lg border bg-card">
+                  {topUsers.map((user) => (
+                    <li
                       key={user.id}
-                      className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
+                      className="flex items-center gap-3 px-4 py-2.5"
                     >
-                      <div className="relative">
-                        <Avatar size="sm">
-                          <AvatarImage
-                            src={user.avatarUrl ?? undefined}
-                            alt={user.displayName ?? "User"}
-                          />
-                          <AvatarFallback>
-                            {user.displayName?.charAt(0)?.toUpperCase() ?? "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                        {index < 3 && (
-                          <span
-                            className={`absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold ring-2 ring-background ${rankBgColors[index]} ${rankColors[index]}`}
-                          >
-                            {index + 1}
-                          </span>
-                        )}
-                      </div>
+                      <Avatar size="sm">
+                        <AvatarImage
+                          src={user.avatarUrl ?? undefined}
+                          alt={user.displayName ?? "User"}
+                        />
+                        <AvatarFallback>
+                          {user.displayName?.charAt(0)?.toUpperCase() ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-foreground">
+                        <p className="truncate text-[13px] font-medium text-foreground">
                           {user.displayName ?? "Anonymous"}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user.postCount}{" "}
-                          {user.postCount === 1 ? "post" : "posts"} &middot;{" "}
-                          {user.commentCount}{" "}
-                          {user.commentCount === 1 ? "comment" : "comments"}
+                        <p className="text-[11px] text-muted-foreground">
+                          {user.postCount} posts &middot; {user.commentCount}{" "}
+                          comments
                         </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </CardContent>
-              </Card>
+                </ul>
+              </section>
             )}
-
-            {/* Quick Stats Card */}
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-6 text-center">
-                <Sparkles className="mb-2 h-5 w-5 text-muted-foreground" />
-                <p className="text-sm font-medium text-foreground">
-                  Join the conversation
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Pick a category and start posting
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          </aside>
         </div>
       </div>
     </div>

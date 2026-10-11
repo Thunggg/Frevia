@@ -5,12 +5,6 @@ import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@repo/ui/components/shadcn/card";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
   Field,
@@ -20,10 +14,10 @@ import {
 } from "@repo/ui/components/shadcn/field";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { LoginBodySchema } from "@shared/types";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -81,148 +75,175 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-xl p-10 bg-color-card-foreground">
-      {/* Card Header */}
-      <CardHeader className="p-0 mb-8 flex flex-col items-center text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Welcome Back!
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Log in to your account to continue
-        </p>
-      </CardHeader>
-      <CardContent className="p-0">
-        <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup>
-            {/* Email Field */}
-            <Controller
-              name="email"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-foreground" htmlFor="email">
-                    Email address
-                  </FieldLabel>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      {...field}
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      autoComplete="email"
-                      className="pl-10 h-11"
-                      aria-invalid={fieldState.invalid}
-                    />
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+    <div className="m-auto w-full min-w-0 max-w-sm">
+      <Link
+        href="/"
+        className="mb-10 flex items-center justify-center gap-2 lg:hidden"
+      >
+        <Image
+          src="/Logo.png"
+          alt="Frevia"
+          width={28}
+          height={28}
+          className="size-7 object-contain"
+          priority
+        />
+        <span className="text-lg font-semibold tracking-tight text-foreground">
+          Frevia
+        </span>
+      </Link>
 
-            {/* Password Field */}
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel className="text-foreground" htmlFor="password">
-                    Password
-                  </FieldLabel>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      {...field}
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      autoComplete="current-password"
-                      className="pl-10 pr-10 h-11"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        Frevia account
+      </p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+        Sign in
+      </h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        Use your Frevia account to continue.
+      </p>
 
-            {/* Remember Me */}
-            <div className="flex items-center space-x-2 mt-2">
+      <form
+        id="form-rhf-demo"
+        className="mt-8"
+        onSubmit={form.handleSubmit(onSubmit)}
+        noValidate
+      >
+        <FieldGroup className="gap-5">
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="email"
+                >
+                  Email
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  inputMode="email"
+                  autoFocus
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="password"
+                >
+                  Password
+                </FieldLabel>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    className="pr-10"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <Checkbox id="remember" className="cursor-pointer" />
-              <div className="flex items-center justify-between w-full space-x-2">
-                <Label
-                  htmlFor="remember"
-                  className="text-sm font-medium text-muted-foreground cursor-pointer"
-                >
-                  Remember me
-                </Label>
-
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-medium text-muted-foreground cursor-pointer"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+              <Label
+                htmlFor="remember"
+                className="cursor-pointer text-sm font-normal text-muted-foreground"
+              >
+                Remember me
+              </Label>
             </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              form="form-rhf-demo"
-              className="w-full mt-6 h-11 cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-              disabled={loginMutation.isPending}
+            <Link
+              href="/forgot-password"
+              className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
-              {loginMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Submitting...</span>
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-          </FieldGroup>
-        </form>
-
-        {/* Divider */}
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
+              Forgot password?
+            </Link>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className=" px-3 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
 
-        {/* Social Logins */}
-        <div className="flex">
           <Button
-            variant="outline"
-            type="button"
-            onClick={() => clickGoogleLogin()}
-            disabled={googleLinkMutation.isPending}
-            className="h-11 font-medium  w-full cursor-pointer"
+            type="submit"
+            form="form-rhf-demo"
+            className="h-10 w-full cursor-pointer font-medium"
+            disabled={loginMutation.isPending}
           >
-            {/* Bạn có thể thay bằng SVG thực tế của Google */}
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+            {loginMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Signing in</span>
+              </>
+            ) : (
+              "Sign in"
+            )}
+          </Button>
+
+          <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+            <ShieldCheck className="size-3.5" />
+            Your credentials are always encrypted.
+          </p>
+        </FieldGroup>
+      </form>
+
+      <div className="my-6 flex items-center gap-3">
+        <span className="h-px flex-1 bg-border" />
+        <span className="text-xs text-muted-foreground">or</span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      <Button
+        variant="outline"
+        type="button"
+        onClick={() => clickGoogleLogin()}
+        disabled={googleLinkMutation.isPending}
+        className="h-10 w-full cursor-pointer font-medium"
+      >
+        {googleLinkMutation.isPending ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Connecting</span>
+          </>
+        ) : (
+          <>
+            <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                 fill="#4285F4"
@@ -240,21 +261,20 @@ export function LoginForm() {
                 fill="#EA4335"
               />
             </svg>
-            Google
-          </Button>
-        </div>
-      </CardContent>
-      <CardFooter className="p-0 mt-8 justify-center">
-        <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="text-primary hover:text-primary/90 font-semibold"
-          >
-            Sign Up
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+            Continue with Google
+          </>
+        )}
+      </Button>
+
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+        >
+          Create one
+        </Link>
+      </p>
+    </div>
   );
 }

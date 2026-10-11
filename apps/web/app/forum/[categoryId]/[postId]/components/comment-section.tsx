@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { Card, CardContent } from "@repo/ui/components/shadcn/card";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import {
@@ -74,17 +73,17 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
     <div className="space-y-6">
       {/* Section Header */}
       <div className="flex items-center gap-2">
-        <MessageSquare className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-semibold text-foreground">Comments</h2>
+        <MessageSquare className="h-4.5 w-4.5 text-muted-foreground" />
+        <h2 className="text-base font-semibold text-foreground">Comments</h2>
         {pagination && (
-          <Badge variant="secondary" className="text-xs">
+          <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-medium tabular-nums text-primary">
             {pagination.total}
-          </Badge>
+          </span>
         )}
       </div>
 
       {/* Create Comment Form */}
-      <Card className="border-border/60">
+      <Card>
         <CardContent className="pt-4 pb-4">
           <div className="flex gap-3">
             <Avatar size="sm" className="mt-0.5">
@@ -117,7 +116,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   size="sm"
                   onClick={handleSubmitComment}
                   disabled={!newComment.trim() || isSubmitting}
-                  className="gap-1.5 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
+                  className="gap-1.5"
                 >
                   {isSubmitting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -232,7 +231,7 @@ function CommentItem({
   }, [deleteComment, postId, comment.id]);
 
   return (
-    <Card className="transition-colors hover:bg-muted/20 border-border/60">
+    <Card className="transition-colors hover:bg-muted/50">
       <CardContent className="pt-4 pb-3">
         <div className="flex gap-3">
           <Avatar size="sm">

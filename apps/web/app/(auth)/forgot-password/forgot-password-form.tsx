@@ -6,13 +6,6 @@ import { handleErrorApi } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
-import {
   Field,
   FieldError,
   FieldGroup,
@@ -30,7 +23,8 @@ import {
   ForgotPasswordBodySchema,
   TypeOfVerificationCode,
 } from "@shared/types";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -97,6 +91,7 @@ export function ForgotPasswordForm() {
         onSuccess: (response) => {
           if (response.success) {
             toastSuccess({ message: response.data.message });
+            setCountdown(60);
           }
         },
         onError: (error) => {
@@ -111,195 +106,247 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <Card className="w-full sm:max-w-md mx-auto my-auto">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Forgot Password</CardTitle>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Enter your email and set a new password
-        </p>
-      </CardHeader>
-      <CardContent>
-        <form id="forgot-password-form" onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup>
-            <Controller
-              name="email"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="forgot-password-email">
-                    Email address
-                  </FieldLabel>
+    <div className="m-auto w-full min-w-0 max-w-[360px]">
+      <Link
+        href="/"
+        className="mb-8 flex items-center justify-center gap-2 lg:hidden"
+      >
+        <Image
+          src="/Logo.png"
+          alt="Frevia"
+          width={28}
+          height={28}
+          className="size-7 object-contain"
+          priority
+        />
+        <span className="text-lg font-semibold tracking-tight text-foreground">
+          Frevia
+        </span>
+      </Link>
+
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        Frevia account
+      </p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+        Reset password
+      </h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        Enter your email, the code we sent you, and a new password.
+      </p>
+
+      <form
+        id="forgot-password-form"
+        className="mt-7"
+        onSubmit={form.handleSubmit(onSubmit)}
+        noValidate
+      >
+        <FieldGroup className="gap-4">
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="forgot-password-email"
+                >
+                  Email
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="forgot-password-email"
+                  type="email"
+                  placeholder="name@company.com"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  inputMode="email"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="newPassword"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="forgot-password-new-password"
+                >
+                  New password
+                </FieldLabel>
+                <div className="relative">
                   <Input
                     {...field}
-                    id="forgot-password-email"
-                    type="email"
+                    id="forgot-password-new-password"
+                    type={showNewPassword ? "text" : "password"}
+                    placeholder="Enter your new password"
+                    autoComplete="new-password"
+                    className="pr-10"
                     aria-invalid={fieldState.invalid}
-                    placeholder="Enter your email"
-                    autoComplete="email"
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    aria-label={
+                      showNewPassword ? "Hide new password" : "Show new password"
+                    }
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <Controller
-              name="newPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="forgot-password-new-password">
-                    New Password
-                  </FieldLabel>
-                  <div className="relative">
-                    <Input
-                      {...field}
-                      id="forgot-password-new-password"
-                      type={showNewPassword ? "text" : "password"}
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Enter new password"
-                      autoComplete="new-password"
-                      className="pr-10"
-                    />
-                    <button
+          <Controller
+            name="confirmNewPassword"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="forgot-password-confirm-password"
+                >
+                  Confirm new password
+                </FieldLabel>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="forgot-password-confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm your new password"
+                    autoComplete="new-password"
+                    className="pr-10"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
+                    aria-label={
+                      showConfirmPassword
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="code"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel
+                  className="text-sm font-medium text-foreground"
+                  htmlFor="forgot-password-otp"
+                >
+                  Verification code
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    id="forgot-password-otp"
+                    placeholder="6-digit code"
+                    maxLength={6}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    aria-invalid={fieldState.invalid}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      field.onChange(value);
+                    }}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
                       type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                      aria-label={
-                        showNewPassword
-                          ? "Hide new password"
-                          : "Show new password"
+                      variant="secondary"
+                      onClick={() => sendOtp()}
+                      disabled={
+                        countdown > 0 || sendOtpMutation.isPending
                       }
                     >
-                      {showNewPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                      {sendOtpMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Sending</span>
+                        </>
+                      ) : countdown > 0 ? (
+                        `Resend in ${countdown}s`
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        "Send code"
                       )}
-                    </button>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="confirmNewPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="forgot-password-confirm-password">
-                    Confirm Password
-                  </FieldLabel>
-                  <div className="relative">
-                    <Input
-                      {...field}
-                      id="forgot-password-confirm-password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Confirm new password"
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                      aria-label={
-                        showConfirmPassword
-                          ? "Hide confirm password"
-                          : "Show confirm password"
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <Controller
-              name="code"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="forgot-password-otp">
-                    OTP Code
-                  </FieldLabel>
-                  <InputGroup>
-                    <InputGroupInput
-                      {...field}
-                      id="forgot-password-otp"
-                      placeholder="OTP Code"
-                      maxLength={6}
-                      aria-invalid={fieldState.invalid}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "");
-                        field.onChange(value);
-                      }}
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        type="button"
-                        variant="secondary"
-                        onClick={() => sendOtp()}
-                        disabled={countdown > 0 || sendOtpMutation.isPending}
-                      >
-                        {sendOtpMutation.isPending ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span>Sending...</span>
-                          </>
-                        ) : countdown > 0 ? (
-                          `Resend in ${countdown}s`
-                        ) : (
-                          "Send OTP"
-                        )}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </FieldGroup>
-        </form>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        <Field orientation="horizontal">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
-            Reset
-          </Button>
           <Button
             type="submit"
             form="forgot-password-form"
+            className="h-10 w-full cursor-pointer font-medium"
             disabled={forgotPasswordMutation.isPending}
           >
-            Submit
+            {forgotPasswordMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Resetting password</span>
+              </>
+            ) : (
+              "Reset password"
+            )}
           </Button>
-        </Field>
-        <p className="text-sm text-muted-foreground text-center">
-          Remember your password?{" "}
-          <Link
-            href="/login"
-            className="font-semibold text-primary hover:text-primary/90"
-          >
-            Log in
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+
+          <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+            <ShieldCheck className="size-3.5" />
+            Your credentials are always encrypted.
+          </p>
+        </FieldGroup>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Remember your password?{" "}
+        <Link
+          href="/login"
+          className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+        >
+          Back to sign in
+        </Link>
+      </p>
+    </div>
   );
 }

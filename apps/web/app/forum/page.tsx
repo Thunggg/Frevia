@@ -4,6 +4,7 @@ import {
   ForumCategoryListResponseType,
   ForumCategoryTopListResponseType,
   ForumTopActiveUserListResponseType,
+  ForumTopPostListResponseType,
 } from "@shared/types";
 import { cookies } from "next/headers";
 import { ForumCategoryView } from "./components/forum-category-view";
@@ -13,10 +14,17 @@ const ForumPage = async () => {
   const accessToken = cookieStore.get("accessToken")?.value;
 
   if (!accessToken || !envConfig?.NESTJS_API_URL) {
-    return <ForumCategoryView categories={[]} topCategories={[]} topUsers={[]} />;
+    return (
+      <ForumCategoryView
+        categories={[]}
+        topCategories={[]}
+        topUsers={[]}
+        topPosts={[]}
+      />
+    );
   }
 
-  const [categories, topCategories, topUsers] = await Promise.all([
+  const [categories, topCategories, topUsers, topPosts] = await Promise.all([
     (async (): Promise<ForumCategoryListResponseType> => {
       const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -27,7 +35,7 @@ const ForumPage = async () => {
       return data.data;
     })(),
     (async (): Promise<ForumCategoryTopListResponseType> => {
-      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories/top?limit=3`, {
+      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories/top?limit=5`, {
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: "no-store",
       });
@@ -44,6 +52,15 @@ const ForumPage = async () => {
       if (!res.ok || !data.success) return [];
       return data.data;
     })(),
+    (async (): Promise<ForumTopPostListResponseType> => {
+      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/posts/top?limit=5`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: "no-store",
+      });
+      const data = (await res.json()) as ApiResponse<ForumTopPostListResponseType>;
+      if (!res.ok || !data.success) return [];
+      return data.data;
+    })(),
   ]);
 
   return (
@@ -51,6 +68,7 @@ const ForumPage = async () => {
       categories={categories}
       topCategories={topCategories}
       topUsers={topUsers}
+      topPosts={topPosts}
     />
   );
 };
