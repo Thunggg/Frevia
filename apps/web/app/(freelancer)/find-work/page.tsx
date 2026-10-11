@@ -1,7 +1,8 @@
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
+import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import type { UserRole } from "@/components/header";
-import { RoleName } from "@shared/types";
+import { RoleName, type SavedSearchType } from "@shared/types";
 
 import { FindWorkContent } from "./find-work-content";
 
@@ -90,6 +91,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     : { page: 1, limit: 10, total: 0, totalPages: 0 };
 
   let initialBookmarkedSlugs: string[] = [];
+  let initialSavedSearches: SavedSearchType[] = [];
   if (role === "FREELANCER" && jobs.length > 0) {
     const statuses = await Promise.all(
       jobs.map(async (job) => {
@@ -100,6 +102,10 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     initialBookmarkedSlugs = statuses.filter(
       (slug): slug is string => Boolean(slug),
     );
+  }
+
+  if (role === "FREELANCER") {
+    initialSavedSearches = (await savedSearchServerRequest.getSavedSearches()) ?? [];
   }
 
   return (
@@ -114,6 +120,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
         sortOptions[sort as keyof typeof sortOptions] ? sort : "newest"
       }
       initialBookmarkedSlugs={initialBookmarkedSlugs}
+      initialSavedSearches={initialSavedSearches}
     />
   );
 }
