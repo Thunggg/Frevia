@@ -35,6 +35,9 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
+const inputClass =
+  "h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20";
+
 export function RegisterForm() {
   const router = useRouter();
 
@@ -122,14 +125,16 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="register-full-name">Full name</FieldLabel>
+                <FieldLabel htmlFor="register-full-name" className="text-[13px] font-medium text-foreground/70">
+                  Full name
+                </FieldLabel>
                 <Input
                   {...field}
                   id="register-full-name"
                   aria-invalid={fieldState.invalid}
                   placeholder="Your full name"
                   autoComplete="name"
-                  className="h-11"
+                  className={inputClass}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -143,7 +148,9 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="register-email">Email address</FieldLabel>
+                <FieldLabel htmlFor="register-email" className="text-[13px] font-medium text-foreground/70">
+                  Email address
+                </FieldLabel>
                 <Input
                   {...field}
                   id="register-email"
@@ -151,7 +158,7 @@ export function RegisterForm() {
                   aria-invalid={fieldState.invalid}
                   placeholder="you@company.com"
                   autoComplete="email"
-                  className="h-11"
+                  className={inputClass}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -165,7 +172,9 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="register-password">Password</FieldLabel>
+                <FieldLabel htmlFor="register-password" className="text-[13px] font-medium text-foreground/70">
+                  Password
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     {...field}
@@ -174,12 +183,12 @@ export function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     placeholder="Create a password"
                     autoComplete="new-password"
-                    className="h-11 pr-10"
+                    className={`${inputClass} pr-10`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -201,7 +210,7 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="register-confirm-password">
+                <FieldLabel htmlFor="register-confirm-password" className="text-[13px] font-medium text-foreground/70">
                   Confirm password
                 </FieldLabel>
                 <div className="relative">
@@ -212,12 +221,12 @@ export function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     placeholder="Confirm your password"
                     autoComplete="new-password"
-                    className="h-11 pr-10"
+                    className={`${inputClass} pr-10`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
                     aria-label={
                       showConfirmPassword
                         ? "Hide confirm password"
@@ -243,7 +252,9 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="register-otp">OTP code</FieldLabel>
+                <FieldLabel htmlFor="register-otp" className="text-[13px] font-medium text-foreground/70">
+                  OTP code
+                </FieldLabel>
                 <InputGroup>
                   <InputGroupInput
                     {...field}
@@ -255,6 +266,7 @@ export function RegisterForm() {
                       field.onChange(value);
                     }}
                     aria-invalid={fieldState.invalid}
+                    className={inputClass}
                   />
                   <InputGroupAddon align="inline-end">
                     <InputGroupButton
@@ -288,7 +300,7 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-3">
-                <FieldLabel>I want to</FieldLabel>
+                <FieldLabel className="text-[13px] font-medium text-foreground/70">I want to</FieldLabel>
                 <RadioGroup
                   value={field.value}
                   onValueChange={field.onChange}
@@ -296,12 +308,12 @@ export function RegisterForm() {
                 >
                   <FieldLabel
                     htmlFor="role-freelancer"
-                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#4fae2e]/10"
+                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/50 has-data-[state=checked]:bg-[#4fae2e]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#4fae2e]/40 dark:has-data-[state=checked]:bg-[#4fae2e]/8"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
-                        <FieldTitle>Find work</FieldTitle>
-                        <FieldDescription>
+                        <FieldTitle className="text-[14px]">Find work</FieldTitle>
+                        <FieldDescription className="text-[13px] text-muted-foreground/60">
                           Join as a freelancer and apply to projects.
                         </FieldDescription>
                       </FieldContent>
@@ -314,12 +326,12 @@ export function RegisterForm() {
                   </FieldLabel>
                   <FieldLabel
                     htmlFor="role-client"
-                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#4fae2e]/10"
+                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/50 has-data-[state=checked]:bg-[#4fae2e]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#4fae2e]/40 dark:has-data-[state=checked]:bg-[#4fae2e]/8"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
-                        <FieldTitle>Hire talent</FieldTitle>
-                        <FieldDescription>
+                        <FieldTitle className="text-[14px]">Hire talent</FieldTitle>
+                        <FieldDescription className="text-[13px] text-muted-foreground/60">
                           Join as an employer and post jobs.
                         </FieldDescription>
                       </FieldContent>
@@ -345,7 +357,7 @@ export function RegisterForm() {
             />
             <FieldLabel
               htmlFor="terms-checkbox"
-              className="cursor-pointer font-normal leading-snug text-muted-foreground"
+              className="cursor-pointer text-[13px] font-normal leading-snug text-muted-foreground/70"
             >
               I accept the terms and conditions
             </FieldLabel>
@@ -357,7 +369,7 @@ export function RegisterForm() {
         <Button
           type="button"
           variant="outline"
-          className="h-11 flex-1 active:scale-[0.99]"
+          className="h-11 flex-1 rounded-lg border-border/60 bg-white/60 text-[14px] font-medium transition-all dark:border-white/10 dark:bg-white/[0.03] active:scale-[0.99]"
           onClick={() => form.reset()}
         >
           Reset
@@ -365,7 +377,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           form="register-form"
-          className="h-11 flex-1 bg-[#4fae2e] font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+          className="h-11 flex-1 rounded-lg bg-[#4fae2e] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#459928] hover:shadow-md active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
           disabled={!isTermsAccepted || registerMutation.isPending}
         >
           {registerMutation.isPending ? (
@@ -379,7 +391,7 @@ export function RegisterForm() {
         </Button>
       </div>
 
-      <p className="mt-8 text-center text-sm text-muted-foreground">
+      <p className="mt-8 text-center text-[13px] text-muted-foreground/60">
         Already have an account?{" "}
         <Link
           href="/login"

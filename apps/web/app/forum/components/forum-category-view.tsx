@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, LayoutGrid } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
@@ -37,15 +37,15 @@ export function ForumCategoryView({
 }: ForumCategoryViewProps) {
   const hasTopCategories = topCategories.length > 0;
   const hasTopUsers = topUsers.length > 0;
-  const totalPosts = categories.reduce((sum, c) => sum + c.postCount, 0);
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
       <main className="flex-1">
+        {/* Hero */}
         <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
                 Home
@@ -54,42 +54,25 @@ export function ForumCategoryView({
               <span className="font-medium text-foreground">Forum</span>
             </nav>
 
-            <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-xl">
-                <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                  Community Forum
-                </h1>
-                <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
-                  Ask questions, share tips, and learn from freelancers and
-                  clients on Frevia.
-                </p>
-              </div>
-
-              <p className="text-sm text-foreground/65 dark:text-foreground/70">
-                <span className="font-semibold text-foreground">
-                  {categories.length}
-                </span>{" "}
-                {categories.length === 1 ? "category" : "categories"}
-                <span className="mx-2 text-foreground/35">·</span>
-                <span className="font-semibold text-foreground">
-                  {totalPosts}
-                </span>{" "}
-                {totalPosts === 1 ? "post" : "posts"}
+            <div className="mt-6 max-w-2xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                Community Forum
+              </h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-foreground/65">
+                Ask questions, share tips, and learn from freelancers and
+                clients on Frevia.
               </p>
             </div>
           </div>
         </section>
 
+        {/* Content */}
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-10">
           <section className="lg:col-span-8">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
-              Categories
-            </h2>
-
             {categories.length === 0 ? (
-              <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
                 <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                  <LayoutGrid className="size-7" />
+                  <MessageSquare className="size-7" />
                 </div>
                 <p className="text-lg font-medium text-foreground">
                   No categories yet
@@ -99,67 +82,60 @@ export function ForumCategoryView({
                 </p>
               </div>
             ) : (
-              <ul className="mt-4 divide-y divide-border border-y border-border">
+              <div className="divide-y divide-border border-y border-border">
                 {categories.map((category) => (
-                  <li key={category.id}>
-                    <Link
-                      href={`/forum/${category.id}`}
-                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/4"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
-                            {category.name}
-                          </h3>
-                          <ArrowRight className="size-4 shrink-0 text-[#4fae2e] opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
-                        </div>
-                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                          {category.description ?? "No description provided."}
-                        </p>
+                  <Link
+                    key={category.id}
+                    href={`/forum/${category.id}`}
+                    className="group flex items-start gap-4 px-1 py-5 transition-colors hover:bg-[#f9fcf7]/60 sm:items-center sm:py-6 dark:hover:bg-white/[0.02]"
+                  >
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <MessageSquare className="size-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-semibold text-foreground transition-colors group-hover:text-[#4fae2e]">
+                          {category.name}
+                        </h3>
                       </div>
-
-                      <div className="shrink-0 text-sm text-muted-foreground sm:text-right">
-                        <p className="font-medium text-foreground">
-                          {category.postCount}{" "}
-                          {category.postCount === 1 ? "post" : "posts"}
-                        </p>
-                        <p className="mt-1 text-xs">
-                          Added {formatDate(category.createdAt)}
-                        </p>
-                      </div>
-                    </Link>
-                  </li>
+                      <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                        {category.description ?? "No description provided."}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm font-semibold tabular-nums text-foreground/70">
+                        {category.postCount}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {category.postCount === 1 ? "post" : "posts"}
+                      </p>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             )}
           </section>
 
-          <aside className="space-y-8 lg:col-span-4">
+          <aside className="space-y-6 lg:col-span-4">
             {hasTopCategories ? (
               <section className="rounded-xl border border-border p-5 sm:p-6">
-                <h2 className="text-base font-semibold tracking-tight text-foreground">
-                  Active categories
+                <h2 className="text-sm font-semibold text-foreground">
+                  Most Active
                 </h2>
                 <ul className="mt-4 divide-y divide-border">
-                  {topCategories.map((category, index) => (
+                  {topCategories.map((category) => (
                     <li key={category.id}>
                       <Link
                         href={`/forum/${category.id}`}
-                        className="group flex items-center gap-3 py-3"
+                        className="group flex items-center justify-between py-3 transition-colors hover:text-[#4fae2e]"
                       >
-                        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                          {index + 1}
+                        <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
+                          {category.name}
+                        </p>
+                        <span className="ml-4 shrink-0 text-xs tabular-nums text-muted-foreground">
+                          {category.postCount}{" "}
+                          {category.postCount === 1 ? "post" : "posts"}
                         </span>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
-                            {category.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {category.postCount}{" "}
-                            {category.postCount === 1 ? "post" : "posts"}
-                          </p>
-                        </div>
-                        <ArrowRight className="size-3.5 shrink-0 text-[#4fae2e] opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
                       </Link>
                     </li>
                   ))}
@@ -169,16 +145,13 @@ export function ForumCategoryView({
 
             {hasTopUsers ? (
               <section className="rounded-xl border border-border p-5 sm:p-6">
-                <h2 className="text-base font-semibold tracking-tight text-foreground">
-                  Active members
+                <h2 className="text-sm font-semibold text-foreground">
+                  Top Contributors
                 </h2>
-                <ul className="mt-4 space-y-1">
+                <ul className="mt-4 space-y-4">
                   {topUsers.map((user) => (
-                    <li
-                      key={user.id}
-                      className="flex items-center gap-3 rounded-lg px-1 py-2"
-                    >
-                      <Avatar size="sm">
+                    <li key={user.id} className="flex items-center gap-3">
+                      <Avatar>
                         <AvatarImage
                           src={user.avatarUrl ?? undefined}
                           alt={user.displayName ?? "Member"}
@@ -194,7 +167,7 @@ export function ForumCategoryView({
                         <p className="text-xs text-muted-foreground">
                           {user.postCount}{" "}
                           {user.postCount === 1 ? "post" : "posts"}
-                          <span className="mx-1.5 text-foreground/30">·</span>
+                          <span className="mx-1">·</span>
                           {user.commentCount}{" "}
                           {user.commentCount === 1 ? "comment" : "comments"}
                         </p>

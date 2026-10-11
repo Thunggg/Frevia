@@ -164,25 +164,26 @@ export function ForumPostList({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <form onSubmit={handleSearchSubmit} className="w-full max-w-sm">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/50" strokeWidth={1.75} />
             <Input
               type="text"
               placeholder="Search posts..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-11 pl-10 pr-10"
+              className="h-9 rounded-lg border-border/60 bg-white/60 pl-9 pr-9 text-[13px] focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:bg-white/[0.03]"
             />
             {searchInput ? (
               <button
                 type="button"
                 onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-muted-foreground/50 transition-colors hover:text-foreground"
                 aria-label="Clear search"
               >
-                <X className="size-4" />
+                <X className="size-3.5" />
               </button>
             ) : null}
           </div>
@@ -192,10 +193,11 @@ export function ForumPostList({
           {currentUserId ? (
             <Button
               variant={isMyPosts ? "default" : "outline"}
-              className={`h-11 gap-1.5 ${
+              size="sm"
+              className={`h-8 gap-1.5 text-[13px] ${
                 isMyPosts
-                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
-                  : ""
+                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
+                  : "border-border/60 text-foreground/60 hover:border-[#4fae2e]/40 hover:text-foreground"
               }`}
               onClick={toggleMyPosts}
               aria-pressed={isMyPosts}
@@ -210,7 +212,7 @@ export function ForumPostList({
             currentUserId={currentUserId}
           />
           <Select value={String(limit)} onValueChange={handleLimitChange}>
-            <SelectTrigger className="h-11 w-[120px]">
+            <SelectTrigger className="h-8 w-[90px] rounded-lg border-border/60 bg-transparent text-[13px] text-foreground/60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -223,67 +225,70 @@ export function ForumPostList({
         </div>
       </div>
 
+      {/* Filter chips */}
       {hasActiveFilters ? (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted-foreground">Filters:</span>
+          <span className="text-[13px] text-muted-foreground/50">Filters:</span>
           {currentSearch ? (
             <button
               type="button"
               onClick={clearSearch}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/20 bg-[#4fae2e]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#4fae2e] transition-colors hover:border-[#4fae2e]/40"
             >
-              Search: {currentSearch}
-              <X className="size-3.5 text-muted-foreground" />
+              &quot;{currentSearch}&quot;
+              <X className="size-3" />
             </button>
           ) : null}
           {isMyPosts ? (
             <button
               type="button"
               onClick={() => navigateToPage(1, searchInput, undefined, false)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/20 bg-[#4fae2e]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#4fae2e] transition-colors hover:border-[#4fae2e]/40"
             >
               My posts
-              <X className="size-3.5 text-muted-foreground" />
+              <X className="size-3" />
             </button>
           ) : null}
           <button
             type="button"
             onClick={clearAllFilters}
-            className="text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+            className="text-[12px] font-medium text-muted-foreground/50 transition-colors hover:text-[#4fae2e]"
           >
             Clear all
           </button>
         </div>
       ) : null}
 
+      {/* Main grid */}
       <div
         className={`grid gap-8 ${
           showTrending ? "lg:grid-cols-12" : "grid-cols-1"
         }`}
       >
+        {/* Trending sidebar */}
         {showTrending ? (
           <aside className="order-2 lg:order-1 lg:col-span-4">
-            <div className="sticky top-20 rounded-xl border border-border bg-background p-5 sm:p-6">
-              <h2 className="text-base font-semibold tracking-tight text-foreground">
+            <div className="sticky top-20 rounded-xl border border-border/40 bg-background p-5 sm:p-6">
+              <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">
                 Trending in {categoryName}
               </h2>
-              <ul className="mt-4 divide-y divide-border">
+              <ul className="mt-4 space-y-1">
                 {topPosts.map((post, index) => (
                   <li key={post.id}>
                     <Link
                       href={`/forum/${post.categoryId ?? categoryId}/${post.id}`}
-                      className="group flex items-start gap-3 py-3"
+                      className="group flex items-start gap-3 rounded-lg px-2.5 py-2.5 transition-colors hover:bg-[#f9fcf7]/60 dark:hover:bg-white/[0.02]"
                     >
-                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[#4fae2e]/8 text-[11px] font-semibold text-[#4fae2e]/70">
                         {index + 1}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-[#4fae2e]">
+                        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-foreground/80 transition-colors group-hover:text-[#4fae2e]">
                           {post.title}
                         </p>
-                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground/50">
                           <span className="inline-flex items-center gap-1">
-                            <Heart className="size-3 text-[#4fae2e]" />
+                            <Heart className="size-3 text-[#4fae2e]/60" />
                             {post.likeCount}
                           </span>
                           <span className="inline-flex items-center gap-1">
@@ -300,18 +305,19 @@ export function ForumPostList({
           </aside>
         ) : null}
 
+        {/* Post list */}
         <div
           className={`order-1 ${showTrending ? "lg:order-2 lg:col-span-8" : ""}`}
         >
           {pagination.total > 0 ? (
-            <p className="mb-4 text-sm text-muted-foreground">
+            <p className="mb-4 text-[13px] text-muted-foreground/50">
               Showing{" "}
-              <span className="font-medium text-foreground">
-                {Math.min((currentPage - 1) * limit + 1, pagination.total)}-
+              <span className="font-medium text-foreground/70">
+                {Math.min((currentPage - 1) * limit + 1, pagination.total)}–
                 {Math.min(currentPage * limit, pagination.total)}
               </span>{" "}
               of{" "}
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-foreground/70">
                 {pagination.total}
               </span>{" "}
               {pagination.total === 1 ? "post" : "posts"}
@@ -325,9 +331,9 @@ export function ForumPostList({
             }`}
           >
             {posts.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                  <Inbox className="size-7" />
+              <div className="rounded-xl border border-dashed border-border/60 px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#4fae2e]/8 text-[#4fae2e]">
+                  <Inbox className="size-7" strokeWidth={1.5} />
                 </div>
                 <p className="text-lg font-medium text-foreground">
                   {isMyPosts
@@ -336,7 +342,7 @@ export function ForumPostList({
                       ? "No posts found"
                       : "No posts yet"}
                 </p>
-                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground/60">
                   {isMyPosts
                     ? "Create a post to get started."
                     : currentSearch
@@ -345,7 +351,8 @@ export function ForumPostList({
                 </p>
                 {hasActiveFilters ? (
                   <Button
-                    className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    size="sm"
+                    className="mt-6 h-8 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
                     onClick={clearAllFilters}
                   >
                     Clear filters
@@ -353,59 +360,58 @@ export function ForumPostList({
                 ) : null}
               </div>
             ) : (
-              <ul className="divide-y divide-border border-y border-border">
+              <div className="space-y-2">
                 {posts.map((post) => (
-                  <li key={post.id}>
-                    <Link
-                      href={`/forum/${categoryId}/${post.id}`}
-                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-white/4"
-                    >
-                      <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-lg">
-                        {post.title}
-                      </h3>
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {stripHtml(post.content)}
-                      </p>
-                      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                        <span className="inline-flex items-center gap-2">
-                          <Avatar size="sm">
-                            <AvatarImage
-                              src={
-                                post.user?.profile?.avatarUrl ?? undefined
-                              }
-                              alt={
-                                post.user?.profile?.displayName ??
-                                `User #${post.userId}`
-                              }
-                            />
-                            <AvatarFallback className="text-[10px]">
-                              {post.user?.profile?.displayName
-                                ?.charAt(0)
-                                ?.toUpperCase() ?? "?"}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-foreground">
-                            {post.user?.profile?.displayName ??
-                              `User #${post.userId}`}
-                          </span>
+                  <Link
+                    key={post.id}
+                    href={`/forum/${categoryId}/${post.id}`}
+                    className="group block rounded-xl border border-border/40 bg-background px-5 py-5 transition-all hover:border-[#4fae2e]/20 hover:bg-[#f9fcf7]/60 hover:shadow-sm sm:py-6 dark:hover:bg-white/[0.02]"
+                  >
+                    <h3 className="text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-base">
+                      {post.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground/60">
+                      {stripHtml(post.content)}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-muted-foreground/50">
+                      <span className="inline-flex items-center gap-2">
+                        <Avatar size="sm">
+                          <AvatarImage
+                            src={
+                              post.user?.profile?.avatarUrl ?? undefined
+                            }
+                            alt={
+                              post.user?.profile?.displayName ??
+                              `User #${post.userId}`
+                            }
+                          />
+                          <AvatarFallback className="text-[10px]">
+                            {post.user?.profile?.displayName
+                              ?.charAt(0)
+                              ?.toUpperCase() ?? "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium text-foreground/70">
+                          {post.user?.profile?.displayName ??
+                            `User #${post.userId}`}
                         </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Calendar className="size-3.5 text-[#4fae2e]" />
-                          {formatDate(post.createdAt)}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Heart className="size-3.5 text-[#4fae2e]" />
-                          {post.likeCount}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <MessageSquare className="size-3.5" />
-                          {post.commentCount}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="size-3 text-[#4fae2e]/60" />
+                        {formatDate(post.createdAt)}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Heart className="size-3 text-[#4fae2e]/60" />
+                        {post.likeCount}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MessageSquare className="size-3" />
+                        {post.commentCount}
+                      </span>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
 

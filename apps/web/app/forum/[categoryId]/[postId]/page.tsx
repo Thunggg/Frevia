@@ -26,16 +26,15 @@ function resolveHeaderRole(
 }
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
-  const { categoryId, postId } = await params;
-
-  const postIdNum = Number(postId);
-  const categoryIdNum = Number(categoryId);
+  const { categoryId: categoryIdParam, postId: postIdParam } = await params;
+  const categoryId = Number(categoryIdParam);
+  const postId = Number(postIdParam);
 
   if (
-    Number.isNaN(postIdNum) ||
-    postIdNum <= 0 ||
-    Number.isNaN(categoryIdNum) ||
-    categoryIdNum <= 0
+    !Number.isInteger(categoryId) ||
+    categoryId <= 0 ||
+    !Number.isInteger(postId) ||
+    postId <= 0
   ) {
     notFound();
   }
@@ -49,8 +48,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
       <Header role={role} />
       <main className="flex-1">
         <PostDetailWrapper
-          postId={postIdNum}
-          categoryId={categoryIdNum}
+          postId={postId}
+          categoryId={categoryId}
           currentUserId={currentUserId}
         />
       </main>
