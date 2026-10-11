@@ -31,6 +31,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -82,7 +83,11 @@ function isNavLinkActive(link: NavLink, pathname: string) {
 
   if (!pathMatches) return false;
 
-  if (link.excludePaths?.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
+  if (
+    link.excludePaths?.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    )
+  ) {
     return false;
   }
 
@@ -111,7 +116,8 @@ function Logo() {
 function HeaderNavigation({
   role,
   mobile = false,
-}: HeaderProps & { mobile?: boolean }) {
+  onNavigate,
+}: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   const links = role === "GUEST" ? [] : roleConfig[role].links;
 
@@ -123,10 +129,13 @@ function HeaderNavigation({
           <Link
             key={link.label}
             href={link.href}
-            className={`block text-sm font-medium transition-colors ${
+            onClick={onNavigate}
+            className={`block rounded-md text-sm font-medium transition-colors ${
+              mobile ? "px-2 py-2" : ""
+            } ${
               isActive
                 ? "text-[#4fae2e] underline decoration-2 underline-offset-4"
-                : "text-gray-700 hover:text-[#4fae2e] dark:text-gray-200"
+                : "text-foreground/75 hover:text-[#4fae2e] dark:text-foreground/85 dark:hover:text-[#5bc03a]"
             }`}
           >
             {link.label}
@@ -137,7 +146,11 @@ function HeaderNavigation({
   );
 }
 
-function HeaderSearch() {
+function HeaderSearch({
+  className = "hidden max-w-md flex-1 md:block",
+}: {
+  className?: string;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
@@ -146,7 +159,7 @@ function HeaderSearch() {
 
   return (
     <form
-      className="hidden max-w-md flex-1 md:block"
+      className={className}
       onSubmit={(event) => {
         event.preventDefault();
         const params = new URLSearchParams(searchParams.toString());
@@ -161,12 +174,12 @@ function HeaderSearch() {
       }}
     >
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search for projects, skills..."
-          className="w-full rounded-full border-0 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 shadow-sm outline-none ring-[#4fae2e]/30 focus:ring-2"
+          className="w-full rounded-full border border-transparent bg-white py-2 pl-10 pr-4 text-sm text-foreground shadow-sm outline-none ring-[#4fae2e]/30 placeholder:text-muted-foreground focus:ring-2 dark:border-white/10 dark:bg-[#0c2416] dark:text-foreground dark:shadow-none dark:ring-[#4fae2e]/40"
         />
       </div>
     </form>
@@ -193,10 +206,10 @@ function ProfileDropdown({ role }: HeaderProps) {
           <Avatar>
             <AvatarFallback>{profile.name.slice(0, 1)}</AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
+          <span className="text-sm font-medium text-foreground">
             {profile.name}
           </span>
-          <ChevronDown className="size-4 text-gray-600 dark:text-gray-300" />
+          <ChevronDown className="size-4 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72 p-2">
@@ -284,13 +297,18 @@ function ProfileDropdown({ role }: HeaderProps) {
 function HeaderActions({ role }: HeaderProps) {
   if (role === "GUEST") {
     return (
-      <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" asChild>
+      <div className="ml-auto flex items-center gap-1 sm:gap-2">
+        <ThemeToggle />
+        <Button
+          variant="ghost"
+          asChild
+          className="hidden text-foreground hover:bg-black/5 hover:text-foreground sm:inline-flex dark:hover:bg-white/10"
+        >
           <Link href="/login">Log in</Link>
         </Button>
         <Button
           asChild
-          className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+          className="hidden bg-[#4fae2e] text-white hover:bg-[#459928] sm:inline-flex dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
         >
           <Link href="/register">Get started</Link>
         </Button>
@@ -299,11 +317,12 @@ function HeaderActions({ role }: HeaderProps) {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-3">
+    <div className="ml-auto flex items-center gap-1 sm:gap-3">
+      <ThemeToggle />
       <Button
         variant="ghost"
         size="icon"
-        className="hidden rounded-full sm:inline-flex"
+        className="hidden rounded-full text-foreground hover:bg-black/5 sm:inline-flex dark:hover:bg-white/10"
         aria-label="Notifications"
       >
         <Bell className="size-5" />
@@ -315,9 +334,10 @@ function HeaderActions({ role }: HeaderProps) {
 
 export function Header({ role }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-[#eaf8df] dark:bg-[#12331f]">
+    <header className="sticky top-0 z-50 border-b border-[#4fae2e]/15 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Logo />
         {role === "FREELANCER" && <HeaderSearch />}
@@ -325,18 +345,44 @@ export function Header({ role }: HeaderProps) {
         <HeaderActions role={role} />
         <button
           onClick={() => setIsMenuOpen((open) => !open)}
-          className="rounded-md p-2 hover:bg-black/5 md:hidden"
+          className="rounded-md p-2 text-foreground hover:bg-black/5 md:hidden dark:hover:bg-white/10"
           aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
         >
           {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
       {isMenuOpen && (
-        <div className="space-y-3 border-t border-black/10 bg-[#eaf8df] p-4 md:hidden">
-          <HeaderNavigation role={role} mobile />
-          <div className="border-t border-black/10 pt-3 text-sm font-medium text-muted-foreground">
-            {role === "GUEST" ? "Welcome to Frevia" : roleConfig[role].name}
-          </div>
+        <div className="space-y-3 border-t border-[#4fae2e]/15 bg-[#eaf8df] p-4 md:hidden dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          {role === "FREELANCER" && (
+            <HeaderSearch className="block w-full" />
+          )}
+          <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
+          {role === "GUEST" ? (
+            <div className="flex flex-col gap-2 border-t border-[#4fae2e]/15 pt-3 dark:border-[#4fae2e]/25">
+              <Button
+                variant="outline"
+                asChild
+                className="w-full border-[#4fae2e]/35 bg-transparent dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+              >
+                <Link href="/login" onClick={closeMenu}>
+                  Log in
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="w-full bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+              >
+                <Link href="/register" onClick={closeMenu}>
+                  Get started
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="border-t border-[#4fae2e]/15 pt-3 text-sm font-medium text-muted-foreground dark:border-[#4fae2e]/25">
+              {roleConfig[role].name}
+            </div>
+          )}
         </div>
       )}
     </header>

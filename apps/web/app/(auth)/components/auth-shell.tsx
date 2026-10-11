@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { ThemeToggle } from "@/components/theme-toggle";
+
 import styles from "./auth-shell.module.css";
 
 type AuthShellProps = {
@@ -78,6 +80,10 @@ export function AuthShell({
         />
 
         <div className="relative flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
+          <div className="absolute right-4 top-4 sm:right-8 sm:top-6 lg:right-12">
+            <ThemeToggle />
+          </div>
+
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <Link href="/" className="flex items-center gap-2.5">
               <Image

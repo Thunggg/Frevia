@@ -7,6 +7,7 @@ import { Header, type UserRole } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { RoleName, type GetMeResType } from "@shared/types";
 
+import { HeroSlider } from "./hero-slider";
 import { RevealOnScroll } from "./reveal-on-scroll";
 import styles from "./home-view.module.css";
 
@@ -145,17 +146,9 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
 
           <div
-            className={`mx-auto w-full max-w-6xl px-2 sm:px-4 ${styles.reveal} ${styles.revealDelay5}`}
+            className={`mx-auto w-full max-w-5xl px-4 pb-10 sm:px-6 sm:pb-14 ${styles.reveal} ${styles.revealDelay5}`}
           >
-            <Image
-              src="/home/hero-illustration.png"
-              alt="Freelancers collaborating online across a connected community"
-              width={1536}
-              height={1024}
-              priority
-              sizes="(max-width: 1024px) 100vw, 1152px"
-              className={`mx-auto h-auto w-full ${styles.heroIllustration}`}
-            />
+            <HeroSlider />
           </div>
         </section>
 
@@ -170,7 +163,7 @@ export function HomeView({ user }: HomeViewProps) {
                   alt={partner.alt}
                   width={partner.width}
                   height={32}
-                  className="h-8 w-auto opacity-50 grayscale"
+                  className="h-8 w-auto opacity-50 grayscale dark:opacity-60 dark:invert"
                 />
               ))}
             </div>
