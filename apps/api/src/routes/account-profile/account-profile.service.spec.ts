@@ -13,6 +13,7 @@ const userWithRole = (roleName: string, userId = 1) => ({
 describe('AccountProfileService', () => {
   const repository = {
     findUserWithRoles: jest.fn(),
+    createIdentityDocument: jest.fn(),
     findIdentityDocuments: jest.fn(),
     findSocialLinks: jest.fn(),
     findSocialLinkByPlatform: jest.fn(),
@@ -21,7 +22,10 @@ describe('AccountProfileService', () => {
     deleteSocialLink: jest.fn(),
     findFavorites: jest.fn(),
   };
-  const cloudinary = { uploadFile: jest.fn() };
+  const cloudinary = {
+    isConfigured: jest.fn(),
+    uploadFile: jest.fn(),
+  };
   const service = new AccountProfileService(
     repository as unknown as AccountProfileRepository,
     cloudinary as unknown as CloudinaryService,
@@ -48,6 +52,41 @@ describe('AccountProfileService', () => {
 
     await expect(service.getIdentityStatus(1)).rejects.toBeInstanceOf(
       ForbiddenException,
+    );
+  });
+
+  it('uploads an identity document to Cloudinary when configured', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.FREELANCER),
+    );
+    cloudinary.isConfigured.mockReturnValue(true);
+    cloudinary.uploadFile.mockResolvedValue({
+      secure_url: 'https://res.cloudinary.com/demo/image/upload/document.png',
+    });
+    repository.createIdentityDocument.mockImplementation(
+      (userId: number, documentType: string, fileUrl: string) => ({
+        id: 12,
+        userId,
+        documentType,
+        fileUrl,
+      }),
+    );
+
+    const file = {
+      originalname: 'document.png',
+      mimetype: 'image/png',
+      size: 4,
+      buffer: Buffer.from('demo'),
+    } as Express.Multer.File;
+
+    await expect(
+      service.uploadIdentityDocument(1, 'ID_CARD', file),
+    ).resolves.toMatchObject({
+      fileUrl: 'https://res.cloudinary.com/demo/image/upload/document.png',
+    });
+    expect(cloudinary.uploadFile).toHaveBeenCalledWith(
+      file,
+      'frevia/identity-verifications/1',
     );
   });
 
