@@ -39,21 +39,21 @@ export class MilestoneSubmissionController {
         @Param('contractId', ParseIntPipe) contractId: number,
         @Param('milestoneId', ParseIntPipe) milestoneId: number,
     ) {
-        return this.submissionService.getSubmissionDetail(
+        return this.submissionService.getSubmission(
             userId, roleName, contractId, milestoneId,
         );
     }
 
     @Get(':id')
     @ZodSerializerDto(GetSubmissionResponseDTO)
-    getSubmission(
+    getSubmissionDetail(
         @UserActive('userId') userId: number,
         @UserActive('roleName') roleName: string,
         @Param('contractId', ParseIntPipe) contractId: number,
         @Param('milestoneId', ParseIntPipe) milestoneId: number,
         @Param('id', ParseIntPipe) submissionId: number,
     ) {
-        return this.submissionService.getSubmission(
+        return this.submissionService.getSubmissionDetail(
             userId, roleName, contractId, milestoneId, submissionId,
         );
     }

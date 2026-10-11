@@ -77,7 +77,7 @@ export class MilestoneSubmissionService {
         }
     }
 
-    async getSubmissionDetail(
+    async getSubmission(
         userId: number,
         roleName: string,
         contractId: number,
@@ -95,7 +95,7 @@ export class MilestoneSubmissionService {
         }
     }
 
-    async getSubmission(
+    async getSubmissionDetail(
         userId: number,
         roleName: string,
         contractId: number,

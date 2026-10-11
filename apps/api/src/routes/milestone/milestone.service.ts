@@ -20,9 +20,6 @@ import {
 import { RoleName } from '@shared/types';
 import { ContractStatus, MilestonePaymentStatus, MilestoneStatus } from '@prisma/client';
 
-const NON_EDITABLE_STATUSES = ['APPROVED', 'CANCELLED'];
-const NON_DELETABLE_STATUSES = ['APPROVED', 'SUBMITTED'];
-
 @Injectable()
 export class MilestoneService {
     constructor(private readonly milestoneRepository: MilestoneRepository) { }
@@ -107,7 +104,7 @@ export class MilestoneService {
             if (!milestone) throw MilestoneNotFoundException();
             if (milestone.contractId !== contractId) throw MilestoneForbiddenException();
 
-            if (NON_EDITABLE_STATUSES.includes(milestone.status)) {
+            if (milestone.status !== MilestoneStatus.PENDING) {
                 throw MilestoneCannotBeEditedException();
             }
 
@@ -137,7 +134,7 @@ export class MilestoneService {
             if (!milestone) throw MilestoneNotFoundException();
             if (milestone.contractId !== contractId) throw MilestoneForbiddenException();
 
-            if (NON_DELETABLE_STATUSES.includes(milestone.status)) {
+            if (milestone.status !== MilestoneStatus.PENDING) {
                 throw MilestoneCannotBeDeletedException();
             }
 
