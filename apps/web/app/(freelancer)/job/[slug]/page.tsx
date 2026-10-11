@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
 import type { UserRole } from "@/components/header";
-import { RoleName } from "@shared/types";
+import { RoleName, type JobType } from "@shared/types";
 
 import { JobDetailContent } from "./job-detail-content";
 
@@ -42,16 +42,34 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   }
 
   const role = resolveHeaderRole(user);
-  const bookmarkStatus =
+  const relatedSearch = job.skills[0]?.skill.name;
+
+  const [bookmarkStatus, relatedResult] = await Promise.all([
     role === "FREELANCER"
-      ? await jobServerRequest.getBookmarkStatus(slug)
-      : null;
+      ? jobServerRequest.getBookmarkStatus(slug)
+      : Promise.resolve(null),
+    relatedSearch
+      ? jobServerRequest.getJobs({
+          page: 1,
+          limit: 5,
+          skill: relatedSearch,
+          sortBy: "createdAt",
+          order: "desc",
+        })
+      : Promise.resolve(null),
+  ]);
+
+  const relatedJobs: JobType[] = (relatedResult?.data ?? [])
+    .filter((item) => item.slug !== job.slug)
+    .slice(0, 3);
 
   return (
     <JobDetailContent
       job={job}
       role={role}
       initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
+      relatedJobs={relatedJobs}
+      relatedSkill={relatedSearch}
     />
   );
 }
