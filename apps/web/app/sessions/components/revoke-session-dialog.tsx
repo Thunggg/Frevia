@@ -21,7 +21,7 @@ import { type MouseEvent } from "react";
 
 function getRevokeSessionErrorMessage(error: unknown): string {
   if (!(error instanceof ApiFail)) {
-    return "Failed to revoke session";
+    return "Couldn't revoke session. Try again.";
   }
 
   return error.response.error.details?.[0]?.message || error.message;
@@ -45,7 +45,6 @@ export function RevokeSessionDialog({
   const router = useRouter();
   const revokeSession = useRevokeSession();
 
-  // BR-02: session hết hạn không revoke lại
   if (isExpired) {
     return (
       <Button
@@ -53,8 +52,8 @@ export function RevokeSessionDialog({
         variant="ghost"
         size="icon"
         disabled
-        title="Expired session cannot be revoked"
-        aria-label="Expired session cannot be revoked"
+        title="Expired sessions can't be revoked"
+        aria-label="Expired sessions can't be revoked"
       >
         <ShieldOff className="size-4 opacity-40" />
       </Button>
@@ -69,7 +68,6 @@ export function RevokeSessionDialog({
         toastSuccess({ message: data.message });
         onRevoked?.();
 
-        // BR-04: revoke session hiện tại → logout ngay
         if (data.loggedOut) {
           await fetch("/api/auth/logout", { method: "POST" });
           router.push("/login");
@@ -82,6 +80,8 @@ export function RevokeSessionDialog({
     });
   }
 
+  const deviceLabel = deviceInfo?.trim() || `Session #${sessionId}`;
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -89,20 +89,21 @@ export function RevokeSessionDialog({
           type="button"
           variant="ghost"
           size="icon"
-          className="text-destructive hover:text-destructive"
-          aria-label={`Revoke session ${sessionId}`}
+          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+          aria-label={`Revoke ${deviceLabel}`}
         >
           <ShieldOff className="size-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Revoke session</AlertDialogTitle>
+          <AlertDialogTitle>
+            {isCurrent ? "Sign out this device?" : "Revoke this session?"}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Revoke session #{sessionId}
-            {deviceInfo ? ` (${deviceInfo})` : ""}
-            {isCurrent ? " (this device)" : ""}? That device will be signed out
-            and must log in again.
+            {isCurrent
+              ? `You'll be signed out of ${deviceLabel} right away and need to log in again.`
+              : `${deviceLabel} will be signed out and must log in again to continue.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -112,12 +113,12 @@ export function RevokeSessionDialog({
           <AlertDialogAction
             onClick={handleRevoke}
             disabled={revokeSession.isPending}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90"
           >
-            {revokeSession.isPending && (
+            {revokeSession.isPending ? (
               <Loader2 className="size-4 animate-spin" />
-            )}
-            Revoke
+            ) : null}
+            {isCurrent ? "Sign out" : "Revoke"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

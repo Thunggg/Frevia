@@ -1,11 +1,15 @@
+import { AuthShell } from "../components/auth-shell";
 import { RegisterForm } from "./register-form";
 
-const RegisterPage = () => {
+export default function RegisterPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <AuthShell
+      title="Create your account"
+      description="Join as a freelancer or employer and get started."
+      imageSrc="/auth/register.jpg"
+      panelTitle="Find work or hire talent."
+    >
       <RegisterForm />
-    </div>
+    </AuthShell>
   );
-};
-
-export default RegisterPage;
+}

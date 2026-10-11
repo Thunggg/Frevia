@@ -231,6 +231,12 @@ export class ForumRepository {
               },
             },
           },
+          _count: {
+            select: {
+              likes: true,
+              comments: { where: { deletedAt: null } },
+            },
+          },
         },
         skip,
         take: limit,
@@ -243,7 +249,18 @@ export class ForumRepository {
       }),
     ]);
     return {
-      posts,
+      posts: posts.map((p) => ({
+        id: p.id,
+        categoryId: p.categoryId,
+        userId: p.userId,
+        title: p.title,
+        content: p.content,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+        likeCount: p._count.likes,
+        commentCount: p._count.comments,
+        user: p.user,
+      })),
       total,
     };
   }
@@ -385,7 +402,10 @@ export class ForumRepository {
     });
   }
 
-  async getTopInteractedPosts(limit: number = 3): Promise<ForumTopPostType[]> {
+  async getTopInteractedPosts(
+    limit: number = 3,
+    categoryId?: number,
+  ): Promise<ForumTopPostType[]> {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
@@ -393,6 +413,7 @@ export class ForumRepository {
       where: {
         deletedAt: null,
         createdAt: { gte: oneWeekAgo },
+        ...(categoryId !== undefined && { categoryId }),
       },
       select: {
         id: true,

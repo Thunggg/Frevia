@@ -45,8 +45,8 @@ const METHOD_VARIANT: Record<
   string,
   "default" | "secondary" | "outline" | "destructive"
 > = {
-  [HttpMethod.GET]: "secondary",
-  [HttpMethod.POST]: "default",
+  [HttpMethod.GET]: "outline",
+  [HttpMethod.POST]: "secondary",
   [HttpMethod.PUT]: "outline",
   [HttpMethod.PATCH]: "outline",
   [HttpMethod.DELETE]: "destructive",
@@ -285,7 +285,7 @@ export function PermissionsTable() {
         </div>
       ) : isError && !data ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Failed to load permissions. Please try again.
+          Couldn&apos;t load permissions. Try again.
         </p>
       ) : (
         <>

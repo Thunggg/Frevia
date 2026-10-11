@@ -1,9 +1,12 @@
-import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import authServerRequest from "@/apiRequests/auth.server";
 import forumServerRequest from "@/apiRequests/forum.server";
+import { Footer } from "@/components/footer";
+import { Header, type UserRole } from "@/components/header";
+import { RoleName } from "@shared/types";
+
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
 
 type ForumCategoryDetailPageProps = {
@@ -16,16 +19,30 @@ type ForumCategoryDetailPageProps = {
   }>;
 };
 
-const ForumCategoryDetailPage = async ({
+function resolveHeaderRole(
+  user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
+): UserRole {
+  if (!user) return "GUEST";
+
+  const primaryRole =
+    user.roles.find((role) => role.isPrimary) ?? user.roles[0];
+
+  if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
+  if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
+
+  return "FREELANCER";
+}
+
+export default async function ForumCategoryDetailPage({
   params,
   searchParams,
-}: ForumCategoryDetailPageProps) => {
+}: ForumCategoryDetailPageProps) {
   const { categoryId } = await params;
   const { page, limit, search, myPosts } = await searchParams;
 
   const categoryIdNum = Number(categoryId);
 
-  if (isNaN(categoryIdNum) || categoryIdNum <= 0) {
+  if (Number.isNaN(categoryIdNum) || categoryIdNum <= 0) {
     notFound();
   }
 
@@ -38,6 +55,7 @@ const ForumCategoryDetailPage = async ({
     notFound();
   }
 
+  const role = resolveHeaderRole(user);
   const currentUserId = user?.id ?? null;
 
   const filter = {
@@ -48,64 +66,59 @@ const ForumCategoryDetailPage = async ({
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-            >
-              <Home className="h-3.5 w-3.5" />
-              Home
-            </Link>
-            <span className="text-muted-foreground/50">/</span>
-            <Link
-              href="/forum"
-              className="transition-colors hover:text-foreground"
-            >
-              Community Forum
-            </Link>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="max-w-[200px] truncate font-medium text-foreground">
-              {category.name}
-            </span>
-          </nav>
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
+      <Header role={role} />
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+      <main className="flex-1">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
               <Link
                 href="/forum"
-                className="mb-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="transition-colors hover:text-[#4fae2e]"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Back to categories
+                Forum
               </Link>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="max-w-[220px] truncate font-medium text-foreground">
                 {category.name}
-              </h1>
-              {category.description && (
-                <p className="mt-2 max-w-2xl text-muted-foreground">
-                  {category.description}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+              </span>
+            </nav>
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <ForumPostListWrapper
-          filter={filter}
-          categoryId={categoryIdNum}
-          categoryName={category.name}
-          currentSearch={search}
-          currentUserId={currentUserId}
-          isMyPosts={myPosts === "1"}
-        />
-      </div>
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {category.name}
+            </h1>
+            {category.description ? (
+              <p className="mt-2 max-w-2xl text-base text-foreground/70 dark:text-foreground/75">
+                {category.description}
+              </p>
+            ) : null}
+            <p className="mt-3 text-sm text-foreground/65">
+              <span className="font-semibold text-foreground">
+                {category.postCount}
+              </span>{" "}
+              {category.postCount === 1 ? "post" : "posts"}
+            </p>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <ForumPostListWrapper
+            filter={filter}
+            categoryId={categoryIdNum}
+            categoryName={category.name}
+            currentSearch={search}
+            currentUserId={currentUserId}
+            isMyPosts={myPosts === "1"}
+          />
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
-};
-
-export default ForumCategoryDetailPage;
+}

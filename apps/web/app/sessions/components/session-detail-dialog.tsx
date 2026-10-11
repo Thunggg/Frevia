@@ -61,7 +61,7 @@ export function SessionDetailDialog({
           </div>
         ) : isError || !session ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            Failed to load session detail. The session may not exist.
+            Couldn&apos;t load session. It may no longer exist.
           </p>
         ) : (
           <div className="space-y-4 py-2">

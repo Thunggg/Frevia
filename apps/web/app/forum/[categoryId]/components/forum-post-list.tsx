@@ -1,25 +1,25 @@
 "use client";
 
-import { useState, useCallback, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@repo/ui/components/shadcn/card";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Input } from "@repo/ui/components/shadcn/input";
-import { Separator } from "@repo/ui/components/shadcn/separator";
+import {
+  Calendar,
+  Heart,
+  Inbox,
+  MessageSquare,
+  Search,
+  User,
+  X,
+} from "lucide-react";
+
 import {
   Avatar,
-  AvatarImage,
   AvatarFallback,
+  AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui/components/shadcn/select";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { Input } from "@repo/ui/components/shadcn/input";
 import {
   Pagination,
   PaginationContent,
@@ -30,28 +30,18 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/shadcn/pagination";
 import {
-  Search,
-  Calendar,
-  MessageSquare,
-  SlidersHorizontal,
-  Inbox,
-  User,
-  TrendingUp,
-  Heart,
-  Flame,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/shadcn/select";
 import type {
   ForumPostWithUserType,
-  PaginationMeta,
   ForumTopPostType,
+  PaginationMeta,
 } from "@shared/types";
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .trim();
-}
 import { CreatePostDialog } from "./create-post-dialog";
 
 type ForumPostListProps = {
@@ -64,6 +54,21 @@ type ForumPostListProps = {
   isMyPosts: boolean;
   topPosts: ForumTopPostType[];
 };
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+}
+
+function formatDate(value: string | Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
 
 export function ForumPostList({
   posts,
@@ -82,6 +87,7 @@ export function ForumPostList({
   const currentPage = pagination.page;
   const totalPages = pagination.totalPages;
   const limit = pagination.limit;
+  const hasActiveFilters = Boolean(currentSearch) || isMyPosts;
 
   const navigateToPage = useCallback(
     (page: number, search?: string, newLimit?: number, myPosts?: boolean) => {
@@ -105,15 +111,14 @@ export function ForumPostList({
   const handleSearchSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      navigateToPage(1, searchInput, undefined, isMyPosts);
+      navigateToPage(1, searchInput.trim(), undefined, isMyPosts);
     },
     [navigateToPage, searchInput, isMyPosts],
   );
 
   const handleLimitChange = useCallback(
     (value: string) => {
-      const newLimit = Number(value);
-      navigateToPage(1, searchInput, newLimit, isMyPosts);
+      navigateToPage(1, searchInput, Number(value), isMyPosts);
     },
     [navigateToPage, searchInput, isMyPosts],
   );
@@ -122,35 +127,35 @@ export function ForumPostList({
     navigateToPage(1, searchInput, undefined, !isMyPosts);
   }, [navigateToPage, searchInput, isMyPosts]);
 
-  const getPageNumbers = (): (number | "...")[] => {
-    const pages: (number | "...")[] = [];
+  const clearSearch = useCallback(() => {
+    setSearchInput("");
+    navigateToPage(1, "", undefined, isMyPosts);
+  }, [navigateToPage, isMyPosts]);
+
+  const clearAllFilters = useCallback(() => {
+    setSearchInput("");
+    navigateToPage(1, "", undefined, false);
+  }, [navigateToPage]);
+
+  const getPageNumbers = (): (number | "ellipsis")[] => {
+    const pages: (number | "ellipsis")[] = [];
 
     if (totalPages <= 5) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
-    } else {
-      pages.push(1);
-
-      if (currentPage > 3) {
-        pages.push("...");
-      }
-
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-
-      if (currentPage < totalPages - 2) {
-        pages.push("...");
-      }
-
-      if (totalPages > 1) {
-        pages.push(totalPages);
-      }
+      return pages;
     }
+
+    pages.push(1);
+    if (currentPage > 3) pages.push("ellipsis");
+
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (currentPage < totalPages - 2) pages.push("ellipsis");
+    if (totalPages > 1) pages.push(totalPages);
 
     return pages;
   };
@@ -159,116 +164,150 @@ export function ForumPostList({
 
   return (
     <div className="space-y-6">
-      {/* Toolbar */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search posts..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-10 pl-10"
+              className="h-11 pl-10 pr-10"
             />
+            {searchInput ? (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <X className="size-4" />
+              </button>
+            ) : null}
           </div>
         </form>
 
-        <div className="flex items-center gap-2">
-          {currentUserId && (
+        <div className="flex flex-wrap items-center gap-2">
+          {currentUserId ? (
             <Button
               variant={isMyPosts ? "default" : "outline"}
-              size="sm"
-              className={`gap-1.5 ${isMyPosts ? "!bg-emerald-600 !text-white hover:!bg-emerald-700" : ""}`}
+              className={`h-11 gap-1.5 ${
+                isMyPosts
+                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+                  : ""
+              }`}
               onClick={toggleMyPosts}
+              aria-pressed={isMyPosts}
             >
-              <User className="h-3.5 w-3.5" />
+              <User className="size-3.5" />
               My Posts
             </Button>
-          )}
+          ) : null}
           <CreatePostDialog
             categoryId={categoryId}
             categoryName={categoryName}
+            currentUserId={currentUserId}
           />
-          <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
           <Select value={String(limit)} onValueChange={handleLimitChange}>
-            <SelectTrigger className="h-10 w-[100px]">
+            <SelectTrigger className="h-11 w-[120px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5 per page</SelectItem>
-              <SelectItem value="10">10 per page</SelectItem>
-              <SelectItem value="20">20 per page</SelectItem>
-              <SelectItem value="50">50 per page</SelectItem>
+              <SelectItem value="5">5 / page</SelectItem>
+              <SelectItem value="10">10 / page</SelectItem>
+              <SelectItem value="20">20 / page</SelectItem>
+              <SelectItem value="50">50 / page</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {/* Grid: Trending sidebar + Post list */}
-      <div
-        className={`grid gap-6 ${showTrending ? "grid-cols-1 lg:grid-cols-[280px_1fr]" : "grid-cols-1"}`}
-      >
-        {/* Trending Posts - Left sidebar */}
-        {showTrending && (
-          <div className="order-2 lg:order-1">
-            <div className="sticky top-24 overflow-hidden rounded-xl border border-orange-200/60 bg-gradient-to-br from-orange-50 via-amber-50/40 to-yellow-50/30 p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <Flame className="h-5 w-5 text-orange-500" />
-                <h3 className="text-sm font-semibold text-foreground">
-                  Trending This Week
-                </h3>
-                <Badge
-                  variant="secondary"
-                  className="ml-1 bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 text-[10px] px-1.5 py-0"
-                >
-                  HOT
-                </Badge>
-              </div>
-              <div className="space-y-1">
-                {topPosts.map((post, index) => (
-                  <Link
-                    key={post.id}
-                    href={`/forum/${categoryId}/${post.id}`}
-                    className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-orange-50/80"
-                  >
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-xs font-bold text-orange-700">
-                      {index + 1}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium leading-snug text-foreground group-hover:text-orange-700 line-clamp-2">
-                        {post.title}
-                      </p>
-                      <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1">
-                          <Heart className="h-3 w-3 text-red-400" />
-                          {post.likeCount}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <MessageSquare className="h-3 w-3" />
-                          {post.commentCount}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3 text-emerald-500" />
-                          {post.interactionScore}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+      {hasActiveFilters ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-muted-foreground">Filters:</span>
+          {currentSearch ? (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
+            >
+              Search: {currentSearch}
+              <X className="size-3.5 text-muted-foreground" />
+            </button>
+          ) : null}
+          {isMyPosts ? (
+            <button
+              type="button"
+              onClick={() => navigateToPage(1, searchInput, undefined, false)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
+            >
+              My posts
+              <X className="size-3.5 text-muted-foreground" />
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={clearAllFilters}
+            className="text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+          >
+            Clear all
+          </button>
+        </div>
+      ) : null}
 
-        {/* Post List - Right side */}
-        <div className={`order-1 ${showTrending ? "lg:order-2" : ""}`}>
-          {/* Results info */}
-          {pagination.total > 0 && (
+      <div
+        className={`grid gap-8 ${
+          showTrending ? "lg:grid-cols-12" : "grid-cols-1"
+        }`}
+      >
+        {showTrending ? (
+          <aside className="order-2 lg:order-1 lg:col-span-4">
+            <div className="sticky top-20 rounded-xl border border-border bg-background p-5 sm:p-6">
+              <h2 className="text-base font-semibold tracking-tight text-foreground">
+                Trending in {categoryName}
+              </h2>
+              <ul className="mt-4 divide-y divide-border">
+                {topPosts.map((post, index) => (
+                  <li key={post.id}>
+                    <Link
+                      href={`/forum/${post.categoryId ?? categoryId}/${post.id}`}
+                      className="group flex items-start gap-3 py-3"
+                    >
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-[#4fae2e]">
+                          {post.title}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                          <span className="inline-flex items-center gap-1">
+                            <Heart className="size-3 text-[#4fae2e]" />
+                            {post.likeCount}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <MessageSquare className="size-3" />
+                            {post.commentCount}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        ) : null}
+
+        <div
+          className={`order-1 ${showTrending ? "lg:order-2 lg:col-span-8" : ""}`}
+        >
+          {pagination.total > 0 ? (
             <p className="mb-4 text-sm text-muted-foreground">
               Showing{" "}
               <span className="font-medium text-foreground">
-                {Math.min((currentPage - 1) * limit + 1, pagination.total)}–
+                {Math.min((currentPage - 1) * limit + 1, pagination.total)}-
                 {Math.min(currentPage * limit, pagination.total)}
               </span>{" "}
               of{" "}
@@ -276,123 +315,102 @@ export function ForumPostList({
                 {pagination.total}
               </span>{" "}
               {pagination.total === 1 ? "post" : "posts"}
-              {isMyPosts && " (your posts)"}
+              {isMyPosts ? " (yours)" : ""}
             </p>
-          )}
+          ) : null}
 
-          {/* Post Items */}
           <div
-            className={`space-y-4 transition-opacity ${isPending ? "pointer-events-none opacity-50" : ""}`}
+            className={`transition-opacity ${
+              isPending ? "pointer-events-none opacity-50" : ""
+            }`}
           >
             {posts.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-                    <Inbox className="h-7 w-7 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground">
-                    {isMyPosts
-                      ? "You have no posts here"
-                      : currentSearch
-                        ? "No posts found"
-                        : "No posts yet"}
-                  </p>
-                  <p className="mt-1 text-center text-sm text-muted-foreground">
-                    {isMyPosts
-                      ? "Create a post to get started."
-                      : currentSearch
-                        ? `No results for "${currentSearch}". Try a different search term.`
-                        : "Be the first to create a post in this category."}
-                  </p>
-                  {currentSearch && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-4"
-                      onClick={() => {
-                        setSearchInput("");
-                        navigateToPage(1, "", undefined, isMyPosts);
-                      }}
-                    >
-                      Clear search
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                  <Inbox className="size-7" />
+                </div>
+                <p className="text-lg font-medium text-foreground">
+                  {isMyPosts
+                    ? "You have no posts here"
+                    : currentSearch
+                      ? "No posts found"
+                      : "No posts yet"}
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                  {isMyPosts
+                    ? "Create a post to get started."
+                    : currentSearch
+                      ? `No results for "${currentSearch}". Try a different search.`
+                      : "Be the first to create a post in this category."}
+                </p>
+                {hasActiveFilters ? (
+                  <Button
+                    className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    onClick={clearAllFilters}
+                  >
+                    Clear filters
+                  </Button>
+                ) : null}
+              </div>
             ) : (
-              posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/forum/${categoryId}/${post.id}`}
-                  className="block"
-                >
-                  <Card className="group transition-all duration-200 hover:border-emerald-200 hover:shadow-md hover:shadow-emerald-50">
-                    <CardContent className="py-5">
-                      <div className="space-y-3">
-                        {/* Title + Badge */}
-                        <div className="flex items-start justify-between gap-3">
-                          <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-emerald-700 transition-colors">
-                            {post.title}
-                          </h3>
-                          <Badge
-                            variant="secondary"
-                            className="shrink-0 gap-1 text-xs"
-                          >
-                            <MessageSquare className="h-3 w-3" />#{post.id}
-                          </Badge>
-                        </div>
-
-                        {/* Content preview */}
-                        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                          {stripHtml(post.content)}
-                        </p>
-
-                        {/* Meta row */}
-                        <div className="flex items-center gap-3 pt-1">
-                          <div className="flex items-center gap-2">
-                            <Avatar size="sm">
-                              <AvatarImage
-                                src={post.user?.profile?.avatarUrl ?? undefined}
-                                alt={
-                                  post.user?.profile?.displayName ??
-                                  `User #${post.userId}`
-                                }
-                              />
-                              <AvatarFallback className="text-[10px]">
-                                {post.user?.profile?.displayName
-                                  ?.charAt(0)
-                                  ?.toUpperCase() ?? "?"}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm font-medium text-foreground">
-                              {post.user?.profile?.displayName ??
-                                `User #${post.userId}`}
-                            </span>
-                          </div>
-                          <Separator orientation="vertical" className="h-4" />
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            {new Date(post.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
+              <ul className="divide-y divide-border border-y border-border">
+                {posts.map((post) => (
+                  <li key={post.id}>
+                    <Link
+                      href={`/forum/${categoryId}/${post.id}`}
+                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-white/4"
+                    >
+                      <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-lg">
+                        {post.title}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                        {stripHtml(post.content)}
+                      </p>
+                      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                        <span className="inline-flex items-center gap-2">
+                          <Avatar size="sm">
+                            <AvatarImage
+                              src={
+                                post.user?.profile?.avatarUrl ?? undefined
+                              }
+                              alt={
+                                post.user?.profile?.displayName ??
+                                `User #${post.userId}`
+                              }
+                            />
+                            <AvatarFallback className="text-[10px]">
+                              {post.user?.profile?.displayName
+                                ?.charAt(0)
+                                ?.toUpperCase() ?? "?"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-foreground">
+                            {post.user?.profile?.displayName ??
+                              `User #${post.userId}`}
                           </span>
-                        </div>
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Calendar className="size-3.5 text-[#4fae2e]" />
+                          {formatDate(post.createdAt)}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Heart className="size-3.5 text-[#4fae2e]" />
+                          {post.likeCount}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <MessageSquare className="size-3.5" />
+                          {post.commentCount}
+                        </span>
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center pt-6">
+          {totalPages > 1 ? (
+            <div className="flex justify-center pt-8">
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
@@ -419,7 +437,7 @@ export function ForumPostList({
                   </PaginationItem>
 
                   {getPageNumbers().map((pageNum, index) =>
-                    pageNum === "..." ? (
+                    pageNum === "ellipsis" ? (
                       <PaginationItem key={`ellipsis-${index}`}>
                         <PaginationEllipsis />
                       </PaginationItem>
@@ -469,7 +487,7 @@ export function ForumPostList({
                 </PaginationContent>
               </Pagination>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

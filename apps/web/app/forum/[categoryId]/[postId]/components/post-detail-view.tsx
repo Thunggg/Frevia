@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Separator } from "@repo/ui/components/shadcn/separator";
 import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@repo/ui/components/shadcn/avatar";
+  Calendar,
+  Heart,
+  MessageSquare,
+  Trash2,
+} from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,42 +22,52 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import {
-  Home,
-  ArrowLeft,
-  Heart,
-  MessageSquare,
-  Calendar,
-  Tag,
-  Trash2,
-} from "lucide-react";
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
+import { Button } from "@repo/ui/components/shadcn/button";
 import type { ViewForumPostDetailResponseType } from "@shared/types";
+
 import {
-  useTogglePostLike,
   useDeletePost,
-  useForumPostLikes,
   useForumComments,
+  useForumPostLikes,
+  useTogglePostLike,
 } from "@/hooks/use-forum";
+
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
-import { ReportDialog } from "./report-dialog";
 import { PostLikesDialog } from "./post-likes-dialog";
-
-// Props - chỉ nhận post và currentUserId, mọi thứ khác do Query quản lý
+import { ReportDialog } from "./report-dialog";
 
 type PostDetailViewProps = {
   post: ViewForumPostDetailResponseType;
+  categoryId: number;
   currentUserId: number | null;
 };
 
-export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
+function formatDate(value: string | Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+export function PostDetailView({
+  post,
+  categoryId,
+  currentUserId,
+}: PostDetailViewProps) {
   const router = useRouter();
   const isAuthor = currentUserId === post.userId;
+  const resolvedCategoryId = post.category?.id ?? categoryId;
+  const categoryName = post.category?.name ?? "Category";
 
-  // Queries: likes và comments
   const { data: likes } = useForumPostLikes(post.id);
   const { data: commentsData } = useForumComments(post.id, 1, 50);
 
-  // Mutations: like post, xóa pos
   const toggleLike = useTogglePostLike(post.id, currentUserId);
   const deletePost = useDeletePost();
 
@@ -69,92 +78,81 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
   const likeCount = likes?.length ?? 0;
   const commentTotal = commentsData?.pagination.total ?? 0;
 
-  // Local UI state: hiển thị title/content sau khi edit
   const [displayTitle, setDisplayTitle] = useState(post.title);
   const [displayContent, setDisplayContent] = useState(post.content);
 
-  // Xử lý toggle like post
   const handleToggleLike = useCallback(() => {
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
     toggleLike.mutate();
-  }, [toggleLike]);
+  }, [currentUserId, router, toggleLike]);
 
-  // Xử lý xóa post
   const handleDeletePost = useCallback(() => {
     deletePost.mutate(post.id, {
       onSuccess: () => {
-        router.push(`/forum/${post.category?.id ?? ""}`);
+        router.push(`/forum/${resolvedCategoryId}`);
       },
     });
-  }, [deletePost, post.id, post.category?.id, router]);
+  }, [deletePost, post.id, resolvedCategoryId, router]);
 
-  // Xử lý sau khi edit post thành công
   const handlePostUpdated = useCallback((title: string, content: string) => {
     setDisplayTitle(title);
     setDisplayContent(content);
   }, []);
 
+  const wasEdited =
+    new Date(post.updatedAt).getTime() !== new Date(post.createdAt).getTime();
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header với breadcrumb */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-          <nav className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-            >
-              <Home className="h-3.5 w-3.5" />
+    <div>
+      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <nav className="text-sm text-foreground/60">
+            <Link href="/" className="transition-colors hover:text-[#4fae2e]">
               Home
             </Link>
-            <span className="text-muted-foreground/50">/</span>
+            <span className="mx-2 text-foreground/35">/</span>
             <Link
               href="/forum"
-              className="transition-colors hover:text-foreground"
+              className="transition-colors hover:text-[#4fae2e]"
             >
-              Community Forum
+              Forum
             </Link>
-            <span className="text-muted-foreground/50">/</span>
+            <span className="mx-2 text-foreground/35">/</span>
             <Link
-              href={`/forum/${post.category?.id ?? ""}`}
-              className="transition-colors hover:text-foreground"
+              href={`/forum/${resolvedCategoryId}`}
+              className="transition-colors hover:text-[#4fae2e]"
             >
-              {post.category?.name ?? "Unknown"}
+              {categoryName}
             </Link>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="max-w-[150px] truncate font-medium text-foreground">
-              Post #{post.id}
+            <span className="mx-2 text-foreground/35">/</span>
+            <span className="max-w-[180px] truncate font-medium text-foreground sm:max-w-[280px]">
+              {displayTitle}
             </span>
           </nav>
 
-          <Link
-            href={`/forum/${post.category?.id ?? ""}`}
-            className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to {post.category?.name ?? "category"}
-          </Link>
-
-          <div className="flex items-center gap-2">
-            {post.category && (
-              <Badge variant="secondary" className="gap-1.5">
-                <Tag className="h-3 w-3" />
-                {post.category.name}
-              </Badge>
-            )}
-          </div>
+          <p className="mt-4 text-sm text-foreground/65">
+            Discussion in{" "}
+            <Link
+              href={`/forum/${resolvedCategoryId}`}
+              className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+            >
+              {categoryName}
+            </Link>
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* Content */}
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <article>
-          {/* Post Title + Action buttons */}
           <div className="flex items-start justify-between gap-4">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               {displayTitle}
             </h1>
-            {isAuthor && (
-              <div className="flex items-center gap-1 shrink-0">
+            {isAuthor ? (
+              <div className="flex shrink-0 items-center gap-1">
                 <EditPostDialog
                   postId={post.id}
                   initialTitle={displayTitle}
@@ -192,11 +190,10 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
-            )}
+            ) : null}
           </div>
 
-          {/* Author + Meta */}
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-5 flex items-center gap-3">
             <Avatar>
               <AvatarImage
                 src={post.user?.profile?.avatarUrl ?? undefined}
@@ -211,42 +208,27 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
               <p className="text-sm font-medium text-foreground">
                 {post.user?.profile?.displayName ?? `User #${post.userId}`}
               </p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                {new Date(post.createdAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-                {post.updatedAt !== post.createdAt && (
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="size-3 text-[#4fae2e]" />
+                  {formatDate(post.createdAt)}
+                </span>
+                {wasEdited ? (
                   <>
-                    <span>&middot;</span>
-                    <span>
-                      Edited{" "}
-                      {new Date(post.updatedAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
+                    <span className="text-foreground/35">·</span>
+                    <span>Edited {formatDate(post.updatedAt)}</span>
                   </>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
 
-          <Separator className="my-6" />
-
-          {/* Post Body */}
           <div
-            className="post-content text-base leading-relaxed text-foreground"
+            className="post-content mt-8 max-w-prose text-[15px] leading-8 text-foreground/90 [&_a]:text-[#4fae2e] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
             dangerouslySetInnerHTML={{ __html: displayContent }}
           />
 
-          <Separator className="my-6" />
-
-          {/* Actions Bar */}
-          <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xs">
+          <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border py-3">
             <Button
               variant="ghost"
               size="sm"
@@ -254,27 +236,28 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
               disabled={toggleLike.isPending}
               className={
                 liked
-                  ? "!text-red-500 hover:!text-red-600 hover:!bg-red-50 gap-1.5 px-3"
-                  : "text-muted-foreground hover:text-red-500 hover:bg-red-50 gap-1.5 px-3"
+                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                  : "gap-1.5 px-3 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-white/5/40"
               }
             >
-              <Heart className={`h-[18px] w-[18px] transition-transform ${liked ? "fill-current scale-110" : ""}`} />
-              <span className="text-sm font-medium tabular-nums">{likeCount}</span>
+              <Heart
+                className={`size-[18px] transition-transform ${
+                  liked ? "scale-110 fill-current" : ""
+                }`}
+              />
+              <span className="text-sm font-medium tabular-nums">
+                {likeCount}
+              </span>
             </Button>
 
-            <div className="h-5 w-px bg-border" />
-
-            <div className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground">
-              <MessageSquare className="h-[18px] w-[18px]" />
-              <span className="text-sm font-medium tabular-nums">{commentTotal}</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground">
+              <MessageSquare className="size-[18px]" />
+              <span className="font-medium tabular-nums">{commentTotal}</span>
             </div>
 
-            {!isAuthor && currentUserId && (
-              <>
-                <div className="h-5 w-px bg-border" />
-                <ReportDialog postId={post.id} />
-              </>
-            )}
+            {!isAuthor && currentUserId ? (
+              <ReportDialog postId={post.id} />
+            ) : null}
           </div>
 
           <div className="mt-2">
@@ -282,7 +265,6 @@ export function PostDetailView({ post, currentUserId }: PostDetailViewProps) {
           </div>
         </article>
 
-        {/* Comment Section - tự fetch data bằng useForumComments query */}
         <div className="mt-10">
           <CommentSection postId={post.id} currentUserId={currentUserId} />
         </div>

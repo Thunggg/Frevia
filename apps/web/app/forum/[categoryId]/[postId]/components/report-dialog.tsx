@@ -98,7 +98,7 @@ export function ReportDialog({
   // Nếu đã report và dialog đang đóng → hiển thị badge "Reported"
   if (reported && !open) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+      <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-400/25">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Reported
       </span>

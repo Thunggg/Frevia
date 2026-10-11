@@ -44,7 +44,7 @@ export function RolesTable() {
         />
       ) : isError ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Failed to load roles. Please try again.
+          Couldn&apos;t load roles. Try again.
         </p>
       ) : (
         <div className="rounded-lg border bg-card">
@@ -85,7 +85,14 @@ export function RolesTable() {
                         {role.description || "—"}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={isSystem ? "secondary" : "outline"}>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            isSystem
+                              ? "border border-[#4fae2e]/25 bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
+                              : "border border-border bg-muted text-muted-foreground"
+                          }
+                        >
                           {isSystem ? "System" : "Custom"}
                         </Badge>
                       </TableCell>

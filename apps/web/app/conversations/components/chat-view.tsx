@@ -277,10 +277,10 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b px-4 py-3">
+      <div className="flex items-center gap-3 border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-muted/60">
         <Link
           href="/conversations"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+          className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225] md:hidden"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -336,7 +336,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             const isMine = message.senderId === currentUserId;
             const hasFile = Boolean(message.fileUrl);
             const bubbleClassName = isMine
-              ? "*:data-[slot=bubble-content]:!bg-emerald-600 *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
+              ? "*:data-[slot=bubble-content]:!bg-[#4fae2e] *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
               : undefined;
 
             return (
@@ -511,7 +511,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             type="submit"
             size="icon"
             disabled={!input.trim()}
-            className="shrink-0 !bg-emerald-600 !text-white hover:!bg-emerald-700 disabled:!bg-emerald-600/50 disabled:!text-white"
+            className="shrink-0 !bg-[#4fae2e] !text-white hover:!bg-[#459928] disabled:!bg-[#4fae2e]/50 disabled:!text-white"
           >
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>

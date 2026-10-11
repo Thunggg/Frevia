@@ -37,7 +37,8 @@ export const forumKeys = {
   category: (categoryId: number) => ["forum", "category", categoryId] as const,
 
   // Key cho top posts
-  topPosts: (limit: number) => ["forum", "topPosts", limit] as const,
+  topPosts: (limit: number, categoryId?: number) =>
+    ["forum", "topPosts", limit, categoryId] as const,
 };
 
 // Lấy danh sách posts theo filter.
@@ -119,11 +120,13 @@ export function useForumCategoryDetail(categoryId: number) {
 
 /**
  * Lấy danh sách top posts (tương tác nhiều).
+ * Truyền categoryId để giới hạn trong 1 category.
  */
-export function useForumTopPosts(limit: number = 3) {
+export function useForumTopPosts(limit: number = 3, categoryId?: number) {
   return useQuery({
-    queryKey: forumKeys.topPosts(limit),
-    queryFn: () => forumApiRequest.getTopPosts(limit).then(extractData),
+    queryKey: forumKeys.topPosts(limit, categoryId),
+    queryFn: () =>
+      forumApiRequest.getTopPosts(limit, categoryId).then(extractData),
     staleTime: 5 * 60 * 1000, // 5 phút
   });
 }

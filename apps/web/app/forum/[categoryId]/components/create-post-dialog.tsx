@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -21,11 +22,16 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 type CreatePostDialogProps = {
   categoryId: number;
   categoryName: string;
+  currentUserId: number | null;
 };
+
+const brandButtonClass =
+  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]";
 
 export function CreatePostDialog({
   categoryId,
   categoryName,
+  currentUserId,
 }: CreatePostDialogProps) {
   const router = useRouter();
   const createPost = useCreatePost();
@@ -50,7 +56,6 @@ export function CreatePostDialog({
           setOpen(false);
           setTitle("");
           setContent("");
-          // Navigate đến post vừa tạo
           if (result?.id) {
             router.push(`/forum/${categoryId}/${result.id}`);
           }
@@ -59,10 +64,21 @@ export function CreatePostDialog({
     );
   }, [categoryId, title, content, isSubmitting, createPost, router]);
 
+  if (!currentUserId) {
+    return (
+      <Button asChild className={brandButtonClass}>
+        <Link href="/login">
+          <Plus className="h-4 w-4" />
+          New Post
+        </Link>
+      </Button>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-1.5 !bg-emerald-600 !text-white hover:!bg-emerald-700">
+        <Button className={brandButtonClass}>
           <Plus className="h-4 w-4" />
           New Post
         </Button>
@@ -104,6 +120,7 @@ export function CreatePostDialog({
             Cancel
           </Button>
           <Button
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >

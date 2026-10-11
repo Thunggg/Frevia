@@ -22,7 +22,6 @@ import {
   Plus,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   Trash2,
   UserRound,
 } from "lucide-react";
@@ -175,10 +174,14 @@ function SectionEmpty({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-dashed bg-muted/20 px-6 py-12 text-center">
-      <Sparkles className="mx-auto size-8 text-muted-foreground" />
-      <h3 className="mt-3 font-semibold">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
+      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+        <UserRound className="size-7" />
+      </div>
+      <p className="text-lg font-medium text-foreground">{title}</p>
+      <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+        {description}
+      </p>
     </div>
   );
 }
@@ -247,7 +250,7 @@ export function ProfilePageClient({
         !skillsResponse.success ||
         !portfoliosResponse.success
       ) {
-        throw new Error("Unable to load freelancer profile.");
+        throw new Error("Couldn't load freelancer profile.");
       }
 
       setProfile(profileResponse.data);
@@ -262,7 +265,7 @@ export function ProfilePageClient({
       setLoadError(
         getErrorMessage(
           error,
-          "Unable to load profile details. Please try again later.",
+          "Couldn't load profile. Try again.",
         ),
       );
     } finally {
@@ -287,7 +290,7 @@ export function ProfilePageClient({
       });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, "Unable to update favorites."),
+        message: getErrorMessage(error, "Couldn't update favorites. Try again."),
       });
     } finally {
       setPendingAction(null);
@@ -579,50 +582,60 @@ export function ProfilePageClient({
   const freelancer = profile.freelancerProfile;
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/20">
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
       <main className="flex-1">
-        <div className="border-b bg-background">
-          <nav className="mx-auto flex max-w-7xl gap-2 px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
-            <Link href="/" className="hover:text-foreground">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-foreground">Freelancer profile</span>
-          </nav>
-        </div>
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">
+                Freelancer profile
+              </span>
+            </nav>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {profile.displayName ?? "Unnamed freelancer"}
+            </h1>
+            <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
+              {freelancer?.title ?? "Professional title not added"}
+            </p>
+          </div>
+        </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <Card className="overflow-hidden py-0">
+          <div className="overflow-hidden rounded-xl border border-border">
             <div
-              className="h-44 bg-gradient-to-br from-emerald-700 via-emerald-600 to-lime-500 bg-cover bg-center"
+              className="h-44 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"
               style={
                 profile.coverUrl
                   ? { backgroundImage: `url(${profile.coverUrl})` }
                   : undefined
               }
             />
-            <CardContent className="relative px-6 pb-7 sm:px-8">
+            <div className="relative px-6 pb-7 sm:px-8">
               <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                  <Avatar className="-mt-14 size-28 border-4 border-background shadow-lg">
+                  <Avatar className="-mt-14 size-28 border-4 border-background shadow-sm">
                     {profile.avatarUrl ? (
                       <AvatarImage
                         src={profile.avatarUrl}
                         alt={profile.displayName ?? "Freelancer"}
                       />
                     ) : null}
-                    <AvatarFallback className="bg-emerald-100 text-2xl font-bold text-emerald-700">
+                    <AvatarFallback className="bg-[#eaf8df] text-2xl font-bold text-[#4fae2e] dark:bg-[#4fae2e]/15">
                       {getInitials(profile.displayName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="pb-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-3xl font-bold tracking-tight">
+                      <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                         {profile.displayName ?? "Unnamed freelancer"}
-                      </h1>
+                      </h2>
                       {freelancer?.idVerified ? (
-                        <Badge className="gap-1">
+                        <Badge className="gap-1 border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                           <ShieldCheck className="size-3" /> Verified
                         </Badge>
                       ) : null}
@@ -633,7 +646,7 @@ export function ProfilePageClient({
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline" className="gap-1.5">
                         <span
-                          className={`size-2 rounded-full ${profile.availabilityStatus === AvailabilityStatus.AVAILABLE ? "bg-emerald-500" : "bg-amber-500"}`}
+                          className={`size-2 rounded-full ${profile.availabilityStatus === AvailabilityStatus.AVAILABLE ? "bg-[#4fae2e]" : "bg-amber-500"}`}
                         />
                         {profile.availabilityStatus.toLowerCase()}
                       </Badge>
@@ -644,12 +657,20 @@ export function ProfilePageClient({
                   </div>
                 </div>
                 {isOwner ? (
-                  <Button onClick={openProfileEditor}>
+                  <Button
+                    className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    onClick={openProfileEditor}
+                  >
                     <Pencil /> Edit profile
                   </Button>
                 ) : headerRole === "CLIENT" ? (
                   <Button
                     variant={isFavorite ? "default" : "outline"}
+                    className={
+                      isFavorite
+                        ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        : ""
+                    }
                     onClick={() => void toggleFavorite()}
                     disabled={pendingAction === "favorite"}
                   >
@@ -662,8 +683,8 @@ export function ProfilePageClient({
                   </Button>
                 ) : null}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
             <Tabs defaultValue="about" className="min-w-0">
@@ -680,19 +701,17 @@ export function ProfilePageClient({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="about" className="mt-5 space-y-5">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>About me</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
-                      {profile.bio ||
-                        "This freelancer has not added a bio yet."}
-                    </p>
-                  </CardContent>
-                </Card>
-                <div className="grid gap-5 md:grid-cols-2">
+              <TabsContent value="about" className="mt-5 space-y-8">
+                <section>
+                  <h3 className="text-base font-semibold tracking-tight text-foreground">
+                    About me
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
+                    {profile.bio ||
+                      "This freelancer has not added a bio yet."}
+                  </p>
+                </section>
+                <div className="grid gap-8 md:grid-cols-2">
                   <DetailListCard
                     icon={GraduationCap}
                     title="Education"
@@ -715,224 +734,227 @@ export function ProfilePageClient({
               </TabsContent>
 
               <TabsContent value="skills" className="mt-5">
-                <Card>
-                  <CardHeader className="flex-row items-center justify-between">
-                    <div>
-                      <CardTitle>Professional skills</CardTitle>
-                      <CardDescription>
-                        Skill names and proficiency levels.
-                      </CardDescription>
-                    </div>
-                    {isOwner ? (
-                      <Button
-                        size="sm"
-                        onClick={() => setSkillEditorOpen(true)}
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      Professional skills
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Skill names and proficiency levels.
+                    </p>
+                  </div>
+                  {isOwner ? (
+                    <Button
+                      size="sm"
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={() => setSkillEditorOpen(true)}
+                    >
+                      <Plus /> Add skill
+                    </Button>
+                  ) : null}
+                </div>
+                {skills.length === 0 ? (
+                  <div className="mt-5">
+                    <SectionEmpty
+                      title="No skills added yet"
+                      description={
+                        isOwner
+                          ? "Add your first skill to help clients understand your expertise."
+                          : "This freelancer has not added any skills."
+                      }
+                    />
+                  </div>
+                ) : (
+                  <ul className="mt-5 divide-y divide-border border-y border-border">
+                    {skills.map((skill) => (
+                      <li
+                        key={skill.id}
+                        className="flex items-center gap-4 px-1 py-4 sm:px-2"
                       >
-                        <Plus /> Add skill
-                      </Button>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    {skills.length === 0 ? (
-                      <SectionEmpty
-                        title="No skills added yet"
-                        description={
-                          isOwner
-                            ? "Add your first skill to help clients understand your expertise."
-                            : "This freelancer has not added any skills."
-                        }
-                      />
-                    ) : (
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {skills.map((skill) => (
-                          <div key={skill.id} className="rounded-xl border p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="font-semibold">
-                                  {skill.skillName}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {getProficiencyLabel(skill.proficiencyLevel)}{" "}
-                                  · {skill.proficiencyLevel}/10
-                                </p>
-                              </div>
-                              {isOwner ? (
-                                <Button
-                                  variant="ghost"
-                                  size="icon-sm"
-                                  aria-label={`Delete ${skill.skillName}`}
-                                  onClick={() => setSkillToDelete(skill)}
-                                >
-                                  <Trash2 className="text-destructive" />
-                                </Button>
-                              ) : null}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-semibold text-foreground">
+                                {skill.skillName}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {getProficiencyLabel(skill.proficiencyLevel)} ·{" "}
+                                {skill.proficiencyLevel}/10
+                              </p>
                             </div>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                              <div
-                                className="h-full rounded-full bg-emerald-500"
-                                style={{
-                                  width: `${skill.proficiencyLevel * 10}%`,
-                                }}
-                              />
-                            </div>
+                            {isOwner ? (
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                aria-label={`Delete ${skill.skillName}`}
+                                onClick={() => setSkillToDelete(skill)}
+                              >
+                                <Trash2 className="text-destructive" />
+                              </Button>
+                            ) : null}
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full rounded-full bg-[#4fae2e]"
+                              style={{
+                                width: `${skill.proficiencyLevel * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </TabsContent>
 
               <TabsContent value="portfolio" className="mt-5">
-                <Card>
-                  <CardHeader className="flex-row items-center justify-between">
-                    <div>
-                      <CardTitle>Portfolio</CardTitle>
-                      <CardDescription>
-                        Selected projects, work samples and technologies.
-                      </CardDescription>
-                    </div>
-                    {isOwner ? (
-                      <Button
-                        size="sm"
-                        onClick={() => openPortfolioEditor("new")}
-                      >
-                        <Plus /> Add portfolio
-                      </Button>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    {portfolios.length === 0 ? (
-                      <SectionEmpty
-                        title="No portfolios available"
-                        description={
-                          isOwner
-                            ? "Showcase your work by adding a portfolio project."
-                            : "This freelancer has not published a portfolio yet."
-                        }
-                      />
-                    ) : (
-                      <div className="grid gap-5 md:grid-cols-2">
-                        {portfolios.map((portfolio) => (
-                          <article
-                            key={portfolio.id}
-                            className="group overflow-hidden rounded-xl border bg-background"
-                          >
-                            <button
-                              type="button"
-                              className="block w-full text-left"
-                              onClick={() =>
-                                void showPortfolioDetail(portfolio)
-                              }
-                            >
-                              <div
-                                className="h-44 bg-gradient-to-br from-emerald-100 to-lime-100 bg-cover bg-center transition-transform group-hover:scale-[1.01] dark:from-emerald-950 dark:to-zinc-900"
-                                style={
-                                  portfolio.mediaUrls[0]
-                                    ? {
-                                        backgroundImage: `url(${portfolio.mediaUrls[0]})`,
-                                      }
-                                    : undefined
-                                }
-                              />
-                              <div className="p-4">
-                                <h3 className="font-semibold group-hover:text-primary">
-                                  {portfolio.title}
-                                </h3>
-                                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                                  {portfolio.description ||
-                                    "No description provided."}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-1.5">
-                                  {portfolio.technologies
-                                    .slice(0, 4)
-                                    .map((technology) => (
-                                      <Badge
-                                        key={technology}
-                                        variant="secondary"
-                                      >
-                                        {technology}
-                                      </Badge>
-                                    ))}
-                                </div>
-                              </div>
-                            </button>
-                            {isOwner ? (
-                              <div className="flex justify-end gap-2 border-t p-3">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => openPortfolioEditor(portfolio)}
-                                >
-                                  <Pencil /> Edit
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-destructive"
-                                  onClick={() =>
-                                    setPortfolioToDelete(portfolio)
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      Portfolio
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Selected projects, work samples and technologies.
+                    </p>
+                  </div>
+                  {isOwner ? (
+                    <Button
+                      size="sm"
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={() => openPortfolioEditor("new")}
+                    >
+                      <Plus /> Add portfolio
+                    </Button>
+                  ) : null}
+                </div>
+                {portfolios.length === 0 ? (
+                  <div className="mt-5">
+                    <SectionEmpty
+                      title="No portfolios available"
+                      description={
+                        isOwner
+                          ? "Showcase your work by adding a portfolio project."
+                          : "This freelancer has not published a portfolio yet."
+                      }
+                    />
+                  </div>
+                ) : (
+                  <ul className="mt-5 divide-y divide-border border-y border-border">
+                    {portfolios.map((portfolio) => (
+                      <li key={portfolio.id} className="py-5">
+                        <button
+                          type="button"
+                          className="group flex w-full flex-col gap-4 text-left sm:flex-row"
+                          onClick={() => void showPortfolioDetail(portfolio)}
+                        >
+                          <div
+                            className="h-36 w-full shrink-0 rounded-lg bg-[#eaf8df] bg-cover bg-center sm:h-28 sm:w-40 dark:bg-[#1a1c1a]"
+                            style={
+                              portfolio.mediaUrls[0]
+                                ? {
+                                    backgroundImage: `url(${portfolio.mediaUrls[0]})`,
                                   }
-                                >
-                                  <Trash2 /> Delete
-                                </Button>
-                              </div>
-                            ) : null}
-                          </article>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                                : undefined
+                            }
+                          />
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
+                              {portfolio.title}
+                            </h3>
+                            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                              {portfolio.description ||
+                                "No description provided."}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                              {portfolio.technologies
+                                .slice(0, 4)
+                                .map((technology) => (
+                                  <Badge
+                                    key={technology}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                  >
+                                    {technology}
+                                  </Badge>
+                                ))}
+                            </div>
+                          </div>
+                        </button>
+                        {isOwner ? (
+                          <div className="mt-3 flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openPortfolioEditor(portfolio)}
+                            >
+                              <Pencil /> Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive"
+                              onClick={() => setPortfolioToDelete(portfolio)}
+                            >
+                              <Trash2 /> Delete
+                            </Button>
+                          </div>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </TabsContent>
             </Tabs>
 
-            <aside className="space-y-5">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Profile strength</CardTitle>
-                  <CardDescription>{completion}% complete</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-emerald-500"
-                      style={{ width: `${completion}%` }}
-                    />
-                  </div>
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Complete your bio, professional details, skills and
-                    portfolio to stand out.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">At a glance</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
+            <aside className="space-y-6">
+              <div className="rounded-xl border border-border p-5 sm:p-6">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  Profile strength
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {completion}% complete
+                </p>
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-[#4fae2e]"
+                    style={{ width: `${completion}%` }}
+                  />
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Complete your bio, professional details, skills and portfolio
+                  to stand out.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border p-5 sm:p-6">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  At a glance
+                </h3>
+                <ul className="mt-4 divide-y divide-border text-sm">
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <CheckCircle2 className="size-4" /> Availability
+                      <CheckCircle2 className="size-4 text-[#4fae2e]" />{" "}
+                      Availability
                     </span>
                     <span className="font-medium capitalize">
                       {profile.availabilityStatus.toLowerCase()}
                     </span>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  </li>
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <Sparkles className="size-4" /> Skills
+                      <Award className="size-4 text-[#4fae2e]" /> Skills
                     </span>
                     <span className="font-medium">{skills.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  </li>
+                  <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <BriefcaseBusiness className="size-4" /> Projects
+                      <BriefcaseBusiness className="size-4 text-[#4fae2e]" />{" "}
+                      Projects
                     </span>
                     <span className="font-medium">{portfolios.length}</span>
-                  </div>
-                </CardContent>
-              </Card>
+                  </li>
+                </ul>
+              </div>
             </aside>
           </div>
         </div>
@@ -1291,8 +1313,13 @@ export function ProfilePageClient({
                         />
                       ))
                     ) : (
-                      <div className="col-span-full flex h-40 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
-                        No media attached.
+                      <div className="col-span-full flex h-40 flex-col items-center justify-center rounded-xl border border-dashed border-border px-4 text-center">
+                        <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                          <UserRound className="size-6" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          No media attached.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1388,27 +1415,23 @@ function DetailListCard({
   empty: string;
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Icon className="size-4 text-emerald-600" /> {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {items?.length ? (
-          <ul className="space-y-2">
-            {items.map((item) => (
-              <li key={item} className="flex gap-2 text-sm">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">{empty}</p>
-        )}
-      </CardContent>
-    </Card>
+    <section>
+      <h3 className="flex items-center gap-2 text-base font-semibold tracking-tight text-foreground">
+        <Icon className="size-4 text-[#4fae2e]" /> {title}
+      </h3>
+      {items?.length ? (
+        <ul className="mt-3 divide-y divide-border border-y border-border">
+          {items.map((item) => (
+            <li key={item} className="flex gap-2 py-2.5 text-sm">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-muted-foreground">{empty}</p>
+      )}
+    </section>
   );
 }
 

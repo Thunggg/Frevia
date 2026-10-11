@@ -115,6 +115,7 @@ export function EditPostDialog({
             Cancel
           </Button>
           <Button
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >
