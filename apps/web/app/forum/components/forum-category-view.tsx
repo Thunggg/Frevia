@@ -1,228 +1,154 @@
-"use client";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
-import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Footer } from "@/components/footer";
+import { Header, type UserRole } from "@/components/header";
 import {
   Avatar,
-  AvatarImage,
   AvatarFallback,
+  AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
 import type {
   ForumCategoryListResponseType,
   ForumCategoryTopListResponseType,
   ForumTopActiveUserListResponseType,
 } from "@shared/types";
-import {
-  Folder,
-  ArrowRight,
-  Trophy,
-  FileText,
-  Home,
-  MessageSquare,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react";
-import Link from "next/link";
 
 type ForumCategoryViewProps = {
+  role: UserRole;
   categories: ForumCategoryListResponseType;
   topCategories: ForumCategoryTopListResponseType;
   topUsers: ForumTopActiveUserListResponseType;
 };
 
-const rankColors = [
-  "text-yellow-600 dark:text-yellow-400",
-  "text-gray-500 dark:text-gray-400",
-  "text-amber-700 dark:text-amber-500",
-];
-const rankBgColors = [
-  "bg-yellow-100 dark:bg-yellow-500/15",
-  "bg-gray-100 dark:bg-gray-500/15",
-  "bg-amber-100 dark:bg-amber-500/15",
-];
+function formatDate(value: string | Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
 
 export function ForumCategoryView({
+  role,
   categories,
   topCategories,
   topUsers,
 }: ForumCategoryViewProps) {
   const hasTopCategories = topCategories.length > 0;
   const hasTopUsers = topUsers.length > 0;
-
   const totalPosts = categories.reduce((sum, c) => sum + c.postCount, 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden border-b bg-gradient-to-b from-emerald-50/80 via-green-50/30 to-background">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          {/* Breadcrumb */}
-          <nav className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-            >
-              <Home className="h-3.5 w-3.5" />
-              Home
-            </Link>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="font-medium text-foreground">Community Forum</span>
-          </nav>
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
+      <Header role={role} />
 
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                Community Forum
-              </h1>
-              <p className="mt-2 text-muted-foreground">
-                Browse categories, join discussions, and connect with the
-                community.
+      <main className="flex-1">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">Forum</span>
+            </nav>
+
+            <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-xl">
+                <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  Community Forum
+                </h1>
+                <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
+                  Ask questions, share tips, and learn from freelancers and
+                  clients on Frevia.
+                </p>
+              </div>
+
+              <p className="text-sm text-foreground/65 dark:text-foreground/70">
+                <span className="font-semibold text-foreground">
+                  {categories.length}
+                </span>{" "}
+                {categories.length === 1 ? "category" : "categories"}
+                <span className="mx-2 text-foreground/35">·</span>
+                <span className="font-semibold text-foreground">
+                  {totalPosts}
+                </span>{" "}
+                {totalPosts === 1 ? "post" : "posts"}
               </p>
             </div>
-
-            {/* Stats */}
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                  <Folder className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold leading-none text-foreground">
-                    {categories.length}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Categories</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-600">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold leading-none text-foreground">
-                    {totalPosts}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Posts</p>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Content */}
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="flex flex-col gap-8 lg:flex-row">
-          {/* Left: All Categories */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">
-                All Categories
-              </h2>
-              <Badge variant="secondary" className="text-xs">
-                {categories.length} total
-              </Badge>
-            </div>
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-10">
+          <section className="lg:col-span-8">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+              Categories
+            </h2>
 
             {categories.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-                    <Folder className="h-7 w-7 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground">
-                    No categories yet
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Categories will appear here once they are created.
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                <p className="text-lg font-medium text-foreground">
+                  No categories yet
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                  Categories will show up here once they are created.
+                </p>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ul className="mt-4 divide-y divide-border border-y border-border">
                 {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/forum/${category.id}`}
-                    className="group block"
-                  >
-                    <Card className="h-full transition-all duration-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-base">
-                          <span className="group-hover:text-emerald-700 transition-colors">
+                  <li key={category.id}>
+                    <Link
+                      href={`/forum/${category.id}`}
+                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-[#12331f]/35"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
                             {category.name}
-                          </span>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-emerald-600" />
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                          </h3>
+                          <ArrowRight className="size-4 shrink-0 text-[#4fae2e] opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+                        </div>
+                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
                           {category.description ?? "No description provided."}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <Badge
-                            variant="secondary"
-                            className="gap-1 text-xs font-normal"
-                          >
-                            <FileText className="h-3 w-3" />
-                            {category.postCount}{" "}
-                            {category.postCount === 1 ? "post" : "posts"}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(category.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+                      </div>
 
-          {/* Right: Sidebar */}
-          <div className="w-full shrink-0 space-y-6 lg:w-80">
-            {/* Top Categories */}
-            {hasTopCategories && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-yellow-500/10">
-                      <Trophy className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                    </div>
-                    Top Categories
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
+                      <div className="shrink-0 text-sm text-muted-foreground sm:text-right">
+                        <p className="font-medium text-foreground">
+                          {category.postCount}{" "}
+                          {category.postCount === 1 ? "post" : "posts"}
+                        </p>
+                        <p className="mt-1 text-xs">
+                          Added {formatDate(category.createdAt)}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <aside className="space-y-8 lg:col-span-4">
+            {hasTopCategories ? (
+              <section className="rounded-xl border border-border p-5 sm:p-6">
+                <h2 className="text-base font-semibold tracking-tight text-foreground">
+                  Active categories
+                </h2>
+                <ul className="mt-4 divide-y divide-border">
                   {topCategories.map((category, index) => (
-                    <Link
-                      key={category.id}
-                      href={`/forum/${category.id}`}
-                      className="group block"
-                    >
-                      <div className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-                        <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${rankBgColors[index] ?? "bg-muted"} ${rankColors[index] ?? "text-muted-foreground"}`}
-                        >
-                          {index === 0 ? (
-                            <Trophy className="h-3.5 w-3.5" />
-                          ) : (
-                            index + 1
-                          )}
+                    <li key={category.id}>
+                      <Link
+                        href={`/forum/${category.id}`}
+                        className="group flex items-center gap-3 py-3"
+                      >
+                        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#12331f]">
+                          {index + 1}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
                             {category.name}
                           </p>
                           <p className="text-xs text-muted-foreground">
@@ -230,81 +156,56 @@ export function ForumCategoryView({
                             {category.postCount === 1 ? "post" : "posts"}
                           </p>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                    </Link>
+                        <ArrowRight className="size-3.5 shrink-0 text-[#4fae2e] opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+                      </Link>
+                    </li>
                   ))}
-                </CardContent>
-              </Card>
-            )}
+                </ul>
+              </section>
+            ) : null}
 
-            {/* Top Active Users */}
-            {hasTopUsers && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100">
-                      <TrendingUp className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    Most Active Users
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  {topUsers.map((user, index) => (
-                    <div
+            {hasTopUsers ? (
+              <section className="rounded-xl border border-border p-5 sm:p-6">
+                <h2 className="text-base font-semibold tracking-tight text-foreground">
+                  Active members
+                </h2>
+                <ul className="mt-4 space-y-1">
+                  {topUsers.map((user) => (
+                    <li
                       key={user.id}
-                      className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
+                      className="flex items-center gap-3 rounded-lg px-1 py-2"
                     >
-                      <div className="relative">
-                        <Avatar size="sm">
-                          <AvatarImage
-                            src={user.avatarUrl ?? undefined}
-                            alt={user.displayName ?? "User"}
-                          />
-                          <AvatarFallback>
-                            {user.displayName?.charAt(0)?.toUpperCase() ?? "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                        {index < 3 && (
-                          <span
-                            className={`absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold ring-2 ring-background ${rankBgColors[index]} ${rankColors[index]}`}
-                          >
-                            {index + 1}
-                          </span>
-                        )}
-                      </div>
+                      <Avatar size="sm">
+                        <AvatarImage
+                          src={user.avatarUrl ?? undefined}
+                          alt={user.displayName ?? "Member"}
+                        />
+                        <AvatarFallback>
+                          {user.displayName?.charAt(0)?.toUpperCase() ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-foreground">
                           {user.displayName ?? "Anonymous"}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {user.postCount}{" "}
-                          {user.postCount === 1 ? "post" : "posts"} &middot;{" "}
+                          {user.postCount === 1 ? "post" : "posts"}
+                          <span className="mx-1.5 text-foreground/30">·</span>
                           {user.commentCount}{" "}
                           {user.commentCount === 1 ? "comment" : "comments"}
                         </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Quick Stats Card */}
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-6 text-center">
-                <Sparkles className="mb-2 h-5 w-5 text-muted-foreground" />
-                <p className="text-sm font-medium text-foreground">
-                  Join the conversation
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Pick a category and start posting
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+                </ul>
+              </section>
+            ) : null}
+          </aside>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
