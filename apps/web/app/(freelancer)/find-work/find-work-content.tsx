@@ -437,10 +437,8 @@ export function FindWorkContent({
                 return (
                   <li key={job.id}>
                     <div
-                      className={`py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-white/4 ${
-                        job.featured
-                          ? "border-l-2 border-l-[#4fae2e] pl-4 sm:pl-5"
-                          : "pl-0 sm:pl-1"
+                      className={`px-4 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-6 dark:hover:bg-white/4 ${
+                        job.featured ? "border-l-2 border-l-[#4fae2e]" : ""
                       }`}
                     >
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
