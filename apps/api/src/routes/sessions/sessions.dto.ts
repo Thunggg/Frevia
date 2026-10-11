@@ -1,4 +1,5 @@
 import {
+  RevokeSessionResponseSchema,
   SessionDetailResponseSchema,
   SessionFilterSchema,
   SessionListResponseSchema,
@@ -13,4 +14,8 @@ export class SessionListResponseDto extends createZodDto(
 
 export class SessionDetailResponseDto extends createZodDto(
   SessionDetailResponseSchema,
+) {}
+
+export class RevokeSessionResponseDto extends createZodDto(
+  RevokeSessionResponseSchema,
 ) {}

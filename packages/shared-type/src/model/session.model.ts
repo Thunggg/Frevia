@@ -8,6 +8,8 @@ export const SessionListItemSchema = z.object({
   ipAddress: z.string().nullable(),
   expiresAt: z.date(),
   createdAt: z.date(),
+  /** true = đây là session của thiết bị đang dùng */
+  isCurrent: z.boolean(),
 });
 
 export const SessionFilterSchema = z.object({
@@ -25,9 +27,18 @@ export const SessionListResponseSchema = z.object({
 
 export const SessionDetailResponseSchema = SessionListItemSchema;
 
+export const RevokeSessionResponseSchema = z.object({
+  message: z.string(),
+  /** true = vừa revoke session hiện tại → client nên logout */
+  loggedOut: z.boolean(),
+});
+
 export type SessionListItemType = z.infer<typeof SessionListItemSchema>;
 export type SessionFilterType = z.infer<typeof SessionFilterSchema>;
 export type SessionListResponseType = z.infer<typeof SessionListResponseSchema>;
 export type SessionDetailResponseType = z.infer<
   typeof SessionDetailResponseSchema
+>;
+export type RevokeSessionResponseType = z.infer<
+  typeof RevokeSessionResponseSchema
 >;
