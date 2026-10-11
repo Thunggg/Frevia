@@ -1,92 +1,106 @@
-import Link from 'next/link'
-import { Mail, Globe } from 'lucide-react'
+import Image from "next/image";
+import Link from "next/link";
+
+const exploreLinks = [
+  { href: "/find-work", label: "Find Work" },
+  { href: "/forum", label: "Forum" },
+  { href: "/bookmarks", label: "Bookmarks" },
+] as const;
+
+const companyLinks = [
+  { href: "/", label: "Home" },
+  { href: "/forum", label: "Community" },
+  { href: "/register", label: "Get started" },
+] as const;
+
+const supportLinks = [
+  { href: "/login", label: "Log in" },
+  { href: "/account-profile", label: "Account" },
+  { href: "/sessions", label: "Sessions" },
+] as const;
+
+function FooterLink({ href, label }: { href: string; label: string }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="text-sm text-muted-foreground transition-colors hover:text-[#4fae2e]"
+      >
+        {label}
+      </Link>
+    </li>
+  );
+}
 
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-background border-t border-border">
+    <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 mb-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-                <span className="text-sm font-bold">f</span>
-              </div>
-              <span className="font-semibold text-foreground">Frevia</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 Frevia. Connect Talent - Endless Opportunities.
+        <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-4">
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="mb-4 inline-flex items-center gap-2">
+              <Image
+                src="/Logo.png"
+                alt=""
+                width={28}
+                height={28}
+                className="size-7 object-contain"
+              />
+              <span className="text-lg font-semibold tracking-tight text-[#4fae2e]">
+                Frevia
+              </span>
+            </Link>
+            <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-muted-foreground">
+              A calm marketplace to hire freelancers, find work, and learn
+              together.
             </p>
           </div>
 
-          {/* Explore */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Explore</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Browse Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Find Talent
-                </Link>
-              </li>
+            <h3 className="mb-4 text-sm font-semibold text-foreground">
+              Explore
+            </h3>
+            <ul className="space-y-2.5">
+              {exploreLinks.map((link) => (
+                <FooterLink key={link.href + link.label} {...link} />
+              ))}
             </ul>
           </div>
 
-          {/* Company */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Company</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Trust & Safety
-                </Link>
-              </li>
+            <h3 className="mb-4 text-sm font-semibold text-foreground">
+              Company
+            </h3>
+            <ul className="space-y-2.5">
+              {companyLinks.map((link) => (
+                <FooterLink key={link.href + link.label} {...link} />
+              ))}
             </ul>
           </div>
 
-          {/* Support */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Support</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Help & Support
-                </Link>
-              </li>
+            <h3 className="mb-4 text-sm font-semibold text-foreground">
+              Support
+            </h3>
+            <ul className="space-y-2.5">
+              {supportLinks.map((link) => (
+                <FooterLink key={link.href + link.label} {...link} />
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground text-center sm:text-left">
-            © 2024 Frevia. All rights reserved.
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-border pt-8 sm:flex-row">
+          <p className="text-xs text-muted-foreground">
+            © {year} Frevia. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <button className="p-2 rounded-lg hover:bg-secondary transition-colors">
-              <Globe className="h-5 w-5 text-muted-foreground hover:text-foreground" />
-            </button>
-            <button className="p-2 rounded-lg hover:bg-secondary transition-colors">
-              <Mail className="h-5 w-5 text-muted-foreground hover:text-foreground" />
-            </button>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            Built for freelancers and clients.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

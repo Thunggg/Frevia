@@ -74,8 +74,22 @@
 
 .heroIllustration {
   display: block;
+  filter: drop-shadow(0 18px 40px rgba(18, 51, 31, 0.12));
   animation: home-drift 28s ease-in-out infinite alternate;
   will-change: transform;
+}
+
+.scrollReveal {
+  opacity: 0;
+  transform: translateY(0.85rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scrollVisible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sectionReveal {
@@ -99,5 +113,11 @@
   .heroIllustration {
     animation: none;
     will-change: auto;
+  }
+
+  .scrollReveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

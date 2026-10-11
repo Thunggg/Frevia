@@ -288,8 +288,11 @@ function HeaderActions({ role }: HeaderProps) {
         <Button variant="ghost" asChild>
           <Link href="/login">Log in</Link>
         </Button>
-        <Button asChild>
-          <Link href="/register">Sign up</Link>
+        <Button
+          asChild
+          className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+        >
+          <Link href="/register">Get started</Link>
         </Button>
       </div>
     );

@@ -7,6 +7,7 @@ import { Header, type UserRole } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { RoleName, type GetMeResType } from "@shared/types";
 
+import { RevealOnScroll } from "./reveal-on-scroll";
 import styles from "./home-view.module.css";
 
 const display = Fraunces({
@@ -16,11 +17,11 @@ const display = Fraunces({
 });
 
 const PARTNERS = [
-  { src: "/home/partners/northwind.svg", alt: "Northwind", width: 140 },
+  { src: "/home/partners/northwind.svg", alt: "Northwind", width: 148 },
   { src: "/home/partners/brightly.svg", alt: "Brightly", width: 128 },
-  { src: "/home/partners/cascade.svg", alt: "Cascade", width: 120 },
-  { src: "/home/partners/orbit-labs.svg", alt: "Orbit Labs", width: 132 },
-  { src: "/home/partners/harbor-co.svg", alt: "Harbor Co", width: 148 },
+  { src: "/home/partners/cascade.svg", alt: "Cascade", width: 132 },
+  { src: "/home/partners/orbit-labs.svg", alt: "Orbit Labs", width: 142 },
+  { src: "/home/partners/harbor-co.svg", alt: "Harbor Co", width: 138 },
 ] as const;
 
 type HomeViewProps = {
@@ -58,10 +59,10 @@ export function HomeView({ user }: HomeViewProps) {
 
   const headline = isLoggedIn
     ? `Welcome back, ${displayName}`
-    : "Hire talent, find work, grow together";
+    : "Work finds the right people";
   const subtext = isLoggedIn
     ? "Continue where you left off: projects, freelancers, or the community forum."
-    : "Frevia is a calm marketplace where clients post real work and freelancers build lasting careers.";
+    : "Hire freelancers, find paid work, and grow with a community that stays calm and clear.";
 
   const secondHeadline = isClient
     ? "Your work deserves the right people"
@@ -106,7 +107,7 @@ export function HomeView({ user }: HomeViewProps) {
             </h1>
 
             <p
-              className={`mx-auto mt-5 max-w-[42ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75 ${styles.reveal} ${styles.revealDelay3}`}
+              className={`mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75 ${styles.reveal} ${styles.revealDelay3}`}
             >
               {subtext}
             </p>
@@ -144,7 +145,7 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
 
           <div
-            className={`mx-auto w-full max-w-5xl px-2 sm:px-4 ${styles.reveal} ${styles.revealDelay5}`}
+            className={`mx-auto w-full max-w-6xl px-2 sm:px-4 ${styles.reveal} ${styles.revealDelay5}`}
           >
             <Image
               src="/home/hero-illustration.png"
@@ -152,73 +153,74 @@ export function HomeView({ user }: HomeViewProps) {
               width={1536}
               height={1024}
               priority
-              sizes="(max-width: 1024px) 100vw, 1024px"
+              sizes="(max-width: 1024px) 100vw, 1152px"
               className={`mx-auto h-auto w-full ${styles.heroIllustration}`}
             />
           </div>
         </section>
 
         <section className="border-b border-border bg-background">
-          <div
-            className={`mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-6 px-4 py-10 sm:gap-x-12 sm:px-6 md:gap-x-14 ${styles.sectionReveal}`}
-          >
-            {PARTNERS.map((partner) => (
-              <Image
-                key={partner.src}
-                src={partner.src}
-                alt={partner.alt}
-                width={partner.width}
-                height={32}
-                className="h-8 w-auto opacity-50 grayscale"
-              />
-            ))}
-          </div>
+          <RevealOnScroll>
+            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-6 px-4 py-10 text-foreground sm:gap-x-12 sm:px-6 md:gap-x-14">
+              {PARTNERS.map((partner) => (
+                // eslint-disable-next-line @next/next/no-img-element -- SVG wordmarks need currentColor via img
+                <img
+                  key={partner.src}
+                  src={partner.src}
+                  alt={partner.alt}
+                  width={partner.width}
+                  height={32}
+                  className="h-8 w-auto opacity-50 grayscale"
+                />
+              ))}
+            </div>
+          </RevealOnScroll>
         </section>
 
         <section className="border-b border-border bg-background">
-          <div
-            className={`mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24 ${styles.sectionReveal}`}
-          >
-            <h2
-              className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]`}
-            >
-              {secondHeadline}
-            </h2>
-            <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
-              {secondBody}
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="mt-9 min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] active:scale-[0.98] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
-            >
-              <Link href={secondHref}>{secondLabel}</Link>
-            </Button>
-          </div>
+          <RevealOnScroll>
+            <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+              <h2
+                className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]`}
+              >
+                {secondHeadline}
+              </h2>
+              <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
+                {secondBody}
+              </p>
+              <Button
+                asChild
+                size="lg"
+                className="mt-9 min-w-40 bg-[#4fae2e] px-8 text-white hover:bg-[#459928] active:scale-[0.98] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+              >
+                <Link href={secondHref}>{secondLabel}</Link>
+              </Button>
+            </div>
+          </RevealOnScroll>
         </section>
 
         <section className="bg-[#f4faf0] dark:bg-[#12331f]">
-          <div
-            className={`mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24 ${styles.sectionReveal}`}
-          >
-            <h2
-              className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
-            >
-              Talk shop in the community
-            </h2>
-            <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
-              Ask questions, share tips, and learn from freelancers and clients
-              building on Frevia.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
-            >
-              <Link href="/forum">Visit Forum</Link>
-            </Button>
-          </div>
+          <RevealOnScroll>
+            <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
+              <h2
+                className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
+              >
+                Talk shop in the community
+              </h2>
+              <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/65 sm:text-lg dark:text-foreground/75">
+                Ask questions, share tips, and learn from freelancers and
+                clients building on Frevia.
+              </p>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+              >
+                <Link href="/forum">Visit Forum</Link>
+              </Button>
+            </div>
+          </RevealOnScroll>
         </section>
       </main>
 
