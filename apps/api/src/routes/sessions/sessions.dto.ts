@@ -1,4 +1,5 @@
 import {
+  SessionDetailResponseSchema,
   SessionFilterSchema,
   SessionListResponseSchema,
 } from '@shared/types';
@@ -8,4 +9,8 @@ export class SessionFilterDto extends createZodDto(SessionFilterSchema) {}
 
 export class SessionListResponseDto extends createZodDto(
   SessionListResponseSchema,
+) {}
+
+export class SessionDetailResponseDto extends createZodDto(
+  SessionDetailResponseSchema,
 ) {}

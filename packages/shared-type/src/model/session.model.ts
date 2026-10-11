@@ -23,6 +23,11 @@ export const SessionListResponseSchema = z.object({
   pagination: PaginationSchema,
 });
 
+export const SessionDetailResponseSchema = SessionListItemSchema;
+
 export type SessionListItemType = z.infer<typeof SessionListItemSchema>;
 export type SessionFilterType = z.infer<typeof SessionFilterSchema>;
 export type SessionListResponseType = z.infer<typeof SessionListResponseSchema>;
+export type SessionDetailResponseType = z.infer<
+  typeof SessionDetailResponseSchema
+>;

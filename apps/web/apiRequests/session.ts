@@ -1,4 +1,8 @@
-import type { SessionFilterType, SessionListResponseType } from "@shared/types";
+import type {
+  SessionDetailResponseType,
+  SessionFilterType,
+  SessionListResponseType,
+} from "@shared/types";
 import { http } from "@/lib/http";
 
 function buildQueryString(
@@ -25,4 +29,6 @@ export const sessionApiRequest = {
     });
     return http.get<SessionListResponseType>(`/api/sessions${query}`);
   },
+  getSession: (id: number) =>
+    http.get<SessionDetailResponseType>(`/api/sessions/${id}`),
 };

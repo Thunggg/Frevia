@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { SessionFilterType, SessionListItemType } from '@shared/types';
+import {
+  SessionDetailResponseType,
+  SessionFilterType,
+  SessionListItemType,
+} from '@shared/types';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { SessionNotFoundException } from './sessions.error';
 
 const sessionSelect = {
   id: true,
@@ -57,5 +62,21 @@ export class SessionsRepository {
     ]);
 
     return { sessions, total };
+  }
+
+  async findByIdForUser(
+    id: number,
+    userId: number,
+  ): Promise<SessionDetailResponseType> {
+    const session = await this.prisma.session.findFirst({
+      where: { id, userId },
+      select: sessionSelect,
+    });
+
+    if (!session) {
+      throw SessionNotFoundException();
+    }
+
+    return session;
   }
 }
