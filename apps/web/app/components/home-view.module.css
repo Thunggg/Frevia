@@ -1,9 +1,9 @@
-/* Home motion: MOTION_INTENSITY 4 — opacity/transform only, reduced-motion safe */
+/* Home landing motion — calm Kaizen-style (MOTION ~3) */
 
 @keyframes home-fade-up {
   from {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(0.6rem);
   }
   to {
     opacity: 1;
@@ -11,57 +11,76 @@
   }
 }
 
-@keyframes home-fade-in {
+@keyframes home-drift {
   from {
-    opacity: 0;
+    transform: translate3d(0, 0, 0);
   }
   to {
-    opacity: 1;
+    transform: translate3d(0, -0.4%, 0);
   }
 }
 
-@keyframes home-drift {
-  from {
-    transform: scale(1.06) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.12) translate3d(-1.5%, 1%, 0);
-  }
+.display {
+  font-family: var(--font-home-display), ui-serif, Georgia, "Times New Roman",
+    serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+}
+
+.heroBand {
+  background:
+    radial-gradient(
+      ellipse 90% 55% at 50% 0%,
+      rgba(79, 174, 46, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #eaf6df 0%, #f4faf0 45%, #eaf6df 100%);
+}
+
+:global(.dark) .heroBand {
+  background:
+    radial-gradient(
+      ellipse 90% 55% at 50% 0%,
+      rgba(79, 174, 46, 0.2),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #12331f 0%, #0f2a19 45%, #12331f 100%);
 }
 
 .reveal {
   opacity: 0;
-  animation: home-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: home-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .revealDelay1 {
-  animation-delay: 80ms;
+  animation-delay: 60ms;
 }
 
 .revealDelay2 {
-  animation-delay: 160ms;
+  animation-delay: 140ms;
 }
 
 .revealDelay3 {
-  animation-delay: 240ms;
+  animation-delay: 220ms;
 }
 
 .revealDelay4 {
-  animation-delay: 320ms;
+  animation-delay: 300ms;
 }
 
-.heroMedia {
-  animation: home-fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.revealDelay5 {
+  animation-delay: 380ms;
 }
 
-.heroMediaImg {
+.heroIllustration {
+  display: block;
   animation: home-drift 28s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 .sectionReveal {
   opacity: 0;
-  animation: home-fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  animation: home-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -70,14 +89,14 @@
   .revealDelay2,
   .revealDelay3,
   .revealDelay4,
-  .heroMedia,
+  .revealDelay5,
   .sectionReveal {
     animation: none;
     opacity: 1;
     transform: none;
   }
 
-  .heroMediaImg {
+  .heroIllustration {
     animation: none;
     will-change: auto;
   }
