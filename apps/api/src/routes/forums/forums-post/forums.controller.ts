@@ -29,6 +29,7 @@ import { z } from 'zod';
 
 const TopLimitSchema = z.object({
   limit: z.coerce.number().int().min(1).max(10).default(3),
+  categoryId: z.coerce.number().int().positive().optional(),
 });
 
 @Controller('forums')
@@ -83,9 +84,13 @@ export class ForumController {
   @IsPublic()
   @ZodSerializerDto(ForumTopPostListResponseDto)
   getTopInteractedPosts(
-    @Query(new ZodValidationPipe(TopLimitSchema)) query: { limit: number },
+    @Query(new ZodValidationPipe(TopLimitSchema))
+    query: { limit: number; categoryId?: number },
   ) {
-    return this.forumService.getTopInteractedPosts(query.limit);
+    return this.forumService.getTopInteractedPosts(
+      query.limit,
+      query.categoryId,
+    );
   }
 
   @Get('posts/:id')

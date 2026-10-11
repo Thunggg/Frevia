@@ -47,6 +47,8 @@ export const UpdateForumPostSchema = z.object({
 
 // Schema response khi lấy danh sách posts (data + pagination), bao gồm user info
 export const ForumPostWithUserSchema = ForumPostSchema.extend({
+  likeCount: z.number(),
+  commentCount: z.number(),
   user: z.object({
     id: z.number(),
     profile: z

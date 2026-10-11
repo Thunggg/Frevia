@@ -113,8 +113,13 @@ export const forumApiRequest = {
       `/api/forums/posts/${postId}/comments/${commentId}/is-reported`,
     ),
 
-  getTopPosts: (limit: number = 3) =>
-    http.get<ForumTopPostListResponseType>(
-      `/api/forums/posts/top?limit=${limit}`,
-    ),
+  getTopPosts: (limit: number = 3, categoryId?: number) => {
+    const params = new URLSearchParams({ limit: String(limit) });
+    if (categoryId !== undefined) {
+      params.set("categoryId", String(categoryId));
+    }
+    return http.get<ForumTopPostListResponseType>(
+      `/api/forums/posts/top?${params.toString()}`,
+    );
+  },
 };

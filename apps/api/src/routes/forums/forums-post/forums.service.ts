@@ -220,9 +220,10 @@ export class ForumService {
 
   async getTopInteractedPosts(
     limit: number = 3,
+    categoryId?: number,
   ): Promise<ForumTopPostListResponseType> {
     try {
-      return await this.forumRepository.getTopInteractedPosts(limit);
+      return await this.forumRepository.getTopInteractedPosts(limit, categoryId);
     } catch {
       throw FailedToLoadForumPostsException();
     }
