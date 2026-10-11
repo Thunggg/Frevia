@@ -4,6 +4,8 @@ import {
   DeleteRoleResponseSchema,
   RoleDetailResponseSchema,
   RoleListResponseSchema,
+  SetRolePermissionsBodySchema,
+  SetRolePermissionsResponseSchema,
   UpdateRoleBodySchema,
   UpdateRoleResponseSchema,
 } from '@shared/types';
@@ -29,4 +31,12 @@ export class UpdateRoleResponseDto extends createZodDto(
 
 export class DeleteRoleResponseDto extends createZodDto(
   DeleteRoleResponseSchema,
+) {}
+
+export class SetRolePermissionsBodyDto extends createZodDto(
+  SetRolePermissionsBodySchema,
+) {}
+
+export class SetRolePermissionsResponseDto extends createZodDto(
+  SetRolePermissionsResponseSchema,
 ) {}

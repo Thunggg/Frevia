@@ -60,22 +60,24 @@ const statusConfig: Record<
 > = {
   PENDING: {
     label: "Pending",
-    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    color:
+      "border-[#4fae2e]/30 bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#5bc03a]",
     icon: Clock,
   },
   REVIEWED: {
     label: "Reviewed",
-    color: "bg-blue-100 text-blue-800 border-blue-200",
+    color: "border-border bg-muted text-muted-foreground",
     icon: Eye,
   },
   RESOLVED: {
     label: "Resolved",
-    color: "bg-green-100 text-green-800 border-green-200",
+    color:
+      "border-[#4fae2e]/30 bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15",
     icon: CheckCircle,
   },
   DISMISSED: {
     label: "Dismissed",
-    color: "bg-gray-100 text-gray-800 border-gray-200",
+    color: "border-border bg-background text-muted-foreground",
     icon: XCircle,
   },
 };
@@ -97,7 +99,7 @@ export function ReportsTable({
       toastSuccess({ message: "Report status updated" });
       router.refresh();
     } catch {
-      toastError({ message: "Failed to update status" });
+      toastError({ message: "Couldn't update status. Try again." });
     } finally {
       setUpdatingId(null);
     }

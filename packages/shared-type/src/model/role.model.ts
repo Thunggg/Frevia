@@ -1,4 +1,5 @@
 import { ManageRoleMessage } from "../message/manage-role.message";
+import { PermissionListItemSchema } from "./permission.model";
 import { MessageResSchema } from "./response.model";
 import { z } from "zod";
 
@@ -27,7 +28,9 @@ export const RoleListItemSchema = RoleSchema.pick({
 
 export const RoleListResponseSchema = z.array(RoleListItemSchema);
 
-export const RoleDetailResponseSchema = RoleListItemSchema;
+export const RoleDetailResponseSchema = RoleListItemSchema.extend({
+  permissions: z.array(PermissionListItemSchema),
+});
 
 export const CreateRoleBodySchema = RoleSchema.pick({
   name: true,
@@ -47,6 +50,12 @@ export const UpdateRoleResponseSchema = RoleListItemSchema;
 
 export const DeleteRoleResponseSchema = MessageResSchema;
 
+export const SetRolePermissionsBodySchema = z.object({
+  permissionIds: z.array(z.number().int().positive()),
+});
+
+export const SetRolePermissionsResponseSchema = RoleDetailResponseSchema;
+
 export type RoleType = z.infer<typeof RoleSchema>;
 export type RoleListItemType = z.infer<typeof RoleListItemSchema>;
 export type RoleListResponseType = z.infer<typeof RoleListResponseSchema>;
@@ -56,3 +65,9 @@ export type CreateRoleResponseType = z.infer<typeof CreateRoleResponseSchema>;
 export type UpdateRoleBodyType = z.infer<typeof UpdateRoleBodySchema>;
 export type UpdateRoleResponseType = z.infer<typeof UpdateRoleResponseSchema>;
 export type DeleteRoleResponseType = z.infer<typeof DeleteRoleResponseSchema>;
+export type SetRolePermissionsBodyType = z.infer<
+  typeof SetRolePermissionsBodySchema
+>;
+export type SetRolePermissionsResponseType = z.infer<
+  typeof SetRolePermissionsResponseSchema
+>;

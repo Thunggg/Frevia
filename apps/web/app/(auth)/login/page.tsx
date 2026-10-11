@@ -1,11 +1,15 @@
+import { AuthShell } from "../components/auth-shell";
 import { LoginForm } from "./login-form";
 
-const LoginPage = () => {
+export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <AuthShell
+      title="Welcome back"
+      description="Log in to continue to your Frevia workspace."
+      imageSrc="/auth/login.jpg"
+      panelTitle="Your projects, in one place."
+    >
       <LoginForm />
-    </div>
+    </AuthShell>
   );
-};
-
-export default LoginPage;
+}

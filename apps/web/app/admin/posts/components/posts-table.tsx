@@ -73,7 +73,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
       setViewingPost(null);
       router.refresh();
     } catch {
-      toastError({ message: "Failed to delete post" });
+      toastError({ message: "Couldn't delete post. Try again." });
     } finally {
       setDeletingId(null);
     }

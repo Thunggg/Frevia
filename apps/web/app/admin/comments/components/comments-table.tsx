@@ -71,7 +71,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
       setViewingComment(null);
       router.refresh();
     } catch {
-      toastError({ message: "Failed to delete comment" });
+      toastError({ message: "Couldn't delete comment. Try again." });
     } finally {
       setDeletingId(null);
     }

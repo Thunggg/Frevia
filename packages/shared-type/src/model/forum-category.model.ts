@@ -8,6 +8,7 @@ export const ForumCategorySchema = z.object({
     .trim()
     .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
     .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG),
+  slug: z.string(),
   description: z
     .string()
     .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)

@@ -1,4 +1,4 @@
-import { ApiError, ApiResponse } from "@shared/types";
+import { ApiError, ApiSuccess } from "@shared/types";
 
 export class ApiFail extends Error {
   readonly response: ApiError;
@@ -16,7 +16,7 @@ export const request = async <T>(
   url: string,
   body?: object,
   isRequestToProxyAPI: boolean = true,
-): Promise<ApiResponse<T>> => {
+): Promise<ApiSuccess<T>> => {
   // chuẩn hóa lại url người dùng gửi lên
   const formatUrl = url.startsWith("/") ? url : `/${url}`;
 
@@ -36,7 +36,7 @@ export const request = async <T>(
     throw new ApiFail(data, res.status);
   }
 
-  return data;
+  return data as ApiSuccess<T>;
 };
 
 export const http = {
@@ -60,7 +60,11 @@ export const http = {
     return request<T>("PATCH", url, body, isRequestToProxyAPI);
   },
 
-  delete: <T>(url: string, isRequestToProxyAPI: boolean = true) => {
-    return request<T>("DELETE", url, undefined, isRequestToProxyAPI);
+  delete: <T>(
+    url: string,
+    body?: object,
+    isRequestToProxyAPI: boolean = true,
+  ) => {
+    return request<T>("DELETE", url, body, isRequestToProxyAPI);
   },
 };

@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -21,21 +20,16 @@ import {
   CreateForumPostDto,
   CreateForumPostResponseDto,
   ViewForumPostDetailResponseDto,
-  UpdateForumPostDto,
-  UpdateForumPostResponseDto,
   ForumTopPostListResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
-import type {
-  ForumPostFilterType,
-  CreateForumPostType,
-  UpdateForumPostType,
-} from '@shared/types';
+import type { ForumPostFilterType, CreateForumPostType } from '@shared/types';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { z } from 'zod';
 
 const TopLimitSchema = z.object({
   limit: z.coerce.number().int().min(1).max(10).default(3),
+  categoryId: z.coerce.number().int().positive().optional(),
 });
 
 @Controller('forums')
@@ -74,6 +68,13 @@ export class ForumController {
     return this.forumService.getForumCategoryById(id);
   }
 
+  @Get('categories/by-slug/:slug')
+  @IsPublic()
+  @ZodSerializerDto(ForumCategoryDetailResponseDto)
+  getForumCategoryBySlug(@Param('slug') slug: string) {
+    return this.forumService.getForumCategoryBySlug(slug);
+  }
+
   @Get('posts')
   @IsPublic()
   @ZodSerializerDto(ForumPostListResponseDto)
@@ -90,9 +91,13 @@ export class ForumController {
   @IsPublic()
   @ZodSerializerDto(ForumTopPostListResponseDto)
   getTopInteractedPosts(
-    @Query(new ZodValidationPipe(TopLimitSchema)) query: { limit: number },
+    @Query(new ZodValidationPipe(TopLimitSchema))
+    query: { limit: number; categoryId?: number },
   ) {
-    return this.forumService.getTopInteractedPosts(query.limit);
+    return this.forumService.getTopInteractedPosts(
+      query.limit,
+      query.categoryId,
+    );
   }
 
   @Get('posts/:id')
@@ -100,6 +105,13 @@ export class ForumController {
   @ZodSerializerDto(ViewForumPostDetailResponseDto)
   viewForumPostDetail(@Param('id', ParseIntPipe) id: number) {
     return this.forumService.viewForumPostDetail(id);
+  }
+
+  @Get('posts/by-slug/:slug')
+  @IsPublic()
+  @ZodSerializerDto(ViewForumPostDetailResponseDto)
+  getForumPostBySlug(@Param('slug') slug: string) {
+    return this.forumService.getForumPostBySlug(slug);
   }
 
   @Post('posts')

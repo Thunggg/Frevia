@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getAdminCommentsServer } from "@/lib/get-admin-data";
+import adminServerRequest from "@/apiRequests/admin.server";
 import { CommentsTable } from "./components/comments-table";
 import { SearchBar } from "../components/search-bar";
 
@@ -13,7 +13,7 @@ export default async function AdminCommentsPage({
   const limit = 10;
   const search = params.search || undefined;
 
-  const data = await getAdminCommentsServer(page, limit, search);
+  const data = await adminServerRequest.getComments(page, limit, search);
 
   return (
     <div className="space-y-6">

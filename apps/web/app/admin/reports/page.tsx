@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getAdminReportsServer } from "@/lib/get-admin-data";
+import adminServerRequest from "@/apiRequests/admin.server";
 import { ReportsTable } from "./components/reports-table";
 import { SearchBar } from "../components/search-bar";
 
@@ -14,7 +14,7 @@ export default async function AdminReportsPage({
   const search = params.search || undefined;
   const status = params.status || undefined;
 
-  const data = await getAdminReportsServer(page, limit, status, search);
+  const data = await adminServerRequest.getReports(page, limit, status, search);
 
   return (
     <div className="space-y-6">

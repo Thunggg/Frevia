@@ -1,8 +1,12 @@
 import * as React from "react"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react"
 
 import { cn } from "@repo/ui/lib/utils"
-import { buttonVariants } from "@repo/ui/components/shadcn/button"
+import { buttonVariants, type Button } from "@repo/ui/components/shadcn/button"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -35,8 +39,8 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-  size?: "default" | "sm" | "lg" | "icon"
-} & React.ComponentProps<"a">
+} & Pick<React.ComponentProps<typeof Button>, "size"> &
+  React.ComponentProps<"a">
 
 function PaginationLink({
   className,
@@ -54,7 +58,6 @@ function PaginationLink({
           variant: isActive ? "outline" : "ghost",
           size,
         }),
-        "cursor-pointer",
         className
       )}
       {...props}
@@ -73,7 +76,7 @@ function PaginationPrevious({
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
-      <ChevronLeftIcon className="size-4" />
+      <ChevronLeftIcon />
       <span className="hidden sm:block">Previous</span>
     </PaginationLink>
   )
@@ -91,7 +94,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">Next</span>
-      <ChevronRightIcon className="size-4" />
+      <ChevronRightIcon />
     </PaginationLink>
   )
 }
@@ -116,9 +119,9 @@ function PaginationEllipsis({
 export {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
   PaginationLink,
-  PaginationNext,
+  PaginationItem,
   PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
 }

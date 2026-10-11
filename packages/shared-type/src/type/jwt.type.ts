@@ -3,6 +3,8 @@ export interface AccessTokenPayloadCreate {
   userId: number;
   roleId: number;
   roleName: string;
+  /** ID của Session đang dùng — dùng để revoke / check token còn hiệu lực */
+  sessionId: number;
 }
 
 export interface AccessTokenPayload extends AccessTokenPayloadCreate {

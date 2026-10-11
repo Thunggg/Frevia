@@ -6,6 +6,8 @@ import {
   RoleDetailResponseType,
   RoleListResponseType,
   RoleName,
+  SetRolePermissionsBodyType,
+  SetRolePermissionsResponseType,
   UpdateRoleBodyType,
   UpdateRoleResponseType,
 } from '@shared/types';
@@ -16,8 +18,11 @@ import {
   FailedToDeleteRoleException,
   FailedToLoadRoleDetailException,
   FailedToLoadRolesException,
+  FailedToSetRolePermissionsException,
   FailedToUpdateRoleException,
+  InvalidPermissionIdsException,
   RoleAlreadyExistsException,
+  RoleInUseException,
 } from './roles.error';
 import { RolesRepository } from './roles.repo';
 
@@ -28,8 +33,11 @@ export class RolesService {
   constructor(private readonly rolesRepository: RolesRepository) {}
 
   private isSystemRoleName(name: string): boolean {
-    return Object.values(RoleName).some(
-      (systemName) => systemName.toLowerCase() === name.trim().toLowerCase(),
+    const normalizedName = name.trim().toLowerCase();
+    return (
+      normalizedName === RoleName.ADMIN.toLowerCase() ||
+      normalizedName === RoleName.CLIENT.toLowerCase() ||
+      normalizedName === RoleName.FREELANCER.toLowerCase()
     );
   }
 
@@ -141,6 +149,13 @@ export class RolesService {
         throw CannotModifySystemRoleException();
       }
 
+      const assignedUserCount =
+        await this.rolesRepository.countAssignedUsers(id);
+
+      if (assignedUserCount > 0) {
+        throw RoleInUseException();
+      }
+
       await this.rolesRepository.softDeleteRole(id);
       this.logger.log(`Role deleted successfully: id=${id}`);
       return { message: 'Role deleted successfully' };
@@ -148,6 +163,37 @@ export class RolesService {
       if (error instanceof PrismaClientKnownRequestError) {
         this.logger.error(`Failed to delete role: id=${id}`, error);
         throw FailedToDeleteRoleException();
+      }
+      throw error;
+    }
+  }
+
+  async setRolePermissions(
+    id: number,
+    body: SetRolePermissionsBodyType,
+  ): Promise<SetRolePermissionsResponseType> {
+    try {
+      await this.rolesRepository.findById(id);
+
+      const permissionIds = [...new Set(body.permissionIds)];
+      const activeIds =
+        await this.rolesRepository.findActivePermissionIds(permissionIds);
+
+      if (activeIds.length !== permissionIds.length) {
+        throw InvalidPermissionIdsException();
+      }
+
+      await this.rolesRepository.replaceRolePermissions(id, permissionIds);
+
+      const updated = await this.rolesRepository.findById(id);
+      this.logger.log(
+        `Role permissions updated: roleId=${id}, count=${permissionIds.length}`,
+      );
+      return updated;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        this.logger.error(`Failed to set role permissions: id=${id}`, error);
+        throw FailedToSetRolePermissionsException();
       }
       throw error;
     }

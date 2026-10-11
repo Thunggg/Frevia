@@ -1,21 +1,22 @@
+import { clearAuthCookies } from "@/lib/auth-session";
 import { cookies } from "next/headers";
 import { envConfig } from "@/configs/validate-env";
 
 export async function POST() {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  // Báo NestJS xoá refresh token trong DB (hard delete theo thiết kế của bạn),
-  // không chặn việc xoá cookie phía Next kể cả khi bước này lỗi.
-  if (accessToken) {
+  // Nest logout là public: chỉ cần body { refreshToken } để revoke session.
+  // Không chặn xoá cookie phía Next kể cả khi Nest lỗi.
+  if (refreshToken) {
     await fetch(`${envConfig?.NESTJS_API_URL}/api/auth/logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
     }).catch(() => null);
   }
 
-  cookieStore.delete("accessToken");
-  cookieStore.delete("refreshToken");
+  clearAuthCookies(cookieStore);
 
   return Response.json({ success: true });
 }

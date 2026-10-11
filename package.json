@@ -4,6 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:api": "infisical run --env=dev --path=/api -- pnpm --filter api exec nest start --watch",
+    "dev:web": "infisical run --env=dev --path=/web -- pnpm --filter web exec next dev --port 3001",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

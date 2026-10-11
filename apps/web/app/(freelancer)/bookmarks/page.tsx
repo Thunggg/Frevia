@@ -1,4 +1,4 @@
-import { getBookmarkedJobsServer } from "@/lib/get-job";
+import jobServerRequest from "@/apiRequests/job.server";
 import { BookmarksContent } from "./bookmarks-content";
 
 type BookmarksPageProps = {
@@ -11,7 +11,7 @@ export default async function BookmarksPage({
   const { page: pageParam } = await searchParams;
   const parsedPage = Number(pageParam);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const result = await getBookmarkedJobsServer({ page, limit: 10 });
+  const result = await jobServerRequest.getBookmarkedJobs({ page, limit: 10 });
   // console.log("result", result);
   return (
     <BookmarksContent

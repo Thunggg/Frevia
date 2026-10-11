@@ -1,11 +1,15 @@
+import { AuthShell } from "../components/auth-shell";
 import { ForgotPasswordForm } from "./forgot-password-form";
 
-const ForgotPasswordPage = () => {
+export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <AuthShell
+      title="Reset your password"
+      description="Enter your email, choose a new password, and confirm with the OTP code."
+      imageSrc="/auth/forgot-password.jpg"
+      panelTitle="Get back into your account."
+    >
       <ForgotPasswordForm />
-    </div>
+    </AuthShell>
   );
-};
-
-export default ForgotPasswordPage;
+}

@@ -8,9 +8,28 @@ export class CloudinaryService {
 
   constructor() {
     cloudinary.config({
-      cloud_name: envConfig.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
+      cloud_name:
+        envConfig.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME,
       api_key: envConfig.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_KEY,
-      api_secret: envConfig.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET,
+      api_secret:
+        envConfig.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET,
+    });
+  }
+
+  isConfigured() {
+    const credentials = [
+      envConfig.CLOUDINARY_CLOUD_NAME,
+      envConfig.CLOUDINARY_API_KEY,
+      envConfig.CLOUDINARY_API_SECRET,
+    ];
+    return credentials.every((credential) => {
+      const normalized = credential.trim().toLowerCase();
+      return (
+        normalized.length > 0 &&
+        !normalized.startsWith('dummy') &&
+        !normalized.includes('placeholder') &&
+        !normalized.includes('change_me')
+      );
     });
   }
 
@@ -28,8 +47,11 @@ export class CloudinaryService {
         },
         (error, result) => {
           if (error) {
-            this.logger.error(`Cloudinary upload error: ${error.message}`, error.stack);
-            return reject(error);
+            this.logger.error(
+              `Cloudinary upload error: ${error.message}`,
+              error.stack,
+            );
+            return reject(new Error(error.message, { cause: error }));
           }
           if (!result) {
             return reject(new Error('Cloudinary upload returned empty result'));
@@ -41,7 +63,6 @@ export class CloudinaryService {
       uploadStream.end(file.buffer);
     });
   }
-
 
   async deleteFile(publicId: string): Promise<any> {
     try {
@@ -58,7 +79,10 @@ export class CloudinaryService {
 
       return result;
     } catch (error) {
-      this.logger.error(`Cloudinary delete error for publicId ${publicId}:`, error);
+      this.logger.error(
+        `Cloudinary delete error for publicId ${publicId}:`,
+        error,
+      );
       throw error;
     }
   }

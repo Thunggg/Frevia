@@ -1,4 +1,12 @@
 import { Body, Controller, Get, Ip, Post, Query, Res } from '@nestjs/common';
+import type {
+  ForgotPasswordBodyType,
+  LoginBodyType,
+  LogoutBodySchemaType,
+  RefreshTokenBodySchemaType,
+  RegisterBodyType,
+  SendOTPBodyType,
+} from '@shared/types';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { envConfig } from '../../shared/config/validate-env';
@@ -29,14 +37,14 @@ export class AuthController {
   @IsPublic()
   @ZodSerializerDto(RegisterResponseDto)
   register(@Body() body: RegisterDto) {
-    return this.authService.register(body);
+    return this.authService.register(body as RegisterBodyType);
   }
 
   @Post('otp')
   @IsPublic()
   @ZodSerializerDto(SendOTPResponseDTO)
   async sendOTP(@Body() body: SendOTPBodyDTO) {
-    return await this.authService.sendOTP(body);
+    return await this.authService.sendOTP(body as SendOTPBodyType);
   }
 
   @Post('login')
@@ -48,7 +56,7 @@ export class AuthController {
     @Ip() ipAddress: string,
   ) {
     const result = await this.authService.login({
-      ...body,
+      ...(body as LoginBodyType),
       userAgent,
       ipAddress,
     });
@@ -65,26 +73,26 @@ export class AuthController {
     @Ip() ipAddress: string,
   ) {
     return await this.authService.refreshToken({
-      ...body,
+      ...(body as RefreshTokenBodySchemaType),
       userAgent,
       ipAddress,
     });
   }
 
   @Post('logout')
+  @IsPublic()
   @ZodSerializerDto(MessageResDTO)
-  async logout(
-    @Body() body: LogoutBodyDTO,
-    @UserActive('userId') userId: number,
-  ) {
-    return await this.authService.logout(body.refreshToken as string, userId);
+  async logout(@Body() body: LogoutBodyDTO) {
+    return await this.authService.logout(
+      (body as LogoutBodySchemaType).refreshToken,
+    );
   }
 
   @Post('forgot-password')
   @IsPublic()
   @ZodSerializerDto(MessageResDTO)
   async forgotPassword(@Body() body: ForgotPasswordBodyDTO) {
-    return this.authService.forgotPassword(body);
+    return this.authService.forgotPassword(body as ForgotPasswordBodyType);
   }
 
   @Get('google-link')

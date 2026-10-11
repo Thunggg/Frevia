@@ -1,0 +1,30 @@
+meta {
+  name: View permission list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/permissions?page=1&limit=10
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: 
+  ~method: GET
+  ~module: PERMISSIONS
+  ~sortBy: id
+  ~order: asc
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

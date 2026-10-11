@@ -3,10 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  ManageForumPostMessage,
-  ManageForumReportMessage,
-} from '@shared/types';
+import { ManageForumReportMessage } from '@shared/types';
 
 export const ForumReportNotFoundException = () =>
   new NotFoundException([

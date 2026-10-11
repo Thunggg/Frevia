@@ -14,14 +14,20 @@ import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module'
 import { BrowseJobModule } from './routes/browse-job/browse-job.module';
 import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
 import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ProfilesModule } from './routes/profiles/profile.module';
+import { PortfoliosModule } from './routes/portfolios/portfolio.module';
 import { ManageJobModule } from './routes/manage-job/manage-job.module';
 import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
 import { RolesModule } from './routes/roles/roles.module';
+import { PermissionsModule } from './routes/permissions/permissions.module';
+import { SessionsModule } from './routes/sessions/sessions.module';
+import { ConversationModule } from './routes/conversations/conversations.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
 import { MilestoneModule } from './routes/milestone/milestone.module';
 import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
 import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
+import { AccountProfileModule } from './routes/account-profile/account-profile.module';
 
 @Module({
   imports: [
@@ -31,15 +37,21 @@ import { MilestoneSubmissionModule } from './routes/milestone-submission/milesto
     ForumLikeModule,
     ForumCommentModule,
     ForumReportModule,
+    ProfilesModule,
+    PortfoliosModule,
     BrowseJobModule,
     ManageJobModule,
     ForumAdminModule,
     RolesModule,
+    PermissionsModule,
+    SessionsModule,
+    ConversationModule,
     ContractModule,
     SharedFileModule,
     MilestoneModule,
     MilestoneFileModule,
     MilestoneSubmissionModule,
+    AccountProfileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -62,4 +74,4 @@ import { MilestoneSubmissionModule } from './routes/milestone-submission/milesto
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

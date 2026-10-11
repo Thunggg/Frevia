@@ -5,7 +5,6 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
-  AccessTokenPayloadCreate,
   EmailVerificationType,
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
@@ -15,7 +14,6 @@ import {
   MessageResType,
   OauthProvider,
   RefreshTokenBodySchemaType,
-  RefreshTokenPayloadCreate,
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
@@ -292,21 +290,11 @@ export class AuthService {
     userAgent: string;
     ipAddress: string;
   }) {
-    const accessTokenPayload: AccessTokenPayloadCreate = {
-      userId,
-      roleId,
-      roleName,
-    };
-    const accessToken =
-      await this.tokenService.signAccessToken(accessTokenPayload);
-    const refreshTokenPayload: RefreshTokenPayloadCreate = {
-      userId,
-    };
-    const refreshToken =
-      await this.tokenService.signRefreshToken(refreshTokenPayload);
+    // 1) Tạo refresh token trước
+    const refreshToken = await this.tokenService.signRefreshToken({ userId });
 
-    // Tạo session
-    await this.authRepository.createSession({
+    // 2) Lưu session vào DB để lấy session.id
+    const session = await this.authRepository.createSession({
       userId,
       refreshToken,
       deviceInfo: userAgent,
@@ -315,6 +303,14 @@ export class AuthService {
         new Date(),
         ms(envConfig.REFRESH_TOKEN_EXPIRES_IN as StringValue) as number,
       ),
+    });
+
+    // 3) Access token mang sessionId → biết đây là session nào đang dùng
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId,
+      roleName,
+      sessionId: session.id,
     });
 
     return { accessToken, refreshToken };
@@ -384,8 +380,11 @@ export class AuthService {
     }
   }
 
-  async logout(refreshToken: string, userId: number): Promise<MessageResType> {
+  async logout(refreshToken: string): Promise<MessageResType> {
     try {
+      const { userId } =
+        await this.tokenService.verifyRefreshToken(refreshToken);
+
       this.logger.log(`Logout request: userId=${userId}`);
       await this.authRepository.deleteSessionByRefreshToken({
         refreshToken,
@@ -403,6 +402,8 @@ export class AuthService {
       } else if (error instanceof PrismaClientValidationError) {
         this.logger.error('PrismaClientValidationError during logout', error);
         throw ServerErrorException();
+      } else if (error instanceof JsonWebTokenError) {
+        throw RefreshTokenRevokedException();
       }
       throw error;
     }

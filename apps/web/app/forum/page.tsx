@@ -1,58 +1,38 @@
-import { envConfig } from "@/configs/validate-env";
-import {
-  ApiResponse,
-  ForumCategoryListResponseType,
-  ForumCategoryTopListResponseType,
-  ForumTopActiveUserListResponseType,
-} from "@shared/types";
-import { cookies } from "next/headers";
+import authServerRequest from "@/apiRequests/auth.server";
+import forumServerRequest from "@/apiRequests/forum.server";
+import type { UserRole } from "@/components/header";
+import { RoleName } from "@shared/types";
+
 import { ForumCategoryView } from "./components/forum-category-view";
 
-const ForumPage = async () => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+function resolveHeaderRole(
+  user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
+): UserRole {
+  if (!user) return "GUEST";
 
-  if (!accessToken || !envConfig?.NESTJS_API_URL) {
-    return <ForumCategoryView categories={[]} topCategories={[]} topUsers={[]} />;
-  }
+  const primaryRole =
+    user.roles.find((role) => role.isPrimary) ?? user.roles[0];
 
-  const [categories, topCategories, topUsers] = await Promise.all([
-    (async (): Promise<ForumCategoryListResponseType> => {
-      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        cache: "no-store",
-      });
-      const data = (await res.json()) as ApiResponse<ForumCategoryListResponseType>;
-      if (!res.ok || !data.success) return [];
-      return data.data;
-    })(),
-    (async (): Promise<ForumCategoryTopListResponseType> => {
-      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/categories/top?limit=3`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        cache: "no-store",
-      });
-      const data = (await res.json()) as ApiResponse<ForumCategoryTopListResponseType>;
-      if (!res.ok || !data.success) return [];
-      return data.data;
-    })(),
-    (async (): Promise<ForumTopActiveUserListResponseType> => {
-      const res = await fetch(`${envConfig.NESTJS_API_URL}/api/forums/users/top?limit=5`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        cache: "no-store",
-      });
-      const data = (await res.json()) as ApiResponse<ForumTopActiveUserListResponseType>;
-      if (!res.ok || !data.success) return [];
-      return data.data;
-    })(),
+  if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
+  if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
+
+  return "FREELANCER";
+}
+
+export default async function ForumPage() {
+  const [user, categories, topCategories, topUsers] = await Promise.all([
+    authServerRequest.getMe(),
+    forumServerRequest.getCategories(),
+    forumServerRequest.getTopCategories(3),
+    forumServerRequest.getTopUsers(5),
   ]);
 
   return (
     <ForumCategoryView
+      role={resolveHeaderRole(user)}
       categories={categories}
       topCategories={topCategories}
       topUsers={topUsers}
     />
   );
-};
-
-export default ForumPage;
+}
