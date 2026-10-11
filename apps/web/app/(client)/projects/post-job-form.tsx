@@ -340,7 +340,10 @@ export function PostJobForm({
             </p>
             <div className="flex flex-wrap gap-2">
               {selectedSkills.map((skill) => (
-                <Badge key={skill.id}>
+                <Badge
+                  key={skill.id}
+                  className="border border-[#4fae2e]/30 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/40 dark:bg-[#12331f]"
+                >
                   {skill.name}
                   <button
                     type="button"
@@ -372,6 +375,7 @@ export function PostJobForm({
       </Button>
       <Button
         type="submit"
+        className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
         disabled={
           form.formState.isSubmitting ||
           (Boolean(job) && !form.formState.isDirty)
@@ -392,6 +396,7 @@ export function PostJobForm({
           </Button>
           <Button
             type="submit"
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
             disabled={
               form.formState.isSubmitting ||
               (Boolean(job) && !form.formState.isDirty)

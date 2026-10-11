@@ -1,5 +1,10 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
+
 import { Footer } from "@/components/footer";
 import type { HeaderProps } from "@/components/header";
 import { Header } from "@/components/header";
@@ -17,17 +22,7 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/shadcn/pagination";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/components/shadcn/table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search, X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+
 import { RevokeSessionDialog } from "./revoke-session-dialog";
 import {
   SessionDetailDialog,
@@ -185,18 +180,31 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">My Sessions</h1>
-          <p className="text-muted-foreground">
-            Devices and browsers currently signed in to your account
-          </p>
-        </div>
 
+      <main className="flex-1">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">Sessions</span>
+            </nav>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              My Sessions
+            </h1>
+            <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
+              Devices and browsers currently signed in to your account.
+            </p>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <form
-          className="mb-4 flex max-w-sm gap-2"
+          className="mb-6 flex max-w-md gap-2"
           onSubmit={(event) => {
             event.preventDefault();
             applySearch();
@@ -208,14 +216,15 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Search device or IP..."
-              className="pl-9"
+              className="h-11 pl-9"
             />
           </div>
-          {searchParam && (
+          {searchParam ? (
             <Button
               type="button"
               variant="ghost"
               size="icon"
+              className="h-11 w-11"
               onClick={() => {
                 setSearchInput("");
                 updateParams({ search: null, page: "1" });
@@ -224,8 +233,11 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
             >
               <X className="size-4" />
             </Button>
-          )}
-          <Button type="submit" variant="secondary">
+          ) : null}
+          <Button
+            type="submit"
+            className="h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
+          >
             Search
           </Button>
         </form>
@@ -235,123 +247,103 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
             Failed to load sessions. Please try again.
           </p>
         ) : isLoading ? (
-          <div className="space-y-3">
+          <div className="divide-y divide-border border-y border-border">
             {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className="h-12 w-full" />
+              <div key={index} className="px-3 py-5 sm:px-5">
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="mt-3 h-4 w-2/3" />
+                <Skeleton className="mt-2 h-4 w-1/2" />
+              </div>
             ))}
           </div>
         ) : (
           <div
             className={isFetching ? "opacity-60 transition-opacity" : undefined}
           >
-            <div className="rounded-lg border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      <button
-                        type="button"
-                        className="inline-flex items-center font-medium"
-                        onClick={() => toggleSort("id")}
-                      >
-                        ID
-                        <SortIcon column="id" />
-                      </button>
-                    </TableHead>
-                    <TableHead>Device</TableHead>
-                    <TableHead>IP Address</TableHead>
-                    <TableHead>
-                      <button
-                        type="button"
-                        className="inline-flex items-center font-medium"
-                        onClick={() => toggleSort("createdAt")}
-                      >
-                        Created
-                        <SortIcon column="createdAt" />
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        type="button"
-                        className="inline-flex items-center font-medium"
-                        onClick={() => toggleSort("expiresAt")}
-                      >
-                        Expires
-                        <SortIcon column="expiresAt" />
-                      </button>
-                    </TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-24 text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sessions.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="py-10 text-center text-muted-foreground"
-                      >
-                        No sessions found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    sessions.map((session) => {
-                      const expired = isExpired(session.expiresAt);
-                      return (
-                        <TableRow key={session.id}>
-                          <TableCell className="font-mono text-sm">
-                            {session.id}
-                          </TableCell>
-                          <TableCell className="max-w-[240px] truncate">
-                            {session.deviceInfo || "—"}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {session.ipAddress || "—"}
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {formatDate(session.createdAt)}
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {formatDate(session.expiresAt)}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-wrap items-center gap-2">
-                              {session.isCurrent && (
-                                <Badge variant="default">Current</Badge>
-                              )}
-                              <Badge
-                                variant={expired ? "destructive" : "secondary"}
-                              >
-                                {expired ? "Expired" : "Active"}
+            {sessions.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                <p className="text-lg font-medium text-foreground">
+                  No sessions found
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                  {searchParam
+                    ? "Try a different search."
+                    : "Signed-in devices will show up here."}
+                </p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-border border-y border-border">
+                {sessions.map((session) => {
+                  const expired = isExpired(session.expiresAt);
+                  return (
+                    <li key={session.id}>
+                      <div className="flex flex-col gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-6 dark:hover:bg-[#12331f]/35">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-semibold tracking-tight text-foreground">
+                              {session.deviceInfo || "Unknown device"}
+                            </p>
+                            {session.isCurrent ? (
+                              <Badge className="border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
+                                Current
                               </Badge>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="inline-flex items-center justify-end gap-1">
-                              <ViewSessionButton
-                                sessionId={session.id}
-                                onView={setDetailSessionId}
-                              />
-                              <RevokeSessionDialog
-                                sessionId={session.id}
-                                deviceInfo={session.deviceInfo}
-                                isCurrent={session.isCurrent}
-                                isExpired={expired}
-                                onRevoked={() => {
-                                  if (detailSessionId === session.id) {
-                                    setDetailSessionId(null);
-                                  }
-                                }}
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                            ) : null}
+                            <Badge
+                              variant={expired ? "destructive" : "secondary"}
+                              className={
+                                expired
+                                  ? ""
+                                  : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]"
+                              }
+                            >
+                              {expired ? "Expired" : "Active"}
+                            </Badge>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                            <span className="font-mono text-xs">
+                              IP: {session.ipAddress || "—"}
+                            </span>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-1 hover:text-foreground"
+                              onClick={() => toggleSort("createdAt")}
+                            >
+                              Created {formatDate(session.createdAt)}
+                              <SortIcon column="createdAt" />
+                            </button>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-1 hover:text-foreground"
+                              onClick={() => toggleSort("expiresAt")}
+                            >
+                              Expires {formatDate(session.expiresAt)}
+                              <SortIcon column="expiresAt" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <ViewSessionButton
+                            sessionId={session.id}
+                            onView={setDetailSessionId}
+                          />
+                          <RevokeSessionDialog
+                            sessionId={session.id}
+                            deviceInfo={session.deviceInfo}
+                            isCurrent={session.isCurrent}
+                            isExpired={expired}
+                            onRevoked={() => {
+                              if (detailSessionId === session.id) {
+                                setDetailSessionId(null);
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
 
             <SessionDetailDialog
               sessionId={detailSessionId}
@@ -361,8 +353,8 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
               }}
             />
 
-            {pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between gap-4">
+            {pagination.totalPages > 1 ? (
+              <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <p className="text-sm text-muted-foreground">
                   Page {pagination.page} of {pagination.totalPages} (
                   {pagination.total} total)
@@ -427,9 +419,10 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                   </PaginationContent>
                 </Pagination>
               </div>
-            )}
+            ) : null}
           </div>
         )}
+        </div>
       </main>
       <Footer />
     </div>

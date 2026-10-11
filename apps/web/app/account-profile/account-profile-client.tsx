@@ -6,12 +6,6 @@ import { Header, type UserRole } from "@/components/header";
 import { ApiFail } from "@/lib/http";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import {
@@ -219,100 +213,126 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
   const defaultTab = headerRole === "CLIENT" ? "company" : "identity";
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/20">
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
-        <div className="mb-7">
-          <h1 className="text-3xl font-bold">Profile & trust settings</h1>
-          <p className="mt-2 text-muted-foreground">
-            Manage the information that helps people trust and contact you.
-          </p>
-        </div>
+
+      <main className="flex-1">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                Home
+              </Link>
+              <span className="mx-2 text-foreground/35">/</span>
+              <span className="font-medium text-foreground">
+                Profile & settings
+              </span>
+            </nav>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Profile & trust settings
+            </h1>
+            <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
+              Manage the information that helps people trust and contact you.
+            </p>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         {loading ? (
           <div className="flex justify-center py-24">
-            <Loader2 className="size-8 animate-spin" />
+            <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
           </div>
         ) : (
           <Tabs defaultValue={defaultTab}>
-            <TabsList className="mb-6">
-              {headerRole === "FREELANCER" && (
+            <TabsList
+              variant="line"
+              className="mb-8 w-full justify-start overflow-x-auto"
+            >
+              {headerRole === "FREELANCER" ? (
                 <TabsTrigger value="identity">
                   <ShieldCheck /> Identity
                 </TabsTrigger>
-              )}
-              {headerRole === "CLIENT" && (
+              ) : null}
+              {headerRole === "CLIENT" ? (
                 <TabsTrigger value="company">
                   <Building2 /> Company
                 </TabsTrigger>
-              )}
+              ) : null}
               <TabsTrigger value="social">
                 <Link2 /> Social links
               </TabsTrigger>
-              {headerRole === "CLIENT" && (
+              {headerRole === "CLIENT" ? (
                 <TabsTrigger value="favorites">
                   <Heart /> Favorites
                 </TabsTrigger>
-              )}
+              ) : null}
             </TabsList>
 
             <TabsContent value="identity">
-              <div className="grid gap-6 lg:grid-cols-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upload identity document</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form className="space-y-5" onSubmit={uploadDocument}>
-                      <div className="space-y-2">
-                        <Label>Document type</Label>
-                        <Select
-                          value={documentType}
-                          onValueChange={(value) =>
-                            setDocumentType(value as DocumentTypeType)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(DocumentType).map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {labels[value]}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="identity-file">
-                          PDF, JPG or PNG (maximum 10 MB)
-                        </Label>
-                        <Input
-                          id="identity-file"
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={(event) =>
-                            setDocumentFile(event.target.files?.[0] ?? null)
-                          }
-                        />
-                      </div>
-                      <Button disabled={pending === "identity"}>
-                        {pending === "identity" ? (
-                          <Loader2 className="animate-spin" />
-                        ) : (
-                          <Upload />
-                        )}{" "}
-                        Upload for review
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Verification status</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+              <div className="grid gap-8 lg:grid-cols-2">
+                <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <h2 className="text-base font-semibold tracking-tight text-foreground">
+                    Upload identity document
+                  </h2>
+                  <form className="mt-5 space-y-5" onSubmit={uploadDocument}>
+                    <div className="space-y-2">
+                      <Label>Document type</Label>
+                      <Select
+                        value={documentType}
+                        onValueChange={(value) =>
+                          setDocumentType(value as DocumentTypeType)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(DocumentType).map((value) => (
+                            <SelectItem key={value} value={value}>
+                              {labels[value]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="identity-file">
+                        PDF, JPG or PNG (maximum 10 MB)
+                      </Label>
+                      <Input
+                        id="identity-file"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(event) =>
+                          setDocumentFile(event.target.files?.[0] ?? null)
+                        }
+                      />
+                    </div>
+                    <Button
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      disabled={pending === "identity"}
+                    >
+                      {pending === "identity" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Upload />
+                      )}{" "}
+                      Upload for review
+                    </Button>
+                  </form>
+                </div>
+
+                <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <h2 className="text-base font-semibold tracking-tight text-foreground">
+                    Verification status
+                  </h2>
+                  <div className="mt-5 space-y-4">
                     <Badge
+                      className={
+                        identity?.status === VerificationStatus.APPROVED
+                          ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
+                          : ""
+                      }
                       variant={
                         identity?.status === VerificationStatus.APPROVED
                           ? "default"
@@ -322,152 +342,157 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                       {identity?.status ?? "NOT SUBMITTED"}
                     </Badge>
                     {identity?.documents.length ? (
-                      identity.documents.map((document) => (
-                        <div
-                          key={document.id}
-                          className="flex items-center justify-between rounded-lg border p-3"
-                        >
-                          <div>
-                            <p className="font-medium">
-                              {labels[document.documentType]}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(document.createdAt).toLocaleString()}
-                            </p>
-                            {document.reviewNotes && (
-                              <p className="mt-1 text-sm text-destructive">
-                                {document.reviewNotes}
+                      <ul className="divide-y divide-border border-y border-border">
+                        {identity.documents.map((document) => (
+                          <li
+                            key={document.id}
+                            className="flex items-center justify-between gap-3 py-3"
+                          >
+                            <div>
+                              <p className="font-medium text-foreground">
+                                {labels[document.documentType]}
                               </p>
-                            )}
-                          </div>
-                          <Button variant="ghost" size="icon" asChild>
-                            <a
-                              href={document.fileUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <ExternalLink />
-                            </a>
-                          </Button>
-                        </div>
-                      ))
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(document.createdAt).toLocaleString()}
+                              </p>
+                              {document.reviewNotes ? (
+                                <p className="mt-1 text-sm text-destructive">
+                                  {document.reviewNotes}
+                                </p>
+                              ) : null}
+                            </div>
+                            <Button variant="ghost" size="icon" asChild>
+                              <a
+                                href={document.fileUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <ExternalLink />
+                              </a>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
                     ) : (
                       <p className="text-sm text-muted-foreground">
                         No documents submitted yet.
                       </p>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="company">
-              <Card className="max-w-3xl">
-                <CardHeader>
-                  <CardTitle>Company information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-5" onSubmit={saveCompany}>
-                    <div className="space-y-2">
-                      <Label>Company name</Label>
-                      <Input
-                        value={companyName}
-                        onChange={(event) => setCompanyName(event.target.value)}
-                        required
-                        maxLength={255}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Description</Label>
-                      <Textarea
-                        rows={6}
-                        value={companyDescription}
-                        onChange={(event) =>
-                          setCompanyDescription(event.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Website</Label>
-                      <Input
-                        type="url"
-                        placeholder="https://company.com"
-                        value={website}
-                        onChange={(event) => setWebsite(event.target.value)}
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button disabled={pending === "company"}>
-                        {pending === "company" && (
-                          <Loader2 className="animate-spin" />
-                        )}{" "}
-                        Save changes
+              <div className="max-w-3xl rounded-xl border border-border p-5 sm:p-6">
+                <h2 className="text-base font-semibold tracking-tight text-foreground">
+                  Company information
+                </h2>
+                <form className="mt-5 space-y-5" onSubmit={saveCompany}>
+                  <div className="space-y-2">
+                    <Label>Company name</Label>
+                    <Input
+                      value={companyName}
+                      onChange={(event) => setCompanyName(event.target.value)}
+                      required
+                      maxLength={255}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Textarea
+                      rows={6}
+                      value={companyDescription}
+                      onChange={(event) =>
+                        setCompanyDescription(event.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Website</Label>
+                    <Input
+                      type="url"
+                      placeholder="https://company.com"
+                      value={website}
+                      onChange={(event) => setWebsite(event.target.value)}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      disabled={pending === "company"}
+                    >
+                      {pending === "company" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : null}{" "}
+                      Save changes
+                    </Button>
+                    {clientProfile ? (
+                      <Button variant="outline" asChild>
+                        <Link href={`/clients/${userId}`}>
+                          View public profile
+                        </Link>
                       </Button>
-                      {clientProfile && (
-                        <Button variant="outline" asChild>
-                          <Link href={`/clients/${userId}`}>
-                            View public profile
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
+                    ) : null}
+                  </div>
+                </form>
+              </div>
             </TabsContent>
 
             <TabsContent value="social">
-              <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Add social link</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form className="space-y-4" onSubmit={addSocialLink}>
-                      <Select
-                        value={platform}
-                        onValueChange={(value) =>
-                          setPlatform(value as SocialPlatformType)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(SocialPlatform).map((value) => (
-                            <SelectItem key={value} value={value}>
-                              {value.replaceAll("_", " ")}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="url"
-                        required
-                        placeholder="https://..."
-                        value={socialUrl}
-                        onChange={(event) => setSocialUrl(event.target.value)}
-                      />
-                      <Button disabled={pending === "social"}>
-                        <Plus /> Add link
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Your links</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {socialLinks.length ? (
-                      socialLinks.map((link) => (
-                        <div
+              <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+                <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <h2 className="text-base font-semibold tracking-tight text-foreground">
+                    Add social link
+                  </h2>
+                  <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
+                    <Select
+                      value={platform}
+                      onValueChange={(value) =>
+                        setPlatform(value as SocialPlatformType)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(SocialPlatform).map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {value.replaceAll("_", " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      type="url"
+                      required
+                      placeholder="https://..."
+                      value={socialUrl}
+                      onChange={(event) => setSocialUrl(event.target.value)}
+                    />
+                    <Button
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      disabled={pending === "social"}
+                    >
+                      <Plus /> Add link
+                    </Button>
+                  </form>
+                </div>
+
+                <div>
+                  <h2 className="text-base font-semibold tracking-tight text-foreground">
+                    Your links
+                  </h2>
+                  {socialLinks.length ? (
+                    <ul className="mt-4 divide-y divide-border border-y border-border">
+                      {socialLinks.map((link) => (
+                        <li
                           key={link.id}
-                          className="flex items-center gap-3 rounded-lg border p-3"
+                          className="flex items-center gap-3 px-1 py-4"
                         >
-                          <Link2 className="size-4" />
+                          <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
                           <a
-                            className="min-w-0 flex-1 truncate text-sm text-primary hover:underline"
+                            className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
                             href={link.url}
                             target="_blank"
                             rel="noreferrer"
@@ -485,26 +510,26 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                           >
                             <Trash2 />
                           </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        No social links added yet.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-4 text-sm text-muted-foreground">
+                      No social links added yet.
+                    </p>
+                  )}
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="favorites">
-              <div className="grid gap-4 md:grid-cols-2">
-                {favorites.length ? (
-                  favorites.map((favorite) => (
-                    <Card key={favorite.freelancerId}>
-                      <CardContent className="flex items-start gap-4 pt-6">
+              {favorites.length ? (
+                <ul className="divide-y divide-border border-y border-border">
+                  {favorites.map((favorite) => (
+                    <li key={favorite.freelancerId}>
+                      <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-[#12331f]/35">
                         <div className="min-w-0 flex-1">
-                          <p className="text-lg font-semibold">
+                          <p className="text-lg font-semibold tracking-tight text-foreground">
                             {favorite.profile.displayName ?? "Freelancer"}
                           </p>
                           <p className="text-sm text-muted-foreground">
@@ -515,7 +540,11 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                             {favorite.profile.freelancerProfile.skills
                               .slice(0, 4)
                               .map((skill) => (
-                                <Badge key={skill.id} variant="secondary">
+                                <Badge
+                                  key={skill.id}
+                                  variant="secondary"
+                                  className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#12331f]"
+                                >
                                   {skill.skillName}
                                 </Badge>
                               ))}
@@ -543,26 +572,28 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                         >
                           <Trash2 />
                         </Button>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <Card className="md:col-span-2">
-                    <CardContent className="py-16 text-center">
-                      <Heart className="mx-auto size-9 text-muted-foreground" />
-                      <p className="mt-3 font-medium">
-                        No favorite freelancers yet
-                      </p>
-                      <Button className="mt-4" asChild>
-                        <Link href="/find-work">Discover freelancers</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                  <Heart className="mx-auto size-9 text-[#4fae2e]" />
+                  <p className="mt-3 font-medium text-foreground">
+                    No favorite freelancers yet
+                  </p>
+                  <Button
+                    className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    asChild
+                  >
+                    <Link href="/find-work">Discover freelancers</Link>
+                  </Button>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         )}
+        </div>
       </main>
       <Footer />
     </div>
