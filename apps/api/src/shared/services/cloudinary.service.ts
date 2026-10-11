@@ -17,8 +17,20 @@ export class CloudinaryService {
   }
 
   isConfigured() {
-    const apiKey = envConfig.CLOUDINARY_API_KEY;
-    return Boolean(apiKey && !apiKey.toLowerCase().startsWith('dummy'));
+    const credentials = [
+      envConfig.CLOUDINARY_CLOUD_NAME,
+      envConfig.CLOUDINARY_API_KEY,
+      envConfig.CLOUDINARY_API_SECRET,
+    ];
+    return credentials.every((credential) => {
+      const normalized = credential.trim().toLowerCase();
+      return (
+        normalized.length > 0 &&
+        !normalized.startsWith('dummy') &&
+        !normalized.includes('placeholder') &&
+        !normalized.includes('change_me')
+      );
+    });
   }
 
   async uploadFile(
