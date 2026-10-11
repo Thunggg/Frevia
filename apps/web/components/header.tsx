@@ -179,7 +179,7 @@ function HeaderSearch({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search for projects, skills..."
-          className="w-full rounded-full border border-transparent bg-white py-2 pl-10 pr-4 text-sm text-foreground shadow-sm outline-none ring-[#4fae2e]/30 placeholder:text-muted-foreground focus:ring-2 dark:border-white/10 dark:bg-[#0c2416] dark:text-foreground dark:shadow-none dark:ring-[#4fae2e]/40"
+          className="w-full rounded-full border border-transparent bg-white py-2 pl-10 pr-4 text-sm text-foreground shadow-sm outline-none ring-[#4fae2e]/30 placeholder:text-muted-foreground focus:ring-2 dark:border-white/10 dark:bg-muted dark:text-foreground dark:shadow-none dark:ring-[#4fae2e]/40"
         />
       </div>
     </form>
@@ -337,7 +337,7 @@ export function Header({ role }: HeaderProps) {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#4fae2e]/15 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+    <header className="sticky top-0 z-50 border-b border-[#4fae2e]/15 bg-[#eaf8df] text-foreground dark:border-white/10 dark:bg-[#161716]">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Logo />
         {role === "FREELANCER" && <HeaderSearch />}
@@ -353,7 +353,7 @@ export function Header({ role }: HeaderProps) {
         </button>
       </div>
       {isMenuOpen && (
-        <div className="space-y-3 border-t border-[#4fae2e]/15 bg-[#eaf8df] p-4 md:hidden dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <div className="space-y-3 border-t border-[#4fae2e]/15 bg-[#eaf8df] p-4 md:hidden dark:border-white/10 dark:bg-[#161716]">
           {role === "FREELANCER" && (
             <HeaderSearch className="block w-full" />
           )}
@@ -363,7 +363,7 @@ export function Header({ role }: HeaderProps) {
               <Button
                 variant="outline"
                 asChild
-                className="w-full border-[#4fae2e]/35 bg-transparent dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+                className="w-full border-[#4fae2e]/35 bg-transparent dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
               >
                 <Link href="/login" onClick={closeMenu}>
                   Log in

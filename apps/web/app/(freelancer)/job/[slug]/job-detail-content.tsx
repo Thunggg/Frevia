@@ -266,7 +266,7 @@ export function JobDetailContent({
       <Header role={role} />
 
       <main className="flex-1 pb-24 lg:pb-0">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-foreground/60">
               <nav className="flex min-w-0 items-center gap-2">
@@ -362,7 +362,7 @@ export function JobDetailContent({
                       <Link
                         key={skill.skillId}
                         href={`/find-work?keyword=${encodeURIComponent(skill.skill.name)}`}
-                        className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
+                        className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
                       >
                         {skill.skill.name}
                       </Link>
@@ -449,7 +449,7 @@ export function JobDetailContent({
               <div className="border-t border-border pt-4">
                 <p className="text-sm font-medium text-foreground">Client</p>
                 <div className="mt-3 flex items-center gap-3">
-                  <div className="flex size-11 items-center justify-center rounded-full bg-[#eaf8df] text-sm font-semibold text-[#4fae2e] dark:bg-[#12331f]">
+                  <div className="flex size-11 items-center justify-center rounded-full bg-[#eaf8df] text-sm font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
                     {clientLoading ? "…" : clientInitial}
                   </div>
                   <div className="min-w-0">

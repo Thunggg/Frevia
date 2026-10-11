@@ -296,7 +296,7 @@ export function RegisterForm() {
                 >
                   <FieldLabel
                     htmlFor="role-freelancer"
-                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#12331f]/50"
+                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#4fae2e]/10"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -314,7 +314,7 @@ export function RegisterForm() {
                   </FieldLabel>
                   <FieldLabel
                     htmlFor="role-client"
-                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#12331f]/50"
+                    className="cursor-pointer rounded-xl border border-border bg-background p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/60 has-data-[state=checked]:bg-[#eaf8df]/50 dark:has-data-[state=checked]:bg-[#4fae2e]/10"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>

@@ -131,14 +131,14 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   return (
     <aside className="flex h-full w-full flex-col border-r border-border bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#12331f]/40">
+      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#1a1c1a]/40">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <MessageSquare className="h-5 w-5 text-[#4fae2e]" />
           Messages
         </h2>
         <NewConversationDialog
           trigger={
-            <Button variant="outline" size="icon" className="h-8 w-8 border-[#4fae2e]/30 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]">
+            <Button variant="outline" size="icon" className="h-8 w-8 border-[#4fae2e]/30 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5">
               <Plus className="h-4 w-4" />
               <span className="sr-only">New conversation</span>
             </Button>
@@ -190,8 +190,8 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                 >
                   <Link
                     href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-[#eaf8df]/80 dark:hover:bg-[#12331f]/50 ${
-                      isActive ? "!bg-[#eaf8df] border-r-[3px] !border-r-[#4fae2e] dark:!bg-[#12331f]" : ""
+                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-[#eaf8df]/80 dark:hover:bg-white/5/50 ${
+                      isActive ? "!bg-[#eaf8df] border-r-[3px] !border-r-[#4fae2e] dark:!bg-[#222422]" : ""
                     }`}
                   >
                     <Avatar className="mt-0.5">

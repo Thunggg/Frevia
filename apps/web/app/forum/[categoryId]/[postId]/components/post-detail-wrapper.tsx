@@ -15,7 +15,7 @@ type PostDetailWrapperProps = {
 function PostDetailSkeleton() {
   return (
     <div>
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
         <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <div className="mb-4 h-4 w-72 max-w-full animate-pulse rounded bg-[#4fae2e]/15" />
           <div className="h-4 w-40 animate-pulse rounded bg-[#4fae2e]/10" />

@@ -342,7 +342,7 @@ export function PostJobForm({
               {selectedSkills.map((skill) => (
                 <Badge
                   key={skill.id}
-                  className="border border-[#4fae2e]/30 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/40 dark:bg-[#12331f]"
+                  className="border border-[#4fae2e]/30 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/40 dark:bg-[#4fae2e]/10"
                 >
                   {skill.name}
                   <button

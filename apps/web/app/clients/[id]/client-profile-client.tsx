@@ -70,7 +70,7 @@ export function ClientProfileClient({
       <Header role={headerRole} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -125,7 +125,7 @@ export function ClientProfileClient({
             <>
               <div className="overflow-hidden rounded-xl border border-border">
                 <div
-                  className="h-40 bg-[#12331f] bg-cover bg-center dark:bg-[#0c2416]"
+                  className="h-40 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"
                   style={
                     profile.coverUrl
                       ? { backgroundImage: `url(${profile.coverUrl})` }
@@ -137,12 +137,12 @@ export function ClientProfileClient({
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                       <Avatar className="-mt-12 size-24 border-4 border-background sm:size-28">
                         <AvatarImage src={profile.avatarUrl ?? undefined} />
-                        <AvatarFallback className="bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+                        <AvatarFallback className="bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                           <Building2 />
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <Badge className="border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+                        <Badge className="border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                           Client
                         </Badge>
                         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">

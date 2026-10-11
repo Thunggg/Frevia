@@ -277,7 +277,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#12331f]/40">
+      <div className="flex items-center gap-3 border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-[#1a1c1a]/40">
         <Link
           href="/conversations"
           className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225] md:hidden"

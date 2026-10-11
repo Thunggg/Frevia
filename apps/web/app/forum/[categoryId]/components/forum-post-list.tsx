@@ -230,7 +230,7 @@ export function ForumPostList({
             <button
               type="button"
               onClick={clearSearch}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#12331f]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
             >
               Search: {currentSearch}
               <X className="size-3.5 text-muted-foreground" />
@@ -240,7 +240,7 @@ export function ForumPostList({
             <button
               type="button"
               onClick={() => navigateToPage(1, searchInput, undefined, false)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#12331f]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1 text-sm text-foreground transition-colors hover:border-[#4fae2e]/50 dark:bg-[#1a1c1a]"
             >
               My posts
               <X className="size-3.5 text-muted-foreground" />
@@ -274,7 +274,7 @@ export function ForumPostList({
                       href={`/forum/${post.categoryId ?? categoryId}/${post.id}`}
                       className="group flex items-start gap-3 py-3"
                     >
-                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#12331f]">
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
                         {index + 1}
                       </span>
                       <div className="min-w-0 flex-1">
@@ -326,7 +326,7 @@ export function ForumPostList({
           >
             {posts.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                   <Inbox className="size-7" />
                 </div>
                 <p className="text-lg font-medium text-foreground">
@@ -359,7 +359,7 @@ export function ForumPostList({
                   <li key={post.id}>
                     <Link
                       href={`/forum/${categoryId}/${post.id}`}
-                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-[#12331f]/35"
+                      className="group block px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 sm:py-7 dark:hover:bg-white/5/35"
                     >
                       <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-lg">
                         {post.title}

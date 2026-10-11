@@ -107,7 +107,7 @@ export function PostDetailView({
 
   return (
     <div>
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
         <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <nav className="text-sm text-foreground/60">
             <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -236,8 +236,8 @@ export function PostDetailView({
               disabled={toggleLike.isPending}
               className={
                 liked
-                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
-                  : "gap-1.5 px-3 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-[#12331f]/40"
+                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                  : "gap-1.5 px-3 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-white/5/40"
               }
             >
               <Heart

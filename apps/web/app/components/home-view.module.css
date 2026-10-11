@@ -41,10 +41,10 @@
   background:
     radial-gradient(
       ellipse 90% 55% at 50% 0%,
-      rgba(79, 174, 46, 0.2),
-      transparent 60%
+      rgba(79, 174, 46, 0.12),
+      transparent 55%
     ),
-    linear-gradient(180deg, #12331f 0%, #0f2a19 45%, #12331f 100%);
+    linear-gradient(180deg, #171817 0%, #141514 50%, #171817 100%);
 }
 
 .reveal {
@@ -132,9 +132,9 @@
 }
 
 :global(.dark) .heroSliderNav {
-  background: rgba(18, 51, 31, 0.88);
-  color: #eaf8df;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  background: rgba(28, 30, 28, 0.92);
+  color: #e8ebe8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .heroSliderNav:hover {
@@ -142,7 +142,7 @@
 }
 
 :global(.dark) .heroSliderNav:hover {
-  background: #184029;
+  background: #2a2d2a;
 }
 
 .heroSliderNav:active {

@@ -44,7 +44,7 @@ export function ForumCategoryView({
       <Header role={role} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -101,7 +101,7 @@ export function ForumCategoryView({
                   <li key={category.id}>
                     <Link
                       href={`/forum/${category.id}`}
-                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-[#12331f]/35"
+                      className="group flex flex-col gap-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/5/35"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export function ForumCategoryView({
                         href={`/forum/${category.id}`}
                         className="group flex items-center gap-3 py-3"
                       >
-                        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#12331f]">
+                        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-xs font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
                           {index + 1}
                         </span>
                         <div className="min-w-0 flex-1">

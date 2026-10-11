@@ -11,7 +11,7 @@ export default function JobNotFound() {
       <Header role="GUEST" />
       <main className="flex flex-1 items-center justify-center px-4 py-16">
         <section className="max-w-md text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
             <BriefcaseBusiness className="size-7" />
           </div>
           <h1 className="mt-6 text-2xl font-semibold tracking-tight text-foreground">

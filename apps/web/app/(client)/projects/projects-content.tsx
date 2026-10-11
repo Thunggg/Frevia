@@ -31,7 +31,7 @@ type ProjectsContentProps = {
 
 function statusBadgeClass(status: string) {
   if (status === "OPEN") {
-    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]";
+    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15";
   }
   return "";
 }
@@ -83,7 +83,7 @@ export function ProjectsContent({
       <Header role="CLIENT" />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -132,7 +132,7 @@ export function ProjectsContent({
             <ul className="divide-y divide-border border-y border-border">
               {jobs.map((job) => (
                 <li key={job.id}>
-                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-[#12331f]/35">
+                  <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/5/35">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-lg font-semibold tracking-tight text-foreground">

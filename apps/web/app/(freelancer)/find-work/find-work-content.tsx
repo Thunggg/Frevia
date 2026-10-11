@@ -318,7 +318,7 @@ export function FindWorkContent({
       <Header role={role} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -384,7 +384,7 @@ export function FindWorkContent({
                     key={chip.key}
                     type="button"
                     onClick={chip.onClear}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-[#dff5cf] dark:border-[#4fae2e]/40 dark:bg-[#12331f] dark:hover:bg-[#184029]"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-[#dff5cf] dark:border-[#4fae2e]/40 dark:bg-[#4fae2e]/10 dark:hover:bg-[#4fae2e]/15"
                   >
                     <span>{chip.label}</span>
                     <X className="size-3.5 text-[#4fae2e]" />
@@ -434,7 +434,7 @@ export function FindWorkContent({
                 return (
                   <li key={job.id}>
                     <div
-                      className={`py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-[#12331f]/35 ${
+                      className={`py-6 transition-colors hover:bg-[#eaf8df]/35 dark:hover:bg-white/5/35 ${
                         job.featured
                           ? "border-l-2 border-l-[#4fae2e] pl-4 sm:pl-5"
                           : "pl-0 sm:pl-1"
@@ -482,7 +482,7 @@ export function FindWorkContent({
                                   onClick={(event) =>
                                     applySkillFilter(skill.skill.name, event)
                                   }
-                                  className="rounded-full border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
+                                  className="rounded-full border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
                                 >
                                   {skill.skill.name}
                                 </button>

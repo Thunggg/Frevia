@@ -36,7 +36,7 @@ export function AuthShell({
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-[linear-gradient(160deg,#eaf8df_0%,rgba(234,248,223,0.88)_38%,rgba(18,51,31,0.55)_100%)] dark:bg-[linear-gradient(160deg,#12331f_0%,rgba(18,51,31,0.92)_45%,rgba(18,51,31,0.72)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(160deg,#eaf8df_0%,rgba(234,248,223,0.88)_38%,rgba(18,51,31,0.55)_100%)] dark:bg-[linear-gradient(160deg,#1a1c1a_0%,rgba(20,21,20,0.94)_50%,rgba(18,18,18,0.88)_100%)]"
         />
         <div className="relative z-10 p-10 xl:p-12">
           <Link

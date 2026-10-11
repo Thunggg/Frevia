@@ -87,7 +87,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
           Comments
         </h2>
         {pagination ? (
-          <span className="rounded-full bg-[#eaf8df] px-2 py-0.5 text-xs font-medium text-[#4fae2e] dark:bg-[#12331f]">
+          <span className="rounded-full bg-[#eaf8df] px-2 py-0.5 text-xs font-medium text-[#4fae2e] dark:bg-[#4fae2e]/15">
             {pagination.total}
           </span>
         ) : null}
@@ -170,7 +170,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
 
       {!isLoading && comments.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
-          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
             <Inbox className="size-6" />
           </div>
           <p className="text-sm font-medium text-foreground">No comments yet</p>
@@ -323,8 +323,8 @@ function CommentItem({
                 size="xs"
                 className={
                   liked
-                    ? "gap-1 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-[#12331f]"
-                    : "gap-1 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-[#12331f]/40"
+                    ? "gap-1 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                    : "gap-1 text-muted-foreground hover:bg-[#eaf8df]/60 hover:text-[#4fae2e] dark:hover:bg-white/5/40"
                 }
                 onClick={handleToggleLike}
                 disabled={toggleLike.isPending}

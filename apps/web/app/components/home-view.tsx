@@ -128,7 +128,7 @@ export function HomeView({ user }: HomeViewProps) {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
                 >
                   <Link href="/login">Log in</Link>
                 </Button>
@@ -137,7 +137,7 @@ export function HomeView({ user }: HomeViewProps) {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+                  className="min-w-36 border-[#4fae2e]/35 bg-transparent text-foreground hover:border-[#4fae2e]/55 hover:bg-[#eaf8df]/70 active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
                 >
                   <Link href="/forum">Visit Forum</Link>
                 </Button>
@@ -192,7 +192,7 @@ export function HomeView({ user }: HomeViewProps) {
           </RevealOnScroll>
         </section>
 
-        <section className="bg-[#f4faf0] dark:bg-[#12331f]">
+        <section className="bg-[#f4faf0] dark:bg-[#1a1c1a]">
           <RevealOnScroll>
             <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 sm:py-24">
               <h2
@@ -208,7 +208,7 @@ export function HomeView({ user }: HomeViewProps) {
                 asChild
                 size="lg"
                 variant="outline"
-                className="mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#184029]"
+                className="mt-9 min-w-40 border-[#4fae2e]/40 bg-transparent text-foreground hover:bg-[#eaf8df] active:scale-[0.98] dark:border-[#4fae2e]/40 dark:hover:bg-[#4fae2e]/15"
               >
                 <Link href="/forum">Visit Forum</Link>
               </Button>

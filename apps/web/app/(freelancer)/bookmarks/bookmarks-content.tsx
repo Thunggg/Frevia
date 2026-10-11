@@ -87,7 +87,7 @@ export function BookmarksContent({
       <Header role="FREELANCER" />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -123,7 +123,7 @@ export function BookmarksContent({
                 const availability = getAvailability(job);
                 return (
                   <li key={job.id}>
-                    <div className="flex flex-col justify-between gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:px-5 sm:py-7 dark:hover:bg-[#12331f]/35">
+                    <div className="flex flex-col justify-between gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:px-5 sm:py-7 dark:hover:bg-white/5/35">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2 text-xs">
                           <Badge
@@ -135,7 +135,7 @@ export function BookmarksContent({
                             className={
                               availability.isExpiring
                                 ? ""
-                                : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]"
+                                : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
                             }
                           >
                             {availability.label}
@@ -205,7 +205,7 @@ export function BookmarksContent({
             </ul>
           ) : (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                 <Bookmark className="size-7" />
               </div>
               <p className="text-lg font-medium text-foreground">

@@ -217,7 +217,7 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
       <Header role={headerRole} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -527,7 +527,7 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                 <ul className="divide-y divide-border border-y border-border">
                   {favorites.map((favorite) => (
                     <li key={favorite.freelancerId}>
-                      <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-[#12331f]/35">
+                      <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/5/35">
                         <div className="min-w-0 flex-1">
                           <p className="text-lg font-semibold tracking-tight text-foreground">
                             {favorite.profile.displayName ?? "Freelancer"}
@@ -543,7 +543,7 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
                                 <Badge
                                   key={skill.id}
                                   variant="secondary"
-                                  className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#12331f]"
+                                  className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
                                 >
                                   {skill.skillName}
                                 </Badge>

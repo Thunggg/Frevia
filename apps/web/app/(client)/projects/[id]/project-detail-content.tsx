@@ -60,7 +60,7 @@ function JobDescription({ description }: { description: string | null }) {
 
 function statusBadgeClass(status: string) {
   if (status === "OPEN") {
-    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]";
+    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15";
   }
   return "";
 }
@@ -71,7 +71,7 @@ export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
       <Header role="CLIENT" />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -153,7 +153,7 @@ export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
                     <li key={skill.skillId}>
                       <Badge
                         variant="secondary"
-                        className="border border-[#4fae2e]/20 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/30 dark:bg-[#12331f]"
+                        className="border border-[#4fae2e]/20 bg-[#eaf8df] text-foreground dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
                       >
                         <Tag className="mr-1 size-3 text-[#4fae2e]" />
                         {skill.skill.name}

@@ -581,7 +581,7 @@ export function ProfilePageClient({
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-[#4fae2e]/25 dark:bg-[#12331f]">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -604,7 +604,7 @@ export function ProfilePageClient({
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-xl border border-border">
             <div
-              className="h-44 bg-[#12331f] bg-cover bg-center dark:bg-[#0c2416]"
+              className="h-44 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"
               style={
                 profile.coverUrl
                   ? { backgroundImage: `url(${profile.coverUrl})` }
@@ -621,7 +621,7 @@ export function ProfilePageClient({
                         alt={profile.displayName ?? "Freelancer"}
                       />
                     ) : null}
-                    <AvatarFallback className="bg-[#eaf8df] text-2xl font-bold text-[#4fae2e] dark:bg-[#12331f]">
+                    <AvatarFallback className="bg-[#eaf8df] text-2xl font-bold text-[#4fae2e] dark:bg-[#4fae2e]/15">
                       {getInitials(profile.displayName)}
                     </AvatarFallback>
                   </Avatar>
@@ -631,7 +631,7 @@ export function ProfilePageClient({
                         {profile.displayName ?? "Unnamed freelancer"}
                       </h2>
                       {freelancer?.idVerified ? (
-                        <Badge className="gap-1 border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#12331f]">
+                        <Badge className="gap-1 border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                           <ShieldCheck className="size-3" /> Verified
                         </Badge>
                       ) : null}
@@ -845,7 +845,7 @@ export function ProfilePageClient({
                           onClick={() => void showPortfolioDetail(portfolio)}
                         >
                           <div
-                            className="h-36 w-full shrink-0 rounded-lg bg-[#eaf8df] bg-cover bg-center sm:h-28 sm:w-40 dark:bg-[#12331f]"
+                            className="h-36 w-full shrink-0 rounded-lg bg-[#eaf8df] bg-cover bg-center sm:h-28 sm:w-40 dark:bg-[#1a1c1a]"
                             style={
                               portfolio.mediaUrls[0]
                                 ? {
@@ -869,7 +869,7 @@ export function ProfilePageClient({
                                   <Badge
                                     key={technology}
                                     variant="secondary"
-                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#12331f]"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
                                   >
                                     {technology}
                                   </Badge>
