@@ -9,6 +9,14 @@ if (!process.env.DIRECT_URL) {
   process.exit(1);
 }
 
+function requireSeedCredential(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required seed credential: ${name}`);
+  }
+  return value;
+}
+
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
 });
@@ -22,12 +30,18 @@ const DEFAULT_EMAIL_AND_PASSWORD: Record<
     password: string;
   }
 > = {
-  [RoleName.ADMIN]: { email: 'admin@gmail.com', password: 'Admin123!' },
-  [RoleName.FREELANCER]: {
-    email: 'freelancer@gmail.com',
-    password: 'Freelancer123!',
+  [RoleName.ADMIN]: {
+    email: requireSeedCredential('SEED_ADMIN_EMAIL'),
+    password: requireSeedCredential('SEED_ADMIN_PASSWORD'),
   },
-  [RoleName.CLIENT]: { email: 'client@gmail.com', password: 'Client123!' },
+  [RoleName.FREELANCER]: {
+    email: requireSeedCredential('SEED_FREELANCER_EMAIL'),
+    password: requireSeedCredential('SEED_FREELANCER_PASSWORD'),
+  },
+  [RoleName.CLIENT]: {
+    email: requireSeedCredential('SEED_CLIENT_EMAIL'),
+    password: requireSeedCredential('SEED_CLIENT_PASSWORD'),
+  },
 };
 
 async function createAccountRole({
@@ -41,12 +55,14 @@ async function createAccountRole({
     where: {
       email,
     },
+    include: {
+      profile: {
+        include: {
+          freelancerProfile: true,
+        },
+      },
+    },
   });
-
-  if (accountIsExist) {
-    console.log('Account already exists: ', accountIsExist);
-    return;
-  }
 
   const accountRole = await prisma.role.findFirst({
     where: {
@@ -60,25 +76,70 @@ async function createAccountRole({
     return;
   }
 
-  const newAccount = await prisma.user.create({
-    data: {
-      email,
-      password: (await hashingService.hash(
-        DEFAULT_EMAIL_AND_PASSWORD[role].password,
-      )) as string,
-      isBanned: false,
-      userRoles: {
-        create: {
-          roleId: accountRole.id,
-          isPrimary: true,
+  if (!accountIsExist) {
+    const newAccount = await prisma.user.create({
+      data: {
+        email,
+        password: (await hashingService.hash(
+          DEFAULT_EMAIL_AND_PASSWORD[role].password,
+        )) as string,
+        isBanned: false,
+        userRoles: {
+          create: {
+            roleId: accountRole.id,
+            isPrimary: true,
+          },
         },
+        profile: {
+          create: {
+            displayName: email.split('@')[0],
+            freelancerProfile:
+              role === RoleName.FREELANCER
+                ? {
+                    create: {
+                      title: 'Senior UI/UX Designer',
+                    },
+                  }
+                : undefined,
+          },
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
+    });
 
-  console.log('New account created: ', newAccount);
+    console.log('New account created: ', newAccount);
+  } else {
+    console.log('Account already exists: ', accountIsExist.email);
+    if (!accountIsExist.profile) {
+      const newProfile = await prisma.profile.create({
+        data: {
+          userId: accountIsExist.id,
+          displayName: email.split('@')[0],
+          freelancerProfile:
+            role === RoleName.FREELANCER
+              ? {
+                  create: {
+                    title: 'Senior UI/UX Designer',
+                  },
+                }
+              : undefined,
+        },
+      });
+      console.log('Created missing profile for user: ', newProfile);
+    } else if (
+      role === RoleName.FREELANCER &&
+      !accountIsExist.profile.freelancerProfile
+    ) {
+      const newFreelancerProfile = await prisma.freelancerProfile.create({
+        data: {
+          profileId: accountIsExist.profile.id,
+          title: 'Senior UI/UX Designer',
+        },
+      });
+      console.log('Created missing freelancer profile: ', newFreelancerProfile);
+    }
+  }
 }
 
 async function main() {
@@ -109,9 +170,9 @@ async function main() {
 }
 
 main()
-  .catch((error) => {
+  .catch((error: unknown) => {
     console.error(error);
-    process.exit(1);
+    process.exitCode = 1;
   })
   .finally(async () => {
     await prisma.$disconnect();

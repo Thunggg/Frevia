@@ -5,8 +5,8 @@ import { ContractRepository } from './contract.repo';
 import { ContractService } from './contract.service';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [ContractController],
-    providers: [ContractService, ContractRepository],
+  imports: [SharedModule],
+  controllers: [ContractController],
+  providers: [ContractService, ContractRepository],
 })
-export class ContractModule { }
+export class ContractModule {}

@@ -70,9 +70,7 @@ async function main() {
   });
 
   if (jobs.length === 0) {
-    throw new Error(
-      'No jobs found in database. Please run seed:jobs first.',
-    );
+    throw new Error('No jobs found in database. Please run seed:jobs first.');
   }
 
   console.log(`Found ${jobs.length} jobs. Creating proposals...`);

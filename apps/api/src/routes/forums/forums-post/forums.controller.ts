@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -21,16 +20,10 @@ import {
   CreateForumPostDto,
   CreateForumPostResponseDto,
   ViewForumPostDetailResponseDto,
-  UpdateForumPostDto,
-  UpdateForumPostResponseDto,
   ForumTopPostListResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
-import type {
-  ForumPostFilterType,
-  CreateForumPostType,
-  UpdateForumPostType,
-} from '@shared/types';
+import type { ForumPostFilterType, CreateForumPostType } from '@shared/types';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { z } from 'zod';
 

@@ -20,7 +20,13 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect(({ body }: { body: unknown }) => {
+        expect(body).toEqual({
+          success: true,
+          data: 'Hello World!',
+          timestamp: expect.any(String),
+        });
+      });
   });
 
   afterEach(async () => {

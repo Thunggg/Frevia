@@ -9,9 +9,16 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
+const PUBLIC_ROUTES = ["/profiles", "/clients"];
 
 const isAuthRoute = (pathname: string) =>
   AUTH_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+const isPublicRoute = (pathname: string) =>
+  isAuthRoute(pathname) ||
+  PUBLIC_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
@@ -60,7 +67,7 @@ export default async function proxy(request: NextRequest) {
       hasSession = false;
 
       // Nếu không phải là route auth thì redirect đến login
-      if (!isAuthRoute(pathname)) {
+      if (!isPublicRoute(pathname)) {
         const login = NextResponse.redirect(
           new URL("/login", envConfig!.APP_URL),
         );
@@ -73,7 +80,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Nếu không có session và không phải là route auth thì redirect đến login
-  if (!hasSession && !isAuthRoute(pathname)) {
+  if (!hasSession && !isPublicRoute(pathname)) {
     return NextResponse.redirect(new URL("/login", envConfig!.APP_URL));
   }
 
