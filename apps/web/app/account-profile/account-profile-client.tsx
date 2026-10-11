@@ -246,7 +246,7 @@ export function AccountProfileClient({ userId, headerRole }: Props) {
           <Tabs defaultValue={defaultTab}>
             <TabsList
               variant="line"
-              className="mb-8 w-full justify-start overflow-x-auto"
+              className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
             >
               {headerRole === "FREELANCER" ? (
                 <TabsTrigger value="identity">
