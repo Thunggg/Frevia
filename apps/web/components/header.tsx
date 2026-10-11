@@ -55,7 +55,6 @@ const roleConfig: Record<
   CLIENT: {
     name: "Client",
     links: [
-      { href: "/projects/new", label: "Post a Job", exact: true },
       {
         href: "/projects",
         label: "My Jobs",
