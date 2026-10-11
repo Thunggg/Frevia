@@ -1,0 +1,20 @@
+meta {
+  name: View Conversation Detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/conversations/2/messages
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

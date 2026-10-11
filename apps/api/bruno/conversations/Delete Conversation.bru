@@ -1,0 +1,24 @@
+meta {
+  name: Delete Conversation
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/conversations/2/hide
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Create New Conversation
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/conversations
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "participantId": 3
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

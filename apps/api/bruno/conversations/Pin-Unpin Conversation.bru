@@ -1,0 +1,27 @@
+meta {
+  name: Pin/Unpin Conversation
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/conversations/2/pin
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "pinned": true
+  //   "pinned": false
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

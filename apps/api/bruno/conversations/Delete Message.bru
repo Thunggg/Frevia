@@ -1,0 +1,20 @@
+meta {
+  name: Delete Message
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/conversations/2/messages/2
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

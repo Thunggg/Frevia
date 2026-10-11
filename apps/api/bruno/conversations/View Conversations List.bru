@@ -1,0 +1,20 @@
+meta {
+  name: View Conversations List
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/conversations
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

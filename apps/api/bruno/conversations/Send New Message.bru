@@ -1,0 +1,26 @@
+meta {
+  name: Send New Message
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/conversations/1/messages
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "message": "Hello from Bruno! 👋"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
