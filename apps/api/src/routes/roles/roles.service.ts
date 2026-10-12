@@ -175,7 +175,7 @@ export class RolesService {
     try {
       await this.rolesRepository.findById(id);
 
-      const permissionIds = [...new Set(body.permissionIds)];
+      const permissionIds = [...new Set(body.permissionIds ?? [])] as number[];
       const activeIds =
         await this.rolesRepository.findActivePermissionIds(permissionIds);
 

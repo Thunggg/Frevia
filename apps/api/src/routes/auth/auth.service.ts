@@ -609,11 +609,16 @@ export class AuthService {
       });
     }
 
+    const primaryRole = user.userRoles[0]?.role;
+    if (!primaryRole) {
+      throw RoleNotFoundException();
+    }
+
     const { accessToken, refreshToken } =
       await this.generateAccessAndRefreshTokens({
         userId: user.id,
-        roleId: user.userRoles[0].role.id,
-        roleName: user.userRoles[0].role.name,
+        roleId: primaryRole.id,
+        roleName: primaryRole.name,
         userAgent: userAgent,
         ipAddress: ip,
       });

@@ -103,7 +103,7 @@ function Logo() {
   return (
     <Link href="/" className="flex shrink-0 items-center gap-2.5">
       <Image
-        src="/Logo.png"
+        src="/frevia-mark.png"
         alt="Frevia logo"
         width={26}
         height={26}

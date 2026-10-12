@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   ForumCategoryType,
+  ForumModerationType,
   ForumPostFilterType,
   ForumPostType,
   ForumTopActiveUserType,
@@ -13,6 +14,14 @@ import {
   ForumPostNotFoundException,
 } from './forums.error';
 import { createCategorySlug, createPostSlug } from './forums.slug';
+
+// Chỉ những bài viết được admin duyệt (APPROVED) mới hiển thị công khai
+const PUBLIC_MODERATION_STATUSES: ('APPROVED')[] = ['APPROVED'];
+
+// Prisma trả Json column dạng JsonValue -> cast về string[] | null cho đúng contract
+function castJsonStringArray(value: unknown): string[] | null {
+  return Array.isArray(value) ? (value as string[]) : null;
+}
 
 @Injectable()
 export class ForumRepository {
@@ -38,7 +47,12 @@ export class ForumRepository {
         updatedAt: true,
         _count: {
           select: {
-            posts: { where: { deletedAt: null } },
+            posts: {
+              where: {
+                deletedAt: null,
+                moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
+              },
+            },
           },
         },
       },
@@ -80,7 +94,12 @@ export class ForumRepository {
         updatedAt: true,
         _count: {
           select: {
-            posts: { where: { deletedAt: null } },
+            posts: {
+              where: {
+                deletedAt: null,
+                moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
+              },
+            },
           },
         },
       },
@@ -218,6 +237,7 @@ export class ForumRepository {
     const skip = (page - 1) * limit;
     const where = {
       deletedAt: null,
+      moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
       ...(categoryId !== undefined && {
         categoryId,
       }),
@@ -240,6 +260,9 @@ export class ForumRepository {
           title: true,
           slug: true,
           content: true,
+          moderationStatus: true,
+          moderationScore: true,
+          moderationCategories: true,
           createdAt: true,
           updatedAt: true,
           user: {
@@ -278,6 +301,9 @@ export class ForumRepository {
         title: p.title,
         slug: p.slug,
         content: p.content,
+        moderationStatus: p.moderationStatus,
+        moderationScore: p.moderationScore,
+        moderationCategories: castJsonStringArray(p.moderationCategories),
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
         likeCount: p._count.likes,
@@ -293,16 +319,22 @@ export class ForumRepository {
     userId: number,
     title: string,
     content: string,
+    moderation?: ForumModerationType,
   ): Promise<ForumPostType> {
     const slug = createPostSlug(title);
 
-    return this.prisma.forumPost.create({
+    const forumPost = await this.prisma.forumPost.create({
       data: {
         categoryId,
         userId,
         title,
         slug,
         content,
+        moderationStatus: moderation?.status ?? 'PENDING',
+        moderationScore: moderation?.score ?? null,
+        moderationCategories: moderation?.categories?.length
+          ? moderation.categories
+          : undefined,
       },
       select: {
         id: true,
@@ -311,10 +343,20 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+
+    return {
+      ...forumPost,
+      moderationCategories: castJsonStringArray(
+        forumPost.moderationCategories,
+      ),
+    };
   }
 
   async viewForumPostDetail(id: number) {
@@ -322,6 +364,7 @@ export class ForumRepository {
       where: {
         id,
         deletedAt: null,
+        moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
       },
       select: {
         id: true,
@@ -330,6 +373,9 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
 
@@ -361,11 +407,16 @@ export class ForumRepository {
       throw ForumPostNotFoundException();
     }
 
-    return forumPost;
+    return {
+      ...forumPost,
+      moderationCategories: castJsonStringArray(
+        forumPost.moderationCategories,
+      ),
+    };
   }
 
   async findForumPostById(id: number): Promise<ForumPostType | null> {
-    return this.prisma.forumPost.findFirst({
+    const forumPost = await this.prisma.forumPost.findFirst({
       where: {
         id,
         deletedAt: null,
@@ -377,10 +428,24 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+
+    if (!forumPost) {
+      return null;
+    }
+
+    return {
+      ...forumPost,
+      moderationCategories: castJsonStringArray(
+        forumPost.moderationCategories,
+      ),
+    };
   }
 
   async findForumPostBySlug(
@@ -390,6 +455,7 @@ export class ForumRepository {
       where: {
         slug,
         deletedAt: null,
+        moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
       },
       select: {
         id: true,
@@ -401,7 +467,7 @@ export class ForumRepository {
     id: number,
     data: UpdateForumPostType,
   ): Promise<ForumPostType> {
-    return this.prisma.forumPost.update({
+    const forumPost = await this.prisma.forumPost.update({
       where: {
         id,
         deletedAt: null,
@@ -421,14 +487,24 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+
+    return {
+      ...forumPost,
+      moderationCategories: castJsonStringArray(
+        forumPost.moderationCategories,
+      ),
+    };
   }
 
   async softDeleteForumPost(id: number): Promise<ForumPostType> {
-    return this.prisma.forumPost.update({
+    const forumPost = await this.prisma.forumPost.update({
       where: {
         id,
         deletedAt: null,
@@ -443,10 +519,20 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+
+    return {
+      ...forumPost,
+      moderationCategories: castJsonStringArray(
+        forumPost.moderationCategories,
+      ),
+    };
   }
 
   async getTopInteractedPosts(
@@ -459,6 +545,7 @@ export class ForumRepository {
     const posts = await this.prisma.forumPost.findMany({
       where: {
         deletedAt: null,
+        moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
         createdAt: { gte: oneWeekAgo },
         ...(categoryId !== undefined && { categoryId }),
       },
@@ -469,6 +556,9 @@ export class ForumRepository {
         title: true,
         slug: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -511,6 +601,9 @@ export class ForumRepository {
       title: p.title,
       slug: p.slug,
       content: p.content,
+      moderationStatus: p.moderationStatus,
+      moderationScore: p.moderationScore,
+      moderationCategories: castJsonStringArray(p.moderationCategories),
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       likeCount: p._count.likes,

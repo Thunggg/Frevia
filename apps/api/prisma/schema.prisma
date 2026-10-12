@@ -108,12 +108,10 @@ model User {
   contractsAsClient     Contract[]             @relation("ContractClient")
   contractsAsFreelancer Contract[]             @relation("ContractFreelancer")
   contractTermTemplates ContractTermTemplate[]
-  revisionRequests      RevisionRequest[]
-  contractActivityLogs  ContractActivityLog[]
 
-  // --- Escrow / Web3 ---
-  walletWithdrawals WalletWithdrawal[]
-  gasFeeSubsidies   GasFeeSubsidy[]
+  // --- Milestones ---
+  milestoneFiles       MilestoneFile[]
+  milestoneSubmissions MilestoneSubmission[]
 
   // --- Certificates / Disputes / Reviews ---
   certificatesAsFreelancer Certificate[]     @relation("CertificateFreelancer")
@@ -127,6 +125,7 @@ model User {
 
   // --- Forum ---
   forumPosts          ForumPost[]
+  forumPostsReviewed  ForumPost[]     @relation("ForumPostReviewedBy")
   forumComments       ForumComment[]
   forumLikes          ForumLike[]
   forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
@@ -509,7 +508,6 @@ model Contract {
   client                 User                    @relation("ContractClient", fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancer             User                    @relation("ContractFreelancer", fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   milestones             Milestone[]
-  activityLogs           ContractActivityLog[]
   invoice                Invoice?
   certificate            Certificate?
   disputes               Dispute[]
@@ -545,106 +543,105 @@ model ContractTermTemplate {
 // 8. Milestones
 // ============================
 model Milestone {
-  id                Int             @id @default(autoincrement())
-  contractId        Int
-  title             String          @db.VarChar(255)
-  dueDate           DateTime?
-  status            MilestoneStatus @default(PENDING)
-  completionPercent Int             @default(0) @db.SmallInt // 0-100, tính từ task
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id          Int @id @default(autoincrement())
 
-  contract         Contract          @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  taskChecklists   TaskChecklist[]
-  revisionRequests RevisionRequest[]
+  contractId Int
+
+  title       String
+  description String?
+  amount      Decimal @db.Decimal(10, 2)
+
+  status        MilestoneStatus        @default(PENDING)
+  paymentStatus MilestonePaymentStatus @default(PENDING)
+
+  dueDate DateTime?
+
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  files       MilestoneFile[]
+  submissions MilestoneSubmission[]
 
   @@index([contractId])
   @@index([status])
 }
 
 // ============================
-// 9. Task Checklists
+// 9. Milestone Files
 // ============================
-model TaskChecklist {
-  id                Int       @id @default(autoincrement())
-  milestoneId       Int
-  taskDescription   String
-  completionPercent Int       @default(0) @db.SmallInt
-  dueDate           DateTime?
-  isCompleted       Boolean   @default(false) // tự động true khi completionPercent = 100
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime?
+model MilestoneFile {
+  id Int @id @default(autoincrement())
 
-  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-
-  @@index([milestoneId])
-}
-
-// ============================
-// 10. Revision Requests (yêu cầu chỉnh sửa)
-// ============================
-model RevisionRequest {
-  id          Int            @id @default(autoincrement())
   milestoneId Int
-  requestedBy Int
-  description String
-  status      RevisionStatus @default(PENDING)
-  deadline    DateTime?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  uploaderId  Int
+
+  fileUrl  String
+  publicId String
+  fileName String?
+
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
 
   milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  requester User      @relation(fields: [requestedBy], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  uploader User @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  submissions MilestoneSubmissionFile[]
 
   @@index([milestoneId])
-  @@index([requestedBy])
+  @@index([uploaderId])
 }
 
 // ============================
-// 11. Contract Activity Log
+// 10. Milestone Submissions
 // ============================
-model ContractActivityLog {
-  id         Int                    @id @default(autoincrement())
-  contractId Int
-  userId     Int?
-  action     ContractActivityAction
-  metadata   Json?
-  createdAt  DateTime               @default(now())
+model MilestoneSubmission {
+  id Int @id @default(autoincrement())
 
-  contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  milestoneId  Int
+  freelancerId Int
 
-  @@index([contractId])
-  @@index([userId])
-  @@index([createdAt])
+  message String?
+  links   String[]
+
+  status SubmissionStatus @default(PENDING_REVIEW)
+
+  changeRequestMessage String?
+  changeRequestDueDate DateTime?
+
+  submittedAt DateTime @default(now())
+  reviewedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer User @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  files MilestoneSubmissionFile[]
+
+  @@index([milestoneId])
+  @@index([freelancerId])
 }
 
 // ============================
-// 12. Escrow / Web3 Off-chain Records
+// 11. Milestone Submission Files
 // ============================
-model WalletWithdrawal {
-  id        Int              @id @default(autoincrement())
-  userId    Int
-  txHash    String?          @db.VarChar(66)
-  amount    Decimal          @db.Decimal(10, 2)
-  token     String           @db.VarChar(10)
-  status    WithdrawalStatus @default(PENDING)
-  createdAt DateTime         @default(now())
+model MilestoneSubmissionFile {
+  submissionId Int
+  fileId       Int
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  submission MilestoneSubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  file MilestoneFile @relation(fields: [fileId], references: [id], onDelete: Restrict)
+
+  @@id([submissionId, fileId])
+  @@index([fileId])
 }
 
-model GasFeeSubsidy {
-  id        Int           @id @default(autoincrement())
-  userId    Int
-  txHash    String?       @db.VarChar(66)
-  amount    Decimal       @db.Decimal(10, 2)
-  status    SubsidyStatus @default(PENDING)
-  createdAt DateTime      @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-}
 
 // ============================
 // 13. Invoices (hóa đơn)
@@ -798,18 +795,29 @@ model ForumPost {
   title      String    @db.VarChar(255)
   slug       String    @unique @db.VarChar(320)
   content    String
+  // ============================
+  // Moderation (nhúng bởi AI proxy SensitiveAI)
+  // ============================
+  moderationStatus      ForumPostStatus @default(PENDING)
+  moderationScore       Float?
+  moderationCategories  Json?
+  reviewedById          Int?
+  reviewedAt            DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
 
   category ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   user     User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewedBy User?        @relation("ForumPostReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
   comments ForumComment[]
   likes    ForumLike[]
   reports  ForumReport[]
 
   @@index([categoryId])
   @@index([userId])
+  @@index([moderationStatus])
+  @@index([reviewedById])
 }
 
 model ForumComment {
@@ -1099,8 +1107,23 @@ enum ContractStatus {
 enum MilestoneStatus {
   PENDING
   IN_PROGRESS
+  SUBMITTED
+  CHANGES_REQUESTED
   COMPLETED
-  CANCELLED
+  DISPUTED
+}
+
+enum MilestonePaymentStatus {
+  PENDING
+  FUNDED
+  RELEASED
+  REFUNDED
+}
+
+enum SubmissionStatus {
+  PENDING_REVIEW
+  CHANGES_REQUESTED
+  APPROVED
 }
 
 enum DisputeStatus {
@@ -1154,31 +1177,11 @@ enum VerificationStatus {
   REJECTED
 }
 
-enum ContractActivityAction {
-  CONTRACT_CREATED
-  CLIENT_SIGNED
-  FREELANCER_SIGNED
-  ACTIVATED
-  MILESTONE_CREATED
-  MILESTONE_COMPLETED
-  MILESTONE_CANCELLED
-  PAYMENT_COMPLETED
-  DEPOSIT_REFUNDED
-  COMPLETED
-  CANCELLED
-  DISPUTE_OPENED
-  DISPUTE_RESOLVED
-}
 
 enum BudgetType {
   FIXED_PRICE
 }
 
-enum WithdrawalStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
 
 enum HttpMethod {
   GET
@@ -1196,11 +1199,6 @@ enum DocumentType {
   OTHER
 }
 
-enum SubsidyStatus {
-  PENDING
-  SUCCESS
-  FAILED
-}
 
 enum PaymentStatus {
   PENDING
@@ -1248,4 +1246,10 @@ enum VerificationCodeType {
 
 enum OauthProvider {
   GOOGLE
+}
+
+enum ForumPostStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

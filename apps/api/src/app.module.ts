@@ -24,8 +24,12 @@ import { SessionsModule } from './routes/sessions/sessions.module';
 import { ConversationModule } from './routes/conversations/conversations.module';
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
+import { MilestoneModule } from './routes/milestone/milestone.module';
+import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
+import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
 import { NotificationModule } from './routes/notifications/notification.module';
+import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
 
 @Module({
   imports: [
@@ -46,8 +50,12 @@ import { NotificationModule } from './routes/notifications/notification.module';
     ConversationModule,
     ContractModule,
     SharedFileModule,
+    MilestoneModule,
+    MilestoneFileModule,
+    MilestoneSubmissionModule,
     AccountProfileModule,
     NotificationModule,
+    IdentityVerificationsAdminModule,
   ],
   controllers: [AppController],
   providers: [

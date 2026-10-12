@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Ip, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Ip,
+  Logger,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import type {
   ForgotPasswordBodyType,
   LoginBodyType,
@@ -34,6 +43,8 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
@@ -112,11 +123,18 @@ export class AuthController {
     @Query('state') state: string,
     @Res() res: Response,
   ) {
-    const data = await this.authService.googleCallback({ code, state });
+    try {
+      const data = await this.authService.googleCallback({ code, state });
+      const params = new URLSearchParams({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
 
-    return res.redirect(
-      `${envConfig.NEXT_URL}/api/auth/google?accessToken=${data.accessToken}&refreshToken=${data.refreshToken}`,
-    );
+      res.redirect(`${envConfig.NEXT_URL}/api/auth/google?${params.toString()}`);
+    } catch (error) {
+      this.logger.error('Google OAuth callback failed', error);
+      res.redirect(`${envConfig.NEXT_URL}/login?error=google`);
+    }
   }
 
   @Get('me')
