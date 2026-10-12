@@ -6,6 +6,7 @@ import type {
   RefreshTokenBodySchemaType,
   RegisterBodyType,
   SendOTPBodyType,
+  SwitchRoleBodyType,
 } from '@shared/types';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -26,6 +27,8 @@ import {
   RegisterResponseDto,
   SendOTPBodyDTO,
   SendOTPResponseDTO,
+  SwitchRoleBodyDto,
+  SwitchRoleResponseDto,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 
@@ -120,5 +123,19 @@ export class AuthController {
   @ZodSerializerDto(GetMeResponseDto)
   getMe(@UserActive('userId') userId: number) {
     return this.authService.getMe(userId);
+  }
+
+  @Post('switch-role')
+  @ZodSerializerDto(SwitchRoleResponseDto)
+  switchRole(
+    @UserActive('userId') userId: number,
+    @UserActive('sessionId') sessionId: number,
+    @Body() body: SwitchRoleBodyDto,
+  ) {
+    return this.authService.switchRole(
+      userId,
+      sessionId,
+      body as SwitchRoleBodyType,
+    );
   }
 }

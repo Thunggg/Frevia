@@ -306,6 +306,7 @@ export class AuthRepository {
       include: {
         profile: {
           select: {
+            id: true,
             displayName: true,
             avatarUrl: true,
           },
@@ -318,6 +319,32 @@ export class AuthRepository {
         },
       },
     });
+  }
+
+  async switchPrimaryRole(userId: number, roleName: string) {
+    const assignment = await this.prisma.userRole.findFirst({
+      where: {
+        userId,
+        role: { name: roleName, deletedAt: null },
+      },
+      include: { role: true },
+    });
+    if (!assignment) return null;
+
+    await this.prisma.$transaction([
+      this.prisma.userRole.updateMany({
+        where: { userId, isPrimary: true },
+        data: { isPrimary: false },
+      }),
+      this.prisma.userRole.update({
+        where: {
+          userId_roleId: { userId, roleId: assignment.roleId },
+        },
+        data: { isPrimary: true },
+      }),
+    ]);
+
+    return assignment.role;
   }
 
   async createOauthAccount({

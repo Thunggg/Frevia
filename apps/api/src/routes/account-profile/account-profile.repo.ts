@@ -150,4 +150,44 @@ export class AccountProfileRepository {
       },
     });
   }
+
+  findFollow(clientId: number, freelancerId: number) {
+    return this.prisma.followFreelancer.findUnique({
+      where: { clientId_freelancerId: { clientId, freelancerId } },
+    });
+  }
+
+  createFollow(clientId: number, freelancerId: number) {
+    return this.prisma.followFreelancer.create({
+      data: { clientId, freelancerId },
+    });
+  }
+
+  deleteFollow(clientId: number, freelancerId: number) {
+    return this.prisma.followFreelancer.delete({
+      where: { clientId_freelancerId: { clientId, freelancerId } },
+    });
+  }
+
+  findFollowing(clientId: number) {
+    return this.prisma.followFreelancer.findMany({
+      where: { clientId, freelancer: { deletedAt: null, isBanned: false } },
+      include: {
+        freelancer: {
+          include: {
+            profile: {
+              include: {
+                freelancerProfile: {
+                  include: {
+                    skills: { orderBy: { proficiencyLevel: 'desc' } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

@@ -36,7 +36,7 @@ function formatTime(createdAt?: string | Date | null): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function NotificationBell() {
+export function MessageBell() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { data: conversations } = useConversations();
@@ -119,9 +119,7 @@ export function NotificationBell() {
                         </span>
                         {conversation.lastMessage && (
                           <span className="shrink-0 text-xs text-muted-foreground">
-                            {formatTime(
-                              conversation.lastMessage.createdAt,
-                            )}
+                            {formatTime(conversation.lastMessage.createdAt)}
                           </span>
                         )}
                       </div>
@@ -134,8 +132,8 @@ export function NotificationBell() {
                                 "Attachment"}
                             </span>
                           ) : (
-                            conversation.lastMessage?.message ??
-                            "No messages yet"
+                            (conversation.lastMessage?.message ??
+                            "No messages yet")
                           )}
                         </p>
                         <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">

@@ -25,6 +25,7 @@ export * from "./model/account-profile.model";
 export * from "./message/portfolio.message";
 export * from "./model/portfolio.model";
 export * from "./model/job-skill.model";
+export * from "./model/notification.model";
 export * from "./model/job-bookmark.model";
 export * from "./message/manage-job.message";
 export * from "./type/google-type";

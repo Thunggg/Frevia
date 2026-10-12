@@ -25,6 +25,7 @@ import { ConversationModule } from './routes/conversations/conversations.module'
 import { ContractModule } from './routes/contract/contract.module';
 import { SharedFileModule } from './routes/shared-file/shared-file.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
+import { NotificationModule } from './routes/notifications/notification.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AccountProfileModule } from './routes/account-profile/account-profile.m
     ContractModule,
     SharedFileModule,
     AccountProfileModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

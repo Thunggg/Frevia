@@ -3,6 +3,7 @@ import {
   AddSocialLinkSchema,
   ClientProfileDetailSchema,
   FavoriteFreelancerSchema,
+  FollowingFreelancerSchema,
   IdentityVerificationDocumentSchema,
   IdentityVerificationStatusSchema,
   SocialLinkSchema,
@@ -36,4 +37,7 @@ export class FavoriteFreelancerDto extends createZodDto(
 ) {}
 export class FavoriteFreelancerListDto extends createZodDto(
   z.array(FavoriteFreelancerSchema),
+) {}
+export class FollowingFreelancerListDto extends createZodDto(
+  z.array(FollowingFreelancerSchema),
 ) {}

@@ -41,6 +41,7 @@ const freelancerModules = [
   'CLIENTS',
   'IDENTITY-VERIFICATIONS',
   'SOCIAL-LINKS',
+  'NOTIFICATIONS',
 ];
 
 const clientModules = [
@@ -55,6 +56,8 @@ const clientModules = [
   'PROFILES',
   'SOCIAL-LINKS',
   'FAVORITES',
+  'FOLLOWING',
+  'NOTIFICATIONS',
 ];
 
 type AvailableRoute = {
@@ -144,9 +147,15 @@ async function bootstrap() {
   console.log(`Discovered ${availableRoutes.length} routes from Nest router`);
 
   const profileRelated = availableRoutes.filter((route) =>
-    ['PROFILES', 'CLIENTS', 'IDENTITY-VERIFICATIONS', 'SOCIAL-LINKS', 'FAVORITES'].includes(
-      route.module,
-    ),
+    [
+      'PROFILES',
+      'CLIENTS',
+      'IDENTITY-VERIFICATIONS',
+      'SOCIAL-LINKS',
+      'FAVORITES',
+      'FOLLOWING',
+      'NOTIFICATIONS',
+    ].includes(route.module),
   );
   console.log(
     `Profile-related routes (${profileRelated.length}):`,
@@ -246,9 +255,12 @@ async function bootstrap() {
   const freelancerProfileCount = updatedPermissionInDb.filter(
     (item) =>
       freelancerModules.includes(item.module ?? '') &&
-      ['PROFILES', 'CLIENTS', 'IDENTITY-VERIFICATIONS', 'SOCIAL-LINKS'].includes(
-        item.module ?? '',
-      ),
+      [
+        'PROFILES',
+        'CLIENTS',
+        'IDENTITY-VERIFICATIONS',
+        'SOCIAL-LINKS',
+      ].includes(item.module ?? ''),
   ).length;
 
   const clientProfileCount = updatedPermissionInDb.filter(

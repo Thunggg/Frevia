@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import type {
   AddFreelancerSkillType,
@@ -52,6 +53,11 @@ export class ProfileController {
   @IsPublic()
   async getSkills(@Param('id', ParseIntPipe) id: number) {
     return this.profileService.getSkills(id);
+  }
+
+  @Get('skills/suggestions')
+  async searchSkillSuggestions(@Query('search') search?: string) {
+    return this.profileService.searchSkillSuggestions(search);
   }
 
   @Post(':id/skills')

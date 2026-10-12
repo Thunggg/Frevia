@@ -95,6 +95,30 @@ export class ProfileRepository {
     });
   }
 
+  async searchActiveCatalogSkills(search?: string) {
+    return this.prisma.skill.findMany({
+      where: {
+        isActive: true,
+        ...(search && {
+          name: { contains: search, mode: Prisma.QueryMode.insensitive },
+        }),
+      },
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+      take: 50,
+    });
+  }
+
+  async findActiveCatalogSkillByName(skillName: string) {
+    return this.prisma.skill.findFirst({
+      where: {
+        isActive: true,
+        name: { equals: skillName, mode: Prisma.QueryMode.insensitive },
+      },
+      select: { name: true },
+    });
+  }
+
   async findSkillByNameAndProfileId(profileId: number, skillName: string) {
     const freelancerProfile = await this.prisma.freelancerProfile.findUnique({
       where: { profileId },
