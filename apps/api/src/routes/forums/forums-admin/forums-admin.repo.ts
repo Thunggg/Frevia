@@ -96,11 +96,10 @@ export class ForumAdminRepository {
       throw ForumPostNotFoundException();
     }
 
+    // Reject đã set deletedAt nên không filter deletedAt: null — bài vẫn phải
+    // đọc được để trả response cho admin.
     const forumPost = await this.prisma.forumPost.findFirst({
-      where: {
-        id: postId,
-        deletedAt: null,
-      },
+      where: { id: postId },
       select: {
         id: true,
         categoryId: true,
@@ -116,10 +115,14 @@ export class ForumAdminRepository {
       },
     });
 
+    if (!forumPost) {
+      throw ForumPostNotFoundException();
+    }
+
     return {
-      ...forumPost!,
+      ...forumPost,
       moderationCategories: castJsonStringArray(
-        forumPost!.moderationCategories,
+        forumPost.moderationCategories,
       ),
     };
   }
