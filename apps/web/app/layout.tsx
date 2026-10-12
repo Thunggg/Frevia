@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   title: "Frevia — Hire talent, find work, grow together",
   description:
     "A calm freelance marketplace to hire freelancers, find paid work, and learn in the community forum.",
+  icons: {
+    icon: [{ url: "/frevia-mark.png", type: "image/png" }],
+    apple: [{ url: "/frevia-mark.png" }],
+  },
 };
 
 export default async function RootLayout({

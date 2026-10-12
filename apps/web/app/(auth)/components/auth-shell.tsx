@@ -45,7 +45,7 @@ export function AuthShell({
             className={`flex items-center gap-3 ${styles.reveal} ${styles.delay1}`}
           >
             <Image
-              src="/Logo.png"
+              src="/frevia-mark.png"
               alt=""
               width={40}
               height={40}
@@ -109,7 +109,7 @@ export function AuthShell({
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <Link href="/" className="flex items-center gap-2.5">
               <Image
-                src="/Logo.png"
+                src="/frevia-mark.png"
                 alt=""
                 width={32}
                 height={32}

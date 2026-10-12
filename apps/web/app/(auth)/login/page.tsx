@@ -1,7 +1,13 @@
 import { AuthShell } from "../components/auth-shell";
 import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { error } = await searchParams;
+
   return (
     <AuthShell
       title="Welcome back"
@@ -9,7 +15,7 @@ export default function LoginPage() {
       imageSrc="/auth/login.jpg"
       panelTitle="Your projects, in one place."
     >
-      <LoginForm />
+      <LoginForm oauthError={error} />
     </AuthShell>
   );
 }

@@ -13,10 +13,11 @@ import {
   KeyRound,
   LayoutDashboard,
   MessageSquare,
-  Shield,
   UserCog,
   UsersRound,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { NavMain, type NavItem } from "./nav-main";
 import { LogoutButton } from "./logout-button";
 
@@ -64,9 +65,13 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2.5 px-2 py-1.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-            <Shield className="size-4" />
-          </div>
+          <Image
+            src="/frevia-mark.png"
+            alt=""
+            width={32}
+            height={32}
+            className="size-8 object-contain"
+          />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold tracking-tight text-[#4fae2e]">
               Frevia Admin
