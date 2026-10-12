@@ -20,16 +20,25 @@ import { LoginBodySchema } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
-export function LoginForm() {
+export function LoginForm({ oauthError }: { oauthError?: string }) {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMutation = useLogin();
   const googleLinkMutation = useGoogleLink();
+
+  useEffect(() => {
+    if (oauthError === "google") {
+      toastError({
+        message: "Google login failed. Please try again.",
+        duration: 4000,
+      });
+    }
+  }, [oauthError]);
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
     resolver: zodResolver(LoginBodySchema),
