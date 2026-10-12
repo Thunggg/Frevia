@@ -60,6 +60,14 @@ export function CreatePostDialog({
           setOpen(false);
           setTitle("");
           setContent("");
+          // Bài bị AI đưa vào trạng thái PENDING -> chưa hiển thị công khai,
+          // không điều hướng tới chi tiết (sẽ 404), chỉ báo cho người dùng.
+          if (result?.moderationStatus === "PENDING") {
+            toast.success(
+              "Bài viết của bạn đã được lưu và đang chờ quản trị viên kiểm duyệt.",
+            );
+            return;
+          }
           if (result?.id && result?.slug) {
             router.push(
               `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,

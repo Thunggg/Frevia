@@ -31,8 +31,10 @@ const navItems: NavItem[] = [
     icon: MessageSquare,
     children: [
       { title: "Comments", href: "/admin/comments" },
+      { title: "Moderation", href: "/admin/moderation" },
       { title: "Reports", href: "/admin/reports" },
       { title: "Posts", href: "/admin/posts" },
+      { title: "Trash", href: "/admin/trash" },
     ],
   },
   {

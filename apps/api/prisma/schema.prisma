@@ -125,6 +125,7 @@ model User {
 
   // --- Forum ---
   forumPosts          ForumPost[]
+  forumPostsReviewed  ForumPost[]     @relation("ForumPostReviewedBy")
   forumComments       ForumComment[]
   forumLikes          ForumLike[]
   forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
@@ -794,18 +795,29 @@ model ForumPost {
   title      String    @db.VarChar(255)
   slug       String    @unique @db.VarChar(320)
   content    String
+  // ============================
+  // Moderation (nhúng bởi AI proxy SensitiveAI)
+  // ============================
+  moderationStatus      ForumPostStatus @default(PENDING)
+  moderationScore       Float?
+  moderationCategories  Json?
+  reviewedById          Int?
+  reviewedAt            DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
 
   category ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   user     User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewedBy User?        @relation("ForumPostReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
   comments ForumComment[]
   likes    ForumLike[]
   reports  ForumReport[]
 
   @@index([categoryId])
   @@index([userId])
+  @@index([moderationStatus])
+  @@index([reviewedById])
 }
 
 model ForumComment {
@@ -1234,4 +1246,10 @@ enum VerificationCodeType {
 
 enum OauthProvider {
   GOOGLE
+}
+
+enum ForumPostStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

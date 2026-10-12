@@ -10,6 +10,9 @@ import type {
   ForumAdminCommentListResponseType,
   ForumReportListResponseType,
   IdentityVerificationAdminListResponseType,
+  PendingForumPostListResponseType,
+  ForumTrashPostListResponseType,
+  ForumTrashCommentListResponseType,
 } from "@shared/types";
 
 function buildQueryString(
@@ -78,6 +81,54 @@ const adminServerRequest = {
     const query = buildQueryString({ page, limit, search });
     const result = await adminServerFetch<ForumAdminCommentListResponseType>(
       `/api/forums/admin/comments${query}`,
+    );
+    return (
+      result ?? {
+        comments: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getPendingPosts(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PendingForumPostListResponseType> {
+    const query = buildQueryString({ page, limit });
+    const result = await adminServerFetch<PendingForumPostListResponseType>(
+      `/api/forums/admin/pending-posts${query}`,
+    );
+    return (
+      result ?? {
+        posts: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getTrashPosts(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<ForumTrashPostListResponseType> {
+    const query = buildQueryString({ page, limit });
+    const result = await adminServerFetch<ForumTrashPostListResponseType>(
+      `/api/forums/admin/trash/posts${query}`,
+    );
+    return (
+      result ?? {
+        posts: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getTrashComments(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<ForumTrashCommentListResponseType> {
+    const query = buildQueryString({ page, limit });
+    const result = await adminServerFetch<ForumTrashCommentListResponseType>(
+      `/api/forums/admin/trash/comments${query}`,
     );
     return (
       result ?? {

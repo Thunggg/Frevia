@@ -1,11 +1,24 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ForumAdminRepository } from './forums-admin.repo';
 import {
+  ForumAdminCommentType,
   ForumAdminStatsType,
   ForumAdminCommentListResponseType,
+  ForumPostType,
+  ForumTrashPostListResponseType,
+  ForumTrashCommentListResponseType,
+  PendingForumPostListResponseType,
   RoleName,
 } from '@shared/types';
-import { ForumReportForbiddenException } from '../forums-reports/forums-reports.error';
+import {
+  ForumCommentNotFoundException,
+  ForumPostNotFoundException,
+  FailedToRestoreForumCommentException,
+  FailedToRestoreForumPostException,
+  FailedToReviewForumPostException,
+  ForumReportForbiddenException,
+} from './forums-admin.error';
 
 @Injectable()
 export class ForumAdminService {
@@ -52,6 +65,162 @@ export class ForumAdminService {
         throw error;
       }
       throw ForumReportForbiddenException();
+    }
+  }
+
+  async getPendingPosts(
+    roleName: string,
+    page: number,
+    limit: number,
+  ): Promise<PendingForumPostListResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const { posts, total } =
+        await this.adminRepository.getPendingPosts(page, limit);
+
+      return {
+        posts,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async reviewPendingPost(
+    roleName: string,
+    postId: number,
+    status: 'APPROVED' | 'REJECTED',
+    adminId: number,
+  ): Promise<ForumPostType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.reviewForumPost(
+        postId,
+        status,
+        adminId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw ForumPostNotFoundException();
+        }
+        throw FailedToReviewForumPostException();
+      }
+      throw error;
+    }
+  }
+
+  async getTrashPosts(
+    roleName: string,
+    page: number,
+    limit: number,
+  ): Promise<ForumTrashPostListResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const { posts, total } =
+        await this.adminRepository.getTrashPosts(page, limit);
+
+      return {
+        posts,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async getTrashComments(
+    roleName: string,
+    page: number,
+    limit: number,
+  ): Promise<ForumTrashCommentListResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const { comments, total } =
+        await this.adminRepository.getTrashComments(page, limit);
+
+      return {
+        comments,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async restoreTrashPost(
+    roleName: string,
+    postId: number,
+  ): Promise<ForumPostType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.restoreTrashPost(postId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToRestoreForumPostException();
+    }
+  }
+
+  async restoreTrashComment(
+    roleName: string,
+    commentId: number,
+  ): Promise<ForumAdminCommentType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.restoreTrashComment(commentId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw ForumCommentNotFoundException();
+        }
+        throw FailedToRestoreForumCommentException();
+      }
+      throw error;
     }
   }
 }

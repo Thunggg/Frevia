@@ -119,6 +119,22 @@ export type ForumAdminCommentListResponseType = z.infer<
   typeof ForumAdminCommentListResponseSchema
 >;
 
+// --- Trash (bình luận đã xóa) ---
+
+export const ForumTrashCommentSchema = ForumAdminCommentSchema.extend({
+  deletedAt: z.date().nullable(),
+});
+
+export const ForumTrashCommentListResponseSchema = z.object({
+  comments: z.array(ForumTrashCommentSchema),
+  pagination: PaginationSchema,
+});
+
+export type ForumTrashCommentType = z.infer<typeof ForumTrashCommentSchema>;
+export type ForumTrashCommentListResponseType = z.infer<
+  typeof ForumTrashCommentListResponseSchema
+>;
+
 // --- Admin Report Filter Schema ---
 
 export const ForumAdminReportFilterSchema = z.object({

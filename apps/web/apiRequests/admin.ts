@@ -2,10 +2,14 @@ import {
   ForumAdminStatsType,
   ForumPostListResponseType,
   ForumAdminCommentListResponseType,
+  ForumPostType,
+  ForumAdminCommentType,
   ForumReportListResponseType,
   ForumReportType,
   IdentityVerificationAdminDetailType,
   IdentityVerificationAdminListResponseType,
+  PendingForumPostListResponseType,
+  ReviewForumPostResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -41,6 +45,25 @@ export const adminApiRequest = {
   deletePost: (postId: number) =>
     http.delete<unknown>(`/api/forums/posts/${postId}`),
 
+  getPendingPosts: (page: number = 1, limit: number = 10) => {
+    const query = buildQueryString({ page, limit });
+    return http.get<PendingForumPostListResponseType>(
+      `/api/forums/admin/pending-posts${query}`,
+    );
+  },
+
+  approvePost: (postId: number) =>
+    http.patch<ReviewForumPostResponseType>(
+      `/api/forums/admin/posts/${postId}/approve`,
+      {},
+    ),
+
+  rejectPost: (postId: number) =>
+    http.patch<ReviewForumPostResponseType>(
+      `/api/forums/admin/posts/${postId}/reject`,
+      {},
+    ),
+
   getComments: (page: number = 1, limit: number = 10, search?: string) => {
     const query = buildQueryString({ page, limit, search });
     return http.get<ForumAdminCommentListResponseType>(
@@ -51,6 +74,18 @@ export const adminApiRequest = {
   deleteComment: (postId: number, commentId: number) =>
     http.delete<unknown>(
       `/api/forums/posts/${postId}/comments/${commentId}`,
+    ),
+
+  restorePost: (postId: number) =>
+    http.patch<ForumPostType>(
+      `/api/forums/admin/trash/posts/${postId}/restore`,
+      {},
+    ),
+
+  restoreComment: (commentId: number) =>
+    http.patch<ForumAdminCommentType>(
+      `/api/forums/admin/trash/comments/${commentId}/restore`,
+      {},
     ),
 
   getReports: (
