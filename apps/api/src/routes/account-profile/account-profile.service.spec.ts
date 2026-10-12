@@ -21,6 +21,10 @@ describe('AccountProfileService', () => {
     findSocialLinkById: jest.fn(),
     deleteSocialLink: jest.fn(),
     findFavorites: jest.fn(),
+    findFollowing: jest.fn(),
+    findFollow: jest.fn(),
+    createFollow: jest.fn(),
+    deleteFollow: jest.fn(),
   };
   const cloudinary = {
     isConfigured: jest.fn(),
@@ -113,5 +117,19 @@ describe('AccountProfileService', () => {
       ForbiddenException,
     );
     expect(repository.deleteSocialLink).not.toHaveBeenCalled();
+  });
+
+  it('hard deletes an existing freelancer follow', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.CLIENT),
+    );
+    repository.findFollow.mockResolvedValue({
+      clientId: 1,
+      freelancerId: 2,
+    });
+
+    await service.unfollowFreelancer(1, 2);
+
+    expect(repository.deleteFollow).toHaveBeenCalledWith(1, 2);
   });
 });

@@ -144,6 +144,7 @@ export const GetAuthorizationUrlResSchema = z.object({
 });
 
 export const GetMeProfileSchema = z.object({
+  id: z.number(),
   displayName: z.string().nullable(),
   avatarUrl: z.string().nullable(),
 });
@@ -159,6 +160,16 @@ export const GetMeResSchema = z.object({
   isBanned: z.boolean(),
   profile: GetMeProfileSchema.nullable(),
   roles: z.array(GetMeRoleSchema),
+});
+
+export const SwitchRoleBodySchema = z
+  .object({
+    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
+  })
+  .strict();
+
+export const SwitchRoleResponseSchema = z.object({
+  accessToken: z.string(),
 });
 
 export type UserType = z.infer<typeof UserSchema>;
@@ -183,3 +194,5 @@ export type GetAuthorizationUrlResType = z.infer<
 >;
 
 export type GetMeResType = z.infer<typeof GetMeResSchema>;
+export type SwitchRoleBodyType = z.infer<typeof SwitchRoleBodySchema>;
+export type SwitchRoleResponseType = z.infer<typeof SwitchRoleResponseSchema>;

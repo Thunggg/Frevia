@@ -77,6 +77,10 @@ export class ProfileService {
     return this.profileRepository.findSkillsByProfileId(profileId);
   }
 
+  async searchSkillSuggestions(search?: string) {
+    return this.profileRepository.searchActiveCatalogSkills(search?.trim());
+  }
+
   async addSkill(
     profileId: number,
     currentUserId: number,
@@ -97,10 +101,14 @@ export class ProfileService {
       throw ProfileForbiddenException();
     }
 
+    const catalogSkill =
+      await this.profileRepository.findActiveCatalogSkillByName(dto.skillName);
+    const normalizedSkillName = catalogSkill?.name ?? dto.skillName;
+
     const existingSkill =
       await this.profileRepository.findSkillByNameAndProfileId(
         profileId,
-        dto.skillName,
+        normalizedSkillName,
       );
     if (existingSkill) {
       throw FreelancerSkillDuplicateException();
@@ -108,7 +116,7 @@ export class ProfileService {
 
     return this.profileRepository.addSkillToProfile(
       profileId,
-      dto.skillName,
+      normalizedSkillName,
       dto.proficiencyLevel,
     );
   }

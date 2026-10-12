@@ -41,6 +41,7 @@ const freelancerModules = [
   'CLIENTS',
   'IDENTITY-VERIFICATIONS',
   'SOCIAL-LINKS',
+  'NOTIFICATIONS',
 ];
 
 const clientModules = [
@@ -55,6 +56,8 @@ const clientModules = [
   'PROFILES',
   'SOCIAL-LINKS',
   'FAVORITES',
+  'FOLLOWING',
+  'NOTIFICATIONS',
 ];
 
 type AvailableRoute = {
@@ -150,6 +153,8 @@ async function bootstrap() {
       'IDENTITY-VERIFICATIONS',
       'SOCIAL-LINKS',
       'FAVORITES',
+      'FOLLOWING',
+      'NOTIFICATIONS',
     ].includes(route.module),
   );
   console.log(

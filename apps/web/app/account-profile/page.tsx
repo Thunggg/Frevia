@@ -13,6 +13,10 @@ export default async function AccountProfilePage() {
         : "GUEST";
 
   return (
-    <AccountProfileClient userId={user?.id ?? null} headerRole={headerRole} />
+    <AccountProfileClient
+      userId={user?.id ?? null}
+      profileId={user?.profile?.id ?? null}
+      headerRole={headerRole}
+    />
   );
 }

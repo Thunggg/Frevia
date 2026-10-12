@@ -28,6 +28,7 @@ import { MilestoneModule } from './routes/milestone/milestone.module';
 import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
 import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
+import { NotificationModule } from './routes/notifications/notification.module';
 import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
 
 @Module({
@@ -53,6 +54,7 @@ import { IdentityVerificationsAdminModule } from './routes/identity-verification
     MilestoneFileModule,
     MilestoneSubmissionModule,
     AccountProfileModule,
+    NotificationModule,
     IdentityVerificationsAdminModule,
   ],
   controllers: [AppController],
