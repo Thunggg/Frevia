@@ -6,12 +6,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
-  ArrowLeft,
-  FileText,
+  IdCard,
   KeyRound,
   LayoutDashboard,
   MessageSquare,
@@ -21,6 +19,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { NavMain, type NavItem } from "./nav-main";
+import { LogoutButton } from "./logout-button";
 
 const navItems: NavItem[] = [
   {
@@ -29,16 +28,14 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Posts",
-    href: "/admin/posts",
-    icon: FileText,
-  },
-  {
     title: "Forum",
     icon: MessageSquare,
     children: [
       { title: "Comments", href: "/admin/comments" },
+      { title: "Moderation", href: "/admin/moderation" },
       { title: "Reports", href: "/admin/reports" },
+      { title: "Posts", href: "/admin/posts" },
+      { title: "Trash", href: "/admin/trash" },
     ],
   },
   {
@@ -55,6 +52,11 @@ const navItems: NavItem[] = [
     title: "Assign Role",
     href: "/admin/assign-role",
     icon: UserCog,
+  },
+  {
+    title: "ID Verification",
+    href: "/admin/identity-verifications",
+    icon: IdCard,
   },
 ];
 
@@ -87,13 +89,16 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
+          {/* <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/forum">
                 <ArrowLeft />
                 <span>Back to Forum</span>
               </Link>
             </SidebarMenuButton>
+          </SidebarMenuItem> */}
+          <SidebarMenuItem>
+            <LogoutButton />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

@@ -3,6 +3,7 @@
 import { useGoogleLink, useLogin } from "@/hooks/use-auth";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
+import { authApiRequest } from "@/apiRequests/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
@@ -50,10 +51,22 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
 
   function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
     loginMutation.mutate(payload, {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         if (response.success) {
           toastSuccess({ message: "Login successful" });
-          router.push("/");
+          try {
+            const meRes = await authApiRequest.me();
+            const primaryRole = meRes.success
+              ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
+              : null;
+            if (primaryRole === "Admin") {
+              router.push("/admin");
+            } else {
+              router.push("/");
+            }
+          } catch {
+            router.push("/");
+          }
         }
       },
       onError: (error) => {
@@ -133,7 +146,9 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="size-4" />

@@ -1,6 +1,16 @@
 import { z } from "zod";
 import { ManageForumPostMessage } from "../message/manage-forum-post.message";
 
+// Trạng thái kiểm duyệt bài viết (nhúng bởi AI proxy SensitiveAI)
+// Chỉ có 3 trạng thái: chờ duyệt, đã duyệt, bị từ chối
+export const ForumPostStatusEnum = z.enum([
+  "PENDING",
+  "APPROVED",
+  "REJECTED",
+]);
+
+export type ForumPostStatus = z.infer<typeof ForumPostStatusEnum>;
+
 // Schema cơ bản của ForumPost
 export const ForumPostSchema = z.object({
   id: z.number(),
@@ -9,6 +19,9 @@ export const ForumPostSchema = z.object({
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
   slug: z.string(),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  moderationStatus: ForumPostStatusEnum,
+  moderationScore: z.number().nullable(),
+  moderationCategories: z.array(z.string()).nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -30,11 +43,24 @@ export const PaginationSchema = z.object({
   totalPages: z.number().int().min(0),
 });
 
+// Schema cho moderation (nhúng bởi AI proxy)
+export const ForumModerationSchema = z.object({
+  status: ForumPostStatusEnum,
+  score: z.number().min(0).max(1).optional(),
+  categories: z.array(z.string()).optional(),
+  matches: z.array(z.unknown()).optional(),
+  risk: z.string().optional(),
+  recommendation: z.string().optional(),
+});
+
+export type ForumModerationType = z.infer<typeof ForumModerationSchema>;
+
 // Schema cho request body khi tạo post mới
 export const CreateForumPostSchema = z.object({
   categoryId: z.coerce.number().int().positive().optional(),
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  moderation: ForumModerationSchema.optional(),
 });
 
 // Schema cho request body khi cập nhật post
@@ -81,6 +107,9 @@ export const ViewForumPostDetailResponseSchema = z.object({
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
   slug: z.string(),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  moderationStatus: ForumPostStatusEnum,
+  moderationScore: z.number().nullable(),
+  moderationCategories: z.array(z.string()).nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   category: z
@@ -165,6 +194,62 @@ export type ViewForumPostDetailResponseType = z.infer<
 export type ForumTopPostType = z.infer<typeof ForumTopPostSchema>;
 export type ForumTopPostListResponseType = z.infer<
   typeof ForumTopPostListResponseSchema
+>;
+
+// --- Moderation (admin duyệt bài PENDING) ---
+
+export const PendingForumPostSchema = z.object({
+  id: z.number(),
+  categoryId: z.number().nullable(),
+  userId: z.number(),
+  title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
+  slug: z.string(),
+  content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  moderationStatus: ForumPostStatusEnum,
+  moderationScore: z.number().nullable(),
+  moderationCategories: z.array(z.string()).nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  user: z.object({
+    id: z.number(),
+    profile: z
+      .object({
+        displayName: z.string().nullable(),
+        avatarUrl: z.string().nullable(),
+      })
+      .nullable(),
+  }),
+});
+
+export const PendingForumPostListResponseSchema = z.object({
+  posts: z.array(PendingForumPostSchema),
+  pagination: PaginationSchema,
+});
+
+export const ReviewForumPostResponseSchema = ForumPostSchema;
+
+// --- Trash (bài viết đã xóa / bị reject chuyển vào thùng rác) ---
+
+export const ForumTrashPostSchema = PendingForumPostSchema.extend({
+  deletedAt: z.date().nullable(),
+});
+
+export const ForumTrashPostListResponseSchema = z.object({
+  posts: z.array(ForumTrashPostSchema),
+  pagination: PaginationSchema,
+});
+
+// Types
+export type PendingForumPostType = z.infer<typeof PendingForumPostSchema>;
+export type PendingForumPostListResponseType = z.infer<
+  typeof PendingForumPostListResponseSchema
+>;
+export type ReviewForumPostResponseType = z.infer<
+  typeof ReviewForumPostResponseSchema
+>;
+export type ForumTrashPostType = z.infer<typeof ForumTrashPostSchema>;
+export type ForumTrashPostListResponseType = z.infer<
+  typeof ForumTrashPostListResponseSchema
 >;
 
 // --- Admin Schemas ---
