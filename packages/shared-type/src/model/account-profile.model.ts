@@ -25,7 +25,7 @@ export const SocialPlatform = {
   OTHER: "OTHER",
 } as const;
 
-const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
+export const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
 export const DocumentTypeSchema = z.nativeEnum(DocumentType);
 export const VerificationStatusSchema = z.nativeEnum(VerificationStatus);
 export const SocialPlatformSchema = z.nativeEnum(SocialPlatform);
@@ -118,6 +118,8 @@ export const FavoriteFreelancerSchema = z.object({
   }),
 });
 
+export const FollowingFreelancerSchema = FavoriteFreelancerSchema;
+
 export type DocumentTypeType = z.infer<typeof DocumentTypeSchema>;
 export type VerificationStatusType = z.infer<typeof VerificationStatusSchema>;
 export type SocialPlatformType = z.infer<typeof SocialPlatformSchema>;
@@ -135,3 +137,4 @@ export type AddSocialLinkType = z.infer<typeof AddSocialLinkSchema>;
 export type ClientProfileDetailType = z.infer<typeof ClientProfileDetailSchema>;
 export type UpdateClientProfileType = z.infer<typeof UpdateClientProfileSchema>;
 export type FavoriteFreelancerType = z.infer<typeof FavoriteFreelancerSchema>;
+export type FollowingFreelancerType = z.infer<typeof FollowingFreelancerSchema>;

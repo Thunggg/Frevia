@@ -7,6 +7,11 @@ const NEST_API = nestApiUrl?.endsWith("/api")
   ? nestApiUrl.slice(0, -4)
   : nestApiUrl;
 
+const proxyApiUrl = envConfig?.NESTJS_PROXY_URL?.replace(/\/$/, "");
+const PROXY_API = proxyApiUrl?.endsWith("/api")
+  ? proxyApiUrl.slice(0, -4)
+  : proxyApiUrl;
+
 type RouteContext = { params: Promise<{ path: string[] }> };
 
 const proxyHandler = async (request: Request, { params }: RouteContext) => {
@@ -26,6 +31,17 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
     ? fullPath
     : `api/${fullPath}`;
 
+  // Chỉ POST tạo bài đăng forum (path chính xác /api/forums/posts, không phải
+  // comment/like/... dưới nó) đi qua proxy SensitiveAI (3002) để scan nội dung.
+  // Các request khác gọi thẳng backend (3000). Proxy không xử lý auth refresh
+  // hay websocket nên CHỈ riêng route tạo bài mới được đưa qua proxy.
+  const isCreateForumPost =
+    request.method === "POST" &&
+    backendPath === "api/forums/posts" &&
+    !!PROXY_API;
+
+  const baseApi = isCreateForumPost ? PROXY_API : NEST_API;
+
   // Giữ nguyên query string
   const { search } = new URL(request.url);
 
@@ -41,7 +57,7 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
 
   // Hàm forward để forward request đến backend
   const forward = (token: string | undefined) =>
-    fetch(`${NEST_API}/${backendPath}${search}`, {
+    fetch(`${baseApi}/${backendPath}${search}`, {
       method: request.method,
       headers: {
         ...(contentType ? { "Content-Type": contentType } : {}),

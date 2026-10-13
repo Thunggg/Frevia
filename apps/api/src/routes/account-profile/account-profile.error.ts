@@ -44,3 +44,11 @@ export const FavoriteNotFoundException = () =>
   new NotFoundException(
     details('Favorite freelancer not found.', 'freelancerId'),
   );
+export const FollowDuplicateException = () =>
+  new ConflictException(
+    details('You are already following this freelancer.', 'freelancerId'),
+  );
+export const FollowNotFoundException = () =>
+  new NotFoundException(
+    details('Followed freelancer not found.', 'freelancerId'),
+  );

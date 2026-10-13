@@ -5,7 +5,12 @@ export class ApiFail extends Error {
   readonly status: number;
 
   constructor(response: ApiError, status: number) {
-    super(response.error.message);
+    // Proxy moderation trả về { success:false, message, moderation } (không có error.message)
+    const message =
+      response?.error?.message ??
+      (response as { message?: string }).message ??
+      "Request failed";
+    super(message);
     this.response = response;
     this.status = status;
   }

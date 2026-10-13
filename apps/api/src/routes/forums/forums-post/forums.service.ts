@@ -169,12 +169,13 @@ export class ForumService {
         }
       }
 
-      // Tạo post
+      // Tạo post (kèm moderation do AI proxy nhúng vào, nếu có)
       return await this.forumRepository.createForumPost(
         body.categoryId ?? null,
         userId,
         body.title,
         body.content,
+        body.moderation,
       );
     } catch (error) {
       // Nếu là lỗi HttpException thì ném lỗi ra ngoài
