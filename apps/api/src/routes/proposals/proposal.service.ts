@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateProposalBodyType,
+  MyProposalsQueryType,
+  MyProposalsResponseType,
+  ProposalDetailType,
   ProposalType,
   RoleName,
   SaveProposalDraftBodyType,
@@ -11,6 +14,7 @@ import {
   ActiveProposalExistsException,
   CannotProposeOwnJobException,
   FailedToCreateProposalException,
+  FailedToLoadProposalException,
   FailedToUpdateProposalException,
   ProposalForbiddenException,
   ProposalFreelancerOnlyException,
@@ -111,8 +115,41 @@ export class ProposalService {
     }
   }
 
+  async getMyProposals(
+    userId: number,
+    roleName: string,
+    query: MyProposalsQueryType,
+  ): Promise<MyProposalsResponseType> {
+    this.assertFreelancer(roleName);
+    try {
+      return await this.proposalRepository.getMyProposals(userId, query);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
+  async getProposalDetail(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ProposalDetailType> {
+    this.assertFreelancer(roleName);
+    try {
+      const proposal =
+        await this.proposalRepository.getProposalDetail(proposalId);
+      if (!proposal) throw ProposalNotFoundException();
+      if (proposal.freelancerId !== userId) throw ProposalForbiddenException();
+      return proposal;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
   private assertFreelancer(roleName: string): void {
-    if (roleName !== RoleName.FREELANCER) throw ProposalFreelancerOnlyException();
+    if (roleName !== RoleName.FREELANCER)
+      throw ProposalFreelancerOnlyException();
   }
 
   private async assertCanPropose(

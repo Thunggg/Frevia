@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { ManageProposalMessage } from '../message/manage-proposal.message';
+import { ManageProposalMessage } from "../message/manage-proposal.message";
 
 export const ProposalStatusSchema = z.enum([
-  'DRAFT',
-  'PENDING',
-  'ACCEPTED',
-  'REJECTED',
-  'WITHDRAWN',
+  "DRAFT",
+  "PENDING",
+  "ACCEPTED",
+  "REJECTED",
+  "WITHDRAWN",
 ]);
 
 const CoverLetterSchema = z
@@ -41,6 +41,56 @@ export const ProposalSchema = z.object({
   updatedAt: z.date(),
 });
 
+const ProposalJobSchema = z.object({
+  id: z.number(),
+  slug: z.string(),
+  title: z.string(),
+  description: z.string().nullable(),
+  budgetMin: z.coerce.number().nullable(),
+  budgetMax: z.coerce.number().nullable(),
+  budgetType: z.enum(["FIXED_PRICE"]),
+  deadline: z.date().nullable(),
+  expiryDate: z.date().nullable(),
+  status: z.enum([
+    "DRAFT",
+    "OPEN",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "CLOSED",
+    "CANCELLED",
+  ]),
+});
+
+const ProposalClientSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  profile: z
+    .object({
+      displayName: z.string().nullable(),
+      avatarUrl: z.string().nullable(),
+    })
+    .nullable(),
+});
+
+export const ProposalDetailSchema = ProposalSchema.extend({
+  job: ProposalJobSchema,
+  client: ProposalClientSchema,
+});
+
+export const MyProposalsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(10),
+  status: ProposalStatusSchema.optional(),
+});
+
+export const MyProposalsResponseSchema = z.object({
+  data: z.array(ProposalDetailSchema),
+  totalItems: z.number(),
+  totalPages: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+
 export const CreateProposalBodySchema = z
   .object({
     coverLetter: CoverLetterSchema,
@@ -65,3 +115,6 @@ export type CreateProposalBodyType = z.output<typeof CreateProposalBodySchema>;
 export type SaveProposalDraftBodyType = z.output<
   typeof SaveProposalDraftBodySchema
 >;
+export type ProposalDetailType = z.infer<typeof ProposalDetailSchema>;
+export type MyProposalsQueryType = z.output<typeof MyProposalsQuerySchema>;
+export type MyProposalsResponseType = z.infer<typeof MyProposalsResponseSchema>;
