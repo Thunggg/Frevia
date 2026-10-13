@@ -1,19 +1,26 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
+  Patch,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import type { CreateSavedSearchBodyType } from '@shared/types';
+import type {
+  CreateSavedSearchBodyType,
+  UpdateSavedSearchBodyType,
+} from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateSavedSearchBodyDto,
   CreateSavedSearchResponseDto,
   GetSavedSearchDetailResponseDto,
   GetSavedSearchesResponseDto,
+  UpdateSavedSearchBodyDto,
+  UpdateSavedSearchResponseDto,
 } from './saved-search.dto';
 import { SavedSearchService } from './saved-search.service';
 
@@ -46,5 +53,27 @@ export class SavedSearchController {
       userId,
       body as CreateSavedSearchBodyType,
     );
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(UpdateSavedSearchResponseDto)
+  updateSavedSearch(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSavedSearchBodyDto,
+  ) {
+    return this.savedSearchService.updateSavedSearch(
+      userId,
+      id,
+      body as UpdateSavedSearchBodyType,
+    );
+  }
+
+  @Delete(':id')
+  deleteSavedSearch(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.savedSearchService.deleteSavedSearch(userId, id);
   }
 }

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const SavedSearchParamsSchema = z.record(z.string(), z.unknown());
 
@@ -17,11 +17,21 @@ export const CreateSavedSearchBodySchema = z
   })
   .strict();
 
+export const UpdateSavedSearchBodySchema = z
+  .object({
+    name: z.string().trim().min(1).max(100),
+  })
+  .strict();
+
 export const GetSavedSearchesResponseSchema = z.array(SavedSearchSchema);
 export const GetSavedSearchDetailResponseSchema = SavedSearchSchema;
 export const CreateSavedSearchResponseSchema = SavedSearchSchema;
+export const UpdateSavedSearchResponseSchema = SavedSearchSchema;
 
 export type SavedSearchType = z.infer<typeof SavedSearchSchema>;
 export type CreateSavedSearchBodyType = z.infer<
   typeof CreateSavedSearchBodySchema
+>;
+export type UpdateSavedSearchBodyType = z.infer<
+  typeof UpdateSavedSearchBodySchema
 >;
