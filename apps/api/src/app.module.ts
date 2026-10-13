@@ -31,6 +31,7 @@ import { AccountProfileModule } from './routes/account-profile/account-profile.m
 import { SavedSearchModule } from './routes/saved-search/saved-search.module';
 import { NotificationModule } from './routes/notifications/notification.module';
 import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
+import { ProposalModule } from './routes/proposals/proposal.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { IdentityVerificationsAdminModule } from './routes/identity-verification
     SavedSearchModule,
     NotificationModule,
     IdentityVerificationsAdminModule,
+    ProposalModule,
   ],
   controllers: [AppController],
   providers: [

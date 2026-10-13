@@ -35,6 +35,7 @@ const freelancerModules = [
   'JOBS',
   'SAVED-SEARCHES',
   'MANAGE-JOBS',
+  'PROPOSALS',
   'CONTRACTS',
   'CONVERSATIONS',
   'FORUMS',
