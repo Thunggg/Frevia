@@ -3,6 +3,8 @@ import { Prisma, ProposalStatus } from '@prisma/client';
 import {
   CreateProposalBodyType,
   ClientJobProposalsResponseType,
+  ClientJobProposalsPageType,
+  ClientJobProposalsQueryType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -114,6 +116,57 @@ export class ProposalRepository {
       ...this.normalize(proposal),
       freelancer: proposal.freelancer,
     }));
+  }
+
+  async findSubmittedProposalsPageForClientJob(
+    jobId: number,
+    query: ClientJobProposalsQueryType,
+  ): Promise<ClientJobProposalsPageType> {
+    const { page, limit, status } = query;
+    const where: Prisma.ProposalWhereInput = {
+      jobId,
+      deletedAt: null,
+      submittedAt: { not: null },
+      status: status ?? { not: ProposalStatus.DRAFT },
+    };
+    const [proposals, totalItems] = await Promise.all([
+      this.prisma.proposal.findMany({
+        where,
+        select: {
+          ...proposalSelect,
+          freelancer: {
+            select: {
+              id: true,
+              email: true,
+              profile: {
+                select: {
+                  displayName: true,
+                  avatarUrl: true,
+                  freelancerProfile: {
+                    select: { title: true, idVerified: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { submittedAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.proposal.count({ where }),
+    ]);
+
+    return {
+      data: proposals.map((proposal) => ({
+        ...this.normalize(proposal),
+        freelancer: proposal.freelancer,
+      })),
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      page,
+      limit,
+    };
   }
 
   async findActiveProposal(

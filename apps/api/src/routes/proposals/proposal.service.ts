@@ -3,6 +3,8 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateProposalBodyType,
   ClientJobProposalsResponseType,
+  ClientJobProposalsPageType,
+  ClientJobProposalsQueryType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -162,6 +164,30 @@ export class ProposalService {
     try {
       return await this.proposalRepository.findSubmittedProposalsForClientJob(
         job.id,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
+  async getSubmittedProposalsPageForClientJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+    query: ClientJobProposalsQueryType,
+  ): Promise<ClientJobProposalsPageType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    const job = await this.proposalRepository.findJobForClientProposals(jobId);
+    if (!job) throw ProposalJobNotFoundException();
+    if (job.deletedAt) throw ProposalJobUnavailableException();
+    if (job.clientId !== userId) throw ProposalForbiddenException();
+
+    try {
+      return await this.proposalRepository.findSubmittedProposalsPageForClientJob(
+        job.id,
+        query,
       );
     } catch (error) {
       if (error instanceof HttpException) throw error;

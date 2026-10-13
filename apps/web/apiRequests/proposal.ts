@@ -1,5 +1,6 @@
 import type {
   ApiResponse,
+  ClientJobProposalsPageType,
   CreateProposalBodyType,
   MyProposalsQueryType,
   MyProposalsResponseType,
@@ -11,6 +12,24 @@ import type {
 import { http } from "@/lib/http";
 
 export const proposalApiRequest = {
+  getClientJobProposals(
+    jobId: number,
+    query: {
+      page?: number;
+      limit?: number;
+      status?: "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
+    } = {},
+  ) {
+    const params = new URLSearchParams();
+    if (query.page) params.set("page", String(query.page));
+    if (query.limit) params.set("limit", String(query.limit));
+    if (query.status) params.set("status", query.status);
+    const suffix = params.toString();
+    return http.get<ClientJobProposalsPageType>(
+      `/api/jobs/${jobId}/proposals${suffix ? `?${suffix}` : ""}`,
+    );
+  },
+
   create(jobId: number, body: CreateProposalBodyType) {
     return http.post<ProposalType>(`/api/proposals/jobs/${jobId}`, body);
   },
@@ -32,6 +51,10 @@ export const proposalApiRequest = {
       `/api/proposals/${proposalId}/withdraw`,
       {},
     );
+  },
+
+  reject(proposalId: number) {
+    return http.patch<ProposalType>(`/api/proposals/${proposalId}/reject`, {});
   },
 
   getMyProposals(query: Partial<MyProposalsQueryType> = {}) {

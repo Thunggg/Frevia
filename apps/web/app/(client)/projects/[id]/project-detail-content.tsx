@@ -4,6 +4,7 @@ import {
   CalendarDays,
   Clock,
   DollarSign,
+  FileText,
   Tag,
 } from "lucide-react";
 
@@ -13,7 +14,9 @@ import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import type { ViewJobDetailResType } from "@shared/types";
 
-function formatBudget(job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">) {
+function formatBudget(
+  job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
+) {
   if (job.budgetMin === null || job.budgetMax === null) {
     return "Negotiable";
   }
@@ -59,10 +62,18 @@ function JobDescription({ description }: { description: string | null }) {
 }
 
 function statusBadgeClass(status: string) {
-  if (status === "OPEN") {
-    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15";
-  }
-  return "";
+  const classes: Record<string, string> = {
+    DRAFT:
+      "border-transparent bg-slate-500/10 text-slate-700 dark:text-slate-200",
+    OPEN: "border-transparent bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]",
+    IN_PROGRESS:
+      "border-transparent bg-blue-500/10 text-blue-700 dark:text-blue-300",
+    COMPLETED:
+      "border-transparent bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+    CLOSED: "border-transparent bg-muted text-muted-foreground",
+    CANCELLED: "border-transparent bg-destructive/10 text-destructive",
+  };
+  return classes[status] ?? "";
 }
 
 export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
@@ -79,7 +90,7 @@ export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
               <Link
-                href="/projects"
+                href="/client/jobs"
                 className="transition-colors hover:text-[#4fae2e]"
               >
                 My Jobs
@@ -91,7 +102,7 @@ export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
             </nav>
 
             <Link
-              href="/projects"
+              href="/client/jobs"
               className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
             >
               <ArrowLeft className="size-3.5" />
@@ -128,7 +139,10 @@ export function ProjectDetailContent({ job }: { job: ViewJobDetailResType }) {
                 asChild
                 className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
               >
-                <Link href="/projects">Manage from My Jobs</Link>
+                <Link href={`/client/jobs/${job.id}/proposals`}>
+                  <FileText className="mr-2 size-4" />
+                  View proposals
+                </Link>
               </Button>
             </div>
           </div>

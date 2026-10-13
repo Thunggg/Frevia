@@ -68,9 +68,9 @@ const roleConfig: Record<
     name: "Client",
     links: [
       {
-        href: "/projects",
+        href: "/client/jobs",
         label: "My Jobs",
-        excludePaths: ["/projects/new"],
+        excludePaths: ["/client/jobs/new"],
       },
       { href: "/forum", label: "Forum" },
     ],
@@ -226,7 +226,9 @@ function ProfileDropdown({ role }: HeaderProps) {
     try {
       await authApiRequest.switchRole({ role: targetRole });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push(targetRole === RoleName.CLIENT ? "/projects" : "/find-work");
+      router.push(
+        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
+      );
       router.refresh();
     } catch {
       toastError({ message: "Unable to switch role. Please try again." });
@@ -323,7 +325,7 @@ function ProfileDropdown({ role }: HeaderProps) {
         {role === "CLIENT" && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/projects" className="cursor-pointer">
+              <Link href="/client/jobs" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />
                 My Jobs
               </Link>

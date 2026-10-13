@@ -1,7 +1,8 @@
 import jobServerRequest from "@/apiRequests/job.server";
-import { ProjectsContent } from "./projects-content";
 
-export default async function ProjectsPage({
+import { ProjectsContent } from "../../projects/projects-content";
+
+export default async function ClientJobsPage({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string }>;
@@ -14,7 +15,9 @@ export default async function ProjectsPage({
   return (
     <ProjectsContent
       initialJobs={result?.data ?? []}
-      pagination={result?.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 }}
+      pagination={
+        result?.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 }
+      }
     />
   );
 }

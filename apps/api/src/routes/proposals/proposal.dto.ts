@@ -1,6 +1,8 @@
 import {
   CreateProposalBodySchema,
   ClientJobProposalsResponseSchema,
+  ClientJobProposalsQuerySchema,
+  ClientJobProposalsPageSchema,
   MyProposalsQuerySchema,
   MyProposalsResponseSchema,
   ProposalDetailSchema,
@@ -20,6 +22,12 @@ export class SaveProposalDraftBodyDto extends createZodDto(
 export class ProposalResponseDto extends createZodDto(ProposalSchema) {}
 export class ClientJobProposalsResponseDto extends createZodDto(
   ClientJobProposalsResponseSchema,
+) {}
+export class ClientJobProposalsQueryDto extends createZodDto(
+  ClientJobProposalsQuerySchema,
+) {}
+export class ClientJobProposalsPageDto extends createZodDto(
+  ClientJobProposalsPageSchema,
 ) {}
 
 export class MyProposalsQueryDto extends createZodDto(MyProposalsQuerySchema) {}

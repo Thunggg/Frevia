@@ -102,6 +102,20 @@ export const ClientJobProposalsResponseSchema = z.array(
   ClientJobProposalSchema,
 );
 
+export const ClientJobProposalsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(10),
+  status: z.enum(["PENDING", "ACCEPTED", "REJECTED", "WITHDRAWN"]).optional(),
+});
+
+export const ClientJobProposalsPageSchema = z.object({
+  data: z.array(ClientJobProposalSchema),
+  totalItems: z.number(),
+  totalPages: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+
 export const MyProposalsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
@@ -146,6 +160,12 @@ export type ProposalDetailType = z.infer<typeof ProposalDetailSchema>;
 export type ClientJobProposalType = z.infer<typeof ClientJobProposalSchema>;
 export type ClientJobProposalsResponseType = z.infer<
   typeof ClientJobProposalsResponseSchema
+>;
+export type ClientJobProposalsQueryType = z.output<
+  typeof ClientJobProposalsQuerySchema
+>;
+export type ClientJobProposalsPageType = z.infer<
+  typeof ClientJobProposalsPageSchema
 >;
 export type MyProposalsQueryType = z.output<typeof MyProposalsQuerySchema>;
 export type MyProposalsResponseType = z.infer<typeof MyProposalsResponseSchema>;
