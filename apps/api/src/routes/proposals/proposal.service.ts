@@ -24,6 +24,7 @@ import {
   ProposalIncompleteException,
   ProposalNotDraftException,
   ProposalNotFoundException,
+  ProposalNotPendingException,
 } from './proposal.error';
 import { ProposalRepository } from './proposal.repo';
 
@@ -126,6 +127,27 @@ export class ProposalService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToLoadProposalException();
+    }
+  }
+
+  async withdrawProposal(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ProposalType> {
+    this.assertFreelancer(roleName);
+    const proposal = await this.proposalRepository.findProposal(proposalId);
+    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
+    if (proposal.freelancerId !== userId) throw ProposalForbiddenException();
+    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+
+    try {
+      return await this.proposalRepository.withdrawProposal(proposal.id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateProposalException();
+      }
+      throw error;
     }
   }
 

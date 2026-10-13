@@ -151,6 +151,18 @@ export class ProposalRepository {
     return this.normalize(proposal);
   }
 
+  async withdrawProposal(proposalId: number): Promise<ProposalType> {
+    const proposal = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data: {
+        status: ProposalStatus.WITHDRAWN,
+        withdrawnAt: new Date(),
+      },
+      select: proposalSelect,
+    });
+    return this.normalize(proposal);
+  }
+
   async getMyProposals(
     freelancerId: number,
     query: MyProposalsQueryType,

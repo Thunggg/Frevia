@@ -8,6 +8,7 @@ export const ManageProposalMessage = {
   DRAFT_CONTENT_REQUIRED: "Error.ProposalDraftContentRequired",
   PROPOSAL_NOT_FOUND: "Error.ProposalNotFound",
   PROPOSAL_NOT_DRAFT: "Error.ProposalNotDraft",
+  PROPOSAL_NOT_PENDING: "Error.ProposalNotPending",
   PROPOSAL_INCOMPLETE: "Error.ProposalIncomplete",
   JOB_NOT_FOUND: "Error.ProposalJobNotFound",
   JOB_UNAVAILABLE: "Error.ProposalJobUnavailable",
