@@ -77,6 +77,31 @@ export const ProposalDetailSchema = ProposalSchema.extend({
   client: ProposalClientSchema,
 });
 
+const ProposalFreelancerSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  profile: z
+    .object({
+      displayName: z.string().nullable(),
+      avatarUrl: z.string().nullable(),
+      freelancerProfile: z
+        .object({
+          title: z.string().nullable(),
+          idVerified: z.boolean(),
+        })
+        .nullable(),
+    })
+    .nullable(),
+});
+
+export const ClientJobProposalSchema = ProposalSchema.extend({
+  freelancer: ProposalFreelancerSchema,
+});
+
+export const ClientJobProposalsResponseSchema = z.array(
+  ClientJobProposalSchema,
+);
+
 export const MyProposalsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
@@ -118,5 +143,9 @@ export type SaveProposalDraftBodyType = z.output<
   typeof SaveProposalDraftBodySchema
 >;
 export type ProposalDetailType = z.infer<typeof ProposalDetailSchema>;
+export type ClientJobProposalType = z.infer<typeof ClientJobProposalSchema>;
+export type ClientJobProposalsResponseType = z.infer<
+  typeof ClientJobProposalsResponseSchema
+>;
 export type MyProposalsQueryType = z.output<typeof MyProposalsQuerySchema>;
 export type MyProposalsResponseType = z.infer<typeof MyProposalsResponseSchema>;

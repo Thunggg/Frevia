@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, ProposalStatus } from '@prisma/client';
 import {
   CreateProposalBodyType,
+  ClientJobProposalsResponseType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -69,6 +70,50 @@ export class ProposalRepository {
         client: { select: { isBanned: true, deletedAt: true } },
       },
     });
+  }
+
+  async findJobForClientProposals(jobId: number) {
+    return this.prisma.job.findUnique({
+      where: { id: jobId },
+      select: { id: true, clientId: true, deletedAt: true },
+    });
+  }
+
+  async findSubmittedProposalsForClientJob(
+    jobId: number,
+  ): Promise<ClientJobProposalsResponseType> {
+    const proposals = await this.prisma.proposal.findMany({
+      where: {
+        jobId,
+        deletedAt: null,
+        submittedAt: { not: null },
+        status: { not: ProposalStatus.DRAFT },
+      },
+      select: {
+        ...proposalSelect,
+        freelancer: {
+          select: {
+            id: true,
+            email: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+                freelancerProfile: {
+                  select: { title: true, idVerified: true },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { submittedAt: 'desc' },
+    });
+
+    return proposals.map((proposal) => ({
+      ...this.normalize(proposal),
+      freelancer: proposal.freelancer,
+    }));
   }
 
   async findActiveProposal(

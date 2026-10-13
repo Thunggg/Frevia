@@ -12,6 +12,11 @@ export const ProposalFreelancerOnlyException = () =>
     { message: ManageProposalMessage.FREELANCER_ONLY, path: '' },
   ]);
 
+export const ProposalClientOnlyException = () =>
+  new ForbiddenException([
+    { message: ManageProposalMessage.CLIENT_ONLY, path: '' },
+  ]);
+
 export const ProposalJobNotFoundException = () =>
   new NotFoundException([
     { message: ManageProposalMessage.JOB_NOT_FOUND, path: 'jobId' },

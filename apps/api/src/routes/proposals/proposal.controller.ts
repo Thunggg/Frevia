@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import type {
+  ClientJobProposalsResponseType,
   CreateProposalBodyType,
   SaveProposalDraftBodyType,
 } from '@shared/types';
@@ -18,6 +19,7 @@ import type { MyProposalsQueryType } from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateProposalBodyDto,
+  ClientJobProposalsResponseDto,
   ProposalResponseDto,
   MyProposalsQueryDto,
   ProposalDetailResponseDto,
@@ -49,6 +51,20 @@ export class ProposalController {
     @Param('jobId', ParseIntPipe) jobId: number,
   ) {
     return this.proposalService.getMyActiveProposalForJob(
+      userId,
+      roleName,
+      jobId,
+    );
+  }
+
+  @Get('jobs/:jobId/submitted')
+  @ZodSerializerDto(ClientJobProposalsResponseDto)
+  getSubmittedProposalsForClientJob(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('jobId', ParseIntPipe) jobId: number,
+  ): Promise<ClientJobProposalsResponseType> {
+    return this.proposalService.getSubmittedProposalsForClientJob(
       userId,
       roleName,
       jobId,

@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateProposalBodyType,
+  ClientJobProposalsResponseType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -13,6 +14,7 @@ import {
 import {
   ActiveProposalExistsException,
   CannotProposeOwnJobException,
+  ProposalClientOnlyException,
   FailedToCreateProposalException,
   FailedToLoadProposalException,
   FailedToUpdateProposalException,
@@ -139,6 +141,28 @@ export class ProposalService {
     this.assertFreelancer(roleName);
     try {
       return await this.proposalRepository.findMyActiveProposal(jobId, userId);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
+  async getSubmittedProposalsForClientJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<ClientJobProposalsResponseType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    const job = await this.proposalRepository.findJobForClientProposals(jobId);
+    if (!job) throw ProposalJobNotFoundException();
+    if (job.deletedAt) throw ProposalJobUnavailableException();
+    if (job.clientId !== userId) throw ProposalForbiddenException();
+
+    try {
+      return await this.proposalRepository.findSubmittedProposalsForClientJob(
+        job.id,
+      );
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToLoadProposalException();

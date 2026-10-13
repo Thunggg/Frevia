@@ -16,6 +16,7 @@ export const ManageProposalMessage = {
   CANNOT_PROPOSE_OWN_JOB: "Error.CannotProposeOwnJob",
   ACTIVE_PROPOSAL_EXISTS: "Error.ActiveProposalAlreadyExists",
   FREELANCER_ONLY: "Error.ProposalFreelancerOnly",
+  CLIENT_ONLY: "Error.ProposalClientOnly",
   FORBIDDEN: "Error.ProposalForbidden",
   FAILED_TO_CREATE: "Error.FailedToCreateProposal",
   FAILED_TO_UPDATE: "Error.FailedToUpdateProposal",
