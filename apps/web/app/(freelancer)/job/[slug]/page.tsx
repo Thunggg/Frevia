@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
+import proposalServerRequest from "@/apiRequests/proposal.server";
 import type { UserRole } from "@/components/header";
-import { RoleName, type JobType } from "@shared/types";
+import { RoleName, type JobType, type ProposalType } from "@shared/types";
 
 import { JobDetailContent } from "./job-detail-content";
 
@@ -63,6 +64,11 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     .filter((item) => item.slug !== job.slug)
     .slice(0, 3);
 
+  const existingProposal: ProposalType | null =
+    role === "FREELANCER"
+      ? await proposalServerRequest.getMyProposalForJob(job.id)
+      : null;
+
   return (
     <JobDetailContent
       job={job}
@@ -70,6 +76,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
       relatedJobs={relatedJobs}
       relatedSkill={relatedSearch}
+      existingProposal={existingProposal}
     />
   );
 }

@@ -496,6 +496,12 @@ export function FindWorkContent({
                                 Featured
                               </Badge>
                             ) : null}
+                            <Badge
+                              variant="secondary"
+                              className="bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]"
+                            >
+                              {job.status.replaceAll("_", " ")}
+                            </Badge>
                             <Link
                               href={`/job/${job.slug}`}
                               className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-[#4fae2e]"

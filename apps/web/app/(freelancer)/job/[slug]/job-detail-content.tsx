@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,6 +16,7 @@ import {
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import jobApiRequest from "@/apiRequests/job";
+import { proposalApiRequest } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -29,7 +31,12 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { JobType, ViewJobDetailResType } from "@shared/types";
+import type {
+  JobType,
+  ProposalType,
+  ViewJobDetailResType,
+} from "@shared/types";
+import { ProposalDialog } from "./proposal-dialog";
 
 type JobDetailContentProps = {
   job: ViewJobDetailResType;
@@ -37,9 +44,12 @@ type JobDetailContentProps = {
   initialIsBookmarked: boolean;
   relatedJobs?: JobType[];
   relatedSkill?: string;
+  existingProposal: ProposalType | null;
 };
 
-function formatBudget(job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">) {
+function formatBudget(
+  job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
+) {
   if (job.budgetMin === null || job.budgetMax === null) {
     return "Negotiable";
   }
@@ -96,6 +106,45 @@ function getDeadlineUrgency(deadline: string | Date | null) {
   return null;
 }
 
+function isPast(value: string | Date | null) {
+  return value !== null && new Date(value).getTime() <= Date.now();
+}
+
+const proposalStatusPresentation = {
+  DRAFT: {
+    actionLabel: "Continue proposal",
+    message: "You have a saved draft for this job.",
+    badgeClassName: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
+  },
+  PENDING: {
+    actionLabel: "View proposal",
+    message: "You already submitted a proposal for this job.",
+    badgeClassName: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  },
+  ACCEPTED: {
+    actionLabel: "View proposal",
+    message: "Your proposal for this job has been accepted.",
+    badgeClassName: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+  },
+  REJECTED: {
+    actionLabel: "View proposal",
+    message: "Your proposal for this job was not selected.",
+    badgeClassName: "bg-destructive/10 text-destructive",
+  },
+  WITHDRAWN: {
+    actionLabel: "Apply now",
+    message: "",
+    badgeClassName: "",
+  },
+} satisfies Record<
+  ProposalType["status"],
+  {
+    actionLabel: string;
+    message: string;
+    badgeClassName: string;
+  }
+>;
+
 function JobDescription({ description }: { description: string | null }) {
   if (!description) {
     return (
@@ -127,15 +176,30 @@ export function JobDetailContent({
   initialIsBookmarked,
   relatedJobs = [],
   relatedSkill,
+  existingProposal,
 }: JobDetailContentProps) {
   const router = useRouter();
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
   const [clientName, setClientName] = useState<string | null>(null);
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
   const [clientLoading, setClientLoading] = useState(true);
   const canBookmark = role === "FREELANCER";
+  const activeProposalQuery = useQuery({
+    queryKey: ["proposals", "job", job.id, "mine"],
+    queryFn: () => proposalApiRequest.getMyProposalForJob(job.id),
+    enabled: canBookmark,
+    initialData: existingProposal ?? undefined,
+    retry: false,
+  });
+  const activeProposal = activeProposalQuery.data ?? existingProposal;
+  const canReceiveProposals =
+    job.status === "OPEN" && !isPast(job.expiryDate) && !isPast(job.deadline);
+  const proposalPresentation = activeProposal
+    ? proposalStatusPresentation[activeProposal.status]
+    : null;
   const deadlineUrgency = getDeadlineUrgency(job.deadline);
   const clientInitial = (clientName ?? "C").slice(0, 1).toUpperCase();
 
@@ -217,11 +281,34 @@ export function JobDetailContent({
     }
   };
 
-  const handleApply = () => {
+  const openProposalAction = () => {
     requireFreelancer(() => {
-      toastError({
-        message: "Applying to jobs is not available yet.",
-      });
+      if (activeProposal) {
+        router.push(`/proposals/${activeProposal.id}`);
+        return;
+      }
+
+      if (!canReceiveProposals) {
+        toastError({ message: "This job is no longer accepting proposals." });
+        return;
+      }
+
+      // Check once more when the button is clicked. This prevents opening a
+      // new form if another tab has already saved or submitted a proposal.
+      void activeProposalQuery
+        .refetch()
+        .then(({ data }) => {
+          if (data) {
+            router.push(`/proposals/${data.id}`);
+            return;
+          }
+          setIsProposalDialogOpen(true);
+        })
+        .catch(() => {
+          // The create endpoint remains the final concurrency guard. Do not
+          // block a freelancer from applying solely because this lookup fails.
+          setIsProposalDialogOpen(true);
+        });
     });
   };
 
@@ -233,6 +320,14 @@ export function JobDetailContent({
     { label: "Expires", value: formatDate(job.expiryDate) },
     { label: "Status", value: job.status.replaceAll("_", " ") },
   ];
+
+  const proposalActionLabel = activeProposal
+    ? activeProposal.status === "DRAFT" && canReceiveProposals
+      ? "Continue proposal"
+      : "View proposal"
+    : canReceiveProposals
+      ? "Apply now"
+      : null;
 
   const actionButtons = (
     <>
@@ -256,12 +351,17 @@ export function JobDetailContent({
           )}
         </Button>
       ) : null}
-      <Button
-        className="h-11 flex-1 bg-[#4fae2e] px-6 font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a] sm:flex-none"
-        onClick={handleApply}
-      >
-        Apply now
-      </Button>
+      {proposalActionLabel ? (
+        <Button
+          className="h-11 flex-1 bg-[#4fae2e] px-6 font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a] sm:flex-none"
+          disabled={canBookmark && activeProposalQuery.isFetching}
+          onClick={openProposalAction}
+        >
+          {canBookmark && activeProposalQuery.isFetching
+            ? "Checking proposal..."
+            : proposalActionLabel}
+        </Button>
+      ) : null}
     </>
   );
 
@@ -274,7 +374,10 @@ export function JobDetailContent({
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-foreground/60">
               <nav className="flex min-w-0 items-center gap-2">
-                <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+                <Link
+                  href="/"
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
                   Home
                 </Link>
                 <span className="text-foreground/35">/</span>
@@ -341,7 +444,28 @@ export function JobDetailContent({
                 </div>
               </div>
 
-              <div className="hidden shrink-0 gap-2 lg:flex">{actionButtons}</div>
+              <div className="hidden shrink-0 lg:block">
+                <div className="flex justify-end gap-2">{actionButtons}</div>
+                {activeProposal && proposalPresentation ? (
+                  <div className="mt-3 flex items-center justify-end gap-2 text-sm">
+                    <Badge
+                      variant="secondary"
+                      className={proposalPresentation.badgeClassName}
+                    >
+                      {activeProposal.status.charAt(0) +
+                        activeProposal.status.slice(1).toLowerCase()}
+                    </Badge>
+                    <span className="text-muted-foreground">
+                      {proposalPresentation.message}
+                    </span>
+                  </div>
+                ) : null}
+                {!canReceiveProposals ? (
+                  <p className="mt-3 text-right text-sm text-muted-foreground">
+                    This job is no longer accepting proposals.
+                  </p>
+                ) : null}
+              </div>
             </div>
           </div>
         </section>
@@ -485,7 +609,9 @@ export function JobDetailContent({
                     className="mt-2 h-11 w-full gap-2 border-[#4fae2e]/35 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
                     onClick={() => {
                       requireFreelancer(() => {
-                        router.push(`/conversations/new?participantId=${job.clientId}`);
+                        router.push(
+                          `/conversations/new?participantId=${job.clientId}`,
+                        );
                       });
                     }}
                   >
@@ -500,7 +626,28 @@ export function JobDetailContent({
       </main>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 backdrop-blur supports-backdrop-filter:bg-background/90 lg:hidden">
-        <div className="mx-auto flex max-w-7xl gap-2">{actionButtons}</div>
+        {activeProposal && proposalPresentation ? (
+          <div className="mx-auto mb-2 flex max-w-7xl items-center gap-2 text-xs">
+            <Badge
+              variant="secondary"
+              className={proposalPresentation.badgeClassName}
+            >
+              {activeProposal.status.charAt(0) +
+                activeProposal.status.slice(1).toLowerCase()}
+            </Badge>
+            <span className="truncate text-muted-foreground">
+              {proposalPresentation.message}
+            </span>
+          </div>
+        ) : null}
+        {!canReceiveProposals ? (
+          <p className="mx-auto mb-2 max-w-7xl text-xs text-muted-foreground">
+            This job is no longer accepting proposals.
+          </p>
+        ) : null}
+        <div className="mx-auto flex max-w-7xl justify-end gap-2">
+          {actionButtons}
+        </div>
       </div>
 
       <AlertDialog
@@ -528,6 +675,13 @@ export function JobDetailContent({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ProposalDialog
+        jobId={job.id}
+        jobTitle={job.title}
+        open={isProposalDialogOpen}
+        onOpenChange={setIsProposalDialogOpen}
+      />
 
       <Footer />
     </div>

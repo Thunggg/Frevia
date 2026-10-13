@@ -140,6 +140,9 @@ export function BookmarksContent({
                           >
                             {availability.label}
                           </Badge>
+                          <Badge variant="secondary">
+                            {job.status.replaceAll("_", " ")}
+                          </Badge>
                           <span className="text-muted-foreground">
                             {formatPostedTime(job.createdAt)}
                           </span>

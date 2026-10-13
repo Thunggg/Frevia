@@ -74,6 +74,7 @@ export class ProposalService {
   ): Promise<ProposalType> {
     this.assertFreelancer(roleName);
     const proposal = await this.getOwnedDraft(userId, proposalId);
+    await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
     try {
       return await this.proposalRepository.updateDraft(proposal.id, body);
     } catch (error) {
@@ -124,6 +125,20 @@ export class ProposalService {
     this.assertFreelancer(roleName);
     try {
       return await this.proposalRepository.getMyProposals(userId, query);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
+  async getMyActiveProposalForJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<ProposalType | null> {
+    this.assertFreelancer(roleName);
+    try {
+      return await this.proposalRepository.findMyActiveProposal(jobId, userId);
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToLoadProposalException();
@@ -192,6 +207,9 @@ export class ProposalService {
     if (job.status !== 'OPEN') throw ProposalJobUnavailableException(); // 6
     if (job.expiryDate && job.expiryDate <= new Date()) {
       throw ProposalJobExpiredException(); // 7
+    }
+    if (job.deadline && job.deadline <= new Date()) {
+      throw ProposalJobExpiredException();
     }
     if (job.clientId === userId) throw CannotProposeOwnJobException(); // 8
 

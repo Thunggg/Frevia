@@ -80,6 +80,7 @@ export const ProposalDetailSchema = ProposalSchema.extend({
 export const MyProposalsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
+  jobId: z.coerce.number().int().positive().optional(),
   status: ProposalStatusSchema.optional(),
 });
 
@@ -111,6 +112,7 @@ export const SaveProposalDraftBodySchema = z
   });
 
 export type ProposalType = z.infer<typeof ProposalSchema>;
+export type ProposalStatusType = z.infer<typeof ProposalStatusSchema>;
 export type CreateProposalBodyType = z.output<typeof CreateProposalBodySchema>;
 export type SaveProposalDraftBodyType = z.output<
   typeof SaveProposalDraftBodySchema
