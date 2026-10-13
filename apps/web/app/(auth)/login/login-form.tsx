@@ -3,6 +3,7 @@
 import { useGoogleLink, useLogin } from "@/hooks/use-auth";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
+import { authApiRequest } from "@/apiRequests/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
@@ -20,16 +21,25 @@ import { LoginBodySchema } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
-export function LoginForm() {
+export function LoginForm({ oauthError }: { oauthError?: string }) {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMutation = useLogin();
   const googleLinkMutation = useGoogleLink();
+
+  useEffect(() => {
+    if (oauthError === "google") {
+      toastError({
+        message: "Google login failed. Please try again.",
+        duration: 4000,
+      });
+    }
+  }, [oauthError]);
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
     resolver: zodResolver(LoginBodySchema),
@@ -41,10 +51,22 @@ export function LoginForm() {
 
   function onSubmit(payload: z.infer<typeof LoginBodySchema>) {
     loginMutation.mutate(payload, {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         if (response.success) {
           toastSuccess({ message: "Login successful" });
-          router.push("/");
+          try {
+            const meRes = await authApiRequest.me();
+            const primaryRole = meRes.success
+              ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
+              : null;
+            if (primaryRole === "Admin") {
+              router.push("/admin");
+            } else {
+              router.push("/");
+            }
+          } catch {
+            router.push("/");
+          }
         }
       },
       onError: (error) => {
@@ -124,7 +146,9 @@ export function LoginForm() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="size-4" />

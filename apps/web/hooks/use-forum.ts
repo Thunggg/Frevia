@@ -11,7 +11,11 @@ function extractData<T>(response: ApiResponse<T>): T {
   if (response.success && "data" in response) {
     return response.data;
   }
-  throw new Error("Unexpected API error response");
+  // REVIEW (HTTP 202) từ proxy moderation: { success:false, message, need_review }
+  const err = response as { message?: string; error?: { message?: string } };
+  throw new Error(
+    err.error?.message ?? err.message ?? "Unexpected API error response",
+  );
 }
 
 export const forumKeys = {

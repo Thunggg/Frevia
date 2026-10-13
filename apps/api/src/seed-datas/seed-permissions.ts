@@ -42,6 +42,7 @@ const freelancerModules = [
   'CLIENTS',
   'IDENTITY-VERIFICATIONS',
   'SOCIAL-LINKS',
+  'NOTIFICATIONS',
 ];
 
 const clientModules = [
@@ -57,6 +58,8 @@ const clientModules = [
   'PROFILES',
   'SOCIAL-LINKS',
   'FAVORITES',
+  'FOLLOWING',
+  'NOTIFICATIONS',
 ];
 
 type AvailableRoute = {
@@ -152,6 +155,8 @@ async function bootstrap() {
       'IDENTITY-VERIFICATIONS',
       'SOCIAL-LINKS',
       'FAVORITES',
+      'FOLLOWING',
+      'NOTIFICATIONS',
     ].includes(route.module),
   );
   console.log(
@@ -242,11 +247,19 @@ async function bootstrap() {
   const adminPermissionIds = updatedPermissionInDb.map((item) => item.id);
 
   const freelancerPermissionIds = updatedPermissionInDb
-    .filter((item) => freelancerModules.includes(item.module ?? ''))
+    .filter(
+      (item) =>
+        freelancerModules.includes(item.module ?? '') &&
+        !(item.path ?? '').startsWith('/api/admin/'),
+    )
     .map((item) => item.id);
 
   const clientPermissionIds = updatedPermissionInDb
-    .filter((item) => clientModules.includes(item.module ?? ''))
+    .filter(
+      (item) =>
+        clientModules.includes(item.module ?? '') &&
+        !(item.path ?? '').startsWith('/api/admin/'),
+    )
     .map((item) => item.id);
 
   const freelancerProfileCount = updatedPermissionInDb.filter(

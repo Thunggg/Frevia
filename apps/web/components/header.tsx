@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
+  Eye,
   FileText,
   LogOut,
   Heart,
@@ -18,10 +20,15 @@ import {
   ShieldCheck,
   SwitchCamera,
   UserRound,
+  UserCheck,
   X,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/shadcn/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   DropdownMenu,
@@ -32,9 +39,13 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { NotificationBell } from "@/components/notification-bell";
+import { MessageBell } from "@/components/notification-bell";
+import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
+import { authApiRequest } from "@/apiRequests/auth";
+import { RoleName } from "@shared/types";
+import { toastError } from "@repo/ui/components/shadcn/toast";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -91,12 +102,9 @@ function isNavLinkActive(link: NavLink, pathname: string) {
 
 function Logo() {
   return (
-    <Link
-      href="/"
-      className="flex shrink-0 items-center gap-2.5"
-    >
+    <Link href="/" className="flex shrink-0 items-center gap-2.5">
       <Image
-        src="/Logo.png"
+        src="/frevia-mark.png"
         alt="Frevia logo"
         width={26}
         height={26}
@@ -119,7 +127,9 @@ function HeaderNavigation({
   const links = role === "GUEST" ? [] : roleConfig[role].links;
 
   return (
-    <div className={mobile ? "space-y-0.5" : "hidden items-center gap-1 md:flex"}>
+    <div
+      className={mobile ? "space-y-0.5" : "hidden items-center gap-1 md:flex"}
+    >
       {links.map((link) => {
         const isActive = isNavLinkActive(link, pathname);
         return (
@@ -171,7 +181,10 @@ function HeaderSearch({
       }}
     >
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
+        <Search
+          className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          strokeWidth={1.75}
+        />
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -185,15 +198,39 @@ function HeaderSearch({
 
 function ProfileDropdown({ role }: HeaderProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const profile = roleConfig[role as Exclude<UserRole, "GUEST">];
-  const { data: me } = useMe();
+  const { data: me, isLoading: isMeLoading } = useMe();
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const displayName = me?.profile?.displayName || profile.name;
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
+  const targetRole =
+    role === "FREELANCER" ? RoleName.CLIENT : RoleName.FREELANCER;
+  const canSwitchRole = me?.roles.some((item) => item.name === targetRole);
+  const publicProfileHref = me?.profile?.id
+    ? role === "FREELANCER"
+      ? `/profiles/${me.profile.id}`
+      : `/clients/${me.id}`
+    : null;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
+  };
+
+  const switchRole = async () => {
+    if (!canSwitchRole || isSwitchingRole) return;
+    setIsSwitchingRole(true);
+    try {
+      await authApiRequest.switchRole({ role: targetRole });
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      router.push(targetRole === RoleName.CLIENT ? "/projects" : "/find-work");
+      router.refresh();
+    } catch {
+      toastError({ message: "Unable to switch role. Please try again." });
+      setIsSwitchingRole(false);
+    }
   };
 
   return (
@@ -204,7 +241,9 @@ function ProfileDropdown({ role }: HeaderProps) {
           aria-label="Open profile menu"
         >
           <Avatar className="size-8">
-            {me?.profile?.avatarUrl && <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />}
+            {me?.profile?.avatarUrl && (
+              <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />
+            )}
             <AvatarFallback className="bg-[#4fae2e]/10 text-[11px] font-semibold text-[#4fae2e]">
               {initial}
             </AvatarFallback>
@@ -212,13 +251,18 @@ function ProfileDropdown({ role }: HeaderProps) {
           <span className="max-w-[100px] truncate text-[13px] font-medium text-foreground/80">
             {displayName}
           </span>
-          <ChevronDown className="size-3.5 text-muted-foreground" strokeWidth={2} />
+          <ChevronDown
+            className="size-3.5 text-muted-foreground"
+            strokeWidth={2}
+          />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 p-1.5">
         <DropdownMenuLabel className="flex items-center gap-3 px-2.5 py-3">
           <Avatar size="lg">
-            {me?.profile?.avatarUrl && <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />}
+            {me?.profile?.avatarUrl && (
+              <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />
+            )}
             <AvatarFallback className="bg-[#4fae2e]/10 text-sm font-semibold text-[#4fae2e]">
               {initial}
             </AvatarFallback>
@@ -233,6 +277,14 @@ function ProfileDropdown({ role }: HeaderProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {publicProfileHref ? (
+          <DropdownMenuItem asChild>
+            <Link href={publicProfileHref} className="cursor-pointer">
+              <Eye className="size-4 text-muted-foreground" />
+              View public profile
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem asChild>
           <Link href="/account-profile" className="cursor-pointer">
             <UserRound className="size-4 text-muted-foreground" />
@@ -270,9 +322,21 @@ function ProfileDropdown({ role }: HeaderProps) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/account-profile" className="cursor-pointer">
+              <Link
+                href="/account-profile?tab=favorites"
+                className="cursor-pointer"
+              >
                 <Heart className="size-4 text-muted-foreground" />
                 Favorite freelancers
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/account-profile?tab=following"
+                className="cursor-pointer"
+              >
+                <UserCheck className="size-4 text-muted-foreground" />
+                Following
               </Link>
             </DropdownMenuItem>
           </>
@@ -284,11 +348,22 @@ function ProfileDropdown({ role }: HeaderProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={role === "FREELANCER" ? "/client" : "/find-work"} className="cursor-pointer">
-            <SwitchCamera className="size-4 text-muted-foreground" />
-            Switch to {role === "FREELANCER" ? "Client" : "Freelancer"}
-          </Link>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          disabled={isMeLoading || !canSwitchRole || isSwitchingRole}
+          onSelect={(event) => {
+            event.preventDefault();
+            void switchRole();
+          }}
+        >
+          <SwitchCamera className="size-4 text-muted-foreground" />
+          {isMeLoading
+            ? "Loading roles..."
+            : isSwitchingRole
+              ? "Switching role..."
+              : canSwitchRole
+                ? `Switch to ${role === "FREELANCER" ? "Client" : "Freelancer"}`
+                : "Second role not available"}
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/sessions" className="cursor-pointer">
@@ -297,7 +372,11 @@ function ProfileDropdown({ role }: HeaderProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onSelect={logout} className="cursor-pointer">
+        <DropdownMenuItem
+          variant="destructive"
+          onSelect={logout}
+          className="cursor-pointer"
+        >
           <LogOut className="size-4" />
           Logout
         </DropdownMenuItem>
@@ -332,9 +411,45 @@ function HeaderActions({ role }: HeaderProps) {
   return (
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
       <ContactDialog />
-      <NotificationBell />
+      <MessageBell />
+      <NotificationsBell />
       <ThemeToggle />
       <ProfileDropdown role={role} />
+    </div>
+  );
+}
+
+function MobileProfileNavigation({
+  role,
+  onNavigate,
+}: HeaderProps & { onNavigate: () => void }) {
+  const { data: me } = useMe();
+  const publicProfileHref = me?.profile?.id
+    ? role === "FREELANCER"
+      ? `/profiles/${me.profile.id}`
+      : `/clients/${me.id}`
+    : null;
+
+  return (
+    <div className="space-y-1">
+      {publicProfileHref ? (
+        <Link
+          href={publicProfileHref}
+          onClick={onNavigate}
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
+        >
+          <Eye className="size-4 text-muted-foreground" />
+          View public profile
+        </Link>
+      ) : null}
+      <Link
+        href="/account-profile"
+        onClick={onNavigate}
+        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
+      >
+        <UserRound className="size-4 text-muted-foreground" />
+        Profile settings
+      </Link>
     </div>
   );
 }
@@ -356,18 +471,12 @@ export function Header({ role }: HeaderProps) {
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
         >
-          {isMenuOpen ? (
-            <X className="size-5" />
-          ) : (
-            <Menu className="size-5" />
-          )}
+          {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
       {isMenuOpen && (
         <div className="space-y-2 border-t border-border/40 bg-[#eaf8df]/95 p-4 backdrop-blur-xl md:hidden dark:border-white/[0.06] dark:bg-[#161716]/95">
-          {role === "FREELANCER" && (
-            <HeaderSearch className="block w-full" />
-          )}
+          {role === "FREELANCER" && <HeaderSearch className="block w-full" />}
           <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
           {role === "GUEST" ? (
             <div className="flex flex-col gap-2 border-t border-border/40 pt-3 dark:border-white/[0.06]">
@@ -400,6 +509,7 @@ export function Header({ role }: HeaderProps) {
                 <MessageSquare className="size-4 text-muted-foreground" />
                 Conversations
               </Link>
+              <MobileProfileNavigation role={role} onNavigate={closeMenu} />
               <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
                 {roleConfig[role].name}
               </div>

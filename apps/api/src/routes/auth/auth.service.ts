@@ -17,6 +17,7 @@ import {
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
+  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
   AuthMessage,
@@ -494,6 +495,7 @@ export class AuthService {
       isBanned: user.isBanned,
       profile: user.profile
         ? {
+            id: user.profile.id,
             displayName: user.profile.displayName,
             avatarUrl: user.profile.avatarUrl,
           }
@@ -503,6 +505,24 @@ export class AuthService {
         isPrimary: userRole.isPrimary,
       })),
     };
+  }
+
+  async switchRole(
+    userId: number,
+    sessionId: number,
+    body: SwitchRoleBodyType,
+  ) {
+    const role = await this.authRepository.switchPrimaryRole(userId, body.role);
+    if (!role) throw RoleNotFoundException();
+
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId: role.id,
+      roleName: role.name,
+      sessionId,
+    });
+
+    return { accessToken };
   }
 
   getAuthorizationUrl(payload: {
@@ -589,11 +609,16 @@ export class AuthService {
       });
     }
 
+    const primaryRole = user.userRoles[0]?.role;
+    if (!primaryRole) {
+      throw RoleNotFoundException();
+    }
+
     const { accessToken, refreshToken } =
       await this.generateAccessAndRefreshTokens({
         userId: user.id,
-        roleId: user.userRoles[0].role.id,
-        roleName: user.userRoles[0].role.name,
+        roleId: primaryRole.id,
+        roleName: primaryRole.name,
         userAgent: userAgent,
         ipAddress: ip,
       });

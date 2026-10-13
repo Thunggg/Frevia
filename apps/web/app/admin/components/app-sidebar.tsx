@@ -6,21 +6,20 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
-  ArrowLeft,
-  FileText,
+  IdCard,
   KeyRound,
   LayoutDashboard,
   MessageSquare,
-  Shield,
   UserCog,
   UsersRound,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { NavMain, type NavItem } from "./nav-main";
+import { LogoutButton } from "./logout-button";
 
 const navItems: NavItem[] = [
   {
@@ -29,16 +28,14 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Posts",
-    href: "/admin/posts",
-    icon: FileText,
-  },
-  {
     title: "Forum",
     icon: MessageSquare,
     children: [
       { title: "Comments", href: "/admin/comments" },
+      { title: "Moderation", href: "/admin/moderation" },
       { title: "Reports", href: "/admin/reports" },
+      { title: "Posts", href: "/admin/posts" },
+      { title: "Trash", href: "/admin/trash" },
     ],
   },
   {
@@ -56,6 +53,11 @@ const navItems: NavItem[] = [
     href: "/admin/assign-role",
     icon: UserCog,
   },
+  {
+    title: "ID Verification",
+    href: "/admin/identity-verifications",
+    icon: IdCard,
+  },
 ];
 
 export function AppSidebar() {
@@ -63,9 +65,13 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2.5 px-2 py-1.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-            <Shield className="size-4" />
-          </div>
+          <Image
+            src="/frevia-mark.png"
+            alt=""
+            width={32}
+            height={32}
+            className="size-8 object-contain"
+          />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold tracking-tight text-[#4fae2e]">
               Frevia Admin
@@ -83,13 +89,16 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
+          {/* <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/forum">
                 <ArrowLeft />
                 <span>Back to Forum</span>
               </Link>
             </SidebarMenuButton>
+          </SidebarMenuItem> */}
+          <SidebarMenuItem>
+            <LogoutButton />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

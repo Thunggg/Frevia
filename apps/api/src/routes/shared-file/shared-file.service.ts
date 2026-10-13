@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { RoleName } from '@shared/types';
-import { SharedFileRepository } from './shared-file.repo';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import {
   ContractNotFoundException,
   FailedToDeleteSharedFileException,
@@ -9,9 +9,8 @@ import {
   SharedFileDeleteExpiredException,
   SharedFileForbiddenException,
   SharedFileNotFoundException,
-  SharedFileRequiredException,
 } from './shared-file.error';
-import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { SharedFileRepository } from './shared-file.repo';
 
 @Injectable()
 export class SharedFileService {
@@ -45,7 +44,7 @@ export class SharedFileService {
 
       throw FailedToLoadSharedFilesException();
     }
-  } // thêm dòng này
+  }
 
   async uploadSharedFile(
     userId: number,

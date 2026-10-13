@@ -4,6 +4,7 @@
   "globalEnv": [
     "APP_URL",
     "NESTJS_API_URL",
+    "NESTJS_PROXY_URL",
     "ACCESS_TOKEN_EXPIRES_IN",
     "REFRESH_TOKEN_EXPIRES_IN",
     "NODE_ENV"

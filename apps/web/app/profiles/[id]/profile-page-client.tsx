@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode,
@@ -24,6 +25,8 @@ import {
   ShieldCheck,
   Trash2,
   UserRound,
+  UserCheck,
+  UserPlus,
 } from "lucide-react";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
@@ -56,13 +59,6 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
 import {
   Dialog,
   DialogContent,
@@ -112,6 +108,8 @@ type PortfolioForm = {
   mediaUrls: string;
   projectUrl: string;
 };
+
+type SkillOption = { id: number; name: string };
 
 const EMPTY_PROFILE_FORM: ProfileForm = {
   displayName: "",
@@ -204,6 +202,12 @@ export function ProfilePageClient({
   const [skillEditorOpen, setSkillEditorOpen] = useState(false);
   const [skillName, setSkillName] = useState("");
   const [skillLevel, setSkillLevel] = useState("5");
+  const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
+  const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
+  const [skillSuggestionStatus, setSkillSuggestionStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const skillPickerRef = useRef<HTMLDivElement>(null);
   const [skillToDelete, setSkillToDelete] =
     useState<FreelancerSkillType | null>(null);
   const [portfolioEditor, setPortfolioEditor] = useState<
@@ -218,6 +222,7 @@ export function ProfilePageClient({
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -236,12 +241,16 @@ export function ProfilePageClient({
         skillsResponse,
         portfoliosResponse,
         favoritesResponse,
+        followingResponse,
       ] = await Promise.all([
         profileApiRequest.getProfileDetail(profileId),
         profileApiRequest.getSkills(profileId),
         profileApiRequest.getPortfoliosList(profileId),
         headerRole === "CLIENT"
           ? accountProfileApi.getFavorites()
+          : Promise.resolve(null),
+        headerRole === "CLIENT"
+          ? accountProfileApi.getFollowing()
           : Promise.resolve(null),
       ]);
 
@@ -261,13 +270,13 @@ export function ProfilePageClient({
           (favorite) => favorite.freelancerId === profileResponse.data.userId,
         ) ?? false,
       );
-    } catch (error) {
-      setLoadError(
-        getErrorMessage(
-          error,
-          "Couldn't load profile. Try again.",
-        ),
+      setIsFollowing(
+        followingResponse?.data.some(
+          (follow) => follow.freelancerId === profileResponse.data.userId,
+        ) ?? false,
       );
+    } catch (error) {
+      setLoadError(getErrorMessage(error, "Couldn't load profile. Try again."));
     } finally {
       setIsLoading(false);
     }
@@ -290,7 +299,34 @@ export function ProfilePageClient({
       });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, "Couldn't update favorites. Try again."),
+        message: getErrorMessage(
+          error,
+          "Couldn't update favorites. Try again.",
+        ),
+      });
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
+  const toggleFollowing = async () => {
+    if (!profile) return;
+    setPendingAction("follow");
+    try {
+      if (isFollowing) {
+        await accountProfileApi.unfollowFreelancer(profile.userId);
+      } else {
+        await accountProfileApi.followFreelancer(profile.userId);
+      }
+      setIsFollowing((current) => !current);
+      toastSuccess({
+        message: isFollowing
+          ? "You unfollowed this freelancer."
+          : "You are now following this freelancer.",
+      });
+    } catch (error) {
+      toastError({
+        message: getErrorMessage(error, "Couldn't update following status."),
       });
     } finally {
       setPendingAction(null);
@@ -300,6 +336,48 @@ export function ProfilePageClient({
   useEffect(() => {
     void loadProfile();
   }, [loadProfile]);
+
+  useEffect(() => {
+    if (!skillEditorOpen || !isSkillMenuOpen) return;
+
+    let ignore = false;
+    const timeoutId = window.setTimeout(
+      async () => {
+        setSkillSuggestionStatus("loading");
+        try {
+          const response = await profileApiRequest.searchSkillSuggestions(
+            skillName.trim(),
+          );
+          if (!ignore && response.success) {
+            setSkillOptions(response.data);
+            setSkillSuggestionStatus("success");
+          }
+        } catch {
+          if (!ignore) {
+            setSkillOptions([]);
+            setSkillSuggestionStatus("error");
+          }
+        }
+      },
+      skillName.trim() ? 250 : 0,
+    );
+
+    return () => {
+      ignore = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [isSkillMenuOpen, skillEditorOpen, skillName]);
+
+  useEffect(() => {
+    const closeSkillMenu = (event: MouseEvent) => {
+      if (!skillPickerRef.current?.contains(event.target as Node)) {
+        setIsSkillMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeSkillMenu);
+    return () => document.removeEventListener("mousedown", closeSkillMenu);
+  }, []);
 
   const completionItems = useMemo(() => {
     if (!profile) return [];
@@ -318,6 +396,17 @@ export function ProfilePageClient({
         (completionItems.filter(Boolean).length / completionItems.length) * 100,
       )
     : 0;
+  const availableSkillOptions = useMemo(
+    () =>
+      skillOptions.filter(
+        (option) =>
+          !skills.some(
+            (skill) =>
+              skill.skillName.toLowerCase() === option.name.toLowerCase(),
+          ),
+      ),
+    [skillOptions, skills],
+  );
 
   const openProfileEditor = () => {
     if (!profile) return;
@@ -403,6 +492,8 @@ export function ProfilePageClient({
       );
       setSkillName("");
       setSkillLevel("5");
+      setSkillOptions([]);
+      setIsSkillMenuOpen(false);
       setSkillEditorOpen(false);
       toastSuccess({ message: "Skill added successfully." });
     } catch (error) {
@@ -657,30 +748,58 @@ export function ProfilePageClient({
                   </div>
                 </div>
                 {isOwner ? (
-                  <Button
-                    className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                    onClick={openProfileEditor}
-                  >
-                    <Pencil /> Edit profile
-                  </Button>
+                  <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                    <Button variant="outline" asChild>
+                      <Link href="/account-profile">
+                        <UserRound /> Profile settings
+                      </Link>
+                    </Button>
+                    <Button
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      onClick={openProfileEditor}
+                    >
+                      <Pencil /> Edit profile
+                    </Button>
+                  </div>
                 ) : headerRole === "CLIENT" ? (
-                  <Button
-                    variant={isFavorite ? "default" : "outline"}
-                    className={
-                      isFavorite
-                        ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        : ""
-                    }
-                    onClick={() => void toggleFavorite()}
-                    disabled={pendingAction === "favorite"}
-                  >
-                    {pendingAction === "favorite" ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <Heart className={isFavorite ? "fill-current" : ""} />
-                    )}
-                    {isFavorite ? "Favorited" : "Add to favorites"}
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant={isFollowing ? "default" : "outline"}
+                      className={
+                        isFollowing
+                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                          : ""
+                      }
+                      onClick={() => void toggleFollowing()}
+                      disabled={pendingAction === "follow"}
+                    >
+                      {pendingAction === "follow" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : isFollowing ? (
+                        <UserCheck />
+                      ) : (
+                        <UserPlus />
+                      )}
+                      {isFollowing ? "Following" : "Follow"}
+                    </Button>
+                    <Button
+                      variant={isFavorite ? "default" : "outline"}
+                      className={
+                        isFavorite
+                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                          : ""
+                      }
+                      onClick={() => void toggleFavorite()}
+                      disabled={pendingAction === "favorite"}
+                    >
+                      {pendingAction === "favorite" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Heart className={isFavorite ? "fill-current" : ""} />
+                      )}
+                      {isFavorite ? "Favorited" : "Add to favorites"}
+                    </Button>
+                  </div>
                 ) : null}
               </div>
             </div>
@@ -707,8 +826,7 @@ export function ProfilePageClient({
                     About me
                   </h3>
                   <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
-                    {profile.bio ||
-                      "This freelancer has not added a bio yet."}
+                    {profile.bio || "This freelancer has not added a bio yet."}
                   </p>
                 </section>
                 <div className="grid gap-8 md:grid-cols-2">
@@ -1109,24 +1227,91 @@ export function ProfilePageClient({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={skillEditorOpen} onOpenChange={setSkillEditorOpen}>
+      <Dialog
+        open={skillEditorOpen}
+        onOpenChange={(open) => {
+          setSkillEditorOpen(open);
+          if (!open) {
+            setSkillOptions([]);
+            setIsSkillMenuOpen(false);
+            setSkillSuggestionStatus("idle");
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add freelancer skill</DialogTitle>
             <DialogDescription>
-              Add a unique skill and select your proficiency level.
+              Choose from the same skill catalog clients use for jobs, or add a
+              skill that is not listed yet.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
             <FormField label="Skill name" htmlFor="skill-name">
-              <Input
-                id="skill-name"
-                value={skillName}
-                maxLength={100}
-                required
-                placeholder="e.g. Product design"
-                onChange={(event) => setSkillName(event.target.value)}
-              />
+              <div ref={skillPickerRef} className="relative">
+                <Input
+                  id="skill-name"
+                  value={skillName}
+                  maxLength={100}
+                  required
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-controls="skill-suggestions"
+                  aria-expanded={isSkillMenuOpen}
+                  placeholder="Search skills used in jobs..."
+                  onFocus={() => setIsSkillMenuOpen(true)}
+                  onChange={(event) => {
+                    setSkillName(event.target.value);
+                    setIsSkillMenuOpen(true);
+                  }}
+                />
+                {isSkillMenuOpen ? (
+                  <div
+                    id="skill-suggestions"
+                    role="listbox"
+                    aria-label="Suggested skills"
+                    className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+                  >
+                    {skillSuggestionStatus === "loading" ? (
+                      <p className="px-3 py-2 text-sm text-muted-foreground">
+                        Loading suggestions...
+                      </p>
+                    ) : null}
+                    {skillSuggestionStatus === "error" ? (
+                      <p className="px-3 py-2 text-sm text-muted-foreground">
+                        Suggestions are unavailable. You can still type a skill.
+                      </p>
+                    ) : null}
+                    {skillSuggestionStatus === "success" &&
+                    availableSkillOptions.length === 0 ? (
+                      <p className="px-3 py-2 text-sm text-muted-foreground">
+                        No matching skill. Your custom skill will still be
+                        saved.
+                      </p>
+                    ) : null}
+                    {skillSuggestionStatus === "success"
+                      ? availableSkillOptions.map((option) => (
+                          <button
+                            key={option.id}
+                            type="button"
+                            role="option"
+                            aria-selected={skillName === option.name}
+                            className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+                            onClick={() => {
+                              setSkillName(option.name);
+                              setIsSkillMenuOpen(false);
+                            }}
+                          >
+                            {option.name}
+                          </button>
+                        ))
+                      : null}
+                  </div>
+                ) : null}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Selecting a suggestion improves matching with client jobs.
+              </p>
             </FormField>
             <FormField label="Proficiency level" htmlFor="skill-level">
               <Select

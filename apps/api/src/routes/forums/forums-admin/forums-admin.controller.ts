@@ -1,10 +1,23 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { ForumAdminService } from './forums-admin.service';
 import {
   ForumAdminStatsResponseDto,
   ForumAdminCommentListResponseDto,
+  PendingForumPostListResponseDto,
+  ReviewForumPostResponseDto,
+  ForumTrashPostListResponseDto,
+  ForumTrashCommentListResponseDto,
+  ForumRestorePostResponseDto,
+  ForumRestoreCommentResponseDto,
 } from './forums-admin.dto';
 
 @Controller('forums/admin')
@@ -31,5 +44,92 @@ export class ForumAdminController {
       Number(limit) || 10,
       search || undefined,
     );
+  }
+
+  // Danh sách bài viết PENDING chờ kiểm duyệt
+  @Get('pending-posts')
+  @ZodSerializerDto(PendingForumPostListResponseDto)
+  getPendingPosts(
+    @UserActive('roleName') roleName: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.adminService.getPendingPosts(
+      roleName,
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
+  }
+
+  // Danh sách bài viết trong trash (đã xóa / bị reject)
+  @Get('trash/posts')
+  @ZodSerializerDto(ForumTrashPostListResponseDto)
+  getTrashPosts(
+    @UserActive('roleName') roleName: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.adminService.getTrashPosts(
+      roleName,
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
+  }
+
+  // Danh sách bình luận trong trash (đã xóa)
+  @Get('trash/comments')
+  @ZodSerializerDto(ForumTrashCommentListResponseDto)
+  getTrashComments(
+    @UserActive('roleName') roleName: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.adminService.getTrashComments(
+      roleName,
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
+  }
+
+  // Khôi phục bài viết khỏi trash
+  @Patch('trash/posts/:id/restore')
+  @ZodSerializerDto(ForumRestorePostResponseDto)
+  restoreTrashPost(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.restoreTrashPost(roleName, id);
+  }
+
+  // Khôi phục bình luận khỏi trash
+  @Patch('trash/comments/:id/restore')
+  @ZodSerializerDto(ForumRestoreCommentResponseDto)
+  restoreTrashComment(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.restoreTrashComment(roleName, id);
+  }
+
+  // Duyệt bài: Approve -> APPROVED (hiển thị công khai)
+  @Patch('posts/:id/approve')
+  @ZodSerializerDto(ReviewForumPostResponseDto)
+  approvePendingPost(
+    @UserActive('roleName') roleName: string,
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.reviewPendingPost(roleName, id, 'APPROVED', userId);
+  }
+
+  // Từ chối bài -> REJECTED (bài không hiển thị, chuyển vào Trash)
+  @Patch('posts/:id/reject')
+  @ZodSerializerDto(ReviewForumPostResponseDto)
+  rejectPendingPost(
+    @UserActive('roleName') roleName: string,
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.reviewPendingPost(roleName, id, 'REJECTED', userId);
   }
 }

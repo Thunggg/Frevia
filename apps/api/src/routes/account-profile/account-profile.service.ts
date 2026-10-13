@@ -14,6 +14,8 @@ import {
   ClientProfileNotFoundException,
   FavoriteDuplicateException,
   FavoriteNotFoundException,
+  FollowDuplicateException,
+  FollowNotFoundException,
   FreelancerNotFoundException,
   IdentityFileInvalidException,
   IdentityFileRequiredException,
@@ -203,5 +205,37 @@ export class AccountProfileService {
     }
     await this.repository.deleteFavorite(clientId, freelancerId);
     return { message: 'Freelancer removed from favorites.' };
+  }
+
+  async getFollowing(clientId: number) {
+    await this.requireRole(clientId, RoleName.CLIENT);
+    const following = await this.repository.findFollowing(clientId);
+    return following
+      .filter((follow) => follow.freelancer.profile?.freelancerProfile)
+      .map((follow) => ({
+        freelancerId: follow.freelancerId,
+        createdAt: follow.createdAt,
+        profile: follow.freelancer.profile,
+      }));
+  }
+
+  async followFreelancer(clientId: number, freelancerId: number) {
+    await this.requireRole(clientId, RoleName.CLIENT);
+    if (clientId === freelancerId) throw FreelancerNotFoundException();
+    await this.requireRole(freelancerId, RoleName.FREELANCER);
+    if (await this.repository.findFollow(clientId, freelancerId)) {
+      throw FollowDuplicateException();
+    }
+    await this.repository.createFollow(clientId, freelancerId);
+    return { message: 'You are now following this freelancer.' };
+  }
+
+  async unfollowFreelancer(clientId: number, freelancerId: number) {
+    await this.requireRole(clientId, RoleName.CLIENT);
+    if (!(await this.repository.findFollow(clientId, freelancerId))) {
+      throw FollowNotFoundException();
+    }
+    await this.repository.deleteFollow(clientId, freelancerId);
+    return { message: 'You unfollowed this freelancer.' };
   }
 }
