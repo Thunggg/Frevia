@@ -63,6 +63,7 @@ export class ProposalRepository {
         id: true,
         clientId: true,
         status: true,
+        deadline: true,
         expiryDate: true,
         deletedAt: true,
         client: { select: { isBanned: true, deletedAt: true } },
@@ -91,6 +92,27 @@ export class ProposalRepository {
       },
       select: { id: true },
     });
+  }
+
+  async findMyActiveProposal(jobId: number, freelancerId: number) {
+    const proposal = await this.prisma.proposal.findFirst({
+      where: {
+        jobId,
+        freelancerId,
+        deletedAt: null,
+        status: {
+          in: [
+            ProposalStatus.DRAFT,
+            ProposalStatus.PENDING,
+            ProposalStatus.ACCEPTED,
+            ProposalStatus.REJECTED,
+          ],
+        },
+      },
+      select: proposalSelect,
+      orderBy: { updatedAt: 'desc' },
+    });
+    return proposal ? this.normalize(proposal) : null;
   }
 
   async findProposal(proposalId: number) {
@@ -167,16 +189,20 @@ export class ProposalRepository {
     freelancerId: number,
     query: MyProposalsQueryType,
   ): Promise<MyProposalsResponseType> {
-    const { page, limit, status } = query;
+    const { page, limit, jobId, status } = query;
     const where: Prisma.ProposalWhereInput = {
       freelancerId,
       deletedAt: null,
+      ...(jobId && { jobId }),
       ...(status && { status }),
     };
-    const [proposals, totalItems] = await this.prisma.$transaction([
+    // Keep these reads separate instead of relying on Prisma's nested relation
+    // query strategy. The PostgreSQL adapter can fail on the deep
+    // Proposal -> Job -> Client -> Profile selection used by this list.
+    const [proposals, totalItems] = await Promise.all([
       this.prisma.proposal.findMany({
         where,
-        select: proposalDetailSelect,
+        select: proposalSelect,
         orderBy: { updatedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -184,8 +210,61 @@ export class ProposalRepository {
       this.prisma.proposal.count({ where }),
     ]);
 
+    if (proposals.length === 0) {
+      return {
+        data: [],
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        page,
+        limit,
+      };
+    }
+
+    const jobs = await this.prisma.job.findMany({
+      where: { id: { in: proposals.map((proposal) => proposal.jobId) } },
+      select: {
+        id: true,
+        clientId: true,
+        slug: true,
+        title: true,
+        description: true,
+        budgetMin: true,
+        budgetMax: true,
+        budgetType: true,
+        deadline: true,
+        expiryDate: true,
+        status: true,
+      },
+    });
+    const clients = await this.prisma.user.findMany({
+      where: { id: { in: jobs.map((job) => job.clientId) } },
+      select: {
+        id: true,
+        email: true,
+        profile: { select: { displayName: true, avatarUrl: true } },
+      },
+    });
+    const jobsById = new Map(jobs.map((job) => [job.id, job]));
+    const clientsById = new Map(clients.map((client) => [client.id, client]));
+
     return {
-      data: proposals.map((proposal) => this.normalizeDetail(proposal)),
+      data: proposals.flatMap((proposal) => {
+        const job = jobsById.get(proposal.jobId);
+        const client = job ? clientsById.get(job.clientId) : undefined;
+        if (!job || !client) return [];
+
+        return [
+          {
+            ...this.normalize(proposal),
+            job: {
+              ...job,
+              budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+              budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
+            },
+            client,
+          },
+        ];
+      }),
       totalItems,
       totalPages: Math.ceil(totalItems / limit),
       page,

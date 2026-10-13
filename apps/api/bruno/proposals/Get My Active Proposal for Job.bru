@@ -1,0 +1,19 @@
+meta {
+  name: Get My Active Proposal for Job
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/proposals/jobs/{{jobId}}/mine
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  jobId: 1
+}

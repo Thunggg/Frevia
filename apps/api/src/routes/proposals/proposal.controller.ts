@@ -20,7 +20,6 @@ import {
   CreateProposalBodyDto,
   ProposalResponseDto,
   MyProposalsQueryDto,
-  MyProposalsResponseDto,
   ProposalDetailResponseDto,
   SaveProposalDraftBodyDto,
 } from './proposal.dto';
@@ -31,7 +30,6 @@ export class ProposalController {
   constructor(private readonly proposalService: ProposalService) {}
 
   @Get('my')
-  @ZodSerializerDto(MyProposalsResponseDto)
   getMyProposals(
     @UserActive('userId') userId: number,
     @UserActive('roleName') roleName: string,
@@ -41,6 +39,19 @@ export class ProposalController {
       userId,
       roleName,
       query as MyProposalsQueryType,
+    );
+  }
+
+  @Get('jobs/:jobId/mine')
+  getMyActiveProposalForJob(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('jobId', ParseIntPipe) jobId: number,
+  ) {
+    return this.proposalService.getMyActiveProposalForJob(
+      userId,
+      roleName,
+      jobId,
     );
   }
 
