@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  useEffect,
-  useState,
-  useTransition,
-  type MouseEvent,
-} from "react";
+import { useEffect, useState, useTransition, type MouseEvent } from "react";
 import {
   ArrowRight,
   Bookmark,
@@ -77,7 +72,10 @@ const TIME_LABELS: Record<string, string> = {
 };
 
 function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function formatPostedTime(value: string | Date) {
@@ -139,10 +137,17 @@ export function FindWorkContent({
   const [pendingBookmarkSlug, setPendingBookmarkSlug] = useState<string | null>(
     null,
   );
+  const [savedSearches, setSavedSearches] = useState(
+    initialSavedSearches ?? [],
+  );
 
   useEffect(() => {
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
   }, [initialBookmarkedSlugs]);
+
+  useEffect(() => {
+    setSavedSearches(initialSavedSearches ?? []);
+  }, [initialSavedSearches]);
 
   const jobs = initialJobs ?? [];
   const pagination = initialPagination ?? {
@@ -198,12 +203,7 @@ export function FindWorkContent({
     updateParams({ keyword: skillName });
   };
 
-  const applySavedSearch = (id: string) => {
-    const savedSearch = initialSavedSearches.find(
-      (search) => search.id === Number(id),
-    );
-    if (!savedSearch) return;
-
+  const applySavedSearch = (savedSearch: SavedSearchType) => {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(savedSearch.searchParams)) {
       if (
@@ -372,26 +372,15 @@ export function FindWorkContent({
               <div className="hidden w-full max-w-6xl items-center gap-3 lg:flex">
                 <div className="grid flex-1 grid-cols-4 gap-3">
                   {filterControls}
-                  <Select onValueChange={applySavedSearch}>
-                    <SelectTrigger className="h-11 w-full bg-background">
-                      <SelectValue placeholder="Saved searches" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {initialSavedSearches.length ? (
-                        initialSavedSearches.map((savedSearch) => (
-                          <SelectItem key={savedSearch.id} value={String(savedSearch.id)}>
-                            {savedSearch.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="none" disabled>
-                          No saved searches yet
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
+                  {canBookmark ? (
+                    <SaveSearchDialog
+                      searchParams={currentSearchParams}
+                      savedSearches={savedSearches}
+                      onApply={applySavedSearch}
+                      onChanged={() => router.refresh()}
+                    />
+                  ) : null}
                 </div>
-                {canBookmark ? <SaveSearchDialog searchParams={currentSearchParams} /> : null}
               </div>
 
               <div className="flex items-center justify-between gap-3 lg:hidden">
@@ -420,32 +409,21 @@ export function FindWorkContent({
                       Show results
                     </Button>
                   </SheetContent>
-                  </Sheet>
-                  <Select onValueChange={applySavedSearch}>
-                    <SelectTrigger className="h-11 w-auto min-w-40 bg-background">
-                      <SelectValue placeholder="Saved" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {initialSavedSearches.length ? (
-                        initialSavedSearches.map((savedSearch) => (
-                          <SelectItem key={savedSearch.id} value={String(savedSearch.id)}>
-                            {savedSearch.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="none" disabled>
-                          No saved searches yet
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {canBookmark ? <SaveSearchDialog searchParams={currentSearchParams} /> : null}
-                </div>
+                </Sheet>
+                {canBookmark ? (
+                  <SaveSearchDialog
+                    searchParams={currentSearchParams}
+                    savedSearches={savedSearches}
+                    onApply={applySavedSearch}
+                    onChanged={() => router.refresh()}
+                  />
+                ) : null}
+              </div>
 
-               <p className="hidden text-sm text-muted-foreground lg:block">
-                 {resultsLabel}
-               </p>
-             </div>
+              <p className="hidden text-sm text-muted-foreground lg:block">
+                {resultsLabel}
+              </p>
+            </div>
 
             {hasActiveFilters ? (
               <div className="flex flex-wrap items-center gap-2">
@@ -575,9 +553,7 @@ export function FindWorkContent({
                               className="size-10"
                               disabled={isBookmarkPending}
                               aria-label={
-                                isBookmarked
-                                  ? "Remove bookmark"
-                                  : "Save job"
+                                isBookmarked ? "Remove bookmark" : "Save job"
                               }
                               onClick={(event) =>
                                 toggleBookmark(job.slug, event)

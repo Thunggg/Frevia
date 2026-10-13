@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
   CreateSavedSearchBodyType,
   SavedSearchType,
+  UpdateSavedSearchBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
@@ -48,5 +49,25 @@ export class SavedSearchRepository {
       },
       select: savedSearchSelect,
     }) as Promise<SavedSearchType>;
+  }
+
+  async update(
+    id: number,
+    userId: number,
+    data: UpdateSavedSearchBodyType,
+  ): Promise<SavedSearchType | null> {
+    const result = await this.prisma.savedSearch.updateMany({
+      where: { id, userId },
+      data: { name: data.name },
+    });
+    if (!result.count) return null;
+    return this.findByIdAndUserId(id, userId);
+  }
+
+  async delete(id: number, userId: number): Promise<boolean> {
+    const result = await this.prisma.savedSearch.deleteMany({
+      where: { id, userId },
+    });
+    return result.count > 0;
   }
 }

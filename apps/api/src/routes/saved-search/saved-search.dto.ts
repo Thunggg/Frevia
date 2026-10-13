@@ -3,6 +3,8 @@ import {
   CreateSavedSearchResponseSchema,
   GetSavedSearchDetailResponseSchema,
   GetSavedSearchesResponseSchema,
+  UpdateSavedSearchBodySchema,
+  UpdateSavedSearchResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -20,4 +22,12 @@ export class GetSavedSearchesResponseDto extends createZodDto(
 
 export class GetSavedSearchDetailResponseDto extends createZodDto(
   GetSavedSearchDetailResponseSchema,
+) {}
+
+export class UpdateSavedSearchBodyDto extends createZodDto(
+  UpdateSavedSearchBodySchema,
+) {}
+
+export class UpdateSavedSearchResponseDto extends createZodDto(
+  UpdateSavedSearchResponseSchema,
 ) {}
