@@ -190,6 +190,32 @@ export class ProposalService {
     }
   }
 
+  async rejectProposal(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ProposalType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    const proposal =
+      await this.proposalRepository.findProposalForClientDecision(proposalId);
+    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
+    if (!proposal.job || proposal.job.deletedAt) {
+      throw ProposalJobUnavailableException();
+    }
+    if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
+    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+
+    try {
+      return await this.proposalRepository.rejectProposal(proposal.id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateProposalException();
+      }
+      throw error;
+    }
+  }
+
   async getProposalDetail(
     userId: number,
     roleName: string,

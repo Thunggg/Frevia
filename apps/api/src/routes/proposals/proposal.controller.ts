@@ -148,4 +148,14 @@ export class ProposalController {
   ) {
     return this.proposalService.withdrawProposal(userId, roleName, proposalId);
   }
+
+  @Patch(':id/reject')
+  @ZodSerializerDto(ProposalResponseDto)
+  rejectProposal(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+  ) {
+    return this.proposalService.rejectProposal(userId, roleName, proposalId);
+  }
 }

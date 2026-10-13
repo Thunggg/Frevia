@@ -167,6 +167,18 @@ export class ProposalRepository {
     });
   }
 
+  async findProposalForClientDecision(proposalId: number) {
+    return this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+      select: {
+        id: true,
+        status: true,
+        deletedAt: true,
+        job: { select: { id: true, clientId: true, deletedAt: true } },
+      },
+    });
+  }
+
   async createDraft(
     jobId: number,
     freelancerId: number,
@@ -225,6 +237,15 @@ export class ProposalRepository {
         status: ProposalStatus.WITHDRAWN,
         withdrawnAt: new Date(),
       },
+      select: proposalSelect,
+    });
+    return this.normalize(proposal);
+  }
+
+  async rejectProposal(proposalId: number): Promise<ProposalType> {
+    const proposal = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data: { status: ProposalStatus.REJECTED, rejectedAt: new Date() },
       select: proposalSelect,
     });
     return this.normalize(proposal);
