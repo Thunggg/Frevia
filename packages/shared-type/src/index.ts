@@ -28,6 +28,8 @@ export * from "./model/job-skill.model";
 export * from "./model/notification.model";
 export * from "./model/job-bookmark.model";
 export * from "./message/manage-job.message";
+export * from "./message/manage-proposal.message";
+export * from "./model/proposal.model";
 export * from "./type/google-type";
 export * from "./constants/oauth.constant";
 export * from "./model/role.model";
