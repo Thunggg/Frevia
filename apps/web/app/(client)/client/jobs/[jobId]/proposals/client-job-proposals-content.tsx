@@ -212,6 +212,23 @@ export function ClientJobProposalsContent({
     }
   };
 
+  const acceptProposal = async (proposalId: number) => {
+    try {
+      await proposalApiRequest.accept(proposalId);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-job-proposals", jobId],
+      });
+      toastSuccess({ message: "Proposal accepted" });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Unable to accept proposal. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <Header role="CLIENT" />
@@ -347,7 +364,9 @@ export function ClientJobProposalsContent({
                       </div>
                       <div className="flex shrink-0 flex-wrap items-center gap-2 lg:w-52 lg:flex-col lg:items-stretch">
                         <Button asChild variant="outline">
-                          <Link href={`/client/proposals/${proposal.id}`}>
+                          <Link
+                            href={`/client/jobs/${jobId}/proposals/${proposal.id}`}
+                          >
                             View proposal
                           </Link>
                         </Button>
@@ -371,12 +390,7 @@ export function ClientJobProposalsContent({
                             <Button
                               type="button"
                               className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                              onClick={() =>
-                                toastSuccess({
-                                  message:
-                                    "Accept flow will be connected to contract creation.",
-                                })
-                              }
+                              onClick={() => void acceptProposal(proposal.id)}
                             >
                               <Check className="size-4" />
                               Accept

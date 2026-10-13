@@ -5,6 +5,7 @@ import {
   ClientJobProposalsResponseType,
   ClientJobProposalsPageType,
   ClientJobProposalsQueryType,
+  ClientProposalDetailType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -195,6 +196,32 @@ export class ProposalService {
     }
   }
 
+  async getProposalDetailForClient(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ClientProposalDetailType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    try {
+      const access =
+        await this.proposalRepository.findProposalForClientDecision(proposalId);
+      if (!access || access.deletedAt) throw ProposalNotFoundException();
+      if (!access.job || access.job.deletedAt) {
+        throw ProposalJobUnavailableException();
+      }
+      if (access.job.clientId !== userId) throw ProposalForbiddenException();
+
+      const proposal =
+        await this.proposalRepository.findProposalDetailForClient(proposalId);
+      if (!proposal) throw ProposalNotFoundException();
+      return proposal;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadProposalException();
+    }
+  }
+
   async withdrawProposal(
     userId: number,
     roleName: string,
@@ -234,6 +261,36 @@ export class ProposalService {
 
     try {
       return await this.proposalRepository.rejectProposal(proposal.id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateProposalException();
+      }
+      throw error;
+    }
+  }
+
+  async acceptProposal(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ProposalType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    const proposal =
+      await this.proposalRepository.findProposalForClientDecision(proposalId);
+    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
+    if (!proposal.job || proposal.job.deletedAt) {
+      throw ProposalJobUnavailableException();
+    }
+    if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
+    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+    if (proposal.job.status !== 'OPEN') throw ProposalJobUnavailableException();
+
+    try {
+      return await this.proposalRepository.acceptProposal(
+        proposal.id,
+        proposal.job.id,
+      );
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateProposalException();

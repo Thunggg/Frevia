@@ -5,6 +5,7 @@ import {
   ClientJobProposalsResponseType,
   ClientJobProposalsPageType,
   ClientJobProposalsQueryType,
+  ClientProposalDetailType,
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
@@ -227,9 +228,75 @@ export class ProposalRepository {
         id: true,
         status: true,
         deletedAt: true,
-        job: { select: { id: true, clientId: true, deletedAt: true } },
+        job: {
+          select: { id: true, clientId: true, deletedAt: true, status: true },
+        },
       },
     });
+  }
+
+  async findProposalDetailForClient(
+    proposalId: number,
+  ): Promise<ClientProposalDetailType | null> {
+    const proposal = await this.prisma.proposal.findFirst({
+      where: {
+        id: proposalId,
+        deletedAt: null,
+        submittedAt: { not: null },
+        status: { not: ProposalStatus.DRAFT },
+      },
+      select: {
+        ...proposalSelect,
+        job: {
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            description: true,
+            budgetMin: true,
+            budgetMax: true,
+            budgetType: true,
+            deadline: true,
+            expiryDate: true,
+            status: true,
+            clientId: true,
+            deletedAt: true,
+          },
+        },
+        freelancer: {
+          select: {
+            id: true,
+            email: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+                freelancerProfile: {
+                  select: { title: true, idVerified: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!proposal || proposal.job.deletedAt) return null;
+
+    return {
+      ...this.normalize(proposal),
+      freelancer: proposal.freelancer,
+      job: {
+        ...proposal.job,
+        budgetMin:
+          proposal.job.budgetMin === null
+            ? null
+            : Number(proposal.job.budgetMin),
+        budgetMax:
+          proposal.job.budgetMax === null
+            ? null
+            : Number(proposal.job.budgetMax),
+      },
+    };
   }
 
   async createDraft(
@@ -302,6 +369,36 @@ export class ProposalRepository {
       select: proposalSelect,
     });
     return this.normalize(proposal);
+  }
+
+  async acceptProposal(
+    proposalId: number,
+    jobId: number,
+  ): Promise<ProposalType> {
+    return this.prisma.$transaction(async (tx) => {
+      const acceptedProposal = await tx.proposal.update({
+        where: { id: proposalId },
+        data: { status: ProposalStatus.ACCEPTED, acceptedAt: new Date() },
+        select: proposalSelect,
+      });
+
+      await tx.proposal.updateMany({
+        where: {
+          jobId,
+          id: { not: proposalId },
+          deletedAt: null,
+          status: ProposalStatus.PENDING,
+        },
+        data: { status: ProposalStatus.REJECTED, rejectedAt: new Date() },
+      });
+
+      await tx.job.update({
+        where: { id: jobId },
+        data: { status: 'IN_PROGRESS' },
+      });
+
+      return this.normalize(acceptedProposal);
+    });
   }
 
   async getMyProposals(

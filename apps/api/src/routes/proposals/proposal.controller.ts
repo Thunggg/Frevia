@@ -20,6 +20,7 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateProposalBodyDto,
   ClientJobProposalsResponseDto,
+  ClientProposalDetailDto,
   ProposalResponseDto,
   MyProposalsQueryDto,
   ProposalDetailResponseDto,
@@ -79,6 +80,20 @@ export class ProposalController {
     @Param('id', ParseIntPipe) proposalId: number,
   ) {
     return this.proposalService.getProposalDetail(userId, roleName, proposalId);
+  }
+
+  @Get(':id/client')
+  @ZodSerializerDto(ClientProposalDetailDto)
+  getProposalDetailForClient(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+  ) {
+    return this.proposalService.getProposalDetailForClient(
+      userId,
+      roleName,
+      proposalId,
+    );
   }
 
   @Post('jobs/:jobId')
@@ -157,5 +172,15 @@ export class ProposalController {
     @Param('id', ParseIntPipe) proposalId: number,
   ) {
     return this.proposalService.rejectProposal(userId, roleName, proposalId);
+  }
+
+  @Patch(':id/accept')
+  @ZodSerializerDto(ProposalResponseDto)
+  acceptProposal(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+  ) {
+    return this.proposalService.acceptProposal(userId, roleName, proposalId);
   }
 }

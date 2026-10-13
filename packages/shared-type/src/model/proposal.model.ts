@@ -116,6 +116,10 @@ export const ClientJobProposalsPageSchema = z.object({
   limit: z.number(),
 });
 
+export const ClientProposalDetailSchema = ClientJobProposalSchema.extend({
+  job: ProposalJobSchema,
+});
+
 export const MyProposalsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
@@ -166,6 +170,9 @@ export type ClientJobProposalsQueryType = z.output<
 >;
 export type ClientJobProposalsPageType = z.infer<
   typeof ClientJobProposalsPageSchema
+>;
+export type ClientProposalDetailType = z.infer<
+  typeof ClientProposalDetailSchema
 >;
 export type MyProposalsQueryType = z.output<typeof MyProposalsQuerySchema>;
 export type MyProposalsResponseType = z.infer<typeof MyProposalsResponseSchema>;

@@ -3,6 +3,7 @@ import {
   ClientJobProposalsResponseSchema,
   ClientJobProposalsQuerySchema,
   ClientJobProposalsPageSchema,
+  ClientProposalDetailSchema,
   MyProposalsQuerySchema,
   MyProposalsResponseSchema,
   ProposalDetailSchema,
@@ -28,6 +29,9 @@ export class ClientJobProposalsQueryDto extends createZodDto(
 ) {}
 export class ClientJobProposalsPageDto extends createZodDto(
   ClientJobProposalsPageSchema,
+) {}
+export class ClientProposalDetailDto extends createZodDto(
+  ClientProposalDetailSchema,
 ) {}
 
 export class MyProposalsQueryDto extends createZodDto(MyProposalsQuerySchema) {}

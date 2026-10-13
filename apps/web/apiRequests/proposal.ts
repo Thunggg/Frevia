@@ -1,6 +1,7 @@
 import type {
   ApiResponse,
   ClientJobProposalsPageType,
+  ClientProposalDetailType,
   CreateProposalBodyType,
   MyProposalsQueryType,
   MyProposalsResponseType,
@@ -57,6 +58,10 @@ export const proposalApiRequest = {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/reject`, {});
   },
 
+  accept(proposalId: number) {
+    return http.patch<ProposalType>(`/api/proposals/${proposalId}/accept`, {});
+  },
+
   getMyProposals(query: Partial<MyProposalsQueryType> = {}) {
     const params = new URLSearchParams();
     if (query.page) params.set("page", String(query.page));
@@ -71,6 +76,12 @@ export const proposalApiRequest = {
 
   getDetail(proposalId: number) {
     return http.get<ProposalDetailType>(`/api/proposals/${proposalId}`);
+  },
+
+  getClientDetail(proposalId: number) {
+    return http.get<ClientProposalDetailType>(
+      `/api/proposals/${proposalId}/client`,
+    );
   },
 
   getMyActiveForJob(jobId: number) {
