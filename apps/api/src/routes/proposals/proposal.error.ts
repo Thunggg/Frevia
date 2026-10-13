@@ -52,6 +52,11 @@ export const ProposalNotDraftException = () =>
     { message: ManageProposalMessage.PROPOSAL_NOT_DRAFT, path: 'id' },
   ]);
 
+export const ProposalNotPendingException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.PROPOSAL_NOT_PENDING, path: 'id' },
+  ]);
+
 export const ProposalIncompleteException = () =>
   new UnprocessableEntityException([
     { message: ManageProposalMessage.PROPOSAL_INCOMPLETE, path: '' },
