@@ -43,7 +43,9 @@ export const ProposalNotFoundException = () =>
   ]);
 
 export const ProposalForbiddenException = () =>
-  new ForbiddenException([{ message: ManageProposalMessage.FORBIDDEN, path: 'id' }]);
+  new ForbiddenException([
+    { message: ManageProposalMessage.FORBIDDEN, path: 'id' },
+  ]);
 
 export const ProposalNotDraftException = () =>
   new UnprocessableEntityException([
@@ -63,4 +65,9 @@ export const FailedToCreateProposalException = () =>
 export const FailedToUpdateProposalException = () =>
   new InternalServerErrorException([
     { message: ManageProposalMessage.FAILED_TO_UPDATE, path: '' },
+  ]);
+
+export const FailedToLoadProposalException = () =>
+  new InternalServerErrorException([
+    { message: ManageProposalMessage.FAILED_TO_LOAD, path: '' },
   ]);

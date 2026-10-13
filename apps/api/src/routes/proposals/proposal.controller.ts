@@ -1,11 +1,27 @@
-import { Body, Controller, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import type { CreateProposalBodyType, SaveProposalDraftBodyType } from '@shared/types';
+import type {
+  CreateProposalBodyType,
+  SaveProposalDraftBodyType,
+} from '@shared/types';
+import type { MyProposalsQueryType } from '@shared/types';
 
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateProposalBodyDto,
   ProposalResponseDto,
+  MyProposalsQueryDto,
+  MyProposalsResponseDto,
+  ProposalDetailResponseDto,
   SaveProposalDraftBodyDto,
 } from './proposal.dto';
 import { ProposalService } from './proposal.service';
@@ -13,6 +29,30 @@ import { ProposalService } from './proposal.service';
 @Controller('proposals')
 export class ProposalController {
   constructor(private readonly proposalService: ProposalService) {}
+
+  @Get('my')
+  @ZodSerializerDto(MyProposalsResponseDto)
+  getMyProposals(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Query() query: MyProposalsQueryDto,
+  ) {
+    return this.proposalService.getMyProposals(
+      userId,
+      roleName,
+      query as MyProposalsQueryType,
+    );
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(ProposalDetailResponseDto)
+  getProposalDetail(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+  ) {
+    return this.proposalService.getProposalDetail(userId, roleName, proposalId);
+  }
 
   @Post('jobs/:jobId')
   @ZodSerializerDto(ProposalResponseDto)

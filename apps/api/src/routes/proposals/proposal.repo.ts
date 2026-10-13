@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, ProposalStatus } from '@prisma/client';
 import {
   CreateProposalBodyType,
+  MyProposalsQueryType,
+  MyProposalsResponseType,
+  ProposalDetailType,
   ProposalType,
   SaveProposalDraftBodyType,
 } from '@shared/types';
@@ -22,6 +25,31 @@ const proposalSelect = {
   rejectedAt: true,
   withdrawnAt: true,
   updatedAt: true,
+} satisfies Prisma.ProposalSelect;
+
+const proposalDetailSelect = {
+  ...proposalSelect,
+  job: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      description: true,
+      budgetMin: true,
+      budgetMax: true,
+      budgetType: true,
+      deadline: true,
+      expiryDate: true,
+      status: true,
+      client: {
+        select: {
+          id: true,
+          email: true,
+          profile: { select: { displayName: true, avatarUrl: true } },
+        },
+      },
+    },
+  },
 } satisfies Prisma.ProposalSelect;
 
 @Injectable()
@@ -52,7 +80,13 @@ export class ProposalRepository {
         jobId,
         freelancerId,
         deletedAt: null,
-        status: { in: [ProposalStatus.DRAFT, ProposalStatus.PENDING, ProposalStatus.ACCEPTED] },
+        status: {
+          in: [
+            ProposalStatus.DRAFT,
+            ProposalStatus.PENDING,
+            ProposalStatus.ACCEPTED,
+          ],
+        },
         ...(ignoredProposalId && { id: { not: ignoredProposalId } }),
       },
       select: { id: true },
@@ -117,7 +151,75 @@ export class ProposalRepository {
     return this.normalize(proposal);
   }
 
-  private normalize(proposal: Prisma.ProposalGetPayload<{ select: typeof proposalSelect }>): ProposalType {
-    return { ...proposal, bidAmount: proposal.bidAmount === null ? null : Number(proposal.bidAmount) };
+  async getMyProposals(
+    freelancerId: number,
+    query: MyProposalsQueryType,
+  ): Promise<MyProposalsResponseType> {
+    const { page, limit, status } = query;
+    const where: Prisma.ProposalWhereInput = {
+      freelancerId,
+      deletedAt: null,
+      ...(status && { status }),
+    };
+    const [proposals, totalItems] = await this.prisma.$transaction([
+      this.prisma.proposal.findMany({
+        where,
+        select: proposalDetailSelect,
+        orderBy: { updatedAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.proposal.count({ where }),
+    ]);
+
+    return {
+      data: proposals.map((proposal) => this.normalizeDetail(proposal)),
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      page,
+      limit,
+    };
+  }
+
+  async getProposalDetail(
+    proposalId: number,
+  ): Promise<ProposalDetailType | null> {
+    const proposal = await this.prisma.proposal.findFirst({
+      where: { id: proposalId, deletedAt: null },
+      select: proposalDetailSelect,
+    });
+    return proposal ? this.normalizeDetail(proposal) : null;
+  }
+
+  private normalize(
+    proposal: Prisma.ProposalGetPayload<{ select: typeof proposalSelect }>,
+  ): ProposalType {
+    return {
+      ...proposal,
+      bidAmount:
+        proposal.bidAmount === null ? null : Number(proposal.bidAmount),
+    };
+  }
+
+  private normalizeDetail(
+    proposal: Prisma.ProposalGetPayload<{
+      select: typeof proposalDetailSelect;
+    }>,
+  ): ProposalDetailType {
+    return {
+      ...this.normalize(proposal),
+      job: {
+        ...proposal.job,
+        budgetMin:
+          proposal.job.budgetMin === null
+            ? null
+            : Number(proposal.job.budgetMin),
+        budgetMax:
+          proposal.job.budgetMax === null
+            ? null
+            : Number(proposal.job.budgetMax),
+      },
+      client: proposal.job.client,
+    };
   }
 }
