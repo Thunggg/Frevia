@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {
   ClientProfileController,
   FavoriteFreelancerController,
+  FollowingFreelancerController,
   IdentityVerificationController,
   SocialLinkController,
 } from './account-profile.controller';
@@ -16,6 +17,7 @@ import { SharedModule } from '../../shared/shared.module';
     ClientProfileController,
     SocialLinkController,
     FavoriteFreelancerController,
+    FollowingFreelancerController,
   ],
   providers: [AccountProfileRepository, AccountProfileService],
 })

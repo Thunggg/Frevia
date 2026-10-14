@@ -19,6 +19,11 @@ export const profileApiRequest = {
   getSkills: (id: number) =>
     http.get<FreelancerSkillType[]>(`/profiles/${id}/skills`),
 
+  searchSkillSuggestions: (search: string) =>
+    http.get<Array<{ id: number; name: string }>>(
+      `/profiles/skills/suggestions?search=${encodeURIComponent(search)}`,
+    ),
+
   addSkill: (id: number, body: AddFreelancerSkillType) =>
     http.post<FreelancerSkillType>(`/profiles/${id}/skills`, body),
 

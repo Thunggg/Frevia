@@ -25,6 +25,7 @@ import {
   AddSocialLinkDto,
   ClientProfileDetailDto,
   FavoriteFreelancerListDto,
+  FollowingFreelancerListDto,
   IdentityVerificationDocumentDto,
   IdentityVerificationStatusDto,
   SocialLinkDto,
@@ -149,5 +150,32 @@ export class FavoriteFreelancerController {
     @Param('freelancerId', ParseIntPipe) freelancerId: number,
   ) {
     return this.service.removeFavorite(userId, freelancerId);
+  }
+}
+
+@Controller('following/freelancers')
+export class FollowingFreelancerController {
+  constructor(private readonly service: AccountProfileService) {}
+
+  @Get()
+  @ZodSerializerDto(FollowingFreelancerListDto)
+  getFollowing(@UserActive('userId') userId: number) {
+    return this.service.getFollowing(userId);
+  }
+
+  @Post(':freelancerId')
+  followFreelancer(
+    @UserActive('userId') userId: number,
+    @Param('freelancerId', ParseIntPipe) freelancerId: number,
+  ) {
+    return this.service.followFreelancer(userId, freelancerId);
+  }
+
+  @Delete(':freelancerId')
+  unfollowFreelancer(
+    @UserActive('userId') userId: number,
+    @Param('freelancerId', ParseIntPipe) freelancerId: number,
+  ) {
+    return this.service.unfollowFreelancer(userId, freelancerId);
   }
 }

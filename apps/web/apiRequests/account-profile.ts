@@ -4,6 +4,7 @@ import type {
   ApiError,
   ClientProfileDetailType,
   FavoriteFreelancerType,
+  FollowingFreelancerType,
   IdentityVerificationDocumentType,
   IdentityVerificationStatusType,
   SocialLinkType,
@@ -51,4 +52,14 @@ export const accountProfileApi = {
     ),
   removeFavorite: (freelancerId: number) =>
     http.delete<{ message: string }>(`/favorites/freelancers/${freelancerId}`),
+
+  getFollowing: () =>
+    http.get<FollowingFreelancerType[]>("/following/freelancers"),
+  followFreelancer: (freelancerId: number) =>
+    http.post<{ message: string }>(
+      `/following/freelancers/${freelancerId}`,
+      {},
+    ),
+  unfollowFreelancer: (freelancerId: number) =>
+    http.delete<{ message: string }>(`/following/freelancers/${freelancerId}`),
 };

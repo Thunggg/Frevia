@@ -15,6 +15,8 @@ describe('ProfileService', () => {
   const repository = {
     findFreelancerProfileById: jest.fn(),
     findSkillsByProfileId: jest.fn(),
+    searchActiveCatalogSkills: jest.fn(),
+    findActiveCatalogSkillByName: jest.fn(),
     findSkillByNameAndProfileId: jest.fn(),
     addSkillToProfile: jest.fn(),
     findSkillById: jest.fn(),
@@ -56,5 +58,21 @@ describe('ProfileService', () => {
       ForbiddenException,
     );
     expect(repository.deleteSkill).not.toHaveBeenCalled();
+  });
+
+  it('uses the canonical job catalog name when adding a profile skill', async () => {
+    repository.findFreelancerProfileById.mockResolvedValue(freelancerProfile());
+    repository.findActiveCatalogSkillByName.mockResolvedValue({
+      name: 'Next.js',
+    });
+    repository.findSkillByNameAndProfileId.mockResolvedValue(null);
+    repository.addSkillToProfile.mockResolvedValue({ id: 7 });
+
+    await service.addSkill(5, 10, {
+      skillName: 'next.js',
+      proficiencyLevel: 8,
+    });
+
+    expect(repository.addSkillToProfile).toHaveBeenCalledWith(5, 'Next.js', 8);
   });
 });

@@ -8,6 +8,7 @@ import {
   RegisterBodyType,
   RegisterResType,
   SendOTPBodyType,
+  SwitchRoleBodyType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -28,4 +29,11 @@ export const authApiRequest = {
     http.get<GetAuthorizationUrlResType>("/api/auth/google-link"),
 
   me: () => http.get<GetMeResType>("/api/auth/me"),
+
+  switchRole: (body: SwitchRoleBodyType) =>
+    http.post<{ roleName: SwitchRoleBodyType["role"] }>(
+      "/api/auth/switch-role",
+      body,
+      false,
+    ),
 };
