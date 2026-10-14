@@ -5,8 +5,8 @@ import { MilestoneSubmissionRepository } from './milestone-submission.repo';
 import { MilestoneSubmissionService } from './milestone-submission.service';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [MilestoneSubmissionController],
-    providers: [MilestoneSubmissionService, MilestoneSubmissionRepository],
+  imports: [SharedModule],
+  controllers: [MilestoneSubmissionController],
+  providers: [MilestoneSubmissionService, MilestoneSubmissionRepository],
 })
-export class MilestoneSubmissionModule { }
+export class MilestoneSubmissionModule {}

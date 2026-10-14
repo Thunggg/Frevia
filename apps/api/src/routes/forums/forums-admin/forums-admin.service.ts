@@ -5,6 +5,7 @@ import {
   ForumAdminCategoryListResponseType,
   ForumCategoryDetailResponseType,
   CreateForumCategoryBodyType,
+  UpdateForumCategoryBodyType,
   ForumCategoryType,
   ForumAdminCommentType,
   ForumAdminStatsType,
@@ -150,6 +151,24 @@ export class ForumAdminService {
     }
   }
 
+  async updateAdminCategory(
+    roleName: string,
+    categoryId: number,
+    body: UpdateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.updateAdminCategory(categoryId, body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
   async getPendingPosts(
     roleName: string,
     page: number,
@@ -159,8 +178,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { posts, total } =
-        await this.adminRepository.getPendingPosts(page, limit);
+      const { posts, total } = await this.adminRepository.getPendingPosts(
+        page,
+        limit,
+      );
 
       return {
         posts,
@@ -217,8 +238,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { posts, total } =
-        await this.adminRepository.getTrashPosts(page, limit);
+      const { posts, total } = await this.adminRepository.getTrashPosts(
+        page,
+        limit,
+      );
 
       return {
         posts,
@@ -246,8 +269,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { comments, total } =
-        await this.adminRepository.getTrashComments(page, limit);
+      const { comments, total } = await this.adminRepository.getTrashComments(
+        page,
+        limit,
+      );
 
       return {
         comments,

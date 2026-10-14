@@ -1,6 +1,6 @@
-import { http } from "@/lib/http";
 import {
   CreateForumCategoryBodyType,
+  UpdateForumCategoryBodyType,
   ForumAdminCommentListResponseType,
   ForumAdminCommentType,
   ForumAdminStatsType,
@@ -14,6 +14,7 @@ import {
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
 } from "@shared/types";
+import { http } from "@/lib/http";
 
 function buildQueryString(
   params: Record<string, string | number | undefined>,
@@ -33,6 +34,9 @@ export const adminApiRequest = {
 
   createCategory: (body: CreateForumCategoryBodyType) =>
     http.post<ForumCategoryType>("/api/forums/admin/categories", body),
+
+  updateCategory: (id: number, body: UpdateForumCategoryBodyType) =>
+    http.patch<ForumCategoryType>(`/api/forums/admin/categories/${id}`, body),
 
   getPosts: (
     page: number = 1,

@@ -96,3 +96,23 @@ export const CreateForumCategoryBodySchema = z.object({
 export type CreateForumCategoryBodyType = z.infer<
   typeof CreateForumCategoryBodySchema
 >;
+
+// --- Admin: Update Category ---
+
+export const UpdateForumCategoryBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
+    .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG)
+    .optional(),
+  description: z
+    .string()
+    .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)
+    .optional()
+    .nullable(),
+});
+
+export type UpdateForumCategoryBodyType = z.infer<
+  typeof UpdateForumCategoryBodySchema
+>;

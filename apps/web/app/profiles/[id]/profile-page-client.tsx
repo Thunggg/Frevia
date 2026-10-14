@@ -56,13 +56,7 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/shadcn/card";
+
 import {
   Dialog,
   DialogContent,

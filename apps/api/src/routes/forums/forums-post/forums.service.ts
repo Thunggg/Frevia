@@ -264,7 +264,10 @@ export class ForumService {
     categoryId?: number,
   ): Promise<ForumTopPostListResponseType> {
     try {
-      return await this.forumRepository.getTopInteractedPosts(limit, categoryId);
+      return await this.forumRepository.getTopInteractedPosts(
+        limit,
+        categoryId,
+      );
     } catch {
       throw FailedToLoadForumPostsException();
     }

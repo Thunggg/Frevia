@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -14,12 +15,14 @@ import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Eye,
+  Pencil,
   FileText,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
 import { AdminPagination } from "../../components/admin-pagination";
+import { UpdateCategoryDialog } from "./update-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
 
 interface CategoriesTableProps {
@@ -38,6 +41,9 @@ export function CategoriesTable({
 }: CategoriesTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [editingCategory, setEditingCategory] =
+    useState<ForumCategoryType | null>(null);
+
   const currentSortBy = searchParams.get("sortBy") || "id";
   const currentSortOrder = searchParams.get("sortOrder") || "desc";
 
@@ -100,7 +106,7 @@ export function CategoriesTable({
                   Created {renderSortIcon("createdAt")}
                 </button>
               </TableHead>
-              <TableHead className="w-20 text-right">Actions</TableHead>
+              <TableHead className="w-24 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -147,11 +153,19 @@ export function CategoriesTable({
                     {new Date(category.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                         <Link href={`/admin/categories/${category.id}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => setEditingCategory(category)}
+                      >
+                        <Pencil className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -169,6 +183,12 @@ export function CategoriesTable({
           total={pagination.total}
         />
       )}
+
+      <UpdateCategoryDialog
+        category={editingCategory}
+        open={!!editingCategory}
+        onOpenChange={(open) => !open && setEditingCategory(null)}
+      />
     </div>
   );
 }

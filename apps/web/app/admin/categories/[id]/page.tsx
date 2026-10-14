@@ -11,6 +11,7 @@ import {
   Hash,
   Tag,
 } from "lucide-react";
+import { EditCategoryButton } from "./components/edit-category-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -58,6 +59,10 @@ export default async function AdminCategoryDetailPage({
               ID: #{category.id}
             </Badge>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <EditCategoryButton category={category} />
         </div>
       </div>
 

@@ -16,6 +16,7 @@ import {
   ForumAdminCategoryListResponseDto,
   ForumAdminCategoryDetailResponseDto,
   CreateForumCategoryBodyDto,
+  UpdateForumCategoryBodyDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -71,6 +72,16 @@ export class ForumAdminController {
     @Body() body: CreateForumCategoryBodyDto,
   ) {
     return this.adminService.createAdminCategory(roleName, body);
+  }
+
+  @Patch('categories/:id')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  updateAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateForumCategoryBodyDto,
+  ) {
+    return this.adminService.updateAdminCategory(roleName, id, body);
   }
 
   @Get('comments')
@@ -162,7 +173,12 @@ export class ForumAdminController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.adminService.reviewPendingPost(roleName, id, 'APPROVED', userId);
+    return this.adminService.reviewPendingPost(
+      roleName,
+      id,
+      'APPROVED',
+      userId,
+    );
   }
 
   // Từ chối bài -> REJECTED (bài không hiển thị, chuyển vào Trash)
@@ -173,6 +189,11 @@ export class ForumAdminController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.adminService.reviewPendingPost(roleName, id, 'REJECTED', userId);
+    return this.adminService.reviewPendingPost(
+      roleName,
+      id,
+      'REJECTED',
+      userId,
+    );
   }
 }

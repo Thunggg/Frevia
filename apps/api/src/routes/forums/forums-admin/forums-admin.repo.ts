@@ -4,11 +4,13 @@ import {
   ForumAdminStatsType,
   ForumCategoryType,
   ForumPostType,
+  UpdateForumCategoryBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
 import { slugify } from '../forums-post/forums.slug';
 import {
   ForumCategoryAlreadyExistsException,
+  ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
 } from './forums-admin.error';
@@ -362,6 +364,90 @@ export class ForumAdminRepository {
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,
       postCount: 0,
+    };
+  }
+
+  // Cập nhật category
+  async updateAdminCategory(
+    id: number,
+    data: UpdateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    // Tìm category forum theo id
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    // nếu không tồn tại thì ném ra exception
+    if (!category) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    let slug = category.slug;
+
+    // Nếu có thay đổi tên category
+    if (data.name && data.name !== category.name) {
+      const existingName = await this.prisma.forumCategory.findFirst({
+        where: {
+          deletedAt: null,
+          id: { not: id },
+          name: { equals: data.name, mode: 'insensitive' },
+        },
+      });
+
+      if (existingName) {
+        throw ForumCategoryAlreadyExistsException();
+      }
+
+      let baseSlug = slugify(data.name);
+      if (!baseSlug) {
+        baseSlug = 'category';
+      }
+
+      slug = baseSlug;
+      let counter = 1;
+
+      while (
+        await this.prisma.forumCategory.findFirst({
+          where: { slug, id: { not: id }, deletedAt: null },
+        })
+      ) {
+        counter++;
+        slug = `${baseSlug}-${counter}`;
+      }
+    }
+
+    const updated = await this.prisma.forumCategory.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
+        slug,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      postCount: updated._count.posts,
     };
   }
 
