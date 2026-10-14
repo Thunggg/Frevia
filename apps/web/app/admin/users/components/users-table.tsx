@@ -17,9 +17,19 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { ArrowUpDown, ArrowUp, ArrowDown, Eye, Shield, User } from "lucide-react";
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  Pencil,
+  Shield,
+  User,
+} from "lucide-react";
 import { AdminPagination } from "../../components/admin-pagination";
 import type { AdminUserItemType } from "@shared/types";
+import { useState } from "react";
+import { EditUserDialog } from "./edit-user-dialog";
 
 interface UsersTableProps {
   users: AdminUserItemType[];
@@ -34,6 +44,9 @@ interface UsersTableProps {
 export function UsersTable({ users, pagination }: UsersTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [editingUser, setEditingUser] = useState<AdminUserItemType | null>(
+    null,
+  );
 
   const currentSortBy = searchParams.get("sortBy") || "id";
   const currentSortOrder = searchParams.get("sortOrder") || "desc";
@@ -227,17 +240,34 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="h-8 px-2.5 text-xs hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] hover:border-[#4fae2e]/40 transition-colors"
-                    >
-                      <Link href={`/admin/users/${user.id}`}>
-                        <Eye className="mr-1.5 h-3.5 w-3.5" />
-                        Details
-                      </Link>
-                    </Button>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                        title="View details"
+                      >
+                        <Link
+                          href={`/admin/users/${user.id}`}
+                          aria-label={`View details of ${
+                            user.displayName || user.email
+                          }`}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                        title="Edit user"
+                        aria-label={`Edit user ${user.displayName || user.email}`}
+                        onClick={() => setEditingUser(user)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -245,6 +275,11 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      <EditUserDialog
+        user={editingUser}
+        onClose={() => setEditingUser(null)}
+      />
 
       {pagination.totalPages > 1 && (
         <AdminPagination

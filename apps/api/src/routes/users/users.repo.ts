@@ -220,6 +220,56 @@ export class UsersRepository {
     });
   }
 
+  async updateUserByAdmin(
+    id: number,
+    data: { email?: string; fullName?: string | null; isBanned?: boolean },
+  ) {
+    const existing = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return null;
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        ...(data.email !== undefined ? { email: data.email } : {}),
+        ...(data.isBanned !== undefined ? { isBanned: data.isBanned } : {}),
+        ...(data.fullName !== undefined
+          ? {
+              profile: {
+                upsert: {
+                  create: { displayName: data.fullName },
+                  update: { displayName: data.fullName },
+                },
+              },
+            }
+          : {}),
+      },
+      include: {
+        profile: {
+          select: {
+            displayName: true,
+          },
+        },
+        userRoles: {
+          select: {
+            isPrimary: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getUserById(id: number): Promise<AdminUserDetailResponseType | null> {
     const user = await this.prisma.user.findUnique({
       where: { id, deletedAt: null },

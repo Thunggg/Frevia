@@ -4,14 +4,21 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import type { AdminCreateUserBodyType } from '@shared/types';
+import type {
+  AdminCreateUserBodyType,
+  AdminUpdateUserBodyType,
+} from '@shared/types';
+import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   AdminCreateUserBodyDto,
   AdminCreateUserResponseDto,
+  AdminUpdateUserBodyDto,
+  AdminUpdateUserResponseDto,
   AdminUserDetailResponseDto,
   AdminUserListResponseDto,
   AdminUserQueryDto,
@@ -26,6 +33,20 @@ export class UsersController {
   @ZodSerializerDto(AdminCreateUserResponseDto)
   createUser(@Body() body: AdminCreateUserBodyDto) {
     return this.service.createUser(body as AdminCreateUserBodyType);
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(AdminUpdateUserResponseDto)
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') actorId: number,
+    @Body() body: AdminUpdateUserBodyDto,
+  ) {
+    return this.service.updateUser(
+      id,
+      actorId,
+      body as AdminUpdateUserBodyType,
+    );
   }
 
   @Get()

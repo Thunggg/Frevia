@@ -1,5 +1,9 @@
 import { adminApiRequest } from "@/apiRequests/admin";
-import type { AdminCreateUserBodyType, ApiResponse } from "@shared/types";
+import type {
+  AdminCreateUserBodyType,
+  AdminUpdateUserBodyType,
+  ApiResponse,
+} from "@shared/types";
 import { useMutation } from "@tanstack/react-query";
 
 function extractData<T>(response: ApiResponse<T>): T {
@@ -13,5 +17,17 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: (body: AdminCreateUserBodyType) =>
       adminApiRequest.createUser(body).then(extractData),
+  });
+}
+
+export function useUpdateUser() {
+  return useMutation({
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: number;
+      body: AdminUpdateUserBodyType;
+    }) => adminApiRequest.updateUser(id, body).then(extractData),
   });
 }

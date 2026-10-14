@@ -68,3 +68,19 @@ export const FailedToCreateUserException = () =>
       path: 'users',
     },
   ]);
+
+export const FailedToUpdateUserException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToUpdateUser',
+      path: 'users',
+    },
+  ]);
+
+export const CannotBanSelfException = () =>
+  new ForbiddenException([
+    {
+      message: 'Error.CannotBanSelf',
+      path: 'isBanned',
+    },
+  ]);

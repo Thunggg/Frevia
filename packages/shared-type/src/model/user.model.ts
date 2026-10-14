@@ -404,3 +404,53 @@ export type AdminCreateUserRoleType = z.infer<typeof AdminCreateUserRoleSchema>;
 export type AdminCreateUserResponseType = z.infer<
   typeof AdminCreateUserResponseSchema
 >;
+
+// --- Admin Update User ---
+
+export const AdminUpdateUserBodySchema = z
+  .object({
+    email: z
+      .email(AuthMessage.INVALID_EMAIL)
+      .trim()
+      .toLowerCase()
+      .max(254)
+      .optional(),
+    fullName: z
+      .union([
+        z
+          .string()
+          .trim()
+          .min(1, AuthMessage.FULLNAME_REQUIRED)
+          .max(100, AuthMessage.FULLNAME_TOO_LONG),
+        z.null(),
+      ])
+      .optional(),
+    isBanned: z.boolean().optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (
+      value.email === undefined &&
+      value.fullName === undefined &&
+      value.isBanned === undefined
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: ManageUserMessage.NOTHING_TO_UPDATE,
+        path: ["email"],
+      });
+    }
+  });
+
+export const AdminUpdateUserResponseSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  displayName: z.string().nullable(),
+  isBanned: z.boolean(),
+  roles: z.array(AdminCreateUserRoleSchema),
+});
+
+export type AdminUpdateUserBodyType = z.infer<typeof AdminUpdateUserBodySchema>;
+export type AdminUpdateUserResponseType = z.infer<
+  typeof AdminUpdateUserResponseSchema
+>;
