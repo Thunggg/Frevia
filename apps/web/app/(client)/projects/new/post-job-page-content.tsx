@@ -24,7 +24,7 @@ export function PostJobPageContent() {
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
               <Link
-                href="/projects"
+                href="/client/jobs"
                 className="transition-colors hover:text-[#4fae2e]"
               >
                 My Jobs
@@ -45,8 +45,8 @@ export function PostJobPageContent() {
           <div className="rounded-xl border border-border p-5 sm:p-8">
             <PostJobForm
               mode="page"
-              onSaved={() => router.push("/projects")}
-              onCancel={() => router.push("/projects")}
+              onSaved={() => router.push("/client/jobs")}
+              onCancel={() => router.push("/client/jobs")}
             />
           </div>
         </div>

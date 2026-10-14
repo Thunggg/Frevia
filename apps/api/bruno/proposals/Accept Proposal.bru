@@ -1,0 +1,19 @@
+meta {
+  name: Accept Proposal
+  type: http
+  seq: 12
+}
+
+patch {
+  url: {{baseUrl}}/proposals/{{proposalId}}/accept
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  proposalId: 1
+}
