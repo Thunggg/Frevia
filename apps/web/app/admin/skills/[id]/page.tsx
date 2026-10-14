@@ -42,7 +42,7 @@ export default async function AdminSkillDetailPage({
         <TagX className="h-12 w-12 text-muted-foreground mb-4" />
         <h2 className="text-xl font-bold text-foreground">Skill Not Found</h2>
         <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          No active skill exists with ID #{skillId}.
+          No skill exists with ID #{skillId}.
         </p>
         <Button asChild variant="outline" className="mt-6">
           <Link href="/admin/skills">
@@ -80,13 +80,13 @@ export default async function AdminSkillDetailPage({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {skill.isActive ? (
+            {skill.deletedAt === null ? (
               <Badge className="border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                 Active
               </Badge>
             ) : (
               <Badge variant="outline" className="text-muted-foreground">
-                Inactive
+                Deleted
               </Badge>
             )}
           </div>

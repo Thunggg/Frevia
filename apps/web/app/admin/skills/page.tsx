@@ -13,20 +13,20 @@ export default async function AdminSkillsPage({
   searchParams: Promise<{
     page?: string;
     search?: string;
-    isActive?: string;
+    deleted?: string;
   }>;
 }) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
-  const isActive = params.isActive || undefined;
+  const deleted = params.deleted || undefined;
 
   const data = await adminServerRequest.getSkills({
     page,
     limit,
     search,
-    isActive,
+    deleted,
   });
 
   const skills = data?.skills ?? [];

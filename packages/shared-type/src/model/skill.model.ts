@@ -8,18 +8,18 @@ export const SkillAdminItemSchema = z.object({
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
-  isActive: z.boolean(),
+  deletedAt: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   jobCount: z.number().optional(),
 });
 
-// Query: phân trang + tìm kiếm + lọc trạng thái active
+// Query: phân trang + tìm kiếm + lọc trạng thái soft-deleted (deletedAt)
 export const SkillAdminQuerySchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(10),
   search: z.string().optional(),
-  isActive: z.enum(["true", "false"]).optional(),
+  deleted: z.enum(["true", "false"]).optional(),
 });
 
 export const SkillAdminListResponseSchema = z.object({

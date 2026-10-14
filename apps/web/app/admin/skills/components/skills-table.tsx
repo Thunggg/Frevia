@@ -71,7 +71,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                     {skill.slug}
                   </TableCell>
                   <TableCell>
-                    {skill.isActive ? (
+                    {skill.deletedAt === null ? (
                       <Badge
                         variant="secondary"
                         className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
@@ -80,7 +80,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-muted-foreground">
-                        Inactive
+                        Deleted
                       </Badge>
                     )}
                   </TableCell>

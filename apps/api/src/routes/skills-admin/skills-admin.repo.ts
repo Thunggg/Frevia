@@ -12,7 +12,7 @@ const skillListSelect = {
   name: true,
   slug: true,
   description: true,
-  isActive: true,
+  deletedAt: true,
   createdAt: true,
   updatedAt: true,
   _count: { select: { jobs: true } },
@@ -29,10 +29,10 @@ export class SkillsAdminRepository {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const search = query.search?.trim();
-    const isActive =
-      query.isActive === 'true'
+    const showDeleted =
+      query.deleted === 'true'
         ? true
-        : query.isActive === 'false'
+        : query.deleted === 'false'
           ? false
           : undefined;
 
@@ -51,7 +51,11 @@ export class SkillsAdminRepository {
             ],
           }
         : {}),
-      ...(isActive !== undefined ? { isActive } : {}),
+      // deleted = 'true'  → chỉ lấy skill đã soft-delete (deletedAt != null)
+      // deleted = 'false' → chỉ lấy skill còn hoạt động (deletedAt = null)
+      ...(showDeleted !== undefined
+        ? { deletedAt: showDeleted ? { not: null } : null }
+        : {}),
     };
 
     const [skills, total] = await this.prisma.$transaction([
@@ -71,7 +75,7 @@ export class SkillsAdminRepository {
         name: skill.name,
         slug: skill.slug,
         description: skill.description,
-        isActive: skill.isActive,
+        deletedAt: skill.deletedAt,
         createdAt: skill.createdAt,
         updatedAt: skill.updatedAt,
         jobCount: skill._count.jobs,
@@ -103,7 +107,7 @@ export class SkillsAdminRepository {
       name: skill.name,
       slug: skill.slug,
       description: skill.description,
-      isActive: skill.isActive,
+      deletedAt: skill.deletedAt,
       createdAt: skill.createdAt,
       updatedAt: skill.updatedAt,
       jobCount: skill._count.jobs,

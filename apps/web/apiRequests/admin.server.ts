@@ -74,12 +74,12 @@ const adminServerRequest = {
     return adminServerFetch<AdminUserDetailResponseType>(`/api/users/${id}`);
   },
 
-  // Danh sách skill (phân trang + search + lọc active) — trang Admin Skills
+  // Danh sách skill (phân trang + search + lọc deleted) — trang Admin Skills
   getSkills(params?: {
     page?: number;
     limit?: number;
     search?: string;
-    isActive?: string;
+    deleted?: string;
   }) {
     const query = buildQueryString(params || {});
     return adminServerFetch<SkillAdminListResponseType>(

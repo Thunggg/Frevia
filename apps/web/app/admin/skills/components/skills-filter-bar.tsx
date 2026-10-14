@@ -12,13 +12,13 @@ import {
   SelectValue,
 } from "@repo/ui/components/shadcn/select";
 
-// Thanh lọc danh sách skill: tìm kiếm (name/slug/description) + lọc Active/Inactive
+// Thanh lọc danh sách skill: tìm kiếm (name/slug/description) + lọc Active/Deleted
 export function SkillsFilterBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
-  const currentActive = searchParams.get("isActive") || "all";
+  const currentStatus = searchParams.get("deleted") || "all";
 
   useEffect(() => {
     setSearch(searchParams.get("search") || "");
@@ -77,16 +77,16 @@ export function SkillsFilterBar() {
           Filter Status:
         </span>
         <Select
-          value={currentActive}
-          onValueChange={(value) => updateQueryParams({ isActive: value })}
+          value={currentStatus}
+          onValueChange={(value) => updateQueryParams({ deleted: value })}
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
+            <SelectItem value="false">Active</SelectItem>
+            <SelectItem value="true">Deleted</SelectItem>
           </SelectContent>
         </Select>
       </div>
