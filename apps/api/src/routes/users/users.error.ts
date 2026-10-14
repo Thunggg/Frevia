@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
@@ -33,5 +34,37 @@ export const FailedToGetUserException = () =>
     {
       message: 'Error.FailedToGetUser',
       path: 'userId',
+    },
+  ]);
+
+export const EmailAlreadyExistsException = () =>
+  new ConflictException([
+    {
+      message: 'Error.EmailAlreadyExists',
+      path: 'email',
+    },
+  ]);
+
+export const CreateUserRoleNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: 'Error.CreateUserRoleNotFound',
+      path: 'roleId',
+    },
+  ]);
+
+export const CannotAssignAdminRoleException = () =>
+  new ForbiddenException([
+    {
+      message: 'Error.CannotAssignAdminRole',
+      path: 'roleId',
+    },
+  ]);
+
+export const FailedToCreateUserException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToCreateUser',
+      path: 'users',
     },
   ]);

@@ -161,6 +161,65 @@ export class UsersRepository {
     };
   }
 
+  async createUserByAdmin(data: {
+    email: string;
+    password: string;
+    fullName: string;
+    roleId: number;
+  }) {
+    return this.prisma.user.create({
+      data: {
+        email: data.email,
+        password: data.password,
+        profile: {
+          create: {
+            displayName: data.fullName,
+          },
+        },
+        userRoles: {
+          create: {
+            roleId: data.roleId,
+            isPrimary: true,
+          },
+        },
+      },
+      include: {
+        profile: {
+          select: {
+            displayName: true,
+          },
+        },
+        userRoles: {
+          select: {
+            isPrimary: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async findUserByEmail(email: string): Promise<{ id: number } | null> {
+    return this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+      select: { id: true },
+    });
+  }
+
+  async findActiveRoleById(
+    id: number,
+  ): Promise<{ id: number; name: string } | null> {
+    return this.prisma.role.findFirst({
+      where: { id, deletedAt: null },
+      select: { id: true, name: true },
+    });
+  }
+
   async getUserById(id: number): Promise<AdminUserDetailResponseType | null> {
     const user = await this.prisma.user.findUnique({
       where: { id, deletedAt: null },

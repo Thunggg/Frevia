@@ -1,6 +1,17 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { ZodSerializerDto } from 'nestjs-zod';
 import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ZodSerializerDto } from 'nestjs-zod';
+import type { AdminCreateUserBodyType } from '@shared/types';
+import {
+  AdminCreateUserBodyDto,
+  AdminCreateUserResponseDto,
   AdminUserDetailResponseDto,
   AdminUserListResponseDto,
   AdminUserQueryDto,
@@ -10,6 +21,12 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly service: UsersService) {}
+
+  @Post()
+  @ZodSerializerDto(AdminCreateUserResponseDto)
+  createUser(@Body() body: AdminCreateUserBodyDto) {
+    return this.service.createUser(body as AdminCreateUserBodyType);
+  }
 
   @Get()
   @ZodSerializerDto(AdminUserListResponseDto)

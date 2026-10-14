@@ -1,5 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import {
+  AdminCreateUserBodySchema,
+  AdminCreateUserResponseSchema,
   AdminUserDetailResponseSchema,
   AdminUserListResponseSchema,
   AdminUserQuerySchema,
@@ -13,4 +15,12 @@ export class AdminUserListResponseDto extends createZodDto(
 
 export class AdminUserDetailResponseDto extends createZodDto(
   AdminUserDetailResponseSchema,
+) {}
+
+export class AdminCreateUserBodyDto extends createZodDto(
+  AdminCreateUserBodySchema,
+) {}
+
+export class AdminCreateUserResponseDto extends createZodDto(
+  AdminCreateUserResponseSchema,
 ) {}

@@ -1,4 +1,6 @@
 import {
+  AdminCreateUserBodyType,
+  AdminCreateUserResponseType,
   CreateForumCategoryBodyType,
   UpdateForumCategoryBodyType,
   DeleteForumCategoryResponseType,
@@ -46,6 +48,9 @@ export const adminApiRequest = {
 
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),
+
+  createUser: (body: AdminCreateUserBodyType) =>
+    http.post<AdminCreateUserResponseType>("/api/users", body),
 
   createCategory: (body: CreateForumCategoryBodyType) =>
     http.post<ForumCategoryType>("/api/forums/admin/categories", body),

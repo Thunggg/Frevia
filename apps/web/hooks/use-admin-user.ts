@@ -1,0 +1,17 @@
+import { adminApiRequest } from "@/apiRequests/admin";
+import type { AdminCreateUserBodyType, ApiResponse } from "@shared/types";
+import { useMutation } from "@tanstack/react-query";
+
+function extractData<T>(response: ApiResponse<T>): T {
+  if (response.success && "data" in response) {
+    return response.data;
+  }
+  throw new Error("Unexpected API error response");
+}
+
+export function useCreateUser() {
+  return useMutation({
+    mutationFn: (body: AdminCreateUserBodyType) =>
+      adminApiRequest.createUser(body).then(extractData),
+  });
+}

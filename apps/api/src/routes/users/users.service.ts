@@ -1,11 +1,20 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
+  AdminCreateUserBodyType,
+  AdminCreateUserResponseType,
   AdminUserDetailResponseType,
   AdminUserListResponseType,
   AdminUserQueryType,
+  RoleName,
 } from '@shared/types';
+import { HashingService } from '../../shared/services/hashing.service';
 import { UsersRepository } from './users.repo';
 import {
+  CannotAssignAdminRoleException,
+  CreateUserRoleNotFoundException,
+  EmailAlreadyExistsException,
+  FailedToCreateUserException,
   FailedToGetUserException,
   FailedToGetUsersException,
   UserNotFoundException,
@@ -13,7 +22,64 @@ import {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly repository: UsersRepository) {}
+  constructor(
+    private readonly repository: UsersRepository,
+    private readonly hashingService: HashingService,
+  ) {}
+
+  async createUser(
+    body: AdminCreateUserBodyType,
+  ): Promise<AdminCreateUserResponseType> {
+    try {
+      // 1. Email đã tồn tại (chưa soft-delete) → báo trùng
+      const existing = await this.repository.findUserByEmail(body.email);
+      if (existing) {
+        throw EmailAlreadyExistsException();
+      }
+
+      // 2. Role khởi tạo phải tồn tại & active; không cho gán role Admin
+      const role = await this.repository.findActiveRoleById(body.roleId);
+      if (!role) {
+        throw CreateUserRoleNotFoundException();
+      }
+      if (role.name.toLowerCase() === RoleName.ADMIN.toLowerCase()) {
+        throw CannotAssignAdminRoleException();
+      }
+
+      // 3. Hash password rồi tạo user + profile + userRole (primary)
+      const hashedPassword = await this.hashingService.hash(body.password);
+
+      const created = await this.repository.createUserByAdmin({
+        email: body.email,
+        password: hashedPassword,
+        fullName: body.fullName,
+        roleId: role.id,
+      });
+
+      return {
+        id: created.id,
+        email: created.email,
+        displayName: created.profile?.displayName ?? null,
+        roles: created.userRoles.map((ur) => ({
+          id: ur.role.id,
+          name: ur.role.name,
+          isPrimary: ur.isPrimary,
+        })),
+      };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        // Race condition: email bị tạo song song → unique violation
+        throw EmailAlreadyExistsException();
+      }
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToCreateUserException();
+    }
+  }
 
   async getUsers(
     query: AdminUserQueryType,

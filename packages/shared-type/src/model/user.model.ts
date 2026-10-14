@@ -2,6 +2,7 @@ import { z } from "zod";
 import { RoleName } from "../constants/role.constant";
 import { TypeOfVerificationCode } from "../constants/token.constant";
 import { AuthMessage } from "../message/auth.message";
+import { ManageUserMessage } from "../message/manage-user.message";
 import { PaginationSchema } from "./forum-post.model";
 
 export const UserSchema = z.object({
@@ -345,4 +346,61 @@ export type AdminUserFreelancerProfileType = z.infer<
 >;
 export type AdminUserCustomRoleProfileType = z.infer<
   typeof AdminUserCustomRoleProfileSchema
+>;
+
+// --- Admin Create User ---
+
+export const AdminCreateUserBodySchema = z
+  .object({
+    email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
+    fullName: z
+      .string()
+      .trim()
+      .min(1, AuthMessage.FULLNAME_REQUIRED)
+      .max(100, AuthMessage.FULLNAME_TOO_LONG),
+    password: z
+      .string()
+      .nonempty(AuthMessage.PASSWORD_IS_REQUIRE)
+      .min(8, AuthMessage.PASSWORD_TOO_SHORT)
+      .max(32, AuthMessage.PASSWORD_TOO_LONG)
+      .regex(/[A-Z]/, AuthMessage.PASSWORD_NEED_UPPERCASE)
+      .regex(/[0-9]/, AuthMessage.PASSWORD_NEED_NUMBER),
+    confirmPassword: z
+      .string()
+      .nonempty(AuthMessage.CONFIRM_PASSWORD_IS_REQUIRE),
+    roleId: z
+      .number({
+        message: ManageUserMessage.ROLE_ID_REQUIRED,
+      })
+      .int(ManageUserMessage.ROLE_ID_REQUIRED)
+      .positive(ManageUserMessage.ROLE_ID_REQUIRED),
+  })
+  .strict()
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: AuthMessage.PASSWORD_NOT_MATCH,
+        path: ["confirmPassword"],
+      });
+    }
+  });
+
+export const AdminCreateUserRoleSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  isPrimary: z.boolean(),
+});
+
+export const AdminCreateUserResponseSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  displayName: z.string().nullable(),
+  roles: z.array(AdminCreateUserRoleSchema),
+});
+
+export type AdminCreateUserBodyType = z.infer<typeof AdminCreateUserBodySchema>;
+export type AdminCreateUserRoleType = z.infer<typeof AdminCreateUserRoleSchema>;
+export type AdminCreateUserResponseType = z.infer<
+  typeof AdminCreateUserResponseSchema
 >;

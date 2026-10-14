@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { UsersFilterBar } from "./components/users-filter-bar";
 import { UsersTable } from "./components/users-table";
+import { CreateUserDialog } from "./components/create-user-dialog";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Users } from "lucide-react";
 
@@ -59,6 +60,7 @@ export default async function AdminUsersPage({
             total users)
           </p>
         </div>
+        <CreateUserDialog />
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>
