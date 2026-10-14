@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Tags } from "lucide-react";
+import { CreateSkillDialog } from "./components/create-skill-dialog";
 import { SkillsFilterBar } from "./components/skills-filter-bar";
 import { SkillsTable } from "./components/skills-table";
 
@@ -53,6 +54,7 @@ export default async function AdminSkillsPage({
             total skills)
           </p>
         </div>
+        <CreateSkillDialog />
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

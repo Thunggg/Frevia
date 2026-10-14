@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
+  AdminCreateSkillBodyType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
   SkillAdminQueryType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { SkillNameAlreadyExistsException } from './skills-admin.error';
 
 const skillListSelect = {
   id: true,
@@ -112,5 +114,75 @@ export class SkillsAdminRepository {
       updatedAt: skill.updatedAt,
       jobCount: skill._count.jobs,
     };
+  }
+
+  // Tạo skill mới (kiểm tra trùng tên + sinh slug duy nhất)
+  async createSkill(
+    data: AdminCreateSkillBodyType,
+  ): Promise<SkillAdminDetailResponseType> {
+    const trimmedName = data.name.trim();
+
+    const existingName = await this.prisma.skill.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: trimmedName, mode: 'insensitive' },
+      },
+      select: { id: true },
+    });
+
+    // check trùng tên
+    if (existingName) {
+      throw SkillNameAlreadyExistsException();
+    }
+
+    const slug = await this.generateUniqueSlug(trimmedName);
+
+    const created = await this.prisma.skill.create({
+      data: {
+        name: trimmedName,
+        slug,
+        description: data.description ?? null,
+      },
+      select: skillListSelect,
+    });
+
+    return {
+      id: created.id,
+      name: created.name,
+      slug: created.slug,
+      description: created.description,
+      deletedAt: created.deletedAt,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+      jobCount: created._count.jobs,
+    };
+  }
+
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  private async generateUniqueSlug(name: string): Promise<string> {
+    const base = this.slugify(name) || 'skill';
+    let slug = base;
+    let suffix = 2;
+
+    while (
+      await this.prisma.skill.findFirst({
+        where: { slug, deletedAt: null },
+        select: { id: true },
+      })
+    ) {
+      slug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+
+    return slug;
   }
 }

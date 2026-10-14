@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -27,5 +28,22 @@ export const FailedToLoadSkillDetailException = () =>
     {
       message: 'Error.FailedToLoadSkillDetail',
       path: 'skillId',
+    },
+  ]);
+
+// Tên skill đã tồn tại (so sánh không phân biệt hoa thường, chỉ tính skill đang active)
+export const SkillNameAlreadyExistsException = () =>
+  new ConflictException([
+    {
+      message: 'Error.SkillNameAlreadyExists',
+      path: 'name',
+    },
+  ]);
+
+export const FailedToCreateSkillException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToCreateSkill',
+      path: 'skill',
     },
   ]);

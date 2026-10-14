@@ -1,5 +1,6 @@
 import { createZodDto } from 'nestjs-zod';
 import {
+  AdminCreateSkillBodySchema,
   SkillAdminDetailResponseSchema,
   SkillAdminListResponseSchema,
   SkillAdminQuerySchema,
@@ -13,4 +14,8 @@ export class SkillAdminListResponseDto extends createZodDto(
 
 export class SkillAdminDetailResponseDto extends createZodDto(
   SkillAdminDetailResponseSchema,
+) {}
+
+export class CreateSkillBodyDto extends createZodDto(
+  AdminCreateSkillBodySchema,
 ) {}

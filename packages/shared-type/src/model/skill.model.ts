@@ -32,6 +32,24 @@ export const SkillAdminDetailResponseSchema = SkillAdminItemSchema.extend({
   jobCount: z.number(),
 });
 
+// --- Admin: Create Skill ---
+export const AdminCreateSkillBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Error.SkillNameRequired")
+    .max(100, "Error.SkillNameTooLong"),
+  description: z
+    .string()
+    .max(500, "Error.SkillDescriptionTooLong")
+    .optional()
+    .nullable(),
+});
+
+export type AdminCreateSkillBodyType = z.infer<
+  typeof AdminCreateSkillBodySchema
+>;
+
 export type SkillAdminItemType = z.infer<typeof SkillAdminItemSchema>;
 export type SkillAdminQueryType = z.infer<typeof SkillAdminQuerySchema>;
 export type SkillAdminListResponseType = z.infer<
