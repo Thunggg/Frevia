@@ -84,9 +84,10 @@ export function UsersFilterBar() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="ADMIN">Admin</SelectItem>
             <SelectItem value="CLIENT">Client</SelectItem>
             <SelectItem value="FREELANCER">Freelancer</SelectItem>
-            <SelectItem value="CUSTOM">Custom Roles (Excl. Client/Freelancer)</SelectItem>
+            <SelectItem value="CUSTOM">Custom Roles (Other)</SelectItem>
           </SelectContent>
         </Select>
       </div>

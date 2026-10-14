@@ -41,7 +41,8 @@ export class UsersRepository {
 
     // nếu API nhận ?role=CLIENT thì chỉ lấy user có role CLIENT;
     // ?role=FREELANCER thì chỉ lấy Freelancer;
-    // ?role=CUSTOM thì lấy các role khác 2 role đó.
+    // ?role=ADMIN thì chỉ lấy Admin;
+    // ?role=CUSTOM thì lấy các role khác 3 role đó.
     if (role && role !== 'all' && role !== 'ALL') {
       if (role === 'CLIENT' || role.toLowerCase() === 'client') {
         where.userRoles = {
@@ -57,12 +58,20 @@ export class UsersRepository {
             },
           },
         };
+      } else if (role === 'ADMIN' || role.toLowerCase() === 'admin') {
+        where.userRoles = {
+          some: {
+            role: {
+              name: { equals: RoleName.ADMIN, mode: 'insensitive' },
+            },
+          },
+        };
       } else if (role === 'CUSTOM' || role.toLowerCase() === 'custom') {
         where.userRoles = {
           some: {
             role: {
               name: {
-                notIn: [RoleName.CLIENT, RoleName.FREELANCER],
+                notIn: [RoleName.CLIENT, RoleName.FREELANCER, RoleName.ADMIN],
                 mode: 'insensitive',
               },
             },
