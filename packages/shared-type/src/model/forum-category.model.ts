@@ -62,6 +62,8 @@ export const ForumAdminCategoryFilterSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).default(10),
   search: z.string().optional(),
+  sortBy: z.enum(["id", "name", "createdAt"]).optional().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
 export const ForumAdminCategoryListResponseSchema = z.object({

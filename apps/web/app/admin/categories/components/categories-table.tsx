@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -19,7 +20,16 @@ import {
   DialogTitle,
 } from "@repo/ui/components/shadcn/dialog";
 import { Separator } from "@repo/ui/components/shadcn/separator";
-import { Eye, ExternalLink, FileText, Calendar, Hash } from "lucide-react";
+import {
+  Eye,
+  ExternalLink,
+  FileText,
+  Calendar,
+  Hash,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { AdminPagination } from "../../components/admin-pagination";
 import type { ForumCategoryType } from "@shared/types";
 
@@ -37,8 +47,37 @@ export function CategoriesTable({
   categories,
   pagination,
 }: CategoriesTableProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [viewingCategory, setViewingCategory] =
     useState<ForumCategoryType | null>(null);
+
+  const currentSortBy = searchParams.get("sortBy") || "id";
+  const currentSortOrder = searchParams.get("sortOrder") || "desc";
+
+  const handleSort = (column: "id" | "name" | "createdAt") => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (currentSortBy === column) {
+      const nextOrder = currentSortOrder === "asc" ? "desc" : "asc";
+      params.set("sortOrder", nextOrder);
+    } else {
+      params.set("sortBy", column);
+      params.set("sortOrder", "desc");
+    }
+    params.delete("page");
+    router.push(`?${params.toString()}`);
+  };
+
+  const renderSortIcon = (column: "id" | "name" | "createdAt") => {
+    if (currentSortBy !== column) {
+      return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />;
+    }
+    return currentSortOrder === "asc" ? (
+      <ArrowUp className="ml-1.5 h-3.5 w-3.5 text-[#4fae2e]" />
+    ) : (
+      <ArrowDown className="ml-1.5 h-3.5 w-3.5 text-[#4fae2e]" />
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -46,11 +85,35 @@ export function CategoriesTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead className="w-20">
+                <button
+                  type="button"
+                  onClick={() => handleSort("id")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  ID {renderSortIcon("id")}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  type="button"
+                  onClick={() => handleSort("name")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  Name {renderSortIcon("name")}
+                </button>
+              </TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Posts</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>
+                <button
+                  type="button"
+                  onClick={() => handleSort("createdAt")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  Created {renderSortIcon("createdAt")}
+                </button>
+              </TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>

@@ -74,13 +74,21 @@ export class ForumAdminService {
     page: number,
     limit: number,
     search?: string,
+    sortBy?: 'id' | 'name' | 'createdAt',
+    sortOrder?: 'asc' | 'desc',
   ): Promise<ForumAdminCategoryListResponseType> {
     if (roleName !== RoleName.ADMIN) {
       throw ForumReportForbiddenException();
     }
     try {
       const { categories, total } =
-        await this.adminRepository.getAdminCategoryLists(page, limit, search);
+        await this.adminRepository.getAdminCategoryLists(
+          page,
+          limit,
+          search,
+          sortBy,
+          sortOrder,
+        );
 
       return {
         categories,

@@ -38,12 +38,16 @@ export class ForumAdminController {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('search') search: string,
+    @Query('sortBy') sortBy: 'id' | 'name' | 'createdAt',
+    @Query('sortOrder') sortOrder: 'asc' | 'desc',
   ) {
     return this.adminService.getAdminCategoryLists(
       roleName,
       Number(page) || 1,
       Number(limit) || 10,
       search || undefined,
+      sortBy || undefined,
+      sortOrder || undefined,
     );
   }
 

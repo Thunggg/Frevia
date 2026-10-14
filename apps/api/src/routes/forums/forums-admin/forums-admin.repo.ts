@@ -227,6 +227,8 @@ export class ForumAdminRepository {
     page: number,
     limit: number,
     search?: string,
+    sortBy: 'id' | 'name' | 'createdAt' = 'id',
+    sortOrder: 'asc' | 'desc' = 'desc',
   ): Promise<{
     categories: ForumCategoryType[];
     total: number;
@@ -258,7 +260,7 @@ export class ForumAdminRepository {
         },
         skip,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: { [sortBy]: sortOrder },
       }),
       this.prisma.forumCategory.count({ where }),
     ]);
