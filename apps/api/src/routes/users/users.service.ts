@@ -289,7 +289,7 @@ export class UsersService {
     return this.repository.ensureFreelancerProfile(userId, context.profileId);
   }
 
-  // Sửa "giới thiệu" Freelancer (professional title + bio)
+  // Sửa hồ sơ Freelancer: professional title + bio + languages/education/certifications
   async updateFreelancerProfile(
     userId: number,
     body: AdminUpdateFreelancerProfileBodyType,
@@ -297,14 +297,33 @@ export class UsersService {
     try {
       await this.getFreelancerProfileContext(userId);
 
+      // Chuẩn hoá chuỗi: rỗng → null (xoá nội dung)
       const clean = (value?: string | null) =>
         typeof value === 'string' && value.trim() === ''
           ? null
           : (value ?? null);
 
+      // Chuẩn hoá mảng (languages/education/certifications):
+      // - cắt khoảng trắng + bỏ dòng rỗng
+      // - trống hoặc null → [] (String[] không chứa null; xoá hết = mảng rỗng)
+      const cleanList = (value?: string[] | null): string[] | undefined => {
+        if (value === undefined) return undefined;
+        if (value === null) return [];
+        return value.map((item) => item.trim()).filter((item) => item);
+      };
+
       const data = {
         ...(body.title !== undefined ? { title: clean(body.title) } : {}),
         ...(body.bio !== undefined ? { bio: clean(body.bio) } : {}),
+        ...(body.languages !== undefined
+          ? { languages: cleanList(body.languages) }
+          : {}),
+        ...(body.education !== undefined
+          ? { education: cleanList(body.education) }
+          : {}),
+        ...(body.certifications !== undefined
+          ? { certifications: cleanList(body.certifications) }
+          : {}),
       };
 
       await this.repository.updateFreelancerProfileByAdmin(userId, data);

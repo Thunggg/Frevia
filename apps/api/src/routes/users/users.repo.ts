@@ -390,12 +390,31 @@ export class UsersRepository {
     };
   }
 
-  // Cập nhật "giới thiệu" Freelancer: bio nằm ở Profile, title nằm ở FreelancerProfile
-  // (upsert theo chuỗi để không lỗi khi user chưa có profile/freelancer profile)
+  // Cập nhật hồ sơ Freelancer:
+  // - bio nằm ở Profile; title + languages/education/certifications nằm ở FreelancerProfile
+  // - dùng upsert theo chuỗi để không lỗi khi user chưa có profile/freelancer profile
   async updateFreelancerProfileByAdmin(
     userId: number,
-    data: { title?: string | null; bio?: string | null },
+    data: {
+      title?: string | null;
+      bio?: string | null;
+      languages?: string[];
+      education?: string[];
+      certifications?: string[];
+    },
   ) {
+    // Các trường thuộc FreelancerProfile (chỉ đưa vào khi được gửi lên)
+    const freelancerData = {
+      ...(data.title !== undefined ? { title: data.title } : {}),
+      ...(data.languages !== undefined ? { languages: data.languages } : {}),
+      ...(data.education !== undefined ? { education: data.education } : {}),
+      ...(data.certifications !== undefined
+        ? { certifications: data.certifications }
+        : {}),
+    };
+
+    const hasFreelancerFields = Object.keys(freelancerData).length > 0;
+
     await this.prisma.user.update({
       where: { id: userId },
       data: {
@@ -403,18 +422,18 @@ export class UsersRepository {
           upsert: {
             create: {
               ...(data.bio !== undefined ? { bio: data.bio } : {}),
-              ...(data.title !== undefined
-                ? { freelancerProfile: { create: { title: data.title } } }
+              ...(hasFreelancerFields
+                ? { freelancerProfile: { create: freelancerData } }
                 : {}),
             },
             update: {
               ...(data.bio !== undefined ? { bio: data.bio } : {}),
-              ...(data.title !== undefined
+              ...(hasFreelancerFields
                 ? {
                     freelancerProfile: {
                       upsert: {
-                        create: { title: data.title },
-                        update: { title: data.title },
+                        create: freelancerData,
+                        update: freelancerData,
                       },
                     },
                   }

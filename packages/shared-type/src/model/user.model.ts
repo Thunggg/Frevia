@@ -286,9 +286,10 @@ export const AdminUserPortfolioItemSchema = z.object({
 export const AdminUserFreelancerProfileSchema = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
-  education: z.any().nullable().optional(),
-  certifications: z.any().nullable().optional(),
-  languages: z.any().nullable().optional(),
+  // education/certifications/languages lưu dạng string[] (không còn JSON tự do)
+  education: z.array(z.string()).default([]),
+  certifications: z.array(z.string()).default([]),
+  languages: z.array(z.string()).default([]),
   idVerified: z.boolean(),
   skills: z.array(AdminUserFreelancerSkillSchema).default([]),
   portfolioItems: z.array(AdminUserPortfolioItemSchema).default([]),
@@ -527,8 +528,10 @@ export type AdminClientProfileResponseType = z.infer<
 
 // --- Admin Edit Freelancer Profile ---
 
-// ====== Admin: SỬA hồ sơ FREELANCER (tiêu đề + bio) ======
-// title/bio: để null hoặc chuỗi rỗng = xoá nội dung đó.
+// ====== Admin: SỬA hồ sơ FREELANCER (tiêu đề + bio + languages/education/certifications) ======
+// - title/bio: để null hoặc chuỗi rỗng = xoá nội dung đó.
+// - languages/education/certifications: lưu dạng mảng chuỗi (mỗi phần tử = 1 mục),
+//   giống cách user owner tự sửa hồ sơ; null = xoá toàn bộ.
 export const AdminUpdateFreelancerProfileBodySchema = z
   .object({
     title: z
@@ -543,10 +546,58 @@ export const AdminUpdateFreelancerProfileBodySchema = z
       .max(5000, ManageUserMessage.BIO_TOO_LONG)
       .nullable()
       .optional(),
+    languages: z
+      .union([
+        z
+          .array(
+            z
+              .string()
+              .trim()
+              .min(1)
+              .max(255, ManageUserMessage.CREDENTIAL_ITEM_TOO_LONG),
+          )
+          .max(100, ManageUserMessage.TOO_MANY_CREDENTIAL_ITEMS),
+        z.null(),
+      ])
+      .optional(),
+    education: z
+      .union([
+        z
+          .array(
+            z
+              .string()
+              .trim()
+              .min(1)
+              .max(255, ManageUserMessage.CREDENTIAL_ITEM_TOO_LONG),
+          )
+          .max(100, ManageUserMessage.TOO_MANY_CREDENTIAL_ITEMS),
+        z.null(),
+      ])
+      .optional(),
+    certifications: z
+      .union([
+        z
+          .array(
+            z
+              .string()
+              .trim()
+              .min(1)
+              .max(255, ManageUserMessage.CREDENTIAL_ITEM_TOO_LONG),
+          )
+          .max(100, ManageUserMessage.TOO_MANY_CREDENTIAL_ITEMS),
+        z.null(),
+      ])
+      .optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
-    if (value.title === undefined && value.bio === undefined) {
+    if (
+      value.title === undefined &&
+      value.bio === undefined &&
+      value.languages === undefined &&
+      value.education === undefined &&
+      value.certifications === undefined
+    ) {
       ctx.addIssue({
         code: "custom",
         message: ManageUserMessage.NOTHING_TO_UPDATE,

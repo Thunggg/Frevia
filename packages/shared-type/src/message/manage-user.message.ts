@@ -21,6 +21,8 @@ export const ManageUserMessage = {
   FREELANCER_TITLE_TOO_LONG: "Error.FreelancerTitleTooLong",
   BIO_TOO_LONG: "Error.BioTooLong",
   FAILED_TO_UPDATE_FREELANCER_PROFILE: "Error.FailedToUpdateFreelancerProfile",
+  CREDENTIAL_ITEM_TOO_LONG: "Error.CredentialItemTooLong",
+  TOO_MANY_CREDENTIAL_ITEMS: "Error.TooManyCredentialItems",
   SKILL_NAME_REQUIRED: "Error.SkillNameRequired",
   SKILL_NAME_TOO_LONG: "Error.SkillNameTooLong",
   SKILL_LEVEL_INVALID: "Error.SkillLevelInvalid",
