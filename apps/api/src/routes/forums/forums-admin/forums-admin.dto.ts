@@ -1,6 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import {
   ForumAdminStatsSchema,
+  ForumAdminCategoryListResponseSchema,
   ForumAdminCommentListResponseSchema,
   ForumAdminCommentSchema,
   ForumPostSchema,
@@ -16,6 +17,10 @@ export class ForumAdminStatsResponseDto extends createZodDto(
 
 export class ForumAdminCommentListResponseDto extends createZodDto(
   ForumAdminCommentListResponseSchema,
+) {}
+
+export class ForumAdminCategoryListResponseDto extends createZodDto(
+  ForumAdminCategoryListResponseSchema,
 ) {}
 
 export class PendingForumPostListResponseDto extends createZodDto(

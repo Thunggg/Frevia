@@ -11,6 +11,7 @@ import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { ForumAdminService } from './forums-admin.service';
 import {
   ForumAdminStatsResponseDto,
+  ForumAdminCategoryListResponseDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -28,6 +29,22 @@ export class ForumAdminController {
   @ZodSerializerDto(ForumAdminStatsResponseDto)
   getAdminStats(@UserActive('roleName') roleName: string) {
     return this.adminService.getAdminStats(roleName);
+  }
+
+  @Get('categories')
+  @ZodSerializerDto(ForumAdminCategoryListResponseDto)
+  getAdminCategoryLists(
+    @UserActive('roleName') roleName: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('search') search: string,
+  ) {
+    return this.adminService.getAdminCategoryLists(
+      roleName,
+      Number(page) || 1,
+      Number(limit) || 10,
+      search || undefined,
+    );
   }
 
   @Get('comments')

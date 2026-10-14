@@ -8,6 +8,7 @@ import type {
   ForumAdminStatsType,
   ForumPostListResponseType,
   ForumAdminCommentListResponseType,
+  ForumAdminCategoryListResponseType,
   ForumReportListResponseType,
   IdentityVerificationAdminListResponseType,
   PendingForumPostListResponseType,
@@ -68,6 +69,23 @@ const adminServerRequest = {
     return (
       result ?? {
         posts: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getAdminCategories(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+  ): Promise<ForumAdminCategoryListResponseType> {
+    const query = buildQueryString({ page, limit, search });
+    const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
+      `/api/forums/admin/categories${query}`,
+    );
+    return (
+      result ?? {
+        categories: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

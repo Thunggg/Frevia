@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import {
+  ForumAdminCommentType,
+  ForumAdminStatsType,
+  ForumCategoryType,
+  ForumPostType,
+} from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
 import {
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
 } from './forums-admin.error';
-import {
-  ForumAdminCommentType,
-  ForumAdminStatsType,
-  ForumPostType,
-} from '@shared/types';
 
 // Prisma trả Json column dạng JsonValue -> cast về string[] | null cho đúng contract
 function castJsonStringArray(value: unknown): string[] | null {
@@ -121,9 +122,7 @@ export class ForumAdminRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -222,6 +221,60 @@ export class ForumAdminRepository {
     ]);
 
     return { comments, total };
+  }
+
+  async getAdminCategoryLists(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<{
+    categories: ForumCategoryType[];
+    total: number;
+  }> {
+    const skip = (page - 1) * limit;
+    const where = {
+      deletedAt: null,
+      ...(search && {
+        // kiếm theo tên không phân biệt hoa thường
+        name: { contains: search, mode: 'insensitive' as const },
+      }),
+    };
+
+    const [categories, total] = await this.prisma.$transaction([
+      this.prisma.forumCategory.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              posts: { where: { deletedAt: null } },
+            },
+          },
+        },
+        skip,
+        take: limit,
+        orderBy: { name: 'asc' },
+      }),
+      this.prisma.forumCategory.count({ where }),
+    ]);
+
+    return {
+      categories: categories.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: c.description,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        postCount: c._count.posts,
+      })),
+      total,
+    };
   }
 
   // Danh sách bài viết trong trash (đã xóa hoặc bị reject)
@@ -331,10 +384,7 @@ export class ForumAdminRepository {
     const existing = await this.prisma.forumPost.findFirst({
       where: {
         id: postId,
-        OR: [
-          { deletedAt: { not: null } },
-          { moderationStatus: 'REJECTED' },
-        ],
+        OR: [{ deletedAt: { not: null } }, { moderationStatus: 'REJECTED' }],
       },
       select: { moderationStatus: true },
     });
@@ -374,9 +424,7 @@ export class ForumAdminRepository {
 
     return {
       ...restored!,
-      moderationCategories: castJsonStringArray(
-        restored!.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(restored!.moderationCategories),
     };
   }
 

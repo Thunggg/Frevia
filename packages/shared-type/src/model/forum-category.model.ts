@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ManageForumMessage } from "../message/manage-forum.message";
+import { PaginationSchema } from "./forum-post.model";
 
 export const ForumCategorySchema = z.object({
   id: z.number(),
@@ -53,4 +54,24 @@ export type ForumCategoryTopListResponseType = z.infer<
 export type ForumTopActiveUserType = z.infer<typeof ForumTopActiveUserSchema>;
 export type ForumTopActiveUserListResponseType = z.infer<
   typeof ForumTopActiveUserListResponseSchema
+>;
+
+// --- Admin: list + search theo tên ---
+
+export const ForumAdminCategoryFilterSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).default(10),
+  search: z.string().optional(),
+});
+
+export const ForumAdminCategoryListResponseSchema = z.object({
+  categories: z.array(ForumCategorySchema),
+  pagination: PaginationSchema,
+});
+
+export type ForumAdminCategoryFilterType = z.infer<
+  typeof ForumAdminCategoryFilterSchema
+>;
+export type ForumAdminCategoryListResponseType = z.infer<
+  typeof ForumAdminCategoryListResponseSchema
 >;

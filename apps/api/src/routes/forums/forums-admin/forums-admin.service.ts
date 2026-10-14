@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ForumAdminRepository } from './forums-admin.repo';
 import {
+  ForumAdminCategoryListResponseType,
   ForumAdminCommentType,
   ForumAdminStatsType,
   ForumAdminCommentListResponseType,
@@ -53,6 +54,36 @@ export class ForumAdminService {
 
       return {
         comments,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async getAdminCategoryLists(
+    roleName: string,
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<ForumAdminCategoryListResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const { categories, total } =
+        await this.adminRepository.getAdminCategoryLists(page, limit, search);
+
+      return {
+        categories,
         pagination: {
           page,
           limit,
