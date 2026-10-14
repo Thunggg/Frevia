@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   ShieldCheck,
+  Tags,
   Users,
 } from "lucide-react";
 import Image from "next/image";
@@ -27,6 +28,11 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Skills",
+    href: "/admin/skills",
+    icon: Tags,
   },
   {
     title: "Users",

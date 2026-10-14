@@ -17,6 +17,8 @@ import type {
   ForumTrashPostListResponseType,
   IdentityVerificationAdminListResponseType,
   PendingForumPostListResponseType,
+  SkillAdminDetailResponseType,
+  SkillAdminListResponseType,
 } from "@shared/types";
 
 // Hàm fomat thành ?page=2&limit=10&search=john&role=CLIENT
@@ -70,6 +72,26 @@ const adminServerRequest = {
 
   getUserById(id: number) {
     return adminServerFetch<AdminUserDetailResponseType>(`/api/users/${id}`);
+  },
+
+  // Danh sách skill (phân trang + search + lọc active) — trang Admin Skills
+  getSkills(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    isActive?: string;
+  }) {
+    const query = buildQueryString(params || {});
+    return adminServerFetch<SkillAdminListResponseType>(
+      `/api/admin/skills${query}`,
+    );
+  },
+
+  // Chi tiết 1 skill — trang /admin/skills/[id]
+  getSkillById(id: number) {
+    return adminServerFetch<SkillAdminDetailResponseType>(
+      `/api/admin/skills/${id}`,
+    );
   },
 
   getStats() {

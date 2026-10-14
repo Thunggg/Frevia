@@ -33,6 +33,7 @@ import { NotificationModule } from './routes/notifications/notification.module';
 import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
 import { ProposalModule } from './routes/proposals/proposal.module';
 import { UsersModule } from './routes/users/users.module';
+import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UsersModule } from './routes/users/users.module';
     IdentityVerificationsAdminModule,
     ProposalModule,
     UsersModule,
+    SkillsAdminModule,
   ],
   controllers: [AppController],
   providers: [
