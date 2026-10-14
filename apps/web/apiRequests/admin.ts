@@ -1,6 +1,8 @@
 import {
+  AdminClientProfileResponseType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
+  AdminUpdateClientProfileBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
   CreateForumCategoryBodyType,
@@ -56,6 +58,12 @@ export const adminApiRequest = {
 
   updateUser: (id: number, body: AdminUpdateUserBodyType) =>
     http.patch<AdminUpdateUserResponseType>(`/api/users/${id}`, body),
+
+  updateClientProfile: (id: number, body: AdminUpdateClientProfileBodyType) =>
+    http.patch<AdminClientProfileResponseType>(
+      `/api/users/${id}/client-profile`,
+      body,
+    ),
 
   createCategory: (body: CreateForumCategoryBodyType) =>
     http.post<ForumCategoryType>("/api/forums/admin/categories", body),

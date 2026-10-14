@@ -7,4 +7,9 @@ export const ManageUserMessage = {
   NOTHING_TO_UPDATE: "Error.NothingToUpdate",
   FAILED_TO_CREATE_USER: "Error.FailedToCreateUser",
   FAILED_TO_UPDATE_USER: "Error.FailedToUpdateUser",
+  COMPANY_NAME_TOO_LONG: "Error.CompanyNameTooLong",
+  COMPANY_DESCRIPTION_TOO_LONG: "Error.CompanyDescriptionTooLong",
+  INVALID_WEBSITE: "Error.InvalidWebsite",
+  USER_HAS_NO_CLIENT_ROLE: "Error.UserHasNoClientRole",
+  FAILED_TO_UPDATE_CLIENT_PROFILE: "Error.FailedToUpdateClientProfile",
 } as const;

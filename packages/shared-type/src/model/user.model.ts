@@ -454,3 +454,59 @@ export type AdminUpdateUserBodyType = z.infer<typeof AdminUpdateUserBodySchema>;
 export type AdminUpdateUserResponseType = z.infer<
   typeof AdminUpdateUserResponseSchema
 >;
+
+// --- Admin Edit Client Profile ---
+
+export const AdminUpdateClientProfileBodySchema = z
+  .object({
+    companyName: z
+      .string()
+      .trim()
+      .max(255, ManageUserMessage.COMPANY_NAME_TOO_LONG)
+      .nullable()
+      .optional(),
+    companyDescription: z
+      .string()
+      .trim()
+      .max(5000, ManageUserMessage.COMPANY_DESCRIPTION_TOO_LONG)
+      .nullable()
+      .optional(),
+    website: z
+      .string()
+      .trim()
+      .url(ManageUserMessage.INVALID_WEBSITE)
+      .nullable()
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (
+      value.companyName === undefined &&
+      value.companyDescription === undefined &&
+      value.website === undefined
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: ManageUserMessage.NOTHING_TO_UPDATE,
+        path: ["companyName"],
+      });
+    }
+  });
+
+export const AdminClientProfileResponseSchema = z.object({
+  id: z.number(),
+  profileId: z.number(),
+  userId: z.number(),
+  companyName: z.string().nullable(),
+  companyDescription: z.string().nullable(),
+  website: z.string().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export type AdminUpdateClientProfileBodyType = z.infer<
+  typeof AdminUpdateClientProfileBodySchema
+>;
+export type AdminClientProfileResponseType = z.infer<
+  typeof AdminClientProfileResponseSchema
+>;

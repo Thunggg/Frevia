@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { AdminUserDetailResponseType } from "@shared/types";
+import { EditClientProfileButton } from "./edit-client-profile-button";
 
 interface UserRoleTabsProps {
   user: AdminUserDetailResponseType;
@@ -170,6 +171,13 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
         {/* 1. Client Profile Tab Content */}
         {hasClientProfile && (
           <TabsContent value="client" className="mt-6 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Building className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                Client Company Profile
+              </h3>
+              <EditClientProfileButton user={user} />
+            </div>
             {user.clientProfile ? (
               <div className="space-y-6">
                 <div className="rounded-lg border p-5 bg-muted/20 space-y-4">

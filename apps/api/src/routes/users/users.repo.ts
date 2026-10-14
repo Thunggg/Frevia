@@ -270,6 +270,88 @@ export class UsersRepository {
     });
   }
 
+  async findClientProfileEditContext(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        profile: {
+          select: {
+            id: true,
+            clientProfile: { select: { id: true } },
+          },
+        },
+        userRoles: {
+          select: { role: { select: { name: true } } },
+        },
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      profileId: user.profile?.id ?? null,
+      clientProfileId: user.profile?.clientProfile?.id ?? null,
+      hasClientRole: user.userRoles.some(
+        (ur) => ur.role.name.toLowerCase() === 'client',
+      ),
+    };
+  }
+
+  async upsertClientProfileByAdmin(
+    userId: number,
+    data: {
+      companyName?: string | null;
+      companyDescription?: string | null;
+      website?: string | null;
+    },
+  ) {
+    const buildData = () => ({
+      ...(data.companyName !== undefined
+        ? { companyName: data.companyName }
+        : {}),
+      ...(data.companyDescription !== undefined
+        ? { companyDescription: data.companyDescription }
+        : {}),
+      ...(data.website !== undefined ? { website: data.website } : {}),
+    });
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: {
+            create: {
+              clientProfile: {
+                create: buildData(),
+              },
+            },
+            update: {
+              clientProfile: {
+                upsert: {
+                  create: buildData(),
+                  update: buildData(),
+                },
+              },
+            },
+          },
+        },
+      },
+      include: {
+        profile: {
+          select: {
+            clientProfile: true,
+          },
+        },
+      },
+    });
+
+    return user.profile?.clientProfile ?? null;
+  }
+
   async getUserById(id: number): Promise<AdminUserDetailResponseType | null> {
     const user = await this.prisma.user.findUnique({
       where: { id, deletedAt: null },

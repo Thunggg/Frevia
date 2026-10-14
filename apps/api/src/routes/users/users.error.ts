@@ -84,3 +84,19 @@ export const CannotBanSelfException = () =>
       path: 'isBanned',
     },
   ]);
+
+export const NoClientRoleForClientProfileException = () =>
+  new ForbiddenException([
+    {
+      message: 'Error.UserHasNoClientRole',
+      path: 'userId',
+    },
+  ]);
+
+export const FailedToUpdateClientProfileException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToUpdateClientProfile',
+      path: 'userId',
+    },
+  ]);

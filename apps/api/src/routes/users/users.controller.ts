@@ -11,12 +11,15 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import type {
   AdminCreateUserBodyType,
+  AdminUpdateClientProfileBodyType,
   AdminUpdateUserBodyType,
 } from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
+  AdminClientProfileResponseDto,
   AdminCreateUserBodyDto,
   AdminCreateUserResponseDto,
+  AdminUpdateClientProfileBodyDto,
   AdminUpdateUserBodyDto,
   AdminUpdateUserResponseDto,
   AdminUserDetailResponseDto,
@@ -46,6 +49,18 @@ export class UsersController {
       id,
       actorId,
       body as AdminUpdateUserBodyType,
+    );
+  }
+
+  @Patch(':id/client-profile')
+  @ZodSerializerDto(AdminClientProfileResponseDto)
+  updateClientProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: AdminUpdateClientProfileBodyDto,
+  ) {
+    return this.service.updateClientProfile(
+      id,
+      body as AdminUpdateClientProfileBodyType,
     );
   }
 

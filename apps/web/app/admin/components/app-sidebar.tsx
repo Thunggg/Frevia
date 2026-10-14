@@ -9,13 +9,10 @@ import {
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
-  IdCard,
-  KeyRound,
   LayoutDashboard,
   MessageSquare,
-  UserCog,
+  ShieldCheck,
   Users,
-  UsersRound,
 } from "lucide-react";
 import Image from "next/image";
 import { LogoutButton } from "./logout-button";
@@ -29,8 +26,20 @@ const navItems: NavItem[] = [
   },
   {
     title: "Users",
-    href: "/admin/users",
     icon: Users,
+    children: [
+      { title: "User Management", href: "/admin/users" },
+      { title: "Identity Verification", href: "/admin/identity-verifications" },
+    ],
+  },
+  {
+    title: "Roles & Permissions",
+    icon: ShieldCheck,
+    children: [
+      { title: "Roles", href: "/admin/roles" },
+      { title: "Permissions", href: "/admin/permissions" },
+      { title: "Assign Role", href: "/admin/assign-role" },
+    ],
   },
   {
     title: "Forum",
@@ -43,26 +52,6 @@ const navItems: NavItem[] = [
       { title: "Posts", href: "/admin/posts" },
       { title: "Trash", href: "/admin/trash" },
     ],
-  },
-  {
-    title: "Roles",
-    href: "/admin/roles",
-    icon: UsersRound,
-  },
-  {
-    title: "Permissions",
-    href: "/admin/permissions",
-    icon: KeyRound,
-  },
-  {
-    title: "Assign Role",
-    href: "/admin/assign-role",
-    icon: UserCog,
-  },
-  {
-    title: "ID Verification",
-    href: "/admin/identity-verifications",
-    icon: IdCard,
   },
 ];
 
@@ -83,7 +72,7 @@ export function AppSidebar() {
               Frevia Admin
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              Forum tools
+              Admin tools
             </p>
           </div>
         </div>
@@ -95,14 +84,6 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          {/* <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/forum">
-                <ArrowLeft />
-                <span>Back to Forum</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem> */}
           <SidebarMenuItem>
             <LogoutButton />
           </SidebarMenuItem>

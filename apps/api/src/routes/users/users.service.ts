@@ -1,8 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
+  AdminClientProfileResponseType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
+  AdminUpdateClientProfileBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
   AdminUserDetailResponseType,
@@ -20,7 +22,9 @@ import {
   FailedToCreateUserException,
   FailedToGetUserException,
   FailedToGetUsersException,
+  FailedToUpdateClientProfileException,
   FailedToUpdateUserException,
+  NoClientRoleForClientProfileException,
   UserNotFoundException,
 } from './users.error';
 
@@ -165,6 +169,64 @@ export class UsersService {
         throw error;
       }
       throw FailedToUpdateUserException();
+    }
+  }
+
+  async updateClientProfile(
+    userId: number,
+    body: AdminUpdateClientProfileBodyType,
+  ): Promise<AdminClientProfileResponseType> {
+    try {
+      const context =
+        await this.repository.findClientProfileEditContext(userId);
+      if (!context) {
+        throw UserNotFoundException();
+      }
+
+      // Chỉ cho sửa khi user có role Client hoặc đã có client profile
+      const canEdit = context.hasClientRole || context.clientProfileId !== null;
+      if (!canEdit) {
+        throw NoClientRoleForClientProfileException();
+      }
+
+      const clean = (value?: string | null) =>
+        typeof value === 'string' && value.trim() === ''
+          ? null
+          : (value ?? null);
+
+      const data = {
+        ...(body.companyName !== undefined
+          ? { companyName: clean(body.companyName) }
+          : {}),
+        ...(body.companyDescription !== undefined
+          ? { companyDescription: clean(body.companyDescription) }
+          : {}),
+        ...(body.website !== undefined ? { website: clean(body.website) } : {}),
+      };
+
+      const updated = await this.repository.upsertClientProfileByAdmin(
+        userId,
+        data,
+      );
+      if (!updated) {
+        throw FailedToUpdateClientProfileException();
+      }
+
+      return {
+        id: updated.id,
+        profileId: updated.profileId,
+        userId,
+        companyName: updated.companyName,
+        companyDescription: updated.companyDescription,
+        website: updated.website,
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateClientProfileException();
     }
   }
 }

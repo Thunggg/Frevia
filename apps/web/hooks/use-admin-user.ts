@@ -1,6 +1,7 @@
 import { adminApiRequest } from "@/apiRequests/admin";
 import type {
   AdminCreateUserBodyType,
+  AdminUpdateClientProfileBodyType,
   AdminUpdateUserBodyType,
   ApiResponse,
 } from "@shared/types";
@@ -29,5 +30,17 @@ export function useUpdateUser() {
       id: number;
       body: AdminUpdateUserBodyType;
     }) => adminApiRequest.updateUser(id, body).then(extractData),
+  });
+}
+
+export function useUpdateClientProfile() {
+  return useMutation({
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: number;
+      body: AdminUpdateClientProfileBodyType;
+    }) => adminApiRequest.updateClientProfile(id, body).then(extractData),
   });
 }
