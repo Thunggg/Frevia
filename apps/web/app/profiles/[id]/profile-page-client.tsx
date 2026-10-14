@@ -105,7 +105,6 @@ type PortfolioForm = {
   title: string;
   description: string;
   technologies: string;
-  mediaUrls: string;
   projectUrl: string;
 };
 
@@ -125,7 +124,6 @@ const EMPTY_PORTFOLIO_FORM: PortfolioForm = {
   title: "",
   description: "",
   technologies: "",
-  mediaUrls: "",
   projectUrl: "",
 };
 
@@ -539,7 +537,6 @@ export function ProfilePageClient({
             title: portfolio.title,
             description: portfolio.description ?? "",
             technologies: portfolio.technologies.join(", "),
-            mediaUrls: portfolio.mediaUrls.join("\n"),
             projectUrl: portfolio.projectUrl ?? "",
           },
     );
@@ -556,7 +553,6 @@ export function ProfilePageClient({
       title: portfolioForm.title,
       description: portfolioForm.description || null,
       technologies: splitValues(portfolioForm.technologies),
-      mediaUrls: splitValues(portfolioForm.mediaUrls),
       projectUrl: portfolioForm.projectUrl || null,
     };
 
@@ -966,16 +962,6 @@ export function ProfilePageClient({
                           className="group flex w-full flex-col gap-4 text-left sm:flex-row"
                           onClick={() => void showPortfolioDetail(portfolio)}
                         >
-                          <div
-                            className="h-36 w-full shrink-0 rounded-lg bg-[#eaf8df] bg-cover bg-center sm:h-28 sm:w-40 dark:bg-[#1a1c1a]"
-                            style={
-                              portfolio.mediaUrls[0]
-                                ? {
-                                    backgroundImage: `url(${portfolio.mediaUrls[0]})`,
-                                  }
-                                : undefined
-                            }
-                          />
                           <div className="min-w-0 flex-1">
                             <h3 className="font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
                               {portfolio.title}
@@ -1363,7 +1349,7 @@ export function ProfilePageClient({
               {portfolioEditor === "new" ? "Add portfolio" : "Edit portfolio"}
             </DialogTitle>
             <DialogDescription>
-              Add project details, technologies and public media links.
+              Add project details and technologies.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={savePortfolio} className="space-y-5">
@@ -1408,23 +1394,6 @@ export function ProfilePageClient({
                   setPortfolioForm((current) => ({
                     ...current,
                     technologies: event.target.value,
-                  }))
-                }
-              />
-            </FormField>
-            <FormField
-              label="Media URLs"
-              htmlFor="portfolio-media"
-              hint="One public image or document URL per line, up to 10"
-            >
-              <Textarea
-                id="portfolio-media"
-                value={portfolioForm.mediaUrls}
-                placeholder="https://example.com/project-cover.png"
-                onChange={(event) =>
-                  setPortfolioForm((current) => ({
-                    ...current,
-                    mediaUrls: event.target.value,
                   }))
                 }
               />
@@ -1484,30 +1453,6 @@ export function ProfilePageClient({
                 </div>
               ) : (
                 <div className="space-y-5">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {portfolioDetail.mediaUrls.length ? (
-                      portfolioDetail.mediaUrls.map((url) => (
-                        <a
-                          key={url}
-                          href={url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="h-48 rounded-xl border bg-muted bg-cover bg-center"
-                          style={{ backgroundImage: `url(${url})` }}
-                          aria-label="Open portfolio media"
-                        />
-                      ))
-                    ) : (
-                      <div className="col-span-full flex h-40 flex-col items-center justify-center rounded-xl border border-dashed border-border px-4 text-center">
-                        <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                          <UserRound className="size-6" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          No media attached.
-                        </p>
-                      </div>
-                    )}
-                  </div>
                   <p className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
                     {portfolioDetail.description || "No description provided."}
                   </p>

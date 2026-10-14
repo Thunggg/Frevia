@@ -7,7 +7,6 @@ export const PortfolioMessage = {
   PORTFOLIO_TITLE_TOO_LONG: "Portfolio title must not exceed 255 characters.",
   PORTFOLIO_DESCRIPTION_TOO_LONG:
     "Portfolio description must not exceed 5,000 characters.",
-  PORTFOLIO_MEDIA_LIMIT: "A portfolio can contain at most 10 media links.",
   PORTFOLIO_TECHNOLOGY_LIMIT:
     "A portfolio can contain at most 20 technologies.",
   PORTFOLIO_INVALID_URL: "Please enter a valid URL.",

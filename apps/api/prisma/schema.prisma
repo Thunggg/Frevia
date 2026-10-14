@@ -282,7 +282,6 @@ model PortfolioItem {
   title               String    @db.VarChar(255)
   description         String?
   technologies        String[]  @default([])
-  mediaUrls           String[]
   projectUrl          String?   @db.VarChar(500)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt

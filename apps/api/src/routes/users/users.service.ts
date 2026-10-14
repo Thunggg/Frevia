@@ -431,7 +431,7 @@ export class UsersService {
           ? null
           : (value ?? null);
 
-      // Chỉ cập nhật những trường được gửi lên (mediaUrls giữ nguyên)
+      // Chỉ cập nhật những trường được gửi lên
       await this.repository.updatePortfolioItemByAdmin(itemId, {
         ...(body.title !== undefined ? { title: body.title } : {}),
         ...(body.description !== undefined

@@ -278,7 +278,6 @@ export const AdminUserPortfolioItemSchema = z.object({
   title: z.string(),
   description: z.string().nullable().optional(),
   technologies: z.array(z.string()).default([]),
-  mediaUrls: z.array(z.string()).default([]),
   projectUrl: z.string().nullable().optional(),
   createdAt: z.coerce.date(),
 });

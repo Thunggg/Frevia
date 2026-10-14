@@ -509,7 +509,7 @@ export class UsersRepository {
     ]);
   }
 
-  // Tạo mới portfolio item (mediaUrls rỗng — admin không upload file)
+  // Tạo mới portfolio item — chỉ nhập text, không upload file
   async createPortfolioItem(
     freelancerProfileId: number,
     data: {
@@ -526,7 +526,6 @@ export class UsersRepository {
         description: data.description ?? null,
         technologies: data.technologies ?? [],
         projectUrl: data.projectUrl ?? null,
-        mediaUrls: [],
       },
     });
   }
@@ -539,7 +538,7 @@ export class UsersRepository {
     });
   }
 
-  // Cập nhật portfolio item theo từng trường được gửi lên (mediaUrls không đổi)
+  // Cập nhật portfolio item theo từng trường được gửi lên
   async updatePortfolioItemByAdmin(
     id: number,
     data: {
@@ -683,7 +682,6 @@ export class UsersRepository {
               title: p.title,
               description: p.description,
               technologies: p.technologies,
-              mediaUrls: p.mediaUrls,
               projectUrl: p.projectUrl,
               createdAt: p.createdAt,
             }),

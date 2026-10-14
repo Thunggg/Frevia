@@ -61,7 +61,6 @@ export class PortfolioRepository {
           title: data.title,
           description: data.description ?? null,
           technologies: data.technologies ?? [],
-          mediaUrls: data.mediaUrls ?? [],
           projectUrl: data.projectUrl ?? null,
         },
       });
@@ -106,7 +105,6 @@ export class PortfolioRepository {
         ...(data.technologies !== undefined && {
           technologies: data.technologies,
         }),
-        ...(data.mediaUrls !== undefined && { mediaUrls: data.mediaUrls }),
         ...(data.projectUrl !== undefined && { projectUrl: data.projectUrl }),
       },
     });
