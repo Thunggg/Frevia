@@ -239,9 +239,10 @@ model FreelancerProfile {
   profileId      Int      @unique
   title          String?  @db.VarChar(255)
   // ĐÃ XÓA hourly_rate
-  education      Json?
-  certifications Json?
-  languages      Json?
+  // Các mục sau lưu dạng danh sách chuỗi (mỗi phần tử = 1 dòng/mục) thay vì JSON tự do
+  education      String[] @default([])
+  certifications String[] @default([])
+  languages      String[] @default([])
   idVerified     Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

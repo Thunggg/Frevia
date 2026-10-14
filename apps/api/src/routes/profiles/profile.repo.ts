@@ -51,26 +51,22 @@ export class ProfileRepository {
       });
 
       // 2. Upsert FreelancerProfile fields
+      // Lưu ý: education/certifications/languages là String[] (không nullable),
+      // null → [] (xoá hết mục)
       await tx.freelancerProfile.upsert({
         where: { profileId },
         update: {
           title: data.title,
-          education: data.education === null ? Prisma.JsonNull : data.education,
-          certifications:
-            data.certifications === null
-              ? Prisma.JsonNull
-              : data.certifications,
-          languages: data.languages === null ? Prisma.JsonNull : data.languages,
+          education: data.education ?? [],
+          certifications: data.certifications ?? [],
+          languages: data.languages ?? [],
         },
         create: {
           profileId,
           title: data.title,
-          education: data.education === null ? Prisma.JsonNull : data.education,
-          certifications:
-            data.certifications === null
-              ? Prisma.JsonNull
-              : data.certifications,
-          languages: data.languages === null ? Prisma.JsonNull : data.languages,
+          education: data.education ?? [],
+          certifications: data.certifications ?? [],
+          languages: data.languages ?? [],
         },
       });
 
