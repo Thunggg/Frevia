@@ -81,8 +81,7 @@ export class SessionsService {
       await this.sessionsRepository.deleteActiveByIdForUser(id, userId);
 
       // BR-04: nếu revoke đúng session đang dùng → client sẽ logout
-      const loggedOut =
-        currentSessionId != null && currentSessionId === id;
+      const loggedOut = currentSessionId != null && currentSessionId === id;
 
       this.logger.log(
         `Session revoked: id=${id}, userId=${userId}, loggedOut=${loggedOut}`,

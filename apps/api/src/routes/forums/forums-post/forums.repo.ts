@@ -13,10 +13,10 @@ import {
   ForumCategoryNotFoundException,
   ForumPostNotFoundException,
 } from './forums.error';
-import { createCategorySlug, createPostSlug } from './forums.slug';
+import { createPostSlug } from './forums.slug';
 
 // Chỉ những bài viết được admin duyệt (APPROVED) mới hiển thị công khai
-const PUBLIC_MODERATION_STATUSES: ('APPROVED')[] = ['APPROVED'];
+const PUBLIC_MODERATION_STATUSES: 'APPROVED'[] = ['APPROVED'];
 
 // Prisma trả Json column dạng JsonValue -> cast về string[] | null cho đúng contract
 function castJsonStringArray(value: unknown): string[] | null {
@@ -31,7 +31,13 @@ export class ForumRepository {
   async getForumCategories(): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      | 'id'
+      | 'name'
+      | 'slug'
+      | 'description'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'postCount'
     >[]
   > {
     const categories = await this.prisma.forumCategory.findMany({
@@ -78,7 +84,13 @@ export class ForumRepository {
   ): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      | 'id'
+      | 'name'
+      | 'slug'
+      | 'description'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'postCount'
     >[]
   > {
     const categories = await this.prisma.forumCategory.findMany({
@@ -179,7 +191,13 @@ export class ForumRepository {
   ): Promise<
     Pick<
       ForumCategoryType,
-      'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'
+      | 'id'
+      | 'name'
+      | 'slug'
+      | 'description'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'postCount'
     >
   > {
     // DÙng findFirst để tìm kiếm forum category theo id và deletedAt = null (chỉ lấy các category đang active)
@@ -353,9 +371,7 @@ export class ForumRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -409,9 +425,7 @@ export class ForumRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -442,9 +456,7 @@ export class ForumRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -497,9 +509,7 @@ export class ForumRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -529,9 +539,7 @@ export class ForumRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 

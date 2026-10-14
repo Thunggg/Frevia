@@ -1,9 +1,13 @@
 import {
-  ForumAdminStatsType,
-  ForumPostListResponseType,
+  CreateForumCategoryBodyType,
+  UpdateForumCategoryBodyType,
+  DeleteForumCategoryResponseType,
   ForumAdminCommentListResponseType,
-  ForumPostType,
   ForumAdminCommentType,
+  ForumAdminStatsType,
+  ForumCategoryType,
+  ForumPostListResponseType,
+  ForumPostType,
   ForumReportListResponseType,
   ForumReportType,
   IdentityVerificationAdminDetailType,
@@ -27,8 +31,18 @@ function buildQueryString(
 }
 
 export const adminApiRequest = {
-  getStats: () =>
-    http.get<ForumAdminStatsType>("/api/forums/admin/stats"),
+  getStats: () => http.get<ForumAdminStatsType>("/api/forums/admin/stats"),
+
+  createCategory: (body: CreateForumCategoryBodyType) =>
+    http.post<ForumCategoryType>("/api/forums/admin/categories", body),
+
+  updateCategory: (id: number, body: UpdateForumCategoryBodyType) =>
+    http.patch<ForumCategoryType>(`/api/forums/admin/categories/${id}`, body),
+
+  deleteCategory: (id: number) =>
+    http.delete<DeleteForumCategoryResponseType>(
+      `/api/forums/admin/categories/${id}`,
+    ),
 
   getPosts: (
     page: number = 1,
@@ -37,9 +51,7 @@ export const adminApiRequest = {
     categoryId?: number,
   ) => {
     const query = buildQueryString({ page, limit, search, categoryId });
-    return http.get<ForumPostListResponseType>(
-      `/api/forums/posts${query}`,
-    );
+    return http.get<ForumPostListResponseType>(`/api/forums/posts${query}`);
   },
 
   deletePost: (postId: number) =>
@@ -72,9 +84,7 @@ export const adminApiRequest = {
   },
 
   deleteComment: (postId: number, commentId: number) =>
-    http.delete<unknown>(
-      `/api/forums/posts/${postId}/comments/${commentId}`,
-    ),
+    http.delete<unknown>(`/api/forums/posts/${postId}/comments/${commentId}`),
 
   restorePost: (postId: number) =>
     http.patch<ForumPostType>(
@@ -95,16 +105,13 @@ export const adminApiRequest = {
     search?: string,
   ) => {
     const query = buildQueryString({ page, limit, status, search });
-    return http.get<ForumReportListResponseType>(
-      `/api/forums/reports${query}`,
-    );
+    return http.get<ForumReportListResponseType>(`/api/forums/reports${query}`);
   },
 
   updateReportStatus: (reportId: number, status: string) =>
-    http.patch<ForumReportType>(
-      `/api/forums/reports/${reportId}/status`,
-      { status },
-    ),
+    http.patch<ForumReportType>(`/api/forums/reports/${reportId}/status`, {
+      status,
+    }),
 
   getIdentityVerifications: (
     page: number = 1,
@@ -123,19 +130,13 @@ export const adminApiRequest = {
       `/api/admin/identity-verifications/${id}`,
     ),
 
-  approveIdentityVerification: (
-    id: number,
-    reviewNotes?: string | null,
-  ) =>
+  approveIdentityVerification: (id: number, reviewNotes?: string | null) =>
     http.patch<IdentityVerificationAdminDetailType>(
       `/api/admin/identity-verifications/${id}/approve`,
       { reviewNotes: reviewNotes ?? null },
     ),
 
-  rejectIdentityVerification: (
-    id: number,
-    reviewNotes?: string | null,
-  ) =>
+  rejectIdentityVerification: (id: number, reviewNotes?: string | null) =>
     http.patch<IdentityVerificationAdminDetailType>(
       `/api/admin/identity-verifications/${id}/reject`,
       { reviewNotes: reviewNotes ?? null },

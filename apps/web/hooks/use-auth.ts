@@ -1,7 +1,6 @@
 import { authApiRequest } from "@/apiRequests/auth";
 import {
   ForgotPasswordBodyType,
-  GetMeResType,
   LoginBodyType,
   RegisterBodyType,
   SendOTPBodyType,

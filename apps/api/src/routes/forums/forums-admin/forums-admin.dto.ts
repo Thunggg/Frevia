@@ -1,6 +1,11 @@
 import { createZodDto } from 'nestjs-zod';
 import {
   ForumAdminStatsSchema,
+  ForumAdminCategoryListResponseSchema,
+  ForumCategoryDetailResponseSchema,
+  CreateForumCategoryBodySchema,
+  UpdateForumCategoryBodySchema,
+  DeleteForumCategoryResponseSchema,
   ForumAdminCommentListResponseSchema,
   ForumAdminCommentSchema,
   ForumPostSchema,
@@ -16,6 +21,22 @@ export class ForumAdminStatsResponseDto extends createZodDto(
 
 export class ForumAdminCommentListResponseDto extends createZodDto(
   ForumAdminCommentListResponseSchema,
+) {}
+
+export class ForumAdminCategoryListResponseDto extends createZodDto(
+  ForumAdminCategoryListResponseSchema,
+) {}
+
+export class ForumAdminCategoryDetailResponseDto extends createZodDto(
+  ForumCategoryDetailResponseSchema,
+) {}
+
+export class CreateForumCategoryBodyDto extends createZodDto(
+  CreateForumCategoryBodySchema,
+) {}
+
+export class UpdateForumCategoryBodyDto extends createZodDto(
+  UpdateForumCategoryBodySchema,
 ) {}
 
 export class PendingForumPostListResponseDto extends createZodDto(
@@ -40,4 +61,8 @@ export class ForumRestorePostResponseDto extends createZodDto(
 
 export class ForumRestoreCommentResponseDto extends createZodDto(
   ForumAdminCommentSchema,
+) {}
+
+export class DeleteForumCategoryResponseDto extends createZodDto(
+  DeleteForumCategoryResponseSchema,
 ) {}

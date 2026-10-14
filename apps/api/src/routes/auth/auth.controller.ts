@@ -130,7 +130,9 @@ export class AuthController {
         refreshToken: data.refreshToken,
       });
 
-      res.redirect(`${envConfig.NEXT_URL}/api/auth/google?${params.toString()}`);
+      res.redirect(
+        `${envConfig.NEXT_URL}/api/auth/google?${params.toString()}`,
+      );
     } catch (error) {
       this.logger.error('Google OAuth callback failed', error);
       res.redirect(`${envConfig.NEXT_URL}/login?error=google`);

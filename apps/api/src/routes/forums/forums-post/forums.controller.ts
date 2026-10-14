@@ -92,7 +92,10 @@ export class ForumController {
   @ZodSerializerDto(ForumTopPostListResponseDto)
   getTopInteractedPosts(
     @Query(new ZodValidationPipe(TopLimitSchema))
-    query: { limit: number; categoryId?: number },
+    query: {
+      limit: number;
+      categoryId?: number;
+    },
   ) {
     return this.forumService.getTopInteractedPosts(
       query.limit,

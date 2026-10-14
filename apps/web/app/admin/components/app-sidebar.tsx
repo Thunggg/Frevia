@@ -17,9 +17,8 @@ import {
   UsersRound,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { NavMain, type NavItem } from "./nav-main";
 import { LogoutButton } from "./logout-button";
+import { NavMain, type NavItem } from "./nav-main";
 
 const navItems: NavItem[] = [
   {
@@ -31,6 +30,7 @@ const navItems: NavItem[] = [
     title: "Forum",
     icon: MessageSquare,
     children: [
+      { title: "Categories", href: "/admin/categories" },
       { title: "Comments", href: "/admin/comments" },
       { title: "Moderation", href: "/admin/moderation" },
       { title: "Reports", href: "/admin/reports" },
