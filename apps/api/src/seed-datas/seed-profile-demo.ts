@@ -46,6 +46,26 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
 });
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+async function findOrCreateCatalogSkill(name: string) {
+  const existing = await prisma.skill.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+  });
+  if (existing) return existing;
+  return prisma.skill.create({
+    data: { name: name.trim(), slug: slugify(name) },
+  });
+}
+
 async function seedDemoProfile() {
   const user = await prisma.user.findUnique({
     where: { email: DEMO_EMAIL },
@@ -118,10 +138,11 @@ async function seedDemoProfile() {
   }
 
   for (const skill of demoSkills) {
+    const catalogSkill = await findOrCreateCatalogSkill(skill.skillName);
     const existingSkill = await prisma.freelancerSkill.findFirst({
       where: {
         freelancerProfileId: freelancerProfile.id,
-        skillName: { equals: skill.skillName, mode: 'insensitive' },
+        skillId: catalogSkill.id,
       },
     });
 
@@ -132,7 +153,11 @@ async function seedDemoProfile() {
       });
     } else {
       await prisma.freelancerSkill.create({
-        data: { freelancerProfileId: freelancerProfile.id, ...skill },
+        data: {
+          freelancerProfileId: freelancerProfile.id,
+          skillId: catalogSkill.id,
+          proficiencyLevel: skill.proficiencyLevel,
+        },
       });
     }
   }

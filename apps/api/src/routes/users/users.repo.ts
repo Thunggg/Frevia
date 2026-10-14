@@ -487,26 +487,88 @@ export class UsersRepository {
   }
 
   // Thay thế toàn bộ kỹ năng: xoá hết kỹ năng cũ rồi tạo lại danh sách mới (transaction)
+  // skillName free-text sẽ được chuẩn hoá về skill trong catalog (tự tạo nếu chưa tồn tại)
   async replaceFreelancerSkills(
     freelancerProfileId: number,
     skills: { skillName: string; proficiencyLevel: number }[],
   ) {
-    await this.prisma.$transaction([
-      this.prisma.freelancerSkill.deleteMany({
+    await this.prisma.$transaction(async (tx) => {
+      // xóa toàn bộ kỹ năng cũ
+      await tx.freelancerSkill.deleteMany({
         where: { freelancerProfileId },
-      }),
-      ...(skills.length > 0
-        ? [
-            this.prisma.freelancerSkill.createMany({
-              data: skills.map((skill) => ({
-                freelancerProfileId,
-                skillName: skill.skillName,
-                proficiencyLevel: skill.proficiencyLevel,
-              })),
-            }),
-          ]
-        : []),
-    ]);
+      });
+
+      if (skills.length === 0) return;
+
+      // Chuẩn hoá về skill trong catalog: kỹ năng gõ tự do chưa tồn tại sẽ được tạo mới
+      const rows: {
+        freelancerProfileId: number;
+        skillId: number;
+        proficiencyLevel: number;
+      }[] = [];
+
+      // lặp qua từng skill để chuẩn hoá và tạo mới nếu chưa có
+      for (const skill of skills) {
+        const catalog = await this.findOrCreateCatalogSkillTx(
+          tx,
+          skill.skillName,
+        );
+
+        rows.push({
+          freelancerProfileId,
+          skillId: catalog.id,
+          proficiencyLevel: skill.proficiencyLevel,
+        });
+      }
+
+      await tx.freelancerSkill.createMany({
+        data: rows,
+      });
+    });
+  }
+
+  private async findOrCreateCatalogSkillTx(
+    tx: Prisma.TransactionClient,
+    name: string,
+  ) {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      throw new Error('Skill name is required.');
+    }
+
+    const existing = await tx.skill.findFirst({
+      where: { name: { equals: trimmed, mode: Prisma.QueryMode.insensitive } },
+    });
+    if (existing) return existing;
+
+    const slug = await this.generateUniqueSlug(tx, trimmed);
+    return tx.skill.create({ data: { name: trimmed, slug } });
+  }
+
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  private async generateUniqueSlug(tx: Prisma.TransactionClient, name: string) {
+    const base = this.slugify(name) || 'skill';
+    let slug = base;
+    let suffix = 2;
+    while (
+      await tx.skill.findFirst({
+        where: { slug },
+        select: { id: true },
+      })
+    ) {
+      slug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+    return slug;
   }
 
   // Tạo mới portfolio item — chỉ nhập text, không upload file
@@ -576,7 +638,7 @@ export class UsersRepository {
   // Liệt kê Skill active trong catalog (nguồn chọn kỹ năng ở dialog Admin)
   async listActiveSkillCatalog() {
     return this.prisma.skill.findMany({
-      where: { isActive: true },
+      where: { deletedAt: null },
       select: { id: true, name: true },
       orderBy: { name: 'asc' },
     });
@@ -591,7 +653,7 @@ export class UsersRepository {
             socialLinks: true,
             freelancerProfile: {
               include: {
-                skills: true,
+                skills: { include: { skill: true } },
                 portfolioItems: {
                   where: { deletedAt: null },
                   orderBy: { createdAt: 'desc' },
@@ -673,8 +735,9 @@ export class UsersRepository {
           idVerified: user.profile.freelancerProfile.idVerified,
           skills: user.profile.freelancerProfile.skills.map((s) => ({
             id: s.id,
-            skillName: s.skillName,
+            skillId: s.skillId,
             proficiencyLevel: s.proficiencyLevel,
+            skill: { id: s.skill.id, name: s.skill.name },
           })),
           portfolioItems: user.profile.freelancerProfile.portfolioItems.map(
             (p) => ({

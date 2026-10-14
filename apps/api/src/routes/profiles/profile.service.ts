@@ -101,14 +101,15 @@ export class ProfileService {
       throw ProfileForbiddenException();
     }
 
-    const catalogSkill =
-      await this.profileRepository.findActiveCatalogSkillByName(dto.skillName);
-    const normalizedSkillName = catalogSkill?.name ?? dto.skillName;
+    // Chuẩn hoá về skill trong catalog: kỹ năng gõ tự do chưa tồn tại sẽ được tạo mới
+    const catalogSkill = await this.profileRepository.findOrCreateCatalogSkill(
+      dto.skillName,
+    );
 
     const existingSkill =
-      await this.profileRepository.findSkillByNameAndProfileId(
+      await this.profileRepository.findSkillByProfileIdAndSkillId(
         profileId,
-        normalizedSkillName,
+        catalogSkill.id,
       );
     if (existingSkill) {
       throw FreelancerSkillDuplicateException();
@@ -116,7 +117,7 @@ export class ProfileService {
 
     return this.profileRepository.addSkillToProfile(
       profileId,
-      normalizedSkillName,
+      catalogSkill.id,
       dto.proficiencyLevel,
     );
   }

@@ -269,8 +269,12 @@ export const AdminUserClientProfileSchema = z.object({
 
 export const AdminUserFreelancerSkillSchema = z.object({
   id: z.number(),
-  skillName: z.string(),
+  skillId: z.number(),
   proficiencyLevel: z.number(),
+  skill: z.object({
+    id: z.number(),
+    name: z.string(),
+  }),
 });
 
 export const AdminUserPortfolioItemSchema = z.object({

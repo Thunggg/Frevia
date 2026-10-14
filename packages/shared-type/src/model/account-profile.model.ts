@@ -110,8 +110,12 @@ export const FavoriteFreelancerSchema = z.object({
       skills: z.array(
         z.object({
           id: z.number(),
-          skillName: z.string(),
+          skillId: z.number(),
           proficiencyLevel: z.number(),
+          skill: z.object({
+            id: z.number(),
+            name: z.string(),
+          }),
         }),
       ),
     }),
