@@ -125,7 +125,7 @@ model User {
 
   // --- Forum ---
   forumPosts          ForumPost[]
-  forumPostsReviewed  ForumPost[]     @relation("ForumPostReviewedBy")
+  forumPostsReviewed  ForumPost[]    @relation("ForumPostReviewedBy")
   forumComments       ForumComment[]
   forumLikes          ForumLike[]
   forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
@@ -436,72 +436,88 @@ model JobAlert {
 // 5. Proposals
 // ============================
 model Proposal {
-  id           Int            @id @default(autoincrement())
+  id           Int @id @default(autoincrement())
   jobId        Int
   freelancerId Int
+
   coverLetter  String?
-  bidAmount    Decimal        @db.Decimal(10, 2)
-  deliveryTime Int
-  status       ProposalStatus @default(PENDING)
-  isDraft      Boolean        @default(false)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  deletedAt    DateTime?
+  bidAmount    Decimal? @db.Decimal(15, 2)
+  deliveryDays Int?
+
+  status ProposalStatus @default(DRAFT)
+
+  createdAt   DateTime  @default(now())
+  submittedAt DateTime?
+  acceptedAt  DateTime?
+  rejectedAt  DateTime?
+  withdrawnAt DateTime?
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   job         Job                  @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancer  User                 @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   attachments ProposalAttachment[]
   contract    Contract?
 
-  // NOTE: cần raw SQL migration cho partial unique index:
-  // CREATE UNIQUE INDEX idx_active_proposals ON "Proposal" ("jobId", "freelancerId") WHERE "deletedAt" IS NULL;
-  @@index([jobId])
-  @@index([freelancerId])
-  @@index([status])
+  @@index([jobId, deletedAt, createdAt])
+  @@index([freelancerId, deletedAt, createdAt])
+  @@index([status, deletedAt])
 }
 
 model ProposalTemplate {
-  id           Int       @id @default(autoincrement())
+  id           Int @id @default(autoincrement())
   freelancerId Int
-  name         String    @db.VarChar(255)
-  content      String
-  createdAt    DateTime  @default(now())
-  deletedAt    DateTime?
+
+  name         String   @db.VarChar(255)
+  coverLetter  String
+  bidAmount    Decimal? @db.Decimal(15, 2)
+  deliveryDays Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   freelancer User @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([freelancerId, deletedAt])
 }
 
 model ProposalAttachment {
-  id         Int       @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
   proposalId Int
-  fileUrl    String    @db.VarChar(500)
-  fileName   String?   @db.VarChar(255)
-  fileSize   Int?
-  createdAt  DateTime  @default(now())
-  deletedAt  DateTime?
+
+  fileUrl  String  @db.VarChar(500)
+  fileName String  @db.VarChar(255)
+  fileSize Int?
+  mimeType String? @db.VarChar(100)
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 
   proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([proposalId, deletedAt])
 }
 
 // ============================
 // 6. Contracts
 // ============================
 model Contract {
-  id             Int            @id @default(autoincrement())
-  jobId          Int            @unique
-  proposalId     Int            @unique
-  clientId       Int
-  freelancerId   Int
-  terms          String?
-  totalAmount    Decimal        @db.Decimal(10, 2)
-  status         ContractStatus @default(PENDING_SIGN)
-  signedByClient Boolean        @default(false)
-  signedByFreelancer Boolean    @default(false)
-  createdAt      DateTime       @default(now())
-  signedAt       DateTime?
-  completedAt    DateTime?
-  expiresAt      DateTime?
-  deletedAt      DateTime?
+  id                 Int            @id @default(autoincrement())
+  jobId              Int            @unique
+  proposalId         Int            @unique
+  clientId           Int
+  freelancerId       Int
+  terms              String?
+  totalAmount        Decimal        @db.Decimal(10, 2)
+  status             ContractStatus @default(PENDING_SIGN)
+  signedByClient     Boolean        @default(false)
+  signedByFreelancer Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+  signedAt           DateTime?
+  completedAt        DateTime?
+  expiresAt          DateTime?
+  deletedAt          DateTime?
 
   job                    Job                     @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   proposal               Proposal                @relation(fields: [proposalId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -543,7 +559,7 @@ model ContractTermTemplate {
 // 8. Milestones
 // ============================
 model Milestone {
-  id          Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   contractId Int
 
@@ -558,8 +574,8 @@ model Milestone {
 
   completedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -584,11 +600,11 @@ model MilestoneFile {
   publicId String
   fileName String?
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   deletedAt DateTime?
 
   milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  uploader User @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  uploader  User      @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   submissions MilestoneSubmissionFile[]
 
@@ -613,14 +629,14 @@ model MilestoneSubmission {
   changeRequestMessage String?
   changeRequestDueDate DateTime?
 
-  submittedAt DateTime @default(now())
+  submittedAt DateTime  @default(now())
   reviewedAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  freelancer User @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  milestone  Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  freelancer User      @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   files MilestoneSubmissionFile[]
 
@@ -636,12 +652,11 @@ model MilestoneSubmissionFile {
   fileId       Int
 
   submission MilestoneSubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
-  file MilestoneFile @relation(fields: [fileId], references: [id], onDelete: Restrict)
+  file       MilestoneFile       @relation(fields: [fileId], references: [id], onDelete: Restrict)
 
   @@id([submissionId, fileId])
   @@index([fileId])
 }
-
 
 // ============================
 // 13. Invoices (hóa đơn)
@@ -789,30 +804,30 @@ model ForumCategory {
 }
 
 model ForumPost {
-  id         Int       @id @default(autoincrement())
-  categoryId Int?
-  userId     Int
-  title      String    @db.VarChar(255)
-  slug       String    @unique @db.VarChar(320)
-  content    String
+  id                   Int             @id @default(autoincrement())
+  categoryId           Int?
+  userId               Int
+  title                String          @db.VarChar(255)
+  slug                 String          @unique @db.VarChar(320)
+  content              String
   // ============================
   // Moderation (nhúng bởi AI proxy SensitiveAI)
   // ============================
-  moderationStatus      ForumPostStatus @default(PENDING)
-  moderationScore       Float?
-  moderationCategories  Json?
-  reviewedById          Int?
-  reviewedAt            DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
+  moderationStatus     ForumPostStatus @default(PENDING)
+  moderationScore      Float?
+  moderationCategories Json?
+  reviewedById         Int?
+  reviewedAt           DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  deletedAt            DateTime?
 
-  category ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  user     User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  reviewedBy User?        @relation("ForumPostReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  comments ForumComment[]
-  likes    ForumLike[]
-  reports  ForumReport[]
+  category   ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewedBy User?          @relation("ForumPostReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  comments   ForumComment[]
+  likes      ForumLike[]
+  reports    ForumReport[]
 
   @@index([categoryId])
   @@index([userId])
@@ -1036,11 +1051,11 @@ model SharedFile {
 // 22. Messaging
 // ============================
 model Conversation {
-  id           Int       @id @default(autoincrement())
-  participant1 Int
-  participant2 Int
-  createdAt    DateTime  @default(now())
-  deletedAt    DateTime?
+  id                   Int       @id @default(autoincrement())
+  participant1         Int
+  participant2         Int
+  createdAt            DateTime  @default(now())
+  deletedAt            DateTime?
   // Trạng thái riêng theo từng người: hide (xóa bên phía mình) và pin (ghim)
   participant1HiddenAt DateTime?
   participant2HiddenAt DateTime?
@@ -1062,10 +1077,10 @@ model DirectMessage {
   senderId       Int
   message        String
   // File đính kèm (nullable: tin nhắn chỉ có text)
-  fileUrl    String?  @db.VarChar(500)
-  fileName   String?  @db.VarChar(255)
-  fileSize   Int?
-  fileType   String?  @db.VarChar(100)
+  fileUrl        String?   @db.VarChar(500)
+  fileName       String?   @db.VarChar(255)
+  fileSize       Int?
+  fileType       String?   @db.VarChar(100)
   isRead         Boolean   @default(false)
   createdAt      DateTime  @default(now())
   deletedAt      DateTime?
@@ -1090,6 +1105,7 @@ enum JobStatus {
 }
 
 enum ProposalStatus {
+  DRAFT
   PENDING
   ACCEPTED
   REJECTED
@@ -1177,11 +1193,9 @@ enum VerificationStatus {
   REJECTED
 }
 
-
 enum BudgetType {
   FIXED_PRICE
 }
-
 
 enum HttpMethod {
   GET
@@ -1198,7 +1212,6 @@ enum DocumentType {
   RESIDENCE_PERMIT
   OTHER
 }
-
 
 enum PaymentStatus {
   PENDING

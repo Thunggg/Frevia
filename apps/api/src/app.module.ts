@@ -28,8 +28,10 @@ import { MilestoneModule } from './routes/milestone/milestone.module';
 import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
 import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
+import { SavedSearchModule } from './routes/saved-search/saved-search.module';
 import { NotificationModule } from './routes/notifications/notification.module';
 import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
+import { ProposalModule } from './routes/proposals/proposal.module';
 import { UsersModule } from './routes/users/users.module';
 
 @Module({
@@ -55,8 +57,10 @@ import { UsersModule } from './routes/users/users.module';
     MilestoneFileModule,
     MilestoneSubmissionModule,
     AccountProfileModule,
+    SavedSearchModule,
     NotificationModule,
     IdentityVerificationsAdminModule,
+    ProposalModule,
     UsersModule,
   ],
   controllers: [AppController],

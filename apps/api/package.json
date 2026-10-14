@@ -20,6 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/index.ts",
+    "seed:permissions": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-permissions.ts",
     "seed:profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-profile-demo.ts",
     "seed:account-profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-account-profile-demo.ts",
     "seed:jobs": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-jobs.ts",

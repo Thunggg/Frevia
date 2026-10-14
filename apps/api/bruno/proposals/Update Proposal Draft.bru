@@ -1,0 +1,26 @@
+meta {
+  name: Update Proposal Draft
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/proposals/{{proposalId}}/draft
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "bidAmount": 16000000,
+    "deliveryDays": 18
+  }
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  proposalId: 1
+}

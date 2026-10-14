@@ -25,6 +25,8 @@ const prisma = new PrismaClient({
  * - IDENTITY-VERIFICATIONS: freelancer KYC docs
  * - SOCIAL-LINKS: both roles
  * - FAVORITES: client saved freelancers (`/api/favorites/freelancers`)
+ * - PROPOSALS: Freelancer submits proposals; Client reviews, accepts, or rejects
+ *   proposals for jobs they own (`/api/proposals/...`, `/api/jobs/:jobId/proposals`)
  *
  * Cross-read: CLIENT cũng có PROFILES, FREELANCER cũng có CLIENTS
  * (GET public vẫn bypass guard; module đủ cho các thao tác auth-required).
@@ -33,7 +35,9 @@ const freelancerModules = [
   'AUTH',
   'SESSIONS',
   'JOBS',
+  'SAVED-SEARCHES',
   'MANAGE-JOBS',
+  'PROPOSALS',
   'CONTRACTS',
   'CONVERSATIONS',
   'FORUMS',
@@ -48,7 +52,9 @@ const clientModules = [
   'AUTH',
   'SESSIONS',
   'JOBS',
+  'SAVED-SEARCHES',
   'MANAGE-JOBS',
+  'PROPOSALS',
   'CONTRACTS',
   'CONVERSATIONS',
   'FORUMS',

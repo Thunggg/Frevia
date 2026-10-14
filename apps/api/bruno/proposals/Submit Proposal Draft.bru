@@ -1,0 +1,19 @@
+meta {
+  name: Submit Proposal Draft
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/proposals/{{proposalId}}/submit
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  proposalId: 1
+}

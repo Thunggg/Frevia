@@ -1,0 +1,21 @@
+meta {
+  name: My Proposals
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/proposals/my?page=1&limit=10
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~status: DRAFT
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

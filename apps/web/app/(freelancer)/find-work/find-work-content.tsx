@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  useEffect,
-  useState,
-  useTransition,
-  type MouseEvent,
-} from "react";
+import { useEffect, useState, useTransition, type MouseEvent } from "react";
 import {
   ArrowRight,
   Bookmark,
@@ -40,7 +35,8 @@ import {
 } from "@repo/ui/components/shadcn/sheet";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { ViewListJobResponseType } from "@shared/types";
+import type { SavedSearchType, ViewListJobResponseType } from "@shared/types";
+import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
 
 type JobItem = ViewListJobResponseType["data"][number];
 
@@ -58,6 +54,7 @@ type FindWorkContentProps = {
   initialTime?: string;
   initialSort?: string;
   initialBookmarkedSlugs?: string[];
+  initialSavedSearches?: SavedSearchType[];
 };
 
 const BUDGET_LABELS: Record<string, string> = {
@@ -75,7 +72,10 @@ const TIME_LABELS: Record<string, string> = {
 };
 
 function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function formatPostedTime(value: string | Date) {
@@ -125,6 +125,7 @@ export function FindWorkContent({
   initialTime = "all",
   initialSort = "newest",
   initialBookmarkedSlugs = [],
+  initialSavedSearches = [],
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -136,10 +137,17 @@ export function FindWorkContent({
   const [pendingBookmarkSlug, setPendingBookmarkSlug] = useState<string | null>(
     null,
   );
+  const [savedSearches, setSavedSearches] = useState(
+    initialSavedSearches ?? [],
+  );
 
   useEffect(() => {
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
   }, [initialBookmarkedSlugs]);
+
+  useEffect(() => {
+    setSavedSearches(initialSavedSearches ?? []);
+  }, [initialSavedSearches]);
 
   const jobs = initialJobs ?? [];
   const pagination = initialPagination ?? {
@@ -149,6 +157,9 @@ export function FindWorkContent({
     totalPages: 0,
   };
   const canBookmark = role === "FREELANCER";
+  const currentSearchParams = Object.fromEntries(
+    Array.from(searchParams.entries()).filter(([, value]) => value !== ""),
+  );
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -190,6 +201,24 @@ export function FindWorkContent({
     event.preventDefault();
     event.stopPropagation();
     updateParams({ keyword: skillName });
+  };
+
+  const applySavedSearch = (savedSearch: SavedSearchType) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(savedSearch.searchParams)) {
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+      ) {
+        params.set(key, String(value));
+      }
+    }
+
+    const query = params.toString();
+    startTransition(() => {
+      router.push(query ? `/find-work?${query}` : "/find-work");
+    });
   };
 
   const toggleBookmark = async (slug: string, event: MouseEvent) => {
@@ -340,8 +369,18 @@ export function FindWorkContent({
         <div className="sticky top-15 z-30 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
           <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="hidden w-full max-w-3xl grid-cols-3 gap-3 lg:grid">
-                {filterControls}
+              <div className="hidden w-full max-w-6xl items-center gap-3 lg:flex">
+                <div className="grid flex-1 grid-cols-4 gap-3">
+                  {filterControls}
+                  {canBookmark ? (
+                    <SaveSearchDialog
+                      searchParams={currentSearchParams}
+                      savedSearches={savedSearches}
+                      onApply={applySavedSearch}
+                      onChanged={() => router.refresh()}
+                    />
+                  ) : null}
+                </div>
               </div>
 
               <div className="flex items-center justify-between gap-3 lg:hidden">
@@ -371,6 +410,14 @@ export function FindWorkContent({
                     </Button>
                   </SheetContent>
                 </Sheet>
+                {canBookmark ? (
+                  <SaveSearchDialog
+                    searchParams={currentSearchParams}
+                    savedSearches={savedSearches}
+                    onApply={applySavedSearch}
+                    onChanged={() => router.refresh()}
+                  />
+                ) : null}
               </div>
 
               <p className="hidden text-sm text-muted-foreground lg:block">
@@ -449,6 +496,12 @@ export function FindWorkContent({
                                 Featured
                               </Badge>
                             ) : null}
+                            <Badge
+                              variant="secondary"
+                              className="bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]"
+                            >
+                              {job.status.replaceAll("_", " ")}
+                            </Badge>
                             <Link
                               href={`/job/${job.slug}`}
                               className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-[#4fae2e]"
@@ -506,9 +559,7 @@ export function FindWorkContent({
                               className="size-10"
                               disabled={isBookmarkPending}
                               aria-label={
-                                isBookmarked
-                                  ? "Remove bookmark"
-                                  : "Save job"
+                                isBookmarked ? "Remove bookmark" : "Save job"
                               }
                               onClick={(event) =>
                                 toggleBookmark(job.slug, event)

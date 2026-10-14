@@ -1,0 +1,27 @@
+meta {
+  name: Submit Proposal
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/proposals/jobs/{{jobId}}
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "coverLetter": "I have experience building reliable, responsive applications and can deliver this project with clear communication.",
+    "bidAmount": 15000000,
+    "deliveryDays": 20
+  }
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  jobId: 1
+}

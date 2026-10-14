@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const platformLinks = [
   { href: "/find-work", label: "Find Work" },
-  { href: "/projects", label: "My Projects" },
+  { href: "/client/jobs", label: "My Jobs" },
   { href: "/bookmarks", label: "Bookmarks" },
   { href: "/conversations", label: "Messages" },
 ] as const;

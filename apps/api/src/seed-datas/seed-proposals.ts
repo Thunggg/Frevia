@@ -17,37 +17,32 @@ const proposalData = [
   {
     coverLetter: `Hi! I'm an experienced React developer with 3+ years of building responsive UIs. I've worked on multiple landing pages using React and Tailwind CSS, delivering pixel-perfect designs. I can complete this within 7 days and ensure mobile responsiveness across all devices.`,
     bidAmount: '350',
-    deliveryTime: 7,
+    deliveryDays: 7,
     status: 'PENDING' as const,
-    isDraft: false,
   },
   {
     coverLetter: `I specialize in NestJS and PostgreSQL backend development. I have built production-grade REST APIs with proper authentication, rate limiting, and Swagger documentation. I'd love to take on this project and deliver clean, well-tested code.`,
     bidAmount: '900',
-    deliveryTime: 14,
+    deliveryDays: 14,
     status: 'ACCEPTED' as const,
-    isDraft: false,
   },
   {
     coverLetter: `React Native is my primary tech stack. I've published 5+ apps on both App Store and Google Play. I can handle state management, push notifications, and Firebase integration. Happy to share my portfolio upon request.`,
     bidAmount: '2200',
-    deliveryTime: 30,
+    deliveryDays: 30,
     status: 'PENDING' as const,
-    isDraft: false,
   },
   {
     coverLetter: `I have extensive e-commerce experience with Next.js and Stripe. I'll set up product catalog, cart, checkout flow, and admin dashboard. SEO optimization is included by default in my workflow.`,
     bidAmount: '1800',
-    deliveryTime: 21,
+    deliveryDays: 21,
     status: 'REJECTED' as const,
-    isDraft: false,
   },
   {
     coverLetter: `I've integrated OpenAI API in multiple Python/FastAPI projects. I can design the chatbot architecture, handle context windows, streaming responses, and fallback mechanisms. Looking forward to discussing your requirements.`,
     bidAmount: '1100',
-    deliveryTime: 10,
+    deliveryDays: 10,
     status: 'WITHDRAWN' as const,
-    isDraft: false,
   },
 ];
 
@@ -105,9 +100,8 @@ async function main() {
         freelancerId: freelancer.id,
         coverLetter: data.coverLetter,
         bidAmount: data.bidAmount,
-        deliveryTime: data.deliveryTime,
+        deliveryDays: data.deliveryDays,
         status: data.status,
-        isDraft: data.isDraft,
       },
     });
 

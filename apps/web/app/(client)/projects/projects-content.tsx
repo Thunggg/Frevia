@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Briefcase, Edit2, Eye, Plus, Trash2 } from "lucide-react";
+import { Briefcase, Edit2, Eye, FileText, Plus, Trash2 } from "lucide-react";
 
 import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
@@ -19,6 +19,13 @@ import {
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/shadcn/select";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { JobStatusType, JobType } from "@shared/types";
 
@@ -26,14 +33,27 @@ import { PostJobForm } from "./post-job-form";
 
 type ProjectsContentProps = {
   initialJobs: JobType[];
-  pagination: { page: number; limit: number; total: number; totalPages: number };
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 function statusBadgeClass(status: string) {
-  if (status === "OPEN") {
-    return "border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15";
-  }
-  return "";
+  const classes: Record<string, string> = {
+    DRAFT:
+      "border-transparent bg-slate-500/10 text-slate-700 dark:text-slate-200",
+    OPEN: "border-transparent bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]",
+    IN_PROGRESS:
+      "border-transparent bg-blue-500/10 text-blue-700 dark:text-blue-300",
+    COMPLETED:
+      "border-transparent bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+    CLOSED: "border-transparent bg-muted text-muted-foreground",
+    CANCELLED: "border-transparent bg-destructive/10 text-destructive",
+  };
+  return classes[status] ?? "";
 }
 
 export function ProjectsContent({
@@ -105,14 +125,16 @@ export function ProjectsContent({
                 asChild
                 className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
               >
-                <Link href="/projects/new">
+                <Link href="/client/jobs/new">
                   <Plus className="mr-2 size-4" />
                   Post a job
                 </Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-foreground/65">
-              <span className="font-semibold text-foreground">{jobs.length}</span>{" "}
+              <span className="font-semibold text-foreground">
+                {jobs.length}
+              </span>{" "}
               {jobs.length === 1 ? "job" : "jobs"} on this page
               {pagination.total > 0 ? (
                 <>
@@ -135,9 +157,12 @@ export function ProjectsContent({
                   <div className="flex flex-col gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-7 dark:hover:bg-white/4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                        <Link
+                          href={`/client/jobs/${job.id}`}
+                          className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-[#4fae2e]"
+                        >
                           {job.title}
-                        </h2>
+                        </Link>
                         <Badge
                           variant="outline"
                           className={statusBadgeClass(job.status)}
@@ -153,32 +178,41 @@ export function ProjectsContent({
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/projects/${job.id}`}>
+                        <Link href={`/client/jobs/${job.id}/proposals`}>
+                          <FileText className="mr-1 size-4" />
+                          Proposals
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/client/jobs/${job.id}`}>
                           <Eye className="mr-1 size-4" />
                           View
                         </Link>
                       </Button>
-                      <select
+                      <Select
                         value={job.status}
-                        className="h-8 rounded-md border border-border bg-background px-2 text-sm"
-                        onChange={(event) =>
-                          changeStatus(
-                            job.id,
-                            event.target.value as JobStatusType,
-                          )
+                        onValueChange={(value) =>
+                          changeStatus(job.id, value as JobStatusType)
                         }
                       >
-                        {[
-                          "DRAFT",
-                          "OPEN",
-                          "IN_PROGRESS",
-                          "COMPLETED",
-                          "CLOSED",
-                          "CANCELLED",
-                        ].map((status) => (
-                          <option key={status}>{status}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="h-8 w-[132px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[
+                            "DRAFT",
+                            "OPEN",
+                            "IN_PROGRESS",
+                            "COMPLETED",
+                            "CLOSED",
+                            "CANCELLED",
+                          ].map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status.replaceAll("_", " ")}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <Button
                         variant="outline"
                         size="sm"
@@ -219,7 +253,7 @@ export function ProjectsContent({
                 asChild
                 className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
               >
-                <Link href="/projects/new">
+                <Link href="/client/jobs/new">
                   <Plus className="mr-2 size-4" />
                   Post a job
                 </Link>
@@ -233,7 +267,7 @@ export function ProjectsContent({
                 variant="outline"
                 disabled={pagination.page <= 1}
                 onClick={() =>
-                  router.push(`/projects?page=${pagination.page - 1}`)
+                  router.push(`/client/jobs?page=${pagination.page - 1}`)
                 }
               >
                 Previous
@@ -245,7 +279,7 @@ export function ProjectsContent({
                 variant="outline"
                 disabled={pagination.page >= pagination.totalPages}
                 onClick={() =>
-                  router.push(`/projects?page=${pagination.page + 1}`)
+                  router.push(`/client/jobs?page=${pagination.page + 1}`)
                 }
               >
                 Next
