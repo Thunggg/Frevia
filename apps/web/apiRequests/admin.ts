@@ -71,6 +71,17 @@ export const adminApiRequest = {
   updateSkill: (id: number, body: AdminUpdateSkillBodyType) =>
     http.patch<SkillAdminDetailResponseType>(`/api/admin/skills/${id}`, body),
 
+  // Khôi phục skill đã soft-delete
+  restoreSkill: (id: number) =>
+    http.patch<SkillAdminDetailResponseType>(
+      `/api/admin/skills/${id}/restore`,
+      {},
+    ),
+
+  // Xóa mềm skill
+  deleteSkill: (id: number) =>
+    http.delete<MessageResType>(`/api/admin/skills/${id}`),
+
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),
 

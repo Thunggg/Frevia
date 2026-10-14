@@ -1,6 +1,7 @@
 // ====== Schema dùng cho trang Admin: danh sách & chi tiết kỹ năng (Skill) ======
 import { z } from "zod";
 import { PaginationSchema } from "./forum-post.model";
+import { MessageResSchema } from "./response.model";
 
 // 1 dòng skill trong danh sách (jobCount là số công việc đang dùng skill này)
 export const SkillAdminItemSchema = z.object({
@@ -67,6 +68,13 @@ export type AdminUpdateSkillBodyType = z.infer<
 
 export type AdminCreateSkillBodyType = z.infer<
   typeof AdminCreateSkillBodySchema
+>;
+
+// --- Admin: Delete Skill (DELETE /api/admin/skills/:id) ---
+export const SkillAdminDeleteResponseSchema = MessageResSchema;
+
+export type SkillAdminDeleteResponseType = z.infer<
+  typeof SkillAdminDeleteResponseSchema
 >;
 
 export type SkillAdminItemType = z.infer<typeof SkillAdminItemSchema>;

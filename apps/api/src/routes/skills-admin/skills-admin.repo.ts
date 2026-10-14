@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import {
   AdminCreateSkillBodyType,
   AdminUpdateSkillBodyType,
+  SkillAdminDeleteResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
   SkillAdminQueryType,
@@ -10,6 +11,7 @@ import {
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
   SkillAdminNotFoundException,
+  SkillInUseException,
   SkillNameAlreadyExistsException,
 } from './skills-admin.error';
 
@@ -208,6 +210,65 @@ export class SkillsAdminRepository {
       },
       select: skillListSelect,
     });
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      deletedAt: updated.deletedAt,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      jobCount: updated._count.jobs,
+    };
+  }
+
+  // Xóa skill (soft delete: set deletedAt; chặn nếu còn job đang hoạt động dùng)
+  async deleteSkill(id: number): Promise<SkillAdminDeleteResponseType> {
+    const skill = await this.prisma.skill.findFirst({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!skill) {
+      throw SkillAdminNotFoundException();
+    }
+
+    const activeJobs = await this.prisma.jobSkill.count({
+      where: { skillId: id, job: { deletedAt: null } },
+    });
+
+    if (activeJobs > 0) {
+      throw SkillInUseException();
+    }
+
+    await this.prisma.skill.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return { message: 'Skill deleted successfully' };
+  }
+
+  // Khôi phục skill đã soft-delete (chỉ những skill đang bị xóa mới restore được)
+  async restoreSkill(id: number): Promise<SkillAdminDetailResponseType> {
+    const result = await this.prisma.skill.updateMany({
+      where: { id, deletedAt: { not: null } },
+      data: { deletedAt: null },
+    });
+
+    if (result.count === 0) {
+      throw SkillAdminNotFoundException();
+    }
+
+    const updated = await this.prisma.skill.findUnique({
+      where: { id },
+      select: skillListSelect,
+    });
+
+    if (!updated) {
+      throw SkillAdminNotFoundException();
+    }
 
     return {
       id: updated.id,

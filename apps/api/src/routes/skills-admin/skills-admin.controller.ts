@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -12,6 +13,7 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import type { SkillAdminQueryType } from '@shared/types';
 import {
   CreateSkillBodyDto,
+  SkillAdminDeleteResponseDto,
   SkillAdminDetailResponseDto,
   SkillAdminListResponseDto,
   SkillAdminQueryDto,
@@ -44,6 +46,18 @@ export class SkillsAdminController {
     @Body() body: UpdateSkillBodyDto,
   ) {
     return this.service.updateSkill(id, body);
+  }
+
+  @Patch(':id/restore')
+  @ZodSerializerDto(SkillAdminDetailResponseDto)
+  restoreSkill(@Param('id', ParseIntPipe) id: number) {
+    return this.service.restoreSkill(id);
+  }
+
+  @Delete(':id')
+  @ZodSerializerDto(SkillAdminDeleteResponseDto)
+  deleteSkill(@Param('id', ParseIntPipe) id: number) {
+    return this.service.deleteSkill(id);
   }
 
   @Get(':id')

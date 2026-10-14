@@ -15,6 +15,15 @@ export const SkillAdminNotFoundException = () =>
     },
   ]);
 
+// Skill đang được 1 job đang hoạt động dùng → không cho xóa
+export const SkillInUseException = () =>
+  new ConflictException([
+    {
+      message: 'Error.SkillInUse',
+      path: 'skillId',
+    },
+  ]);
+
 export const FailedToLoadSkillListException = () =>
   new InternalServerErrorException([
     {
@@ -53,5 +62,21 @@ export const FailedToUpdateSkillException = () =>
     {
       message: 'Error.FailedToUpdateSkill',
       path: 'skill',
+    },
+  ]);
+
+export const FailedToDeleteSkillException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToDeleteSkill',
+      path: 'skillId',
+    },
+  ]);
+
+export const FailedToRestoreSkillException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToRestoreSkill',
+      path: 'skillId',
     },
   ]);

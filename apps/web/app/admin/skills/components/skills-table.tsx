@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -11,10 +12,12 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { SkillAdminItemType } from "@shared/types";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { AdminPagination } from "../../components/admin-pagination";
 import { UpdateSkillDialog } from "./update-skill-dialog";
+import { DeleteSkillDialog } from "./delete-skill-dialog";
+import { RestoreSkillDialog } from "./restore-skill-dialog";
 
 interface SkillsTableProps {
   skills: SkillAdminItemType[];
@@ -27,6 +30,9 @@ interface SkillsTableProps {
 }
 
 export function SkillsTable({ skills, pagination }: SkillsTableProps) {
+  const [deletingSkill, setDeletingSkill] = useState<SkillAdminItemType | null>(
+    null,
+  );
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card">
@@ -95,10 +101,26 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <UpdateSkillDialog
-                        skill={skill}
-                        triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                      />
+                      {skill.deletedAt === null ? (
+                        <>
+                          <UpdateSkillDialog
+                            skill={skill}
+                            triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                            title="Delete skill"
+                            aria-label={`Delete skill ${skill.name}`}
+                            onClick={() => setDeletingSkill(skill)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <RestoreSkillDialog skill={skill} />
+                      )}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -129,6 +151,12 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
           total={pagination.total}
         />
       )}
+
+      <DeleteSkillDialog
+        skill={deletingSkill}
+        open={!!deletingSkill}
+        onOpenChange={(open) => !open && setDeletingSkill(null)}
+      />
     </div>
   );
 }

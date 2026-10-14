@@ -3,14 +3,17 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   AdminCreateSkillBodyType,
   AdminUpdateSkillBodyType,
+  SkillAdminDeleteResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
   SkillAdminQueryType,
 } from '@shared/types';
 import {
   FailedToCreateSkillException,
+  FailedToDeleteSkillException,
   FailedToLoadSkillDetailException,
   FailedToLoadSkillListException,
+  FailedToRestoreSkillException,
   FailedToUpdateSkillException,
   SkillAdminNotFoundException,
   SkillNameAlreadyExistsException,
@@ -90,6 +93,30 @@ export class SkillsAdminService {
         throw error;
       }
       throw FailedToUpdateSkillException();
+    }
+  }
+
+  // Xóa skill (soft delete)
+  async deleteSkill(id: number): Promise<SkillAdminDeleteResponseType> {
+    try {
+      return await this.repository.deleteSkill(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeleteSkillException();
+    }
+  }
+
+  // Khôi phục skill đã xóa
+  async restoreSkill(id: number): Promise<SkillAdminDetailResponseType> {
+    try {
+      return await this.repository.restoreSkill(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToRestoreSkillException();
     }
   }
 }
