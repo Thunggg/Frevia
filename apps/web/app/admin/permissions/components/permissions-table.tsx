@@ -1,19 +1,11 @@
 "use client";
 
 import { AdminTableSkeleton } from "../../components/table-skeleton";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import { usePermissions } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@repo/ui/components/shadcn/pagination";
 import {
   Select,
   SelectContent,
@@ -53,38 +45,6 @@ const METHOD_VARIANT: Record<
 };
 
 const HTTP_METHODS = Object.values(HttpMethod);
-
-function getPageNumbers(
-  currentPage: number,
-  totalPages: number,
-): (number | "...")[] {
-  if (totalPages <= 5) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  const pages: (number | "...")[] = [1];
-
-  if (currentPage > 3) {
-    pages.push("...");
-  }
-
-  const start = Math.max(2, currentPage - 1);
-  const end = Math.min(totalPages - 1, currentPage + 1);
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-
-  if (currentPage < totalPages - 2) {
-    pages.push("...");
-  }
-
-  if (totalPages > 1) {
-    pages.push(totalPages);
-  }
-
-  return pages;
-}
 
 export function PermissionsTable() {
   const router = useRouter();
@@ -146,12 +106,6 @@ export function PermissionsTable() {
     },
     [pathname, router, searchParams],
   );
-
-  const goToPage = (nextPage: number) => {
-    updateParams({
-      page: nextPage > 1 ? String(nextPage) : undefined,
-    });
-  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -387,65 +341,11 @@ export function PermissionsTable() {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-muted-foreground">
-                Page {page} of {totalPages} ({total} total)
-              </p>
-              <Pagination className="mx-0 w-auto justify-end">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (page > 1) goToPage(page - 1);
-                      }}
-                      aria-disabled={page <= 1}
-                      className={
-                        page <= 1 ? "pointer-events-none opacity-50" : undefined
-                      }
-                    />
-                  </PaginationItem>
-
-                  {getPageNumbers(page, totalPages).map((pageNum, index) =>
-                    pageNum === "..." ? (
-                      <PaginationItem key={`ellipsis-${index}`}>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    ) : (
-                      <PaginationItem key={pageNum}>
-                        <PaginationLink
-                          href="#"
-                          isActive={pageNum === page}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            goToPage(pageNum);
-                          }}
-                        >
-                          {pageNum}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ),
-                  )}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (page < totalPages) goToPage(page + 1);
-                      }}
-                      aria-disabled={page >= totalPages}
-                      className={
-                        page >= totalPages
-                          ? "pointer-events-none opacity-50"
-                          : undefined
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+            <NumberedPagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+            />
           )}
         </>
       )}

@@ -622,7 +622,7 @@ export function AccountProfileClient({
                                     variant="secondary"
                                     className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
                                   >
-                                    {skill.skillName}
+                                    {skill.skill.name}
                                   </Badge>
                                 ))}
                             </div>
@@ -692,7 +692,7 @@ export function AccountProfileClient({
                                     variant="secondary"
                                     className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
                                   >
-                                    {skill.skillName}
+                                    {skill.skill.name}
                                   </Badge>
                                 ))}
                             </div>

@@ -22,7 +22,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateCategoryDialog } from "./update-category-dialog";
 import { DeleteCategoryDialog } from "./delete-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
@@ -189,7 +189,7 @@ export function CategoriesTable({
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

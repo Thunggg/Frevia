@@ -44,7 +44,7 @@ import {
   User,
   MessageSquare,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumAdminCommentType } from "@shared/types";
 
 interface CommentsTableProps {
@@ -189,7 +189,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

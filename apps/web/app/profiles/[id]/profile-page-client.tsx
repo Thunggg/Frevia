@@ -400,7 +400,7 @@ export function ProfilePageClient({
         (option) =>
           !skills.some(
             (skill) =>
-              skill.skillName.toLowerCase() === option.name.toLowerCase(),
+              skill.skill.name.toLowerCase() === option.name.toLowerCase(),
           ),
       ),
     [skillOptions, skills],
@@ -467,7 +467,7 @@ export function ProfilePageClient({
     if (
       skills.some(
         (skill) =>
-          skill.skillName.toLowerCase() === normalizedName.toLowerCase(),
+          skill.skill.name.toLowerCase() === normalizedName.toLowerCase(),
       )
     ) {
       toastError({
@@ -485,7 +485,7 @@ export function ProfilePageClient({
       if (!response.success) throw new Error("Unable to add skill.");
       setSkills((current) =>
         [...current, response.data].sort((first, second) =>
-          first.skillName.localeCompare(second.skillName),
+          first.skill.name.localeCompare(second.skill.name),
         ),
       );
       setSkillName("");
@@ -889,7 +889,7 @@ export function ProfilePageClient({
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="font-semibold text-foreground">
-                                {skill.skillName}
+                                {skill.skill.name}
                               </p>
                               <p className="text-xs text-muted-foreground">
                                 {getProficiencyLabel(skill.proficiencyLevel)} ·{" "}
@@ -900,7 +900,7 @@ export function ProfilePageClient({
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
-                                aria-label={`Delete ${skill.skillName}`}
+                                aria-label={`Delete ${skill.skill.name}`}
                                 onClick={() => setSkillToDelete(skill)}
                               >
                                 <Trash2 className="text-destructive" />
@@ -1486,7 +1486,7 @@ export function ProfilePageClient({
         title="Delete this skill?"
         description={
           skillToDelete
-            ? `${skillToDelete.skillName} will be permanently removed from your profile.`
+            ? `${skillToDelete.skill.name} will be permanently removed from your profile.`
             : ""
         }
         pending={pendingAction === "skill-delete"}

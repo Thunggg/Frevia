@@ -1,6 +1,8 @@
 import {
   AdminClientProfileResponseType,
   AdminCreatePortfolioItemBodyType,
+  AdminCreateSkillBodyType,
+  AdminUpdateSkillBodyType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
   AdminReplaceFreelancerSkillsBodyType,
@@ -25,6 +27,7 @@ import {
   MessageResType,
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
+  SkillAdminDetailResponseType,
   AdminUserListResponseType,
   AdminUserDetailResponseType,
 } from "@shared/types";
@@ -59,6 +62,25 @@ export const adminApiRequest = {
   // Lấy catalog Skill active (dùng cho dialog chọn kỹ năng)
   getSkillCatalog: () =>
     http.get<AdminSkillCatalogListType>("/api/users/skills-catalog"),
+
+  // Tạo skill mới — trang Admin Skills
+  createSkill: (body: AdminCreateSkillBodyType) =>
+    http.post<SkillAdminDetailResponseType>("/api/admin/skills", body),
+
+  // Sửa skill — trang Admin Skills
+  updateSkill: (id: number, body: AdminUpdateSkillBodyType) =>
+    http.patch<SkillAdminDetailResponseType>(`/api/admin/skills/${id}`, body),
+
+  // Khôi phục skill đã soft-delete
+  restoreSkill: (id: number) =>
+    http.patch<SkillAdminDetailResponseType>(
+      `/api/admin/skills/${id}/restore`,
+      {},
+    ),
+
+  // Xóa mềm skill
+  deleteSkill: (id: number) =>
+    http.delete<MessageResType>(`/api/admin/skills/${id}`),
 
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),

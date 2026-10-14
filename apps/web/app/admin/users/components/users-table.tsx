@@ -26,7 +26,7 @@ import {
   Shield,
   User,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { AdminUserItemType } from "@shared/types";
 import { useState } from "react";
 import { EditUserDialog } from "./edit-user-dialog";
@@ -284,7 +284,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
       />
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

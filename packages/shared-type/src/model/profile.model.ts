@@ -74,8 +74,12 @@ export type UpdateFreelancerProfileResponseType = z.infer<
 export const FreelancerSkillSchema = z.object({
   id: z.number(),
   freelancerProfileId: z.number(),
-  skillName: z.string(),
+  skillId: z.number(),
   proficiencyLevel: z.number(),
+  skill: z.object({
+    id: z.number(),
+    name: z.string(),
+  }),
 });
 
 export const FreelancerSkillListResponseSchema = z.array(FreelancerSkillSchema);

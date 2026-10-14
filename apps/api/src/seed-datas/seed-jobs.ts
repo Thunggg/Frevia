@@ -98,13 +98,25 @@ async function main() {
 
   console.log('Seeding skills...');
 
-  await prisma.skill.createMany({
-    data: skills.map((skill) => ({
-      name: skill,
-      slug: slugify(skill),
-    })),
-    skipDuplicates: true,
+  // Chỉ tạo các skill chưa có trong catalog (tránh vi phạm partial unique index)
+  const existingSkills = await prisma.skill.findMany({
+    select: { name: true },
   });
+  const existingNames = new Set(
+    existingSkills.map((skill) => skill.name.toLowerCase()),
+  );
+  const newSkills = skills.filter(
+    (skill) => !existingNames.has(skill.toLowerCase()),
+  );
+
+  if (newSkills.length > 0) {
+    await prisma.skill.createMany({
+      data: newSkills.map((skill) => ({
+        name: skill,
+        slug: slugify(skill),
+      })),
+    });
+  }
 
   const allSkills = await prisma.skill.findMany();
 

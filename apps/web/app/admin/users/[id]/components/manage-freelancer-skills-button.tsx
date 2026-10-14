@@ -61,7 +61,7 @@ export function ManageFreelancerSkillsButton({
       setRows(
         (user.freelancerProfile?.skills ?? []).map((skill) => ({
           key: `existing-${skill.id}`,
-          skillName: skill.skillName,
+          skillName: skill.skill.name,
           proficiencyLevel: skill.proficiencyLevel,
         })),
       );
@@ -92,7 +92,7 @@ export function ManageFreelancerSkillsButton({
     const source = user.freelancerProfile?.skills ?? [];
     return JSON.stringify(
       source.map((s) => ({
-        skillName: s.skillName.trim(),
+        skillName: s.skill.name.trim(),
         proficiencyLevel: s.proficiencyLevel,
       })),
     );

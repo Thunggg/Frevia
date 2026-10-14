@@ -45,7 +45,7 @@ import {
   Calendar,
   User,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumPostWithUserType } from "@shared/types";
 
 interface PostsTableProps {
@@ -181,7 +181,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

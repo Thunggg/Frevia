@@ -42,7 +42,7 @@ import {
   ShieldCheck,
   Mail,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { IdentityVerificationAdminListResponseType } from "@shared/types";
 
 type DocumentItem = IdentityVerificationAdminListResponseType["documents"][number];
@@ -247,7 +247,7 @@ export function IdentityVerificationsTable({
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}
