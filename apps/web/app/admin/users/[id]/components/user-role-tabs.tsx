@@ -31,6 +31,9 @@ import {
 } from "@repo/ui/components/shadcn/table";
 import type { AdminUserDetailResponseType } from "@shared/types";
 import { EditClientProfileButton } from "./edit-client-profile-button";
+import { EditFreelancerProfileButton } from "./edit-freelancer-profile-button";
+import { ManageFreelancerSkillsButton } from "./manage-freelancer-skills-button";
+import { ManageFreelancerPortfolioButton } from "./manage-freelancer-portfolio-button";
 
 interface UserRoleTabsProps {
   user: AdminUserDetailResponseType;
@@ -242,6 +245,17 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
         {/* 2. Freelancer Profile Tab Content */}
         {hasFreelancerProfile && (
           <TabsContent value="freelancer" className="mt-6 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <UserCheck className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                Freelancer Professional Profile
+              </h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <EditFreelancerProfileButton user={user} />
+                <ManageFreelancerSkillsButton user={user} />
+                <ManageFreelancerPortfolioButton user={user} />
+              </div>
+            </div>
             {user.freelancerProfile ? (
               <div className="space-y-6">
                 {/* Title & Verification status */}

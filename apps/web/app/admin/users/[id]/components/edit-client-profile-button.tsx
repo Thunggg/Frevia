@@ -56,6 +56,10 @@ interface EditClientProfileButtonProps {
   user: AdminUserDetailResponseType;
 }
 
+// ====== Nút "Edit profile / Complete profile" trong tab CLIENT (User Detail) ======
+// Mở dialog sửa hồ sơ công ty của user: companyName / description / website.
+// - Nếu user chưa có client profile → nút hiện "Complete profile" (server upsert tạo mới).
+// - Bỏ trống 1 trường = xoá nội dung trường đó (gửi null).
 export function EditClientProfileButton({
   user,
 }: EditClientProfileButtonProps) {
@@ -87,6 +91,7 @@ export function EditClientProfileButton({
 
   const watched = form.watch();
 
+  // So sánh form (chuẩn hoá rỗng → null) với dữ liệu hiện tại → disable Save nếu không đổi
   const hasChanges = useMemo(() => {
     const current = {
       companyName: clientProfile?.companyName ?? null,
@@ -110,6 +115,7 @@ export function EditClientProfileButton({
     );
   }, [clientProfile, watched]);
 
+  // Chỉ gửi lên các trường thay đổi (payload tối thiểu cho PATCH)
   function onSubmit(values: ClientProfileFormValues) {
     const current = {
       companyName: clientProfile?.companyName ?? null,

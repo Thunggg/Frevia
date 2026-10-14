@@ -2,31 +2,44 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   AdminClientProfileResponseType,
+  AdminCreatePortfolioItemBodyType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
+  AdminReplaceFreelancerSkillsBodyType,
+  AdminSkillCatalogListType,
   AdminUpdateClientProfileBodyType,
+  AdminUpdateFreelancerProfileBodyType,
+  AdminUpdatePortfolioItemBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
   AdminUserDetailResponseType,
   AdminUserListResponseType,
   AdminUserQueryType,
+  MessageResType,
   RoleName,
 } from '@shared/types';
 import { HashingService } from '../../shared/services/hashing.service';
-import { UsersRepository } from './users.repo';
 import {
   CannotAssignAdminRoleException,
   CannotBanSelfException,
   CreateUserRoleNotFoundException,
   EmailAlreadyExistsException,
+  FailedToCreatePortfolioItemException,
   FailedToCreateUserException,
+  FailedToDeletePortfolioItemException,
   FailedToGetUserException,
   FailedToGetUsersException,
+  FailedToSaveSkillsException,
   FailedToUpdateClientProfileException,
+  FailedToUpdateFreelancerProfileException,
+  FailedToUpdatePortfolioItemException,
   FailedToUpdateUserException,
   NoClientRoleForClientProfileException,
+  NoFreelancerRoleForProfileException,
+  PortfolioItemNotFoundException,
   UserNotFoundException,
 } from './users.error';
+import { UsersRepository } from './users.repo';
 
 @Injectable()
 export class UsersService {
@@ -35,6 +48,7 @@ export class UsersService {
     private readonly hashingService: HashingService,
   ) {}
 
+  // ====== Admin tạo tài khoản mới ======
   async createUser(
     body: AdminCreateUserBodyType,
   ): Promise<AdminCreateUserResponseType> {
@@ -64,6 +78,7 @@ export class UsersService {
         roleId: role.id,
       });
 
+      // Trả về user vừa tạo kèm role để client cập nhật UI
       return {
         id: created.id,
         email: created.email,
@@ -89,6 +104,7 @@ export class UsersService {
     }
   }
 
+  // ====== Đọc danh sách user (trang Admin) ======
   async getUsers(
     query: AdminUserQueryType,
   ): Promise<AdminUserListResponseType> {
@@ -102,6 +118,7 @@ export class UsersService {
     }
   }
 
+  // ====== Đọc chi tiết 1 user (trang User Detail) ======
   async getUserById(id: number): Promise<AdminUserDetailResponseType> {
     try {
       const user = await this.repository.getUserById(id);
@@ -117,6 +134,14 @@ export class UsersService {
     }
   }
 
+  // ====== Catalog Skill active (nguồn chọn kỹ năng trong dialog) ======
+  async listSkillCatalog(): Promise<AdminSkillCatalogListType> {
+    return this.repository.listActiveSkillCatalog();
+  }
+
+  // ====== Admin sửa thông tin chung account ======
+  // - Không cho admin tự ban chính tài khoản của mình
+  // - Đổi email phải kiểm tra trùng với user khác
   async updateUser(
     id: number,
     actorId: number,
@@ -136,6 +161,7 @@ export class UsersService {
         }
       }
 
+      // Cập nhật từng trường được gửi lên
       const updated = await this.repository.updateUserByAdmin(id, {
         ...(body.email !== undefined ? { email: body.email } : {}),
         ...(body.fullName !== undefined ? { fullName: body.fullName } : {}),
@@ -172,11 +198,13 @@ export class UsersService {
     }
   }
 
+  // ====== Admin sửa hồ sơ CLIENT (công ty) ======
   async updateClientProfile(
     userId: number,
     body: AdminUpdateClientProfileBodyType,
   ): Promise<AdminClientProfileResponseType> {
     try {
+      // Kiểm tra user tồn tại và có "quyền" sở hữu hồ sơ client
       const context =
         await this.repository.findClientProfileEditContext(userId);
       if (!context) {
@@ -189,6 +217,7 @@ export class UsersService {
         throw NoClientRoleForClientProfileException();
       }
 
+      // Chuẩn hoá: chuỗi rỗng → null (ý nghĩa "xoá nội dung này")
       const clean = (value?: string | null) =>
         typeof value === 'string' && value.trim() === ''
           ? null
@@ -204,6 +233,7 @@ export class UsersService {
         ...(body.website !== undefined ? { website: clean(body.website) } : {}),
       };
 
+      // Upsert: user chưa có client profile thì sẽ tự tạo mới
       const updated = await this.repository.upsertClientProfileByAdmin(
         userId,
         data,
@@ -227,6 +257,217 @@ export class UsersService {
         throw error;
       }
       throw FailedToUpdateClientProfileException();
+    }
+  }
+
+  // ====== Bước chung cho các thao tác hồ sơ FREELANCER ======
+  // User phải tồn tại VÀ (có role Freelancer HOẶC đã có freelancer profile)
+  private async getFreelancerProfileContext(userId: number) {
+    const context =
+      await this.repository.findFreelancerProfileEditContext(userId);
+    if (!context) {
+      throw UserNotFoundException();
+    }
+
+    const canEdit =
+      context.hasFreelancerRole || context.freelancerProfileId !== null;
+    if (!canEdit) {
+      throw NoFreelancerRoleForProfileException();
+    }
+
+    return context;
+  }
+
+  // Nếu user chưa có freelancer profile thì tạo row trống để có freelancerProfileId
+  private async ensureFreelancerProfileRow(
+    userId: number,
+    context: { profileId: number | null; freelancerProfileId: number | null },
+  ) {
+    if (context.freelancerProfileId !== null) {
+      return context.freelancerProfileId;
+    }
+    return this.repository.ensureFreelancerProfile(userId, context.profileId);
+  }
+
+  // Sửa "giới thiệu" Freelancer (professional title + bio)
+  async updateFreelancerProfile(
+    userId: number,
+    body: AdminUpdateFreelancerProfileBodyType,
+  ): Promise<MessageResType> {
+    try {
+      await this.getFreelancerProfileContext(userId);
+
+      const clean = (value?: string | null) =>
+        typeof value === 'string' && value.trim() === ''
+          ? null
+          : (value ?? null);
+
+      const data = {
+        ...(body.title !== undefined ? { title: clean(body.title) } : {}),
+        ...(body.bio !== undefined ? { bio: clean(body.bio) } : {}),
+      };
+
+      await this.repository.updateFreelancerProfileByAdmin(userId, data);
+      return { message: 'Freelancer profile updated successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateFreelancerProfileException();
+    }
+  }
+
+  // Thay thế toàn bộ kỹ năng của hồ sơ Freelancer (danh sách chọn từ catalog)
+  async replaceFreelancerSkills(
+    userId: number,
+    body: AdminReplaceFreelancerSkillsBodyType,
+  ): Promise<MessageResType> {
+    try {
+      const context = await this.getFreelancerProfileContext(userId);
+
+      // Đảm bảo đã có freelancer profile để gắn kỹ năng vào
+      const freelancerProfileId = await this.ensureFreelancerProfileRow(
+        userId,
+        context,
+      );
+      if (freelancerProfileId === null) {
+        throw FailedToSaveSkillsException();
+      }
+
+      await this.repository.replaceFreelancerSkills(
+        freelancerProfileId,
+        body.skills,
+      );
+
+      return { message: 'Freelancer skills updated successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToSaveSkillsException();
+    }
+  }
+
+  // Tạo mới 1 portfolio item
+  async createPortfolioItem(
+    userId: number,
+    body: AdminCreatePortfolioItemBodyType,
+  ): Promise<MessageResType> {
+    try {
+      const context = await this.getFreelancerProfileContext(userId);
+
+      const freelancerProfileId = await this.ensureFreelancerProfileRow(
+        userId,
+        context,
+      );
+      if (freelancerProfileId === null) {
+        throw FailedToCreatePortfolioItemException();
+      }
+
+      await this.repository.createPortfolioItem(freelancerProfileId, {
+        title: body.title,
+        description: body.description ?? null,
+        technologies: (body.technologies ?? []).map((tech) => tech.trim()),
+        projectUrl: body.projectUrl ?? null,
+      });
+
+      return { message: 'Portfolio item created successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToCreatePortfolioItemException();
+    }
+  }
+
+  // Sửa 1 portfolio item — chỉ cho phép nếu item thuộc đúng freelancer profile của user
+  async updatePortfolioItem(
+    userId: number,
+    itemId: number,
+    body: AdminUpdatePortfolioItemBodyType,
+  ): Promise<MessageResType> {
+    try {
+      const context = await this.getFreelancerProfileContext(userId);
+
+      const freelancerProfileId = await this.ensureFreelancerProfileRow(
+        userId,
+        context,
+      );
+      if (freelancerProfileId === null) {
+        throw FailedToUpdatePortfolioItemException();
+      }
+
+      // Kiểm tra item thuộc đúng freelancer profile + chưa bị xoá mềm
+      const owned = await this.repository.findPortfolioItemOwned(itemId);
+      if (
+        !owned ||
+        owned.deletedAt !== null ||
+        owned.freelancerProfileId !== freelancerProfileId
+      ) {
+        throw PortfolioItemNotFoundException();
+      }
+
+      const clean = (value?: string | null) =>
+        typeof value === 'string' && value.trim() === ''
+          ? null
+          : (value ?? null);
+
+      // Chỉ cập nhật những trường được gửi lên (mediaUrls giữ nguyên)
+      await this.repository.updatePortfolioItemByAdmin(itemId, {
+        ...(body.title !== undefined ? { title: body.title } : {}),
+        ...(body.description !== undefined
+          ? { description: clean(body.description) }
+          : {}),
+        ...(body.technologies !== undefined
+          ? { technologies: body.technologies.map((tech) => tech.trim()) }
+          : {}),
+        ...(body.projectUrl !== undefined
+          ? { projectUrl: clean(body.projectUrl) }
+          : {}),
+      });
+
+      return { message: 'Portfolio item updated successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdatePortfolioItemException();
+    }
+  }
+
+  // Xoá mềm 1 portfolio item (kiểm tra quyền sở hữu trước khi xoá)
+  async deletePortfolioItem(
+    userId: number,
+    itemId: number,
+  ): Promise<MessageResType> {
+    try {
+      const context = await this.getFreelancerProfileContext(userId);
+
+      const freelancerProfileId = await this.ensureFreelancerProfileRow(
+        userId,
+        context,
+      );
+      if (freelancerProfileId === null) {
+        throw FailedToDeletePortfolioItemException();
+      }
+
+      const owned = await this.repository.findPortfolioItemOwned(itemId);
+      if (
+        !owned ||
+        owned.deletedAt !== null ||
+        owned.freelancerProfileId !== freelancerProfileId
+      ) {
+        throw PortfolioItemNotFoundException();
+      }
+
+      await this.repository.softDeletePortfolioItem(itemId);
+
+      return { message: 'Portfolio item deleted successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeletePortfolioItemException();
     }
   }
 }

@@ -18,6 +18,10 @@ import Image from "next/image";
 import { LogoutButton } from "./logout-button";
 import { NavMain, type NavItem } from "./nav-main";
 
+// Cấu hình menu sidebar Admin:
+// - Dashboard: trang riêng
+// - Users / Roles & Permissions / Forum: các nhóm (collapsible) chứa trang con,
+//   tự động mở rộng khi đang ở trang con bên trong nhóm.
 const navItems: NavItem[] = [
   {
     title: "Dashboard",

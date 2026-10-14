@@ -161,6 +161,7 @@ export class UsersRepository {
     };
   }
 
+  // Admin tạo user: tạo User + Profile (displayName) + UserRole primary trong 1 lệnh
   async createUserByAdmin(data: {
     email: string;
     password: string;
@@ -204,6 +205,7 @@ export class UsersRepository {
     });
   }
 
+  // Tìm user theo email (chưa soft-delete) — dùng kiểm tra email trùng
   async findUserByEmail(email: string): Promise<{ id: number } | null> {
     return this.prisma.user.findUnique({
       where: { email, deletedAt: null },
@@ -211,6 +213,7 @@ export class UsersRepository {
     });
   }
 
+  // Lấy role active theo id (dùng khi chọn role khởi tạo cho user mới)
   async findActiveRoleById(
     id: number,
   ): Promise<{ id: number; name: string } | null> {
@@ -220,6 +223,7 @@ export class UsersRepository {
     });
   }
 
+  // Admin sửa thông tin chung account: email / isBanned / displayName (profile upsert)
   async updateUserByAdmin(
     id: number,
     data: { email?: string; fullName?: string | null; isBanned?: boolean },
@@ -270,6 +274,7 @@ export class UsersRepository {
     });
   }
 
+  // Kiểm tra user có đủ điều kiện sửa hồ sơ Client/Freelancer hay không
   async findClientProfileEditContext(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id, deletedAt: null },
@@ -301,6 +306,7 @@ export class UsersRepository {
     };
   }
 
+  // Upsert hồ sơ Client: profile có sẵn thì cập nhật clientProfile, chưa có thì tạo cả chuỗi
   async upsertClientProfileByAdmin(
     userId: number,
     data: {
@@ -350,6 +356,212 @@ export class UsersRepository {
     });
 
     return user.profile?.clientProfile ?? null;
+  }
+
+  // Bối cảnh chỉnh sửa hồ sơ Freelancer: trả về profile/freelancerProfile + có role Freelancer không
+  async findFreelancerProfileEditContext(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        profile: {
+          select: {
+            id: true,
+            freelancerProfile: { select: { id: true } },
+          },
+        },
+        userRoles: {
+          select: { role: { select: { name: true } } },
+        },
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      profileId: user.profile?.id ?? null,
+      freelancerProfileId: user.profile?.freelancerProfile?.id ?? null,
+      hasFreelancerRole: user.userRoles.some(
+        (ur) => ur.role.name.toLowerCase() === 'freelancer',
+      ),
+    };
+  }
+
+  // Cập nhật "giới thiệu" Freelancer: bio nằm ở Profile, title nằm ở FreelancerProfile
+  // (upsert theo chuỗi để không lỗi khi user chưa có profile/freelancer profile)
+  async updateFreelancerProfileByAdmin(
+    userId: number,
+    data: { title?: string | null; bio?: string | null },
+  ) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: {
+            create: {
+              ...(data.bio !== undefined ? { bio: data.bio } : {}),
+              ...(data.title !== undefined
+                ? { freelancerProfile: { create: { title: data.title } } }
+                : {}),
+            },
+            update: {
+              ...(data.bio !== undefined ? { bio: data.bio } : {}),
+              ...(data.title !== undefined
+                ? {
+                    freelancerProfile: {
+                      upsert: {
+                        create: { title: data.title },
+                        update: { title: data.title },
+                      },
+                    },
+                  }
+                : {}),
+            },
+          },
+        },
+      },
+    });
+  }
+
+  // Đảm bảo user có row FreelancerProfile (tạo nếu chưa có) rồi trả về freelancerProfileId
+  async ensureFreelancerProfile(userId: number, profileId: number | null) {
+    return this.prisma.$transaction(async (tx) => {
+      // nếu chưa có profile thì tạo profile và freelancerProfile
+      if (profileId === null) {
+        const result = await tx.user.update({
+          where: { id: userId },
+          data: {
+            profile: {
+              create: {
+                freelancerProfile: { create: { title: null } },
+              },
+            },
+          },
+          include: {
+            profile: {
+              select: {
+                freelancerProfile: { select: { id: true } },
+              },
+            },
+          },
+        });
+        return result.profile?.freelancerProfile?.id ?? null;
+      }
+
+      // Nếu đã có profile thì tạo FreelancerProfile vào Profile hiện có
+      const result = await tx.profile.update({
+        where: { id: profileId },
+        data: {
+          freelancerProfile: {
+            create: { title: null },
+          },
+        },
+        include: {
+          freelancerProfile: { select: { id: true } },
+        },
+      });
+      return result.freelancerProfile?.id ?? null;
+    });
+  }
+
+  // Thay thế toàn bộ kỹ năng: xoá hết kỹ năng cũ rồi tạo lại danh sách mới (transaction)
+  async replaceFreelancerSkills(
+    freelancerProfileId: number,
+    skills: { skillName: string; proficiencyLevel: number }[],
+  ) {
+    await this.prisma.$transaction([
+      this.prisma.freelancerSkill.deleteMany({
+        where: { freelancerProfileId },
+      }),
+      ...(skills.length > 0
+        ? [
+            this.prisma.freelancerSkill.createMany({
+              data: skills.map((skill) => ({
+                freelancerProfileId,
+                skillName: skill.skillName,
+                proficiencyLevel: skill.proficiencyLevel,
+              })),
+            }),
+          ]
+        : []),
+    ]);
+  }
+
+  // Tạo mới portfolio item (mediaUrls rỗng — admin không upload file)
+  async createPortfolioItem(
+    freelancerProfileId: number,
+    data: {
+      title: string;
+      description?: string | null;
+      technologies?: string[];
+      projectUrl?: string | null;
+    },
+  ) {
+    return this.prisma.portfolioItem.create({
+      data: {
+        freelancerProfileId,
+        title: data.title,
+        description: data.description ?? null,
+        technologies: data.technologies ?? [],
+        projectUrl: data.projectUrl ?? null,
+        mediaUrls: [],
+      },
+    });
+  }
+
+  // Lấy portfolio item kèm freelancerProfileId + trạng thái xoá để service kiểm tra "quyền sở hữu"
+  async findPortfolioItemOwned(id: number) {
+    return this.prisma.portfolioItem.findUnique({
+      where: { id },
+      select: { id: true, freelancerProfileId: true, deletedAt: true },
+    });
+  }
+
+  // Cập nhật portfolio item theo từng trường được gửi lên (mediaUrls không đổi)
+  async updatePortfolioItemByAdmin(
+    id: number,
+    data: {
+      title?: string;
+      description?: string | null;
+      technologies?: string[];
+      projectUrl?: string | null;
+    },
+  ) {
+    return this.prisma.portfolioItem.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description }
+          : {}),
+        ...(data.technologies !== undefined
+          ? { technologies: data.technologies }
+          : {}),
+        ...(data.projectUrl !== undefined
+          ? { projectUrl: data.projectUrl }
+          : {}),
+      },
+    });
+  }
+
+  // Xoá mềm portfolio item (đặt deletedAt)
+  async softDeletePortfolioItem(id: number) {
+    return this.prisma.portfolioItem.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  // Liệt kê Skill active trong catalog (nguồn chọn kỹ năng ở dialog Admin)
+  async listActiveSkillCatalog() {
+    return this.prisma.skill.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    });
   }
 
   async getUserById(id: number): Promise<AdminUserDetailResponseType | null> {

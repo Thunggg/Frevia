@@ -42,6 +42,9 @@ import { Controller, useForm, type Resolver } from "react-hook-form";
 
 const ROLE_FIELD_PATHS = new Set(["roleId", "email", "fullName", "password", "confirmPassword"]);
 
+// ====== Dialog "Create User" (Admin) ======
+// Tạo tài khoản mới: họ tên / email / password (kèm confirm) + chọn 1 role khởi tạo
+// (Client | Freelancer | custom role — không cho chọn Admin).
 export function CreateUserDialog() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -68,6 +71,8 @@ export function CreateUserDialog() {
     },
   });
 
+  // Phân loại role để hiển thị dropdown: nhóm built-in (Client, Freelancer) + nhóm custom,
+  // loại bỏ Admin (server cũng tự chặn nếu cố tình gửi lên).
   const roleEntries = useMemo(() => {
     const builtIn: RoleListItemType[] = [];
     const custom: RoleListItemType[] = [];
@@ -98,6 +103,8 @@ export function CreateUserDialog() {
     }
   }
 
+  // Submit: gọi API tạo user → thành công thì toast + đóng dialog + router.refresh()
+  // để bảng danh sách user (server component) được render lại với dữ liệu mới.
   function onSubmit(payload: AdminCreateUserBodyType) {
     createUser.mutate(
       {

@@ -1,3 +1,6 @@
+// Các mã message dùng cho luồng Admin quản lý User.
+// Giá trị là chuỗi code dạng "Error.Xxx" để dùng làm key i18n sau này
+// (client hiện có thể hiển thị thẳng code này).
 export const ManageUserMessage = {
   ROLE_ID_REQUIRED: "Error.RoleIdRequired",
   EMAIL_ALREADY_EXISTS: "Error.EmailAlreadyExists",
@@ -10,6 +13,24 @@ export const ManageUserMessage = {
   COMPANY_NAME_TOO_LONG: "Error.CompanyNameTooLong",
   COMPANY_DESCRIPTION_TOO_LONG: "Error.CompanyDescriptionTooLong",
   INVALID_WEBSITE: "Error.InvalidWebsite",
+  INVALID_URL: "Error.InvalidUrl",
   USER_HAS_NO_CLIENT_ROLE: "Error.UserHasNoClientRole",
   FAILED_TO_UPDATE_CLIENT_PROFILE: "Error.FailedToUpdateClientProfile",
+  // --- Freelancer profile (admin) ---
+  USER_HAS_NO_FREELANCER_ROLE: "Error.UserHasNoFreelancerRole",
+  FREELANCER_TITLE_TOO_LONG: "Error.FreelancerTitleTooLong",
+  BIO_TOO_LONG: "Error.BioTooLong",
+  FAILED_TO_UPDATE_FREELANCER_PROFILE: "Error.FailedToUpdateFreelancerProfile",
+  SKILL_NAME_REQUIRED: "Error.SkillNameRequired",
+  SKILL_NAME_TOO_LONG: "Error.SkillNameTooLong",
+  SKILL_LEVEL_INVALID: "Error.SkillLevelInvalid",
+  TOO_MANY_SKILLS: "Error.TooManySkills",
+  FAILED_TO_SAVE_SKILLS: "Error.FailedToSaveSkills",
+  PORTFOLIO_TITLE_REQUIRED: "Error.PortfolioTitleRequired",
+  PORTFOLIO_TITLE_TOO_LONG: "Error.PortfolioTitleTooLong",
+  PORTFOLIO_DESCRIPTION_TOO_LONG: "Error.PortfolioDescriptionTooLong",
+  PORTFOLIO_ITEM_NOT_FOUND: "Error.PortfolioItemNotFound",
+  FAILED_TO_CREATE_PORTFOLIO_ITEM: "Error.FailedToCreatePortfolioItem",
+  FAILED_TO_UPDATE_PORTFOLIO_ITEM: "Error.FailedToUpdatePortfolioItem",
+  FAILED_TO_DELETE_PORTFOLIO_ITEM: "Error.FailedToDeletePortfolioItem",
 } as const;

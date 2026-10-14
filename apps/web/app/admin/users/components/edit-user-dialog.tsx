@@ -51,6 +51,10 @@ interface EditUserDialogProps {
   onClose: () => void;
 }
 
+// ====== Dialog "Edit User" (Admin) ======
+// Chỉnh sửa thông tin chung account: email / display name / trạng thái Banned.
+// - Dialog được điều khiển từ bảng danh sách (mở khi chọn 1 user, đóng qua onClose).
+// - Khi submit chỉ gửi những trường THAY ĐỔI so với dữ liệu gốc.
 export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
   const router = useRouter();
   const updateUser = useUpdateUser();
@@ -76,6 +80,8 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
 
   const watched = form.watch();
 
+  // So sánh giá trị form (đã chuẩn hoá rỗng → null) với dữ liệu gốc để:
+  // - disable nút Save khi chưa có gì thay đổi
   const hasChanges = useMemo(() => {
     if (!user) return false;
     const nextName = watched.fullName.trim();
@@ -87,6 +93,9 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
     );
   }, [user, watched]);
 
+  // Xây payload dạng "chỉ gửi trường đổi":
+  // - tên để trống → null (xoá displayName)
+  // - email/trạng thái ban chỉ gửi khi khác giá trị hiện tại
   function onSubmit(values: EditUserFormValues) {
     if (!user || !hasChanges) return;
 

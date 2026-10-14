@@ -44,6 +44,7 @@ interface UsersTableProps {
 export function UsersTable({ users, pagination }: UsersTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  // User đang được chọn để mở dialog Edit (null = dialog đóng)
   const [editingUser, setEditingUser] = useState<AdminUserItemType | null>(
     null,
   );
@@ -240,6 +241,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
+                    {/* Cột hành động dạng icon-only: Eye = xem chi tiết, Pencil = sửa user */}
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"

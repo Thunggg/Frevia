@@ -344,12 +344,19 @@ export type AdminUserClientProfileType = z.infer<
 export type AdminUserFreelancerProfileType = z.infer<
   typeof AdminUserFreelancerProfileSchema
 >;
+export type AdminUserFreelancerSkillType = z.infer<
+  typeof AdminUserFreelancerSkillSchema
+>;
+export type AdminUserPortfolioItemType = z.infer<
+  typeof AdminUserPortfolioItemSchema
+>;
 export type AdminUserCustomRoleProfileType = z.infer<
   typeof AdminUserCustomRoleProfileSchema
 >;
 
 // --- Admin Create User ---
 
+// ====== Admin: body/response khi admin TẠO tài khoản mới ======
 export const AdminCreateUserBodySchema = z
   .object({
     email: z.email(AuthMessage.INVALID_EMAIL).trim().toLowerCase().max(254),
@@ -386,6 +393,7 @@ export const AdminCreateUserBodySchema = z
     }
   });
 
+// Role trả về sau khi tạo user (dùng chung cho các response của user)
 export const AdminCreateUserRoleSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -407,6 +415,8 @@ export type AdminCreateUserResponseType = z.infer<
 
 // --- Admin Update User ---
 
+// ====== Admin: SỬA thông tin chung account (email / tên / trạng thái ban) ======
+// Tất cả trường đều tuỳ chọn; superRefine yêu cầu ít nhất 1 trường được gửi lên.
 export const AdminUpdateUserBodySchema = z
   .object({
     email: z
@@ -442,6 +452,7 @@ export const AdminUpdateUserBodySchema = z
     }
   });
 
+// Response chuẩn cho thao tác sửa user (gồm id/email/tên/trạng thái + roles)
 export const AdminUpdateUserResponseSchema = z.object({
   id: z.number(),
   email: z.string(),
@@ -457,6 +468,8 @@ export type AdminUpdateUserResponseType = z.infer<
 
 // --- Admin Edit Client Profile ---
 
+// ====== Admin: SỬA hồ sơ CLIENT (công ty) ======
+// companyName/description/website: để null hoặc chuỗi rỗng = xoá nội dung đó.
 export const AdminUpdateClientProfileBodySchema = z
   .object({
     companyName: z
@@ -493,6 +506,7 @@ export const AdminUpdateClientProfileBodySchema = z
     }
   });
 
+// Response của hồ sơ Client sau khi admin lưu
 export const AdminClientProfileResponseSchema = z.object({
   id: z.number(),
   profileId: z.number(),
@@ -509,4 +523,171 @@ export type AdminUpdateClientProfileBodyType = z.infer<
 >;
 export type AdminClientProfileResponseType = z.infer<
   typeof AdminClientProfileResponseSchema
+>;
+
+// --- Admin Edit Freelancer Profile ---
+
+// ====== Admin: SỬA hồ sơ FREELANCER (tiêu đề + bio) ======
+// title/bio: để null hoặc chuỗi rỗng = xoá nội dung đó.
+export const AdminUpdateFreelancerProfileBodySchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .max(255, ManageUserMessage.FREELANCER_TITLE_TOO_LONG)
+      .nullable()
+      .optional(),
+    bio: z
+      .string()
+      .trim()
+      .max(5000, ManageUserMessage.BIO_TOO_LONG)
+      .nullable()
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.title === undefined && value.bio === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        message: ManageUserMessage.NOTHING_TO_UPDATE,
+        path: ["title"],
+      });
+    }
+  });
+
+// Một kỹ năng trong danh sách thay thế (chọn từ catalog Skill của hệ thống)
+export const AdminFreelancerSkillInputSchema = z.object({
+  skillName: z
+    .string()
+    .trim()
+    .min(1, ManageUserMessage.SKILL_NAME_REQUIRED)
+    .max(100, ManageUserMessage.SKILL_NAME_TOO_LONG),
+  proficiencyLevel: z
+    .number({ message: ManageUserMessage.SKILL_LEVEL_INVALID })
+    .int(ManageUserMessage.SKILL_LEVEL_INVALID)
+    .min(1, ManageUserMessage.SKILL_LEVEL_INVALID)
+    .max(10, ManageUserMessage.SKILL_LEVEL_INVALID),
+});
+
+// Body "thay thế toàn bộ kỹ năng" — server xoá hết kỹ năng cũ rồi tạo lại theo mảng này
+export const AdminReplaceFreelancerSkillsBodySchema = z
+  .object({
+    skills: z
+      .array(AdminFreelancerSkillInputSchema)
+      .max(100, ManageUserMessage.TOO_MANY_SKILLS),
+  })
+  .strict();
+
+// Body TẠO portfolio item — title bắt buộc, technologies nhập mảng chuỗi
+export const AdminCreatePortfolioItemBodySchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, ManageUserMessage.PORTFOLIO_TITLE_REQUIRED)
+      .max(255, ManageUserMessage.PORTFOLIO_TITLE_TOO_LONG),
+    description: z
+      .string()
+      .trim()
+      .max(5000, ManageUserMessage.PORTFOLIO_DESCRIPTION_TOO_LONG)
+      .nullable()
+      .optional(),
+    technologies: z
+      .array(
+        z
+          .string()
+          .trim()
+          .min(1, ManageUserMessage.SKILL_NAME_REQUIRED)
+          .max(100, ManageUserMessage.SKILL_NAME_TOO_LONG),
+      )
+      .max(50)
+      .default([]),
+    projectUrl: z
+      .string()
+      .trim()
+      .url(ManageUserMessage.INVALID_URL)
+      .nullable()
+      .optional(),
+  })
+  .strict();
+
+// Body SỬA portfolio item — trường nào gửi thì cập nhật trường đó (tối thiểu 1 trường)
+export const AdminUpdatePortfolioItemBodySchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, ManageUserMessage.PORTFOLIO_TITLE_REQUIRED)
+      .max(255, ManageUserMessage.PORTFOLIO_TITLE_TOO_LONG)
+      .optional(),
+    description: z
+      .string()
+      .trim()
+      .max(5000, ManageUserMessage.PORTFOLIO_DESCRIPTION_TOO_LONG)
+      .nullable()
+      .optional(),
+    technologies: z
+      .array(
+        z
+          .string()
+          .trim()
+          .min(1, ManageUserMessage.SKILL_NAME_REQUIRED)
+          .max(100, ManageUserMessage.SKILL_NAME_TOO_LONG),
+      )
+      .max(50)
+      .optional(),
+    projectUrl: z
+      .string()
+      .trim()
+      .url(ManageUserMessage.INVALID_URL)
+      .nullable()
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (
+      value.title === undefined &&
+      value.description === undefined &&
+      value.technologies === undefined &&
+      value.projectUrl === undefined
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: ManageUserMessage.NOTHING_TO_UPDATE,
+        path: ["title"],
+      });
+    }
+  });
+
+export type AdminUpdateFreelancerProfileBodyType = z.infer<
+  typeof AdminUpdateFreelancerProfileBodySchema
+>;
+export type AdminFreelancerSkillInputType = z.infer<
+  typeof AdminFreelancerSkillInputSchema
+>;
+export type AdminReplaceFreelancerSkillsBodyType = z.infer<
+  typeof AdminReplaceFreelancerSkillsBodySchema
+>;
+
+// --- Admin Skill Catalog (freelancer skills picker) ---
+
+// ====== Admin: catalog Skill (nguồn chọn kỹ năng trong dialog) ======
+export const AdminSkillCatalogItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export const AdminSkillCatalogListSchema = z.array(AdminSkillCatalogItemSchema);
+
+export type AdminSkillCatalogItemType = z.infer<
+  typeof AdminSkillCatalogItemSchema
+>;
+export type AdminSkillCatalogListType = z.infer<
+  typeof AdminSkillCatalogListSchema
+>;
+export type AdminCreatePortfolioItemBodyType = z.infer<
+  typeof AdminCreatePortfolioItemBodySchema
+>;
+export type AdminUpdatePortfolioItemBodyType = z.infer<
+  typeof AdminUpdatePortfolioItemBodySchema
 >;

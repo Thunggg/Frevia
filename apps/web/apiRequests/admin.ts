@@ -1,8 +1,13 @@
 import {
   AdminClientProfileResponseType,
+  AdminCreatePortfolioItemBodyType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
+  AdminReplaceFreelancerSkillsBodyType,
+  AdminSkillCatalogListType,
   AdminUpdateClientProfileBodyType,
+  AdminUpdateFreelancerProfileBodyType,
+  AdminUpdatePortfolioItemBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
   CreateForumCategoryBodyType,
@@ -17,6 +22,7 @@ import {
   ForumReportType,
   IdentityVerificationAdminDetailType,
   IdentityVerificationAdminListResponseType,
+  MessageResType,
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
   AdminUserListResponseType,
@@ -50,19 +56,67 @@ export const adminApiRequest = {
     return http.get<AdminUserListResponseType>(`/api/users${query}`);
   },
 
+  // Lấy catalog Skill active (dùng cho dialog chọn kỹ năng)
+  getSkillCatalog: () =>
+    http.get<AdminSkillCatalogListType>("/api/users/skills-catalog"),
+
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),
 
+  // ====== Admin quản lý User ======
+  // Tạo tài khoản mới
   createUser: (body: AdminCreateUserBodyType) =>
     http.post<AdminCreateUserResponseType>("/api/users", body),
 
+  // Sửa thông tin chung account (email / displayName / isBanned)
   updateUser: (id: number, body: AdminUpdateUserBodyType) =>
     http.patch<AdminUpdateUserResponseType>(`/api/users/${id}`, body),
 
+  // Sửa hồ sơ Client (công ty) của 1 user
   updateClientProfile: (id: number, body: AdminUpdateClientProfileBodyType) =>
     http.patch<AdminClientProfileResponseType>(
       `/api/users/${id}/client-profile`,
       body,
+    ),
+
+  // ====== Admin sửa hồ sơ FREELANCER ======
+  // Giới thiệu (title + bio)
+  updateFreelancerProfile: (
+    id: number,
+    body: AdminUpdateFreelancerProfileBodyType,
+  ) =>
+    http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+
+  // Thay thế toàn bộ kỹ năng (danh sách chọn từ catalog)
+  replaceFreelancerSkills: (
+    id: number,
+    body: AdminReplaceFreelancerSkillsBodyType,
+  ) =>
+    http.put<MessageResType>(`/api/users/${id}/freelancer-profile/skills`, body),
+
+  // Portfolio items (tạo mới / sửa / xoá mềm)
+  createPortfolioItem: (
+    id: number,
+    body: AdminCreatePortfolioItemBodyType,
+  ) =>
+    http.post<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items`,
+      body,
+    ),
+
+  updatePortfolioItem: (
+    id: number,
+    itemId: number,
+    body: AdminUpdatePortfolioItemBodyType,
+  ) =>
+    http.patch<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items/${itemId}`,
+      body,
+    ),
+
+  deletePortfolioItem: (id: number, itemId: number) =>
+    http.delete<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items/${itemId}`,
     ),
 
   createCategory: (body: CreateForumCategoryBodyType) =>
