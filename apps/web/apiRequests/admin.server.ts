@@ -9,6 +9,7 @@ import type {
   ForumPostListResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminCategoryListResponseType,
+  ForumCategoryDetailResponseType,
   ForumReportListResponseType,
   IdentityVerificationAdminListResponseType,
   PendingForumPostListResponseType,
@@ -90,6 +91,12 @@ const adminServerRequest = {
         categories: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
+    );
+  },
+
+  getAdminCategoryById(id: number) {
+    return adminServerFetch<ForumCategoryDetailResponseType>(
+      `/api/forums/admin/categories/${id}`,
     );
   },
 

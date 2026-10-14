@@ -279,6 +279,38 @@ export class ForumAdminRepository {
     };
   }
 
+  // Chi tiết category theo ID
+  async getAdminCategoryById(id: number): Promise<ForumCategoryType | null> {
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    if (!category) return null;
+
+    return {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+      postCount: category._count.posts,
+    };
+  }
+
   // Danh sách bài viết trong trash (đã xóa hoặc bị reject)
   async getTrashPosts(page: number, limit: number) {
     const skip = (page - 1) * limit;

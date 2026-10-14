@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   ManageForumCommentMessage,
+  ManageForumMessage,
   ManageForumPostMessage,
   ManageForumReportMessage,
 } from '@shared/types';
@@ -22,6 +23,14 @@ export const ForumCommentNotFoundException = () =>
     {
       message: ManageForumCommentMessage.FORUM_COMMENT_NOT_FOUND,
       path: 'commentId',
+    },
+  ]);
+
+export const ForumCategoryNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_NOT_FOUND,
+      path: 'categoryId',
     },
   ]);
 

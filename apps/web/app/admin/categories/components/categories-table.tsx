@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -14,18 +13,8 @@ import {
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/ui/components/shadcn/dialog";
-import { Separator } from "@repo/ui/components/shadcn/separator";
-import {
   Eye,
-  ExternalLink,
   FileText,
-  Calendar,
-  Hash,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -49,9 +38,6 @@ export function CategoriesTable({
 }: CategoriesTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [viewingCategory, setViewingCategory] =
-    useState<ForumCategoryType | null>(null);
-
   const currentSortBy = searchParams.get("sortBy") || "id";
   const currentSortOrder = searchParams.get("sortOrder") || "desc";
 
@@ -162,13 +148,10 @@ export function CategoriesTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setViewingCategory(category)}
-                      >
-                        <Eye className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                        <Link href={`/admin/categories/${category.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
                       </Button>
                     </div>
                   </TableCell>
@@ -186,94 +169,6 @@ export function CategoriesTable({
           total={pagination.total}
         />
       )}
-
-      {/* View Detail Dialog */}
-      <Dialog
-        open={!!viewingCategory}
-        onOpenChange={(open) => !open && setViewingCategory(null)}
-      >
-        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="pr-8 text-xl">
-              {viewingCategory?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {viewingCategory && (
-            <div className="space-y-4">
-              {/* Meta */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Hash className="h-3.5 w-3.5" />
-                  <span>ID: {viewingCategory.id}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>
-                    {new Date(viewingCategory.createdAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )}
-                  </span>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="border border-[#4fae2e]/20 bg-[#eaf8df] text-xs text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                >
-                  <FileText className="mr-1 h-3 w-3" />
-                  {viewingCategory.postCount} posts
-                </Badge>
-              </div>
-
-              <Separator />
-
-              {/* Slug */}
-              <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Slug
-                </p>
-                <code className="block rounded-md bg-muted px-3 py-2 text-sm">
-                  {viewingCategory.slug}
-                </code>
-              </div>
-
-              {/* Description */}
-              <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Description
-                </p>
-                {viewingCategory.description ? (
-                  <p className="rounded-md bg-muted px-3 py-2 text-sm leading-relaxed">
-                    {viewingCategory.description}
-                  </p>
-                ) : (
-                  <p className="text-sm italic text-muted-foreground">
-                    No description provided.
-                  </p>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Footer */}
-              <div className="flex items-center justify-end">
-                <Link
-                  href={`/forum/${viewingCategory.slug}`}
-                  target="_blank"
-                >
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
-                    View on Forum
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

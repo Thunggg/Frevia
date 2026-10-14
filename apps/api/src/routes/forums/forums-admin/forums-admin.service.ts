@@ -3,6 +3,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ForumAdminRepository } from './forums-admin.repo';
 import {
   ForumAdminCategoryListResponseType,
+  ForumCategoryDetailResponseType,
   ForumAdminCommentType,
   ForumAdminStatsType,
   ForumAdminCommentListResponseType,
@@ -13,6 +14,7 @@ import {
   RoleName,
 } from '@shared/types';
 import {
+  ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
   FailedToRestoreForumCommentException,
@@ -99,6 +101,28 @@ export class ForumAdminService {
           totalPages: Math.ceil(total / limit),
         },
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async getAdminCategoryById(
+    roleName: string,
+    categoryId: number,
+  ): Promise<ForumCategoryDetailResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const category =
+        await this.adminRepository.getAdminCategoryById(categoryId);
+      if (!category) {
+        throw ForumCategoryNotFoundException();
+      }
+      return category;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

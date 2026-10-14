@@ -12,6 +12,7 @@ import { ForumAdminService } from './forums-admin.service';
 import {
   ForumAdminStatsResponseDto,
   ForumAdminCategoryListResponseDto,
+  ForumAdminCategoryDetailResponseDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -49,6 +50,15 @@ export class ForumAdminController {
       sortBy || undefined,
       sortOrder || undefined,
     );
+  }
+
+  @Get('categories/:id')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  getAdminCategoryById(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.getAdminCategoryById(roleName, id);
   }
 
   @Get('comments')
