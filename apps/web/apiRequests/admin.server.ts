@@ -4,17 +4,22 @@ import { cookies } from "next/headers";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
+  AdminUserDetailResponseType,
+  AdminUserListResponseType,
   ApiResponse,
-  ForumAdminStatsType,
-  ForumPostListResponseType,
+  ForumAdminCategoryListResponseType,
   ForumAdminCommentListResponseType,
+  ForumAdminStatsType,
+  ForumCategoryDetailResponseType,
+  ForumPostListResponseType,
   ForumReportListResponseType,
+  ForumTrashCommentListResponseType,
+  ForumTrashPostListResponseType,
   IdentityVerificationAdminListResponseType,
   PendingForumPostListResponseType,
-  ForumTrashPostListResponseType,
-  ForumTrashCommentListResponseType,
 } from "@shared/types";
 
+// Hàm fomat thành ?page=2&limit=10&search=john&role=CLIENT
 function buildQueryString(
   params: Record<string, string | number | undefined>,
 ): string {
@@ -51,6 +56,22 @@ async function adminServerFetch<T>(url: string): Promise<T | null> {
 
 /** Server-side admin reads (RSC). Mutations stay in `apiRequests/admin.ts`. */
 const adminServerRequest = {
+  getUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) {
+    const query = buildQueryString(params || {});
+    return adminServerFetch<AdminUserListResponseType>(`/api/users${query}`);
+  },
+
+  getUserById(id: number) {
+    return adminServerFetch<AdminUserDetailResponseType>(`/api/users/${id}`);
+  },
+
   getStats() {
     return adminServerFetch<ForumAdminStatsType>("/api/forums/admin/stats");
   },
@@ -70,6 +91,31 @@ const adminServerRequest = {
         posts: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
+    );
+  },
+
+  async getAdminCategories(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    sortBy?: string,
+    sortOrder?: string,
+  ): Promise<ForumAdminCategoryListResponseType> {
+    const query = buildQueryString({ page, limit, search, sortBy, sortOrder });
+    const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
+      `/api/forums/admin/categories${query}`,
+    );
+    return (
+      result ?? {
+        categories: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  getAdminCategoryById(id: number) {
+    return adminServerFetch<ForumCategoryDetailResponseType>(
+      `/api/forums/admin/categories/${id}`,
     );
   },
 
@@ -163,9 +209,10 @@ const adminServerRequest = {
     search?: string,
   ): Promise<IdentityVerificationAdminListResponseType> {
     const query = buildQueryString({ page, limit, status, search });
-    const result = await adminServerFetch<IdentityVerificationAdminListResponseType>(
-      `/api/admin/identity-verifications${query}`,
-    );
+    const result =
+      await adminServerFetch<IdentityVerificationAdminListResponseType>(
+        `/api/admin/identity-verifications${query}`,
+      );
     return (
       result ?? {
         documents: [],

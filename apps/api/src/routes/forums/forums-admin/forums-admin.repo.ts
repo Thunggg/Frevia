@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../shared/services/prisma.service';
-import {
-  ForumCommentNotFoundException,
-  ForumPostNotFoundException,
-} from './forums-admin.error';
 import {
   ForumAdminCommentType,
   ForumAdminStatsType,
+  ForumCategoryType,
   ForumPostType,
+  UpdateForumCategoryBodyType,
 } from '@shared/types';
+import { PrismaService } from '../../../shared/services/prisma.service';
+import { slugify } from '../forums-post/forums.slug';
+import {
+  ForumCategoryAlreadyExistsException,
+  ForumCategoryHasPostsException,
+  ForumCategoryNotFoundException,
+  ForumCommentNotFoundException,
+  ForumPostNotFoundException,
+} from './forums-admin.error';
 
 // Prisma trả Json column dạng JsonValue -> cast về string[] | null cho đúng contract
 function castJsonStringArray(value: unknown): string[] | null {
@@ -121,9 +127,7 @@ export class ForumAdminRepository {
 
     return {
       ...forumPost,
-      moderationCategories: castJsonStringArray(
-        forumPost.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(forumPost.moderationCategories),
     };
   }
 
@@ -222,6 +226,261 @@ export class ForumAdminRepository {
     ]);
 
     return { comments, total };
+  }
+
+  async getAdminCategoryLists(
+    page: number,
+    limit: number,
+    search?: string,
+    sortBy: 'id' | 'name' | 'createdAt' = 'id',
+    sortOrder: 'asc' | 'desc' = 'desc',
+  ): Promise<{
+    categories: ForumCategoryType[];
+    total: number;
+  }> {
+    const skip = (page - 1) * limit;
+    const where = {
+      deletedAt: null,
+      ...(search && {
+        // kiếm theo tên không phân biệt hoa thường
+        name: { contains: search, mode: 'insensitive' as const },
+      }),
+    };
+
+    const [categories, total] = await this.prisma.$transaction([
+      this.prisma.forumCategory.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              posts: { where: { deletedAt: null } },
+            },
+          },
+        },
+        skip,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+      }),
+      this.prisma.forumCategory.count({ where }),
+    ]);
+
+    return {
+      categories: categories.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: c.description,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        postCount: c._count.posts,
+      })),
+      total,
+    };
+  }
+
+  // Chi tiết category theo ID
+  async getAdminCategoryById(id: number): Promise<ForumCategoryType | null> {
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    if (!category) return null;
+
+    return {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+      postCount: category._count.posts,
+    };
+  }
+
+  // Tạo category mới
+  async createAdminCategory(data: {
+    name: string;
+    description?: string | null;
+  }): Promise<ForumCategoryType> {
+    const existingName = await this.prisma.forumCategory.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: data.name, mode: 'insensitive' },
+      },
+    });
+
+    if (existingName) {
+      throw ForumCategoryAlreadyExistsException();
+    }
+
+    let baseSlug = slugify(data.name);
+    if (!baseSlug) {
+      baseSlug = 'category';
+    }
+
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (
+      await this.prisma.forumCategory.findFirst({
+        where: { slug, deletedAt: null },
+      })
+    ) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+
+    const created = await this.prisma.forumCategory.create({
+      data: {
+        name: data.name,
+        slug,
+        description: data.description ?? null,
+      },
+    });
+
+    return {
+      id: created.id,
+      name: created.name,
+      slug: created.slug,
+      description: created.description,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+      postCount: 0,
+    };
+  }
+
+  // Cập nhật category
+  async updateAdminCategory(
+    id: number,
+    data: UpdateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    // Tìm category forum theo id
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    // nếu không tồn tại thì ném ra exception
+    if (!category) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    let slug = category.slug;
+
+    // Nếu có thay đổi tên category
+    if (data.name && data.name !== category.name) {
+      const existingName = await this.prisma.forumCategory.findFirst({
+        where: {
+          deletedAt: null,
+          id: { not: id },
+          name: { equals: data.name, mode: 'insensitive' },
+        },
+      });
+
+      if (existingName) {
+        throw ForumCategoryAlreadyExistsException();
+      }
+
+      let baseSlug = slugify(data.name);
+      if (!baseSlug) {
+        baseSlug = 'category';
+      }
+
+      slug = baseSlug;
+      let counter = 1;
+
+      while (
+        await this.prisma.forumCategory.findFirst({
+          where: { slug, id: { not: id }, deletedAt: null },
+        })
+      ) {
+        counter++;
+        slug = `${baseSlug}-${counter}`;
+      }
+    }
+
+    const updated = await this.prisma.forumCategory.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
+        slug,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      postCount: updated._count.posts,
+    };
+  }
+
+  // Xóa danh mục (Soft delete, kiểm tra nếu còn bài viết thì không cho xóa)
+  async deleteAdminCategory(id: number): Promise<{ message: string }> {
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    if (!category) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    const postCount = await this.prisma.forumPost.count({
+      where: {
+        categoryId: id,
+        deletedAt: null,
+      },
+    });
+
+    if (postCount > 0) {
+      throw ForumCategoryHasPostsException();
+    }
+
+    await this.prisma.forumCategory.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return { message: 'Category deleted successfully' };
   }
 
   // Danh sách bài viết trong trash (đã xóa hoặc bị reject)
@@ -331,10 +590,7 @@ export class ForumAdminRepository {
     const existing = await this.prisma.forumPost.findFirst({
       where: {
         id: postId,
-        OR: [
-          { deletedAt: { not: null } },
-          { moderationStatus: 'REJECTED' },
-        ],
+        OR: [{ deletedAt: { not: null } }, { moderationStatus: 'REJECTED' }],
       },
       select: { moderationStatus: true },
     });
@@ -374,9 +630,7 @@ export class ForumAdminRepository {
 
     return {
       ...restored!,
-      moderationCategories: castJsonStringArray(
-        restored!.moderationCategories,
-      ),
+      moderationCategories: castJsonStringArray(restored!.moderationCategories),
     };
   }
 

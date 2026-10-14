@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { conversationKeys } from "@/hooks/use-conversation";
 import type {
   ConversationListItemType,

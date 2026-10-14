@@ -5,9 +5,6 @@ const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
 const TechnologiesSchema = z
   .array(z.string().trim().min(1).max(100))
   .max(20, PortfolioMessage.PORTFOLIO_TECHNOLOGY_LIMIT);
-const MediaUrlsSchema = z
-  .array(z.url(PortfolioMessage.PORTFOLIO_INVALID_URL))
-  .max(10, PortfolioMessage.PORTFOLIO_MEDIA_LIMIT);
 
 export const PortfolioItemSchema = z.object({
   id: z.number(),
@@ -15,7 +12,6 @@ export const PortfolioItemSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   technologies: TechnologiesSchema,
-  mediaUrls: MediaUrlsSchema,
   projectUrl: z.string().nullable(),
   createdAt: DateTimeSchema,
   updatedAt: DateTimeSchema,
@@ -43,7 +39,6 @@ export const AddPortfolioSchema = z
       .nullable()
       .optional(),
     technologies: TechnologiesSchema.optional(),
-    mediaUrls: MediaUrlsSchema.optional(),
     projectUrl: z
       .url(PortfolioMessage.PORTFOLIO_INVALID_URL)
       .nullable()
@@ -72,7 +67,6 @@ export const UpdatePortfolioSchema = z
       .nullable()
       .optional(),
     technologies: TechnologiesSchema.optional(),
-    mediaUrls: MediaUrlsSchema.optional(),
     projectUrl: z
       .url(PortfolioMessage.PORTFOLIO_INVALID_URL)
       .nullable()

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Send } from "lucide-react";
 import Link from "next/link";
@@ -22,7 +22,6 @@ type NewConversationViewProps = {
 
 export function NewConversationView({
   participantId,
-  currentUserId,
 }: NewConversationViewProps) {
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -30,7 +29,6 @@ export function NewConversationView({
   const [participantAvatar, setParticipantAvatar] = useState<string | null>(null);
   const [loadingParticipant, setLoadingParticipant] = useState(true);
   const createConversation = useCreateConversation();
-  const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;

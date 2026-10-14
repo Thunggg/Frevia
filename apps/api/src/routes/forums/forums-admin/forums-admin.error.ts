@@ -1,10 +1,13 @@
 import {
+  BadRequestException,
+  ConflictException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import {
   ManageForumCommentMessage,
+  ManageForumMessage,
   ManageForumPostMessage,
   ManageForumReportMessage,
 } from '@shared/types';
@@ -22,6 +25,38 @@ export const ForumCommentNotFoundException = () =>
     {
       message: ManageForumCommentMessage.FORUM_COMMENT_NOT_FOUND,
       path: 'commentId',
+    },
+  ]);
+
+export const ForumCategoryNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_NOT_FOUND,
+      path: 'categoryId',
+    },
+  ]);
+
+export const ForumCategoryAlreadyExistsException = () =>
+  new ConflictException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_ALREADY_EXISTS,
+      path: 'name',
+    },
+  ]);
+
+export const ForumCategoryHasPostsException = () =>
+  new BadRequestException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_HAS_POSTS,
+      path: 'categoryId',
+    },
+  ]);
+
+export const FailedToDeleteForumCategoryException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumMessage.FAILED_TO_DELETE_FORUM_CATEGORY,
+      path: 'deleteCategory',
     },
   ]);
 

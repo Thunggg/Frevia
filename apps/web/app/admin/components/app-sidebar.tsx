@@ -9,18 +9,19 @@ import {
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
-  IdCard,
-  KeyRound,
   LayoutDashboard,
   MessageSquare,
-  UserCog,
-  UsersRound,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { NavMain, type NavItem } from "./nav-main";
 import { LogoutButton } from "./logout-button";
+import { NavMain, type NavItem } from "./nav-main";
 
+// Cấu hình menu sidebar Admin:
+// - Dashboard: trang riêng
+// - Users / Roles & Permissions / Forum: các nhóm (collapsible) chứa trang con,
+//   tự động mở rộng khi đang ở trang con bên trong nhóm.
 const navItems: NavItem[] = [
   {
     title: "Dashboard",
@@ -28,35 +29,33 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: "Users",
+    icon: Users,
+    children: [
+      { title: "User Management", href: "/admin/users" },
+      { title: "Identity Verification", href: "/admin/identity-verifications" },
+    ],
+  },
+  {
+    title: "Roles & Permissions",
+    icon: ShieldCheck,
+    children: [
+      { title: "Roles", href: "/admin/roles" },
+      { title: "Permissions", href: "/admin/permissions" },
+      { title: "Assign Role", href: "/admin/assign-role" },
+    ],
+  },
+  {
     title: "Forum",
     icon: MessageSquare,
     children: [
+      { title: "Categories", href: "/admin/categories" },
       { title: "Comments", href: "/admin/comments" },
       { title: "Moderation", href: "/admin/moderation" },
       { title: "Reports", href: "/admin/reports" },
       { title: "Posts", href: "/admin/posts" },
       { title: "Trash", href: "/admin/trash" },
     ],
-  },
-  {
-    title: "Roles",
-    href: "/admin/roles",
-    icon: UsersRound,
-  },
-  {
-    title: "Permissions",
-    href: "/admin/permissions",
-    icon: KeyRound,
-  },
-  {
-    title: "Assign Role",
-    href: "/admin/assign-role",
-    icon: UserCog,
-  },
-  {
-    title: "ID Verification",
-    href: "/admin/identity-verifications",
-    icon: IdCard,
   },
 ];
 
@@ -77,7 +76,7 @@ export function AppSidebar() {
               Frevia Admin
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              Forum tools
+              Admin tools
             </p>
           </div>
         </div>
@@ -89,14 +88,6 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          {/* <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/forum">
-                <ArrowLeft />
-                <span>Back to Forum</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem> */}
           <SidebarMenuItem>
             <LogoutButton />
           </SidebarMenuItem>

@@ -129,7 +129,6 @@ export function PostDetailWrapper({
   postId,
   categoryId,
   categorySlug,
-  postSlug,
   currentUserId,
 }: PostDetailWrapperProps) {
   const { data: post, isLoading: isLoadingPost } = useForumPost(postId);

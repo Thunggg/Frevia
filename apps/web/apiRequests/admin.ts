@@ -1,15 +1,32 @@
 import {
-  ForumAdminStatsType,
-  ForumPostListResponseType,
+  AdminClientProfileResponseType,
+  AdminCreatePortfolioItemBodyType,
+  AdminCreateUserBodyType,
+  AdminCreateUserResponseType,
+  AdminReplaceFreelancerSkillsBodyType,
+  AdminSkillCatalogListType,
+  AdminUpdateClientProfileBodyType,
+  AdminUpdateFreelancerProfileBodyType,
+  AdminUpdatePortfolioItemBodyType,
+  AdminUpdateUserBodyType,
+  AdminUpdateUserResponseType,
+  CreateForumCategoryBodyType,
+  UpdateForumCategoryBodyType,
+  DeleteForumCategoryResponseType,
   ForumAdminCommentListResponseType,
-  ForumPostType,
   ForumAdminCommentType,
+  ForumCategoryType,
+  ForumPostListResponseType,
+  ForumPostType,
   ForumReportListResponseType,
   ForumReportType,
   IdentityVerificationAdminDetailType,
   IdentityVerificationAdminListResponseType,
+  MessageResType,
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
+  AdminUserListResponseType,
+  AdminUserDetailResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -27,8 +44,91 @@ function buildQueryString(
 }
 
 export const adminApiRequest = {
-  getStats: () =>
-    http.get<ForumAdminStatsType>("/api/forums/admin/stats"),
+  getUsers: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) => {
+    const query = buildQueryString(params || {});
+    return http.get<AdminUserListResponseType>(`/api/users${query}`);
+  },
+
+  // Lấy catalog Skill active (dùng cho dialog chọn kỹ năng)
+  getSkillCatalog: () =>
+    http.get<AdminSkillCatalogListType>("/api/users/skills-catalog"),
+
+  getUserById: (id: number) =>
+    http.get<AdminUserDetailResponseType>(`/api/users/${id}`),
+
+  // ====== Admin quản lý User ======
+  // Tạo tài khoản mới
+  createUser: (body: AdminCreateUserBodyType) =>
+    http.post<AdminCreateUserResponseType>("/api/users", body),
+
+  // Sửa thông tin chung account (email / displayName / isBanned)
+  updateUser: (id: number, body: AdminUpdateUserBodyType) =>
+    http.patch<AdminUpdateUserResponseType>(`/api/users/${id}`, body),
+
+  // Sửa hồ sơ Client (công ty) của 1 user
+  updateClientProfile: (id: number, body: AdminUpdateClientProfileBodyType) =>
+    http.patch<AdminClientProfileResponseType>(
+      `/api/users/${id}/client-profile`,
+      body,
+    ),
+
+  // ====== Admin sửa hồ sơ FREELANCER ======
+  // Giới thiệu (title + bio)
+  updateFreelancerProfile: (
+    id: number,
+    body: AdminUpdateFreelancerProfileBodyType,
+  ) =>
+    http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+
+  // Thay thế toàn bộ kỹ năng (danh sách chọn từ catalog)
+  replaceFreelancerSkills: (
+    id: number,
+    body: AdminReplaceFreelancerSkillsBodyType,
+  ) =>
+    http.put<MessageResType>(`/api/users/${id}/freelancer-profile/skills`, body),
+
+  // Portfolio items (tạo mới / sửa / xoá mềm)
+  createPortfolioItem: (
+    id: number,
+    body: AdminCreatePortfolioItemBodyType,
+  ) =>
+    http.post<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items`,
+      body,
+    ),
+
+  updatePortfolioItem: (
+    id: number,
+    itemId: number,
+    body: AdminUpdatePortfolioItemBodyType,
+  ) =>
+    http.patch<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items/${itemId}`,
+      body,
+    ),
+
+  deletePortfolioItem: (id: number, itemId: number) =>
+    http.delete<MessageResType>(
+      `/api/users/${id}/freelancer-profile/portfolio-items/${itemId}`,
+    ),
+
+  createCategory: (body: CreateForumCategoryBodyType) =>
+    http.post<ForumCategoryType>("/api/forums/admin/categories", body),
+
+  updateCategory: (id: number, body: UpdateForumCategoryBodyType) =>
+    http.patch<ForumCategoryType>(`/api/forums/admin/categories/${id}`, body),
+
+  deleteCategory: (id: number) =>
+    http.delete<DeleteForumCategoryResponseType>(
+      `/api/forums/admin/categories/${id}`,
+    ),
 
   getPosts: (
     page: number = 1,
@@ -37,9 +137,7 @@ export const adminApiRequest = {
     categoryId?: number,
   ) => {
     const query = buildQueryString({ page, limit, search, categoryId });
-    return http.get<ForumPostListResponseType>(
-      `/api/forums/posts${query}`,
-    );
+    return http.get<ForumPostListResponseType>(`/api/forums/posts${query}`);
   },
 
   deletePost: (postId: number) =>
@@ -72,9 +170,7 @@ export const adminApiRequest = {
   },
 
   deleteComment: (postId: number, commentId: number) =>
-    http.delete<unknown>(
-      `/api/forums/posts/${postId}/comments/${commentId}`,
-    ),
+    http.delete<unknown>(`/api/forums/posts/${postId}/comments/${commentId}`),
 
   restorePost: (postId: number) =>
     http.patch<ForumPostType>(
@@ -95,16 +191,13 @@ export const adminApiRequest = {
     search?: string,
   ) => {
     const query = buildQueryString({ page, limit, status, search });
-    return http.get<ForumReportListResponseType>(
-      `/api/forums/reports${query}`,
-    );
+    return http.get<ForumReportListResponseType>(`/api/forums/reports${query}`);
   },
 
   updateReportStatus: (reportId: number, status: string) =>
-    http.patch<ForumReportType>(
-      `/api/forums/reports/${reportId}/status`,
-      { status },
-    ),
+    http.patch<ForumReportType>(`/api/forums/reports/${reportId}/status`, {
+      status,
+    }),
 
   getIdentityVerifications: (
     page: number = 1,
@@ -123,19 +216,13 @@ export const adminApiRequest = {
       `/api/admin/identity-verifications/${id}`,
     ),
 
-  approveIdentityVerification: (
-    id: number,
-    reviewNotes?: string | null,
-  ) =>
+  approveIdentityVerification: (id: number, reviewNotes?: string | null) =>
     http.patch<IdentityVerificationAdminDetailType>(
       `/api/admin/identity-verifications/${id}/approve`,
       { reviewNotes: reviewNotes ?? null },
     ),
 
-  rejectIdentityVerification: (
-    id: number,
-    reviewNotes?: string | null,
-  ) =>
+  rejectIdentityVerification: (id: number, reviewNotes?: string | null) =>
     http.patch<IdentityVerificationAdminDetailType>(
       `/api/admin/identity-verifications/${id}/reject`,
       { reviewNotes: reviewNotes ?? null },

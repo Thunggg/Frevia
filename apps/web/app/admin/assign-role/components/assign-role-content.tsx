@@ -81,7 +81,7 @@ export function AssignRoleContent() {
     }
   }, [role, selectedRoleId]);
 
-  const permissions = data?.permissions ?? [];
+  const permissions = useMemo(() => data?.permissions ?? [], [data?.permissions]);
   const modules = data?.modules ?? [];
 
   const filtered = useMemo(() => {

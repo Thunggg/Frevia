@@ -21,13 +21,7 @@ type ForumCategoryViewProps = {
   topUsers: ForumTopActiveUserListResponseType;
 };
 
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
+
 
 export function ForumCategoryView({
   role,

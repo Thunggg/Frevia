@@ -1,9 +1,12 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -11,6 +14,11 @@ import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { ForumAdminService } from './forums-admin.service';
 import {
   ForumAdminStatsResponseDto,
+  ForumAdminCategoryListResponseDto,
+  ForumAdminCategoryDetailResponseDto,
+  CreateForumCategoryBodyDto,
+  UpdateForumCategoryBodyDto,
+  DeleteForumCategoryResponseDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -28,6 +36,63 @@ export class ForumAdminController {
   @ZodSerializerDto(ForumAdminStatsResponseDto)
   getAdminStats(@UserActive('roleName') roleName: string) {
     return this.adminService.getAdminStats(roleName);
+  }
+
+  @Get('categories')
+  @ZodSerializerDto(ForumAdminCategoryListResponseDto)
+  getAdminCategoryLists(
+    @UserActive('roleName') roleName: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('search') search: string,
+    @Query('sortBy') sortBy: 'id' | 'name' | 'createdAt',
+    @Query('sortOrder') sortOrder: 'asc' | 'desc',
+  ) {
+    return this.adminService.getAdminCategoryLists(
+      roleName,
+      Number(page) || 1,
+      Number(limit) || 10,
+      search || undefined,
+      sortBy || undefined,
+      sortOrder || undefined,
+    );
+  }
+
+  @Get('categories/:id')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  getAdminCategoryById(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.getAdminCategoryById(roleName, id);
+  }
+
+  @Post('categories')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  createAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Body() body: CreateForumCategoryBodyDto,
+  ) {
+    return this.adminService.createAdminCategory(roleName, body);
+  }
+
+  @Patch('categories/:id')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  updateAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateForumCategoryBodyDto,
+  ) {
+    return this.adminService.updateAdminCategory(roleName, id, body);
+  }
+
+  @Delete('categories/:id')
+  @ZodSerializerDto(DeleteForumCategoryResponseDto)
+  deleteAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.deleteAdminCategory(roleName, id);
   }
 
   @Get('comments')
@@ -119,7 +184,12 @@ export class ForumAdminController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.adminService.reviewPendingPost(roleName, id, 'APPROVED', userId);
+    return this.adminService.reviewPendingPost(
+      roleName,
+      id,
+      'APPROVED',
+      userId,
+    );
   }
 
   // Từ chối bài -> REJECTED (bài không hiển thị, chuyển vào Trash)
@@ -130,6 +200,11 @@ export class ForumAdminController {
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.adminService.reviewPendingPost(roleName, id, 'REJECTED', userId);
+    return this.adminService.reviewPendingPost(
+      roleName,
+      id,
+      'REJECTED',
+      userId,
+    );
   }
 }

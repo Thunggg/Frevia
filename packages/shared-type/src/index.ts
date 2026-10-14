@@ -37,6 +37,7 @@ export * from "./message/manage-role.message";
 export * from "./constants/http-method.constant";
 export * from "./model/permission.model";
 export * from "./message/manage-permission.message";
+export * from "./message/manage-user.message";
 export * from "./model/session.model";
 export * from "./message/manage-session.message";
 export * from "./model/conversation.model";

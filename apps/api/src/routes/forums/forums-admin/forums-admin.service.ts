@@ -2,6 +2,11 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ForumAdminRepository } from './forums-admin.repo';
 import {
+  ForumAdminCategoryListResponseType,
+  ForumCategoryDetailResponseType,
+  CreateForumCategoryBodyType,
+  UpdateForumCategoryBodyType,
+  ForumCategoryType,
   ForumAdminCommentType,
   ForumAdminStatsType,
   ForumAdminCommentListResponseType,
@@ -12,11 +17,13 @@ import {
   RoleName,
 } from '@shared/types';
 import {
+  ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
   FailedToRestoreForumCommentException,
   FailedToRestoreForumPostException,
   FailedToReviewForumPostException,
+  FailedToDeleteForumCategoryException,
   ForumReportForbiddenException,
 } from './forums-admin.error';
 
@@ -68,6 +75,118 @@ export class ForumAdminService {
     }
   }
 
+  async getAdminCategoryLists(
+    roleName: string,
+    page: number,
+    limit: number,
+    search?: string,
+    sortBy?: 'id' | 'name' | 'createdAt',
+    sortOrder?: 'asc' | 'desc',
+  ): Promise<ForumAdminCategoryListResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const { categories, total } =
+        await this.adminRepository.getAdminCategoryLists(
+          page,
+          limit,
+          search,
+          sortBy,
+          sortOrder,
+        );
+
+      return {
+        categories,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async getAdminCategoryById(
+    roleName: string,
+    categoryId: number,
+  ): Promise<ForumCategoryDetailResponseType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      const category =
+        await this.adminRepository.getAdminCategoryById(categoryId);
+      if (!category) {
+        throw ForumCategoryNotFoundException();
+      }
+      return category;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw ForumReportForbiddenException();
+    }
+  }
+
+  async createAdminCategory(
+    roleName: string,
+    body: CreateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.createAdminCategory(body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  async updateAdminCategory(
+    roleName: string,
+    categoryId: number,
+    body: UpdateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.updateAdminCategory(categoryId, body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  async deleteAdminCategory(
+    roleName: string,
+    categoryId: number,
+  ): Promise<{ message: string }> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.deleteAdminCategory(categoryId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeleteForumCategoryException();
+    }
+  }
+
   async getPendingPosts(
     roleName: string,
     page: number,
@@ -77,8 +196,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { posts, total } =
-        await this.adminRepository.getPendingPosts(page, limit);
+      const { posts, total } = await this.adminRepository.getPendingPosts(
+        page,
+        limit,
+      );
 
       return {
         posts,
@@ -135,8 +256,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { posts, total } =
-        await this.adminRepository.getTrashPosts(page, limit);
+      const { posts, total } = await this.adminRepository.getTrashPosts(
+        page,
+        limit,
+      );
 
       return {
         posts,
@@ -164,8 +287,10 @@ export class ForumAdminService {
       throw ForumReportForbiddenException();
     }
     try {
-      const { comments, total } =
-        await this.adminRepository.getTrashComments(page, limit);
+      const { comments, total } = await this.adminRepository.getTrashComments(
+        page,
+        limit,
+      );
 
       return {
         comments,

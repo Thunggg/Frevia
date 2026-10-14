@@ -20,10 +20,6 @@ const demoPortfolios = [
     description:
       'A full-stack freelance marketplace featuring job discovery, proposals, contracts, real-time conversations, and role-based dashboards.',
     technologies: ['Next.js', 'NestJS', 'TypeScript', 'PostgreSQL', 'Prisma'],
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80',
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80',
-    ],
     projectUrl: 'https://github.com/',
   },
   {
@@ -31,9 +27,6 @@ const demoPortfolios = [
     description:
       'A responsive analytics experience with accessible data visualizations, reusable design tokens, and a mobile-first interaction system.',
     technologies: ['Figma', 'React', 'Tailwind CSS', 'Storybook'],
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80',
-    ],
     projectUrl: 'https://www.figma.com/',
   },
   {
@@ -41,9 +34,6 @@ const demoPortfolios = [
     description:
       'A collaboration workspace with live messaging, file sharing, presence indicators, and notification workflows for distributed teams.',
     technologies: ['NestJS', 'Socket.IO', 'React', 'Docker'],
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=80',
-    ],
     projectUrl: 'https://socket.io/',
   },
 ];

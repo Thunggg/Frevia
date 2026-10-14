@@ -5,8 +5,8 @@ import { MilestoneRepository } from './milestone.repo';
 import { MilestoneService } from './milestone.service';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [MilestoneController],
-    providers: [MilestoneService, MilestoneRepository],
+  imports: [SharedModule],
+  controllers: [MilestoneController],
+  providers: [MilestoneService, MilestoneRepository],
 })
-export class MilestoneModule { }
+export class MilestoneModule {}
