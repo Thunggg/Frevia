@@ -8,8 +8,22 @@ import {
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+// ====== Routes công khai (guest chưa đăng nhập vẫn truy cập được) ======
+//   - "/"           : trang chủ (marketing)
+//   - "/find-work"  : duyệt danh sách công việc   (GET /api/jobs public)
+//   - "/job"        : chi tiết công việc           (GET /api/jobs/:slug public)
+//   - "/forum"      : đọc diễn đàn (danh mục, bài viết, chi tiết) — các GET /api/forums public
+//   - "/profiles"   : hồ sơ công khai của freelancer (GET /api/profiles/:id public)
+//   - "/clients"    : hồ sơ công khai của client    (GET /api/clients/:userId public)
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
-const PUBLIC_ROUTES = ["/profiles", "/clients"];
+const PUBLIC_ROUTES = [
+  "/",
+  "/find-work",
+  "/job",
+  "/forum",
+  "/profiles",
+  "/clients",
+];
 
 const isAuthRoute = (pathname: string) =>
   AUTH_ROUTES.some(
@@ -19,6 +33,7 @@ const isAuthRoute = (pathname: string) =>
 const isPublicRoute = (pathname: string) =>
   isAuthRoute(pathname) ||
   PUBLIC_ROUTES.some(
+    // "/" chỉ khớp đúng pathname; các route khác khớp cả đường dẫn con
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
