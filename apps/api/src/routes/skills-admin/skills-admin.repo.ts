@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
   AdminCreateSkillBodyType,
+  AdminUpdateSkillBodyType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
   SkillAdminQueryType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { SkillNameAlreadyExistsException } from './skills-admin.error';
+import {
+  SkillAdminNotFoundException,
+  SkillNameAlreadyExistsException,
+} from './skills-admin.error';
 
 const skillListSelect = {
   id: true,
@@ -155,6 +159,65 @@ export class SkillsAdminRepository {
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,
       jobCount: created._count.jobs,
+    };
+  }
+
+  // Cập nhật skill (kiểm tra tồn tại + trùng tên + sinh lại slug nếu đổi tên)
+  async updateSkill(
+    id: number,
+    data: AdminUpdateSkillBodyType,
+  ): Promise<SkillAdminDetailResponseType> {
+    const skill = await this.prisma.skill.findFirst({
+      where: { id },
+      select: { id: true, name: true, slug: true },
+    });
+
+    if (!skill) {
+      throw SkillAdminNotFoundException();
+    }
+
+    let slug = skill.slug;
+    const trimmedName = data.name?.trim();
+
+    // Nếu có thay đổi tên → kiểm tra trùng (loại trừ chính nó) + sinh lại slug
+    if (trimmedName !== undefined && trimmedName !== skill.name) {
+      const existingName = await this.prisma.skill.findFirst({
+        where: {
+          deletedAt: null,
+          id: { not: id },
+          name: { equals: trimmedName, mode: 'insensitive' },
+        },
+        select: { id: true },
+      });
+
+      if (existingName) {
+        throw SkillNameAlreadyExistsException();
+      }
+
+      slug = await this.generateUniqueSlug(trimmedName);
+    }
+
+    const updated = await this.prisma.skill.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined && { name: trimmedName }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
+        slug,
+      },
+      select: skillListSelect,
+    });
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      deletedAt: updated.deletedAt,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      jobCount: updated._count.jobs,
     };
   }
 

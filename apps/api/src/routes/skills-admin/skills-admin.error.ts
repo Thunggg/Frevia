@@ -47,3 +47,11 @@ export const FailedToCreateSkillException = () =>
       path: 'skill',
     },
   ]);
+
+export const FailedToUpdateSkillException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToUpdateSkill',
+      path: 'skill',
+    },
+  ]);

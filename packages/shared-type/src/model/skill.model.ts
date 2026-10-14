@@ -46,6 +46,25 @@ export const AdminCreateSkillBodySchema = z.object({
     .nullable(),
 });
 
+// --- Admin: Update Skill (PATCH /api/admin/skills/:id) ---
+export const AdminUpdateSkillBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Error.SkillNameRequired")
+    .max(100, "Error.SkillNameTooLong")
+    .optional(),
+  description: z
+    .string()
+    .max(500, "Error.SkillDescriptionTooLong")
+    .optional()
+    .nullable(),
+});
+
+export type AdminUpdateSkillBodyType = z.infer<
+  typeof AdminUpdateSkillBodySchema
+>;
+
 export type AdminCreateSkillBodyType = z.infer<
   typeof AdminCreateSkillBodySchema
 >;

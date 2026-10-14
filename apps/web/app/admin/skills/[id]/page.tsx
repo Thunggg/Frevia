@@ -3,6 +3,7 @@ import { ArrowLeft, Briefcase, Tags, TagX } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { UpdateSkillDialog } from "../components/update-skill-dialog";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +90,7 @@ export default async function AdminSkillDetailPage({
                 Deleted
               </Badge>
             )}
+            <UpdateSkillDialog skill={skill} triggerClassName="h-9 w-9 text-[#4fae2e] hover:bg-[#4fae2e]/10 hover:text-[#4fae2e]" />
           </div>
         </div>
       </div>

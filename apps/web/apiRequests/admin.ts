@@ -2,6 +2,7 @@ import {
   AdminClientProfileResponseType,
   AdminCreatePortfolioItemBodyType,
   AdminCreateSkillBodyType,
+  AdminUpdateSkillBodyType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
   AdminReplaceFreelancerSkillsBodyType,
@@ -65,6 +66,10 @@ export const adminApiRequest = {
   // Tạo skill mới — trang Admin Skills
   createSkill: (body: AdminCreateSkillBodyType) =>
     http.post<SkillAdminDetailResponseType>("/api/admin/skills", body),
+
+  // Sửa skill — trang Admin Skills
+  updateSkill: (id: number, body: AdminUpdateSkillBodyType) =>
+    http.patch<SkillAdminDetailResponseType>(`/api/admin/skills/${id}`, body),
 
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),

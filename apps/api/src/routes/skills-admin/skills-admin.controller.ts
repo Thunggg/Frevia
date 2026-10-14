@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import {
   SkillAdminDetailResponseDto,
   SkillAdminListResponseDto,
   SkillAdminQueryDto,
+  UpdateSkillBodyDto,
 } from './skills-admin.dto';
 import { SkillsAdminService } from './skills-admin.service';
 
@@ -33,6 +35,15 @@ export class SkillsAdminController {
   @ZodSerializerDto(SkillAdminDetailResponseDto)
   createSkill(@Body() body: CreateSkillBodyDto) {
     return this.service.createSkill(body);
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(SkillAdminDetailResponseDto)
+  updateSkill(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSkillBodyDto,
+  ) {
+    return this.service.updateSkill(id, body);
   }
 
   @Get(':id')

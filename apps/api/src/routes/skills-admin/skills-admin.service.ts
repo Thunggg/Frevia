@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   AdminCreateSkillBodyType,
+  AdminUpdateSkillBodyType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
   SkillAdminQueryType,
@@ -10,6 +11,7 @@ import {
   FailedToCreateSkillException,
   FailedToLoadSkillDetailException,
   FailedToLoadSkillListException,
+  FailedToUpdateSkillException,
   SkillAdminNotFoundException,
   SkillNameAlreadyExistsException,
 } from './skills-admin.error';
@@ -67,6 +69,27 @@ export class SkillsAdminService {
         throw error;
       }
       throw FailedToCreateSkillException();
+    }
+  }
+
+  // Cập nhật skill
+  async updateSkill(
+    id: number,
+    body: AdminUpdateSkillBodyType,
+  ): Promise<SkillAdminDetailResponseType> {
+    try {
+      return await this.repository.updateSkill(id, body);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw SkillNameAlreadyExistsException();
+      }
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToUpdateSkillException();
     }
   }
 }

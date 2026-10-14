@@ -14,6 +14,7 @@ import type { SkillAdminItemType } from "@shared/types";
 import { Eye } from "lucide-react";
 import Link from "next/link";
 import { AdminPagination } from "../../components/admin-pagination";
+import { UpdateSkillDialog } from "./update-skill-dialog";
 
 interface SkillsTableProps {
   skills: SkillAdminItemType[];
@@ -93,20 +94,26 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                     {new Date(skill.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      asChild
-                      className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                      title="View details"
-                    >
-                      <Link
-                        href={`/admin/skills/${skill.id}`}
-                        aria-label={`View details of ${skill.name}`}
+                    <div className="flex items-center justify-end gap-1">
+                      <UpdateSkillDialog
+                        skill={skill}
+                        triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                        title="View details"
                       >
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                        <Link
+                          href={`/admin/skills/${skill.id}`}
+                          aria-label={`View details of ${skill.name}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
