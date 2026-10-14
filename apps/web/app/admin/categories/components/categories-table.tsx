@@ -16,6 +16,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Eye,
   Pencil,
+  Trash2,
   FileText,
   ArrowUpDown,
   ArrowUp,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import { AdminPagination } from "../../components/admin-pagination";
 import { UpdateCategoryDialog } from "./update-category-dialog";
+import { DeleteCategoryDialog } from "./delete-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
 
 interface CategoriesTableProps {
@@ -42,6 +44,8 @@ export function CategoriesTable({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [editingCategory, setEditingCategory] =
+    useState<ForumCategoryType | null>(null);
+  const [deletingCategory, setDeletingCategory] =
     useState<ForumCategoryType | null>(null);
 
   const currentSortBy = searchParams.get("sortBy") || "id";
@@ -167,6 +171,14 @@ export function CategoriesTable({
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => setDeletingCategory(category)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -188,6 +200,12 @@ export function CategoriesTable({
         category={editingCategory}
         open={!!editingCategory}
         onOpenChange={(open) => !open && setEditingCategory(null)}
+      />
+
+      <DeleteCategoryDialog
+        category={deletingCategory}
+        open={!!deletingCategory}
+        onOpenChange={(open) => !open && setDeletingCategory(null)}
       />
     </div>
   );

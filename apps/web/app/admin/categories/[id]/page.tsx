@@ -12,6 +12,7 @@ import {
   Tag,
 } from "lucide-react";
 import { EditCategoryButton } from "./components/edit-category-button";
+import { DeleteCategoryButton } from "./components/delete-category-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -63,6 +64,7 @@ export default async function AdminCategoryDetailPage({
 
         <div className="flex items-center gap-2">
           <EditCategoryButton category={category} />
+          <DeleteCategoryButton category={category} />
         </div>
       </div>
 

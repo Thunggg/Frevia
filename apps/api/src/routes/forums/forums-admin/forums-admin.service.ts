@@ -23,6 +23,7 @@ import {
   FailedToRestoreForumCommentException,
   FailedToRestoreForumPostException,
   FailedToReviewForumPostException,
+  FailedToDeleteForumCategoryException,
   ForumReportForbiddenException,
 } from './forums-admin.error';
 
@@ -166,6 +167,23 @@ export class ForumAdminService {
         throw error;
       }
       throw error;
+    }
+  }
+
+  async deleteAdminCategory(
+    roleName: string,
+    categoryId: number,
+  ): Promise<{ message: string }> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.deleteAdminCategory(categoryId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToDeleteForumCategoryException();
     }
   }
 

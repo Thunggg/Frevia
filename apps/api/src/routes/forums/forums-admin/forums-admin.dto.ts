@@ -5,6 +5,7 @@ import {
   ForumCategoryDetailResponseSchema,
   CreateForumCategoryBodySchema,
   UpdateForumCategoryBodySchema,
+  DeleteForumCategoryResponseSchema,
   ForumAdminCommentListResponseSchema,
   ForumAdminCommentSchema,
   ForumPostSchema,
@@ -60,4 +61,8 @@ export class ForumRestorePostResponseDto extends createZodDto(
 
 export class ForumRestoreCommentResponseDto extends createZodDto(
   ForumAdminCommentSchema,
+) {}
+
+export class DeleteForumCategoryResponseDto extends createZodDto(
+  DeleteForumCategoryResponseSchema,
 ) {}

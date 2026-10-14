@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ManageForumMessage } from "../message/manage-forum.message";
 import { PaginationSchema } from "./forum-post.model";
+import { MessageResSchema, type MessageResType } from "./response.model";
 
 export const ForumCategorySchema = z.object({
   id: z.number(),
@@ -116,3 +117,8 @@ export const UpdateForumCategoryBodySchema = z.object({
 export type UpdateForumCategoryBodyType = z.infer<
   typeof UpdateForumCategoryBodySchema
 >;
+
+// --- Admin: Delete Category ---
+
+export const DeleteForumCategoryResponseSchema = MessageResSchema;
+export type DeleteForumCategoryResponseType = MessageResType;

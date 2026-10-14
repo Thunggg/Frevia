@@ -10,6 +10,7 @@ import { PrismaService } from '../../../shared/services/prisma.service';
 import { slugify } from '../forums-post/forums.slug';
 import {
   ForumCategoryAlreadyExistsException,
+  ForumCategoryHasPostsException,
   ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
@@ -449,6 +450,37 @@ export class ForumAdminRepository {
       updatedAt: updated.updatedAt,
       postCount: updated._count.posts,
     };
+  }
+
+  // Xóa danh mục (Soft delete, kiểm tra nếu còn bài viết thì không cho xóa)
+  async deleteAdminCategory(id: number): Promise<{ message: string }> {
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    if (!category) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    const postCount = await this.prisma.forumPost.count({
+      where: {
+        categoryId: id,
+        deletedAt: null,
+      },
+    });
+
+    if (postCount > 0) {
+      throw ForumCategoryHasPostsException();
+    }
+
+    await this.prisma.forumCategory.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return { message: 'Category deleted successfully' };
   }
 
   // Danh sách bài viết trong trash (đã xóa hoặc bị reject)

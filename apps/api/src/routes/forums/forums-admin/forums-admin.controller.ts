@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -17,6 +18,7 @@ import {
   ForumAdminCategoryDetailResponseDto,
   CreateForumCategoryBodyDto,
   UpdateForumCategoryBodyDto,
+  DeleteForumCategoryResponseDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -82,6 +84,15 @@ export class ForumAdminController {
     @Body() body: UpdateForumCategoryBodyDto,
   ) {
     return this.adminService.updateAdminCategory(roleName, id, body);
+  }
+
+  @Delete('categories/:id')
+  @ZodSerializerDto(DeleteForumCategoryResponseDto)
+  deleteAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.deleteAdminCategory(roleName, id);
   }
 
   @Get('comments')

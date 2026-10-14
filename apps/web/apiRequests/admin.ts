@@ -1,6 +1,7 @@
 import {
   CreateForumCategoryBodyType,
   UpdateForumCategoryBodyType,
+  DeleteForumCategoryResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminCommentType,
   ForumAdminStatsType,
@@ -37,6 +38,11 @@ export const adminApiRequest = {
 
   updateCategory: (id: number, body: UpdateForumCategoryBodyType) =>
     http.patch<ForumCategoryType>(`/api/forums/admin/categories/${id}`, body),
+
+  deleteCategory: (id: number) =>
+    http.delete<DeleteForumCategoryResponseType>(
+      `/api/forums/admin/categories/${id}`,
+    ),
 
   getPosts: (
     page: number = 1,

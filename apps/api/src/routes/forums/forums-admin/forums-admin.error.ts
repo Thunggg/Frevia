@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
@@ -40,6 +41,22 @@ export const ForumCategoryAlreadyExistsException = () =>
     {
       message: ManageForumMessage.FORUM_CATEGORY_ALREADY_EXISTS,
       path: 'name',
+    },
+  ]);
+
+export const ForumCategoryHasPostsException = () =>
+  new BadRequestException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_HAS_POSTS,
+      path: 'categoryId',
+    },
+  ]);
+
+export const FailedToDeleteForumCategoryException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumMessage.FAILED_TO_DELETE_FORUM_CATEGORY,
+      path: 'deleteCategory',
     },
   ]);
 
