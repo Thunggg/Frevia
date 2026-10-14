@@ -36,7 +36,7 @@ import {
   type AdminCreateUserBodyType,
   type RoleListItemType,
 } from "@shared/types";
-import { Loader2, Plus, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Loader2, Plus, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Controller, useForm, type Resolver } from "react-hook-form";
 
@@ -45,6 +45,8 @@ const ROLE_FIELD_PATHS = new Set(["roleId", "email", "fullName", "password", "co
 export function CreateUserDialog() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const createUser = useCreateUser();
 
   const {
@@ -203,13 +205,29 @@ export function CreateUserDialog() {
                     <FieldLabel htmlFor="create-user-password">
                       Password
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="create-user-password"
-                      type="password"
-                      autoComplete="new-password"
-                      aria-invalid={fieldState.invalid}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="create-user-password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        aria-invalid={fieldState.invalid}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="absolute right-0 top-0 flex h-full items-center px-3 text-muted-foreground hover:text-foreground"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -224,13 +242,29 @@ export function CreateUserDialog() {
                     <FieldLabel htmlFor="create-user-confirmPassword">
                       Confirm password
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="create-user-confirmPassword"
-                      type="password"
-                      autoComplete="new-password"
-                      aria-invalid={fieldState.invalid}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="create-user-confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        aria-invalid={fieldState.invalid}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="absolute right-0 top-0 flex h-full items-center px-3 text-muted-foreground hover:text-foreground"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
