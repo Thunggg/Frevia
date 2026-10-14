@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -12,9 +13,9 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { SkillAdminItemType } from "@shared/types";
-import { Eye, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateSkillDialog } from "./update-skill-dialog";
 import { DeleteSkillDialog } from "./delete-skill-dialog";
 import { RestoreSkillDialog } from "./restore-skill-dialog";
@@ -29,22 +30,70 @@ interface SkillsTableProps {
   };
 }
 
+type SortBy = "id" | "createdAt";
+
 export function SkillsTable({ skills, pagination }: SkillsTableProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [deletingSkill, setDeletingSkill] = useState<SkillAdminItemType | null>(
     null,
   );
+
+  const sortByParam = searchParams.get("sortBy");
+  const sortOrderParam = searchParams.get("sortOrder");
+  const sortBy: SortBy = sortByParam === "createdAt" ? "createdAt" : "id";
+  const sortOrder = sortOrderParam === "asc" ? "asc" : "desc";
+
+  const toggleSort = (column: SortBy) => {
+    const nextOrder = sortBy === column && sortOrder === "desc" ? "asc" : "desc";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sortBy", column);
+    params.set("sortOrder", nextOrder);
+    params.delete("page");
+    router.push(`?${params.toString()}`);
+  };
+
+  const SortIcon = ({ column }: { column: SortBy }) => {
+    if (sortBy !== column) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />;
+    }
+    return sortOrder === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-foreground" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-foreground" />
+    );
+  };
+
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
+              <TableHead className="w-16">
+                <button
+                  type="button"
+                  onClick={() => toggleSort("id")}
+                  className="inline-flex items-center gap-1 hover:text-foreground"
+                >
+                  ID
+                  <SortIcon column="id" />
+                </button>
+              </TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Jobs using it</TableHead>
-              <TableHead className="text-right">Created</TableHead>
+              <TableHead className="text-right">
+                <button
+                  type="button"
+                  onClick={() => toggleSort("createdAt")}
+                  className="inline-flex items-center gap-1 hover:text-foreground"
+                >
+                  Created
+                  <SortIcon column="createdAt" />
+                </button>
+              </TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -85,12 +134,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                         Active
                       </Badge>
                     ) : (
-                      <Badge
-                        variant="outline"
-                        className="text-muted-foreground"
-                      >
-                        Deleted
-                      </Badge>
+                      <Badge variant="destructive">Deleted</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right text-sm text-muted-foreground">
@@ -145,7 +189,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

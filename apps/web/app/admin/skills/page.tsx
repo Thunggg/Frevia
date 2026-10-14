@@ -15,6 +15,8 @@ export default async function AdminSkillsPage({
     page?: string;
     search?: string;
     deleted?: string;
+    sortBy?: string;
+    sortOrder?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -22,12 +24,22 @@ export default async function AdminSkillsPage({
   const limit = 10;
   const search = params.search || undefined;
   const deleted = params.deleted || undefined;
+  const sortBy =
+    params.sortBy === "id" || params.sortBy === "createdAt"
+      ? params.sortBy
+      : undefined;
+  const sortOrder =
+    params.sortOrder === "asc" || params.sortOrder === "desc"
+      ? params.sortOrder
+      : undefined;
 
   const data = await adminServerRequest.getSkills({
     page,
     limit,
     search,
     deleted,
+    sortBy,
+    sortOrder,
   });
 
   const skills = data?.skills ?? [];

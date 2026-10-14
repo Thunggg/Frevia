@@ -43,7 +43,7 @@ import {
   User,
 } from "lucide-react";
 import { adminApiRequest } from "@/apiRequests/admin";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { PendingForumPostType } from "@shared/types";
 
 interface ModerationTableProps {
@@ -222,7 +222,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

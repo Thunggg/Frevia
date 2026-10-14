@@ -44,6 +44,13 @@ export class SkillsAdminRepository {
           ? false
           : undefined;
 
+    // Sort theo cột (chỉ ID / CreatedAt); mặc định id desc
+    const sortBy = query.sortBy ?? 'id';
+    const sortOrder = query.sortOrder ?? 'desc';
+    const orderBy: Prisma.SkillOrderByWithRelationInput = {
+      [sortBy]: sortOrder,
+    };
+
     const where: Prisma.SkillWhereInput = {
       ...(search
         ? {
@@ -70,7 +77,7 @@ export class SkillsAdminRepository {
       this.prisma.skill.findMany({
         where,
         select: skillListSelect,
-        orderBy: { name: 'asc' },
+        orderBy,
         skip: (page - 1) * limit,
         take: limit,
       }),

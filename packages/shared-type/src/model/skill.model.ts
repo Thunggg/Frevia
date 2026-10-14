@@ -15,12 +15,14 @@ export const SkillAdminItemSchema = z.object({
   jobCount: z.number().optional(),
 });
 
-// Query: phân trang + tìm kiếm + lọc trạng thái soft-deleted (deletedAt)
+// Query: phân trang + tìm kiếm + lọc trạng thái soft-deleted (deletedAt) + sort
 export const SkillAdminQuerySchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(10),
   search: z.string().optional(),
   deleted: z.enum(["true", "false"]).optional(),
+  sortBy: z.enum(["id", "createdAt"]).optional().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
 export const SkillAdminListResponseSchema = z.object({

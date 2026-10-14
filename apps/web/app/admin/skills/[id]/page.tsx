@@ -86,9 +86,7 @@ export default async function AdminSkillDetailPage({
                 Active
               </Badge>
             ) : (
-              <Badge variant="outline" className="text-muted-foreground">
-                Deleted
-              </Badge>
+              <Badge variant="destructive">Deleted</Badge>
             )}
             <SkillActions skill={skill} />
           </div>
