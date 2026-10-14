@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
@@ -31,6 +32,14 @@ export const ForumCategoryNotFoundException = () =>
     {
       message: ManageForumMessage.FORUM_CATEGORY_NOT_FOUND,
       path: 'categoryId',
+    },
+  ]);
+
+export const ForumCategoryAlreadyExistsException = () =>
+  new ConflictException([
+    {
+      message: ManageForumMessage.FORUM_CATEGORY_ALREADY_EXISTS,
+      path: 'name',
     },
   ]);
 

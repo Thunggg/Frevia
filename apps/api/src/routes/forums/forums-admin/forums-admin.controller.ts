@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -13,6 +15,7 @@ import {
   ForumAdminStatsResponseDto,
   ForumAdminCategoryListResponseDto,
   ForumAdminCategoryDetailResponseDto,
+  CreateForumCategoryBodyDto,
   ForumAdminCommentListResponseDto,
   PendingForumPostListResponseDto,
   ReviewForumPostResponseDto,
@@ -59,6 +62,15 @@ export class ForumAdminController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.adminService.getAdminCategoryById(roleName, id);
+  }
+
+  @Post('categories')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  createAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Body() body: CreateForumCategoryBodyDto,
+  ) {
+    return this.adminService.createAdminCategory(roleName, body);
   }
 
   @Get('comments')

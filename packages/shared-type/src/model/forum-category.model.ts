@@ -77,3 +77,22 @@ export type ForumAdminCategoryFilterType = z.infer<
 export type ForumAdminCategoryListResponseType = z.infer<
   typeof ForumAdminCategoryListResponseSchema
 >;
+
+// --- Admin: Create Category ---
+
+export const CreateForumCategoryBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
+    .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG),
+  description: z
+    .string()
+    .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)
+    .optional()
+    .nullable(),
+});
+
+export type CreateForumCategoryBodyType = z.infer<
+  typeof CreateForumCategoryBodySchema
+>;

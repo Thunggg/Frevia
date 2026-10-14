@@ -3,6 +3,7 @@ import {
   ForumAdminStatsSchema,
   ForumAdminCategoryListResponseSchema,
   ForumCategoryDetailResponseSchema,
+  CreateForumCategoryBodySchema,
   ForumAdminCommentListResponseSchema,
   ForumAdminCommentSchema,
   ForumPostSchema,
@@ -26,6 +27,10 @@ export class ForumAdminCategoryListResponseDto extends createZodDto(
 
 export class ForumAdminCategoryDetailResponseDto extends createZodDto(
   ForumCategoryDetailResponseSchema,
+) {}
+
+export class CreateForumCategoryBodyDto extends createZodDto(
+  CreateForumCategoryBodySchema,
 ) {}
 
 export class PendingForumPostListResponseDto extends createZodDto(

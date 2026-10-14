@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { CategoriesTable } from "./components/categories-table";
+import { CreateCategoryDialog } from "./components/create-category-dialog";
 import { SearchBar } from "../components/search-bar";
 
 export default async function AdminCategoriesPage({
@@ -30,14 +31,18 @@ export default async function AdminCategoriesPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Categories Management
-        </h1>
-        <p className="mt-1 text-muted-foreground">
-          Manage all forum categories ({data.pagination.total} total)
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Categories Management
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Manage all forum categories ({data.pagination.total} total)
+          </p>
+        </div>
+        <CreateCategoryDialog />
       </div>
+
       <Suspense>
         <SearchBar
           placeholder="Search categories by name..."

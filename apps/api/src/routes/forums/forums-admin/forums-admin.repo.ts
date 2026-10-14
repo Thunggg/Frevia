@@ -6,7 +6,9 @@ import {
   ForumPostType,
 } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
+import { slugify } from '../forums-post/forums.slug';
 import {
+  ForumCategoryAlreadyExistsException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
 } from './forums-admin.error';
@@ -308,6 +310,58 @@ export class ForumAdminRepository {
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
       postCount: category._count.posts,
+    };
+  }
+
+  // Tạo category mới
+  async createAdminCategory(data: {
+    name: string;
+    description?: string | null;
+  }): Promise<ForumCategoryType> {
+    const existingName = await this.prisma.forumCategory.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: data.name, mode: 'insensitive' },
+      },
+    });
+
+    if (existingName) {
+      throw ForumCategoryAlreadyExistsException();
+    }
+
+    let baseSlug = slugify(data.name);
+    if (!baseSlug) {
+      baseSlug = 'category';
+    }
+
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (
+      await this.prisma.forumCategory.findFirst({
+        where: { slug, deletedAt: null },
+      })
+    ) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+
+    const created = await this.prisma.forumCategory.create({
+      data: {
+        name: data.name,
+        slug,
+        description: data.description ?? null,
+      },
+    });
+
+    return {
+      id: created.id,
+      name: created.name,
+      slug: created.slug,
+      description: created.description,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+      postCount: 0,
     };
   }
 

@@ -4,6 +4,8 @@ import { ForumAdminRepository } from './forums-admin.repo';
 import {
   ForumAdminCategoryListResponseType,
   ForumCategoryDetailResponseType,
+  CreateForumCategoryBodyType,
+  ForumCategoryType,
   ForumAdminCommentType,
   ForumAdminStatsType,
   ForumAdminCommentListResponseType,
@@ -128,6 +130,23 @@ export class ForumAdminService {
         throw error;
       }
       throw ForumReportForbiddenException();
+    }
+  }
+
+  async createAdminCategory(
+    roleName: string,
+    body: CreateForumCategoryBodyType,
+  ): Promise<ForumCategoryType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.createAdminCategory(body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw error;
     }
   }
 
