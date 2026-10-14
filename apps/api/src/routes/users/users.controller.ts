@@ -1,7 +1,10 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { UserActive } from '../../shared/decorators/user-active.decorators';
-import { AdminUserListResponseDto, AdminUserQueryDto } from './users.dto';
+import {
+  AdminUserDetailResponseDto,
+  AdminUserListResponseDto,
+  AdminUserQueryDto,
+} from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -10,10 +13,13 @@ export class UsersController {
 
   @Get()
   @ZodSerializerDto(AdminUserListResponseDto)
-  getUsers(
-    @UserActive('roleName') roleName: string,
-    @Query() query: AdminUserQueryDto,
-  ) {
-    return this.service.getUsers(roleName, query);
+  getUsers(@Query() query: AdminUserQueryDto) {
+    return this.service.getUsers(query);
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(AdminUserDetailResponseDto)
+  getUserById(@Param('id', ParseIntPipe) id: number) {
+    return this.service.getUserById(id);
   }
 }

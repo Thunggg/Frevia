@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Table,
@@ -10,12 +11,13 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { ArrowUpDown, ArrowUp, ArrowDown, Shield, User } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Eye, Shield, User } from "lucide-react";
 import { AdminPagination } from "../../components/admin-pagination";
 import type { AdminUserItemType } from "@shared/types";
 
@@ -148,13 +150,14 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   Joined {renderSortIcon("createdAt")}
                 </button>
               </TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
                   No users found.
@@ -222,6 +225,19 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   </TableCell>
                   <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="h-8 px-2.5 text-xs hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] hover:border-[#4fae2e]/40 transition-colors"
+                    >
+                      <Link href={`/admin/users/${user.id}`}>
+                        <Eye className="mr-1.5 h-3.5 w-3.5" />
+                        Details
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))

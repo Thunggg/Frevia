@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
+  AdminUserDetailResponseType,
   AdminUserListResponseType,
   ApiResponse,
   ForumAdminCategoryListResponseType,
@@ -65,6 +66,10 @@ const adminServerRequest = {
   }) {
     const query = buildQueryString(params || {});
     return adminServerFetch<AdminUserListResponseType>(`/api/users${query}`);
+  },
+
+  getUserById(id: number) {
+    return adminServerFetch<AdminUserDetailResponseType>(`/api/users/${id}`);
   },
 
   getStats() {

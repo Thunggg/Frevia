@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 export const UserForbiddenException = () =>
@@ -16,5 +17,21 @@ export const FailedToGetUsersException = () =>
     {
       message: 'Error.FailedToGetUsers',
       path: 'users',
+    },
+  ]);
+
+export const UserNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: 'Error.UserNotFound',
+      path: 'userId',
+    },
+  ]);
+
+export const FailedToGetUserException = () =>
+  new InternalServerErrorException([
+    {
+      message: 'Error.FailedToGetUser',
+      path: 'userId',
     },
   ]);

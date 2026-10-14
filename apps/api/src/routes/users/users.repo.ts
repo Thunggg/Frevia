@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
+  AdminUserDetailResponseType,
   AdminUserItemType,
   AdminUserListResponseType,
   AdminUserQueryType,
@@ -157,6 +158,154 @@ export class UsersRepository {
         total,
         totalPages: Math.ceil(total / limit),
       },
+    };
+  }
+
+  async getUserById(id: number): Promise<AdminUserDetailResponseType | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+      include: {
+        profile: {
+          include: {
+            socialLinks: true,
+            freelancerProfile: {
+              include: {
+                skills: true,
+                portfolioItems: {
+                  where: { deletedAt: null },
+                  orderBy: { createdAt: 'desc' },
+                },
+              },
+            },
+            clientProfile: true,
+          },
+        },
+        userRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            jobsPosted: true,
+            contractsAsClient: true,
+            contractsAsFreelancer: true,
+            proposals: true,
+            reviewsReceived: true,
+            idVerificationDocuments: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    const customRoleProfiles = user.userRoles
+      .filter((ur) => {
+        const name = ur.role.name.toLowerCase();
+        return name !== 'client' && name !== 'freelancer';
+      })
+      .map((ur) => ({
+        roleId: ur.role.id,
+        roleName: ur.role.name,
+        description: ur.role.description,
+        isPrimary: ur.isPrimary,
+        permissions: ur.role.rolePermissions
+          .filter((rp) => rp.permission && !rp.permission.deletedAt)
+          .map((rp) => ({
+            id: rp.permission.id,
+            name: rp.permission.name,
+            path: rp.permission.path,
+            method: rp.permission.method,
+            module: rp.permission.module,
+          })),
+      }));
+
+    const clientProfile = user.profile?.clientProfile
+      ? {
+          id: user.profile.clientProfile.id,
+          companyName: user.profile.clientProfile.companyName,
+          companyDescription: user.profile.clientProfile.companyDescription,
+          website: user.profile.clientProfile.website,
+          createdAt: user.profile.clientProfile.createdAt,
+          updatedAt: user.profile.clientProfile.updatedAt,
+        }
+      : null;
+
+    const freelancerProfile = user.profile?.freelancerProfile
+      ? {
+          id: user.profile.freelancerProfile.id,
+          title: user.profile.freelancerProfile.title,
+          education: user.profile.freelancerProfile.education,
+          certifications: user.profile.freelancerProfile.certifications,
+          languages: user.profile.freelancerProfile.languages,
+          idVerified: user.profile.freelancerProfile.idVerified,
+          skills: user.profile.freelancerProfile.skills.map((s) => ({
+            id: s.id,
+            skillName: s.skillName,
+            proficiencyLevel: s.proficiencyLevel,
+          })),
+          portfolioItems: user.profile.freelancerProfile.portfolioItems.map(
+            (p) => ({
+              id: p.id,
+              title: p.title,
+              description: p.description,
+              technologies: p.technologies,
+              mediaUrls: p.mediaUrls,
+              projectUrl: p.projectUrl,
+              createdAt: p.createdAt,
+            }),
+          ),
+          createdAt: user.profile.freelancerProfile.createdAt,
+          updatedAt: user.profile.freelancerProfile.updatedAt,
+        }
+      : null;
+
+    return {
+      id: user.id,
+      email: user.email,
+      isBanned: user.isBanned,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      displayName: user.profile?.displayName ?? null,
+      avatarUrl: user.profile?.avatarUrl ?? null,
+      coverUrl: user.profile?.coverUrl ?? null,
+      bio: user.profile?.bio ?? null,
+      onlineStatus: user.profile?.onlineStatus ?? false,
+      availabilityStatus: user.profile?.availabilityStatus ?? 'OFFLINE',
+      profileCompletionPercent: user.profile?.profileCompletionPercent ?? 0,
+      roles: user.userRoles.map((ur) => ({
+        id: ur.role.id,
+        name: ur.role.name,
+        description: ur.role.description,
+        isPrimary: ur.isPrimary,
+      })),
+      socialLinks: (user.profile?.socialLinks ?? []).map((s) => ({
+        id: s.id,
+        platform: s.platform,
+        url: s.url,
+      })),
+      stats: {
+        jobsPosted: user._count.jobsPosted,
+        contractsAsClient: user._count.contractsAsClient,
+        contractsAsFreelancer: user._count.contractsAsFreelancer,
+        proposals: user._count.proposals,
+        reviewsReceived: user._count.reviewsReceived,
+        idVerificationDocuments: user._count.idVerificationDocuments,
+      },
+      clientProfile,
+      freelancerProfile,
+      customRoleProfiles,
     };
   }
 }

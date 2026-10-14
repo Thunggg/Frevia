@@ -14,6 +14,7 @@ import {
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
   AdminUserListResponseType,
+  AdminUserDetailResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -42,6 +43,9 @@ export const adminApiRequest = {
     const query = buildQueryString(params || {});
     return http.get<AdminUserListResponseType>(`/api/users${query}`);
   },
+
+  getUserById: (id: number) =>
+    http.get<AdminUserDetailResponseType>(`/api/users/${id}`),
 
   createCategory: (body: CreateForumCategoryBodyType) =>
     http.post<ForumCategoryType>("/api/forums/admin/categories", body),

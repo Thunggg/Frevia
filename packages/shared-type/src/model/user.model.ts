@@ -241,3 +241,108 @@ export type AdminUserListResponseType = z.infer<
   typeof AdminUserListResponseSchema
 >;
 export type AdminUserQueryType = z.infer<typeof AdminUserQuerySchema>;
+
+export const AdminUserSocialLinkSchema = z.object({
+  id: z.number(),
+  platform: z.string(),
+  url: z.string(),
+});
+
+export const AdminUserStatsSchema = z.object({
+  jobsPosted: z.number(),
+  contractsAsClient: z.number(),
+  contractsAsFreelancer: z.number(),
+  proposals: z.number(),
+  reviewsReceived: z.number(),
+  idVerificationDocuments: z.number(),
+});
+
+export const AdminUserClientProfileSchema = z.object({
+  id: z.number(),
+  companyName: z.string().nullable().optional(),
+  companyDescription: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export const AdminUserFreelancerSkillSchema = z.object({
+  id: z.number(),
+  skillName: z.string(),
+  proficiencyLevel: z.number(),
+});
+
+export const AdminUserPortfolioItemSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string().nullable().optional(),
+  technologies: z.array(z.string()).default([]),
+  mediaUrls: z.array(z.string()).default([]),
+  projectUrl: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+});
+
+export const AdminUserFreelancerProfileSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  education: z.any().nullable().optional(),
+  certifications: z.any().nullable().optional(),
+  languages: z.any().nullable().optional(),
+  idVerified: z.boolean(),
+  skills: z.array(AdminUserFreelancerSkillSchema).default([]),
+  portfolioItems: z.array(AdminUserPortfolioItemSchema).default([]),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export const AdminUserPermissionItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  path: z.string(),
+  method: z.string(),
+  module: z.string().nullable().optional(),
+});
+
+export const AdminUserCustomRoleProfileSchema = z.object({
+  roleId: z.number(),
+  roleName: z.string(),
+  description: z.string().nullable().optional(),
+  isPrimary: z.boolean(),
+  permissions: z.array(AdminUserPermissionItemSchema).default([]),
+});
+
+export const AdminUserDetailResponseSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  isBanned: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  displayName: z.string().nullable().optional(),
+  avatarUrl: z.string().nullable().optional(),
+  coverUrl: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  onlineStatus: z.boolean().optional(),
+  availabilityStatus: z.string().optional(),
+  profileCompletionPercent: z.number().optional(),
+  roles: z.array(AdminUserRoleSchema),
+  socialLinks: z.array(AdminUserSocialLinkSchema).default([]),
+  stats: AdminUserStatsSchema,
+  clientProfile: AdminUserClientProfileSchema.nullable().optional(),
+  freelancerProfile: AdminUserFreelancerProfileSchema.nullable().optional(),
+  customRoleProfiles: z.array(AdminUserCustomRoleProfileSchema).default([]),
+});
+
+export type AdminUserDetailResponseType = z.infer<
+  typeof AdminUserDetailResponseSchema
+>;
+export type AdminUserSocialLinkType = z.infer<typeof AdminUserSocialLinkSchema>;
+export type AdminUserStatsType = z.infer<typeof AdminUserStatsSchema>;
+export type AdminUserClientProfileType = z.infer<
+  typeof AdminUserClientProfileSchema
+>;
+export type AdminUserFreelancerProfileType = z.infer<
+  typeof AdminUserFreelancerProfileSchema
+>;
+export type AdminUserCustomRoleProfileType = z.infer<
+  typeof AdminUserCustomRoleProfileSchema
+>;

@@ -1,13 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import {
+  AdminUserDetailResponseType,
   AdminUserListResponseType,
   AdminUserQueryType,
-  RoleName,
 } from '@shared/types';
 import { UsersRepository } from './users.repo';
 import {
+  FailedToGetUserException,
   FailedToGetUsersException,
-  UserForbiddenException,
+  UserNotFoundException,
 } from './users.error';
 
 @Injectable()
@@ -15,12 +16,8 @@ export class UsersService {
   constructor(private readonly repository: UsersRepository) {}
 
   async getUsers(
-    roleName: string,
     query: AdminUserQueryType,
   ): Promise<AdminUserListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw UserForbiddenException();
-    }
     try {
       return await this.repository.getUsers(query);
     } catch (error) {
@@ -28,6 +25,21 @@ export class UsersService {
         throw error;
       }
       throw FailedToGetUsersException();
+    }
+  }
+
+  async getUserById(id: number): Promise<AdminUserDetailResponseType> {
+    try {
+      const user = await this.repository.getUserById(id);
+      if (!user) {
+        throw UserNotFoundException();
+      }
+      return user;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToGetUserException();
     }
   }
 }
