@@ -4,7 +4,6 @@ import {
   DeleteForumCategoryResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminCommentType,
-  ForumAdminStatsType,
   ForumCategoryType,
   ForumPostListResponseType,
   ForumPostType,
@@ -14,6 +13,7 @@ import {
   IdentityVerificationAdminListResponseType,
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
+  AdminUserListResponseType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -31,7 +31,17 @@ function buildQueryString(
 }
 
 export const adminApiRequest = {
-  getStats: () => http.get<ForumAdminStatsType>("/api/forums/admin/stats"),
+  getUsers: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) => {
+    const query = buildQueryString(params || {});
+    return http.get<AdminUserListResponseType>(`/api/users${query}`);
+  },
 
   createCategory: (body: CreateForumCategoryBodyType) =>
     http.post<ForumCategoryType>("/api/forums/admin/categories", body),

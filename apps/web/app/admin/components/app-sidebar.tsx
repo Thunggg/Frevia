@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   UserCog,
+  Users,
   UsersRound,
 } from "lucide-react";
 import Image from "next/image";
@@ -25,6 +26,11 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Users",
+    href: "/admin/users",
+    icon: Users,
   },
   {
     title: "Forum",

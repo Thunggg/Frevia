@@ -2,6 +2,7 @@ import { z } from "zod";
 import { RoleName } from "../constants/role.constant";
 import { TypeOfVerificationCode } from "../constants/token.constant";
 import { AuthMessage } from "../message/auth.message";
+import { PaginationSchema } from "./forum-post.model";
 
 export const UserSchema = z.object({
   id: z.number(),
@@ -196,3 +197,47 @@ export type GetAuthorizationUrlResType = z.infer<
 export type GetMeResType = z.infer<typeof GetMeResSchema>;
 export type SwitchRoleBodyType = z.infer<typeof SwitchRoleBodySchema>;
 export type SwitchRoleResponseType = z.infer<typeof SwitchRoleResponseSchema>;
+
+// --- Admin User Management ---
+
+export const AdminUserRoleSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+export const AdminUserItemSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  isBanned: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  displayName: z.string().nullable().optional(),
+  avatarUrl: z.string().nullable().optional(),
+  roles: z.array(AdminUserRoleSchema),
+});
+
+export const AdminUserListResponseSchema = z.object({
+  users: z.array(AdminUserItemSchema),
+  pagination: PaginationSchema,
+});
+
+export const AdminUserQuerySchema = z.object({
+  page: z.coerce.number().min(1).optional().default(1),
+  limit: z.coerce.number().min(1).max(100).optional().default(10),
+  search: z.string().optional(),
+  role: z.string().optional(),
+  sortBy: z
+    .enum(["id", "email", "createdAt", "displayName"])
+    .optional()
+    .default("id"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
+export type AdminUserRoleType = z.infer<typeof AdminUserRoleSchema>;
+export type AdminUserItemType = z.infer<typeof AdminUserItemSchema>;
+export type AdminUserListResponseType = z.infer<
+  typeof AdminUserListResponseSchema
+>;
+export type AdminUserQueryType = z.infer<typeof AdminUserQuerySchema>;
