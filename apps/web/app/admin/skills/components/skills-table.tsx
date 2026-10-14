@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Table,
   TableBody,
@@ -9,11 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/shadcn/table";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Eye, Tags } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
 import type { SkillAdminItemType } from "@shared/types";
+import { Eye } from "lucide-react";
+import Link from "next/link";
+import { AdminPagination } from "../../components/admin-pagination";
 
 interface SkillsTableProps {
   skills: SkillAdminItemType[];
@@ -61,7 +61,6 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Tags className="h-4 w-4 text-muted-foreground shrink-0" />
                       <span className="font-medium text-sm text-foreground">
                         {skill.name}
                       </span>
@@ -79,7 +78,10 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                         Active
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-muted-foreground">
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground"
+                      >
                         Deleted
                       </Badge>
                     )}
