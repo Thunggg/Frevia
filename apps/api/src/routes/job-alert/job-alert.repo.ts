@@ -35,6 +35,18 @@ const jobAlertSelect = {
 export class JobAlertRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findByIdAndUserId(
+    id: number,
+    userId: number,
+  ): Promise<JobAlertType | null> {
+    const jobAlert = await this.prisma.jobAlert.findFirst({
+      where: { id, userId },
+      select: jobAlertSelect,
+    });
+
+    return jobAlert ? this.normalize(jobAlert) : null;
+  }
+
   async findAllByUserId(
     userId: number,
     query: GetJobAlertsQueryType,

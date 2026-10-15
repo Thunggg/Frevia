@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateJobAlertBodyType,
+  GetJobAlertDetailResponseType,
   GetJobAlertsQueryType,
   GetJobAlertsResponseType,
   JobAlertType,
@@ -10,8 +11,10 @@ import {
 
 import {
   FailedToCreateJobAlertException,
+  FailedToLoadJobAlertDetailException,
   FailedToLoadJobAlertsException,
   JobAlertFreelancerOnlyException,
+  JobAlertNotFoundException,
   JobAlertSkillNotFoundException,
 } from './job-alert.error';
 import { JobAlertRepository } from './job-alert.repo';
@@ -19,6 +22,31 @@ import { JobAlertRepository } from './job-alert.repo';
 @Injectable()
 export class JobAlertService {
   constructor(private readonly jobAlertRepository: JobAlertRepository) {}
+
+  async getJobAlertDetail(
+    userId: number,
+    roleName: string,
+    id: number,
+  ): Promise<GetJobAlertDetailResponseType> {
+    this.assertFreelancer(roleName);
+
+    try {
+      const jobAlert = await this.jobAlertRepository.findByIdAndUserId(
+        id,
+        userId,
+      );
+      if (!jobAlert) {
+        throw JobAlertNotFoundException();
+      }
+
+      return jobAlert;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadJobAlertDetailException();
+      }
+      throw error;
+    }
+  }
 
   async getJobAlerts(
     userId: number,

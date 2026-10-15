@@ -1,6 +1,7 @@
 import {
   CreateJobAlertBodySchema,
   CreateJobAlertResponseSchema,
+  GetJobAlertDetailResponseSchema,
   GetJobAlertsQuerySchema,
   GetJobAlertsResponseSchema,
 } from '@shared/types';
@@ -12,6 +13,10 @@ export class CreateJobAlertBodyDto extends createZodDto(
 
 export class CreateJobAlertResponseDto extends createZodDto(
   CreateJobAlertResponseSchema,
+) {}
+
+export class GetJobAlertDetailResponseDto extends createZodDto(
+  GetJobAlertDetailResponseSchema,
 ) {}
 
 export class GetJobAlertsQueryDto extends createZodDto(

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import type {
   CreateJobAlertBodyType,
   GetJobAlertsQueryType,
@@ -9,6 +17,7 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateJobAlertBodyDto,
   CreateJobAlertResponseDto,
+  GetJobAlertDetailResponseDto,
   GetJobAlertsQueryDto,
   GetJobAlertsResponseDto,
 } from './job-alert.dto';
@@ -30,6 +39,16 @@ export class JobAlertController {
       roleName,
       query as GetJobAlertsQueryType,
     );
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(GetJobAlertDetailResponseDto)
+  getJobAlertDetail(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.jobAlertService.getJobAlertDetail(userId, roleName, id);
   }
 
   @Post()

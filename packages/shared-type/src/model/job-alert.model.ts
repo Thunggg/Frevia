@@ -89,6 +89,7 @@ export const CreateJobAlertBodySchema = z
   });
 
 export const CreateJobAlertResponseSchema = JobAlertSchema;
+export const GetJobAlertDetailResponseSchema = JobAlertSchema;
 
 export const GetJobAlertsQuerySchema = z.object({
   page: z.coerce
@@ -117,6 +118,9 @@ export const GetJobAlertsResponseSchema = z.object({
 });
 
 export type JobAlertType = z.infer<typeof JobAlertSchema>;
+export type GetJobAlertDetailResponseType = z.infer<
+  typeof GetJobAlertDetailResponseSchema
+>;
 export type CreateJobAlertBodyInputType = z.input<
   typeof CreateJobAlertBodySchema
 >;

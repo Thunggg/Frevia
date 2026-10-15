@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   InternalServerErrorException,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ManageJobAlertMessage } from '@shared/types';
@@ -15,6 +16,11 @@ export const JobAlertSkillNotFoundException = () =>
     { message: ManageJobAlertMessage.SKILL_NOT_FOUND, path: 'skills' },
   ]);
 
+export const JobAlertNotFoundException = () =>
+  new NotFoundException([
+    { message: ManageJobAlertMessage.NOT_FOUND, path: 'id' },
+  ]);
+
 export const FailedToCreateJobAlertException = () =>
   new InternalServerErrorException([
     { message: ManageJobAlertMessage.FAILED_TO_CREATE, path: '' },
@@ -23,4 +29,9 @@ export const FailedToCreateJobAlertException = () =>
 export const FailedToLoadJobAlertsException = () =>
   new InternalServerErrorException([
     { message: ManageJobAlertMessage.FAILED_TO_LOAD, path: '' },
+  ]);
+
+export const FailedToLoadJobAlertDetailException = () =>
+  new InternalServerErrorException([
+    { message: ManageJobAlertMessage.FAILED_TO_LOAD_DETAIL, path: '' },
   ]);
