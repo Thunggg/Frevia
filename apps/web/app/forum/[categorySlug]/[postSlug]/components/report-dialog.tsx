@@ -13,7 +13,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { Loader2, Flag, CheckCircle2 } from "lucide-react";
+import { Loader2, Flag, CheckCircle2 } from "@/components/icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
