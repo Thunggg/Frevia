@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookmarkCheck, Search, SlidersHorizontal } from "lucide-react";
+import { BookmarkCheck, Search, SlidersHorizontal } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookmarkPlus, Pencil, Trash2 } from "lucide-react";
+import { BookmarkPlus, Pencil, Trash2 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -149,43 +149,54 @@ export function SaveSearchDialog({
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="h-11 gap-2">
-            <BookmarkPlus className="size-4" />
-            Save search
-            <span className="rounded-full bg-[#eaf8df] px-1.5 py-0.5 text-xs font-semibold text-[#3f9225] dark:bg-[#4fae2e]/15">
-              {savedSearches.length}
-            </span>
-          </Button>
+          <button
+            type="button"
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none shrink-0"
+          >
+            <BookmarkPlus className="size-4 text-[#4fae2e]" />
+            <span>Saved Searches</span>
+            {savedSearches.length > 0 && (
+              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-1.5 text-[11px] font-bold text-foreground">
+                {savedSearches.length}
+              </span>
+            )}
+          </button>
         </DialogTrigger>
-        <DialogContent className="max-h-[min(42rem,calc(100dvh-2rem))] overflow-y-auto sm:max-w-xl">
+        <DialogContent className="max-h-[min(42rem,calc(100dvh-2rem))] overflow-y-auto sm:max-w-xl rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
           <DialogHeader>
-            <DialogTitle>Saved searches</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg font-bold text-foreground font-sans">
+              Saved searches
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground font-sans">
               Open a saved filter set, rename it, or remove it from your list.
             </DialogDescription>
           </DialogHeader>
 
           {editing ? (
             <form
-              className="rounded-lg border border-border bg-muted/30 p-4"
+              className="rounded-2xl border border-border bg-muted/30 p-4 font-sans"
               onSubmit={handleRename}
             >
               <div className="grid gap-2">
-                <Label htmlFor="saved-search-name">Saved search name</Label>
+                <Label htmlFor="saved-search-name" className="text-xs font-semibold">
+                  Saved search name
+                </Label>
                 <Input
                   id="saved-search-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="For example, Remote React work"
                   maxLength={100}
+                  className="rounded-full bg-background"
                   autoFocus
                   required
                 />
               </div>
-              <DialogFooter className="mt-4">
+              <DialogFooter className="mt-4 flex gap-2">
                 <Button
                   type="button"
                   variant="ghost"
+                  className="rounded-full"
                   onClick={() => {
                     setEditing(null);
                     setName("");
@@ -195,7 +206,7 @@ export function SaveSearchDialog({
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                  className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928]"
                   disabled={isSubmitting || !name.trim()}
                 >
                   {isSubmitting ? "Saving..." : "Save changes"}
@@ -204,18 +215,18 @@ export function SaveSearchDialog({
             </form>
           ) : (
             <Button
-              className="w-full bg-[#4fae2e] text-white hover:bg-[#459928]"
+              className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 cursor-pointer"
               onClick={() => setSaveConfirmationOpen(true)}
               disabled={isSubmitting || isCurrentSearchSaved}
             >
-              <BookmarkPlus className="size-4" />
+              <BookmarkPlus className="size-4 mr-1.5" />
               {isCurrentSearchSaved
                 ? "Current search saved"
                 : "Save current search"}
             </Button>
           )}
 
-          <div className="divide-y divide-border rounded-lg border border-border">
+          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
             {savedSearches.length ? (
               savedSearches.map((savedSearch) => (
                 <div
@@ -275,41 +286,44 @@ export function SaveSearchDialog({
         open={saveConfirmationOpen}
         onOpenChange={setSaveConfirmationOpen}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
           <DialogHeader>
-            <DialogTitle>Save this search?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg font-bold text-foreground font-sans">
+              Save this search?
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground font-sans">
               It will be saved as &quot;{defaultSearchName}&quot;. You can
               rename it later.
             </DialogDescription>
           </DialogHeader>
-          <div className="divide-y divide-border rounded-lg border border-border">
+          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden my-2">
             {currentFilters.map((filter) => (
               <div
                 key={filter.label}
-                className="flex items-center justify-between gap-4 px-4 py-3 text-sm"
+                className="flex items-center justify-between gap-4 px-4 py-2.5 text-xs"
               >
-                <span className="text-muted-foreground">{filter.label}</span>
-                <span className="max-w-[60%] truncate text-right font-medium capitalize text-foreground">
+                <span className="text-muted-foreground font-medium">{filter.label}</span>
+                <span className="max-w-[60%] truncate text-right font-semibold capitalize text-foreground">
                   {filter.value}
                 </span>
               </div>
             ))}
           </div>
-          <DialogFooter>
+          <DialogFooter className="mt-2 flex gap-2">
             <Button
               variant="ghost"
+              className="rounded-full"
               disabled={isSubmitting}
               onClick={() => setSaveConfirmationOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+              className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
               disabled={isSubmitting}
               onClick={handleCreate}
             >
-              <BookmarkPlus className="size-4" />
+              <BookmarkPlus className="size-4 mr-1.5" />
               {isSubmitting ? "Saving..." : "Save search"}
             </Button>
           </DialogFooter>
@@ -321,17 +335,20 @@ export function SaveSearchDialog({
           open
           onOpenChange={(nextOpen) => !nextOpen && setDeleting(null)}
         >
-          <DialogContent className="sm:max-w-sm">
+          <DialogContent className="sm:max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
             <DialogHeader>
-              <DialogTitle>Delete this saved search?</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-lg font-bold text-foreground font-sans">
+                Delete saved search?
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground font-sans">
                 This will permanently remove &quot;{deleting.name}&quot;. Your
                 jobs and search results will not be affected.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
+            <DialogFooter className="mt-3 flex gap-2">
               <Button
                 variant="ghost"
+                className="rounded-full"
                 disabled={isSubmitting}
                 onClick={() => setDeleting(null)}
               >
@@ -339,6 +356,7 @@ export function SaveSearchDialog({
               </Button>
               <Button
                 variant="destructive"
+                className="rounded-full"
                 disabled={isSubmitting}
                 onClick={handleDelete}
               >

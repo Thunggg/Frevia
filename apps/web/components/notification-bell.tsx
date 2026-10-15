@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
-import { MessageSquare, Paperclip } from "lucide-react";
+import { MessageSquare, Paperclip } from "@/components/icons";
 
 function formatTime(createdAt?: string | Date | null): string {
   if (!createdAt) return "";

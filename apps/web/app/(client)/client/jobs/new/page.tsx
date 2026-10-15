@@ -1,4 +1,4 @@
-import { PostJobPageContent } from "../../../projects/new/post-job-page-content";
+import { PostJobPageContent } from "./_components/post-job-page-content";
 
 export default function ClientPostJobPage() {
   return <PostJobPageContent />;

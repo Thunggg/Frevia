@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar } from "lucide-react";
+import { Calendar } from "@/components/icons";
 
 import {
   Avatar,
