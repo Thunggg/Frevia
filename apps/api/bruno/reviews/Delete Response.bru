@@ -1,0 +1,15 @@
+meta {
+  name: Delete Response
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/reviews/responses/{{responseId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

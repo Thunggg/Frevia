@@ -4,6 +4,10 @@ import {
   PrismaClient,
   SocialPlatform,
   VerificationStatus,
+  BudgetType,
+  ContractStatus,
+  JobStatus,
+  ProposalStatus,
 } from '@prisma/client';
 import 'dotenv/config';
 
@@ -145,6 +149,96 @@ async function seedAccountProfileDemo() {
     });
   }
 
+  const demoJob = await prisma.job.upsert({
+    where: { slug: 'frevia-review-demo-contract' },
+    create: {
+      clientId: client.id,
+      title: 'Frevia review demo project',
+      slug: 'frevia-review-demo-contract',
+      description: 'Stable demo project for the review management use cases.',
+      budgetType: BudgetType.FIXED_PRICE,
+      budgetMin: 800,
+      budgetMax: 1200,
+      status: JobStatus.COMPLETED,
+    },
+    update: {
+      clientId: client.id,
+      status: JobStatus.COMPLETED,
+      deletedAt: null,
+    },
+  });
+
+  let demoProposal = await prisma.proposal.findFirst({
+    where: {
+      jobId: demoJob.id,
+      freelancerId: freelancer.id,
+      deletedAt: null,
+    },
+  });
+  if (!demoProposal) {
+    demoProposal = await prisma.proposal.create({
+      data: {
+        jobId: demoJob.id,
+        freelancerId: freelancer.id,
+        coverLetter: 'Demo proposal for review management.',
+        bidAmount: 1000,
+        deliveryDays: 14,
+        status: ProposalStatus.ACCEPTED,
+        submittedAt: new Date(),
+        acceptedAt: new Date(),
+      },
+    });
+  }
+
+  const demoContract = await prisma.contract.upsert({
+    where: { proposalId: demoProposal.id },
+    create: {
+      jobId: demoJob.id,
+      proposalId: demoProposal.id,
+      clientId: client.id,
+      freelancerId: freelancer.id,
+      terms: 'Demo contract used to present the complete review lifecycle.',
+      totalAmount: 1000,
+      status: ContractStatus.COMPLETED,
+      signedByClient: true,
+      signedByFreelancer: true,
+      signedAt: new Date(),
+      completedAt: new Date(),
+    },
+    update: {
+      clientId: client.id,
+      freelancerId: freelancer.id,
+      status: ContractStatus.COMPLETED,
+      deletedAt: null,
+    },
+  });
+
+  await prisma.review.upsert({
+    where: {
+      contractId_reviewerId: {
+        contractId: demoContract.id,
+        reviewerId: client.id,
+      },
+    },
+    create: {
+      contractId: demoContract.id,
+      reviewerId: client.id,
+      revieweeId: freelancer.id,
+      overallRating: 4.8,
+      breakdown: { quality: 5, communication: 4.5, deadlines: 5 },
+      comment:
+        'Excellent delivery, thoughtful communication, and reliable progress updates.',
+    },
+    update: {
+      revieweeId: freelancer.id,
+      overallRating: 4.8,
+      breakdown: { quality: 5, communication: 4.5, deadlines: 5 },
+      comment:
+        'Excellent delivery, thoughtful communication, and reliable progress updates.',
+      deletedAt: null,
+    },
+  });
+
   console.log(
     JSON.stringify(
       {
@@ -152,6 +246,7 @@ async function seedAccountProfileDemo() {
         clientProfileId: client.profile.id,
         freelancerUserId: freelancer.id,
         freelancerProfileId: freelancer.profile.id,
+        reviewDemoContractId: demoContract.id,
       },
       null,
       2,

@@ -35,6 +35,8 @@ import {
   Trash2,
   Upload,
   UserCheck,
+  UserRound,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -51,6 +53,8 @@ import {
   type SocialLinkType,
   type SocialPlatformType,
 } from "@shared/types";
+import { GeneralSettings } from "./general-settings";
+import { ReviewManager } from "./review-manager";
 
 type Props = {
   userId: number | null;
@@ -73,11 +77,7 @@ const labels: Record<string, string> = {
   OTHER: "Other document",
 };
 
-export function AccountProfileClient({
-  userId,
-  profileId,
-  headerRole,
-}: Props) {
+export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
@@ -248,14 +248,12 @@ export function AccountProfileClient({
   const requestedTab = searchParams.get("tab");
   const allowedTabs =
     headerRole === "CLIENT"
-      ? ["company", "social", "following", "favorites"]
-      : ["identity", "social"];
+      ? ["general", "company", "social", "reviews", "following", "favorites"]
+      : ["general", "identity", "social", "reviews"];
   const defaultTab =
     requestedTab && allowedTabs.includes(requestedTab)
       ? requestedTab
-      : headerRole === "CLIENT"
-        ? "company"
-        : "identity";
+      : "general";
   const publicProfileHref =
     headerRole === "FREELANCER"
       ? profileId
@@ -318,6 +316,9 @@ export function AccountProfileClient({
                 variant="line"
                 className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
               >
+                <TabsTrigger value="general">
+                  <UserRound /> General
+                </TabsTrigger>
                 {headerRole === "FREELANCER" ? (
                   <TabsTrigger value="identity">
                     <ShieldCheck /> Identity
@@ -331,6 +332,9 @@ export function AccountProfileClient({
                 <TabsTrigger value="social">
                   <Link2 /> Social links
                 </TabsTrigger>
+                <TabsTrigger value="reviews">
+                  <Star /> Reviews
+                </TabsTrigger>
                 {headerRole === "CLIENT" ? (
                   <TabsTrigger value="following">
                     <UserCheck /> Following
@@ -342,6 +346,10 @@ export function AccountProfileClient({
                   </TabsTrigger>
                 ) : null}
               </TabsList>
+
+              <TabsContent value="general">
+                <GeneralSettings />
+              </TabsContent>
 
               <TabsContent value="identity">
                 <div className="grid gap-8 lg:grid-cols-2">
@@ -597,6 +605,10 @@ export function AccountProfileClient({
                     )}
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="reviews">
+                {userId ? <ReviewManager userId={userId} /> : null}
               </TabsContent>
 
               <TabsContent value="following">

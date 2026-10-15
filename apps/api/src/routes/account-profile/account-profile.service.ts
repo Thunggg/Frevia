@@ -4,11 +4,14 @@ import {
   DocumentTypeType,
   RoleName,
   UpdateClientProfileType,
+  ChangePasswordType,
+  UpdateGeneralProfileType,
 } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { randomUUID } from 'crypto';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
+import { HashingService } from '../../shared/services/hashing.service';
 import {
   AccountProfileForbiddenException,
   ClientProfileNotFoundException,
@@ -23,6 +26,11 @@ import {
   ProfileNotFoundException,
   SocialLinkDuplicateException,
   SocialLinkNotFoundException,
+  AvatarFileInvalidException,
+  AvatarFileRequiredException,
+  AvatarNotFoundException,
+  CurrentPasswordIncorrectException,
+  PasswordUnavailableException,
 } from './account-profile.error';
 import { AccountProfileRepository } from './account-profile.repo';
 
@@ -31,7 +39,111 @@ export class AccountProfileService {
   constructor(
     private readonly repository: AccountProfileRepository,
     private readonly cloudinary: CloudinaryService,
+    private readonly hashing: HashingService,
   ) {}
+
+  private presentAvatarUrl(userId: number, avatarUrl: string | null) {
+    if (!avatarUrl?.startsWith('local://')) return avatarUrl;
+    return `/api/backend/account-profile/avatar/${userId}/file`;
+  }
+
+  private presentGeneralProfile(
+    user: NonNullable<
+      Awaited<ReturnType<AccountProfileRepository['findGeneralProfile']>>
+    >,
+  ) {
+    if (!user.profile) throw ProfileNotFoundException();
+    return {
+      ...user.profile,
+      email: user.email,
+      avatarUrl: this.presentAvatarUrl(user.id, user.profile.avatarUrl),
+      roles: user.userRoles.map((item) => ({
+        name: item.role.name,
+        isPrimary: item.isPrimary,
+      })),
+    };
+  }
+
+  async getGeneralProfile(userId: number) {
+    const user = await this.repository.findGeneralProfile(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    return this.presentGeneralProfile(user);
+  }
+
+  async updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
+    const user = await this.repository.findGeneralProfile(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    await this.repository.updateGeneralProfile(userId, input);
+    const updated = await this.repository.findGeneralProfile(userId);
+    if (!updated?.profile) throw ProfileNotFoundException();
+    return this.presentGeneralProfile(updated);
+  }
+
+  async changePassword(userId: number, input: ChangePasswordType) {
+    const user = await this.repository.findGeneralProfile(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    if (!user.password) throw PasswordUnavailableException();
+    if (!(await this.hashing.verify(input.currentPassword, user.password))) {
+      throw CurrentPasswordIncorrectException();
+    }
+    await this.repository.updatePassword(
+      userId,
+      await this.hashing.hash(input.newPassword),
+    );
+    return { message: 'Password changed successfully.' };
+  }
+
+  async uploadAvatar(userId: number, file?: Express.Multer.File) {
+    const user = await this.repository.findGeneralProfile(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    if (!file) throw AvatarFileRequiredException();
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.mimetype) || file.size > 5 * 1024 * 1024) {
+      throw AvatarFileInvalidException();
+    }
+
+    let avatarUrl: string;
+    if (this.cloudinary.isConfigured()) {
+      const uploaded = await this.cloudinary.uploadFile(
+        file,
+        `frevia/avatars/${userId}`,
+      );
+      avatarUrl = uploaded.secure_url;
+    } else {
+      const extension = extname(file.originalname).toLowerCase() || '.png';
+      const relativePath = join(
+        'avatars',
+        String(userId),
+        `${randomUUID()}${extension}`,
+      );
+      const absolutePath = join(process.cwd(), 'uploads', relativePath);
+      await mkdir(dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, file.buffer);
+      avatarUrl = `local://${relativePath.replace(/\\/g, '/')}`;
+    }
+    await this.repository.updateAvatar(userId, avatarUrl);
+    return { avatarUrl: this.presentAvatarUrl(userId, avatarUrl) as string };
+  }
+
+  async getAvatarFile(userId: number) {
+    const user = await this.repository.findGeneralProfile(userId);
+    const avatarUrl = user?.profile?.avatarUrl;
+    if (!avatarUrl?.startsWith('local://')) throw AvatarNotFoundException();
+    const relativePath = avatarUrl.slice('local://'.length);
+    const uploadsRoot = resolve(process.cwd(), 'uploads');
+    const absolutePath = resolve(uploadsRoot, relativePath);
+    const pathFromUploadsRoot = relative(uploadsRoot, absolutePath);
+    if (
+      pathFromUploadsRoot.startsWith('..') ||
+      isAbsolute(pathFromUploadsRoot)
+    ) {
+      throw AvatarNotFoundException();
+    }
+    return {
+      absolutePath,
+      fileName: relativePath.split('/').at(-1) ?? 'avatar',
+    };
+  }
 
   private async requireRole(userId: number, roleName: string) {
     const user = await this.repository.findUserWithRoles(userId);

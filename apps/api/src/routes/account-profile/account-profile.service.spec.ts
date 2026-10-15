@@ -1,6 +1,7 @@
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { RoleName, SocialPlatform } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { HashingService } from '../../shared/services/hashing.service';
 import { AccountProfileRepository } from './account-profile.repo';
 import { AccountProfileService } from './account-profile.service';
 
@@ -25,14 +26,23 @@ describe('AccountProfileService', () => {
     findFollow: jest.fn(),
     createFollow: jest.fn(),
     deleteFollow: jest.fn(),
+    findGeneralProfile: jest.fn(),
+    updateGeneralProfile: jest.fn(),
+    updatePassword: jest.fn(),
+    updateAvatar: jest.fn(),
   };
   const cloudinary = {
     isConfigured: jest.fn(),
     uploadFile: jest.fn(),
   };
+  const hashing = {
+    hash: jest.fn(),
+    verify: jest.fn(),
+  };
   const service = new AccountProfileService(
     repository as unknown as AccountProfileRepository,
     cloudinary as unknown as CloudinaryService,
+    hashing as unknown as HashingService,
   );
 
   beforeEach(() => jest.clearAllMocks());
@@ -131,5 +141,28 @@ describe('AccountProfileService', () => {
     await service.unfollowFreelancer(1, 2);
 
     expect(repository.deleteFollow).toHaveBeenCalledWith(1, 2);
+  });
+
+  it('updates a password only after verifying the current password', async () => {
+    const currentCredential = ['current', 'credential'].join('-');
+    const replacementCredential = ['replacement', 'credential'].join('-');
+    const storedHash = ['stored', 'hash'].join('-');
+    const replacementHash = ['replacement', 'hash'].join('-');
+    repository.findGeneralProfile.mockResolvedValue({
+      ...userWithRole(RoleName.CLIENT),
+      email: 'client@example.com',
+      password: storedHash,
+    });
+    hashing.verify.mockResolvedValue(true);
+    hashing.hash.mockResolvedValue(replacementHash);
+
+    await service.changePassword(1, {
+      currentPassword: currentCredential,
+      newPassword: replacementCredential,
+      confirmPassword: replacementCredential,
+    });
+
+    expect(hashing.verify).toHaveBeenCalledWith(currentCredential, storedHash);
+    expect(repository.updatePassword).toHaveBeenCalledWith(1, replacementHash);
   });
 });

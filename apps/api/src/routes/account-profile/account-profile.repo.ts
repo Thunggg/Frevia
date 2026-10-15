@@ -3,6 +3,7 @@ import {
   AddSocialLinkType,
   DocumentTypeType,
   UpdateClientProfileType,
+  UpdateGeneralProfileType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 
@@ -14,6 +15,47 @@ export class AccountProfileRepository {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
       include: { userRoles: { include: { role: true } }, profile: true },
+    });
+  }
+
+  findGeneralProfile(userId: number) {
+    return this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        profile: true,
+        userRoles: {
+          select: { isPrimary: true, role: { select: { name: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+  }
+
+  updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
+    return this.prisma.profile.update({
+      where: { userId },
+      data: {
+        displayName: input.displayName,
+        bio: input.bio ?? null,
+      },
+    });
+  }
+
+  updatePassword(userId: number, password: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { password },
+    });
+  }
+
+  updateAvatar(userId: number, avatarUrl: string) {
+    return this.prisma.profile.update({
+      where: { userId },
+      data: { avatarUrl },
+      select: { avatarUrl: true },
     });
   }
 
