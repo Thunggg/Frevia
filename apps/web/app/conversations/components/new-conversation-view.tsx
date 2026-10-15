@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Loader2, Send } from "@/components/icons";
 import Link from "next/link";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import { accountProfileApi } from "@/apiRequests/account-profile";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Input } from "@repo/ui/components/shadcn/input";
 import {
   Avatar,
   AvatarImage,
@@ -76,73 +74,78 @@ export function NewConversationView({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-background font-sans">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-muted/60">
-        <Link
-          href="/conversations"
-          className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225] md:hidden"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-        <Avatar>
-          <AvatarImage src={participantAvatar ?? undefined} alt={displayName} />
-          <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">
-            {loadingParticipant ? "Loading..." : displayName}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Start a conversation
-          </p>
+      <div className="flex items-center justify-between border-b border-border bg-background/80 backdrop-blur px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link
+            href="/conversations"
+            className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground hover:text-foreground md:hidden shrink-0 cursor-pointer"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
+          <Avatar className="size-10 shrink-0">
+            <AvatarImage src={participantAvatar ?? undefined} alt={displayName} />
+            <AvatarFallback className="bg-muted text-xs font-bold text-foreground">
+              {displayName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-bold text-foreground font-sans">
+              {loadingParticipant ? "Loading..." : displayName}
+            </h3>
+            <p className="text-[11px] text-muted-foreground font-normal">
+              New conversation
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Empty state */}
       <div className="flex flex-1 items-center justify-center px-4">
         <div className="text-center">
-          <Avatar className="mx-auto h-16 w-16">
+          <Avatar className="mx-auto size-16">
             <AvatarImage src={participantAvatar ?? undefined} alt={displayName} />
-            <AvatarFallback className="text-xl">
+            <AvatarFallback className="text-xl font-bold bg-muted text-foreground">
               {displayName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <p className="mt-4 text-lg font-medium text-foreground">
+          <p className="mt-3 text-base font-bold text-foreground font-sans">
             {loadingParticipant ? "Loading..." : displayName}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             Send a message to start the conversation
           </p>
         </div>
       </div>
 
-      {/* Input */}
-      <div className="border-t p-4">
+      {/* Modern Capsule Input */}
+      <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
         <form
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
           onSubmit={(e) => {
             e.preventDefault();
             handleSend();
           }}
         >
-          <Input
+          <input
             placeholder="Type your first message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="flex-1"
+            className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
             autoFocus
           />
-          <Button
+          <button
             type="submit"
-            size="icon"
             disabled={!input.trim() || createConversation.isPending}
-            className="shrink-0 !bg-[#4fae2e] !text-white hover:!bg-[#459928] disabled:!bg-[#4fae2e]/50 disabled:!text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
           >
-            <Send className="h-4 w-4" />
-            <span className="sr-only">Send</span>
-          </Button>
+            {createConversation.isPending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Send className="size-3.5" />
+            )}
+          </button>
         </form>
       </div>
     </div>

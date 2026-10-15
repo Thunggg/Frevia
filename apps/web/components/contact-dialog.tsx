@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send } from "lucide-react";
+import { Send } from "@/components/icons";
 
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -14,7 +14,11 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/shadcn/dialog";
 
-export function ContactDialog() {
+export function ContactDialog({
+  triggerClassName,
+}: {
+  triggerClassName?: string;
+} = {}) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -56,7 +60,10 @@ export function ContactDialog() {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
-          className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
+          className={
+            triggerClassName ??
+            "rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
+          }
         >
           Contact
         </button>

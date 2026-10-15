@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal } from "@/components/icons";
 
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import { Footer } from "@/components/footer";

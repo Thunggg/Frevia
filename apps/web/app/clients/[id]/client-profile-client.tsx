@@ -20,7 +20,7 @@ import {
   Loader2,
   Pencil,
   RefreshCw,
-} from "lucide-react";
+} from "@/components/icons";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -70,10 +70,10 @@ export function ClientProfileClient({
       <Header role={headerRole} />
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+        <section className="border-b border-[#0069D3]/15 bg-[#D0E1F8]/20 dark:border-white/10 dark:bg-zinc-950">
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+              <Link href="/" className="transition-colors hover:text-[#0069D3]">
                 Home
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
@@ -104,11 +104,11 @@ export function ClientProfileClient({
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           {loading ? (
             <div className="flex justify-center py-24">
-              <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
+              <Loader2 className="size-8 animate-spin text-[#0069D3]" />
             </div>
           ) : error || !profile ? (
-            <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+            <div className="rounded-2xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8]/50 text-[#0069D3] dark:bg-[#0069D3]/15">
                 <Building2 className="size-7" />
               </div>
               <h2 className="text-lg font-medium text-foreground">
@@ -118,7 +118,7 @@ export function ClientProfileClient({
                 {error || "Couldn't load this profile. Try again."}
               </p>
               <Button
-                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-6 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 onClick={() => void load()}
               >
                 <RefreshCw className="mr-2 size-4" />
@@ -127,9 +127,9 @@ export function ClientProfileClient({
             </div>
           ) : (
             <>
-              <div className="overflow-hidden rounded-xl border border-border">
+              <div className="overflow-hidden rounded-2xl border border-border">
                 <div
-                  className="h-40 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"
+                  className="h-40 bg-zinc-900 bg-cover bg-center"
                   style={
                     profile.coverUrl
                       ? { backgroundImage: `url(${profile.coverUrl})` }
@@ -141,12 +141,12 @@ export function ClientProfileClient({
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                       <Avatar className="-mt-12 size-24 border-4 border-background sm:size-28">
                         <AvatarImage src={profile.avatarUrl ?? undefined} />
-                        <AvatarFallback className="bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                        <AvatarFallback className="bg-[#D0E1F8]/60 text-[#0069D3] dark:bg-[#0069D3]/20">
                           <Building2 />
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <Badge className="border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                        <Badge className="border-transparent bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/20 dark:text-[#D0E1F8]">
                           Client
                         </Badge>
                         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
@@ -157,9 +157,9 @@ export function ClientProfileClient({
                     {currentUserId === profile.userId ? (
                       <Button
                         asChild
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       >
-                        <Link href="/account-profile">
+                        <Link href="/client/profile">
                           <Pencil className="mr-2 size-4" />
                           Edit company
                         </Link>
@@ -182,14 +182,14 @@ export function ClientProfileClient({
                 </section>
 
                 <aside className="space-y-8 lg:col-span-4">
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <div className="rounded-2xl border border-border p-5 sm:p-6">
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
                       Company details
                     </h3>
                     <div className="mt-4">
                       {profile.clientProfile.website ? (
                         <a
-                          className="flex items-center gap-2 text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                          className="flex items-center gap-2 text-[#0069D3] transition-colors hover:text-[#005bb8]"
                           href={profile.clientProfile.website}
                           target="_blank"
                           rel="noreferrer"
@@ -206,7 +206,7 @@ export function ClientProfileClient({
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <div className="rounded-2xl border border-border p-5 sm:p-6">
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
                       Social links
                     </h3>
@@ -215,7 +215,7 @@ export function ClientProfileClient({
                         profile.socialLinks.map((social) => (
                           <li key={social.id}>
                             <a
-                              className="flex items-center gap-2 py-2.5 text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                              className="flex items-center gap-2 py-2.5 text-sm text-[#0069D3] transition-colors hover:text-[#005bb8]"
                               href={social.url}
                               target="_blank"
                               rel="noreferrer"

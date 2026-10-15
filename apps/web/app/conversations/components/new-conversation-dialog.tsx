@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { Loader2, Plus, MessageSquare } from "lucide-react";
+import { Loader2, Plus, MessageSquare } from "@/components/icons";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import { toastError } from "@repo/ui/components/shadcn/toast";
 
@@ -27,8 +27,13 @@ export function NewConversationDialog({
   trigger,
 }: NewConversationDialogProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [participantId, setParticipantId] = useState("");
+
+  const basePath = pathname.startsWith("/client/conversations")
+    ? "/client/conversations"
+    : "/conversations";
 
   const createConversation = useCreateConversation();
 
@@ -44,7 +49,7 @@ export function NewConversationDialog({
       onSuccess: (conversation) => {
         setOpen(false);
         setParticipantId("");
-        router.push(`/conversations/${conversation.id}`);
+        router.push(`${basePath}/${conversation.id}`);
       },
       onError: (error: unknown) => {
         const message =
@@ -54,7 +59,7 @@ export function NewConversationDialog({
         toastError({ message });
       },
     });
-  }, [participantId, createConversation, router]);
+  }, [participantId, createConversation, router, basePath]);
 
   const handleOpenChange = useCallback((isOpen: boolean) => {
     setOpen(isOpen);
@@ -69,24 +74,28 @@ export function NewConversationDialog({
         {trigger ?? (
           <Button
             size="sm"
-            className="gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928]"
+            className="rounded-full gap-1.5 bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4 py-2 cursor-pointer shadow-xs"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="size-3.5" />
             New conversation
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
         <DialogHeader>
-          <DialogTitle>Start a conversation</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg font-bold text-foreground font-sans">
+            Start a conversation
+          </DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground font-sans">
             Open a private chat with another Frevia user. You’ll need their
             numeric user ID for now.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-2">
-          <Label htmlFor="participant-id">User ID</Label>
+        <div className="space-y-2 my-2">
+          <Label htmlFor="participant-id" className="text-xs font-semibold">
+            User ID
+          </Label>
           <Input
             id="participant-id"
             type="number"
@@ -96,34 +105,36 @@ export function NewConversationDialog({
             value={participantId}
             onChange={(e) => setParticipantId(e.target.value)}
             disabled={createConversation.isPending}
+            className="rounded-full bg-[#F3F3F7] dark:bg-zinc-800/80 border border-black/5 dark:border-white/10 h-10 px-4 text-xs sm:text-sm"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSubmit();
             }}
           />
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
             Tip: open someone’s profile — the number in the URL (for example{" "}
-            <span className="font-medium text-foreground">/profiles/42</span>)
+            <span className="font-semibold text-foreground">/profiles/42</span>)
             is their user ID.
           </p>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="mt-2 flex gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
+            className="rounded-full"
             onClick={() => setOpen(false)}
             disabled={createConversation.isPending}
           >
             Cancel
           </Button>
           <Button
-            className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+            className="rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4"
             onClick={handleSubmit}
             disabled={!participantId.trim() || createConversation.isPending}
           >
             {createConversation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-3.5 animate-spin mr-1.5" />
             ) : (
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="size-3.5 mr-1.5" />
             )}
             Start chat
           </Button>

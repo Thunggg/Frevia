@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
