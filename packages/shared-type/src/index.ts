@@ -57,5 +57,7 @@ export * from "./model/milestone-submission.model";
 export * from "./message/manage-milestone-submission.message";
 export * from "./model/saved-search.model";
 export * from "./message/saved-search.message";
+export * from "./model/job-alert.model";
+export * from "./message/manage-job-alert.message";
 export * from "./message/manage-identity-verification.message";
 export * from "./model/identity-verification.model";
