@@ -10,6 +10,15 @@ interface BannerSlotProps {
   className?: string;
 }
 
+// Chiều cao hiển thị theo từng vị trí banner (object-cover sẽ crop gọn đẹp).
+const BANNER_HEIGHTS: Record<BannerPosition, string> = {
+  GLOBAL_HEADER: "h-12 sm:h-14",
+  HOME_HERO: "h-40 sm:h-64",
+  HOME_BODY: "h-36 sm:h-56",
+  SEARCH_RESULTS: "h-36 sm:h-56",
+  FOOTER: "h-36 sm:h-56",
+};
+
 // Vị trí hiển thị banner trên giao diện người dùng.
 // Vì mỗi position chỉ được phép có 1 banner active, component chỉ render khi có banner hợp lệ.
 export function BannerSlot({ position, className }: BannerSlotProps) {
@@ -44,7 +53,11 @@ export function BannerSlot({ position, className }: BannerSlotProps) {
 
   if (!imageUrl || !title) return null;
 
-  const content = (
+  const frameClass = `block w-full overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-border/40 transition-shadow duration-200 ${
+    BANNER_HEIGHTS[position]
+  }`;
+
+  const imageElement = (
     // eslint-disable-next-line @next/next/no-img-element -- banner image from Cloudinary
     <img
       src={imageUrl}
@@ -55,13 +68,20 @@ export function BannerSlot({ position, className }: BannerSlotProps) {
 
   return (
     <div className={className}>
-      {linkUrl ? (
-        <Link href={linkUrl} target="_blank" rel="noopener noreferrer">
-          {content}
-        </Link>
-      ) : (
-        content
-      )}
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        {linkUrl ? (
+          <Link
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${frameClass} hover:ring-border/70 hover:shadow-md`}
+          >
+            {imageElement}
+          </Link>
+        ) : (
+          <div className={frameClass}>{imageElement}</div>
+        )}
+      </div>
     </div>
   );
 }
