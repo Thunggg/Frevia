@@ -1,6 +1,7 @@
 export const ManageJobAlertMessage = {
   FREELANCER_ONLY: "Error.JobAlertOnlyForFreelancer",
   FAILED_TO_CREATE: "Error.FailedToCreateJobAlert",
+  FAILED_TO_UPDATE: "Error.FailedToUpdateJobAlert",
   FAILED_TO_LOAD: "Error.FailedToLoadJobAlerts",
   FAILED_TO_LOAD_DETAIL: "Error.FailedToLoadJobAlertDetail",
   NOT_FOUND: "Error.JobAlertNotFound",
@@ -19,4 +20,5 @@ export const ManageJobAlertMessage = {
   CHANNEL_INVALID: "Error.JobAlertChannelInvalid",
   CHANNELS_REQUIRED: "Error.JobAlertChannelsRequired",
   SKILL_INVALID: "Error.SkillIdInvalid",
+  NO_FIELDS_TO_UPDATE: "Error.NoFieldsToUpdate",
 } as const;

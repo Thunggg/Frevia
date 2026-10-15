@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
@@ -21,9 +22,22 @@ export const JobAlertNotFoundException = () =>
     { message: ManageJobAlertMessage.NOT_FOUND, path: 'id' },
   ]);
 
+export const JobAlertBudgetRangeInvalidException = () =>
+  new BadRequestException([
+    {
+      message: ManageJobAlertMessage.BUDGET_RANGE_INVALID,
+      path: 'budgetMax',
+    },
+  ]);
+
 export const FailedToCreateJobAlertException = () =>
   new InternalServerErrorException([
     { message: ManageJobAlertMessage.FAILED_TO_CREATE, path: '' },
+  ]);
+
+export const FailedToUpdateJobAlertException = () =>
+  new InternalServerErrorException([
+    { message: ManageJobAlertMessage.FAILED_TO_UPDATE, path: '' },
   ]);
 
 export const FailedToLoadJobAlertsException = () =>

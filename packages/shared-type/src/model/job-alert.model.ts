@@ -91,6 +91,71 @@ export const CreateJobAlertBodySchema = z
 export const CreateJobAlertResponseSchema = JobAlertSchema;
 export const GetJobAlertDetailResponseSchema = JobAlertSchema;
 
+export const UpdateJobAlertBodySchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, ManageJobAlertMessage.NAME_REQUIRED)
+      .max(100, ManageJobAlertMessage.NAME_TOO_LONG)
+      .optional(),
+    keywords: z
+      .string()
+      .trim()
+      .max(255, ManageJobAlertMessage.KEYWORDS_TOO_LONG)
+      .nullable()
+      .optional(),
+    budgetMin: z.coerce
+      .number({ error: ManageJobAlertMessage.BUDGET_MIN_INVALID })
+      .min(0, ManageJobAlertMessage.BUDGET_MIN_INVALID)
+      .nullable()
+      .optional(),
+    budgetMax: z.coerce
+      .number({ error: ManageJobAlertMessage.BUDGET_MAX_INVALID })
+      .min(0, ManageJobAlertMessage.BUDGET_MAX_INVALID)
+      .nullable()
+      .optional(),
+    budgetType: JobBudgetTypeSchema.nullable().optional(),
+    frequency: JobAlertFrequencySchema.optional(),
+    channels: z
+      .array(JobAlertChannelSchema)
+      .min(1, ManageJobAlertMessage.CHANNELS_REQUIRED)
+      .optional(),
+    skills: z
+      .array(
+        z
+          .number()
+          .int(ManageJobAlertMessage.SKILL_INVALID)
+          .positive(ManageJobAlertMessage.SKILL_INVALID),
+      )
+      .optional(),
+    isActive: z.boolean().optional(),
+  })
+  .strict()
+  .superRefine((data, ctx) => {
+    if (Object.values(data).every((value) => value === undefined)) {
+      ctx.addIssue({
+        code: "custom",
+        path: [],
+        message: ManageJobAlertMessage.NO_FIELDS_TO_UPDATE,
+      });
+    }
+
+    if (
+      data.budgetMin != null &&
+      data.budgetMax != null &&
+      data.budgetMin > data.budgetMax
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["budgetMax"],
+        message: ManageJobAlertMessage.BUDGET_RANGE_INVALID,
+      });
+    }
+  });
+
+export const UpdateJobAlertResponseSchema = JobAlertSchema;
+
 export const GetJobAlertsQuerySchema = z.object({
   page: z.coerce
     .number()
@@ -125,6 +190,10 @@ export type CreateJobAlertBodyInputType = z.input<
   typeof CreateJobAlertBodySchema
 >;
 export type CreateJobAlertBodyType = z.output<typeof CreateJobAlertBodySchema>;
+export type UpdateJobAlertBodyType = z.output<typeof UpdateJobAlertBodySchema>;
+export type UpdateJobAlertResponseType = z.infer<
+  typeof UpdateJobAlertResponseSchema
+>;
 export type GetJobAlertsQueryType = z.output<typeof GetJobAlertsQuerySchema>;
 export type GetJobAlertsResponseType = z.infer<
   typeof GetJobAlertsResponseSchema

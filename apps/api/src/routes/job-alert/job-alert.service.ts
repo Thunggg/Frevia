@@ -7,12 +7,16 @@ import {
   GetJobAlertsResponseType,
   JobAlertType,
   RoleName,
+  UpdateJobAlertBodyType,
+  UpdateJobAlertResponseType,
 } from '@shared/types';
 
 import {
   FailedToCreateJobAlertException,
   FailedToLoadJobAlertDetailException,
   FailedToLoadJobAlertsException,
+  FailedToUpdateJobAlertException,
+  JobAlertBudgetRangeInvalidException,
   JobAlertFreelancerOnlyException,
   JobAlertNotFoundException,
   JobAlertSkillNotFoundException,
@@ -97,6 +101,51 @@ export class JobAlertService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToCreateJobAlertException();
+      }
+      throw error;
+    }
+  }
+
+  async updateJobAlert(
+    userId: number,
+    roleName: string,
+    id: number,
+    body: UpdateJobAlertBodyType,
+  ): Promise<UpdateJobAlertResponseType> {
+    this.assertFreelancer(roleName);
+
+    try {
+      const jobAlert = await this.jobAlertRepository.findByIdAndUserId(
+        id,
+        userId,
+      );
+      if (!jobAlert) {
+        throw JobAlertNotFoundException();
+      }
+
+      const budgetMin =
+        body.budgetMin !== undefined ? body.budgetMin : jobAlert.budgetMin;
+      const budgetMax =
+        body.budgetMax !== undefined ? body.budgetMax : jobAlert.budgetMax;
+      if (budgetMin != null && budgetMax != null && budgetMin > budgetMax) {
+        throw JobAlertBudgetRangeInvalidException();
+      }
+
+      if (body.skills !== undefined) {
+        const uniqueSkillIds = [...new Set(body.skills)];
+        if (
+          uniqueSkillIds.length > 0 &&
+          (await this.jobAlertRepository.countActiveSkills(uniqueSkillIds)) !==
+            uniqueSkillIds.length
+        ) {
+          throw JobAlertSkillNotFoundException();
+        }
+      }
+
+      return await this.jobAlertRepository.update(id, userId, body);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateJobAlertException();
       }
       throw error;
     }

@@ -4,6 +4,7 @@ import {
   CreateJobAlertBodyType,
   GetJobAlertsQueryType,
   JobAlertType,
+  UpdateJobAlertBodyType,
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -98,6 +99,36 @@ export class JobAlertRepository {
         skills: {
           create: skillIds.map((skillId) => ({ skillId })),
         },
+      },
+      select: jobAlertSelect,
+    });
+
+    return this.normalize(jobAlert);
+  }
+
+  async update(
+    id: number,
+    userId: number,
+    data: UpdateJobAlertBodyType,
+  ): Promise<JobAlertType> {
+    const skillIds = data.skills ? [...new Set(data.skills)] : undefined;
+    const jobAlert = await this.prisma.jobAlert.update({
+      where: { id, userId },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.keywords !== undefined && { keywords: data.keywords }),
+        ...(data.budgetMin !== undefined && { budgetMin: data.budgetMin }),
+        ...(data.budgetMax !== undefined && { budgetMax: data.budgetMax }),
+        ...(data.budgetType !== undefined && { budgetType: data.budgetType }),
+        ...(data.frequency !== undefined && { frequency: data.frequency }),
+        ...(data.channels !== undefined && { channels: data.channels }),
+        ...(data.isActive !== undefined && { isActive: data.isActive }),
+        ...(skillIds !== undefined && {
+          skills: {
+            deleteMany: {},
+            create: skillIds.map((skillId) => ({ skillId })),
+          },
+        }),
       },
       select: jobAlertSelect,
     });

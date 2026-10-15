@@ -4,12 +4,14 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import type {
   CreateJobAlertBodyType,
   GetJobAlertsQueryType,
+  UpdateJobAlertBodyType,
 } from '@shared/types';
 import { ZodSerializerDto } from 'nestjs-zod';
 
@@ -20,6 +22,8 @@ import {
   GetJobAlertDetailResponseDto,
   GetJobAlertsQueryDto,
   GetJobAlertsResponseDto,
+  UpdateJobAlertBodyDto,
+  UpdateJobAlertResponseDto,
 } from './job-alert.dto';
 import { JobAlertService } from './job-alert.service';
 
@@ -62,6 +66,22 @@ export class JobAlertController {
       userId,
       roleName,
       body as CreateJobAlertBodyType,
+    );
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(UpdateJobAlertResponseDto)
+  updateJobAlert(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateJobAlertBodyDto,
+  ) {
+    return this.jobAlertService.updateJobAlert(
+      userId,
+      roleName,
+      id,
+      body as UpdateJobAlertBodyType,
     );
   }
 }
