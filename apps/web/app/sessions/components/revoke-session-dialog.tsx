@@ -15,7 +15,7 @@ import {
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { Loader2, ShieldOff } from "lucide-react";
+import { Loader2, ShieldOff } from "@/components/icons";
 import { useRouter } from "next/navigation";
 import { type MouseEvent } from "react";
 

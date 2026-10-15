@@ -253,10 +253,10 @@ model FreelancerProfile {
 }
 
 model FreelancerSkill {
-  id                  Int    @id @default(autoincrement())
+  id                  Int @id @default(autoincrement())
   freelancerProfileId Int
   skillId             Int
-  proficiencyLevel    Int    @db.SmallInt // Range 1-10.
+  proficiencyLevel    Int @db.SmallInt // Range 1-10.
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skill             Skill             @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -377,6 +377,7 @@ model Skill {
 
   jobs             JobSkill[]
   freelancerSkills FreelancerSkill[]
+  jobAlertSkills   JobAlertSkill[]
 
   // NOTE: cần tạo bằng raw SQL migration (Prisma không hỗ trợ partial unique index):
   // CREATE UNIQUE INDEX idx_skills_name_active ON "Skill" ("name") WHERE "deletedAt" IS NULL;
@@ -429,13 +430,43 @@ model SavedSearch {
 }
 
 model JobAlert {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  keywords  String?
-  skills    String[]
+  id     Int @id @default(autoincrement())
+  userId Int
+
+  name     String  @db.VarChar(100)
+  keywords String? @db.VarChar(255)
+
+  budgetMin  Decimal?    @db.Decimal(10, 2)
+  budgetMax  Decimal?    @db.Decimal(10, 2)
+  budgetType BudgetType?
+
+  frequency JobAlertFrequency @default(INSTANT)
+  channels JobAlertChannel[]
+
+  isActive Boolean @default(true)
+
+  lastTriggeredAt DateTime?
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  skills JobAlertSkill[]
+
+  @@index([userId])
+  @@index([isActive, frequency])
+}
+
+model JobAlertSkill {
+  jobAlertId Int
+  skillId    Int
+
+  jobAlert JobAlert @relation(fields: [jobAlertId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  skill    Skill    @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([jobAlertId, skillId])
+  @@index([skillId])
 }
 
 // ============================
@@ -1271,4 +1302,15 @@ enum ForumPostStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum JobAlertFrequency {
+  INSTANT
+  DAILY
+  WEEKLY
+}
+
+enum JobAlertChannel {
+  IN_APP
+  EMAIL
 }

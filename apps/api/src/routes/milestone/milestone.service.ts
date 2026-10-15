@@ -104,8 +104,12 @@ export class MilestoneService {
 
       if (contract.clientId !== clientId) throw MilestoneForbiddenException();
 
-      if (contract.status !== ContractStatus.ACTIVE)
+      if (
+        contract.status !== ContractStatus.ACTIVE &&
+        contract.status !== ContractStatus.PENDING_SIGN
+      ) {
         throw MilestoneContractNotActiveException();
+      }
 
       const totalMilestoneAmount =
         await this.milestoneRepository.getTotalMilestoneAmount(contractId);

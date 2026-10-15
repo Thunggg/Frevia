@@ -12,7 +12,7 @@ import {
   Clock,
   Loader2,
   MessageSquare,
-} from "lucide-react";
+} from "@/components/icons";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import jobApiRequest from "@/apiRequests/job";

@@ -15,7 +15,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus } from "@/components/icons";
 import { toast } from "@repo/ui/components/shadcn/sonner";
 import { useCreatePost } from "@/hooks/use-forum";
 import { buildSlugId } from "@/lib/slug-utils";

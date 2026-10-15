@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -14,7 +14,6 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   DropdownMenu,
@@ -24,17 +23,15 @@ import {
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
   CheckCheck,
+  ChevronRight,
   Ellipsis,
   Loader2,
   MessageSquare,
@@ -42,8 +39,10 @@ import {
   Pin,
   PinOff,
   Plus,
+  Search,
   Trash2,
-} from "lucide-react";
+  X,
+} from "@/components/icons";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { NewConversationDialog } from "./new-conversation-dialog";
 
@@ -83,9 +82,13 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const hideConversation = useHideConversation();
   const markRead = useMarkConversationRead();
   const pinConversation = usePinConversation();
+  const [searchQuery, setSearchQuery] = useState("");
   const [conversationToDelete, setConversationToDelete] = useState<
     number | null
   >(null);
+  const basePath = pathname.startsWith("/client/conversations")
+    ? "/client/conversations"
+    : "/conversations";
 
   const deleting = hideConversation.isPending;
 
@@ -95,9 +98,8 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     hideConversation.mutate(conversationToDelete, {
       onSuccess: () => {
         toastSuccess({ message: "Conversation deleted" });
-        // Nếu đang xem conversation bị xóa thì quay về danh sách
-        if (pathname === `/conversations/${conversationToDelete}`) {
-          router.push("/conversations");
+        if (pathname === `${basePath}/${conversationToDelete}`) {
+          router.push(basePath);
         }
       },
       onError: (error) => {
@@ -128,128 +130,166 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     );
   };
 
+  const filteredConversations = useMemo(() => {
+    if (!conversations) return [];
+    if (!searchQuery.trim()) return conversations;
+    const query = searchQuery.toLowerCase();
+    return conversations.filter((c) => {
+      const name = c.otherUser.profile?.displayName ?? `User #${c.otherUser.id}`;
+      const msg = c.lastMessage?.message ?? "";
+      return name.toLowerCase().includes(query) || msg.toLowerCase().includes(query);
+    });
+  }, [conversations, searchQuery]);
+
   return (
-    <aside className="flex h-full w-full flex-col border-r border-border bg-background">
+    <aside className="flex h-full w-full flex-col border-r border-border bg-background font-sans">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-muted/60">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <MessageSquare className="h-5 w-5 text-[#4fae2e]" />
-          Messages
-        </h2>
-        <NewConversationDialog
-          trigger={
-            <Button
-              size="icon"
-              className="h-8 w-8 bg-[#4fae2e] text-white hover:bg-[#459928]"
+      <div className="flex flex-col gap-3 border-b border-border bg-background/80 backdrop-blur p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold tracking-tight text-foreground font-sans">
+            Messages
+          </h2>
+          <NewConversationDialog
+            trigger={
+              <button
+                type="button"
+                className="flex size-8 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] shadow-xs cursor-pointer transition-colors outline-none"
+                title="New conversation"
+              >
+                <Plus className="size-4" />
+              </button>
+            }
+          />
+        </div>
+
+        {/* Search inside conversation list */}
+        <div className="relative flex items-center">
+          <Search className="pointer-events-none absolute left-3 size-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search chats..."
+            className="h-8 w-full rounded-full bg-[#F3F3F7] dark:bg-zinc-800/80 pl-8 pr-7 text-xs font-normal text-foreground placeholder:text-muted-foreground border border-black/5 dark:border-white/10 outline-none focus:ring-2 focus:ring-[#0069D3]/30 transition-all"
+          />
+          {searchQuery ? (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 flex size-4 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
             >
-              <Plus className="h-4 w-4" />
-              <span className="sr-only">New conversation</span>
-            </Button>
-          }
-        />
+              <X className="size-2.5" />
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto py-2">
         {isLoading ? (
-          <div className="space-y-0 divide-y">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-3">
-                <Skeleton className="mt-0.5 size-10 shrink-0 rounded-full" />
-                <div className="min-w-0 flex-1 space-y-2">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <Skeleton className="h-4 w-28" />
-                    <Skeleton className="h-3 w-12" />
-                  </div>
+          <div className="space-y-1 px-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-2xl p-3">
+                <Skeleton className="size-10 shrink-0 rounded-full" />
+                <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <Skeleton className="h-3.5 w-44" />
-                    {i % 3 === 0 && (
-                      <Skeleton className="size-5 shrink-0 rounded-full" />
-                    )}
+                    <Skeleton className="h-3.5 w-24 rounded-full" />
+                    <Skeleton className="h-2.5 w-10 rounded-full" />
                   </div>
+                  <Skeleton className="h-3 w-40 rounded-full" />
                 </div>
               </div>
             ))}
           </div>
         ) : !conversations || conversations.length === 0 ? (
           <div className="px-6 py-14 text-center">
-            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-              <MessageSquare className="size-7" />
+            <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
+              <MessageSquare className="size-5" />
             </div>
-            <p className="text-lg font-medium text-foreground">
+            <p className="text-sm font-semibold text-foreground">
               No conversations yet
             </p>
-            <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
-              Start a chat with another user to keep proposals and project talk
-              in one place.
+            <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+              Start a chat with another user to collaborate on projects.
             </p>
-            <div className="mt-6 flex justify-center">
+            <div className="mt-4 flex justify-center">
               <NewConversationDialog
                 trigger={
-                  <Button className="bg-[#4fae2e] text-white hover:bg-[#459928]">
-                    <Plus className="mr-1.5 size-4" />
+                  <Button className="rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4 py-2 cursor-pointer shadow-xs gap-1.5">
+                    <Plus className="size-3.5" />
                     Start a chat
                   </Button>
                 }
               />
             </div>
           </div>
+        ) : filteredConversations.length === 0 ? (
+          <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+            No chats match &quot;{searchQuery}&quot;
+          </div>
         ) : (
-          <ul className="divide-y">
-            {conversations.map((conversation) => {
+          <ul className="space-y-0.5">
+            {filteredConversations.map((conversation) => {
               const displayName =
                 conversation.otherUser.profile?.displayName ??
                 `User #${conversation.otherUser.id}`;
               const avatarUrl =
                 conversation.otherUser.profile?.avatarUrl ?? undefined;
-              const isActive = pathname === `/conversations/${conversation.id}`;
+              const isActive = pathname === `${basePath}/${conversation.id}`;
 
               return (
                 <li
                   key={conversation.id}
-                  className="group relative flex items-center"
+                  className="group relative px-2"
                 >
                   <Link
-                    href={`/conversations/${conversation.id}`}
-                    className={`flex flex-1 items-start gap-3 px-4 py-3 transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.04] ${
-                      isActive ? "!bg-[#eaf8df] border-r-[3px] !border-r-[#4fae2e] dark:!bg-[#222422]" : ""
+                    href={`${basePath}/${conversation.id}`}
+                    className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-150 ${
+                      isActive
+                        ? "bg-[#D0E1F8] dark:bg-[#0069D3]/25 text-[#0069D3] dark:text-blue-100 shadow-xs font-medium"
+                        : "text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800/50 hover:text-foreground"
                     }`}
                   >
-                    <Avatar className="mt-0.5">
-                      <AvatarImage src={avatarUrl} alt={displayName} />
-                      <AvatarFallback>
-                        {displayName.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative shrink-0">
+                      <Avatar className="size-10 rounded-full">
+                        <AvatarImage src={avatarUrl} alt={displayName} />
+                        <AvatarFallback className="bg-muted text-xs font-bold text-foreground">
+                          {displayName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {conversation.unreadCount > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 flex size-2.5 rounded-full bg-[#0069D3] ring-2 ring-background" />
+                      )}
+                    </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <p className="truncate text-sm font-semibold text-foreground">
-                          {conversation.pinnedAt && (
-                            <Pin className="mr-1 inline-block h-3 w-3 shrink-0 -translate-y-px text-muted-foreground" />
-                          )}
-                          {displayName}
+                    <div className="min-w-0 flex-1 pr-6">
+                      <div className="flex items-baseline justify-between gap-1.5">
+                        <p className="truncate text-xs sm:text-sm font-bold text-foreground font-sans flex items-center gap-1">
+                          {conversation.pinnedAt ? (
+                            <Pin className="size-3 text-[#0069D3] shrink-0" />
+                          ) : null}
+                          <span className="truncate">{displayName}</span>
                         </p>
-                        {conversation.lastMessage && (
-                          <span className="shrink-0 text-xs text-muted-foreground">
+                        {conversation.lastMessage ? (
+                          <span className="shrink-0 text-[10px] text-muted-foreground font-normal">
                             {formatTime(conversation.lastMessage.createdAt)}
                           </span>
-                        )}
+                        ) : null}
                       </div>
 
                       <div className="mt-0.5 flex items-center justify-between gap-2">
-                        <p className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+                        <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground font-normal">
                           {conversation.lastMessage ? (
                             <>
                               {conversation.lastMessage.senderId ===
                                 currentUserId && (
-                                <span className="font-medium text-foreground/70">
+                                <span className="font-semibold text-foreground/70">
                                   You:{" "}
                                 </span>
                               )}
                               {conversation.lastMessage.fileUrl ? (
                                 <span className="inline-flex items-center gap-1">
-                                  <Paperclip className="h-3 w-3 shrink-0" />
+                                  <Paperclip className="size-3 shrink-0" />
                                   {conversation.lastMessage.fileName ??
                                     "Attachment"}
                                 </span>
@@ -262,33 +302,37 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                           )}
                         </p>
                         {conversation.unreadCount > 0 && (
-                          <Badge className="shrink-0 rounded-full bg-red-500 px-1.5 py-0 text-xs text-white hover:bg-red-500">
+                          <span className="shrink-0 rounded-full bg-[#0069D3] px-1.5 py-0.2 text-[10px] font-bold text-white">
                             {conversation.unreadCount}
-                          </Badge>
+                          </span>
                         )}
                       </div>
                     </div>
                   </Link>
 
-                  {/* Menu "..." với các action */}
+                  {/* Menu "..." actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                      <button
+                        type="button"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-full bg-background/80 hover:bg-[#F1F0F5] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-xs"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
                       >
-                        <Ellipsis className="h-4 w-4" />
+                        <Ellipsis className="size-3.5" />
                         <span className="sr-only">More actions</span>
-                      </Button>
+                      </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent
+                      align="end"
+                      sideOffset={4}
+                      className="w-44 rounded-[22px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-1.5 shadow-2xl flex flex-col gap-1 font-sans"
+                    >
                       <DropdownMenuItem
                         disabled={pinConversation.isPending}
+                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
                         onSelect={() =>
                           handleTogglePin(
                             conversation.id,
@@ -296,25 +340,32 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                           )
                         }
                       >
-                        {conversation.pinnedAt ? <PinOff /> : <Pin />}
-                        {conversation.pinnedAt ? "Unpin" : "Pin"}
+                        {conversation.pinnedAt ? (
+                          <PinOff className="size-3.5 mr-2" />
+                        ) : (
+                          <Pin className="size-3.5 mr-2" />
+                        )}
+                        {conversation.pinnedAt ? "Unpin chat" : "Pin chat"}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        disabled={conversation.unreadCount === 0 || markRead.isPending}
+                        disabled={
+                          conversation.unreadCount === 0 || markRead.isPending
+                        }
+                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
                         onSelect={() => handleMarkAsRead(conversation.id)}
                       >
-                        <CheckCheck />
+                        <CheckCheck className="size-3.5 mr-2" />
                         Mark as read
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        variant="destructive"
                         disabled={deleting}
+                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 focus:text-red-600"
                         onSelect={() =>
                           setConversationToDelete(conversation.id)
                         }
                       >
-                        <Trash2 />
-                        Delete
+                        <Trash2 className="size-3.5 mr-2" />
+                        Delete chat
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -325,35 +376,61 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
         )}
       </div>
 
-      {/* Xác nhận xóa hội thoại */}
+      {/* Modern Capsule Delete Dialog */}
       <AlertDialog
         open={conversationToDelete != null}
         onOpenChange={(open) => {
           if (!open) setConversationToDelete(null);
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Removes this chat from your list only. The other person keeps
-              their copy.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={deleting}
-              className="bg-destructive text-white hover:bg-destructive/90"
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-            >
-              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                Delete conversation
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                Removes this chat from your list only. The other person keeps their copy.
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDelete}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 cursor-pointer transition-all duration-200 outline-none disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
+                    {deleting ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3.5" />
+                    )}
+                  </div>
+                  <span className="text-xs font-semibold">Delete chat</span>
+                </div>
+                <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel asChild>
+                <button
+                  type="button"
+                  disabled={deleting}
+                  className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                      <X className="size-3.5" />
+                    </div>
+                    <span className="text-xs font-medium">Cancel</span>
+                  </div>
+                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+                </button>
+              </AlertDialogCancel>
+            </div>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     </aside>
