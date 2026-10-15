@@ -4,6 +4,22 @@ import { accountProfileApi } from "@/apiRequests/account-profile";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { ApiFail } from "@/lib/http";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
@@ -15,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/shadcn/select";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import {
   Tabs,
   TabsContent,
@@ -31,10 +48,14 @@ import {
   Link2,
   Loader2,
   Plus,
+  RefreshCw,
+  Search,
   ShieldCheck,
   Trash2,
   Upload,
   UserCheck,
+  UserMinus,
+  UserPlus,
   UserRound,
   Star,
 } from "lucide-react";
@@ -47,8 +68,8 @@ import {
   VerificationStatus,
   type ClientProfileDetailType,
   type DocumentTypeType,
+  type DiscoverFreelancerType,
   type FavoriteFreelancerType,
-  type FollowingFreelancerType,
   type IdentityVerificationStatusType,
   type SocialLinkType,
   type SocialPlatformType,
@@ -77,6 +98,37 @@ const labels: Record<string, string> = {
   OTHER: "Other document",
 };
 
+function FreelancerListSkeleton({ label }: { label: string }) {
+  return (
+    <div
+      className="mt-6 grid gap-4 lg:grid-cols-2"
+      aria-label={label}
+      aria-busy="true"
+    >
+      {["first", "second"].map((item) => (
+        <div key={item} className="rounded-xl border border-border p-5">
+          <div className="flex items-start gap-3.5">
+            <Skeleton className="size-14 shrink-0 rounded-full sm:size-16" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-4 w-48 max-w-full" />
+              <Skeleton className="h-5 w-24 rounded-md" />
+            </div>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Skeleton className="h-6 w-20 rounded-md" />
+            <Skeleton className="h-6 w-24 rounded-md" />
+          </div>
+          <div className="mt-5 flex gap-2 border-t border-border pt-4">
+            <Skeleton className="h-8 flex-1 rounded-md" />
+            <Skeleton className="h-8 w-24 rounded-md" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
@@ -85,7 +137,13 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     useState<ClientProfileDetailType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteFreelancerType[]>([]);
-  const [following, setFollowing] = useState<FollowingFreelancerType[]>([]);
+  const [freelancers, setFreelancers] = useState<DiscoverFreelancerType[]>([]);
+  const [freelancersLoading, setFreelancersLoading] = useState(false);
+  const [freelancersError, setFreelancersError] = useState<string | null>(null);
+  const [freelancerQuery, setFreelancerQuery] = useState("");
+  const [freelancerView, setFreelancerView] = useState<"all" | "following">(
+    "all",
+  );
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
   const [documentType, setDocumentType] = useState<DocumentTypeType>(
@@ -113,17 +171,12 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
         setIdentity(identityResponse.data);
         setSocialLinks(linksResponse.data);
       } else {
-        const [
-          profileResponse,
-          linksResponse,
-          favoritesResponse,
-          followingResponse,
-        ] = await Promise.all([
-          accountProfileApi.getClientProfile(userId),
-          common,
-          accountProfileApi.getFavorites(),
-          accountProfileApi.getFollowing(),
-        ]);
+        const [profileResponse, linksResponse, favoritesResponse] =
+          await Promise.all([
+            accountProfileApi.getClientProfile(userId),
+            common,
+            accountProfileApi.getFavorites(),
+          ]);
         const profile = profileResponse.data;
         setClientProfile(profile);
         setCompanyName(profile.clientProfile.companyName ?? "");
@@ -131,7 +184,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
         setWebsite(profile.clientProfile.website ?? "");
         setSocialLinks(linksResponse.data);
         setFavorites(favoritesResponse.data);
-        setFollowing(followingResponse.data);
       }
     } catch (error) {
       toastError({ message: errorMessage(error) });
@@ -140,7 +192,26 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     }
   }, [headerRole, userId]);
 
+  const loadFreelancers = useCallback(async () => {
+    setFreelancersLoading(true);
+    setFreelancersError(null);
+    try {
+      const response = await accountProfileApi.discoverFreelancers();
+      setFreelancers(response.data);
+    } catch (error) {
+      setFreelancersError(errorMessage(error));
+    } finally {
+      setFreelancersLoading(false);
+    }
+  }, []);
+
   useEffect(() => void load(), [load]);
+
+  useEffect(() => {
+    if (headerRole === "CLIENT" && userId) {
+      void loadFreelancers();
+    }
+  }, [headerRole, loadFreelancers, userId]);
 
   const uploadDocument = async (event: FormEvent) => {
     event.preventDefault();
@@ -234,8 +305,12 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     setPending(`following-${freelancerId}`);
     try {
       await accountProfileApi.unfollowFreelancer(freelancerId);
-      setFollowing((current) =>
-        current.filter((item) => item.freelancerId !== freelancerId),
+      setFreelancers((current) =>
+        current.map((item) =>
+          item.freelancerId === freelancerId
+            ? { ...item, isFollowing: false }
+            : item,
+        ),
       );
       toastSuccess({ message: "Freelancer unfollowed." });
     } catch (error) {
@@ -245,7 +320,48 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     }
   };
 
+  const followFreelancer = async (freelancer: DiscoverFreelancerType) => {
+    setPending(`following-${freelancer.freelancerId}`);
+    try {
+      await accountProfileApi.followFreelancer(freelancer.freelancerId);
+      setFreelancers((current) =>
+        current.map((item) =>
+          item.freelancerId === freelancer.freelancerId
+            ? { ...item, isFollowing: true }
+            : item,
+        ),
+      );
+      toastSuccess({ message: "You are now following this freelancer." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
   const requestedTab = searchParams.get("tab");
+  const normalizedFreelancerQuery = freelancerQuery.trim().toLowerCase();
+  const followingCount = freelancers.filter(
+    (freelancer) => freelancer.isFollowing,
+  ).length;
+  const visibleFreelancers = freelancers.filter(
+    (freelancer) => freelancerView === "all" || freelancer.isFollowing,
+  );
+  const filteredFreelancers = normalizedFreelancerQuery
+    ? visibleFreelancers.filter((freelancer) => {
+        const searchableText = [
+          freelancer.profile.displayName,
+          freelancer.profile.freelancerProfile.title,
+          ...freelancer.profile.freelancerProfile.skills.map(
+            (skill) => skill.skill.name,
+          ),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return searchableText.includes(normalizedFreelancerQuery);
+      })
+    : visibleFreelancers;
   const allowedTabs =
     headerRole === "CLIENT"
       ? ["general", "company", "social", "reviews", "following", "favorites"]
@@ -612,23 +728,210 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
               </TabsContent>
 
               <TabsContent value="following">
-                {following.length ? (
-                  <ul className="divide-y divide-border border-y border-border">
-                    {following.map((follow) => (
-                      <li key={follow.freelancerId}>
-                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-lg font-semibold tracking-tight text-foreground">
-                              {follow.profile.displayName ?? "Freelancer"}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {follow.profile.freelancerProfile.title ??
-                                "Freelancer"}
-                            </p>
-                            <div className="mt-3 flex flex-wrap gap-1">
-                              {follow.profile.freelancerProfile.skills
-                                .slice(0, 4)
-                                .map((skill) => (
+                <section aria-labelledby="following-heading">
+                  <div className="border-b border-border pb-5">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h2
+                          id="following-heading"
+                          className="text-xl font-semibold tracking-tight text-foreground"
+                        >
+                          Find freelancers
+                        </h2>
+                        {!freelancersLoading && !freelancersError ? (
+                          <Badge variant="secondary">
+                            {followingCount} following
+                          </Badge>
+                        ) : null}
+                      </div>
+                      <p className="mt-1.5 text-sm text-muted-foreground">
+                        Browse profiles and follow people you want to keep in
+                        view.
+                      </p>
+                    </div>
+
+                    <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div
+                        className="inline-flex w-fit rounded-lg bg-muted p-1"
+                        aria-label="Filter freelancers"
+                      >
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={
+                            freelancerView === "all"
+                              ? "bg-background shadow-xs hover:bg-background"
+                              : "text-muted-foreground"
+                          }
+                          aria-pressed={freelancerView === "all"}
+                          onClick={() => setFreelancerView("all")}
+                        >
+                          All freelancers
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={
+                            freelancerView === "following"
+                              ? "bg-background shadow-xs hover:bg-background"
+                              : "text-muted-foreground"
+                          }
+                          aria-pressed={freelancerView === "following"}
+                          onClick={() => setFreelancerView("following")}
+                        >
+                          Following ({followingCount})
+                        </Button>
+                      </div>
+
+                      <div className="relative w-full sm:max-w-xs">
+                        <label htmlFor="freelancer-search" className="sr-only">
+                          Search freelancers
+                        </label>
+                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          id="freelancer-search"
+                          value={freelancerQuery}
+                          onChange={(event) =>
+                            setFreelancerQuery(event.target.value)
+                          }
+                          placeholder="Search by name, title, or skill"
+                          className="pl-9"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {freelancersLoading ? (
+                    <FreelancerListSkeleton label="Loading freelancers" />
+                  ) : freelancersError ? (
+                    <div className="mt-6 rounded-xl border border-destructive/25 bg-destructive/5 px-5 py-8 text-center">
+                      <p className="font-medium text-foreground">
+                        We could not load freelancers
+                      </p>
+                      <p className="mx-auto mt-1.5 max-w-md text-sm text-muted-foreground">
+                        {freelancersError}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-4 active:translate-y-px"
+                        onClick={() => void loadFreelancers()}
+                      >
+                        <RefreshCw /> Try again
+                      </Button>
+                    </div>
+                  ) : !freelancers.length ? (
+                    <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-14 text-center">
+                      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                        <UserPlus className="size-7" />
+                      </div>
+                      <p className="text-lg font-medium text-foreground">
+                        No freelancers available
+                      </p>
+                      <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                        Freelancer profiles will appear here when they become
+                        available.
+                      </p>
+                    </div>
+                  ) : !filteredFreelancers.length ? (
+                    <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+                      {freelancerView === "following" && !freelancerQuery ? (
+                        <UserCheck className="mx-auto size-7 text-muted-foreground" />
+                      ) : (
+                        <Search className="mx-auto size-7 text-muted-foreground" />
+                      )}
+                      <p className="mt-3 font-medium text-foreground">
+                        {freelancerView === "following" && !freelancerQuery
+                          ? "You are not following anyone yet"
+                          : "No matching freelancers"}
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {freelancerView === "following" && !freelancerQuery
+                          ? "Switch to All freelancers to find people to follow."
+                          : "Try another name, title, or skill."}
+                      </p>
+                      <Button
+                        variant="link"
+                        className="mt-2 text-[#438f2b] dark:text-[#78c85d]"
+                        onClick={() => {
+                          setFreelancerQuery("");
+                          if (freelancerView === "following") {
+                            setFreelancerView("all");
+                          }
+                        }}
+                      >
+                        {freelancerView === "following"
+                          ? "Browse freelancers"
+                          : "Clear search"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <ul className="mt-6 grid gap-4 lg:grid-cols-2">
+                      {filteredFreelancers.map((freelancer) => {
+                        const displayName =
+                          freelancer.profile.displayName ?? "Freelancer";
+                        const skills =
+                          freelancer.profile.freelancerProfile.skills;
+                        const isPending =
+                          pending === `following-${freelancer.freelancerId}`;
+
+                        return (
+                          <li
+                            key={freelancer.freelancerId}
+                            className="flex min-w-0 flex-col rounded-xl border border-border bg-background p-5 transition-colors hover:border-[#4fae2e]/35 dark:hover:border-[#4fae2e]/40"
+                          >
+                            <div className="flex min-w-0 items-start gap-3.5">
+                              <Avatar className="size-14 border border-border sm:size-16">
+                                <AvatarImage
+                                  src={
+                                    freelancer.profile.avatarUrl ?? undefined
+                                  }
+                                  alt={displayName}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback className="bg-[#eaf8df] text-lg font-semibold text-[#438f2b] dark:bg-[#4fae2e]/15 dark:text-[#78c85d]">
+                                  {displayName.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+
+                              <div className="min-w-0 flex-1">
+                                <Link
+                                  href={`/profiles/${freelancer.profile.id}`}
+                                  className="block truncate text-base font-semibold tracking-tight text-foreground hover:text-[#438f2b] hover:underline hover:underline-offset-4 dark:hover:text-[#78c85d]"
+                                >
+                                  {displayName}
+                                </Link>
+                                <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
+                                  {freelancer.profile.freelancerProfile.title ??
+                                    "Freelancer"}
+                                </p>
+                                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                  <Badge
+                                    variant="outline"
+                                    className="capitalize"
+                                  >
+                                    {freelancer.profile.availabilityStatus
+                                      .toLowerCase()
+                                      .replaceAll("_", " ")}
+                                  </Badge>
+                                  {freelancer.profile.freelancerProfile
+                                    .idVerified ? (
+                                    <Badge
+                                      variant="outline"
+                                      className="border-[#4fae2e]/25 text-[#438f2b] dark:text-[#78c85d]"
+                                    >
+                                      <ShieldCheck /> Verified
+                                    </Badge>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </div>
+
+                            {skills.length ? (
+                              <div className="mt-4 flex min-h-6 flex-wrap gap-1.5">
+                                {skills.slice(0, 3).map((skill) => (
                                   <Badge
                                     key={skill.id}
                                     variant="secondary"
@@ -637,48 +940,101 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                                     {skill.skill.name}
                                   </Badge>
                                 ))}
+                                {skills.length > 3 ? (
+                                  <Badge variant="secondary">
+                                    +{skills.length - 3}
+                                  </Badge>
+                                ) : null}
+                              </div>
+                            ) : (
+                              <p className="mt-4 text-xs text-muted-foreground">
+                                No skills listed yet
+                              </p>
+                            )}
+
+                            <div className="mt-5 flex items-center gap-2 border-t border-border pt-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 active:translate-y-px"
+                                asChild
+                              >
+                                <Link
+                                  href={`/profiles/${freelancer.profile.id}`}
+                                >
+                                  View profile
+                                </Link>
+                              </Button>
+
+                              {freelancer.isFollowing ? (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-destructive/10 hover:text-destructive dark:text-[#78c85d]"
+                                      disabled={isPending}
+                                    >
+                                      {isPending ? (
+                                        <Loader2 className="animate-spin" />
+                                      ) : (
+                                        <UserCheck />
+                                      )}
+                                      Following
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Unfollow {displayName}?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Their profile will be removed from your
+                                        following list. You can follow them
+                                        again at any time.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        Keep following
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-destructive text-white hover:bg-destructive/90"
+                                        onClick={() =>
+                                          void unfollowFreelancer(
+                                            freelancer.freelancerId,
+                                          )
+                                        }
+                                      >
+                                        <UserMinus /> Unfollow
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  className="bg-[#4fae2e] text-white hover:bg-[#459928] active:translate-y-px"
+                                  disabled={isPending}
+                                  onClick={() =>
+                                    void followFreelancer(freelancer)
+                                  }
+                                >
+                                  {isPending ? (
+                                    <Loader2 className="animate-spin" />
+                                  ) : (
+                                    <UserPlus />
+                                  )}
+                                  Follow
+                                </Button>
+                              )}
                             </div>
-                            <Button
-                              className="mt-4"
-                              variant="outline"
-                              size="sm"
-                              asChild
-                            >
-                              <Link href={`/profiles/${follow.profile.id}`}>
-                                View profile
-                              </Link>
-                            </Button>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`Unfollow ${follow.profile.displayName ?? "freelancer"}`}
-                            onClick={() =>
-                              void unfollowFreelancer(follow.freelancerId)
-                            }
-                            disabled={
-                              pending === `following-${follow.freelancerId}`
-                            }
-                          >
-                            <Trash2 />
-                          </Button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                      <UserCheck className="size-7" />
-                    </div>
-                    <p className="text-lg font-medium text-foreground">
-                      Not following anyone yet
-                    </p>
-                    <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                      Follow freelancers to keep their profiles easy to find.
-                    </p>
-                  </div>
-                )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </section>
               </TabsContent>
 
               <TabsContent value="favorites">

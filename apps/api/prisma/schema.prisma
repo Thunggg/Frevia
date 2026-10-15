@@ -1162,6 +1162,7 @@ enum DisputeOutcome {
 }
 
 enum NotificationType {
+  NEW_FOLLOWER
   JOB_ALERT
   PROPOSAL_NEW
   PROPOSAL_ACCEPTED

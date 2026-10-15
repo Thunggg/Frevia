@@ -5,6 +5,7 @@ import type {
   ClientProfileDetailType,
   FavoriteFreelancerType,
   FollowingFreelancerType,
+  DiscoverFreelancerType,
   IdentityVerificationDocumentType,
   IdentityVerificationStatusType,
   SocialLinkType,
@@ -75,6 +76,8 @@ export const accountProfileApi = {
 
   getFollowing: () =>
     http.get<FollowingFreelancerType[]>("/following/freelancers"),
+  discoverFreelancers: () =>
+    http.get<DiscoverFreelancerType[]>("/following/freelancers/discover"),
   followFreelancer: (freelancerId: number) =>
     http.post<{ message: string }>(
       `/following/freelancers/${freelancerId}`,

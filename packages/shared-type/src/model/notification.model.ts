@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const NotificationType = {
+  NEW_FOLLOWER: "NEW_FOLLOWER",
   JOB_ALERT: "JOB_ALERT",
   PROPOSAL_NEW: "PROPOSAL_NEW",
   PROPOSAL_ACCEPTED: "PROPOSAL_ACCEPTED",

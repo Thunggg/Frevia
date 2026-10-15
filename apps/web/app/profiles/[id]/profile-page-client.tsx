@@ -26,6 +26,7 @@ import {
   Trash2,
   UserRound,
   UserCheck,
+  UserMinus,
   UserPlus,
 } from "lucide-react";
 
@@ -221,6 +222,7 @@ export function ProfilePageClient({
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [unfollowDialogOpen, setUnfollowDialogOpen] = useState(false);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -317,6 +319,7 @@ export function ProfilePageClient({
         await accountProfileApi.followFreelancer(profile.userId);
       }
       setIsFollowing((current) => !current);
+      if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
         message: isFollowing
           ? "You unfollowed this freelancer."
@@ -760,13 +763,19 @@ export function ProfilePageClient({
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant={isFollowing ? "default" : "outline"}
+                      variant={isFollowing ? "outline" : "default"}
                       className={
                         isFollowing
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : ""
+                          ? "border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
+                          : "bg-[#4fae2e] text-white hover:bg-[#459928]"
                       }
-                      onClick={() => void toggleFollowing()}
+                      onClick={() => {
+                        if (isFollowing) {
+                          setUnfollowDialogOpen(true);
+                        } else {
+                          void toggleFollowing();
+                        }
+                      }}
                       disabled={pendingAction === "follow"}
                     >
                       {pendingAction === "follow" ? (
@@ -778,6 +787,44 @@ export function ProfilePageClient({
                       )}
                       {isFollowing ? "Following" : "Follow"}
                     </Button>
+                    <AlertDialog
+                      open={unfollowDialogOpen}
+                      onOpenChange={setUnfollowDialogOpen}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Unfollow {profile.displayName ?? "this freelancer"}?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Their profile will be removed from your following
+                            list. You can follow them again at any time.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel
+                            disabled={pendingAction === "follow"}
+                          >
+                            Keep following
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive text-white hover:bg-destructive/90"
+                            disabled={pendingAction === "follow"}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              void toggleFollowing();
+                            }}
+                          >
+                            {pendingAction === "follow" ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <UserMinus />
+                            )}
+                            Unfollow
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       variant={isFavorite ? "default" : "outline"}
                       className={

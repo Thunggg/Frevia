@@ -28,6 +28,7 @@ import {
   ClientProfileDetailDto,
   FavoriteFreelancerListDto,
   FollowingFreelancerListDto,
+  DiscoverFreelancerListDto,
   IdentityVerificationDocumentDto,
   IdentityVerificationStatusDto,
   SocialLinkDto,
@@ -220,6 +221,12 @@ export class FavoriteFreelancerController {
 @Controller('following/freelancers')
 export class FollowingFreelancerController {
   constructor(private readonly service: AccountProfileService) {}
+
+  @Get('discover')
+  @ZodSerializerDto(DiscoverFreelancerListDto)
+  discover(@UserActive('userId') userId: number) {
+    return this.service.discoverFreelancers(userId);
+  }
 
   @Get()
   @ZodSerializerDto(FollowingFreelancerListDto)
