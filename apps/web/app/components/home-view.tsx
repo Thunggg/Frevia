@@ -3,6 +3,7 @@ import { Header, type UserRole } from "@/components/header";
 import { RoleName, type GetMeResType } from "@shared/types";
 
 import { BackToTop } from "./back-to-top";
+import { BannerSlot } from "@/components/banner-slot";
 import { FaqSection } from "./faq-section";
 import { HeroSlider } from "./hero-slider";
 import { RevealOnScroll } from "./reveal-on-scroll";
@@ -67,46 +68,37 @@ export function HomeView({ user }: HomeViewProps) {
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
+      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+
       <main className="flex-1">
         <section className="w-full">
           <HeroSlider />
         </section>
 
-        <section className="w-full py-8">
-          <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:gap-12">
+        <BannerSlot position="HOME_HERO" className="border-b border-border/50 bg-background" />
 
-              <div className="shrink-0 max-w-[170px] text-left">
-                <p className="text-xs sm:text-sm font-medium leading-snug text-muted-foreground">
-                  Trusted by <br />
-                  <span className="font-semibold text-foreground">
-                    fast-growing teams
-                  </span>
-                </p>
-              </div>
-
-              <div className="relative w-full flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-                <div className={styles.marqueeTrack}>
-                  {[...PARTNERS, ...PARTNERS].map((partner, i) => (
-                    <div
-                      key={`${partner.name}-${i}`}
-                      className="flex items-center gap-2.5 shrink-0 px-3 py-1 text-green-800 dark:text-green-500 opacity-80 transition-all duration-200 hover:opacity-100 hover:scale-105"
-                    >
-                      <svg
-                        className="size-5 fill-current"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path d={partner.path} />
-                      </svg>
-                      <span className="text-sm sm:text-base font-bold tracking-tight text-green-800 dark:text-green-400">
-                        {partner.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+        {/* ── Partners ── */}
+        <section className="border-y border-border/50 bg-background">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+            <RevealOnScroll>
+              <p className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
+                Trusted by forward-thinking teams
+              </p>
+            </RevealOnScroll>
+            <div className={styles.partnersRow}>
+              {PARTNERS.map((partner, i) => (
+                <RevealOnScroll key={partner.src} delayMs={i * 70}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- SVG wordmarks need currentColor via img */}
+                  <img
+                    src={partner.src}
+                    alt={partner.alt}
+                    width={partner.width}
+                    height={32}
+                    className={`${styles.partnerLogo} opacity-40 grayscale dark:opacity-50 dark:invert`}
+                    style={{ animationDelay: `${i * 0.6}s` }}
+                  />
+                </RevealOnScroll>
+              ))}
             </div>
           </div>
         </section>
@@ -136,9 +128,51 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
         </section>
 
-        {/* ── FAQ / F&A ── */}
-        <FaqSection />
+        <BannerSlot position="HOME_BODY" className="border-b border-border/50 bg-background" />
+
+        {/* ── Community ── */}
+        <section className="border-b border-border/40 bg-background">
+          <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6 sm:py-32">
+            <RevealOnScroll>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4fae2e]/70">
+                Community
+              </p>
+              <h2
+                className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
+              >
+                Talk shop with peers
+              </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={90}>
+              <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/50 sm:text-lg dark:text-foreground/60">
+                Ask questions, share tips, and learn from freelancers and
+                clients building on Frevia.
+              </p>
+            </RevealOnScroll>
+            <RevealOnScroll delayMs={160}>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
+                <Button
+                  asChild
+                  size="lg"
+                  className={`${styles.ctaPrimary} min-w-[11rem] bg-[#4fae2e] px-8 text-sm font-semibold text-white shadow-lg shadow-[#4fae2e]/20 hover:bg-[#459928] dark:shadow-[#4fae2e]/25 dark:hover:bg-[#5bc03a]`}
+                >
+                  <Link href="/forum">Join the Forum</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className={`${styles.ctaSecondary} min-w-[9rem] border-border/60 bg-transparent text-sm font-medium text-foreground/70 hover:border-[#4fae2e]/40 hover:bg-[#4fae2e]/5 hover:text-foreground dark:border-white/10 dark:text-foreground/60 dark:hover:border-[#4fae2e]/30 dark:hover:bg-[#4fae2e]/10`}
+                >
+                  <Link href="/register">Get started</Link>
+                </Button>
+              </div>
+            </RevealOnScroll>
+          </div>
+        </section>
       </main>
+
+      <BannerSlot position="FOOTER" className="border-b border-border/50 bg-background" />
 
       <Footer />
       <BackToTop />

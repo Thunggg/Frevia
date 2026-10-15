@@ -120,6 +120,19 @@ export function ManageFreelancerSkillsButton({
     );
   };
 
+  // Giới hạn level trong khoảng 1-10 ngay tại input (không cho nhập 132).
+  // Giá trị không nguyên (vd "1.5") → giữ nguyên giá trị cũ.
+  const updateSkillLevel = (key: string, rawValue: string) => {
+    setRows((prev) =>
+      prev.map((row) => {
+        if (row.key !== key) return row;
+        const parsed = Number(rawValue);
+        if (!Number.isInteger(parsed)) return row;
+        return { ...row, proficiencyLevel: Math.min(10, Math.max(1, parsed)) };
+      }),
+    );
+  };
+
   // Thêm một row mới để nhập skill
   const addRow = () => {
     setRows((prev) => [
@@ -272,11 +285,8 @@ export function ManageFreelancerSkillsButton({
                     max={10}
                     step={1}
                     value={row.proficiencyLevel}
-                    onChange={(e) =>
-                      updateRow(row.key, {
-                        proficiencyLevel: Number(e.target.value),
-                      })
-                    }
+                    onChange={(e) => updateSkillLevel(row.key, e.target.value)}
+                    onBlur={(e) => updateSkillLevel(row.key, e.target.value)}
                     className="w-20"
                     aria-label={`Skill ${index + 1} proficiency (1-10)`}
                   />

@@ -20,6 +20,8 @@ import {
 import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { BannerSlot } from "@/components/banner-slot";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Select,
@@ -395,15 +397,13 @@ export function FindWorkContent({
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
-      <main className="flex-1 font-sans">
-        {/* Page Header */}
-        <section className="border-b border-border bg-background">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
-              <Link
-                href="/"
-                className="transition-colors hover:text-foreground font-medium"
-              >
+      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+
+      <main className="flex-1">
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+            <nav className="text-sm text-foreground/60">
+              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
                 Home
               </Link>
               <span className="text-muted-foreground/30">/</span>
@@ -551,8 +551,9 @@ export function FindWorkContent({
           </div>
         </div>
 
-        {/* Job Listings Area */}
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <BannerSlot position="SEARCH_RESULTS" className="border-b border-border/50 bg-background" />
+
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {isPending ? (
             <JobListSkeleton />
           ) : jobs.length === 0 ? (
