@@ -12,9 +12,12 @@ export const ProposalNotFoundException = () =>
     { message: ManageContractMessage.PROPOSAL_NOT_FOUND, path: 'proposalId' },
   ]);
 
-export const ProposalNotPendingException = () =>
+export const ProposalNotAcceptedException = () =>
   new UnprocessableEntityException([
-    { message: ManageContractMessage.PROPOSAL_NOT_PENDING, path: 'proposalId' },
+    {
+      message: ManageContractMessage.PROPOSAL_NOT_ACCEPTED,
+      path: 'proposalId',
+    },
   ]);
 
 export const ContractAlreadyExistsException = () =>

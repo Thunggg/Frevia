@@ -26,12 +26,21 @@ export class AccountProfileRepository {
       select: {
         id: true,
         email: true,
-        password: true,
         profile: true,
         userRoles: {
           select: { isPrimary: true, role: { select: { name: true } } },
           orderBy: { createdAt: 'asc' },
         },
+      },
+    });
+  }
+
+  findPasswordCredential(userId: number) {
+    return this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      select: {
+        password: true,
+        profile: { select: { id: true } },
       },
     });
   }
@@ -57,7 +66,7 @@ export class AccountProfileRepository {
     return this.prisma.profile.update({
       where: { userId },
       data: { avatarUrl },
-      select: { avatarUrl: true },
+      select: { avatarUrl: true, updatedAt: true },
     });
   }
 

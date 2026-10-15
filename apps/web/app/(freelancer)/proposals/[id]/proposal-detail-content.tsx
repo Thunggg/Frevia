@@ -10,6 +10,7 @@ import { Controller, useForm, type Resolver } from "react-hook-form";
 import { proposalApiRequest } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { ContractLifecyclePanel } from "@/components/contract-lifecycle-panel";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -196,6 +197,14 @@ export function ProposalDetailContent({
           </div>
         </section>
         <div className="mx-auto grid max-w-5xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:px-8">
+          {proposal.status === "ACCEPTED" ? (
+            <div className="lg:col-span-2">
+              <ContractLifecyclePanel
+                proposalId={proposal.id}
+                role="FREELANCER"
+              />
+            </div>
+          ) : null}
           <section>
             <h2 className="text-xl font-semibold">Your proposal</h2>
             <form onSubmit={submit} className="mt-5">

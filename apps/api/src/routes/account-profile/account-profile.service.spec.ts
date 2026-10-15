@@ -28,6 +28,7 @@ describe('AccountProfileService', () => {
     createFollowWithNotification: jest.fn(),
     deleteFollow: jest.fn(),
     findGeneralProfile: jest.fn(),
+    findPasswordCredential: jest.fn(),
     updateGeneralProfile: jest.fn(),
     updatePassword: jest.fn(),
     updateAvatar: jest.fn(),
@@ -224,9 +225,8 @@ describe('AccountProfileService', () => {
     const replacementCredential = ['replacement', 'credential'].join('-');
     const storedHash = ['stored', 'hash'].join('-');
     const replacementHash = ['replacement', 'hash'].join('-');
-    repository.findGeneralProfile.mockResolvedValue({
-      ...userWithRole(RoleName.CLIENT),
-      email: 'client@example.com',
+    repository.findPasswordCredential.mockResolvedValue({
+      profile: { id: 10 },
       password: storedHash,
     });
     hashing.verify.mockResolvedValue(true);
@@ -240,5 +240,23 @@ describe('AccountProfileService', () => {
 
     expect(hashing.verify).toHaveBeenCalledWith(currentCredential, storedHash);
     expect(repository.updatePassword).toHaveBeenCalledWith(1, replacementHash);
+  });
+
+  it('rejects avatar files whose content does not match the image MIME type', async () => {
+    repository.findGeneralProfile.mockResolvedValue({
+      ...userWithRole(RoleName.CLIENT),
+      email: 'client@example.com',
+    });
+    const file = {
+      originalname: 'not-really-an-image.png',
+      mimetype: 'image/png',
+      size: 12,
+      buffer: Buffer.from('plain text'),
+    } as Express.Multer.File;
+
+    await expect(service.uploadAvatar(1, file)).rejects.toMatchObject({
+      status: 400,
+    });
+    expect(repository.updateAvatar).not.toHaveBeenCalled();
   });
 });

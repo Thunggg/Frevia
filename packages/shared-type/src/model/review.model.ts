@@ -11,7 +11,6 @@ export const ReviewBreakdownSchema = z
 
 export const ReviewUserSchema = z.object({
   id: z.number(),
-  email: z.email(),
   profile: z
     .object({
       displayName: z.string().nullable(),
@@ -26,6 +25,7 @@ export const ReviewResponseSchema = z.object({
   userId: z.number(),
   responseText: z.string(),
   createdAt: ReviewDateTimeSchema,
+  updatedAt: ReviewDateTimeSchema,
   deletedAt: ReviewDateTimeSchema.nullable(),
   user: ReviewUserSchema,
 });

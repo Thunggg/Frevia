@@ -12,6 +12,7 @@ import {
 } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { ContractLifecyclePanel } from "@/components/contract-lifecycle-panel";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -208,7 +209,10 @@ export function ClientProposalDetailContent({
           </div>
         </section>
         <div className="mx-auto grid max-w-5xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:px-8">
-          <article>
+          <article className="space-y-5">
+            {proposal.status === "ACCEPTED" ? (
+              <ContractLifecyclePanel proposalId={proposal.id} role="CLIENT" />
+            ) : null}
             <Card>
               <CardContent className="p-5 sm:p-7">
                 <h2 className="text-lg font-semibold">Cover letter</h2>

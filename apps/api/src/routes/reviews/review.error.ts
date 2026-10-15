@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
@@ -8,6 +9,13 @@ const details = (message: string, path: string) => [{ message, path }];
 
 export const ReviewContractNotFoundException = () =>
   new NotFoundException(details('Contract not found.', 'contractId'));
+export const ReviewContractNotCompletedException = () =>
+  new BadRequestException(
+    details(
+      'Reviews can only be submitted after the contract is completed.',
+      'contractId',
+    ),
+  );
 export const ReviewNotFoundException = () =>
   new NotFoundException(details('Review not found.', 'reviewId'));
 export const ReviewResponseNotFoundException = () =>

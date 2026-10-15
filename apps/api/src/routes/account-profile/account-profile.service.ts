@@ -42,9 +42,41 @@ export class AccountProfileService {
     private readonly hashing: HashingService,
   ) {}
 
-  private presentAvatarUrl(userId: number, avatarUrl: string | null) {
+  private presentAvatarUrl(
+    userId: number,
+    avatarUrl: string | null,
+    updatedAt?: Date,
+  ) {
     if (!avatarUrl?.startsWith('local://')) return avatarUrl;
-    return `/api/backend/account-profile/avatar/${userId}/file`;
+    const version = updatedAt ? `?v=${updatedAt.getTime()}` : '';
+    return `/api/backend/account-profile/avatar/${userId}/file${version}`;
+  }
+
+  private detectAvatarType(buffer: Buffer) {
+    if (
+      buffer.length >= 3 &&
+      buffer[0] === 0xff &&
+      buffer[1] === 0xd8 &&
+      buffer[2] === 0xff
+    ) {
+      return { mimeType: 'image/jpeg', extension: '.jpg' };
+    }
+    if (
+      buffer.length >= 8 &&
+      buffer
+        .subarray(0, 8)
+        .equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+    ) {
+      return { mimeType: 'image/png', extension: '.png' };
+    }
+    if (
+      buffer.length >= 12 &&
+      buffer.subarray(0, 4).toString('ascii') === 'RIFF' &&
+      buffer.subarray(8, 12).toString('ascii') === 'WEBP'
+    ) {
+      return { mimeType: 'image/webp', extension: '.webp' };
+    }
+    return null;
   }
 
   private presentGeneralProfile(
@@ -56,7 +88,11 @@ export class AccountProfileService {
     return {
       ...user.profile,
       email: user.email,
-      avatarUrl: this.presentAvatarUrl(user.id, user.profile.avatarUrl),
+      avatarUrl: this.presentAvatarUrl(
+        user.id,
+        user.profile.avatarUrl,
+        user.profile.updatedAt,
+      ),
       roles: user.userRoles.map((item) => ({
         name: item.role.name,
         isPrimary: item.isPrimary,
@@ -80,7 +116,7 @@ export class AccountProfileService {
   }
 
   async changePassword(userId: number, input: ChangePasswordType) {
-    const user = await this.repository.findGeneralProfile(userId);
+    const user = await this.repository.findPasswordCredential(userId);
     if (!user?.profile) throw ProfileNotFoundException();
     if (!user.password) throw PasswordUnavailableException();
     if (!(await this.hashing.verify(input.currentPassword, user.password))) {
@@ -97,8 +133,12 @@ export class AccountProfileService {
     const user = await this.repository.findGeneralProfile(userId);
     if (!user?.profile) throw ProfileNotFoundException();
     if (!file) throw AvatarFileRequiredException();
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.mimetype) || file.size > 5 * 1024 * 1024) {
+    const detectedType = this.detectAvatarType(file.buffer);
+    if (
+      !detectedType ||
+      detectedType.mimeType !== file.mimetype ||
+      file.size > 5 * 1024 * 1024
+    ) {
       throw AvatarFileInvalidException();
     }
 
@@ -110,19 +150,24 @@ export class AccountProfileService {
       );
       avatarUrl = uploaded.secure_url;
     } else {
-      const extension = extname(file.originalname).toLowerCase() || '.png';
       const relativePath = join(
         'avatars',
         String(userId),
-        `${randomUUID()}${extension}`,
+        `${randomUUID()}${detectedType.extension}`,
       );
       const absolutePath = join(process.cwd(), 'uploads', relativePath);
       await mkdir(dirname(absolutePath), { recursive: true });
       await writeFile(absolutePath, file.buffer);
       avatarUrl = `local://${relativePath.replace(/\\/g, '/')}`;
     }
-    await this.repository.updateAvatar(userId, avatarUrl);
-    return { avatarUrl: this.presentAvatarUrl(userId, avatarUrl) as string };
+    const updated = await this.repository.updateAvatar(userId, avatarUrl);
+    return {
+      avatarUrl: this.presentAvatarUrl(
+        userId,
+        avatarUrl,
+        updated.updatedAt,
+      ) as string,
+    };
   }
 
   async getAvatarFile(userId: number) {
@@ -142,6 +187,12 @@ export class AccountProfileService {
     return {
       absolutePath,
       fileName: relativePath.split('/').at(-1) ?? 'avatar',
+      contentType:
+        extname(relativePath).toLowerCase() === '.jpg'
+          ? 'image/jpeg'
+          : extname(relativePath).toLowerCase() === '.png'
+            ? 'image/png'
+            : 'image/webp',
     };
   }
 
