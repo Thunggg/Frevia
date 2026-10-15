@@ -140,7 +140,10 @@ export class AccountProfileRepository {
               include: {
                 freelancerProfile: {
                   include: {
-                    skills: { orderBy: { proficiencyLevel: 'desc' } },
+                    skills: {
+                      include: { skill: true },
+                      orderBy: { proficiencyLevel: 'desc' },
+                    },
                   },
                 },
               },
@@ -179,7 +182,10 @@ export class AccountProfileRepository {
               include: {
                 freelancerProfile: {
                   include: {
-                    skills: { orderBy: { proficiencyLevel: 'desc' } },
+                    skills: {
+                      include: { skill: true },
+                      orderBy: { proficiencyLevel: 'desc' },
+                    },
                   },
                 },
               },

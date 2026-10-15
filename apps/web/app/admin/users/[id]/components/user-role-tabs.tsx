@@ -308,7 +308,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                             className="bg-background py-1 px-2.5 text-xs flex items-center gap-2 border-border"
                           >
                             <span className="font-medium text-foreground">
-                              {skill.skillName}
+                              {skill.skill.name}
                             </span>
                             <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
                               Level {skill.proficiencyLevel}/10

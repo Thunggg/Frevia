@@ -422,6 +422,152 @@ export function AccountProfileClient({
                   </div>
                 </div>
               </TabsContent>
+
+              <TabsContent value="following">
+                {following.length ? (
+                  <ul className="divide-y divide-border border-y border-border">
+                    {following.map((follow) => (
+                      <li key={follow.freelancerId}>
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-lg font-semibold tracking-tight text-foreground">
+                              {follow.profile.displayName ?? "Freelancer"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {follow.profile.freelancerProfile.title ??
+                                "Freelancer"}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1">
+                              {follow.profile.freelancerProfile.skills
+                                .slice(0, 4)
+                                .map((skill) => (
+                                  <Badge
+                                    key={skill.id}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                  >
+                                    {skill.skill.name}
+                                  </Badge>
+                                ))}
+                            </div>
+                            <Button
+                              className="mt-4"
+                              variant="outline"
+                              size="sm"
+                              asChild
+                            >
+                              <Link href={`/profiles/${follow.profile.id}`}>
+                                View profile
+                              </Link>
+                            </Button>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Unfollow ${follow.profile.displayName ?? "freelancer"}`}
+                            onClick={() =>
+                              void unfollowFreelancer(follow.freelancerId)
+                            }
+                            disabled={
+                              pending === `following-${follow.freelancerId}`
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <UserCheck className="size-7" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground">
+                      Not following anyone yet
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                      Follow freelancers to keep their profiles easy to find.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="favorites">
+                {favorites.length ? (
+                  <ul className="divide-y divide-border border-y border-border">
+                    {favorites.map((favorite) => (
+                      <li key={favorite.freelancerId}>
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-lg font-semibold tracking-tight text-foreground">
+                              {favorite.profile.displayName ?? "Freelancer"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {favorite.profile.freelancerProfile.title ??
+                                "Freelancer"}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1">
+                              {favorite.profile.freelancerProfile.skills
+                                .slice(0, 4)
+                                .map((skill) => (
+                                  <Badge
+                                    key={skill.id}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                  >
+                                    {skill.skill.name}
+                                  </Badge>
+                                ))}
+                            </div>
+                            <Button
+                              className="mt-4"
+                              variant="outline"
+                              size="sm"
+                              asChild
+                            >
+                              <Link href={`/profiles/${favorite.profile.id}`}>
+                                View profile
+                              </Link>
+                            </Button>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              void removeFavorite(favorite.freelancerId)
+                            }
+                            disabled={
+                              pending === `favorite-${favorite.freelancerId}`
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <Heart className="size-7" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground">
+                      No favorite freelancers yet
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                      Open a freelancer profile and tap Add to favorites to keep
+                      them here.
+                    </p>
+                    <Button
+                      className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      asChild
+                    >
+                      <Link href="/forum">Visit Forum</Link>
+                    </Button>
+                  </div>
+                )}
+              </TabsContent>
             </Tabs>
           )}
         </div>

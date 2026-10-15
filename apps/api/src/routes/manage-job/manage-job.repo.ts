@@ -361,7 +361,7 @@ export class ManageJobRepository {
   ): Promise<Array<{ id: number; name: string }>> {
     return this.prisma.skill.findMany({
       where: {
-        isActive: true,
+        deletedAt: null,
         ...(search && {
           name: { contains: search, mode: Prisma.QueryMode.insensitive },
         }),

@@ -16,8 +16,8 @@ describe('ProfileService', () => {
     findFreelancerProfileById: jest.fn(),
     findSkillsByProfileId: jest.fn(),
     searchActiveCatalogSkills: jest.fn(),
-    findActiveCatalogSkillByName: jest.fn(),
-    findSkillByNameAndProfileId: jest.fn(),
+    findOrCreateCatalogSkill: jest.fn(),
+    findSkillByProfileIdAndSkillId: jest.fn(),
     addSkillToProfile: jest.fn(),
     findSkillById: jest.fn(),
     deleteSkill: jest.fn(),
@@ -60,12 +60,13 @@ describe('ProfileService', () => {
     expect(repository.deleteSkill).not.toHaveBeenCalled();
   });
 
-  it('uses the canonical job catalog name when adding a profile skill', async () => {
+  it('uses the canonical catalog skill when adding a profile skill', async () => {
     repository.findFreelancerProfileById.mockResolvedValue(freelancerProfile());
-    repository.findActiveCatalogSkillByName.mockResolvedValue({
+    repository.findOrCreateCatalogSkill.mockResolvedValue({
+      id: 3,
       name: 'Next.js',
     });
-    repository.findSkillByNameAndProfileId.mockResolvedValue(null);
+    repository.findSkillByProfileIdAndSkillId.mockResolvedValue(null);
     repository.addSkillToProfile.mockResolvedValue({ id: 7 });
 
     await service.addSkill(5, 10, {
@@ -73,6 +74,11 @@ describe('ProfileService', () => {
       proficiencyLevel: 8,
     });
 
-    expect(repository.addSkillToProfile).toHaveBeenCalledWith(5, 'Next.js', 8);
+    expect(repository.findOrCreateCatalogSkill).toHaveBeenCalledWith('next.js');
+    expect(repository.findSkillByProfileIdAndSkillId).toHaveBeenCalledWith(
+      5,
+      3,
+    );
+    expect(repository.addSkillToProfile).toHaveBeenCalledWith(5, 3, 8);
   });
 });

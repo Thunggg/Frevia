@@ -37,7 +37,7 @@ import {
   AlertTriangle,
   Calendar,
 } from "lucide-react";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumReportListResponseType } from "@shared/types";
 import { ReportStatus } from "@shared/types";
 
@@ -237,7 +237,7 @@ export function ReportsTable({
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}

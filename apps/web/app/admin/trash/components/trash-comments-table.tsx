@@ -47,7 +47,7 @@ import {
   User,
 } from "lucide-react";
 import { adminApiRequest } from "@/apiRequests/admin";
-import { AdminPagination } from "../../components/admin-pagination";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumTrashCommentType } from "@shared/types";
 
 interface TrashCommentsTableProps {
@@ -193,7 +193,7 @@ export function TrashCommentsTable({
       </div>
 
       {pagination.totalPages > 1 && (
-        <AdminPagination
+        <NumberedPagination
           page={pagination.page}
           totalPages={pagination.totalPages}
           total={pagination.total}
