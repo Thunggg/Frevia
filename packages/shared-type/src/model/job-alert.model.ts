@@ -90,8 +90,38 @@ export const CreateJobAlertBodySchema = z
 
 export const CreateJobAlertResponseSchema = JobAlertSchema;
 
+export const GetJobAlertsQuerySchema = z.object({
+  page: z.coerce
+    .number()
+    .int(ManageJobAlertMessage.INVALID_PAGE)
+    .min(1, ManageJobAlertMessage.INVALID_PAGE)
+    .default(1),
+  limit: z.coerce
+    .number()
+    .int(ManageJobAlertMessage.INVALID_LIMIT)
+    .min(1, ManageJobAlertMessage.INVALID_LIMIT)
+    .max(20, ManageJobAlertMessage.INVALID_LIMIT)
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt", "name"]).default("createdAt"),
+  order: z.enum(["asc", "desc"]).default("desc"),
+});
+
+export const GetJobAlertsResponseSchema = z.object({
+  data: z.array(JobAlertSchema),
+  pagination: z.object({
+    page: z.number().int().min(1),
+    limit: z.number().int().min(1),
+    total: z.number().int().min(0),
+    totalPages: z.number().int().min(0),
+  }),
+});
+
 export type JobAlertType = z.infer<typeof JobAlertSchema>;
 export type CreateJobAlertBodyInputType = z.input<
   typeof CreateJobAlertBodySchema
 >;
 export type CreateJobAlertBodyType = z.output<typeof CreateJobAlertBodySchema>;
+export type GetJobAlertsQueryType = z.output<typeof GetJobAlertsQuerySchema>;
+export type GetJobAlertsResponseType = z.infer<
+  typeof GetJobAlertsResponseSchema
+>;

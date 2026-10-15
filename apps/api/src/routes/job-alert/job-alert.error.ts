@@ -19,3 +19,8 @@ export const FailedToCreateJobAlertException = () =>
   new InternalServerErrorException([
     { message: ManageJobAlertMessage.FAILED_TO_CREATE, path: '' },
   ]);
+
+export const FailedToLoadJobAlertsException = () =>
+  new InternalServerErrorException([
+    { message: ManageJobAlertMessage.FAILED_TO_LOAD, path: '' },
+  ]);

@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
-import { CreateJobAlertBodyType, JobAlertType, RoleName } from '@shared/types';
+import {
+  CreateJobAlertBodyType,
+  GetJobAlertsQueryType,
+  GetJobAlertsResponseType,
+  JobAlertType,
+  RoleName,
+} from '@shared/types';
 
 import {
   FailedToCreateJobAlertException,
+  FailedToLoadJobAlertsException,
   JobAlertFreelancerOnlyException,
   JobAlertSkillNotFoundException,
 } from './job-alert.error';
@@ -13,14 +20,40 @@ import { JobAlertRepository } from './job-alert.repo';
 export class JobAlertService {
   constructor(private readonly jobAlertRepository: JobAlertRepository) {}
 
+  async getJobAlerts(
+    userId: number,
+    roleName: string,
+    query: GetJobAlertsQueryType,
+  ): Promise<GetJobAlertsResponseType> {
+    this.assertFreelancer(roleName);
+
+    try {
+      const { jobAlerts, total } =
+        await this.jobAlertRepository.findAllByUserId(userId, query);
+
+      return {
+        data: jobAlerts,
+        pagination: {
+          page: query.page,
+          limit: query.limit,
+          total,
+          totalPages: Math.ceil(total / query.limit),
+        },
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadJobAlertsException();
+      }
+      throw error;
+    }
+  }
+
   async createJobAlert(
     userId: number,
     roleName: string,
     body: CreateJobAlertBodyType,
   ): Promise<JobAlertType> {
-    if (roleName !== RoleName.FREELANCER) {
-      throw JobAlertFreelancerOnlyException();
-    }
+    this.assertFreelancer(roleName);
 
     try {
       const uniqueSkillIds = [...new Set(body.skills)];
@@ -38,6 +71,12 @@ export class JobAlertService {
         throw FailedToCreateJobAlertException();
       }
       throw error;
+    }
+  }
+
+  private assertFreelancer(roleName: string): void {
+    if (roleName !== RoleName.FREELANCER) {
+      throw JobAlertFreelancerOnlyException();
     }
   }
 }

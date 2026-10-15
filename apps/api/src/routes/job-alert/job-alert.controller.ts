@@ -1,17 +1,36 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import type { CreateJobAlertBodyType } from '@shared/types';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import type {
+  CreateJobAlertBodyType,
+  GetJobAlertsQueryType,
+} from '@shared/types';
 import { ZodSerializerDto } from 'nestjs-zod';
 
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   CreateJobAlertBodyDto,
   CreateJobAlertResponseDto,
+  GetJobAlertsQueryDto,
+  GetJobAlertsResponseDto,
 } from './job-alert.dto';
 import { JobAlertService } from './job-alert.service';
 
 @Controller('job-alerts')
 export class JobAlertController {
   constructor(private readonly jobAlertService: JobAlertService) {}
+
+  @Get()
+  @ZodSerializerDto(GetJobAlertsResponseDto)
+  getJobAlerts(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Query() query: GetJobAlertsQueryDto,
+  ) {
+    return this.jobAlertService.getJobAlerts(
+      userId,
+      roleName,
+      query as GetJobAlertsQueryType,
+    );
+  }
 
   @Post()
   @ZodSerializerDto(CreateJobAlertResponseDto)

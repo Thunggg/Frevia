@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { CreateJobAlertBodyType, JobAlertType } from '@shared/types';
+import {
+  CreateJobAlertBodyType,
+  GetJobAlertsQueryType,
+  JobAlertType,
+} from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
 
@@ -30,6 +34,30 @@ const jobAlertSelect = {
 @Injectable()
 export class JobAlertRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findAllByUserId(
+    userId: number,
+    query: GetJobAlertsQueryType,
+  ): Promise<{ jobAlerts: JobAlertType[]; total: number }> {
+    const { page, limit, sortBy, order } = query;
+    const where = { userId } satisfies Prisma.JobAlertWhereInput;
+
+    const [jobAlerts, total] = await this.prisma.$transaction([
+      this.prisma.jobAlert.findMany({
+        where,
+        select: jobAlertSelect,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { [sortBy]: order },
+      }),
+      this.prisma.jobAlert.count({ where }),
+    ]);
+
+    return {
+      jobAlerts: jobAlerts.map((jobAlert) => this.normalize(jobAlert)),
+      total,
+    };
+  }
 
   async countActiveSkills(skillIds: number[]): Promise<number> {
     return this.prisma.skill.count({
@@ -62,6 +90,20 @@ export class JobAlertRepository {
       select: jobAlertSelect,
     });
 
+    return this.normalize(jobAlert);
+  }
+
+  private normalize<
+    T extends {
+      budgetMin: Prisma.Decimal | number | null;
+      budgetMax: Prisma.Decimal | number | null;
+    },
+  >(
+    jobAlert: T,
+  ): Omit<T, 'budgetMin' | 'budgetMax'> & {
+    budgetMin: number | null;
+    budgetMax: number | null;
+  } {
     return {
       ...jobAlert,
       budgetMin:

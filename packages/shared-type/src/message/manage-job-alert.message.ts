@@ -1,7 +1,11 @@
 export const ManageJobAlertMessage = {
   FREELANCER_ONLY: "Error.JobAlertOnlyForFreelancer",
   FAILED_TO_CREATE: "Error.FailedToCreateJobAlert",
+  FAILED_TO_LOAD: "Error.FailedToLoadJobAlerts",
   SKILL_NOT_FOUND: "Error.SkillNotFound",
+
+  INVALID_PAGE: "Error.InvalidPage",
+  INVALID_LIMIT: "Error.InvalidLimit",
 
   NAME_REQUIRED: "Error.JobAlertNameRequired",
   NAME_TOO_LONG: "Error.JobAlertNameTooLong",
