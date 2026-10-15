@@ -1,0 +1,15 @@
+meta {
+  name: Get Review Detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/reviews/{{reviewId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

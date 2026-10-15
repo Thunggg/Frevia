@@ -1,0 +1,27 @@
+meta {
+  name: Write Review
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/reviews/contracts/{{contractId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "overallRating": 4.8,
+    "breakdown": {
+      "quality": 5,
+      "communication": 4.5,
+      "deadlines": 5
+    },
+    "comment": "Excellent collaboration and delivery."
+  }
+}

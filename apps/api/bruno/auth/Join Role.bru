@@ -1,0 +1,32 @@
+meta {
+  name: Join Role
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/auth/join-role
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "role": "Client"
+  }
+}
+
+script:post-response {
+  const body = res.body.data;
+  if (res.body.success && body.accessToken) {
+    bru.setEnvVar("accessToken", body.accessToken);
+  }
+}

@@ -13,6 +13,7 @@ export const AuthMessage = {
   REFRESH_TOKEN_REVOKED: "Error.RefreshTokenRevoked",
   EMAIL_REQUIRED: "Error.EmailRequired",
   ROLE_NOT_FOUND: "Error.RoleNotFound",
+  ROLE_ALREADY_ASSIGNED: "Error.RoleAlreadyAssigned",
   INCORRECT_EMAIL: "Error.IncorrectEmail",
   INCORRECT_PASSWORD: "Error.IncorrectPassword",
 

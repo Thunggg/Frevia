@@ -31,6 +31,14 @@ import {
   Trash2,
   Upload,
 } from "@/components/icons";
+import {
+  UserCheck,
+  UserRound,
+  Star,
+  ShieldCheck,
+  Building2,
+  Heart,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -43,6 +51,8 @@ import {
   type SocialLinkType,
   type SocialPlatformType,
 } from "@shared/types";
+import { GeneralSettings } from "./general-settings";
+import { ReviewManager } from "./review-manager";
 
 type Props = {
   userId: number | null;
@@ -65,11 +75,7 @@ const labels: Record<string, string> = {
   OTHER: "Other document",
 };
 
-export function AccountProfileClient({
-  userId,
-  profileId,
-  headerRole,
-}: Props) {
+export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
@@ -160,12 +166,22 @@ export function AccountProfileClient({
   };
 
   const requestedTab = searchParams.get("tab");
-  const allowedTabs = ["identity", "social"];
+  const allowedTabs =
+    headerRole === "CLIENT"
+      ? ["general", "company", "social", "reviews", "following", "favorites"]
+      : ["general", "identity", "social", "reviews"];
   const defaultTab =
     requestedTab && allowedTabs.includes(requestedTab)
       ? requestedTab
-      : "identity";
-  const publicProfileHref = profileId ? `/profiles/${profileId}` : null;
+      : "general";
+  const publicProfileHref =
+    headerRole === "FREELANCER"
+      ? profileId
+        ? `/profiles/${profileId}`
+        : null
+      : headerRole === "CLIENT" && userId
+        ? `/clients/${userId}`
+        : null;
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -214,11 +230,45 @@ export function AccountProfileClient({
               <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
             </div>
           ) : (
-            <Tabs defaultValue={defaultTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2 sm:w-auto">
-                <TabsTrigger value="identity">Identity verification</TabsTrigger>
-                <TabsTrigger value="social">Social links</TabsTrigger>
+            <Tabs key={defaultTab} defaultValue={defaultTab}>
+              <TabsList
+                variant="line"
+                className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
+              >
+                <TabsTrigger value="general">
+                  <UserRound /> General
+                </TabsTrigger>
+                {headerRole === "FREELANCER" ? (
+                  <TabsTrigger value="identity">
+                    <ShieldCheck /> Identity
+                  </TabsTrigger>
+                ) : null}
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="company">
+                    <Building2 /> Company
+                  </TabsTrigger>
+                ) : null}
+                <TabsTrigger value="social">
+                  <Link2 /> Social links
+                </TabsTrigger>
+                <TabsTrigger value="reviews">
+                  <Star /> Reviews
+                </TabsTrigger>
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="following">
+                    <UserCheck /> Following
+                  </TabsTrigger>
+                ) : null}
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="favorites">
+                    <Heart /> Favorites
+                  </TabsTrigger>
+                ) : null}
               </TabsList>
+
+              <TabsContent value="general">
+                <GeneralSettings />
+              </TabsContent>
 
               <TabsContent value="identity">
                 <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -421,6 +471,10 @@ export function AccountProfileClient({
                     )}
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="reviews">
+                {userId ? <ReviewManager userId={userId} /> : null}
               </TabsContent>
 
               <TabsContent value="following">

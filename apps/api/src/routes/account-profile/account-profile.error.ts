@@ -52,3 +52,22 @@ export const FollowNotFoundException = () =>
   new NotFoundException(
     details('Followed freelancer not found.', 'freelancerId'),
   );
+export const AvatarFileRequiredException = () =>
+  new BadRequestException(details('Please select an avatar image.', 'file'));
+export const AvatarFileInvalidException = () =>
+  new BadRequestException(
+    details('Only JPG, PNG, or WebP images up to 5 MB are accepted.', 'file'),
+  );
+export const AvatarNotFoundException = () =>
+  new NotFoundException(details('Avatar image not found.', 'avatar'));
+export const PasswordUnavailableException = () =>
+  new BadRequestException(
+    details(
+      'This account uses social sign-in and does not have a password yet.',
+      'currentPassword',
+    ),
+  );
+export const CurrentPasswordIncorrectException = () =>
+  new BadRequestException(
+    details('Current password is incorrect.', 'currentPassword'),
+  );

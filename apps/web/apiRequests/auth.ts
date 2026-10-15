@@ -2,6 +2,7 @@ import {
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
   GetMeResType,
+  JoinRoleBodyType,
   LoginBodyType,
   LoginResType,
   MessageResType,
@@ -33,6 +34,13 @@ export const authApiRequest = {
   switchRole: (body: SwitchRoleBodyType) =>
     http.post<{ roleName: SwitchRoleBodyType["role"] }>(
       "/api/auth/switch-role",
+      body,
+      false,
+    ),
+
+  joinRole: (body: JoinRoleBodyType) =>
+    http.post<{ roleName: JoinRoleBodyType["role"] }>(
+      "/api/auth/join-role",
       body,
       false,
     ),
