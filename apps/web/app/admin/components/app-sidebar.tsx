@@ -10,6 +10,7 @@ import {
 } from "@repo/ui/components/shadcn/sidebar";
 import {
   LayoutDashboard,
+  Megaphone,
   MessageSquare,
   ShieldCheck,
   Tags,
@@ -33,6 +34,11 @@ const navItems: NavItem[] = [
     title: "Skills",
     href: "/admin/skills",
     icon: Tags,
+  },
+  {
+    title: "Banners",
+    href: "/admin/banners",
+    icon: Megaphone,
   },
   {
     title: "Users",

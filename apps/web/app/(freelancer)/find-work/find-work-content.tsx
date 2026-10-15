@@ -18,6 +18,7 @@ import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import { BannerSlot } from "@/components/banner-slot";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Select,
@@ -347,6 +348,8 @@ export function FindWorkContent({
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
+      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+
       <main className="flex-1">
         <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
@@ -449,6 +452,8 @@ export function FindWorkContent({
             ) : null}
           </div>
         </div>
+
+        <BannerSlot position="SEARCH_RESULTS" className="border-b border-border/50 bg-background" />
 
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {isPending ? (

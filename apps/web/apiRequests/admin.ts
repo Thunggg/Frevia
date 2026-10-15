@@ -12,6 +12,11 @@ import {
   AdminUpdatePortfolioItemBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
+  BannerAdminDeleteResponseType,
+  BannerAdminDetailResponseType,
+  BannerCreateBodyType,
+  BannerUploadImageResponseType,
+  BannerUpdateBodyType,
   CreateForumCategoryBodyType,
   UpdateForumCategoryBodyType,
   DeleteForumCategoryResponseType,
@@ -30,8 +35,9 @@ import {
   SkillAdminDetailResponseType,
   AdminUserListResponseType,
   AdminUserDetailResponseType,
+  ApiError,
 } from "@shared/types";
-import { http } from "@/lib/http";
+import { ApiFail, http } from "@/lib/http";
 
 function buildQueryString(
   params: Record<string, string | number | undefined>,
@@ -249,4 +255,40 @@ export const adminApiRequest = {
       `/api/admin/identity-verifications/${id}/reject`,
       { reviewNotes: reviewNotes ?? null },
     ),
+
+  // ====== Admin quản lý Banner quảng cáo ======
+  uploadBannerImage: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch("/api/backend/api/admin/banners/upload-image", {
+      method: "POST",
+      body: formData,
+    }).then(async (res) => {
+      const data: { success: boolean; data: BannerUploadImageResponseType } =
+        await res.json();
+      if (!res.ok) {
+        throw new ApiFail(
+          data as unknown as ApiError,
+          res.status,
+        );
+      }
+      return data.data;
+    });
+  },
+
+  createBanner: (body: BannerCreateBodyType) =>
+    http.post<BannerAdminDetailResponseType>("/api/admin/banners", body),
+
+  updateBanner: (id: number, body: BannerUpdateBodyType) =>
+    http.patch<BannerAdminDetailResponseType>(`/api/admin/banners/${id}`, body),
+
+  restoreBanner: (id: number) =>
+    http.patch<BannerAdminDetailResponseType>(
+      `/api/admin/banners/${id}/restore`,
+      {},
+    ),
+
+  deleteBanner: (id: number) =>
+    http.delete<BannerAdminDeleteResponseType>(`/api/admin/banners/${id}`),
 };

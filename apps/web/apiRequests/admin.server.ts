@@ -7,6 +7,8 @@ import type {
   AdminUserDetailResponseType,
   AdminUserListResponseType,
   ApiResponse,
+  BannerAdminDetailResponseType,
+  BannerAdminListResponseType,
   ForumAdminCategoryListResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminStatsType,
@@ -93,6 +95,29 @@ const adminServerRequest = {
   getSkillById(id: number) {
     return adminServerFetch<SkillAdminDetailResponseType>(
       `/api/admin/skills/${id}`,
+    );
+  },
+
+  // Danh sách banner (phân trang + search + lọc deleted/position + sort) — trang Admin Banners
+  getBanners(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    deleted?: string;
+    position?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) {
+    const query = buildQueryString(params || {});
+    return adminServerFetch<BannerAdminListResponseType>(
+      `/api/admin/banners${query}`,
+    );
+  },
+
+  // Chi tiết 1 banner — trang /admin/banners/[id]
+  getBannerById(id: number) {
+    return adminServerFetch<BannerAdminDetailResponseType>(
+      `/api/admin/banners/${id}`,
     );
   },
 

@@ -58,3 +58,5 @@ export * from "./model/saved-search.model";
 export * from "./message/saved-search.message";
 export * from "./message/manage-identity-verification.message";
 export * from "./model/identity-verification.model";
+export * from "./model/banner.model";
+export * from "./message/banner.message";

@@ -6,6 +6,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { RoleName, type GetMeResType } from "@shared/types";
 
 import { BackToTop } from "./back-to-top";
+import { BannerSlot } from "@/components/banner-slot";
 import { HeroSlider } from "./hero-slider";
 import { RevealOnScroll } from "./reveal-on-scroll";
 import { SkillsHighlight } from "./skills-highlight";
@@ -42,11 +43,15 @@ export function HomeView({ user }: HomeViewProps) {
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
+      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+
       <main className="flex-1">
         {/* ── Hero Carousel (full-width) ── */}
         <section className="w-full">
           <HeroSlider />
         </section>
+
+        <BannerSlot position="HOME_HERO" className="border-b border-border/50 bg-background" />
 
         {/* ── Partners ── */}
         <section className="border-y border-border/50 bg-background">
@@ -110,6 +115,8 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
         </section>
 
+        <BannerSlot position="HOME_BODY" className="border-b border-border/50 bg-background" />
+
         {/* ── Community ── */}
         <section className="border-b border-border/40 bg-background">
           <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6 sm:py-32">
@@ -151,6 +158,8 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
         </section>
       </main>
+
+      <BannerSlot position="FOOTER" className="border-b border-border/50 bg-background" />
 
       <Footer />
       <BackToTop />
