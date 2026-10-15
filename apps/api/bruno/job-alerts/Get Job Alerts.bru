@@ -1,0 +1,40 @@
+meta {
+  name: Get Job Alerts
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/job-alerts?page=1&limit=10&sortBy=createdAt&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 10
+  sortBy: createdAt
+  order: desc
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("Status should be 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Response should use the common pagination format", function () {
+    const body = res.getBody();
+    expect(body.success).to.equal(true);
+    expect(body.data.data).to.be.an("array");
+    expect(body.data.pagination.page).to.equal(1);
+    expect(body.data.pagination.limit).to.equal(10);
+  });
+}

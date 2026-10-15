@@ -1,0 +1,45 @@
+meta {
+  name: Update Job Alert
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/job-alerts/{{jobAlertId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "Updated Backend Job Alert",
+    "frequency": "WEEKLY",
+    "channels": ["IN_APP"],
+    "isActive": true
+  }
+}
+
+vars:pre-request {
+  jobAlertId: 1
+}
+
+tests {
+  test("Status should be 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Job Alert should be updated", function () {
+    expect(res.getBody().success).to.equal(true);
+    expect(res.getBody().data.name).to.equal("Updated Backend Job Alert");
+    expect(res.getBody().data.frequency).to.equal("WEEKLY");
+  });
+}

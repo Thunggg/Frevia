@@ -1,0 +1,44 @@
+meta {
+  name: Create Job Alert
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/job-alerts
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "Backend TypeScript jobs",
+    "keywords": "NestJS Prisma TypeScript",
+    "budgetMin": 500,
+    "budgetMax": 3000,
+    "budgetType": "FIXED_PRICE",
+    "frequency": "DAILY",
+    "channels": ["IN_APP", "EMAIL"],
+    "skills": []
+  }
+}
+
+tests {
+  test("Status should be 201", function () {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Job Alert should be created", function () {
+    expect(res.getBody().success).to.equal(true);
+    expect(res.getBody().data.name).to.equal("Backend TypeScript jobs");
+  });
+}

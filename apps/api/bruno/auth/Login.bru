@@ -21,6 +21,11 @@ body:json {
   }
 }
 
+vars:pre-request {
+  demoEmail: phamkhavycm2004@gmail.com
+  demoPassword: Phamkhavy123@
+}
+
 script:post-response {
   const body = res.body.data;
   const isSuccess = res.body.success;
