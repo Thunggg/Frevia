@@ -136,6 +136,14 @@ export class JobAlertRepository {
     return this.normalize(jobAlert);
   }
 
+  async delete(id: number, userId: number): Promise<boolean> {
+    const result = await this.prisma.jobAlert.deleteMany({
+      where: { id, userId },
+    });
+
+    return result.count > 0;
+  }
+
   private normalize<
     T extends {
       budgetMin: Prisma.Decimal | number | null;

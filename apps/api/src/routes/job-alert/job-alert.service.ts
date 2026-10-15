@@ -13,6 +13,7 @@ import {
 
 import {
   FailedToCreateJobAlertException,
+  FailedToDeleteJobAlertException,
   FailedToLoadJobAlertDetailException,
   FailedToLoadJobAlertsException,
   FailedToUpdateJobAlertException,
@@ -146,6 +147,26 @@ export class JobAlertService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateJobAlertException();
+      }
+      throw error;
+    }
+  }
+
+  async deleteJobAlert(
+    userId: number,
+    roleName: string,
+    id: number,
+  ): Promise<void> {
+    this.assertFreelancer(roleName);
+
+    try {
+      const deleted = await this.jobAlertRepository.delete(id, userId);
+      if (!deleted) {
+        throw JobAlertNotFoundException();
+      }
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToDeleteJobAlertException();
       }
       throw error;
     }

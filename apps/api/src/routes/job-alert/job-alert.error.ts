@@ -40,6 +40,11 @@ export const FailedToUpdateJobAlertException = () =>
     { message: ManageJobAlertMessage.FAILED_TO_UPDATE, path: '' },
   ]);
 
+export const FailedToDeleteJobAlertException = () =>
+  new InternalServerErrorException([
+    { message: ManageJobAlertMessage.FAILED_TO_DELETE, path: '' },
+  ]);
+
 export const FailedToLoadJobAlertsException = () =>
   new InternalServerErrorException([
     { message: ManageJobAlertMessage.FAILED_TO_LOAD, path: '' },

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -83,5 +84,14 @@ export class JobAlertController {
       id,
       body as UpdateJobAlertBodyType,
     );
+  }
+
+  @Delete(':id')
+  deleteJobAlert(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.jobAlertService.deleteJobAlert(userId, roleName, id);
   }
 }
