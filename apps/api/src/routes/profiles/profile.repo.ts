@@ -7,9 +7,9 @@ export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
-    return this.prisma.profile.findUnique({
+    return this.prisma.profile.findFirst({
       where: {
-        id: profileId,
+        OR: [{ id: profileId }, { userId: profileId }],
         user: {
           deletedAt: null,
         },
@@ -81,8 +81,10 @@ export class ProfileRepository {
   }
 
   async findSkillsByProfileId(profileId: number) {
-    const freelancerProfile = await this.prisma.freelancerProfile.findUnique({
-      where: { profileId },
+    const freelancerProfile = await this.prisma.freelancerProfile.findFirst({
+      where: {
+        OR: [{ profileId }, { profile: { userId: profileId } }],
+      },
     });
     if (!freelancerProfile) return [];
     return this.prisma.freelancerSkill.findMany({

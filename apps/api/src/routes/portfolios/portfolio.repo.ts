@@ -9,7 +9,7 @@ export class PortfolioRepository {
   async findFreelancerProfileById(profileId: number) {
     return this.prisma.profile.findFirst({
       where: {
-        id: profileId,
+        OR: [{ id: profileId }, { userId: profileId }],
         user: {
           deletedAt: null,
         },

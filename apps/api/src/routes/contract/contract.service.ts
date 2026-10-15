@@ -35,7 +35,8 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+      if (proposal.status !== 'PENDING' && proposal.status !== 'ACCEPTED')
+        throw ProposalNotPendingException();
       if (proposal.job.clientId !== clientId)
         throw ContractForbiddenException();
 

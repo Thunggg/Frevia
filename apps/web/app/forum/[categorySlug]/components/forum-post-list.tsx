@@ -11,7 +11,7 @@ import {
   Search,
   User,
   X,
-} from "lucide-react";
+} from "@/components/icons";
 
 import {
   Avatar,

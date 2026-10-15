@@ -25,7 +25,7 @@ import {
   Quote,
   Code,
   Minus,
-} from "lucide-react";
+} from "@/components/icons";
 import { cn } from "@repo/ui/lib/utils";
 
 function ToolbarButton({
