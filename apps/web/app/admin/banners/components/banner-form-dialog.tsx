@@ -299,13 +299,7 @@ export function BannerFormDialog({
                   onChange={handleFileChange}
                   className="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border-0 file:bg-[#4fae2e]/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#4fae2e] hover:file:bg-[#4fae2e]/20"
                 />
-                {uploading && (
-                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Uploading image...
-                  </p>
-                )}
-                {previewUrl && !uploading && (
+                {previewUrl && (
                   <div className="flex items-center gap-3 rounded-md border bg-muted/40 p-2">
                     {/* eslint-disable-next-line @next/next/no-img-element -- banner preview */}
                     <img
@@ -328,7 +322,7 @@ export function BannerFormDialog({
                     </div>
                   </div>
                 )}
-                {!previewUrl && !uploading && (
+                {!previewUrl && (
                   <div className="flex items-center gap-2 rounded-md border border-dashed p-2 text-xs text-muted-foreground">
                     <ImageIcon className="h-3.5 w-3.5" />
                     No image yet. Select a file above to preview.
