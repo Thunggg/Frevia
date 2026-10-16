@@ -113,6 +113,7 @@ export const Pencil = createGoogleIcon("edit", "Pencil");
 export const Pin = createGoogleIcon("push_pin", "Pin");
 export const PinOff = createGoogleIcon("do_not_disturb_on", "PinOff");
 export const Plus = createGoogleIcon("add", "Plus");
+export const Play = createGoogleIcon("play_arrow", "Play");
 export const Quote = createGoogleIcon("format_quote", "Quote");
 export const Redo = createGoogleIcon("redo", "Redo");
 export const RefreshCw = createGoogleIcon("refresh", "RefreshCw");

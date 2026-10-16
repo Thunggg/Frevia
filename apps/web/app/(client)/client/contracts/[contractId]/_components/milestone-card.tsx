@@ -6,14 +6,17 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  Clock,
   Download,
   Edit2,
   Ellipsis,
   ExternalLink,
   FileText,
   Loader2,
+  Play,
   RotateCcw,
   Trash2,
+  Upload,
 } from "@/components/icons";
 import {
   DropdownMenu,
@@ -57,12 +60,12 @@ function getMilestoneStatusBadge(status: MilestoneType["status"]) {
     case "IN_PROGRESS":
       return {
         label: "In Progress",
-        className: "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15",
+        className: "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium",
       };
     case "CHANGES_REQUESTED":
       return {
         label: "Revisions Requested",
-        className: "bg-[#F1F0F5] text-foreground/80 border border-border",
+        className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium",
       };
     default:
       return {
@@ -76,26 +79,36 @@ interface MilestoneCardProps {
   contractId: number;
   milestone: MilestoneType;
   index: number;
-  onEdit: (milestone: MilestoneType) => void;
-  onDelete: (milestone: MilestoneType) => void;
-  onReview: (milestone: MilestoneType, submission: GetSubmissionResponseType) => void;
+  isFreelancer?: boolean;
+  onEdit?: (milestone: MilestoneType) => void;
+  onDelete?: (milestone: MilestoneType) => void;
+  onReview?: (milestone: MilestoneType, submission: GetSubmissionResponseType) => void;
+  onSubmitWork?: (milestone: MilestoneType) => void;
+  onStartWork?: (milestone: MilestoneType) => void;
 }
 
 export function MilestoneCard({
   contractId,
   milestone,
   index,
+  isFreelancer = false,
   onEdit,
   onDelete,
   onReview,
+  onSubmitWork,
+  onStartWork,
 }: MilestoneCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [submissions, setSubmissions] = useState<GetSubmissionResponseType[] | null>(null);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
-  // Auto-expand if milestone is submitted (awaiting review)
+  // Auto-expand if milestone needs attention
   useEffect(() => {
-    if (milestone.status === "SUBMITTED") {
+    if (
+      milestone.status === "SUBMITTED" ||
+      milestone.status === "CHANGES_REQUESTED" ||
+      milestone.status === "IN_PROGRESS"
+    ) {
       setIsExpanded(true);
     }
   }, [milestone.status]);
@@ -128,31 +141,46 @@ export function MilestoneCard({
 
   return (
     <div className="group rounded-2xl border border-border/70 bg-card hover:border-[#0069D3]/40 transition-all shadow-xs overflow-hidden">
-      {/* Header Row (List card summary) */}
+      {/* Top Main Bar (Always Visible) */}
       <div
         onClick={handleToggleExpand}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 cursor-pointer select-none transition-colors hover:bg-[#F1F0F5]/30"
+        className="flex flex-col sm:flex-row sm:items-center justify-between p-5 cursor-pointer gap-4 transition-colors hover:bg-muted/20 select-none"
       >
-        {/* Left: Title & Due Date & Amount */}
-        <div className="flex-1 min-w-0 space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-muted-foreground/70">#{index + 1}</span>
-            <h3 className="text-sm font-bold text-foreground truncate group-hover:text-[#0069D3] transition-colors">
-              {milestone.title}
-            </h3>
+        {/* Left: Index badge + Title + Dates + Amount */}
+        <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+          {/* Milestone Number Index */}
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#F1F0F5] text-xs font-bold text-foreground">
+            {index + 1}
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <CalendarDays className="size-3.5 text-muted-foreground/70" />
-              Due: {formatDate(milestone.dueDate)}
-            </span>
-            <span className="font-semibold text-foreground">
+
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-foreground truncate">
+                {milestone.title}
+              </h4>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <CalendarDays className="size-3.5 text-muted-foreground/70" />
+                Due {formatDate(milestone.dueDate)}
+              </span>
+              <span>•</span>
+              <span className="capitalize">
+                Payment: {milestone.paymentStatus.toLowerCase()}
+              </span>
+            </div>
+          </div>
+
+          {/* Amount Badge */}
+          <div className="text-right shrink-0">
+            <span className="text-base font-extrabold text-foreground block tracking-tight">
               {money(Number(milestone.amount))}
             </span>
           </div>
         </div>
 
-        {/* Right: Status badge + 3 dots action menu + Chevron */}
+        {/* Right: Status badge + 3 dots action menu (Client only) + Chevron */}
         <div
           className="flex items-center gap-2 shrink-0 self-start sm:self-center"
           onClick={(e) => e.stopPropagation()}
@@ -161,47 +189,51 @@ export function MilestoneCard({
             {badge.label}
           </span>
 
-          {/* 3-dots action menu (Like Job Card) */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-colors outline-none"
-                title="Milestone options"
-              >
-                <Ellipsis className="size-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              sideOffset={6}
-              className="w-44 rounded-[20px] border border-border bg-white dark:bg-zinc-900 p-1.5 shadow-xl flex flex-col gap-1"
-            >
-              <DropdownMenuItem
-                onClick={() => onEdit(milestone)}
-                className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 cursor-pointer transition-all outline-none"
-              >
-                <div className="flex items-center gap-2">
-                  <Edit2 className="size-3.5 text-foreground" />
-                  <span className="text-xs font-medium text-foreground">Edit</span>
-                </div>
-                <ChevronRight className="size-3 text-muted-foreground/50 group-hover:text-[#0069D3] transition-all" />
-              </DropdownMenuItem>
-
-              {milestone.status !== "COMPLETED" && (
-                <DropdownMenuItem
-                  onClick={() => onDelete(milestone)}
-                  className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
+          {/* 3-dots action menu (Only Client can edit/delete milestones) */}
+          {!isFreelancer && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-colors outline-none"
+                  title="Milestone options"
                 >
-                  <div className="flex items-center gap-2">
-                    <Trash2 className="size-3.5 text-red-600" />
-                    <span className="text-xs font-medium text-red-600">Delete</span>
-                  </div>
-                  <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <Ellipsis className="size-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={6}
+                className="w-44 rounded-[20px] border border-border bg-white dark:bg-zinc-900 p-1.5 shadow-xl flex flex-col gap-1"
+              >
+                {milestone.status === "PENDING" && onEdit && (
+                  <DropdownMenuItem
+                    onClick={() => onEdit(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 cursor-pointer transition-all outline-none"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Edit2 className="size-3.5 text-foreground" />
+                      <span className="text-xs font-medium text-foreground">Edit</span>
+                    </div>
+                    <ChevronRight className="size-3 text-muted-foreground/50 group-hover:text-[#0069D3] transition-all" />
+                  </DropdownMenuItem>
+                )}
+
+                {milestone.status === "PENDING" && onDelete && (
+                  <DropdownMenuItem
+                    onClick={() => onDelete(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Trash2 className="size-3.5 text-red-600" />
+                      <span className="text-xs font-medium text-red-600">Delete</span>
+                    </div>
+                    <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Expand / Collapse Chevron */}
           <button
@@ -211,38 +243,51 @@ export function MilestoneCard({
             title={isExpanded ? "Collapse" : "Expand"}
           >
             <ChevronDown
-              className={`size-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
-                }`}
+              className={`size-4 transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
             />
           </button>
         </div>
       </div>
 
-      {/* Expanded Details ("Showdown" / Slide-down) */}
+      {/* Expanded Details */}
       {isExpanded && (
         <div className="border-t border-border/60 px-5 py-4 space-y-4 bg-[#F1F0F5]/20 dark:bg-zinc-900/20">
           {/* Deliverable Scope & Criteria */}
           {milestone.description && (
             <div>
               <span className="text-[11px] block mb-1">
-                Deliverable Requirements: <span className="text-foreground/90"> {milestone.description}</span>
+                Deliverable Requirements: <span className="text-foreground/90">{milestone.description}</span>
               </span>
             </div>
           )}
 
-          {/* Freelancer Submissions Section */}
+          {/* Revision Requested Message Banner */}
+          {milestone.status === "CHANGES_REQUESTED" && latestSubmission?.changeRequestMessage && (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1">
+              <span className="font-semibold text-amber-600 dark:text-amber-400 block">
+                Feedback / Changes Requested by Client:
+              </span>
+              <p className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                {latestSubmission.changeRequestMessage}
+              </p>
+            </div>
+          )}
+
+          {/* Submissions Section */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               {milestone.status === "SUBMITTED" && latestSubmission && (
                 <span className="text-[11px] font-semibold text-[#0069D3]">
-                  Action required
+                  Deliverables submitted for review
                 </span>
               )}
             </div>
 
             {loadingSubmissions ? (
               <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground">
-                <Loader2 className="size-4 animate-spin text-[#0069D3]" />
+                <Loader2 className="size-4 animate-spin text-primary" />
                 <span>Loading submitted deliverables...</span>
               </div>
             ) : latestSubmission ? (
@@ -262,7 +307,7 @@ export function MilestoneCard({
                 {latestSubmission.message && (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                      Deliverable Notes: <span className="font-medium">  {latestSubmission.message}</span>
+                      Deliverable Notes: <span className="font-medium text-foreground">{latestSubmission.message}</span>
                     </span>
                   </div>
                 )}
@@ -280,7 +325,7 @@ export function MilestoneCard({
                           href={link}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-border/70 bg-background px-3 py-2 text-xs text-[#0069D3] hover:underline"
+                          className="flex items-center justify-between rounded-xl border border-border/70 bg-background px-3 py-2 text-xs text-primary hover:underline"
                         >
                           <span className="truncate">{link}</span>
                           <ExternalLink className="size-3.5 shrink-0 ml-2" />
@@ -313,7 +358,7 @@ export function MilestoneCard({
                               href={item.file.fileUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-1 text-[#0069D3] hover:underline p-1 text-xs shrink-0"
+                              className="flex items-center gap-1 text-primary hover:underline p-1 text-xs shrink-0"
                             >
                               <Download className="size-3.5" />
                               Download
@@ -325,8 +370,8 @@ export function MilestoneCard({
                   </div>
                 )}
 
-                {/* Review & Evaluation Actions */}
-                {milestone.status === "SUBMITTED" && (
+                {/* CLIENT-ONLY: Review & Evaluation Actions */}
+                {!isFreelancer && milestone.status === "SUBMITTED" && onReview && (
                   <div className="pt-3 border-t border-border/60 flex flex-col sm:flex-row items-center justify-end gap-2">
                     <Button
                       type="button"
@@ -351,9 +396,19 @@ export function MilestoneCard({
                   </div>
                 )}
 
+                {/* FREELANCER-ONLY: Waiting for review badge */}
+                {isFreelancer && milestone.status === "SUBMITTED" && (
+                  <div className="pt-2 border-t border-border/60 flex items-center justify-end text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full font-medium">
+                      <Clock className="size-3.5 text-primary" />
+                      <span>Deliverables submitted • Awaiting client review</span>
+                    </div>
+                  </div>
+                )}
+
                 {milestone.status === "COMPLETED" && (
-                  <div className="flex items-center gap-2 text-xs text-foreground bg-[#D0E1F8]/30 rounded-xl p-3">
-                    <CheckCircle2 className="size-4 text-[#0069D3]" />
+                  <div className="flex items-center gap-2 text-xs text-foreground bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                     <span>
                       Milestone approved and payment of{" "}
                       <strong>{money(Number(milestone.amount))}</strong> released.
@@ -368,11 +423,55 @@ export function MilestoneCard({
                     Milestone has been approved and completed.
                   </span>
                 ) : (
-                  <span>Freelancer hasn&apos;t submitted deliverables for this milestone yet.</span>
+                  <span>No work deliverables submitted yet.</span>
                 )}
               </div>
             )}
           </div>
+
+          {/* FREELANCER WORK ACTIONS */}
+          {isFreelancer && (
+            <div className="pt-2 border-t border-border/60 flex items-center justify-end gap-2">
+              {/* 1. Start milestone (when PENDING and FUNDED) */}
+              {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && onStartWork && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onStartWork(milestone)}
+                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
+                >
+                  <Play className="mr-1.5 size-3.5" />
+                  Start Working on Milestone
+                </Button>
+              )}
+
+              {/* 2. Submit Work (when IN_PROGRESS) */}
+              {milestone.status === "IN_PROGRESS" && onSubmitWork && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onSubmitWork(milestone)}
+                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
+                >
+                  <Upload className="mr-1.5 size-3.5" />
+                  Submit Work / Deliverables
+                </Button>
+              )}
+
+              {/* 3. Resubmit Work (when CHANGES_REQUESTED) */}
+              {milestone.status === "CHANGES_REQUESTED" && onSubmitWork && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onSubmitWork(milestone)}
+                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
+                >
+                  <RotateCcw className="mr-1.5 size-3.5" />
+                  Resubmit Deliverables
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

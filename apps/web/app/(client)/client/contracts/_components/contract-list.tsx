@@ -165,11 +165,17 @@ export function ContractList({
           <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
             {selectedTab !== "ALL"
               ? `You don't have any contracts with status "${selectedTab}".`
-              : "Contracts appear here once you hire a freelancer from your job proposals."}
+              : basePath === "/freelancer"
+                ? "Contracts appear here once a client hires you for a project."
+                : "Contracts appear here once you hire a freelancer from your job proposals."}
           </p>
           <div className="mt-5">
             <Button asChild size="sm" className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs">
-              <Link href="/client/jobs">View Job Proposals</Link>
+              {basePath === "/freelancer" ? (
+                <Link href="/freelancer/find-work">Find Work</Link>
+              ) : (
+                <Link href="/client/jobs">View Job Proposals</Link>
+              )}
             </Button>
           </div>
         </div>
@@ -177,9 +183,13 @@ export function ContractList({
         <div className="grid gap-4">
           {contracts.map((contract: ContractDetailType) => {
             const badge = getStatusBadge(contract.status);
-            const freelancerName =
-              contract.freelancer?.profile?.displayName || "Freelancer";
-            const avatarUrl = contract.freelancer?.profile?.avatarUrl;
+            const isFreelancerView = basePath === "/freelancer";
+            const counterpartyName = isFreelancerView
+              ? contract.client?.profile?.displayName || "Client"
+              : contract.freelancer?.profile?.displayName || "Freelancer";
+            const counterpartyAvatar = isFreelancerView
+              ? contract.client?.profile?.avatarUrl
+              : contract.freelancer?.profile?.avatarUrl;
 
             return (
               <div
@@ -210,40 +220,66 @@ export function ContractList({
                     </Link>
                   </h3>
 
-                  {/* Freelancer Info & Sign Status */}
+                  {/* Counterparty Info & Sign Status */}
                   <div className="flex flex-wrap items-center gap-4 text-xs">
                     <div className="flex items-center gap-2">
                       <Avatar className="size-6 border border-border">
-                        <AvatarImage src={avatarUrl || undefined} />
+                        <AvatarImage src={counterpartyAvatar || undefined} />
                         <AvatarFallback className="text-[10px] font-semibold">
-                          {freelancerName.charAt(0).toUpperCase()}
+                          {counterpartyName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <span className="font-medium text-foreground">
-                        {freelancerName}
+                        {counterpartyName}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 text-muted-foreground text-[11px]">
-                      <span
-                        className={
-                          contract.signedByClient
-                            ? "text-emerald-600 dark:text-emerald-400 font-medium"
-                            : "text-amber-600 dark:text-amber-400"
-                        }
-                      >
-                        Client: {contract.signedByClient ? "Signed ✓" : "Unsigned"}
-                      </span>
-                      <span>•</span>
-                      <span
-                        className={
-                          contract.signedByFreelancer
-                            ? "text-emerald-600 dark:text-emerald-400 font-medium"
-                            : "text-amber-600 dark:text-amber-400"
-                        }
-                      >
-                        Freelancer: {contract.signedByFreelancer ? "Signed ✓" : "Waiting"}
-                      </span>
+                      {isFreelancerView ? (
+                        <>
+                          <span
+                            className={
+                              contract.signedByFreelancer
+                                ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                                : "text-amber-600 dark:text-amber-400"
+                            }
+                          >
+                            You: {contract.signedByFreelancer ? "Signed ✓" : "Unsigned"}
+                          </span>
+                          <span>•</span>
+                          <span
+                            className={
+                              contract.signedByClient
+                                ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                                : "text-muted-foreground"
+                            }
+                          >
+                            Client: {contract.signedByClient ? "Signed ✓" : "Waiting"}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            className={
+                              contract.signedByClient
+                                ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                                : "text-amber-600 dark:text-amber-400"
+                            }
+                          >
+                            Client: {contract.signedByClient ? "Signed ✓" : "Unsigned"}
+                          </span>
+                          <span>•</span>
+                          <span
+                            className={
+                              contract.signedByFreelancer
+                                ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                                : "text-amber-600 dark:text-amber-400"
+                            }
+                          >
+                            Freelancer: {contract.signedByFreelancer ? "Signed ✓" : "Waiting"}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
