@@ -1,0 +1,166 @@
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{7.5cm}|}
+\hline
+\rowcolor{headerbg}
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{headerbg}
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+
+UC-01 & Register & Guest, Client, Freelancer & Allows users to create new accounts using email and password. \\
+\hline
+UC-02 & Google Login & Guest, Client, Freelancer & Allows users to login/register using Google OAuth. \\
+\hline
+UC-03 & Job Browsing & Guest, Client, Freelancer & Enables guests to browse and search for available job listings. \\
+\hline
+UC-03.1 & View List Job & Guest, Client, Freelancer & Retrieve paginated job list with filters (category, budget, skills, status, keywords) and sorting options. \\
+\hline
+UC-03.2 & View Job Detail & Guest, Client, Freelancer & Get full job details: title, description, budget, skills, client info, proposals count, attachments, timeline. \\
+\hline
+UC-04 & Manage Forum & Guest, Client, Freelancer, Admin & Manages forum operations including viewing, creating, editing, and moderating posts and comments. \\
+\hline
+UC-04.1 & View Forum Categories & Guest, Client, Freelancer, Admin & Displays all available forum categories for browsing. \\
+\hline
+UC-04.2 & View Forum Category Detail & Guest, Client, Freelancer, Admin & Shows detailed information of a specific forum category and its sub-forums. \\
+\hline
+UC-04.3 & View Post List & Guest, Client, Freelancer, Admin & Retrieves paginated list of posts within a forum category with filters and sorting. \\
+\hline
+UC-04.4 & View Post Detail & Guest, Client, Freelancer, Admin & Displays full post content, author info, creation date, and associated tags. \\
+\hline
+UC-04.5 & View Comments & Guest, Client, Freelancer, Admin & Retrieves all comments related to a specific forum post. \\
+\hline
+UC-04.6 & View Comment Detail & Guest, Client, Freelancer, Admin & Shows detailed information of a specific comment, including content, author, and timestamps. \\
+\hline
+UC-04.7 & Create Post & Client, Freelancer & Allows freelancers to create new discussion posts or questions in the forum. \\
+\hline
+UC-04.8 & Edit Post & Client, Freelancer & Allows freelancers to edit their own forum posts. \\
+\hline
+UC-04.9 & Delete Post & Client, Freelancer, Admin & Allows post owners or admins to delete a forum post. \\
+\hline
+UC-04.10 & Like Post & Client, Freelancer & Allows freelancers to like a forum post. \\
+\hline
+UC-04.11 & Unlike Post & Client, Freelancer & Allows freelancers to remove their like from a forum post. \\
+\hline
+UC-04.12 & Add Comment & Client, Freelancer & Allows freelancers to add comments to a forum post. \\
+\hline
+UC-04.13 & Edit Comment & Client, Freelancer & Allows freelancers to edit their own comments. \\
+\hline
+UC-04.14 & Delete Comment & Client, Freelancer & Allows comment owners or admins to delete a comment. \\
+\hline
+UC-04.15 & Like Comment & Client, Freelancer & Allows freelancers to like a comment. \\
+\hline
+UC-04.16 & Unlike Comment & Client, Freelancer & Allows freelancers to remove their like from a comment. \\
+\hline
+UC-04.17 & Report Content & Client, Freelancer & Allows freelancers to report inappropriate content in forum posts or comments. \\
+\hline
+UC-05 & Forgot Password & Client, Freelancer & Allows users to reset their password via email verification. \\
+\hline
+UC-06 & Manage Job & Client, Freelancer & Manages job postings including creation, editing, deletion, and status changes. \\
+\hline
+UC-06.1 & View List Job & Guest, Client, Freelancer & Retrieve paginated job list with filters and sorting options. \\
+\hline
+UC-06.2 & Post New Job & Client & Allows clients to create and publish new job postings. \\
+\hline
+UC-06.3 & Edit Job & Client & Allows clients to edit their own job postings. \\
+\hline
+UC-06.4 & Delete Job & Client & Allows clients to delete their own job postings. \\
+\hline
+UC-06.5 & Change Job Status & Client & Allows clients to update job status (Open, In Progress, Closed, Cancelled). \\
+\hline
+UC-06.6 & View List Bookmarked Job & Freelancer & Retrieves list of jobs bookmarked by the freelancer. \\
+\hline
+UC-06.7 & Bookmark Job & Freelancer & Allows freelancers to save/bookmark a job for later reference. \\
+\hline
+UC-06.8 & Remove Bookmark & Freelancer & Allows freelancers to remove a bookmarked job from their list. \\
+\hline
+UC-07 & Login & Client, Freelancer, Admin & Allows users to authenticate using email and password. \\
+\hline
+UC-08 & Logout & Client, Freelancer, Admin & Allows users to securely log out of the system. \\
+\hline
+UC-09 & Manage Contract & Client, Freelancer, Admin & Manages contracts between clients and freelancers. \\
+\hline
+UC-09.1 & Get Contract List & Client, Freelancer, Admin & Retrieves paginated list of contracts with status filters and sorting. \\
+\hline
+UC-09.2 & Get Contract Detail & Client, Freelancer, Admin & Displays full contract details including terms, parties, status, and milestones. \\
+\hline
+UC-09.3 & Sign Contract & Client, Freelancer & Allows freelancers to digitally sign and accept a contract. \\
+\hline
+UC-09.4 & Complete Contract & Client, Freelancer & Marks a contract as completed successfully. \\
+\hline
+UC-09.5 & Cancel Contract & Client, Freelancer & Allows either party to cancel a contract before completion. \\
+\hline
+UC-09.6 & Contract Activities & Client, Freelancer, Admin & Tracks all activities and updates related to a contract. \\
+\hline
+UC-09.7 & Contract Files & Client, Freelancer & Manages files and attachments associated with a contract. \\
+\hline
+UC-09.8 & Upload Contract File & Client, Freelancer & Allows users to upload files to a contract (e.g., deliverables, documents). \\
+\hline
+UC-09.9 & Delete Contract File & Client, Freelancer & Allows users to delete files from a contract. \\
+\hline
+UC-09.10 & Update Contract Terms & Client & Allows clients to update contract terms and conditions. \\
+\hline
+UC-09.11 & Create Contract & Client & Allows clients to create and initiate a new contract with a freelancer. \\
+\hline
+UC-09.12 & Progress Update & Client, Freelancer & Allows freelancers to submit progress updates on contract milestones. \\
+\hline
+UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
+\hline
+UC-10.1 & View Detailed Freelancer Profile & Freelancer & Displays full freelancer profile including skills, portfolio, experience, and ratings. \\
+\hline
+UC-10.2 & Update Your Detailed Freelancer Profile & Freelancer & Allows freelancers to edit and update their profile information. \\
+\hline
+UC-11 & Manage Skills & Freelancer & Manages freelancer skill set and proficiency levels. \\
+\hline
+UC-11.1 & View List Freelancer Skill & Freelancer & Retrieve the list of skills added by the freelancer. \\
+\hline
+UC-11.2 & Add Freelancer Skill & Freelancer & Allows freelancers to add new skills to their profile. \\
+\hline
+UC-11.3 & Delete Freelancer Skill & Freelancer & Allows freelancers to remove skills from their profile. \\
+\hline
+UC-12 & Manage Portfolio & Freelancer & Manages freelancer portfolio projects and work samples. \\
+\hline
+UC-12.1 & View Portfolio List & Freelancer & Retrieve the list of portfolios created by the freelancer. \\
+\hline
+UC-12.2 & Add New Portfolio & Freelancer & Allows freelancers to add new portfolio items with images and descriptions. \\
+\hline
+UC-12.3 & View Portfolio Detail & Freelancer & Displays full details of a portfolio item including media, description, and technologies used. \\
+\hline
+UC-12.4 & Update Portfolio & Freelancer & Allows freelancers to edit and update their portfolio items. \\
+\hline
+UC-12.5 & Delete Portfolio & Freelancer & Allows freelancers to remove portfolio items. \\
+\hline
+UC-13 & Manage Role & Admin & Manages user roles and permissions within the system. \\
+\hline
+UC-13.1 & View Role List & Admin & Retrieves list of all roles in the system. \\
+\hline
+UC-13.2 & View Role Detail & Admin & Displays detailed information of a specific role and its permissions. \\
+\hline
+UC-13.3 & Create New Role & Admin & Allows admins to create new roles with custom permissions. \\
+\hline
+UC-13.4 & Update Role & Admin & Allows admins to edit role permissions and details. \\
+\hline
+UC-13.5 & Delete Role & Admin & Allows admins to delete roles from the system. \\
+\hline
+
+
+
+\end{longtable}
+\label{tab:use_cases}

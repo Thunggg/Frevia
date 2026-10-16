@@ -1,0 +1,1080 @@
+\paragraph{Manage Moderation}
+% =================================================================
+% UC-06.1 View Moderation Queue
+% =================================================================
+\subparagraph{UC-06.1 View Moderation Queue}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.1 View Moderation Queue} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Moderation section from the admin navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all forum posts with a PENDING moderation status, review their content, AI moderation scores, and categories, then approve or reject them.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} There are forum posts with a PENDING moderation status in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of PENDING forum posts is displayed. \newline
+\textbf{POST-2} The Admin can select a post to view its full details. \newline
+\textbf{POST-3} The Admin can approve or reject each post.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Moderation Queue} \newline
+1. The Admin navigates to the Moderation page from the admin sidebar. \newline
+2. The system retrieves all forum posts where \texttt{moderationStatus = PENDING} and \texttt{deletedAt = NULL}, ordered by \texttt{createdAt ASC}. \newline
+3. For each post, the system loads the author's profile (display name, avatar), the moderation score, moderation categories, and creation date. \newline
+4. The system displays the moderation queue as a table with columns: ID, Title, Score (color-coded), Categories (as badges), Author, and Date. \newline
+5. The Admin can view the AI moderation score: green if less than 0.3, amber if between 0.3 and 0.8, red if 0.8 or above.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 No Pending Posts Found} \newline
+1. The Admin navigates to the Moderation page. \newline
+2. The system determines that no posts have a PENDING moderation status. \newline
+3. The system displays a message indicating the moderation queue is empty. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to access the Moderation page. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the pending posts from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load moderation queue. Please try again later.'' \newline
+4. The moderation queue is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the moderation data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any moderation data being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MOD-01: Only posts with \texttt{moderationStatus = PENDING} and \texttt{deletedAt = NULL} shall appear in the moderation queue. \newline
+BR-MOD-02: The AI moderation score is assigned by the SensitiveAI proxy during post creation and ranges from 0.0 to 1.0. \newline
+BR-MOD-03: Posts with a score less than 0.3 are considered low risk (green), 0.3--0.8 medium risk (amber), 0.8 or above high risk (red). \newline
+BR-MOD-04: Only users with the Admin role may access the moderation queue.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The moderation score and categories are populated by the SensitiveAI proxy at post creation time. If the proxy does not provide a score, the post defaults to PENDING.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The SensitiveAI proxy is operational and assigns scores to new posts.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.2 Moderation Item Detail
+% =================================================================
+
+\subparagraph{UC-06.2 Moderation Item Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Moderation Item Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a post in the moderation queue.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete content and metadata of a pending forum post before deciding whether to approve or reject it.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The post exists with a PENDING moderation status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The full post content, author information, moderation score, categories, and creation date are displayed. \newline
+\textbf{POST-2} The Admin can approve the post or reject it.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Moderation Detail} \newline
+1. The Admin clicks the ``View'' action on a post in the moderation queue. \newline
+2. The system retrieves the full post content including title, content body, author profile, moderation score, moderation categories, and creation date. \newline
+3. The system displays a detail dialog showing all post information. \newline
+4. The system displays the moderation score and categories with visual indicators. \newline
+5. The system displays Approve and Reject action buttons.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Post Not Found or No Longer Pending} \newline
+1. The Admin clicks the ``View'' action on a post. \newline
+2. The system determines that the post does not exist, has been deleted, or is no longer in PENDING status. \newline
+3. The system displays the message ``Post not found or no longer pending.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to view a moderation item detail. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the post detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load post detail. Please try again later.'' \newline
+4. The detail view is not displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MOD-05: Only posts with \texttt{moderationStatus = PENDING} may be viewed through the moderation detail. \newline
+BR-MOD-06: The detail view shall display the AI moderation score and categories as visual indicators. \newline
+BR-MOD-07: The Admin must be able to approve or reject the post from the detail view.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The detail is shown in a modal dialog on the frontend, not a separate page.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The post data is consistent and not modified during the review process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.3 Resolve Moderation
+% =================================================================
+
+\subparagraph{UC-06.3 Resolve Moderation}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Resolve Moderation} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Approve'' or ``Reject'' button on a moderation item detail.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to resolve a moderation item by approving or rejecting the post. Approval makes the post publicly visible; rejection soft-deletes the post and moves it to the trash.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The post exists with a PENDING moderation status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} If approved, the post's \texttt{moderationStatus} is set to APPROVED and it becomes publicly visible. \newline
+\textbf{POST-2} If rejected, the post's \texttt{moderationStatus} is set to REJECTED, it is soft-deleted, and moved to the trash. \newline
+\textbf{POST-3} The post is removed from the moderation queue.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Approve Post} \newline
+1. The Admin clicks the ``Approve'' button on the moderation item detail. \newline
+2. The system verifies that the user has the Admin role. \newline
+3. The system updates the post: sets \texttt{moderationStatus = APPROVED}, records the admin's ID in \texttt{reviewedById}, and sets \texttt{reviewedAt} to the current timestamp. \newline
+4. The system returns the updated post. \newline
+5. The post is removed from the moderation queue. \newline
+6. The post becomes publicly visible on the forum.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Reject Post} \newline
+1. The Admin clicks the ``Reject'' button on the moderation item detail. \newline
+2. The system verifies that the user has the Admin role. \newline
+3. The system updates the post: sets \texttt{moderationStatus = REJECTED}, records the admin's ID in \texttt{reviewedById}, sets \texttt{reviewedAt} to the current timestamp, and sets \texttt{deletedAt} to the current timestamp. \newline
+4. The system returns the updated post. \newline
+5. The post is removed from the moderation queue and moved to the trash. \newline
+\textbf{A.3 Post Not Found or No Longer Pending} \newline
+1. The Admin confirms the approve or reject action. \newline
+2. The system determines that the post does not exist, has been deleted, or is no longer in PENDING status. \newline
+3. The system displays the message ``Post not found or no longer pending.'' \newline
+4. Return to the moderation queue.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to approve or reject a post. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system returns a 403 Forbidden error. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the post's moderation status in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to update forum post.'' \newline
+4. The post remains in PENDING status. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the approval or rejection. \newline
+2. The system cannot save the updated moderation status. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The post remains in PENDING status. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MOD-08: Only the Admin role may approve or reject a post. \newline
+BR-MOD-09: Approval shall set \texttt{moderationStatus} to APPROVED and make the post publicly visible. \newline
+BR-MOD-10: Rejection shall set \texttt{moderationStatus} to REJECTED, soft-delete the post, and move it to the trash. \newline
+BR-MOD-11: The \texttt{reviewedById} and \texttt{reviewedAt} fields shall record which admin reviewed the post and when. \newline
+BR-MOD-12: A rejected post may later be restored from the trash, which returns it to PENDING status (UC-07.3). \newline
+BR-MOD-13: Once a post is approved or rejected, it cannot be re-moderated unless it is restored from trash.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Both approve and reject use the same repository update with a WHERE clause of \texttt{moderationStatus = PENDING AND deletedAt = NULL}. No WebSocket events are emitted for moderation actions.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The post has not been modified by the author during the review process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.4 View Reports Queue
+% =================================================================
+
+\subparagraph{UC-06.4 View Reports Queue}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.4 View Reports Queue} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Reports section from the admin navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all user-submitted reports on forum posts and comments, filter by status, search by reason, and update report statuses.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} There are forum reports in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of reports is displayed with reporter info, target (post or comment), reason, status, and date. \newline
+\textbf{POST-2} The Admin can filter reports by status and search by reason. \newline
+\textbf{POST-3} The Admin can view report details and update the report status.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Reports Queue} \newline
+1. The Admin navigates to the Reports page from the admin sidebar. \newline
+2. The system retrieves all forum reports with pagination, optionally filtered by status and search term. \newline
+3. For each report, the system loads the reporter's profile, the target post or comment, and the admin who handled it (if any). \newline
+4. The system displays the reports as a table with columns: ID, Reporter, Reason (truncated to 40 characters), Target (post title or comment content), Status (as a badge), and Date. \newline
+5. The Admin can filter by status using tabs: All, Pending, Reviewed, Resolved, Dismissed. \newline
+6. The Admin can search reports by reason using the search bar.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 No Reports Found} \newline
+1. The Admin navigates to the Reports page. \newline
+2. The system determines that no reports match the current filter or search criteria. \newline
+3. The system displays a message indicating no reports were found. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to access the Reports page. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the reports from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load reports. Please try again later.'' \newline
+4. The reports list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the reports data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any reports data being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MOD-14: Only users with the Admin role may access the reports queue. \newline
+BR-MOD-15: Reports may have one of four statuses: PENDING, REVIEWED, RESOLVED, or DISMISSED. \newline
+BR-MOD-16: The search filter shall perform a case-insensitive match on the report reason. \newline
+BR-MOD-17: Reports are ordered by \texttt{createdAt DESC}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The reports queue is separate from the moderation queue. The moderation queue handles new post approval, while the reports queue handles user-flagged content.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one report exists in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.5 Update Report Status
+% =================================================================
+
+\subparagraph{UC-06.5 Update Report Status}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Update Report Status} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin changes the status of a report from the reports queue using the inline status dropdown.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update the status of a user-submitted report (e.g., from PENDING to REVIEWED, RESOLVED, or DISMISSED).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The report exists in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The report's \texttt{status} is updated to the new value. \newline
+\textbf{POST-2} The admin's ID is recorded in the \texttt{adminId} field.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Report Status} \newline
+1. The Admin selects a new status from the status dropdown on a report row. \newline
+2. The system verifies that the user has the Admin role. \newline
+3. The system retrieves the report by ID. \newline
+4. The system verifies that the report is associated with a post (postId is not null). \newline
+5. The system updates the report's \texttt{status} and records the admin's ID in \texttt{adminId}. \newline
+6. The system returns the updated report. \newline
+7. The reports list refreshes to reflect the new status.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 Report Not Found} \newline
+1. The Admin attempts to update the status of a report. \newline
+2. The system determines that the report does not exist. \newline
+3. The system displays the message ``Report not found.'' \newline
+4. Return to the reports queue. \newline
+\textbf{A.4 Report Not Associated With a Post} \newline
+1. The Admin attempts to update the status of a report. \newline
+2. The system determines that the report is not associated with a post (postId is null). \newline
+3. The system displays the message ``Report not found.'' \newline
+4. Return to the reports queue.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to update a report status. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system returns a 403 Forbidden error. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the report status in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to update report status.'' \newline
+4. The report status is not updated. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MOD-18: Only the Admin role may update a report status. \newline
+BR-MOD-19: Valid status transitions are: PENDING to REVIEWED, REVIEWED to RESOLVED or DISMISSED, RESOLVED to REVIEWED, DISMISSED to REVIEWED. \newline
+BR-MOD-20: The \texttt{adminId} field shall record which admin updated the status. \newline
+BR-MOD-21: Report status updates are performed via REST only (no WebSocket events).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The status update is performed inline in the reports table without a detail page.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The report data is consistent and not modified during the update process.} \\ \hline
+
+\end{longtable}
+
+\paragraph{Manage ID Verification}
+% =================================================================
+% UC-06.6 View ID Verification Requests
+% =================================================================
+
+\subparagraph{UC-06.6 View ID Verification Requests}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View ID Verification Requests} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Identity Verification section from the admin navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all identity verification requests submitted by users, filter by status, and search by user name or email.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} There are identity verification requests in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of verification requests is displayed with user info, document type, status, and submission date. \newline
+\textbf{POST-2} The Admin can select a request to view its full details. \newline
+\textbf{POST-3} The Admin can approve or reject each request.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Verification Requests} \newline
+1. The Admin navigates to the Identity Verification page from the admin sidebar. \newline
+2. The system retrieves all identity verification requests where \texttt{deletedAt = NULL}, optionally filtered by status and search term. \newline
+3. For each request, the system loads the user's profile (avatar, display name, email), document type, status, and creation date. \newline
+4. The system displays the requests as a table with columns: ID, User (avatar + name + email), Document Type, Status (as a color-coded badge), and Submitted Date. \newline
+5. The Admin can filter by status using tabs: All, Pending, Approved, Rejected. \newline
+6. The Admin can search by user name or email using the search bar.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 No Requests Found} \newline
+1. The Admin navigates to the Identity Verification page. \newline
+2. The system determines that no verification requests match the current filter or search criteria. \newline
+3. The system displays a message indicating no requests were found. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to access the Identity Verification page. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the verification requests from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load verification requests. Please try again later.'' \newline
+4. The requests list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the verification data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any verification data being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-IDV-01: Only non-deleted (\texttt{deletedAt = NULL}) verification requests shall be displayed. \newline
+BR-IDV-02: Document types include PASSPORT, ID\_CARD, DRIVER\_LICENSE, RESIDENCE\_PERMIT, and OTHER. \newline
+BR-IDV-03: Verification statuses include PENDING, APPROVED, and REJECTED. \newline
+BR-IDV-04: The search filter shall perform a case-insensitive match on the user's email and display name. \newline
+BR-IDV-05: Requests are ordered by \texttt{createdAt DESC}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{File URLs are transformed for the admin UI: local files use a proxy endpoint (\texttt{/api/backend/admin/identity-verifications/:id/file}), external URLs (e.g., Cloudinary) are returned as-is.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one verification request exists in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.7 ID Verification Detail
+% =================================================================
+
+\subparagraph{UC-06.7 ID Verification Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.7 ID Verification Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a verification request in the list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete details of an identity verification request, including the uploaded document image, user profile information, and existing review notes.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The verification request exists and has not been deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The full verification detail is displayed including document image, user info, document type, status, review notes, and submission date. \newline
+\textbf{POST-2} If the request is PENDING, the Admin can approve or reject it.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Verification Detail} \newline
+1. The Admin clicks the ``View'' action on a verification request. \newline
+2. The system retrieves the full verification detail including: user info (id, email, createdAt, profile with display name, avatar, bio, and freelancer profile with title and idVerified status), admin info (if reviewed), document type, file URL, status, review notes, creation date, and review date. \newline
+3. The system displays a detail dialog showing all verification information. \newline
+4. The system displays the document image using the file URL. \newline
+5. The system displays the user's freelancer profile verification status. \newline
+6. If the request is PENDING, the system displays a textarea for review notes along with Approve and Reject buttons.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 Request Not Found} \newline
+1. The Admin clicks the ``View'' action on a verification request. \newline
+2. The system determines that the request does not exist or has been deleted. \newline
+3. The system displays the message ``Identity verification not found.'' \newline
+4. Return to the verification requests list.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to view a verification detail. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the verification detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load verification detail. Please try again later.'' \newline
+4. The detail view is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Document File Not Available} \newline
+1. The system attempts to retrieve the document file. \newline
+2. The file is not available or the path is invalid. \newline
+3. The system displays a placeholder or error message for the document image. \newline
+4. The Admin can still view other detail information and perform approve/reject actions.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-IDV-06: The detail view shall display the user's freelancer profile \texttt{idVerified} status. \newline
+BR-IDV-07: Local document files shall be served through a secure proxy endpoint with path traversal protection. \newline
+BR-IDV-08: The review notes field shall accept up to 1000 characters. \newline
+BR-IDV-09: Only PENDING requests shall display the Approve and Reject buttons.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The detail is shown in a modal dialog on the frontend. The document file proxy endpoint validates the file path to prevent path traversal attacks.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The uploaded document file is accessible and not corrupted.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.8 Approve ID Verification
+% =================================================================
+
+\subparagraph{UC-06.8 Approve ID Verification}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Approve ID Verification} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Approve'' button on the identity verification detail.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to approve an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to true.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The verification request exists with a PENDING status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The verification request's \texttt{status} is set to APPROVED. \newline
+\textbf{POST-2} The reviewing admin's ID and review timestamp are recorded. \newline
+\textbf{POST-3} The user's freelancer profile \texttt{idVerified} is set to true. \newline
+\textbf{POST-4} The request is removed from the pending queue.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Approve Verification} \newline
+1. The Admin clicks the ``Approve'' button on the verification detail. \newline
+2. The Admin optionally enters review notes (up to 1000 characters). \newline
+3. The system verifies that the verification request exists with PENDING status. \newline
+4. The system starts a database transaction. \newline
+5. The system updates the verification request: sets \texttt{status = APPROVED}, records the admin's ID in \texttt{adminId}, sets \texttt{reviewedAt} to the current timestamp, and saves the review notes. \newline
+6. The system looks up the user's freelancer profile. \newline
+7. If a freelancer profile exists, the system sets \texttt{idVerified = true}. \newline
+8. The system commits the transaction. \newline
+9. The system returns the updated verification detail. \newline
+10. The request is no longer visible in the PENDING queue.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.3a Request Not Found} \newline
+1. The Admin confirms the approval. \newline
+2. The system determines that the verification request does not exist or has been deleted. \newline
+3. The system displays the message ``Identity verification not found.'' \newline
+4. Return to the verification requests list. \newline
+\textbf{A.3b Request Already Reviewed} \newline
+1. The Admin confirms the approval. \newline
+2. The system determines that the verification request has already been reviewed (status is not PENDING). \newline
+3. The system displays the message ``Identity verification has already been reviewed.'' \newline
+4. Return to the verification detail.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to approve a verification request. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system returns a 403 Forbidden error. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the verification request and freelancer profile in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system rolls back the transaction. \newline
+4. The system displays the message ``Failed to update identity verification.'' \newline
+5. The verification status remains PENDING. \newline
+6. The use case ends. \newline
+\textbf{EX-03: Transaction Timeout} \newline
+1. The database transaction exceeds the 15-second timeout. \newline
+2. The system rolls back the transaction. \newline
+3. The system displays the message ``Failed to update identity verification. Please try again later.'' \newline
+4. The verification status remains PENDING. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-IDV-10: Only the Admin role may approve a verification request. \newline
+BR-IDV-11: Only requests with \texttt{status = PENDING} may be approved. \newline
+BR-IDV-12: Approval shall set the user's freelancer profile \texttt{idVerified = true}. \newline
+BR-IDV-13: The approve and reject operations shall be performed within a database transaction to ensure atomicity. \newline
+BR-IDV-14: The transaction timeout is 15 seconds with a max wait of 10 seconds. \newline
+BR-IDV-15: If the user does not have a freelancer profile, only the verification status is updated (no idVerified change).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The approve operation uses a Prisma interactive transaction to update both the verification document and the freelancer profile atomically.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user's freelancer profile exists and is accessible during the approval process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.9 Reject ID Verification
+% =================================================================
+
+\subparagraph{UC-06.9 Reject ID Verification}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.9 Reject ID Verification} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Reject'' button on the identity verification detail.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to reject an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to false.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The verification request exists with a PENDING status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The verification request's \texttt{status} is set to REJECTED. \newline
+\textbf{POST-2} The reviewing admin's ID and review timestamp are recorded. \newline
+\textbf{POST-3} The user's freelancer profile \texttt{idVerified} is set to false. \newline
+\textbf{POST-4} The request is removed from the pending queue.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Reject Verification} \newline
+1. The Admin clicks the ``Reject'' button on the verification detail. \newline
+2. The Admin optionally enters review notes (up to 1000 characters). \newline
+3. The system verifies that the verification request exists with PENDING status. \newline
+4. The system starts a database transaction. \newline
+5. The system updates the verification request: sets \texttt{status = REJECTED}, records the admin's ID in \texttt{adminId}, sets \texttt{reviewedAt} to the current timestamp, and saves the review notes. \newline
+6. The system looks up the user's freelancer profile. \newline
+7. If a freelancer profile exists, the system sets \texttt{idVerified = false}. \newline
+8. The system commits the transaction. \newline
+9. The system returns the updated verification detail. \newline
+10. The request is no longer visible in the PENDING queue.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.3a Request Not Found} \newline
+1. The Admin confirms the rejection. \newline
+2. The system determines that the verification request does not exist or has been deleted. \newline
+3. The system displays the message ``Identity verification not found.'' \newline
+4. Return to the verification requests list. \newline
+\textbf{A.3b Request Already Reviewed} \newline
+1. The Admin confirms the rejection. \newline
+2. The system determines that the verification request has already been reviewed (status is not PENDING). \newline
+3. The system displays the message ``Identity verification has already been reviewed.'' \newline
+4. Return to the verification detail.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to reject a verification request. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system returns a 403 Forbidden error. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the verification request and freelancer profile in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system rolls back the transaction. \newline
+4. The system displays the message ``Failed to update identity verification.'' \newline
+5. The verification status remains PENDING. \newline
+6. The use case ends. \newline
+\textbf{EX-03: Transaction Timeout} \newline
+1. The database transaction exceeds the 15-second timeout. \newline
+2. The system rolls back the transaction. \newline
+3. The system displays the message ``Failed to update identity verification. Please try again later.'' \newline
+4. The verification status remains PENDING. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-IDV-16: Only the Admin role may reject a verification request. \newline
+BR-IDV-17: Only requests with \texttt{status = PENDING} may be rejected. \newline
+BR-IDV-18: Rejection shall set the user's freelancer profile \texttt{idVerified = false}. \newline
+BR-IDV-19: The reject operation shall be performed within a database transaction to ensure atomicity. \newline
+BR-IDV-20: If the user does not have a freelancer profile, only the verification status is updated (no idVerified change). \newline
+BR-IDV-21: A user may re-submit a verification request after rejection (the system does not prevent re-submission).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The reject operation uses the same Prisma interactive transaction pattern as approve. Rejection explicitly sets \texttt{idVerified = false}, unlike approve which sets it to true.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user's freelancer profile exists and is accessible during the rejection process.} \\ \hline
+
+\end{longtable}
+
+\paragraph{Manage Forum Trash}
+% =================================================================
+% UC-06.10 View Deleted Posts / Comments List
+% =================================================================
+
+\subparagraph{UC-06.10 View Deleted Posts / Comments List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.10 View Deleted Posts / Comments List} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Trash section from the admin navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all soft-deleted forum posts and comments, including posts that were rejected by moderators. The admin can toggle between the Posts and Comments tabs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} There are soft-deleted posts or comments in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of deleted posts is displayed with title, status, author, and deletion date. \newline
+\textbf{POST-2} A paginated list of deleted comments is displayed with content, post title, author, and deletion date. \newline
+\textbf{POST-3} The Admin can select an item to view its full details. \newline
+\textbf{POST-4} The Admin can restore items from trash.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Deleted Posts List} \newline
+1. The Admin navigates to the Trash page from the admin sidebar. \newline
+2. The system retrieves all forum posts where \texttt{deletedAt IS NOT NULL} or \texttt{moderationStatus = REJECTED}, ordered by \texttt{deletedAt DESC}. \newline
+3. For each post, the system loads the author's profile and the moderation status. \newline
+4. The system displays the deleted posts as a table with columns: ID, Title, Status badge (REJECTED, PENDING, or APPROVED), Author (avatar + name), and Deleted On date. \newline
+5. The Admin can click the ``Comments'' tab to view deleted comments.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 View Deleted Comments List} \newline
+1. The Admin clicks the ``Comments'' tab on the Trash page. \newline
+2. The system retrieves all forum comments where \texttt{deletedAt IS NOT NULL}, ordered by \texttt{deletedAt DESC}. \newline
+3. For each comment, the system loads the author's profile and the associated post. \newline
+4. The system displays the deleted comments as a table with columns: ID, Content (truncated), Post Title, Author (avatar + name), and Deleted On date. \newline
+\textbf{A.2 No Deleted Items Found} \newline
+1. The Admin navigates to the Trash page. \newline
+2. The system determines that no deleted posts or comments exist. \newline
+3. The system displays a message indicating the trash is empty. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to access the Trash page. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the deleted items from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load trash items. Please try again later.'' \newline
+4. The trash list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the trash data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any trash data being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-TRASH-01: The posts trash shall include both user-deleted posts (\texttt{deletedAt IS NOT NULL}) and admin-rejected posts (\texttt{moderationStatus = REJECTED}). \newline
+BR-TRASH-02: The comments trash shall include only user-deleted comments (\texttt{deletedAt IS NOT NULL}). \newline
+BR-TRASH-03: Deleted items are ordered by \texttt{deletedAt DESC} (most recently deleted first). \newline
+BR-TRASH-04: Posts in the trash may have their original moderation status displayed as a badge. \newline
+BR-TRASH-05: Only users with the Admin role may access the trash.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The trash page uses server-side rendering for the initial data load. The Posts and Comments tabs are managed client-side.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one deleted post or comment exists in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.11 View Deleted Posts / Comments Detail
+% =================================================================
+
+\subparagraph{UC-06.11 View Deleted Posts / Comments Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.11 View Deleted Posts / Comments Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a deleted post or comment in the trash list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete content and metadata of a deleted post or comment before deciding whether to restore it.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The deleted post or comment exists in the trash.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The full content of the deleted item is displayed. \newline
+\textbf{POST-2} The Admin can restore the item.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Deleted Post Detail} \newline
+1. The Admin clicks the ``View'' action on a deleted post in the trash. \newline
+2. The system retrieves the full post content including title, content body, author profile, moderation status, moderation score, moderation categories, creation date, and deletion date. \newline
+3. The system displays a detail dialog showing all post information. \newline
+4. The system displays the Restore button. \newline
+5. If the post was rejected, the system displays a note: ``Restoring this post will return it to the moderation queue for review.''
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 View Deleted Comment Detail} \newline
+1. The Admin clicks the ``View'' action on a deleted comment in the trash. \newline
+2. The system retrieves the full comment content including content body, author profile, associated post, creation date, and deletion date. \newline
+3. The system displays a detail dialog showing all comment information. \newline
+4. The system displays the Restore button. \newline
+\textbf{A.2 Item Not Found} \newline
+1. The Admin clicks the ``View'' action on a deleted item. \newline
+2. The system determines that the item does not exist or is no longer in the trash. \newline
+3. The system displays the message ``Item not found in trash.'' \newline
+4. Return to the trash list.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to view a deleted item detail. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system displays the message ``You do not have permission to access this page.'' \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to retrieve the deleted item detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load item detail. Please try again later.'' \newline
+4. The detail view is not displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-TRASH-06: The detail view shall display the original moderation status for posts. \newline
+BR-TRASH-07: Posts with \texttt{moderationStatus = REJECTED} shall display a note indicating restoration returns them to the moderation queue. \newline
+BR-TRASH-08: The Admin must be able to restore the item from the detail view.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The detail is shown in a modal dialog on the frontend.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The deleted item data is consistent and not modified during the view process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.12 Restore Deleted Posts / Comments
+% =================================================================
+
+\subparagraph{UC-06.12 Restore Deleted Posts / Comments}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-06.12 Restore Deleted Posts / Comments} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Restore'' button on a deleted post or comment detail.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to restore a soft-deleted post or comment from the trash. Restored posts are either made immediately public (if previously approved) or returned to the moderation queue (if previously rejected).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The post or comment exists in the trash (has been soft-deleted or rejected).
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The item's \texttt{deletedAt} field is set to null. \newline
+\textbf{POST-2} If the post was REJECTED, its \texttt{moderationStatus} is reset to PENDING and the \texttt{reviewedById} and \texttt{reviewedAt} fields are cleared. \newline
+\textbf{POST-3} If the post was previously APPROVED, it becomes publicly visible immediately. \newline
+\textbf{POST-4} The item is removed from the trash list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Restore Post} \newline
+1. The Admin clicks the ``Restore'' button on the deleted post detail. \newline
+2. The system verifies that the post exists in the trash (\texttt{deletedAt IS NOT NULL} or \texttt{moderationStatus = REJECTED}). \newline
+3. The system sets \texttt{deletedAt = null}. \newline
+4. If the original \texttt{moderationStatus} was REJECTED, the system also sets \texttt{moderationStatus = PENDING}, \texttt{reviewedById = null}, and \texttt{reviewedAt = null}. \newline
+5. The system returns the restored post. \newline
+6. If the post was previously APPROVED, it becomes publicly visible immediately. \newline
+7. If the post was REJECTED, it re-appears in the moderation queue (UC-06.1).
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Restore Comment} \newline
+1. The Admin clicks the ``Restore'' button on the deleted comment detail. \newline
+2. The system verifies that the comment exists in the trash (\texttt{deletedAt IS NOT NULL}). \newline
+3. The system sets \texttt{deletedAt = null}. \newline
+4. The system returns the restored comment. \newline
+5. The comment becomes visible again in the associated post. \newline
+\textbf{A.2 Item Not Found in Trash} \newline
+1. The Admin confirms the restore action. \newline
+2. The system determines that the item does not exist in the trash or has already been restored. \newline
+3. The system displays the message ``Item not found in trash.'' \newline
+4. Return to the trash list.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Unauthorized Access} \newline
+1. A user without the Admin role attempts to restore an item from trash. \newline
+2. The system determines that the user does not have the Admin role. \newline
+3. The system returns a 403 Forbidden error. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to update forum post.'' or ``Failed to update forum comment.'' \newline
+4. The item remains in the trash. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the restore request. \newline
+2. The system cannot save the restored item. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The item remains in the trash. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-TRASH-09: Only the Admin role may restore items from trash. \newline
+BR-TRASH-10: Restoring a previously APPROVED post (soft-deleted by user) shall make it immediately public. \newline
+BR-TRASH-11: Restoring a REJECTED post shall reset its \texttt{moderationStatus} to PENDING and clear the review metadata, returning it to the moderation queue. \newline
+BR-TRASH-12: Restoring a comment shall make it visible again in the associated post. \newline
+BR-TRASH-13: There is no permanent deletion endpoint -- items in trash can only be restored.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The restore operation for posts uses a conditional logic: if the post was REJECTED, it goes back to PENDING for re-review. If it was APPROVED and soft-deleted by the user, clearing \texttt{deletedAt} makes it public immediately. Comments always become visible upon restore.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The item has not been permanently removed from the database.} \\ \hline
+
+\end{longtable}
