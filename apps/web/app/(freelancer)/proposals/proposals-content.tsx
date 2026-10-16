@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FileText, ArrowRight } from "lucide-react";
+import { FileText, ArrowRight } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import {

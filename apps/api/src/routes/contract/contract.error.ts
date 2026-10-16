@@ -20,6 +20,14 @@ export const ProposalNotAcceptedException = () =>
     },
   ]);
 
+export const ProposalNotPendingException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageContractMessage.PROPOSAL_NOT_PENDING,
+      path: 'proposalId',
+    },
+  ]);
+
 export const ContractAlreadyExistsException = () =>
   new ConflictException([
     {

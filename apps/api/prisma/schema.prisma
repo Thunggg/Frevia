@@ -971,16 +971,27 @@ model BannedKeyword {
 }
 
 model AdvertisementBanner {
-  id        Int       @id @default(autoincrement())
-  title     String    @db.VarChar(255)
-  imageUrl  String?   @db.VarChar(500)
-  linkUrl   String?   @db.VarChar(500)
+  id        Int            @id @default(autoincrement())
+  title     String         @db.VarChar(255)
+  imageUrl  String?        @db.VarChar(500)
+  linkUrl   String?        @db.VarChar(500)
+  position  BannerPosition @default(GLOBAL_HEADER)
   startDate DateTime?
   endDate   DateTime?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   deletedAt DateTime?
+
+  @@index([position, startDate, endDate])
+}
+
+enum BannerPosition {
+  GLOBAL_HEADER
+  HOME_HERO
+  HOME_BODY
+  SEARCH_RESULTS
+  FOOTER
 }
 
 // ============================

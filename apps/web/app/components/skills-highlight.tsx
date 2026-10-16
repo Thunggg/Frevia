@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import styles from "./home-view.module.css";
-
 const SKILLS = [
   "UI Design",
   "React",
@@ -52,14 +50,16 @@ export function SkillsHighlight() {
   }
 
   return (
-    <div className={styles.skillsGrid}>
+    <div className="flex flex-wrap gap-2.5 sm:gap-3">
       {SKILLS.map((skill, index) => {
         const isFound = found.has(index);
         return (
           <span
             key={skill}
-            className={`${styles.skillChip} ${
-              isFound ? styles.skillFound : ""
+            className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+              isFound
+                ? "bg-green-300 text-green-900 shadow-sm shadow-green-800/10 scale-105 dark:bg-green-500/20 dark:text-green-300 dark:border dark:border-green-500/30"
+                : "bg-white/90 dark:bg-zinc-800/80 text-foreground/70 dark:text-zinc-300 border border-black/5 dark:border-white/10 hover:border-green-800/30 dark:hover:border-green-500/30 hover:text-foreground shadow-2xs"
             }`}
           >
             {skill}

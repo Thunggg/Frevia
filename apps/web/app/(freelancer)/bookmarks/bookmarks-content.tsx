@@ -3,14 +3,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion } from "motion/react";
 import {
+  ArrowRight,
   Bookmark,
   BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
   Clock,
-  DollarSign,
+  Loader2,
   MapPin,
+  Trash2,
   X,
-} from "lucide-react";
+} from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
@@ -20,11 +25,8 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { ViewBookmarkedJobResponseType } from "@shared/types";
@@ -36,7 +38,7 @@ type BookmarksContentProps = {
 
 function formatBudget(job: ViewBookmarkedJobResponseType["data"][number]) {
   if (job.budgetMin === null || job.budgetMax === null) return "Negotiable";
-  return `$${job.budgetMin} - $${job.budgetMax}`;
+  return `$${job.budgetMin.toLocaleString()} – $${job.budgetMax.toLocaleString()}`;
 }
 
 function formatPostedTime(value: string | Date) {
@@ -45,8 +47,8 @@ function formatPostedTime(value: string | Date) {
     Math.floor((Date.now() - new Date(value).getTime()) / 3_600_000),
   );
   return hours < 24
-    ? `Posted ${hours || "just"} ${hours ? "hours" : "now"} ago`
-    : `Posted ${Math.floor(hours / 24)} days ago`;
+    ? `${hours || "just"} ${hours ? "h" : "now"} ago`
+    : `${Math.floor(hours / 24)}d ago`;
 }
 
 function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
@@ -82,189 +84,270 @@ export function BookmarksContent({
     }
   };
 
+  const goToPage = (page: number) => {
+    router.push(`/bookmarks?page=${page}`);
+  };
+
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role="FREELANCER" />
 
-      <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-            <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
+      <main className="flex-1 font-sans">
+        {/* Page Header */}
+        <section className="border-b border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
+              <Link
+                href="/"
+                className="transition-colors hover:text-foreground font-medium"
+              >
                 Home
               </Link>
-              <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">Bookmarks</span>
+              <span className="text-muted-foreground/30">/</span>
+              <span className="text-foreground font-medium">Bookmarks</span>
             </nav>
-            <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="flex items-center gap-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                  <Bookmark className="size-7 fill-[#4fae2e] text-[#4fae2e]" />
+                <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
                   Saved Jobs
                 </h1>
-                <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
+                <p className="mt-1 text-xs font-normal text-muted-foreground">
                   Jobs you&apos;ve bookmarked for later.
                 </p>
               </div>
-              <p className="text-sm text-foreground/65">
-                <span className="font-semibold text-foreground">
-                  {pagination.total}
-                </span>{" "}
-                {pagination.total === 1 ? "saved job" : "saved jobs"}
-              </p>
+
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
+                  {pagination.total}{" "}
+                  {pagination.total === 1 ? "saved job" : "saved jobs"}
+                </span>
+              </div>
             </div>
           </div>
         </section>
 
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        {/* Content Area */}
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {initialJobs.length ? (
-            <ul className="divide-y divide-border border-y border-border">
-              {initialJobs.map((job) => {
+            <div className="space-y-3">
+              {initialJobs.map((job, index) => {
                 const availability = getAvailability(job);
                 return (
-                  <li key={job.id}>
-                    <div className="flex flex-col justify-between gap-4 px-3 py-6 transition-colors hover:bg-[#eaf8df]/35 sm:flex-row sm:items-start sm:px-5 sm:py-7 dark:hover:bg-white/[0.04]">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <Badge
-                            variant={
+                  <motion.div
+                    key={job.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: index * 0.03,
+                    }}
+                    className="group relative flex flex-col justify-between rounded-[28px] border border-border bg-card p-5 sm:p-6 transition-all hover:bg-accent/10 shadow-xs font-sans"
+                  >
+                    <div>
+                      {/* Top Badges & Remove Bookmark Button */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${
                               availability.isExpiring
-                                ? "destructive"
-                                : "secondary"
-                            }
-                            className={
-                              availability.isExpiring
-                                ? ""
-                                : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                            }
+                                ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
+                                : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
+                            }`}
                           >
                             {availability.label}
-                          </Badge>
-                          <Badge variant="secondary">
+                          </span>
+                          <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
                             {job.status.replaceAll("_", " ")}
-                          </Badge>
-                          <span className="text-muted-foreground">
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
+                            <Clock className="size-3.5" />
                             {formatPostedTime(job.createdAt)}
                           </span>
                         </div>
+
+                        {/* Remove button */}
+                        <button
+                          type="button"
+                          onClick={() => setPendingRemoveJobSlug(job.slug)}
+                          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer outline-none"
+                          title="Remove from bookmarks"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+
+                      {/* Job Title & Budget */}
+                      <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                         <Link
                           href={`/job/${job.slug}`}
-                          className="mt-2 block w-fit text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-[#4fae2e]"
+                          className="text-base sm:text-lg font-bold text-foreground hover:text-[#4fae2e] transition-colors line-clamp-1"
                         >
                           {job.title}
                         </Link>
-                        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-                          <span className="inline-flex items-center gap-1.5">
-                            <MapPin className="size-4 text-[#4fae2e]" />
-                            Remote (Worldwide)
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-                            <DollarSign className="size-4 text-[#4fae2e]" />
-                            {formatBudget(job)}
-                          </span>
-                          <span className="inline-flex items-center gap-1.5">
-                            <Clock className="size-4 text-[#4fae2e]" />
-                            {job.budgetType.replaceAll("_", " ")}
+                        <div className="shrink-0 text-xs sm:text-sm font-semibold text-foreground">
+                          {formatBudget(job)}{" "}
+                          <span className="font-normal text-muted-foreground capitalize">
+                            ({job.budgetType.toLowerCase().replace("_", " ")})
                           </span>
                         </div>
-                        {job.skills.length > 0 ? (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {job.skills.map((skill) => (
-                              <Badge
-                                key={skill.skillId}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {skill.skill.name}
-                              </Badge>
-                            ))}
-                          </div>
-                        ) : null}
                       </div>
-                      <div className="flex shrink-0 flex-row gap-2 sm:flex-col sm:items-end">
-                        <Button
-                          asChild
-                          className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        >
-                          <Link href={`/job/${job.slug}`}>
-                            <BriefcaseBusiness className="mr-2 size-4" />
-                            View job
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => setPendingRemoveJobSlug(job.slug)}
-                        >
-                          <X className="mr-1 size-4" />
-                          Remove
-                        </Button>
+
+                      {/* Location / Meta */}
+                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground font-normal">
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="size-3.5" />
+                          Remote (Worldwide)
+                        </span>
                       </div>
                     </div>
-                  </li>
+
+                    {/* Bottom Row: Skills & View Action */}
+                    <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {job.skills?.length > 0 ? (
+                          job.skills.map((skill) => (
+                            <span
+                              key={skill.skillId}
+                              className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800/80 px-3 py-1 text-xs font-medium text-foreground"
+                            >
+                              {skill.skill.name}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            General project
+                          </span>
+                        )}
+                      </div>
+
+                      <Link
+                        href={`/job/${job.slug}`}
+                        className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
+                      >
+                        <BriefcaseBusiness className="size-3.5" />
+                        <span>View job</span>
+                        <ArrowRight className="size-3.5" />
+                      </Link>
+                    </div>
+                  </motion.div>
                 );
               })}
-            </ul>
+            </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                <Bookmark className="size-7" />
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-20 text-center font-sans"
+            >
+              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
+                <Bookmark className="size-6" />
               </div>
-              <p className="text-lg font-medium text-foreground">
+              <p className="text-base font-semibold text-foreground">
                 No saved jobs yet
               </p>
-              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                Bookmark jobs from Find Work to keep them here.
+              <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                Bookmark jobs from Find Work to keep track of projects you&apos;re interested in.
               </p>
               <Button
                 asChild
-                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-6 gap-2 rounded-full bg-[#4fae2e] text-xs font-medium text-white hover:bg-[#459928]"
               >
-                <Link href="/find-work">Browse jobs</Link>
+                <Link href="/find-work">
+                  Browse jobs
+                  <ArrowRight className="size-3.5" />
+                </Link>
               </Button>
-            </div>
+            </motion.div>
           )}
 
-          {pagination.page < pagination.totalPages ? (
-            <div className="mt-8 text-center">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(`/bookmarks?page=${pagination.page + 1}`)
-                }
-              >
-                Load more saved jobs
-              </Button>
+          {/* Pagination */}
+          {pagination.totalPages > 1 ? (
+            <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
+              <p className="font-sans text-xs text-muted-foreground">
+                Page {pagination.page} of {pagination.totalPages}
+              </p>
+              <div className="flex gap-1.5">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-8 rounded-full cursor-pointer"
+                  disabled={pagination.page <= 1}
+                  onClick={() => goToPage(pagination.page - 1)}
+                >
+                  <ChevronLeft className="size-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-8 rounded-full cursor-pointer"
+                  disabled={pagination.page >= pagination.totalPages}
+                  onClick={() => goToPage(pagination.page + 1)}
+                >
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>
       </main>
 
+      {/* Modern Capsule Remove Alert Dialog */}
       <AlertDialog
         open={pendingRemoveJobSlug !== null}
         onOpenChange={(open) => !open && setPendingRemoveJobSlug(null)}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This job leaves your Bookmarks. You can save it again anytime from
-              Find Work.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isRemoving}>Cancel</AlertDialogCancel>
-            <Button
-              className="bg-destructive text-white hover:bg-destructive/90"
-              disabled={isRemoving}
-              onClick={() =>
-                pendingRemoveJobSlug && removeBookmark(pendingRemoveJobSlug)
-              }
-            >
-              {isRemoving ? "Removing…" : "Remove"}
-            </Button>
-          </AlertDialogFooter>
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                Remove saved job
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                Are you sure you want to remove this job from your bookmarks? You can always save it again from Find Work.
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={isRemoving}
+                onClick={() =>
+                  pendingRemoveJobSlug && void removeBookmark(pendingRemoveJobSlug)
+                }
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 cursor-pointer transition-all duration-200 outline-none disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
+                    {isRemoving ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3.5" />
+                    )}
+                  </div>
+                  <span className="text-xs font-semibold">Remove bookmark</span>
+                </div>
+                <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel asChild>
+                <button
+                  type="button"
+                  disabled={isRemoving}
+                  className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                      <X className="size-3.5" />
+                    </div>
+                    <span className="text-xs font-medium">Cancel</span>
+                  </div>
+                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+                </button>
+              </AlertDialogCancel>
+            </div>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
 

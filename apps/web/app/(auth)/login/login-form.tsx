@@ -18,7 +18,7 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { LoginBodySchema } from "@shared/types";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "@/components/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

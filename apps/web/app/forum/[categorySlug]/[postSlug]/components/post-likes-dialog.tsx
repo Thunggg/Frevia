@@ -14,7 +14,7 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import { Loader2, Heart } from "lucide-react";
+import { Loader2, Heart } from "@/components/icons";
 import { useForumPostLikes } from "@/hooks/use-forum";
 
 type PostLikesDialogProps = {

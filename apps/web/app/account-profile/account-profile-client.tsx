@@ -3,6 +3,17 @@
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import {
+  ExternalLink,
+  Eye,
+  Link2,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+  Upload,
+} from "@/components/icons";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -38,42 +49,31 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/shadcn/tabs";
-import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import {
-  Building2,
-  Eye,
-  ExternalLink,
-  Heart,
-  Link2,
-  Loader2,
-  Plus,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  Trash2,
-  Upload,
-  UserCheck,
-  UserMinus,
-  UserPlus,
-  UserRound,
-  Star,
-} from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
 import {
   DocumentType,
   SocialPlatform,
   VerificationStatus,
-  type ClientProfileDetailType,
-  type DocumentTypeType,
   type DiscoverFreelancerType,
+  type DocumentTypeType,
   type FavoriteFreelancerType,
   type IdentityVerificationStatusType,
   type SocialLinkType,
   type SocialPlatformType,
 } from "@shared/types";
+import {
+  Building2,
+  Heart,
+  ShieldCheck,
+  Star,
+  UserCheck,
+  UserMinus,
+  UserPlus,
+  UserRound,
+} from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { GeneralSettings } from "./general-settings";
 import { ReviewManager } from "./review-manager";
 
@@ -133,8 +133,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
-  const [clientProfile, setClientProfile] =
-    useState<ClientProfileDetailType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteFreelancerType[]>([]);
   const [freelancers, setFreelancers] = useState<DiscoverFreelancerType[]>([]);
@@ -144,6 +142,9 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const [freelancerView, setFreelancerView] = useState<"all" | "following">(
     "all",
   );
+  const [companyName, setCompanyName] = useState("");
+  const [companyDescription, setCompanyDescription] = useState("");
+  const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
   const [documentType, setDocumentType] = useState<DocumentTypeType>(
@@ -154,9 +155,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     SocialPlatform.LINKEDIN,
   );
   const [socialUrl, setSocialUrl] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyDescription, setCompanyDescription] = useState("");
-  const [website, setWebsite] = useState("");
 
   const load = useCallback(async () => {
     if (!userId || headerRole === "GUEST") return;
@@ -178,7 +176,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
             accountProfileApi.getFavorites(),
           ]);
         const profile = profileResponse.data;
-        setClientProfile(profile);
         setCompanyName(profile.clientProfile.companyName ?? "");
         setCompanyDescription(profile.clientProfile.companyDescription ?? "");
         setWebsite(profile.clientProfile.website ?? "");
@@ -235,24 +232,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     }
   };
 
-  const saveCompany = async (event: FormEvent) => {
-    event.preventDefault();
-    setPending("company");
-    try {
-      const response = await accountProfileApi.updateClientProfile({
-        companyName,
-        companyDescription: companyDescription || null,
-        website: website || null,
-      });
-      setClientProfile(response.data);
-      toastSuccess({ message: "Company information updated." });
-    } catch (error) {
-      toastError({ message: errorMessage(error) });
-    } finally {
-      setPending(null);
-    }
-  };
-
   const addSocialLink = async (event: FormEvent) => {
     event.preventDefault();
     setPending("social");
@@ -286,21 +265,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     }
   };
 
-  const removeFavorite = async (freelancerId: number) => {
-    setPending(`favorite-${freelancerId}`);
-    try {
-      await accountProfileApi.removeFavorite(freelancerId);
-      setFavorites((current) =>
-        current.filter((item) => item.freelancerId !== freelancerId),
-      );
-      toastSuccess({ message: "Freelancer removed from favorites." });
-    } catch (error) {
-      toastError({ message: errorMessage(error) });
-    } finally {
-      setPending(null);
-    }
-  };
-
   const unfollowFreelancer = async (freelancerId: number) => {
     setPending(`following-${freelancerId}`);
     try {
@@ -312,7 +276,22 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
             : item,
         ),
       );
-      toastSuccess({ message: "Freelancer unfollowed." });
+      toastSuccess({ message: "Unfollowed freelancer." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const removeFavorite = async (freelancerId: number) => {
+    setPending(`favorite-${freelancerId}`);
+    try {
+      await accountProfileApi.removeFavorite(freelancerId);
+      setFavorites((current) =>
+        current.filter((item) => item.freelancerId !== freelancerId),
+      );
+      toastSuccess({ message: "Removed from favorites." });
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
@@ -332,6 +311,23 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
         ),
       );
       toastSuccess({ message: "You are now following this freelancer." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const saveCompanyProfile = async (event: FormEvent) => {
+    event.preventDefault();
+    setPending("company");
+    try {
+      await accountProfileApi.updateClientProfile({
+        companyName,
+        companyDescription,
+        website,
+      });
+      toastSuccess({ message: "Company profile updated." });
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
@@ -392,7 +388,7 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
               <span className="font-medium text-foreground">
-                Profile & settings
+                Profile & trust settings
               </span>
             </nav>
             <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -401,8 +397,8 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                   Profile & trust settings
                 </h1>
                 <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
-                  Manage the information that helps people trust and contact
-                  you.
+                  Manage your identity verification documents and public social
+                  connections.
                 </p>
               </div>
               {publicProfileHref ? (
@@ -412,7 +408,7 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                   asChild
                 >
                   <Link href={publicProfileHref}>
-                    <Eye className="size-4 text-[#4fae2e]" />
+                    <Eye className="mr-2 size-4" />
                     View public profile
                   </Link>
                 </Button>
@@ -421,9 +417,9 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="flex justify-center py-24">
+            <div className="flex justify-center py-20">
               <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
             </div>
           ) : (
@@ -467,13 +463,71 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                 <GeneralSettings />
               </TabsContent>
 
+              <TabsContent value="company">
+                <div className="rounded-xl border border-border p-5 sm:p-6">
+                  <h2 className="text-base font-semibold tracking-tight text-foreground">
+                    Company information
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Tell freelancers about your company. This information is
+                    public on your client profile.
+                  </p>
+                  <form
+                    className="mt-5 space-y-4"
+                    onSubmit={saveCompanyProfile}
+                  >
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName">Company name</Label>
+                      <Input
+                        id="companyName"
+                        value={companyName}
+                        onChange={(event) => setCompanyName(event.target.value)}
+                        placeholder="Acme Inc."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyDescription">Description</Label>
+                      <textarea
+                        id="companyDescription"
+                        value={companyDescription}
+                        onChange={(event) =>
+                          setCompanyDescription(event.target.value)
+                        }
+                        rows={4}
+                        placeholder="A short description about your company..."
+                        className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyWebsite">Website</Label>
+                      <Input
+                        id="companyWebsite"
+                        type="url"
+                        value={website}
+                        onChange={(event) => setWebsite(event.target.value)}
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                    <Button
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      disabled={pending === "company"}
+                    >
+                      {pending === "company" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : null}
+                      Save changes
+                    </Button>
+                  </form>
+                </div>
+              </TabsContent>
+
               <TabsContent value="identity">
-                <div className="grid gap-8 lg:grid-cols-2">
+                <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
                   <div className="rounded-xl border border-border p-5 sm:p-6">
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      Upload identity document
+                      Submit document for review
                     </h2>
-                    <form className="mt-5 space-y-5" onSubmit={uploadDocument}>
+                    <form className="mt-5 space-y-4" onSubmit={uploadDocument}>
                       <div className="space-y-2">
                         <Label>Document type</Label>
                         <Select
@@ -495,17 +549,18 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="identity-file">
-                          PDF, JPG or PNG (maximum 10 MB)
-                        </Label>
+                        <Label>Document file</Label>
                         <Input
-                          id="identity-file"
                           type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
+                          accept=".pdf,.png,.jpg,.jpeg"
                           onChange={(event) =>
                             setDocumentFile(event.target.files?.[0] ?? null)
                           }
+                          required
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Upload PDF, PNG, or JPG (max 10MB).
+                        </p>
                       </div>
                       <Button
                         className="bg-[#4fae2e] text-white hover:bg-[#459928]"
@@ -515,8 +570,8 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                           <Loader2 className="animate-spin" />
                         ) : (
                           <Upload />
-                        )}{" "}
-                        Upload for review
+                        )}
+                        Upload document
                       </Button>
                     </form>
                   </div>
@@ -581,62 +636,6 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
                       )}
                     </div>
                   </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="company">
-                <div className="max-w-3xl rounded-xl border border-border p-5 sm:p-6">
-                  <h2 className="text-base font-semibold tracking-tight text-foreground">
-                    Company information
-                  </h2>
-                  <form className="mt-5 space-y-5" onSubmit={saveCompany}>
-                    <div className="space-y-2">
-                      <Label>Company name</Label>
-                      <Input
-                        value={companyName}
-                        onChange={(event) => setCompanyName(event.target.value)}
-                        required
-                        maxLength={255}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Description</Label>
-                      <Textarea
-                        rows={6}
-                        value={companyDescription}
-                        onChange={(event) =>
-                          setCompanyDescription(event.target.value)
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Website</Label>
-                      <Input
-                        type="url"
-                        placeholder="https://company.com"
-                        value={website}
-                        onChange={(event) => setWebsite(event.target.value)}
-                      />
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        disabled={pending === "company"}
-                      >
-                        {pending === "company" ? (
-                          <Loader2 className="animate-spin" />
-                        ) : null}{" "}
-                        Save changes
-                      </Button>
-                      {clientProfile ? (
-                        <Button variant="outline" asChild>
-                          <Link href={`/clients/${userId}`}>
-                            View public profile
-                          </Link>
-                        </Button>
-                      ) : null}
-                    </div>
-                  </form>
                 </div>
               </TabsContent>
 

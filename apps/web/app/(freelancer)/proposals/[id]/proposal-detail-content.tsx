@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "@/components/icons";
 import { Controller, useForm, type Resolver } from "react-hook-form";
 
 import { proposalApiRequest } from "@/apiRequests/proposal";

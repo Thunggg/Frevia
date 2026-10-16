@@ -21,6 +21,7 @@ import {
   FailedToUpdateContractException,
   ProposalNotFoundException,
   ProposalNotAcceptedException,
+  ProposalNotPendingException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
 
@@ -35,6 +36,8 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
+      if (proposal.status !== 'PENDING' && proposal.status !== 'ACCEPTED')
+        throw ProposalNotPendingException();
       if (proposal.job.clientId !== clientId)
         throw ContractForbiddenException();
 
