@@ -1,0 +1,32 @@
+\section{Non-Functional Requirement}
+This section describes the non-functional requirements of the Frevia platform, covering performance, security, availability, usability, and Web3-specific requirements.
+
+\subsection{Performance \& Scalability}
+\begin{itemize}
+    \item \textbf{Response Time:} The system's API read operations must respond within 200ms under normal load (up to 500 concurrent requests). Write/update operations, excluding blockchain transactions, must complete within 500ms.
+    \item \textbf{Page Load Time:} The web application must achieve a Largest Contentful Paint (LCP) of less than 2.5 seconds, adhering to Google's Core Web Vitals guidelines.
+    \item \textbf{Concurrency:} The system backend must support at least 1,000 concurrent active users and handle a database connection pool efficiently.
+    \item \textbf{Search and Filtering Efficiency:} The job search page must employ debouncing (300ms delay) and pagination (default 10 items per page) to optimize query performance and reduce server load.
+\end{itemize}
+
+\subsection{Security \& Privacy}
+\begin{itemize}
+    \item \textbf{Authentication and Authorization:} All network communications must be encrypted using HTTPS/TLS 1.3. User passwords must be hashed using bcrypt with a work factor of 12.
+    \item \textbf{Session Management:} JWT Access Tokens must have a short lifespan (e.g., 15 minutes) and be stored in memory. Refresh Tokens must have a longer lifespan (e.g., 7 days), be stored in HTTP-only, Secure, and SameSite=Strict cookies, and be invalidated in the database upon user logout.
+    \item \textbf{Role-Based Access Control (RBAC):} The system must strictly enforce role boundaries (Guest, Freelancer, Client, Admin). Administrative features, such as changing smart contract addresses or viewing audit logs, must be blocked by a server-side gateway for non-admin accounts.
+    \item \textbf{Web3 Wallet and Transaction Safety:} Input wallet addresses must be verified on the client and server side to conform to the standard EVM format (starts with \texttt{0x} followed by 40 hexadecimal characters).
+\end{itemize}
+
+\subsection{Availability \& Reliability}
+\begin{itemize}
+    \item \textbf{System Uptime:} The system core services must maintain a 99.9\% monthly uptime, excluding scheduled maintenance.
+    \item \textbf{Blockchain Fault Tolerance:} In case of RPC node connection failures, the platform must gracefully fall back to backup RPC endpoints within 3 seconds to avoid breaking the wallet balance display or transaction signing flows.
+    \item \textbf{Escrow Reliability:} Funds locked in the Escrow Smart Contracts must be secure. Contracts must be verified on Etherscan/BscScan and use standard libraries (e.g., OpenZeppelin) to prevent vulnerabilities.
+\end{itemize}
+
+\subsection{Usability \& User Experience}
+\begin{itemize}
+    \item \textbf{Responsive Design:} The user interface must be fully responsive, supporting mobile devices, tablets, and desktop viewports (minimum width 320px).
+    \item \textbf{Toast Notification System:} Interactive toast notifications (success, warning, error) must have the highest z-index to overlay all content, auto-dismiss after 3000ms, and must not freeze or block other user interactions.
+    \item \textbf{Client-side Image Processing:} The avatar cropping tool must handle images locally before upload. The system must restrict upload sizes to under 5MB and validate formats (.jpg, .jpeg, .png, .webp) before initiating API requests.
+\end{itemize}

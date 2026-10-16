@@ -1,0 +1,226 @@
+\paragraph{Browse Jobs}
+
+
+% =================================================================
+% UC-03.1 View List Job
+% =================================================================
+\subparagraph{UC-03.1 View List Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-03.1 View List Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Jobs page from the navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a guest or registered user, I want to view a list of active jobs with pagination support and search/filter capabilities so that I can browse available opportunities or manage my posted jobs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database. \newline
+\textbf{PRE-2} At least one active job exists in the jobs table.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of active jobs is displayed. \newline
+\textbf{POST-2} Users can click a job to view its details.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View List Job} \newline
+1. User accesses the job list page. \newline
+2. The system receives the request with default parameters (page 1, no filters, default sorting by created\_at DESC). \newline
+3. The system queries the database to retrieve the job list based on role permissions. \newline
+4. The system calculates total records and total pages. \newline
+5. The system returns the first page of job list with pagination information. \newline
+6. User views the job list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1a Search by Keyword} \newline
+1. User enters a keyword in the search bar before submitting the request. \newline
+2. The system searches jobs where title or description matches the keyword (case-insensitive). \newline
+3. The system displays matching jobs. \newline
+4. Return to step A.6.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1b Filter by Category} \newline
+1. User selects a category from the filter dropdown. \newline
+2. The system retrieves jobs matching the selected category. \newline
+3. The system displays filtered jobs. \newline
+4. Return to step A.6.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1c Filter by Budget Range} \newline
+1. User sets a minimum budget value. \newline
+2. The system retrieves jobs with budget greater than or equal to the value. \newline
+3. The system displays filtered jobs. \newline
+4. Return to step A.6.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1d Filter by Skills} \newline
+1. User selects one or more skills. \newline
+2. The system retrieves jobs requiring the selected skills. \newline
+3. The system displays filtered jobs. \newline
+4. Return to step A.6.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1e Combine Multiple Filters} \newline
+1. User applies multiple filters simultaneously (e.g., search + category + budget). \newline
+2. The system applies all filter conditions using AND logic. \newline
+3. The system displays combined results. \newline
+4. Return to step A.6.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.5a No Jobs Found} \newline
+1. The system finds no jobs matching the entered criteria (zero total records). \newline
+2. The system displays the message: ``No jobs available. Please adjust your filters or try again later.'' \newline
+3. Return to step A.1.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.6a Navigate Between Pages} \newline
+1. User clicks a page number, Next, or Previous button. \newline
+2. The system retrieves the corresponding page of jobs. \newline
+3. The system displays the requested page. \newline
+4. Return to step A.6.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Database Connection Failure} \newline
+1. The system cannot connect to the database while retrieving job data. \newline
+2. The system displays the message: ``Unable to load jobs. Please try again later.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-01:} Only jobs with status = 'open' or 'in\_progress' shall be displayed to freelancers and guests. \newline
+\textbf{BR-JOB-02:} Clients shall see all their jobs regardless of status. \newline
+\textbf{BR-JOB-03:} Default sorting shall be by created\_at in descending order. \newline
+\textbf{BR-JOB-04:} The system shall support pagination with default page size of 10. \newline
+\textbf{BR-JOB-05:} Search shall match keywords in title and description fields (case-insensitive). \newline
+\textbf{BR-JOB-06:} When multiple filters are applied, all conditions shall be combined using AND logic.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Default page size: 10 jobs per page. \newline
+Filters available: Category, Budget (min), Skills, Status (for clients only).
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+Jobs are created by registered clients. \newline
+Categories and skills are predefined in the system.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+
+
+% =================================================================
+% UC-03.2 View Job Detail
+% =================================================================
+\subparagraph{UC-03.2 View Job Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-03.2 View Job Detail} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a job from the job list by clicking on the job title or "View Details" button.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view detailed information about a specific job including title, description, budget, deadline, category, required skills, and client information.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is viewing the job list (UC-03.1). \newline
+\textbf{PRE-2} The selected job exists and is active.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The selected job information is displayed successfully.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Detail} \newline
+1. User selects a job from the job list (clicks on job title or "View Details" button). \newline
+2. The system receives the request with job\_id parameter. \newline
+3. The system queries the database to retrieve job information by job\_id from the jobs table. \newline
+4. The system queries the client information associated with the job. \newline
+5. The system displays job details: title, description, budget, deadline, category, required skills, status, client name, and client avatar. \newline
+6. User views the job detail information.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist or has been deleted). \newline
+2. The system displays the message: "Job not found." \newline
+3. The use case ends. \newline
+
+\textbf{EX-02 Job Inactive} \newline
+1. The system determines the job is inactive (status = 'closed' or 'deleted') and the requester is not the job owner. \newline
+2. The system displays the message: "This job is no longer available." \newline
+3. The use case ends. \newline
+
+\textbf{EX-03 Database Connection Failure} \newline
+1. The system cannot retrieve job information due to a database connection failure. \newline
+2. The system displays the message: "Unable to load job details. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-07:} Job information displayed includes: title, description, budget, deadline, category, required skills, client name, created date, status. \newline
+\textbf{BR-JOB-08:} If the job is inactive (status = 'closed' or 'deleted'), only the job owner can view full details.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The job exists and is associated with a valid client account.
+} \\ \hline
+
+\end{longtable}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

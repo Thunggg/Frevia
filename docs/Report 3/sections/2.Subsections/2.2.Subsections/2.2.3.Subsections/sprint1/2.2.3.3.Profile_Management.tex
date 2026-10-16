@@ -1,0 +1,116 @@
+\paragraph{Manage Freelancer Profile}
+
+% =================================================================
+% UC-10.1 View Detailed Freelancer Profile
+% =================================================================
+
+\subparagraph{UC-10.1 View Detailed Freelancer Profile}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-10.1 View Detailed Freelancer Profile} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to a freelancer's profile page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows guests or registered users to retrieve and view all profile information of a freelancer, including basic account data and detailed professional records merged from both the profiles and freelancer\_profiles tables.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected freelancer profile exists and is active in the database.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The freelancer's detailed profile information is successfully displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Detailed Freelancer Profile} \newline
+1. User navigates to the selected freelancer's profile page. \newline
+2. The system retrieves the user's basic profile data from the \texttt{profiles} table. \newline
+3. The system retrieves the user's professional data from the \texttt{freelancer\_profiles} table. \newline
+4. The system merges the retrieved data. \newline
+5. The system displays the complete detailed freelancer profile to the user.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Profile Not Found} \newline
+1. The system displays the message ``Freelancer profile not found.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
+1. The system displays the message ``Unable to load profile details. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROF-01: Both basic details (from profiles) and professional details (from freelancer\_profiles) must be presented together in a single view.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The database correctly links the profiles and freelancer\_profiles tables via a unique user identifier.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-10.2 Update Your Detailed Freelancer Profile
+% =================================================================
+
+\subparagraph{UC-10.2 Update Your Detailed Freelancer Profile}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-10.2 Update Your Detailed Freelancer Profile} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated freelancer clicks the ``Edit Profile'' button on their own profile page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to update their personal and professional details such as display name, bio, title, education, certifications, languages, and availability status.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged into the system. \newline
+\textbf{PRE-2} The freelancer is viewing their own profile settings page.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The updated profile information is saved in the profiles and freelancer\_profiles tables. \newline
+\textbf{POST-2} The updated information is visible on the freelancer's public profile page.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Detailed Freelancer Profile} \newline
+1. Freelancer clicks the ``Edit Profile'' button. \newline
+2. The system displays the profile editing form populated with current data. \newline
+3. Freelancer modifies fields: display\_name, bio, title, education, certifications, languages, and availability\_status. \newline
+4. Freelancer clicks the ``Save Changes'' button. \newline
+5. The system validates the input data for all modified fields. \newline
+6. The system updates the corresponding records in the \texttt{profiles} and \texttt{freelancer\_profiles} tables. \newline
+7. The system displays the message: ``Profile updated successfully.'' \newline
+8. The system redirects the user to their updated profile page.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Cancel Update} \newline
+1. Freelancer clicks the ``Cancel'' button. \newline
+2. The system discards all unsaved changes. \newline
+3. Return to step A.1.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Invalid Input Data} \newline
+1. The system highlights the error fields and displays a warning message: ``Please enter valid information for all fields.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
+1. The system displays the message: ``Profile update failed. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROF-02: Freelancers can only update their own profile. \newline
+BR-PROF-03: Mandatory fields (e.g., display\_name, title) cannot be left empty.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Some updates (like availability\_status) may immediately impact search visibility for clients.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer remains authenticated throughout the process.} \\ \hline
+\end{longtable}
+}

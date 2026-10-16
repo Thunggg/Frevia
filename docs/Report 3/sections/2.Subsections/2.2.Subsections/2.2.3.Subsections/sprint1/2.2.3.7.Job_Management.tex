@@ -1,0 +1,771 @@
+% =================================================================
+% UC-06.2 Post New Job
+% =================================================================
+\subparagraph{UC-06.2 Post New Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Post New Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Post New Job" or "Create Job" button from the job management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a registered client to create and publish a new job posting with details including title, description, budget, category, and required skills.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is logged in to the system. \newline
+\textbf{PRE-2} The client has an active account.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new job record is created in the jobs table with status = 'draft'. \newline
+\textbf{POST-2} The job is saved to the database. \newline
+\textbf{POST-3} The client is redirected to the job detail page or job list with a success message.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Post New Job} \newline
+1. Client navigates to the job management page. \newline
+2. Client clicks the "Post New Job" button. \newline
+3. The system displays the job creation form. \newline
+4. Client enters the following information: \newline
+   - Job Title (required, max 200 characters) \newline
+   - Description (required, max 5000 characters) \newline
+   - Budget (required, must be > 0) \newline
+   - Category (required, dropdown selection) \newline
+   - Required Skills (optional, tags input) \newline
+5. Client clicks the "Save Draft" or "Publish Job" button. \newline
+6. The system validates all input fields. \newline
+7. The system creates a new job record with: \newline
+   - title, description, budget, category \newline
+   - client\_id = current user ID \newline
+   - status = 'draft' (if Save Draft) or 'open' (if Publish Job) \newline
+   - created\_at = current timestamp \newline
+8. The system saves the skills associated with the job. \newline
+9. The system redirects to the job detail page with a success message.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.2 Cancel Creation} \newline
+1. Client clicks the "Cancel" button. \newline
+2. The system discards all input data. \newline
+3. The system returns to the job list page. \newline
+4. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.6a Validation Failed} \newline
+1. The system validates input fields and finds invalid or incomplete data. \newline
+2. The system highlights the errors and displays: "Invalid data. Please check your input." \newline
+3. Return to step A.4.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.6b Budget Invalid} \newline
+1. The system finds that budget is less than or equal to 0. \newline
+2. The system displays: "Budget must be greater than 0." \newline
+3. Return to step A.4.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.6c Missing Required Fields} \newline
+1. The system finds that title or description is empty. \newline
+2. The system displays: "Please fill in all required fields." \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Database Insert Failure} \newline
+1. The system cannot save the new job record due to a database error. \newline
+2. The system displays: "Unable to create job. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-09:} Job title is required and must not exceed 200 characters. \newline
+\textbf{BR-JOB-10:} Job description is required and must not exceed 5000 characters. \newline
+\textbf{BR-JOB-11:} Budget must be a positive number (greater than 0). \newline
+\textbf{BR-JOB-12:} Category must be selected from predefined categories. \newline
+\textbf{BR-JOB-13:} New jobs shall have status = 'draft' by default when saved as draft, or 'open' when published.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The client has sufficient permissions to create jobs. \newline
+Categories and skills are predefined in the system.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+% =================================================================
+% UC-06.3 Edit Job
+% =================================================================
+\subparagraph{UC-06.3 Edit Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Edit Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Edit" button on a job they own from the job list or job detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client who created a job to modify its details such as title, description, budget, category, skills, and status. Editing is restricted if the job has an active contract.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is logged in to the system. \newline
+\textbf{PRE-2} The client is the owner of the job. \newline
+\textbf{PRE-3} The job exists and is not deleted. \newline
+\textbf{PRE-4} The job does not have an active contract.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job record is updated with new information. \newline
+\textbf{POST-2} The updated job is visible with new details. \newline
+\textbf{POST-3} A log entry is created for the edit action.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Job} \newline
+1. Client navigates to the job detail page or job list. \newline
+2. Client clicks the "Edit" button on a job they own. \newline
+3. The system retrieves the current job data and pre-fills the edit form. \newline
+4. Client modifies the following fields as needed: \newline
+   - Job Title \newline
+   - Description \newline
+   - Budget \newline
+   - Category \newline
+   - Required Skills \newline
+   - Status (if applicable) \newline
+5. Client clicks the "Save Changes" button. \newline
+6. The system validates the updated input. \newline
+7. The system updates the job record in the jobs table. \newline
+8. The system updates the associated skills. \newline
+9. The system logs the edit action with timestamp. \newline
+10. The system redirects to the job detail page with a success message.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.2 Cancel Edit} \newline
+1. Client clicks the "Cancel" button. \newline
+2. The system discards all changes. \newline
+3. The system returns to the job detail page. \newline
+4. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.6 Validation Failed} \newline
+1. The system validates the updated input and finds invalid or incomplete data. \newline
+2. The system highlights the errors and displays appropriate error messages. \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist). \newline
+2. The system displays: "Job not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-02 Unauthorized Access} \newline
+1. The system determines the client is not the owner of the job. \newline
+2. The system displays: "You do not have permission to edit this job." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-03 Database Update Failure} \newline
+1. The system cannot update the job record due to a database error. \newline
+2. The system displays: "Unable to update job. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-14:} Only the job owner can edit the job. \newline
+\textbf{BR-JOB-15:} Editing is restricted if the job has an active contract. \newline
+\textbf{BR-JOB-16:} All validation rules from UC-06.2 apply to edits. \newline
+\textbf{BR-JOB-17:} Edit actions shall be logged for auditing purposes.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The client has sufficient permissions to edit jobs. \newline
+The job exists and is accessible.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+% =================================================================
+% UC-06.4 Delete Job
+% =================================================================
+\subparagraph{UC-06.4 Delete Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.4 Delete Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Delete" button on a job they own from the job list or job detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client who created a job to delete it (soft delete). The job is hidden from public view but retained in the database. The system checks for active proposals or contracts before allowing deletion.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is logged in to the system. \newline
+\textbf{PRE-2} The client is the owner of the job. \newline
+\textbf{PRE-3} The job exists and is not already deleted. \newline
+\textbf{PRE-4} No active proposals or contracts exist for this job.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job is soft-deleted (deleted\_at field is set). \newline
+\textbf{POST-2} The job is no longer visible to freelancers or guests. \newline
+\textbf{POST-3} A log entry is created for the delete action.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Job} \newline
+1. Client navigates to the job detail page or job list. \newline
+2. Client clicks the "Delete" button on a job they own. \newline
+3. The system displays a confirmation dialog: "Are you sure you want to delete this job? This action cannot be undone." \newline
+4. Client confirms by clicking "Yes, Delete". \newline
+5. The system checks for active proposals or contracts. \newline
+6. The system updates the job record: \newline
+   - status = 'deleted' \newline
+   - deleted\_at = current timestamp \newline
+7. The system logs the delete action. \newline
+8. The system redirects to the job list with a success message: "Job deleted successfully."
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.3 Cancel Delete} \newline
+1. Client clicks the "Cancel" button in the confirmation dialog. \newline
+2. The system closes the dialog. \newline
+3. The system returns to the job detail page or job list. \newline
+4. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.5 Job Cannot Be Deleted} \newline
+1. The system finds an active proposal or contract associated with the job. \newline
+2. The system displays: "This job cannot be deleted because it has active proposals/contracts. Please close them first." \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist). \newline
+2. The system displays: "Job not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-02 Unauthorized Access} \newline
+1. The system determines the client is not the owner of the job. \newline
+2. The system displays: "You do not have permission to delete this job." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-03 Database Update Failure} \newline
+1. The system cannot update the job record due to a database error. \newline
+2. The system displays: "Unable to delete job. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-18:} Only the job owner can delete the job. \newline
+\textbf{BR-JOB-19:} Deletion should be soft delete (set deleted\_at timestamp, status = 'deleted'). \newline
+\textbf{BR-JOB-20:} Jobs with active proposals or contracts cannot be deleted. \newline
+\textbf{BR-JOB-21:} Delete actions shall be logged for auditing purposes.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Soft delete: job is hidden from public but retained in database for audit.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The client has sufficient permissions to delete jobs. \newline
+The job exists and is accessible.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+% =================================================================
+% UC-06.5 Change Job Status
+% =================================================================
+\subparagraph{UC-06.5 Change Job Status}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Change Job Status} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client or system action triggers a status change on a job.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the job owner to change the status of a job following the workflow: draft → open → in\_progress → completed → closed. Each transition has specific constraints and permissions. The system may also auto-transition statuses based on business events.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is logged in to the system (for manual changes). \newline
+\textbf{PRE-2} The client is the job owner. \newline
+\textbf{PRE-3} The job exists and is not deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job status is updated to the new status. \newline
+\textbf{POST-2} A log entry is created for the status change. \newline
+\textbf{POST-3} Notifications may be sent to relevant users.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Change Job Status} \newline
+1. Client navigates to the job detail page. \newline
+2. Client clicks the "Change Status" button. \newline
+3. The system displays the current status and available next statuses based on workflow rules. \newline
+4. Client selects the new status from the allowed options. \newline
+5. The system validates the transition is allowed. \newline
+6. The system updates the job status. \newline
+7. The system logs the status change. \newline
+8. The system sends notifications if applicable (e.g., to freelancers when job becomes open). \newline
+9. The system displays a success message: "Job status updated successfully."
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.2a System Auto-Transition} \newline
+1. System event occurs (e.g., contract created, job completed). \newline
+2. System automatically updates job status based on business rules. \newline
+3. System logs the status change. \newline
+4. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.2b Cancel Status Change} \newline
+1. Client clicks the "Cancel" button. \newline
+2. The system discards the status change. \newline
+3. The system returns to the job detail page. \newline
+4. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.5 Invalid Transition} \newline
+1. The system validates and finds that the requested status transition is not allowed. \newline
+2. The system displays: "Status transition from [current] to [new] is not allowed." \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist). \newline
+2. The system displays: "Job not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-02 Unauthorized Access} \newline
+1. The system determines the client is not the owner of the job. \newline
+2. The system displays: "You do not have permission to change job status." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-03 Database Update Failure} \newline
+1. The system cannot update the job status due to a database error. \newline
+2. The system displays: "Unable to update status. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-22:} Job status workflow: draft → open → in\_progress → completed → closed. \newline
+\textbf{BR-JOB-23:} Allowed transitions: \newline
+   - draft → open (client) \newline
+   - open → in\_progress (client, when contract created) \newline
+   - open → closed (client, if cancelled) \newline
+   - in\_progress → completed (client, when work done) \newline
+   - in\_progress → closed (client, if cancelled) \newline
+   - completed → closed (system/auto) \newline
+   - Any status → deleted (soft delete) \newline
+\textbf{BR-JOB-24:} Only the job owner can manually change status. \newline
+\textbf{BR-JOB-25:} Status changes shall be logged for auditing purposes. \newline
+\textbf{BR-JOB-26:} Notifications shall be sent to freelancers when status changes from draft to open.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Status definitions: \newline
+- draft: Job created but not published \newline
+- open: Job is visible and accepting proposals \newline
+- in\_progress: Job has been assigned and is being worked on \newline
+- completed: Work is done, awaiting finalization \newline
+- closed: Job is finished and closed \newline
+- deleted: Job is soft-deleted
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The client has sufficient permissions to change job status. \newline
+The job exists and is accessible.
+} \\ \hline
+
+\end{longtable}
+}
+
+% =================================================================
+% UC-06.6 View List Bookmarked Job
+% =================================================================
+\subparagraph{UC-06.6 View List Bookmarked Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View List Bookmarked Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the "Bookmarked Jobs" page from the navigation menu or profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view a list of all jobs they have bookmarked. The list displays job title, budget, client name, and bookmark date with pagination support.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is logged in to the system. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of bookmarked jobs is displayed. \newline
+\textbf{POST-2} The freelancer can click a job to view its details or remove the bookmark.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View List Bookmarked Job} \newline
+1. Freelancer accesses the "Bookmarked Jobs" page. \newline
+2. The system receives the request with default parameters (page 1, sorting by bookmark created\_at DESC). \newline
+3. The system queries the database to retrieve the bookmark list from the bookmarks table for the current freelancer. \newline
+4. The system joins with the jobs table to fetch job details. \newline
+5. The system calculates total records and total pages. \newline
+6. The system returns the first page of bookmarks with pagination information. \newline
+7. The system displays: job title, budget, client name, and bookmark date. \newline
+8. Freelancer views the bookmark list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.3 No Bookmarks Found} \newline
+1. The system queries and finds no bookmarks for the freelancer. \newline
+2. The system displays: "You have no bookmarked jobs. Start exploring jobs to save your favorites." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.8a Navigate Between Pages} \newline
+1. Freelancer clicks a page number, Next, or Previous button. \newline
+2. The system retrieves the corresponding page of bookmarks. \newline
+3. The system displays the requested page. \newline
+4. Return to step A.7.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.8b Sort by Different Criteria} \newline
+1. Freelancer selects a sorting option (e.g., by budget, by client name). \newline
+2. The system reorders the bookmark list accordingly. \newline
+3. The system displays the sorted list. \newline
+4. Return to step A.7.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.8c View Job Detail} \newline
+1. Freelancer clicks on a job title in the list. \newline
+2. The system navigates to the job detail page. \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.8d Remove Bookmark Directly} \newline
+1. Freelancer clicks the "Remove Bookmark" button on a job in the list. \newline
+2. The system removes the bookmark and updates the displayed list. \newline
+3. Return to step A.7.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Database Connection Failure} \newline
+1. The system cannot retrieve bookmark data due to a database connection error. \newline
+2. The system displays: "Unable to load bookmarked jobs. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-27:} Only the freelancer can view their own bookmarks. \newline
+\textbf{BR-JOB-28:} Bookmarks shall be sorted by created\_at in descending order by default. \newline
+\textbf{BR-JOB-29:} Displayed information includes: job title, budget, client name, bookmark date. \newline
+\textbf{BR-JOB-30:} The system shall support pagination with default page size of 10.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Default page size: 10 bookmarks per page. \newline
+Sorting options: by bookmark date (default), by budget, by client name.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The freelancer is logged in and has a valid account. \newline
+Bookmarks are created only by freelancers.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+
+% =================================================================
+% UC-06.7 Bookmark Job
+% =================================================================
+\subparagraph{UC-06.7 Bookmark Job}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.7 Bookmark Job} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer clicks the "Bookmark" button on a job detail page or job list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to add a job to their bookmark list for easy tracking. The system automatically checks for duplicates and ignores if the job is already bookmarked.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is logged in to the system. \newline
+\textbf{PRE-2} The job exists and is active.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job is added to the freelancer's bookmark list. \newline
+\textbf{POST-2} The bookmark button changes to "Bookmarked". \newline
+\textbf{POST-3} A success message is displayed.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Bookmark Job} \newline
+1. Freelancer views a job detail page or job list. \newline
+2. Freelancer clicks the "Bookmark" button on the job. \newline
+3. The system receives the request with job\_id and freelancer\_id parameters. \newline
+4. The system checks if the bookmark already exists in the bookmarks table. \newline
+5. If not exists, the system creates a new bookmark record with: \newline
+   - freelancer\_id = current user ID \newline
+   - job\_id = selected job ID \newline
+   - created\_at = current timestamp \newline
+6. The system updates the button state to "Bookmarked". \newline
+7. The system displays the message: "Job bookmarked successfully."
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.4 Bookmark Already Exists} \newline
+1. The system detects that a bookmark already exists for this freelancer and job. \newline
+2. The system skips creating a new record. \newline
+3. The system displays the message: "This job is already bookmarked." \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist). \newline
+2. The system displays: "Job not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-02 Database Connection Failure} \newline
+1. The system cannot create the bookmark due to a database error. \newline
+2. The system displays: "Unable to bookmark job. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-31:} Only freelancers can bookmark jobs. \newline
+\textbf{BR-JOB-32:} Each freelancer can bookmark a job only once (no duplicates). \newline
+\textbf{BR-JOB-33:} If a bookmark already exists, the system silently ignores the duplicate. \newline
+\textbf{BR-JOB-34:} Bookmarks can only be created for active jobs (status = 'open' or 'in\_progress').
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The freelancer is logged in and has a valid account. \newline
+The job exists and is active.
+} \\ \hline
+
+\end{longtable}
+}
+
+
+
+
+% =================================================================
+% UC-06.8 Remove Bookmark
+% =================================================================
+\subparagraph{UC-06.8 Remove Bookmark}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Remove Bookmark} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer clicks the "Remove Bookmark" or "Unbookmark" button on a job detail page or bookmark list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove a job from their bookmark list. The system checks if the bookmark exists before deleting and returns a 404 error if not found.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is logged in to the system. \newline
+\textbf{PRE-2} The job is bookmarked by this freelancer.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The bookmark is deleted from the bookmarks table. \newline
+\textbf{POST-2} The button state changes to "Bookmark". \newline
+\textbf{POST-3} A success message is displayed.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Remove Bookmark} \newline
+1. Freelancer views a job detail page or bookmark list. \newline
+2. Freelancer clicks the "Remove Bookmark" button. \newline
+3. The system receives the request with job\_id and freelancer\_id parameters. \newline
+4. The system checks if the bookmark exists in the bookmarks table. \newline
+5. If exists, the system deletes the bookmark record. \newline
+6. The system updates the button state to "Bookmark". \newline
+7. The system displays the message: "Bookmark removed successfully."
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Remove from Bookmark List} \newline
+1. Freelancer clicks the remove button on a bookmark in the bookmark list page. \newline
+2. The system performs the same deletion flow as the normal flow. \newline
+3. The system updates the bookmark list by removing the deleted item. \newline
+4. Return to step A.1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01 Job Not Found} \newline
+1. The system cannot find the selected job (job does not exist). \newline
+2. The system displays: "Job not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-02 Bookmark Not Found} \newline
+1. The system cannot find the bookmark record for the given freelancer and job. \newline
+2. The system displays: "Bookmark not found." \newline
+3. The use case ends.
+} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-03 Database Connection Failure} \newline
+1. The system cannot delete the bookmark due to a database error. \newline
+2. The system displays: "Unable to remove bookmark. Please try again later." \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-JOB-35:} Only the freelancer can remove their own bookmarks. \newline
+\textbf{BR-JOB-36:} The system must check if the bookmark exists before deletion. \newline
+\textbf{BR-JOB-37:} If the bookmark does not exist, the system shall return a 404 Not Found error. \newline
+\textbf{BR-JOB-38:} Removing a bookmark is a hard delete from the database.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Returns 404 error if bookmark does not exist.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+The freelancer is logged in and has a valid account. \newline
+Bookmarks are deleted only by their owners.
+} \\ \hline
+
+\end{longtable}
+}

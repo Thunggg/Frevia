@@ -1,0 +1,148 @@
+\subsubsection{Non-Screen Functions}
+
+\renewcommand{\arraystretch}{1.4}
+
+\begin{longtable}{|C{0.8cm}|L{2.8cm}|L{6.8cm}|L{5.5cm}|}
+\hline
+\rowcolor{headerbg}
+
+\textbf{\#}
+&
+\textbf{Feature}
+&
+\textbf{System Function}
+&
+\textbf{Description}
+\\ \hline
+\endfirsthead
+
+\hline
+\rowcolor{headerbg}
+
+\textbf{\#}
+&
+\textbf{Feature}
+&
+\textbf{System Function}
+&
+\textbf{Description}
+\\ \hline
+\endhead
+
+3
+&
+\textbf{Manage Forum}
+&
+[GET] /api/forum/categories \newline
+[GET] /api/forum/categories/\{id\} \newline
+[GET] /api/forum/posts \newline
+[GET] /api/forum/posts/\{id\} \newline
+[GET] /api/forum/comments/\{postId\} \newline
+[GET] /api/forum/comments/\{id\} \newline
+[POST] /api/forum/posts \newline
+[PUT] /api/forum/posts/\{id\} \newline
+[DELETE] /api/forum/posts/\{id\} \newline
+[POST] /api/forum/like-post/\{id\} \newline
+[DELETE] /api/forum/unlike-post/\{id\} \newline
+[POST] /api/forum/comments \newline
+[PUT] /api/forum/comments/\{id\} \newline
+[DELETE] /api/forum/comments/\{id\} \newline
+[POST] /api/forum/like-comments/\{id\} \newline
+[DELETE] /api/forum/unlike-comments/\{id\} \newline
+[POST] /api/forum/report-contents
+&
+The Forum Management feature enables community discussion and knowledge sharing within the platform. Users can browse forum categories, view discussion threads, create and manage posts, add comments, react to content through likes, and report inappropriate content. Guests can access public forum content, while authenticated users can participate in discussions by creating posts, commenting, reacting, and reporting violations. Administrators can moderate forum activities and maintain community standards.
+\\ \hline
+4
+&
+\textbf{Manage Contract}
+&
+[GET] /api/contracts \newline
+[GET] /api/contracts/{id} \newline
+[GET] /api/contracts/{id}/files \newline
+[POST] /api/contracts/{id}/files \newline
+[DELETE] /api/contracts/files/{id} \newline
+[POST] /api/contracts/{id}/sign \newline
+[PUT] /api/contracts/{id}/terms \newline
+[POST] /api/contracts/{id}/milestones/{id}/complete \newline
+[POST] /api/contracts/{id}/cancel
+&
+The Contract Management feature enables clients to manage agreements and collaboration with freelancers throughout the project lifecycle. Users can browse contract lists, view contract details, upload and manage contract-related files, and digitally sign contracts to confirm participation. Clients can update contract terms, manage milestone execution, release escrow payments upon successful milestone completion, and request contract cancellation when necessary. The feature ensures secure transactions, transparent collaboration, and controlled contract execution between both parties. \\ \hline
+5
+&
+\textbf{Manage Freelancer Profile}
+&
+[GET] /api/profiles/\{id\} \newline
+[PUT] /api/profiles/\{id\} \newline
+[GET] /api/profiles/\{id\}/skills \newline
+[POST] /api/profiles/\{id\}/skills \newline
+[DELETE] /api/profiles/skills/\{id\} \newline
+[GET] /api/profiles/\{id\}/portfolios \newline
+[POST] /api/profiles/\{id\}/portfolios \newline
+[GET] /api/profiles/portfolios/\{id\} \newline
+[PUT] /api/profiles/portfolios/\{id\} \newline
+[DELETE] /api/profiles/portfolios/\{id\}
+&
+The Freelancer Profile Management feature enables freelancers to manage their professional identity and showcase their expertise to potential clients. Users can view and update their detailed profile information, including their bio, professional title, education, and availability status. Furthermore, freelancers can manage their skill set by adding or removing specific skills along with proficiency levels. The feature also allows freelancers to build a comprehensive portfolio by creating, updating, and deleting portfolio items with attached media files. This robust profile system helps freelancers build credibility, highlight their capabilities, and attract suitable project opportunities. \\ \hline
+6
+&
+\textbf{Manage Freelancer Skills}
+&
+[GET] /api/profiles/\{id\}/skills \newline
+[POST] /api/profiles/\{id\}/skills \newline
+[DELETE] /api/profiles/skills/\{id\}
+&
+The Freelancer Skills Management feature allows freelancers to define and showcase their professional capabilities. Users can view the complete list of skills associated with a freelancer's profile, add new skills with corresponding proficiency levels (e.g., beginner, intermediate, expert), and permanently remove skills that are no longer relevant. This feature ensures that the freelancer's skill set remains accurate and up-to-date, helping clients easily evaluate their technical and professional qualifications during the talent selection process. \\ \hline
+7
+&
+\textbf{Manage Freelancer Portfolio}
+&
+[GET] /api/profiles/\{id\}/portfolios \newline
+[POST] /api/profiles/\{id\}/portfolios \newline
+[GET] /api/profiles/portfolios/\{id\} \newline
+[PUT] /api/profiles/portfolios/\{id\} \newline
+[DELETE] /api/profiles/portfolios/\{id\}
+&
+The Freelancer Portfolio Management feature enables freelancers to visually demonstrate their past work experience and successful projects. Freelancers can create new portfolio entries by providing project details and uploading associated media files or links. The feature also allows users to view detailed information of specific portfolios, update existing portfolio content or media, and soft-delete portfolios that they no longer wish to display publicly. By maintaining a rich and organized portfolio gallery, freelancers can build stronger credibility and significantly increase their chances of being hired by prospective clients. \\ \hline
+8
+&
+\textbf{Manage Authentication}
+&
+[POST] /api/auth/google \newline
+[POST] /api/auth/login \newline
+[POST] /api/auth/register \newline
+[POST] /api/auth/forgot-password \newline
+[POST] /api/auth/logout
+&
+The Authentication Management feature handles user identity verification and access control. It supports multiple authentication methods including traditional email/password login with JWT token generation, Google OAuth for social sign‑in, and new account registration. The feature also provides secure password reset via email verification links, and allows authenticated users to terminate their session by logging out. Together, these endpoints ensure a seamless and secure authentication experience for all platform users.
+\\ \hline
+9
+&
+\textbf{Manage Roles}
+&
+[GET] /api/roles \newline
+[GET] /api/roles/\{id\} \newline
+[POST] /api/roles \newline
+[PUT] /api/roles/\{id\} \newline
+[DELETE] /api/roles/\{id\}
+&
+The Role Management feature allows administrators to define and control user permissions within the system. Admin users can retrieve a list of all roles along with their assigned permissions, view detailed information of a specific role, create new roles with custom names and permission sets, update existing roles to modify their access rights, and delete roles that are no longer needed. This feature ensures fine‑grained access control, maintaining system security and proper segregation of duties across different user types.
+\\ \hline
+
+10
+&
+\textbf{Manage Job}
+&
+[GET] /api/jobs \newline
+[GET] /api/jobs/\{id\} \newline
+[POST] /api/jobs \newline
+[PUT] /api/jobs/\{id\} \newline
+[DELETE] /api/jobs/\{id\} \newline
+[PATCH] /api/jobs/\{id\}/status \newline
+[GET] /api/jobs/bookmarks \newline
+[POST] /api/jobs/\{id\}/bookmark \newline
+[DELETE] /api/jobs/\{id\}/bookmark
+&
+The Job Management feature enables clients to create and manage job postings, and allows freelancers to browse, search, and bookmark interesting opportunities. Clients can post new jobs with detailed descriptions, budgets, required skills, and timelines; edit or delete their own job postings; and update job status (Open, In Progress, Closed, Cancelled). Freelancers can view paginated job lists with filters and sorting, view full job details, and bookmark jobs for later reference. This feature serves as the core marketplace functionality connecting clients with freelancers.
+\\ \hline
+\end{longtable}

@@ -1,0 +1,143 @@
+\section{Business Rule}
+
+\renewcommand{\arraystretch}{1.5}
+
+% Đổi p{2.2cm} thành 'c' để cột tự động khít với nội dung dài nhất
+\begin{longtable}{|c|p{12cm}|}
+
+\caption{Business Rules}
+\label{tab:businessrules}
+\\
+
+\hline
+\rowcolor{orange!30} 
+\textbf{ID} 
+&
+\centering\arraybackslash\textbf{Rule Definition}
+\\ \hline
+\endfirsthead
+
+\hline
+\rowcolor{orange!30}
+\textbf{ID}
+&
+\centering\arraybackslash\textbf{Rule Definition}
+\\ \hline
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+    BR-PROF-01 & Both basic details (from profiles) and professional details (from freelancer\_profiles) must be presented together. \\ \hline
+    BR-PROF-02 & Hidden or private fields should not be displayed to unauthorized users (e.g., clients vs. the profile owner). \\ \hline
+    BR-PROF-03 & Freelancers can only update their own profile. \\ \hline
+    BR-PROF-04 & Mandatory fields (e.g., display\_name, title) cannot be left empty. \\ \hline
+    BR-SKILL-01 & All skills belonging to the freelancer must be displayed along with their proficiency level. \\ \hline
+    BR-SKILL-02 & A freelancer cannot add duplicate skills. \\ \hline
+    BR-SKILL-03 & Both skill name and proficiency level are required. \\ \hline
+    BR-SKILL-04 & Skill deletion must be a hard delete operation; the record is permanently removed from the mapping table. \\ \hline
+    BR-SKILL-05 & Only the owning freelancer or an administrator can delete a skill from the profile. \\ \hline
+    BR-PORT-01 & Only portfolios with deleted\_at = NULL shall be displayed. \\ \hline
+    BR-PORT-02 & Portfolio title is a required field. \\ \hline
+    BR-PORT-03 & Media uploads must conform to system-defined size and type restrictions. \\ \hline
+    BR-PORT-04 & Only portfolios with deleted\_at = NULL can be accessed. \\ \hline
+    BR-PORT-05 & Only the portfolio owner can edit it. \\ \hline
+    BR-PORT-06 & Portfolio title remains a required field. \\ \hline
+    BR-PORT-07 & Portfolio deletion must be a soft delete (updating the deleted\_at column). \\ \hline
+    BR-PORT-08 & Soft-deleted portfolios must not be visible to clients or guests. \\ \hline
+    BR-FORUM-01 & Only categories with is\_active = TRUE shall be displayed. \\ \hline
+    BR-FORUM-02 & Category information displayed includes name and description. \\ \hline
+    BR-FORUM-03 & Only categories with is\_active = TRUE shall be accessible. \\ \hline
+    BR-FORUM-04 & Category information displayed includes name and description. \\ \hline
+    BR-FORUM-05 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
+    BR-FORUM-06 & Posts with is\_pinned = TRUE shall appear before regular posts. \\ \hline
+    BR-FORUM-07 & Posts shall be sorted by created\_at in descending order within each group. \\ \hline
+    BR-FORUM-08 & The system shall support pagination for post listings. \\ \hline
+    BR-FORUM-09 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
+    BR-FORUM-10 & Post details shall include title, content, author, category, and created\_at information. \\ \hline
+    BR-FORUM-11 & Only comments with deleted\_at = NULL shall be displayed. \\ \hline
+    BR-FORUM-12 & Comment information shall include content, author, and created\_at. \\ \hline
+    BR-FORUM-13 & Only comments with deleted\_at = NULL shall be displayed. \\ \hline
+    BR-FORUM-14 & Comment details shall include content, author, and created\_at information. \\ \hline
+    BR-FORUM-15 & Only authenticated users can create posts. \\ \hline
+    BR-FORUM-16 & Every post must belong to exactly one category. \\ \hline
+    BR-FORUM-17 & Title and content are required fields. \\ \hline
+    BR-FORUM-18 & Only the author of a post can edit that post. \\ \hline
+    BR-FORUM-19 & Every post must belong to a valid category. \\ \hline
+    BR-FORUM-20 & Title and content are required fields. \\ \hline
+    BR-FORUM-21 & Only the author of a post can delete that post. \\ \hline
+    BR-FORUM-22 & Post deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
+    BR-FORUM-23 & Soft-deleted posts shall not appear in public forum listings. \\ \hline
+    BR-FORUM-24 & Only authenticated users can like posts. \\ \hline
+    BR-FORUM-25 & A user can have only one active like reaction per post. \\ \hline
+    BR-FORUM-26 & The reaction shall be stored in the forum\_likes table. \\ \hline
+    BR-FORUM-27 & Only authenticated users can remove post reactions. \\ \hline
+    BR-FORUM-28 & A like reaction can only be removed if a corresponding like record exists. \\ \hline
+    BR-FORUM-29 & Removing a reaction shall delete the corresponding record from the forum\_likes table. \\ \hline
+    BR-FORUM-30 & Only authenticated users can create comments. \\ \hline
+    BR-FORUM-31 & Comment content cannot be empty. \\ \hline
+    BR-FORUM-32 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-33 & Each comment shall be associated with a valid post\_id and user\_id. \\ \hline
+    BR-FORUM-34 & Only the owner of a comment can edit it. \\ \hline
+    BR-FORUM-35 & Comment content cannot be empty. \\ \hline
+    BR-FORUM-36 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-37 & The system shall record the updated\_at timestamp when a comment is modified. \\ \hline
+    BR-FORUM-38 & Only the owner of a comment can delete it. \\ \hline
+    BR-FORUM-39 & Comment deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
+    BR-FORUM-40 & Soft-deleted comments shall not be displayed in normal comment listings. \\ \hline
+    BR-FORUM-41 & Only authenticated users can like comments. \\ \hline
+    BR-FORUM-42 & A user can have only one active like reaction per comment. \\ \hline
+    BR-FORUM-43 & The reaction shall be stored in the forum\_likes table using comment\_id. \\ \hline
+    BR-FORUM-44 & Only authenticated users can remove comment reactions. \\ \hline
+    BR-FORUM-45 & A like reaction can only be removed if a corresponding like record exists. \\ \hline
+    BR-FORUM-46 & Removing a reaction shall delete the corresponding record from the forum\_likes table using comment\_id. \\ \hline
+    BR-FORUM-47 & Only authenticated users can submit reports. \\ \hline
+    BR-FORUM-48 & Reports must be associated with either a post\_id or comment\_id. \\ \hline
+    BR-FORUM-49 & New reports shall be created with status = PENDING. \\ \hline
+    BR-FORUM-50 & A user may submit only one active report for the same content item. \\ \hline
+   BR-JOB-01 & Only jobs with status = 'open' or 'in\_progress' shall be displayed to freelancers and guests. \\ \hline
+BR-JOB-02 & Clients shall see all their jobs regardless of status. \\ \hline
+BR-JOB-03 & Default sorting shall be by created\_at in descending order. \\ \hline
+BR-JOB-04 & The system shall support pagination with default page size of 10. \\ \hline
+BR-JOB-05 & Search shall match keywords in title and description fields (case-insensitive). \\ \hline
+BR-JOB-06 & When multiple filters are applied, all conditions shall be combined using AND logic. \\ \hline
+BR-JOB-07 & Job information displayed includes: title, description, budget, deadline, category, required skills, client name, created date, status. \\ \hline
+BR-JOB-08 & If the job is inactive (status = 'closed' or 'deleted'), only the job owner can view full details. \\ \hline
+BR-JOB-09 & Job title is required and must not exceed 200 characters. \\ \hline
+BR-JOB-10 & Job description is required and must not exceed 5000 characters. \\ \hline
+BR-JOB-11 & Budget must be a positive number (greater than 0). \\ \hline
+BR-JOB-12 & Category must be selected from predefined categories. \\ \hline
+BR-JOB-13 & New jobs shall have status = 'draft' by default when saved as draft, or 'open' when published. \\ \hline
+BR-JOB-14 & Only the job owner can edit the job. \\ \hline
+BR-JOB-15 & Editing is restricted if the job has an active contract. \\ \hline
+BR-JOB-16 & All validation rules from UC-06.2 apply to edits. \\ \hline
+BR-JOB-17 & Edit actions shall be logged for auditing purposes. \\ \hline
+BR-JOB-18 & Only the job owner can delete the job. \\ \hline
+BR-JOB-19 & Deletion should be soft delete (set deleted\_at timestamp, status = 'deleted'). \\ \hline
+BR-JOB-20 & Jobs with active proposals or contracts cannot be deleted. \\ \hline
+BR-JOB-21 & Delete actions shall be logged for auditing purposes. \\ \hline
+BR-JOB-22 & Job status workflow: draft → open → in\_progress → completed → closed. \\ \hline
+BR-JOB-23 & Allowed transitions: draft → open (client); open → in\_progress (client, when contract created); open → closed (client, if cancelled); in\_progress → completed (client, when work done); in\_progress → closed (client, if cancelled); completed → closed (system/auto); Any status → deleted (soft delete). \\ \hline
+BR-JOB-24 & Only the job owner can manually change status. \\ \hline
+BR-JOB-25 & Status changes shall be logged for auditing purposes. \\ \hline
+BR-JOB-26 & Notifications shall be sent to freelancers when status changes from draft to open. \\ \hline
+BR-JOB-27 & Only the freelancer can view their own bookmarks. \\ \hline
+BR-JOB-28 & Bookmarks shall be sorted by created\_at in descending order by default. \\ \hline
+BR-JOB-29 & Displayed information includes: job title, budget, client name, bookmark date. \\ \hline
+BR-JOB-30 & The system shall support pagination with default page size of 10. \\ \hline
+BR-JOB-31 & Only freelancers can bookmark jobs. \\ \hline
+BR-JOB-32 & Bookmark is a toggle action. Clicking the button toggles between adding and removing. \\ \hline
+BR-JOB-33 & If the bookmark does not exist, the system creates it and changes the button to "Bookmarked". \\ \hline
+BR-JOB-34 & If the bookmark exists, the system deletes it and changes the button to "Bookmark". \\ \hline
+BR-JOB-35 & Bookmarks can only be created for active jobs (status = 'open' or 'in\_progress'). \\ \hline
+BR-JOB-36 & Only the freelancer can remove their own bookmarks. \\ \hline
+BR-JOB-37 & The system must check if the bookmark exists before deletion. \\ \hline
+BR-JOB-38 & If the bookmark does not exist, the system shall return a 404 Not Found error. \\ \hline
+BR-JOB-39 & Removing a bookmark is a hard delete from the database. \\ \hline
+
+ 
+
+\end{longtable}
