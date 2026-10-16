@@ -1,0 +1,32 @@
+meta {
+  name: Switch Role
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/auth/switch-role
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "role": "Freelancer"
+  }
+}
+
+script:post-response {
+  const body = res.body.data;
+  if (res.body.success && body.accessToken) {
+    bru.setEnvVar("accessToken", body.accessToken);
+  }
+}

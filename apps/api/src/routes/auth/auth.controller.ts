@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import type {
   ForgotPasswordBodyType,
+  JoinRoleBodyType,
   LoginBodyType,
   LogoutBodySchemaType,
   RefreshTokenBodySchemaType,
@@ -28,6 +29,8 @@ import {
   ForgotPasswordBodyDTO,
   GetAuthorizationUrlResponseDTO,
   GetMeResponseDto,
+  JoinRoleBodyDto,
+  JoinRoleResponseDto,
   LoginBodyDTO,
   LoginResponseDto,
   LogoutBodyDTO,
@@ -156,6 +159,20 @@ export class AuthController {
       userId,
       sessionId,
       body as SwitchRoleBodyType,
+    );
+  }
+
+  @Post('join-role')
+  @ZodSerializerDto(JoinRoleResponseDto)
+  joinRole(
+    @UserActive('userId') userId: number,
+    @UserActive('sessionId') sessionId: number,
+    @Body() body: JoinRoleBodyDto,
+  ) {
+    return this.authService.joinRole(
+      userId,
+      sessionId,
+      body as JoinRoleBodyType,
     );
   }
 }

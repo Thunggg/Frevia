@@ -46,6 +46,8 @@ const freelancerModules = [
   'IDENTITY-VERIFICATIONS',
   'SOCIAL-LINKS',
   'NOTIFICATIONS',
+  'ACCOUNT-PROFILE',
+  'REVIEWS',
 ];
 
 const clientModules = [
@@ -64,6 +66,8 @@ const clientModules = [
   'FAVORITES',
   'FOLLOWING',
   'NOTIFICATIONS',
+  'ACCOUNT-PROFILE',
+  'REVIEWS',
 ];
 
 type AvailableRoute = {

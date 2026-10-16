@@ -31,6 +31,14 @@ import {
   Trash2,
   Upload,
 } from "@/components/icons";
+import {
+  UserCheck,
+  UserRound,
+  Star,
+  ShieldCheck,
+  Building2,
+  Heart,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -43,11 +51,37 @@ import {
   type SocialLinkType,
   type SocialPlatformType,
 } from "@shared/types";
+import { GeneralSettings } from "./general-settings";
+import { ReviewManager } from "./review-manager";
 
 type Props = {
   userId: number | null;
   profileId: number | null;
   headerRole: UserRole;
+};
+
+type FreelancerSkill = {
+  id: number;
+  skill: { name: string };
+};
+
+type FollowedProfile = {
+  id: number;
+  displayName: string | null;
+  freelancerProfile: {
+    title: string | null;
+    skills: FreelancerSkill[];
+  };
+};
+
+type FollowItem = {
+  freelancerId: number;
+  profile: FollowedProfile;
+};
+
+type FavoriteItem = {
+  freelancerId: number;
+  profile: FollowedProfile;
 };
 
 function errorMessage(error: unknown) {
@@ -65,15 +99,13 @@ const labels: Record<string, string> = {
   OTHER: "Other document",
 };
 
-export function AccountProfileClient({
-  userId,
-  profileId,
-  headerRole,
-}: Props) {
+export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
+  const [following, setFollowing] = useState<FollowItem[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
   const [documentType, setDocumentType] = useState<DocumentTypeType>(
@@ -89,12 +121,30 @@ export function AccountProfileClient({
     if (!userId || headerRole === "GUEST") return;
     setLoading(true);
     try {
-      const [identityResponse, linksResponse] = await Promise.all([
+      const requests: Promise<unknown>[] = [
         accountProfileApi.getIdentityStatus(),
         accountProfileApi.getSocialLinks(),
-      ]);
+      ];
+
+      if (headerRole === "CLIENT") {
+        requests.push(
+          accountProfileApi.getFollowing?.() ?? Promise.resolve({ data: [] }),
+          accountProfileApi.getFavorites?.() ?? Promise.resolve({ data: [] }),
+        );
+      }
+
+      const [identityResponse, linksResponse, followingResponse, favoritesResponse] =
+        (await Promise.all(requests)) as [
+          { data: IdentityVerificationStatusType },
+          { data: SocialLinkType[] },
+          { data: FollowItem[] } | undefined,
+          { data: FavoriteItem[] } | undefined,
+        ];
+
       setIdentity(identityResponse.data);
       setSocialLinks(linksResponse.data);
+      if (followingResponse) setFollowing(followingResponse.data ?? []);
+      if (favoritesResponse) setFavorites(favoritesResponse.data ?? []);
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
@@ -159,13 +209,53 @@ export function AccountProfileClient({
     }
   };
 
+  const unfollowFreelancer = async (freelancerId: number) => {
+    setPending(`following-${freelancerId}`);
+    try {
+      await accountProfileApi.unfollowFreelancer(freelancerId);
+      setFollowing((current) =>
+        current.filter((item) => item.freelancerId !== freelancerId),
+      );
+      toastSuccess({ message: "Unfollowed freelancer." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const removeFavorite = async (freelancerId: number) => {
+    setPending(`favorite-${freelancerId}`);
+    try {
+      await accountProfileApi.removeFavorite(freelancerId);
+      setFavorites((current) =>
+        current.filter((item) => item.freelancerId !== freelancerId),
+      );
+      toastSuccess({ message: "Removed from favorites." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
   const requestedTab = searchParams.get("tab");
-  const allowedTabs = ["identity", "social"];
+  const allowedTabs =
+    headerRole === "CLIENT"
+      ? ["general", "company", "social", "reviews", "following", "favorites"]
+      : ["general", "identity", "social", "reviews"];
   const defaultTab =
     requestedTab && allowedTabs.includes(requestedTab)
       ? requestedTab
-      : "identity";
-  const publicProfileHref = profileId ? `/profiles/${profileId}` : null;
+      : "general";
+  const publicProfileHref =
+    headerRole === "FREELANCER"
+      ? profileId
+        ? `/profiles/${profileId}`
+        : null
+      : headerRole === "CLIENT" && userId
+        ? `/clients/${userId}`
+        : null;
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -214,11 +304,45 @@ export function AccountProfileClient({
               <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
             </div>
           ) : (
-            <Tabs defaultValue={defaultTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2 sm:w-auto">
-                <TabsTrigger value="identity">Identity verification</TabsTrigger>
-                <TabsTrigger value="social">Social links</TabsTrigger>
+            <Tabs key={defaultTab} defaultValue={defaultTab}>
+              <TabsList
+                variant="line"
+                className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
+              >
+                <TabsTrigger value="general">
+                  <UserRound /> General
+                </TabsTrigger>
+                {headerRole === "FREELANCER" ? (
+                  <TabsTrigger value="identity">
+                    <ShieldCheck /> Identity
+                  </TabsTrigger>
+                ) : null}
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="company">
+                    <Building2 /> Company
+                  </TabsTrigger>
+                ) : null}
+                <TabsTrigger value="social">
+                  <Link2 /> Social links
+                </TabsTrigger>
+                <TabsTrigger value="reviews">
+                  <Star /> Reviews
+                </TabsTrigger>
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="following">
+                    <UserCheck /> Following
+                  </TabsTrigger>
+                ) : null}
+                {headerRole === "CLIENT" ? (
+                  <TabsTrigger value="favorites">
+                    <Heart /> Favorites
+                  </TabsTrigger>
+                ) : null}
               </TabsList>
+
+              <TabsContent value="general">
+                <GeneralSettings />
+              </TabsContent>
 
               <TabsContent value="identity">
                 <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -421,6 +545,156 @@ export function AccountProfileClient({
                     )}
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="reviews">
+                {userId ? <ReviewManager userId={userId} /> : null}
+              </TabsContent>
+
+              <TabsContent value="following">
+                {following.length ? (
+                  <ul className="divide-y divide-border border-y border-border">
+                    {following.map((follow) => (
+                      <li key={follow.freelancerId}>
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-lg font-semibold tracking-tight text-foreground">
+                              {follow.profile.displayName ?? "Freelancer"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {follow.profile.freelancerProfile.title ??
+                                "Freelancer"}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1">
+                              {follow.profile.freelancerProfile.skills
+                                .slice(0, 4)
+                                .map((skill) => (
+                                  <Badge
+                                    key={skill.id}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                  >
+                                    {skill.skill.name}
+                                  </Badge>
+                                ))}
+                            </div>
+                            <Button
+                              className="mt-4"
+                              variant="outline"
+                              size="sm"
+                              asChild
+                            >
+                              <Link href={`/profiles/${follow.profile.id}`}>
+                                View profile
+                              </Link>
+                            </Button>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Unfollow ${follow.profile.displayName ?? "freelancer"}`}
+                            onClick={() =>
+                              void unfollowFreelancer(follow.freelancerId)
+                            }
+                            disabled={
+                              pending === `following-${follow.freelancerId}`
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <UserCheck className="size-7" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground">
+                      Not following anyone yet
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                      Follow freelancers to keep their profiles easy to find.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="favorites">
+                {favorites.length ? (
+                  <ul className="divide-y divide-border border-y border-border">
+                    {favorites.map((favorite) => (
+                      <li key={favorite.freelancerId}>
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-lg font-semibold tracking-tight text-foreground">
+                              {favorite.profile.displayName ?? "Freelancer"}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {favorite.profile.freelancerProfile.title ??
+                                "Freelancer"}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1">
+                              {favorite.profile.freelancerProfile.skills
+                                .slice(0, 4)
+                                .map((skill) => (
+                                  <Badge
+                                    key={skill.id}
+                                    variant="secondary"
+                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                  >
+                                    {skill.skill.name}
+                                  </Badge>
+                                ))}
+                            </div>
+                            <Button
+                              className="mt-4"
+                              variant="outline"
+                              size="sm"
+                              asChild
+                            >
+                              <Link href={`/profiles/${favorite.profile.id}`}>
+                                View profile
+                              </Link>
+                            </Button>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              void removeFavorite(favorite.freelancerId)
+                            }
+                            disabled={
+                              pending === `favorite-${favorite.freelancerId}`
+                            }
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <Heart className="size-7" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground">
+                      No favorite freelancers yet
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                      Open a freelancer profile and tap Add to favorites to keep
+                      them here.
+                    </p>
+                    <Button
+                      className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      asChild
+                    >
+                      <Link href="/forum">Visit Forum</Link>
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           )}

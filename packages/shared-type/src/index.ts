@@ -23,6 +23,7 @@ export * from "./message/manage-forum-report.message";
 export * from "./message/profile.message";
 export * from "./model/profile.model";
 export * from "./model/account-profile.model";
+export * from "./model/review.model";
 export * from "./message/portfolio.message";
 export * from "./model/portfolio.model";
 export * from "./model/job-skill.model";

@@ -10,6 +10,7 @@ import {
   GetAuthorizationUrlResType,
   GoogleUserInfo,
   GetMeResType,
+  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -39,6 +40,7 @@ import {
   InvalidVerificationCodeException,
   OTPExpiredException,
   RefreshTokenRevokedException,
+  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
@@ -523,6 +525,33 @@ export class AuthService {
     });
 
     return { accessToken };
+  }
+
+  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
+    try {
+      const result = await this.authRepository.joinRole(userId, body.role);
+      if (!result) throw RoleNotFoundException();
+      if (result.status === 'already-assigned') {
+        throw RoleAlreadyAssignedException();
+      }
+
+      const accessToken = await this.tokenService.signAccessToken({
+        userId,
+        roleId: result.role.id,
+        roleName: result.role.name,
+        sessionId,
+      });
+
+      return { accessToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw RoleAlreadyAssignedException();
+      }
+      throw error;
+    }
   }
 
   getAuthorizationUrl(payload: {

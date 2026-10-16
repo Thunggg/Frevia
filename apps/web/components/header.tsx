@@ -18,6 +18,7 @@ import {
   Search,
   ShieldCheck,
   SwitchCamera,
+  UserPlus,
   UserRound,
   UserCheck,
   X,
@@ -44,7 +45,7 @@ import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { authApiRequest } from "@/apiRequests/auth";
 import { RoleName } from "@shared/types";
-import { toastError } from "@repo/ui/components/shadcn/toast";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -216,17 +217,85 @@ function HeaderSearch({
   );
 }
 
-function ProfileDropdown({ role }: HeaderProps) {
+function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const profile = roleConfig[role as Exclude<UserRole, "GUEST">];
   const { data: me, isLoading: isMeLoading } = useMe();
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
-  const displayName = me?.profile?.displayName || profile.name;
-  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
+  const [isRoleActionPending, setIsRoleActionPending] = useState(false);
   const targetRole =
     role === "FREELANCER" ? RoleName.CLIENT : RoleName.FREELANCER;
-  const canSwitchRole = me?.roles.some((item) => item.name === targetRole);
+  const hasTargetRole =
+    me?.roles.some((item) => item.name === targetRole) === true;
+  const targetRoleLabel =
+    targetRole === RoleName.CLIENT ? "Client" : "Freelancer";
+
+  const updateRoleContext = async () => {
+    if (isMeLoading || !me || isRoleActionPending) return false;
+
+    setIsRoleActionPending(true);
+    try {
+      if (hasTargetRole) {
+        await authApiRequest.switchRole({ role: targetRole });
+      } else {
+        await authApiRequest.joinRole({ role: targetRole });
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      toastSuccess({
+        message: hasTargetRole
+          ? `Switched to ${targetRoleLabel}`
+          : `${targetRoleLabel} role added`,
+      });
+      router.push(
+        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
+      );
+      router.refresh();
+      return true;
+    } catch {
+      toastError({
+        message: hasTargetRole
+          ? "Unable to switch role. Please try again."
+          : "Unable to add role. Please try again.",
+      });
+      return false;
+    } finally {
+      setIsRoleActionPending(false);
+    }
+  };
+
+  const roleActionLabel = isMeLoading
+    ? "Loading roles..."
+    : isRoleActionPending
+      ? hasTargetRole
+        ? "Switching role..."
+        : "Adding role..."
+      : hasTargetRole
+        ? `Switch to ${targetRoleLabel}`
+        : `Add ${targetRoleLabel} role`;
+
+  return {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  };
+}
+
+function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
+  const router = useRouter();
+  const profile = roleConfig[role];
+  const {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  } = useRoleContextAction(role);
+  const displayName = me?.profile?.displayName || profile.name;
+  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -237,22 +306,6 @@ function ProfileDropdown({ role }: HeaderProps) {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
-  };
-
-  const switchRole = async () => {
-    if (!canSwitchRole || isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: targetRole });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push(
-        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
-      );
-      router.refresh();
-    } catch {
-      toastError({ message: "Unable to switch role. Please try again." });
-      setIsSwitchingRole(false);
-    }
   };
 
   return (
@@ -378,20 +431,18 @@ function ProfileDropdown({ role }: HeaderProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
-          disabled={isMeLoading || !canSwitchRole || isSwitchingRole}
+          disabled={isMeLoading || isRoleActionPending}
           onSelect={(event) => {
             event.preventDefault();
-            void switchRole();
+            void updateRoleContext();
           }}
         >
-          <SwitchCamera className="size-4 text-muted-foreground" />
-          {isMeLoading
-            ? "Loading roles..."
-            : isSwitchingRole
-              ? "Switching role..."
-              : canSwitchRole
-                ? `Switch to ${role === "FREELANCER" ? "Client" : "Freelancer"}`
-                : "Second role not available"}
+          {hasTargetRole ? (
+            <SwitchCamera className="size-4 text-muted-foreground" />
+          ) : (
+            <UserPlus className="size-4 text-muted-foreground" />
+          )}
+          {roleActionLabel}
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/sessions" className="cursor-pointer">
@@ -450,8 +501,18 @@ function HeaderActions({ role }: HeaderProps) {
 function MobileProfileNavigation({
   role,
   onNavigate,
-}: HeaderProps & { onNavigate: () => void }) {
-  const { data: me } = useMe();
+}: {
+  role: Exclude<UserRole, "GUEST">;
+  onNavigate: () => void;
+}) {
+  const {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  } = useRoleContextAction(role);
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -478,6 +539,23 @@ function MobileProfileNavigation({
         <UserRound className="size-4 text-muted-foreground" />
         Profile settings
       </Link>
+      <button
+        type="button"
+        disabled={isMeLoading || isRoleActionPending}
+        onClick={() => {
+          void updateRoleContext().then((didUpdate) => {
+            if (didUpdate) onNavigate();
+          });
+        }}
+        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/[0.06]"
+      >
+        {hasTargetRole ? (
+          <SwitchCamera className="size-4 text-muted-foreground" />
+        ) : (
+          <UserPlus className="size-4 text-muted-foreground" />
+        )}
+        {roleActionLabel}
+      </button>
     </div>
   );
 }

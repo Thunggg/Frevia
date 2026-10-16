@@ -1,0 +1,22 @@
+meta {
+  name: Edit Review
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/reviews/{{reviewId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "overallRating": 5,
+    "comment": "Updated review after the final handoff."
+  }
+}

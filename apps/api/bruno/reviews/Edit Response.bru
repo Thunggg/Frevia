@@ -1,0 +1,21 @@
+meta {
+  name: Edit Response
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/reviews/responses/{{responseId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "responseText": "Thank you. I enjoyed working on this project."
+  }
+}
