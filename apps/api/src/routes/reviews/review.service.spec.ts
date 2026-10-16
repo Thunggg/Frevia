@@ -2,7 +2,14 @@ import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { ReviewRepository } from './review.repo';
 import { ReviewService } from './review.service';
 
-const contract = { id: 9, clientId: 1, freelancerId: 2 };
+const contract = {
+  id: 9,
+  clientId: 1,
+  freelancerId: 2,
+  status: 'COMPLETED',
+  client: { profile: { displayName: 'Jordan Tran' } },
+  freelancer: { profile: { displayName: 'Alex Nguyen' } },
+};
 const review = {
   id: 4,
   contractId: 9,
@@ -45,8 +52,21 @@ describe('ReviewService', () => {
       9,
       1,
       2,
+      'Jordan Tran',
       expect.objectContaining({ overallRating: 4.5 }),
     );
+  });
+
+  it('rejects a review until the contract is completed', async () => {
+    repository.findContract.mockResolvedValue({
+      ...contract,
+      status: 'ACTIVE',
+    });
+
+    await expect(
+      service.create(1, 9, { overallRating: 5 }),
+    ).rejects.toMatchObject({ status: 400 });
+    expect(repository.create).not.toHaveBeenCalled();
   });
 
   it('rejects a user who is not a contract participant', async () => {
@@ -78,6 +98,30 @@ describe('ReviewService', () => {
 
     await expect(service.respond(1, 4, 'Thank you')).rejects.toBeInstanceOf(
       ForbiddenException,
+    );
+  });
+
+  it('restores a deleted response and notifies the reviewer', async () => {
+    repository.findById.mockResolvedValue({
+      ...review,
+      reviewee: { profile: { displayName: 'Alex Nguyen' } },
+    });
+    repository.findResponseByReview.mockResolvedValue({
+      id: 5,
+      deletedAt: new Date(),
+    });
+    repository.createResponse.mockResolvedValue({ id: 5 });
+
+    await service.respond(2, 4, 'Thank you');
+
+    expect(repository.createResponse).toHaveBeenCalledWith(
+      4,
+      2,
+      1,
+      9,
+      'Alex Nguyen',
+      'Thank you',
+      5,
     );
   });
 

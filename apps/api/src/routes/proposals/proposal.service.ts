@@ -285,11 +285,16 @@ export class ProposalService {
     if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
     if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
     if (proposal.job.status !== 'OPEN') throw ProposalJobUnavailableException();
+    if (proposal.bidAmount === null) throw ProposalIncompleteException();
 
     try {
       return await this.proposalRepository.acceptProposal(
         proposal.id,
         proposal.job.id,
+        proposal.job.clientId,
+        proposal.freelancerId,
+        Number(proposal.bidAmount),
+        proposal.job.title,
       );
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {

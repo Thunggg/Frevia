@@ -7,6 +7,7 @@ export const ManageContractMessage = {
     PROPOSAL_NOT_FOUND: 'Error.ContractProposalNotFound',
     PROPOSAL_ALREADY_CONTRACTED: 'Error.ContractProposalAlreadyContracted',
     PROPOSAL_NOT_PENDING: 'Error.ContractProposalNotPending',
+    PROPOSAL_NOT_ACCEPTED: 'Error.ContractProposalNotAccepted',
     CONTRACT_NOT_FOUND: 'Error.ContractNotFound',
     CONTRACT_ALREADY_EXISTS_FOR_JOB: 'Error.ContractAlreadyExistsForJob',
     JOB_NOT_FOUND: 'Error.ContractJobNotFound',

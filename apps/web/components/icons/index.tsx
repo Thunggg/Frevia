@@ -140,6 +140,7 @@ export const Undo = createGoogleIcon("undo", "Undo");
 export const Upload = createGoogleIcon("upload", "Upload");
 export const User = createGoogleIcon("person", "User");
 export const UserCheck = createGoogleIcon("person_check", "UserCheck");
+export const UserMinus = createGoogleIcon("person_remove", "UserMinus");
 export const UserPlus = createGoogleIcon("person_add", "UserPlus");
 export const UserRound = createGoogleIcon("account_circle", "UserRound");
 export const UserX = createGoogleIcon("person_remove", "UserX");
