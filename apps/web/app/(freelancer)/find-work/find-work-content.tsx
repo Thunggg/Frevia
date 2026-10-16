@@ -20,7 +20,6 @@ import {
 import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import { BannerSlot } from "@/components/banner-slot";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {

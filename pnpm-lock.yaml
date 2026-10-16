@@ -221,8 +221,8 @@ importers:
         specifier: ^3.28.0
         version: 3.28.0
       lucide-react:
-        specifier: ^1.24.0
-        version: 1.24.0(react@19.2.0)
+        specifier: ^1.43.0
+        version: 1.43.0(react@19.2.0)
       motion:
         specifier: ^13.2.0
         version: 13.2.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -346,9 +346,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      lucide-react:
-        specifier: ^1.24.0
-        version: 1.24.0(react@19.2.0)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -5373,8 +5370,8 @@ packages:
     resolution: {integrity: sha512-DqC6n3QQ77zdFpCMASA1a3Jlb64Hv2N2DciFGkO/4L9+q/IpIAuRlKOvCXabtRW6cQf8usbmM6BE/TOPysCdIA==}
     engines: {bun: '>=1.0.0', deno: '>=1.30.0', node: '>=8.0.0'}
 
-  lucide-react@1.24.0:
-    resolution: {integrity: sha512-YT6mBD8lGKkg4nM39enlm94/sfJIiW0YKUT60fBy4YK8tai31ylg1VhGNWxkpSKHo9UagfnZqwIff3HTDQwXeA==}
+  lucide-react@1.43.0:
+    resolution: {integrity: sha512-ubtnda1fVK5ky0PNEpOmB0wiwhpZUyJiol4K14KCm+QKvuCkfUu54Et/rIjyupJpwiJ5Hg+BLQE86/GEsS+IgQ==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -12467,7 +12464,7 @@ snapshots:
 
   lru.min@1.1.4: {}
 
-  lucide-react@1.24.0(react@19.2.0):
+  lucide-react@1.43.0(react@19.2.0):
     dependencies:
       react: 19.2.0
 

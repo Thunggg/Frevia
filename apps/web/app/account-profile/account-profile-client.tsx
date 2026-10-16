@@ -60,6 +60,30 @@ type Props = {
   headerRole: UserRole;
 };
 
+type FreelancerSkill = {
+  id: number;
+  skill: { name: string };
+};
+
+type FollowedProfile = {
+  id: number;
+  displayName: string | null;
+  freelancerProfile: {
+    title: string | null;
+    skills: FreelancerSkill[];
+  };
+};
+
+type FollowItem = {
+  freelancerId: number;
+  profile: FollowedProfile;
+};
+
+type FavoriteItem = {
+  freelancerId: number;
+  profile: FollowedProfile;
+};
+
 function errorMessage(error: unknown) {
   if (error instanceof ApiFail) {
     return error.response.error.details?.[0]?.message ?? error.message;
@@ -80,6 +104,8 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
+  const [following, setFollowing] = useState<FollowItem[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
   const [documentType, setDocumentType] = useState<DocumentTypeType>(
@@ -95,12 +121,30 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
     if (!userId || headerRole === "GUEST") return;
     setLoading(true);
     try {
-      const [identityResponse, linksResponse] = await Promise.all([
+      const requests: Promise<unknown>[] = [
         accountProfileApi.getIdentityStatus(),
         accountProfileApi.getSocialLinks(),
-      ]);
+      ];
+
+      if (headerRole === "CLIENT") {
+        requests.push(
+          accountProfileApi.getFollowing?.() ?? Promise.resolve({ data: [] }),
+          accountProfileApi.getFavorites?.() ?? Promise.resolve({ data: [] }),
+        );
+      }
+
+      const [identityResponse, linksResponse, followingResponse, favoritesResponse] =
+        (await Promise.all(requests)) as [
+          { data: IdentityVerificationStatusType },
+          { data: SocialLinkType[] },
+          { data: FollowItem[] } | undefined,
+          { data: FavoriteItem[] } | undefined,
+        ];
+
       setIdentity(identityResponse.data);
       setSocialLinks(linksResponse.data);
+      if (followingResponse) setFollowing(followingResponse.data ?? []);
+      if (favoritesResponse) setFavorites(favoritesResponse.data ?? []);
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
@@ -158,6 +202,36 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
         current.filter((item) => item.id !== link.id),
       );
       toastSuccess({ message: "Social link removed." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const unfollowFreelancer = async (freelancerId: number) => {
+    setPending(`following-${freelancerId}`);
+    try {
+      await accountProfileApi.unfollowFreelancer(freelancerId);
+      setFollowing((current) =>
+        current.filter((item) => item.freelancerId !== freelancerId),
+      );
+      toastSuccess({ message: "Unfollowed freelancer." });
+    } catch (error) {
+      toastError({ message: errorMessage(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const removeFavorite = async (freelancerId: number) => {
+    setPending(`favorite-${freelancerId}`);
+    try {
+      await accountProfileApi.removeFavorite(freelancerId);
+      setFavorites((current) =>
+        current.filter((item) => item.freelancerId !== freelancerId),
+      );
+      toastSuccess({ message: "Removed from favorites." });
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
