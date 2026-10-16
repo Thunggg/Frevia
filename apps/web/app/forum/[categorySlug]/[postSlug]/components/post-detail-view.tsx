@@ -8,7 +8,7 @@ import {
   Heart,
   MessageSquare,
   Trash2,
-} from "lucide-react";
+} from "@/components/icons";
 
 import {
   AlertDialog,

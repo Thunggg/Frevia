@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import jobServerRequest from "@/apiRequests/job.server";
 
-import { ProjectDetailContent } from "../../../projects/[id]/project-detail-content";
+import { JobDetail } from "./_components/job-detail";
 
 export default async function ClientJobDetailPage({
   params,
@@ -13,5 +13,5 @@ export default async function ClientJobDetailPage({
   const job = await jobServerRequest.getClientJobDetail(jobId);
   if (!job) notFound();
 
-  return <ProjectDetailContent job={job} />;
+  return <JobDetail job={job} />;
 }

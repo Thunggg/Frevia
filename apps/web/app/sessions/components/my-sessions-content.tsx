@@ -10,7 +10,7 @@ import {
   MonitorSmartphone,
   Search,
   X,
-} from "lucide-react";
+} from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import type { HeaderProps } from "@/components/header";

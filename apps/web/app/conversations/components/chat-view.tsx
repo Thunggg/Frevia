@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   useConversationMessages,
   useConversations,
@@ -17,33 +18,25 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import {
-  Message,
-  MessageAvatar,
-  MessageContent,
-  MessageFooter,
-} from "@repo/ui/components/shadcn/message";
-import { Bubble, BubbleContent } from "@repo/ui/components/shadcn/bubble";
-import { Marker, MarkerContent, MarkerIcon } from "@repo/ui/components/shadcn/marker";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Input } from "@repo/ui/components/shadcn/input";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError } from "@repo/ui/components/shadcn/toast";
 import {
   ArrowLeft,
+  Check,
+  CheckCheck,
   Download,
   FileText,
   Loader2,
   Paperclip,
   Send,
   Trash2,
-} from "lucide-react";
+  UserRound,
+} from "@/components/icons";
 import type {
   DirectMessageType,
   MessageAttachmentType,
 } from "@shared/types";
 
-// Giới hạn dung lượng file khi upload (khớp với backend)
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
 function formatMessageTime(createdAt: string | Date): string {
@@ -67,10 +60,8 @@ function isImageType(fileType: string | null): boolean {
 function isEmojiOnly(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
-  // Bỏ ZWJ / variation selector trước (tránh ghép chữ cái với emoji)
   const stripped = trimmed.replace(/\u200d/g, "").replace(/\ufe0f/g, "");
   if (!stripped) return true;
-  // Chỉ chứa emoji (và khoảng trắng/#/*/+/số)
   return /^[\p{Extended_Pictographic}\p{Emoji_Component}\s#*+\d]+$/u.test(
     stripped,
   );
@@ -106,7 +97,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   const conversation = conversations?.find((c) => c.id === conversationId);
   const otherUser = conversation?.otherUser;
 
-  // Đánh dấu đã đọc khi mở hội thoại (socket nếu có, fallback REST)
   useEffect(() => {
     if (!conversationId) return;
     if (socket && connected) {
@@ -116,7 +106,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     }
   }, [socket, connected, conversationId, restMarkRead]);
 
-  // Đánh dấu đã đọc khi nhận tin nhắn mới từ người kia
   useEffect(() => {
     if (!socket) return;
 
@@ -138,7 +127,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     };
   }, [socket, conversationId, currentUserId]);
 
-  // Lắng nghe trạng thái "đang gõ" của đối phương
   useEffect(() => {
     if (!socket) return;
 
@@ -152,7 +140,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
       if (payload.isTyping) {
         setOtherTyping(true);
-        // An toàn: tự ẩn nếu quá lâu không nhận typing:stop
         if (otherTypingTimeoutRef.current) {
           clearTimeout(otherTypingTimeoutRef.current);
         }
@@ -180,7 +167,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     };
   }, [socket, conversationId]);
 
-  // Tự cuộn xuống tin nhắn mới nhất
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -190,7 +176,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
     if (!socket || !socket.connected) return;
 
-    // Báo "đang gõ" và dừng sau 1.5s không gõ
     socket.emit("typing", { conversationId, isTyping: true });
     if (typingStopTimeoutRef.current) {
       clearTimeout(typingStopTimeoutRef.current);
@@ -208,7 +193,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
       socket.emit("message:send", { conversationId, message: trimmed });
       socket.emit("typing", { conversationId, isTyping: false });
     } else {
-      // Fallback khi socket chưa kết nối
       restSend.mutate({ conversationId, message: trimmed });
     }
 
@@ -219,7 +203,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     setEmojiOpen(false);
   };
 
-  // Gửi tin nhắn kèm file (sau khi đã upload thành công)
   const sendAttachmentMessage = (attachment: MessageAttachmentType) => {
     if (socket && socket.connected) {
       socket.emit("message:send", {
@@ -228,12 +211,10 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
         attachment,
       });
     } else {
-      // Fallback khi socket chưa kết nối
       restSend.mutate({ conversationId, message: "", attachment });
     }
   };
 
-  // Chọn file -> upload -> gửi tin nhắn kèm file
   const handleFileSelect = (file: File | undefined) => {
     if (!file) return;
 
@@ -265,57 +246,83 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     if (socket && socket.connected) {
       socket.emit("message:delete", { conversationId, messageId });
     } else {
-      // Fallback khi socket chưa kết nối
       restDelete.mutate({ conversationId, messageId });
     }
   };
+
+  const pathname = usePathname();
+  const basePath = pathname.startsWith("/client/conversations")
+    ? "/client/conversations"
+    : "/conversations";
 
   const displayName =
     otherUser?.profile?.displayName ?? `User #${otherUser?.id ?? ""}`;
   const avatarUrl = otherUser?.profile?.avatarUrl ?? undefined;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-background font-sans">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border bg-[#eaf8df]/50 px-4 py-3 dark:bg-muted/60">
-        <Link
-          href="/conversations"
-          className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225] md:hidden"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-        <Avatar>
-          <AvatarImage src={avatarUrl} alt={displayName} />
-          <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">{displayName}</p>
+      <div className="flex items-center justify-between border-b border-border bg-background/80 backdrop-blur px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link
+            href={basePath}
+            className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground hover:text-foreground md:hidden shrink-0 cursor-pointer"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
+          <Avatar className="size-10 shrink-0">
+            <AvatarImage src={avatarUrl} alt={displayName} />
+            <AvatarFallback className="bg-muted text-xs font-bold text-foreground">
+              {displayName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-bold text-foreground font-sans">
+              {displayName}
+            </h3>
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-normal">
+              <span className="inline-block size-1.5 rounded-full bg-[#0069D3]" />
+              Active
+            </p>
+          </div>
         </div>
+
+        {otherUser?.id ? (
+          <Link
+            href={`/profiles/${otherUser.id}`}
+            className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
+          >
+            <UserRound className="size-3.5 text-muted-foreground" />
+            <span>Profile</span>
+          </Link>
+        ) : null}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      {/* Messages Stream */}
+      <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
         {isLoading ? (
           <div className="flex h-full items-center justify-center px-4 py-8">
             <div className="w-full max-w-md space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
+              {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
+                  className={`flex ${
+                    i % 2 === 0 ? "justify-start" : "justify-end"
+                  }`}
                 >
                   <div
-                    className={`flex items-end gap-2 ${i % 2 === 0 ? "" : "flex-row-reverse"}`}
+                    className={`flex items-end gap-2 ${
+                      i % 2 === 0 ? "" : "flex-row-reverse"
+                    }`}
                   >
                     {i % 2 === 0 && (
-                      <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+                      <Skeleton className="size-8 shrink-0 rounded-full" />
                     )}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Skeleton
-                        className={`h-10 rounded-2xl ${i % 2 === 0 ? "rounded-bl-sm w-48" : "rounded-br-sm w-40"}`}
-                      />
-                      <Skeleton
-                        className={`h-3 ${i % 2 === 0 ? "w-16" : "w-12 ml-auto"}`}
+                        className={`h-9 rounded-2xl ${
+                          i % 2 === 0 ? "w-44" : "w-36"
+                        }`}
                       />
                     </div>
                   </div>
@@ -324,114 +331,151 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             </div>
           </div>
         ) : !messages || messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
-            <Marker>
-              <MarkerContent className="text-muted-foreground">
-                No messages yet. Say hello!
-              </MarkerContent>
-            </Marker>
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <div className="size-12 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 flex items-center justify-center mb-2">
+              <Avatar className="size-10">
+                <AvatarImage src={avatarUrl} alt={displayName} />
+                <AvatarFallback className="bg-transparent text-xs font-bold text-foreground">
+                  {displayName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <p className="text-sm font-semibold text-foreground font-sans">
+              Say hello to {displayName}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground max-w-xs">
+              This is the start of your message history together.
+            </p>
           </div>
         ) : (
           messages.map((message) => {
             const isMine = message.senderId === currentUserId;
             const hasFile = Boolean(message.fileUrl);
-            const bubbleClassName = isMine
-              ? "*:data-[slot=bubble-content]:!bg-[#4fae2e] *:data-[slot=bubble-content]:!text-white *:data-[slot=bubble-content]:shadow-sm"
-              : undefined;
 
             return (
-              <Message key={message.id} align={isMine ? "end" : "start"}>
+              <div
+                key={message.id}
+                className={`group flex items-end gap-2 ${
+                  isMine ? "justify-end" : "justify-start"
+                }`}
+              >
                 {!isMine && (
-                  <MessageAvatar>
-                    <Avatar>
-                      <AvatarImage src={avatarUrl} alt={displayName} />
-                      <AvatarFallback>
-                        {displayName.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </MessageAvatar>
+                  <Avatar className="size-7 shrink-0 mb-1">
+                    <AvatarImage src={avatarUrl} alt={displayName} />
+                    <AvatarFallback className="bg-muted text-[10px] font-bold text-foreground">
+                      {displayName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 )}
-                <MessageContent>
+
+                <div
+                  className={`flex flex-col max-w-[82%] sm:max-w-[70%] ${
+                    isMine ? "items-end" : "items-start"
+                  }`}
+                >
                   {hasFile ? (
-                    <Bubble
-                      variant={isMine ? "default" : "muted"}
-                      className={bubbleClassName}
-                    >
-                      <BubbleContent className="whitespace-pre-wrap">
-                        {isImageType(message.fileType) ? (
-                          <a
-                            href={message.fileUrl ?? "#"}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="block"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={message.fileUrl ?? ""}
-                              alt={message.fileName ?? "Attachment"}
-                              className="max-h-72 w-full max-w-xs rounded-lg object-cover"
-                            />
-                          </a>
-                        ) : (
-                          <a
-                            href={message.fileUrl ?? "#"}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center gap-3"
-                          >
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
-                              <FileText className="h-5 w-5" />
-                            </span>
-                            <span className="min-w-0">
-                              <span className="block max-w-[180px] truncate text-sm font-medium">
-                                {message.fileName ?? "Attachment"}
-                              </span>
-                              <span className="block text-xs opacity-70">
-                                {formatFileSize(message.fileSize)}
-                              </span>
-                            </span>
-                            <Download className="h-4 w-4 shrink-0" />
-                          </a>
-                        )}
-                        {message.message && (
-                          <p className="whitespace-pre-wrap">{message.message}</p>
-                        )}
-                      </BubbleContent>
-                    </Bubble>
-                  ) : isEmojiOnly(message.message) ? (
-                    <span
-                      className={`select-none whitespace-pre-wrap text-4xl leading-none ${
-                        isMine ? "self-end" : "self-start"
+                    <div
+                      className={`overflow-hidden transition-all ${
+                        isMine
+                          ? "rounded-[20px] rounded-br-[4px] bg-[#0069D3] text-white p-2.5 shadow-xs"
+                          : "rounded-[20px] rounded-bl-[4px] bg-[#F1F0F5] dark:bg-zinc-800 text-foreground p-2.5 shadow-xs"
                       }`}
                     >
+                      {isImageType(message.fileType) ? (
+                        <a
+                          href={message.fileUrl ?? "#"}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block overflow-hidden rounded-xl"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={message.fileUrl ?? ""}
+                            alt={message.fileName ?? "Attachment"}
+                            className="max-h-72 w-full object-cover transition-transform hover:scale-105"
+                          />
+                        </a>
+                      ) : (
+                        <a
+                          href={message.fileUrl ?? "#"}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={`flex items-center gap-3 rounded-xl p-2 transition-colors ${
+                            isMine
+                              ? "bg-white/10 hover:bg-white/20 text-white"
+                              : "bg-background/80 hover:bg-background text-foreground"
+                          }`}
+                        >
+                          <span
+                            className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
+                              isMine ? "bg-white/20" : "bg-muted"
+                            }`}
+                          >
+                            <FileText className="size-4" />
+                          </span>
+                          <span className="min-w-0 pr-2">
+                            <span className="block max-w-[180px] truncate text-xs font-semibold">
+                              {message.fileName ?? "Attachment"}
+                            </span>
+                            <span className="block text-[10px] opacity-75">
+                              {formatFileSize(message.fileSize)}
+                            </span>
+                          </span>
+                          <Download className="size-4 shrink-0 opacity-80" />
+                        </a>
+                      )}
+                      {message.message ? (
+                        <p className="mt-2 text-xs leading-relaxed whitespace-pre-wrap px-1">
+                          {message.message}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : isEmojiOnly(message.message) ? (
+                    <span className="select-none text-4xl leading-none py-1">
                       {message.message.trim()}
                     </span>
                   ) : (
-                    <Bubble
-                      variant={isMine ? "default" : "muted"}
-                      className={bubbleClassName}
+                    <div
+                      className={`px-4 py-2.5 text-xs sm:text-sm font-sans leading-relaxed shadow-xs transition-all ${
+                        isMine
+                          ? "rounded-[22px] rounded-br-[4px] bg-[#0069D3] text-white"
+                          : "rounded-[22px] rounded-bl-[4px] bg-[#F1F0F5] dark:bg-zinc-800 text-foreground"
+                      }`}
                     >
-                      <BubbleContent className="whitespace-pre-wrap">
-                        {message.message}
-                      </BubbleContent>
-                    </Bubble>
+                      <p className="whitespace-pre-wrap">{message.message}</p>
+                    </div>
                   )}
-                  <MessageFooter>
-                    {formatMessageTime(message.createdAt)}
-                    {isMine && (message.isRead ? " · Read" : " · Sent")}
+
+                  {/* Message timestamp & status footer */}
+                  <div
+                    className={`mt-1 flex items-center gap-1.5 text-[10px] text-muted-foreground px-1 ${
+                      isMine ? "flex-row-reverse" : ""
+                    }`}
+                  >
+                    <span>{formatMessageTime(message.createdAt)}</span>
+                    {isMine && (
+                      <span className="inline-flex items-center gap-0.5">
+                        {message.isRead ? (
+                          <CheckCheck className="size-3 text-[#0069D3]" />
+                        ) : (
+                          <Check className="size-3 text-muted-foreground/60" />
+                        )}
+                      </span>
+                    )}
                     {isMine && (
                       <button
                         type="button"
                         onClick={() => handleDeleteMessage(message.id)}
                         aria-label="Delete message"
-                        className="ml-1 rounded-md p-1 text-muted-foreground/60 opacity-0 transition-opacity outline-none hover:bg-muted hover:text-destructive focus-visible:opacity-100 group-hover/message:opacity-100"
+                        className="opacity-0 transition-opacity group-hover:opacity-100 text-muted-foreground hover:text-red-500 cursor-pointer ml-1"
+                        title="Delete message"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="size-3" />
                       </button>
                     )}
-                  </MessageFooter>
-                </MessageContent>
-              </Message>
+                  </div>
+                </div>
+              </div>
             );
           })
         )}
@@ -440,42 +484,43 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
       {/* Typing indicator */}
       {otherTyping && (
-        <div className="flex px-4 pb-2">
-          <Marker role="status">
-            <MarkerIcon>
-              <Loader2 className="animate-spin" />
-            </MarkerIcon>
-            <MarkerContent className="shimmer">
-              <span className="font-medium">{displayName}</span> is typing...
-            </MarkerContent>
-          </Marker>
+        <div className="flex items-center gap-2 px-4 sm:px-6 py-1">
+          <div className="flex items-center gap-1.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">{displayName}</span> is typing
+            <span className="flex items-center gap-0.5 ml-1">
+              <span className="size-1 rounded-full bg-[#0069D3] animate-bounce" />
+              <span className="size-1 rounded-full bg-[#0069D3] animate-bounce [animation-delay:0.2s]" />
+              <span className="size-1 rounded-full bg-[#0069D3] animate-bounce [animation-delay:0.4s]" />
+            </span>
+          </div>
         </div>
       )}
 
-      {/* Input */}
-      <div className="border-t p-4">
+      {/* Modern Capsule Input Bar */}
+      <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
         <form
-          className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             handleSend();
           }}
+          className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
         >
-          <Input
-            placeholder="Type a message..."
-            value={input}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (
-                e.key === "Enter" ||
-                (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey)
-              ) {
-                setEmojiOpen(false);
-              }
-            }}
-            className="flex-1"
-          />
-          {/* Upload file để gửi kèm tin nhắn */}
+          {/* File upload button */}
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none"
+            title="Attach file"
+          >
+            {uploading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Paperclip className="size-4" />
+            )}
+            <span className="sr-only">Attach file</span>
+          </button>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -486,36 +531,39 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
               e.target.value = "";
             }}
           />
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Attach file"
-            className="shrink-0 text-muted-foreground hover:text-foreground"
-          >
-            {uploading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Paperclip className="h-5 w-5" />
-            )}
-            <span className="sr-only">Attach file</span>
-          </Button>
+
+          {/* Emoji Picker */}
           <EmojiPicker
             open={emojiOpen}
             onOpenChange={setEmojiOpen}
-            onSelect={(emoji) => setInput((value) => value + emoji)}
+            onSelect={(emoji) => setInput((val) => val + emoji)}
           />
-          <Button
+
+          {/* Text Input */}
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={input}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
+          />
+
+          {/* Send button */}
+          <button
             type="submit"
-            size="icon"
             disabled={!input.trim()}
-            className="shrink-0 !bg-[#4fae2e] !text-white hover:!bg-[#459928] disabled:!bg-[#4fae2e]/50 disabled:!text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
+            title="Send message"
           >
-            <Send className="h-4 w-4" />
+            <Send className="size-3.5" />
             <span className="sr-only">Send</span>
-          </Button>
+          </button>
         </form>
       </div>
     </div>

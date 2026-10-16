@@ -33,8 +33,28 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof ZodSerializationException) {
       const zodError = (exception as ZodSerializationException).getZodError();
       if (zodError instanceof ZodError) {
-        this.logger.error(`ZodSerializationException: ${zodError.message}`);
+        this.logger.error(
+          `ZodSerializationException: ${zodError.message}`,
+          zodError.issues,
+        );
       }
+
+      const apiRes: ApiError = {
+        success: false,
+        error: {
+          code: String(500),
+          message: 'Response validation failed',
+          details: zodError instanceof ZodError
+            ? zodError.issues.map((issue) => ({
+                message: issue.message,
+                path: issue.path.join('.'),
+              }))
+            : undefined,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      response.status(500).json(apiRes);
     } else if (exception instanceof HttpException) {
       const body: HttpExceptionBody = {
         ...(exception.getResponse() as object),

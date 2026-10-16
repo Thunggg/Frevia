@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import jobServerRequest from "@/apiRequests/job.server";
 
-import { ClientJobProposalsContent } from "./client-job-proposals-content";
+import { ProposalList } from "./_components/proposal-list";
 
 export default async function ClientJobProposalsPage({
   params,
@@ -15,5 +15,5 @@ export default async function ClientJobProposalsPage({
   const job = await jobServerRequest.getClientJobDetail(jobId);
   if (!job) notFound();
 
-  return <ClientJobProposalsContent jobId={parsedJobId} jobTitle={job.title} />;
+  return <ProposalList jobId={parsedJobId} jobTitle={job.title} />;
 }

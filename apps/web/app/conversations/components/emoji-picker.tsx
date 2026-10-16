@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Smile } from "lucide-react";
+import { Smile } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
 
 const EMOJIS = [

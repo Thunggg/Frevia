@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BriefcaseBusiness } from "lucide-react";
+import { BriefcaseBusiness } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";

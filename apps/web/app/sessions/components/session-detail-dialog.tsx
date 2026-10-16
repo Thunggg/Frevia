@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@repo/ui/components/shadcn/dialog";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
-import { Eye } from "lucide-react";
+import { Eye } from "@/components/icons";
 
 function formatDate(value: Date | string) {
   return new Date(value).toLocaleString("en-US", {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck } from "@/components/icons";
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
