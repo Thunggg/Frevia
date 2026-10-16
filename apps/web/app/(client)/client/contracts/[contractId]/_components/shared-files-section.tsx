@@ -3,16 +3,13 @@
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Clock,
   Download,
   FileCode,
   FileImage,
   FileText,
   FolderArchive,
-  FolderOpen,
   Loader2,
   Paperclip,
-  Plus,
   Trash2,
   Upload,
 } from "@/components/icons";
@@ -45,13 +42,22 @@ interface SharedFilesSectionProps {
 
 function formatDate(date: string | Date | null) {
   if (!date) return "N/A";
-  return new Intl.DateTimeFormat("en-US", {
+  const d = new Date(date);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+  const timeStr = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  if (isToday) return `Today, ${timeStr}`;
+  const monthDay = d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
+  });
+  if (d.getFullYear() === now.getFullYear()) {
+    return `${monthDay}, ${timeStr}`;
+  }
+  return `${monthDay} ${d.getFullYear()}, ${timeStr}`;
 }
 
 function getFileIcon(fileName?: string | null) {
@@ -189,28 +195,26 @@ export function SharedFilesSection({
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-xs space-y-5">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-xs space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border/60">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-[#F1F0F5] text-[#0069D3]">
-            <FolderOpen className="size-4" />
-          </div>
-          <div>
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-foreground">
-              Shared Project Files
+              Shared Files
             </h3>
-            <span className="text-[11px] text-muted-foreground block">
-              Files, assets, and documentation shared between you and the {isFreelancer ? "client" : "freelancer"}.
-            </span>
+            {files.length > 0 && (
+              <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                {files.length}
+              </span>
+            )}
           </div>
+          <p className="text-[11px] text-muted-foreground">
+            Shared with {isFreelancer ? "the client" : "the freelancer"}
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground font-medium hidden sm:inline">
-            {files.length} file{files.length !== 1 ? "s" : ""}
-          </span>
-
+        <div>
           <input
             ref={fileInputRef}
             type="file"
@@ -223,43 +227,33 @@ export function SharedFilesSection({
             size="sm"
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-3.5 shadow-xs flex items-center gap-1.5 cursor-pointer"
+            className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-3 shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             {isUploading ? (
               <Loader2 className="size-3.5 animate-spin" />
             ) : (
               <Upload className="size-3.5" />
             )}
-            <span>Upload File</span>
+            <span>Upload</span>
           </Button>
         </div>
       </div>
 
       {/* Files List */}
       {files.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card p-10 text-center">
-          <div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-[#F1F0F5] text-[#0069D3]">
-            <Paperclip className="size-5" />
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/10 py-6 px-4 text-center">
+          <div className="mb-2 flex size-8 items-center justify-center rounded-lg bg-[#D0E1F8]/50 text-[#0069D3]">
+            <Paperclip className="size-4" />
           </div>
           <p className="text-xs font-semibold text-foreground">
-            No shared files uploaded yet
+            No shared files yet
           </p>
-          <p className="mt-1 text-[11px] text-muted-foreground max-w-sm">
-            Share design assets, project specifications, briefs, and code archives directly in this contract space.
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
+            Upload documents, assets or deliverables
           </p>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={isUploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="mt-3 rounded-full text-xs font-medium"
-          >
-            <Plus className="mr-1 size-3" />
-            Upload First File
-          </Button>
         </div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {files.map((file) => {
             const { canDelete, isUploader, remainingMins } =
               checkDeleteEligibility(file);
@@ -276,25 +270,27 @@ export function SharedFilesSection({
             return (
               <div
                 key={file.id}
-                className="flex items-center justify-between rounded-xl border border-border/70 bg-card p-3.5 hover:border-[#0069D3]/40 transition-colors gap-3"
+                className="group flex items-center justify-between rounded-xl border border-border/70 bg-card p-3 hover:border-[#0069D3]/40 hover:bg-muted/10 transition-all gap-2.5"
               >
                 {/* Left: Icon & Name & Meta */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#F1F0F5]">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#D0E1F8]/40 text-[#0069D3]">
                     {getFileIcon(file.fileName)}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="text-xs font-semibold text-foreground truncate">
+                    <p
+                      className="text-xs font-semibold text-foreground truncate"
+                      title={file.fileName || `File #${file.id}`}
+                    >
                       {file.fileName || `File #${file.id}`}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                      <span className="font-medium text-foreground/80">
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground truncate">
+                      <span className="font-medium text-foreground/80 shrink-0">
                         {uploaderLabel}
                       </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="size-3 text-muted-foreground/70" />
+                      <span className="text-muted-foreground/40 shrink-0">•</span>
+                      <span className="truncate">
                         {formatDate(file.createdAt)}
                       </span>
                     </div>
@@ -302,13 +298,13 @@ export function SharedFilesSection({
                 </div>
 
                 {/* Right: Download & Delete Actions */}
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1 shrink-0">
                   <a
                     href={file.fileUrl}
                     target="_blank"
                     rel="noreferrer"
                     download
-                    className="flex size-8 items-center justify-center rounded-lg border border-border hover:bg-[#D0E1F8]/50 text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
+                    className="flex size-7 items-center justify-center rounded-lg border border-border hover:bg-[#D0E1F8]/50 hover:text-[#0069D3] text-muted-foreground transition-colors cursor-pointer"
                     title="Download file"
                   >
                     <Download className="size-3.5" />
@@ -324,10 +320,10 @@ export function SharedFilesSection({
                           ? `Delete file (${remainingMins}m remaining)`
                           : "Files can only be removed within 1 hour of upload"
                       }
-                      className={`flex size-8 items-center justify-center rounded-lg border transition-colors ${
+                      className={`flex size-7 items-center justify-center rounded-lg border transition-colors ${
                         canDelete
-                          ? "border-border text-muted-foreground hover:text-red-600 hover:border-red-200 cursor-pointer"
-                          : "border-transparent text-muted-foreground/40 cursor-not-allowed"
+                          ? "border-border text-muted-foreground hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 cursor-pointer"
+                          : "border-transparent text-muted-foreground/30 cursor-not-allowed"
                       }`}
                     >
                       <Trash2 className="size-3.5" />

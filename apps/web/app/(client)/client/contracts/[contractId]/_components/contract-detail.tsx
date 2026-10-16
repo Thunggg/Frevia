@@ -757,20 +757,6 @@ export function ContractDetail({
               </div>
             )}
           </div>
-
-          {/* Card 3: Shared Project Files */}
-          <SharedFilesSection
-            contractId={contract.id}
-            initialFiles={initialSharedFiles}
-            currentUserId={
-              isFreelancer ? contract.freelancerId : contract.clientId
-            }
-            clientId={contract.clientId}
-            freelancerId={contract.freelancerId}
-            clientName={clientName}
-            freelancerName={freelancerName}
-            isFreelancer={isFreelancer}
-          />
         </div>
 
         {/* Right Column (4 cols) */}
@@ -858,7 +844,21 @@ export function ContractDetail({
             </div>
           </div>
 
-          {/* Card 2: How milestones work? */}
+          {/* Card 2: Shared Project Files */}
+          <SharedFilesSection
+            contractId={contract.id}
+            initialFiles={initialSharedFiles}
+            currentUserId={
+              isFreelancer ? contract.freelancerId : contract.clientId
+            }
+            clientId={contract.clientId}
+            freelancerId={contract.freelancerId}
+            clientName={clientName}
+            freelancerName={freelancerName}
+            isFreelancer={isFreelancer}
+          />
+
+          {/* Card 3: How milestones work? */}
           <div className="p-6 space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex size-7 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3]">
