@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";

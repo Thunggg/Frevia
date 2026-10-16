@@ -2,6 +2,8 @@ import {
   ForgotPasswordBodySchema,
   GetAuthorizationUrlResSchema,
   GetMeResSchema,
+  JoinRoleBodySchema,
+  JoinRoleResponseSchema,
   LoginBodySchema,
   LoginResSchema,
   LogoutBodySchema,
@@ -41,3 +43,6 @@ export class SwitchRoleBodyDto extends createZodDto(SwitchRoleBodySchema) {}
 export class SwitchRoleResponseDto extends createZodDto(
   SwitchRoleResponseSchema,
 ) {}
+
+export class JoinRoleBodyDto extends createZodDto(JoinRoleBodySchema) {}
+export class JoinRoleResponseDto extends createZodDto(JoinRoleResponseSchema) {}

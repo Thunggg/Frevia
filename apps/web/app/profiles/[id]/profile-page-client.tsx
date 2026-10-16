@@ -22,17 +22,18 @@ import {
   Pencil,
   Plus,
   RefreshCw,
-  ShieldCheck,
   Trash2,
   UserRound,
   UserCheck,
+  UserMinus,
   UserPlus,
-} from "lucide-react";
+} from "@/components/icons";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { VerifiedBadge } from "@/components/verified-badge";
 import { ApiFail } from "@/lib/http";
 import {
   AvailabilityStatus,
@@ -221,6 +222,7 @@ export function ProfilePageClient({
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [unfollowDialogOpen, setUnfollowDialogOpen] = useState(false);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -317,6 +319,7 @@ export function ProfilePageClient({
         await accountProfileApi.followFreelancer(profile.userId);
       }
       setIsFollowing((current) => !current);
+      if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
         message: isFollowing
           ? "You unfollowed this freelancer."
@@ -722,25 +725,17 @@ export function ProfilePageClient({
                         {profile.displayName ?? "Unnamed freelancer"}
                       </h2>
                       {freelancer?.idVerified ? (
-                        <Badge className="gap-1 border-transparent bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                          <ShieldCheck className="size-3" /> Verified
-                        </Badge>
+                        <VerifiedBadge size="sm" />
                       ) : null}
                     </div>
                     <p className="mt-1 text-lg text-muted-foreground">
                       {freelancer?.title ?? "Professional title not added"}
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Badge variant="outline" className="gap-1.5">
-                        <span
-                          className={`size-2 rounded-full ${profile.availabilityStatus === AvailabilityStatus.AVAILABLE ? "bg-[#4fae2e]" : "bg-amber-500"}`}
-                        />
-                        {profile.availabilityStatus.toLowerCase()}
-                      </Badge>
-                      {profile.onlineStatus ? (
+                    {profile.onlineStatus ? (
+                      <div className="mt-3 flex flex-wrap gap-2">
                         <Badge variant="secondary">Online now</Badge>
-                      ) : null}
-                    </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 {isOwner ? (
@@ -760,13 +755,19 @@ export function ProfilePageClient({
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant={isFollowing ? "default" : "outline"}
+                      variant={isFollowing ? "outline" : "default"}
                       className={
                         isFollowing
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : ""
+                          ? "border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
+                          : "bg-[#4fae2e] text-white hover:bg-[#459928]"
                       }
-                      onClick={() => void toggleFollowing()}
+                      onClick={() => {
+                        if (isFollowing) {
+                          setUnfollowDialogOpen(true);
+                        } else {
+                          void toggleFollowing();
+                        }
+                      }}
                       disabled={pendingAction === "follow"}
                     >
                       {pendingAction === "follow" ? (
@@ -778,6 +779,44 @@ export function ProfilePageClient({
                       )}
                       {isFollowing ? "Following" : "Follow"}
                     </Button>
+                    <AlertDialog
+                      open={unfollowDialogOpen}
+                      onOpenChange={setUnfollowDialogOpen}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Unfollow {profile.displayName ?? "this freelancer"}?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Their profile will be removed from your following
+                            list. You can follow them again at any time.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel
+                            disabled={pendingAction === "follow"}
+                          >
+                            Keep following
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive text-white hover:bg-destructive/90"
+                            disabled={pendingAction === "follow"}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              void toggleFollowing();
+                            }}
+                          >
+                            {pendingAction === "follow" ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <UserMinus />
+                            )}
+                            Unfollow
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       variant={isFavorite ? "default" : "outline"}
                       className={
@@ -1035,15 +1074,6 @@ export function ProfilePageClient({
                   At a glance
                 </h3>
                 <ul className="mt-4 divide-y divide-border text-sm">
-                  <li className="flex items-center justify-between py-2.5">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <CheckCircle2 className="size-4 text-[#4fae2e]" />{" "}
-                      Availability
-                    </span>
-                    <span className="font-medium capitalize">
-                      {profile.availabilityStatus.toLowerCase()}
-                    </span>
-                  </li>
                   <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
                       <Award className="size-4 text-[#4fae2e]" /> Skills

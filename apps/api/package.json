@@ -23,9 +23,9 @@
     "seed:permissions": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-permissions.ts",
     "seed:profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-profile-demo.ts",
     "seed:account-profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-account-profile-demo.ts",
+    "seed:relationships-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-relationships-demo.ts",
     "seed:jobs": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-jobs.ts",
-    "seed:proposals": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-proposals.ts",
-    "seed:permissions": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-permissions.ts"
+    "seed:proposals": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-proposals.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

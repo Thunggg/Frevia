@@ -76,6 +76,7 @@ export class ContractRepository {
       where: { id: contractId },
       select: {
         id: true,
+        jobId: true,
         clientId: true,
         freelancerId: true,
         status: true,
@@ -131,24 +132,29 @@ export class ContractRepository {
     };
   }
 
-  async signContract(
-    contractId: number,
-    role: 'client' | 'freelancer',
-    alreadySigned: boolean,
-  ) {
+  async signContract(contractId: number, role: 'client' | 'freelancer') {
     const isClientSigning = role === 'client';
 
-    const contract = await this.prisma.contract.update({
-      where: { id: contractId },
-      data: {
-        ...(isClientSigning
+    const contract = await this.prisma.$transaction(async (tx) => {
+      const signedContract = await tx.contract.update({
+        where: { id: contractId },
+        data: isClientSigning
           ? { signedByClient: true }
-          : { signedByFreelancer: true }),
-        ...(alreadySigned && {
-          status: ContractStatus.ACTIVE,
-          signedAt: new Date(),
-        }),
-      },
+          : { signedByFreelancer: true },
+      });
+
+      if (signedContract.signedByClient && signedContract.signedByFreelancer) {
+        await tx.job.update({
+          where: { id: signedContract.jobId },
+          data: { status: 'IN_PROGRESS' },
+        });
+        return tx.contract.update({
+          where: { id: contractId },
+          data: { status: ContractStatus.ACTIVE, signedAt: new Date() },
+        });
+      }
+
+      return signedContract;
     });
 
     return {
@@ -157,13 +163,20 @@ export class ContractRepository {
     };
   }
 
-  async completeContract(contractId: number) {
-    const contract = await this.prisma.contract.update({
-      where: { id: contractId },
-      data: {
-        status: ContractStatus.COMPLETED,
-        completedAt: new Date(),
-      },
+  async completeContract(contractId: number, jobId: number) {
+    const contract = await this.prisma.$transaction(async (tx) => {
+      const completedContract = await tx.contract.update({
+        where: { id: contractId },
+        data: {
+          status: ContractStatus.COMPLETED,
+          completedAt: new Date(),
+        },
+      });
+      await tx.job.update({
+        where: { id: jobId },
+        data: { status: 'COMPLETED' },
+      });
+      return completedContract;
     });
 
     return {
@@ -191,12 +204,13 @@ export class ContractRepository {
     query: GetContractListQueryType,
     filter: { userId?: number; role?: 'client' | 'freelancer' },
   ) {
-    const { page, limit, status } = query;
+    const { page, limit, status, proposalId } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ContractWhereInput = {
       deletedAt: null,
       ...(status && { status: status as ContractStatus }),
+      ...(proposalId && { proposalId }),
       ...(filter.userId &&
         filter.role === 'client' && { clientId: filter.userId }),
       ...(filter.userId &&

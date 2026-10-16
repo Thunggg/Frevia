@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 import {
   AddSocialLinkType,
   DocumentTypeType,
+  RoleName,
   UpdateClientProfileType,
+  UpdateGeneralProfileType,
 } from '@shared/types';
+import { NotificationType } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -14,6 +17,56 @@ export class AccountProfileRepository {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
       include: { userRoles: { include: { role: true } }, profile: true },
+    });
+  }
+
+  findGeneralProfile(userId: number) {
+    return this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        profile: true,
+        userRoles: {
+          select: { isPrimary: true, role: { select: { name: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+  }
+
+  findPasswordCredential(userId: number) {
+    return this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      select: {
+        password: true,
+        profile: { select: { id: true } },
+      },
+    });
+  }
+
+  updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
+    return this.prisma.profile.update({
+      where: { userId },
+      data: {
+        displayName: input.displayName,
+        bio: input.bio ?? null,
+      },
+    });
+  }
+
+  updatePassword(userId: number, password: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { password },
+    });
+  }
+
+  updateAvatar(userId: number, avatarUrl: string) {
+    return this.prisma.profile.update({
+      where: { userId },
+      data: { avatarUrl },
+      select: { avatarUrl: true, updatedAt: true },
     });
   }
 
@@ -160,9 +213,30 @@ export class AccountProfileRepository {
     });
   }
 
-  createFollow(clientId: number, freelancerId: number) {
-    return this.prisma.followFreelancer.create({
-      data: { clientId, freelancerId },
+  createFollowWithNotification(
+    clientId: number,
+    freelancerId: number,
+    followerName: string,
+  ) {
+    return this.prisma.$transaction(async (transaction) => {
+      const follow = await transaction.followFreelancer.create({
+        data: { clientId, freelancerId },
+      });
+
+      await transaction.notification.create({
+        data: {
+          userId: freelancerId,
+          type: NotificationType.NEW_FOLLOWER,
+          title: 'You have a new follower',
+          message: `${followerName} started following you.`,
+          data: {
+            href: `/clients/${clientId}`,
+            followerUserId: clientId,
+          },
+        },
+      });
+
+      return follow;
     });
   }
 
@@ -194,6 +268,48 @@ export class AccountProfileRepository {
         },
       },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  findDiscoverableFreelancers(clientId: number) {
+    return this.prisma.user.findMany({
+      where: {
+        id: { not: clientId },
+        isBanned: false,
+        deletedAt: null,
+        userRoles: {
+          some: {
+            role: { name: RoleName.FREELANCER, deletedAt: null },
+          },
+        },
+        profile: {
+          is: { freelancerProfile: { isNot: null } },
+        },
+      },
+      select: {
+        id: true,
+        profile: {
+          include: {
+            freelancerProfile: {
+              include: {
+                skills: {
+                  include: { skill: true },
+                  orderBy: { proficiencyLevel: 'desc' },
+                },
+              },
+            },
+          },
+        },
+        followsAsFreelancer: {
+          where: { clientId },
+          select: { clientId: true },
+          take: 1,
+        },
+      },
+      orderBy: [
+        { profile: { profileCompletionPercent: 'desc' } },
+        { id: 'desc' },
+      ],
     });
   }
 }

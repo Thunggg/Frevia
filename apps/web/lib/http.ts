@@ -35,10 +35,29 @@ export const request = async <T>(
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  const data = await res.json();
+  let data: unknown;
+
+  try {
+    data = await res.json();
+  } catch {
+    const text = await res.text().catch(() => "");
+    throw new ApiFail(
+      {
+        success: false,
+        error: {
+          code: String(res.status),
+          message: text
+            ? `Response is not valid JSON: ${text.slice(0, 300)}`
+            : "Response is not valid JSON",
+        },
+        timestamp: new Date().toISOString(),
+      },
+      res.status,
+    );
+  }
 
   if (!res.ok) {
-    throw new ApiFail(data, res.status);
+    throw new ApiFail(data as ApiError, res.status);
   }
 
   return data as ApiSuccess<T>;

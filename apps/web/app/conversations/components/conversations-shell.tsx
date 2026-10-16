@@ -23,8 +23,11 @@ export function ConversationsShell({
 }: ConversationsShellProps) {
   const pathname = usePathname();
   const socketValue = useConversationSocket(socketUrl, token, currentUserId);
+  const basePath = pathname.startsWith("/client/conversations")
+    ? "/client/conversations"
+    : "/conversations";
   const isThread =
-    pathname.startsWith("/conversations/") && pathname !== "/conversations";
+    pathname.startsWith(`${basePath}/`) && pathname !== basePath;
 
   return (
     <ConversationSocketContext.Provider value={socketValue}>

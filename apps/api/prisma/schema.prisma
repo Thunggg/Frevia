@@ -101,8 +101,7 @@ model User {
   jobAlerts          JobAlert[]
 
   // --- Proposals ---
-  proposals         Proposal[]
-  proposalTemplates ProposalTemplate[]
+  proposals Proposal[]
 
   // --- Contracts ---
   contractsAsClient     Contract[]             @relation("ContractClient")
@@ -253,10 +252,10 @@ model FreelancerProfile {
 }
 
 model FreelancerSkill {
-  id                  Int    @id @default(autoincrement())
+  id                  Int @id @default(autoincrement())
   freelancerProfileId Int
   skillId             Int
-  proficiencyLevel    Int    @db.SmallInt // Range 1-10.
+  proficiencyLevel    Int @db.SmallInt // Range 1-10.
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skill             Skill             @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -468,24 +467,6 @@ model Proposal {
   @@index([jobId, deletedAt, createdAt])
   @@index([freelancerId, deletedAt, createdAt])
   @@index([status, deletedAt])
-}
-
-model ProposalTemplate {
-  id           Int @id @default(autoincrement())
-  freelancerId Int
-
-  name         String   @db.VarChar(255)
-  coverLetter  String
-  bidAmount    Decimal? @db.Decimal(15, 2)
-  deliveryDays Int?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  freelancer User @relation(fields: [freelancerId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-
-  @@index([freelancerId, deletedAt])
 }
 
 model ProposalAttachment {
@@ -786,6 +767,7 @@ model ReviewResponse {
   userId       Int
   responseText String
   createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -970,16 +952,27 @@ model BannedKeyword {
 }
 
 model AdvertisementBanner {
-  id        Int       @id @default(autoincrement())
-  title     String    @db.VarChar(255)
-  imageUrl  String?   @db.VarChar(500)
-  linkUrl   String?   @db.VarChar(500)
+  id        Int            @id @default(autoincrement())
+  title     String         @db.VarChar(255)
+  imageUrl  String?        @db.VarChar(500)
+  linkUrl   String?        @db.VarChar(500)
+  position  BannerPosition @default(GLOBAL_HEADER)
   startDate DateTime?
   endDate   DateTime?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   deletedAt DateTime?
+
+  @@index([position, startDate, endDate])
+}
+
+enum BannerPosition {
+  GLOBAL_HEADER
+  HOME_HERO
+  HOME_BODY
+  SEARCH_RESULTS
+  FOOTER
 }
 
 // ============================
@@ -1162,6 +1155,7 @@ enum DisputeOutcome {
 }
 
 enum NotificationType {
+  NEW_FOLLOWER
   JOB_ALERT
   PROPOSAL_NEW
   PROPOSAL_ACCEPTED
@@ -1169,6 +1163,7 @@ enum NotificationType {
   PAYMENT_RELEASED
   DISPUTE_OPENED
   REVIEW_RECEIVED
+  REVIEW_RESPONSE_RECEIVED
   SYSTEM_ANNOUNCEMENT
   MESSAGE_NEW
   MILESTONE_COMPLETED

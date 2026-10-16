@@ -1,6 +1,6 @@
 import jobServerRequest from "@/apiRequests/job.server";
 
-import { ProjectsContent } from "../../projects/projects-content";
+import { JobList } from "./_components/job-list";
 
 export default async function ClientJobsPage({
   searchParams,
@@ -13,7 +13,7 @@ export default async function ClientJobsPage({
   const result = await jobServerRequest.getClientJobs({ page, limit: 10 });
 
   return (
-    <ProjectsContent
+    <JobList
       initialJobs={result?.data ?? []}
       pagination={
         result?.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 }

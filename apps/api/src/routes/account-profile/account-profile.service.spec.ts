@@ -1,6 +1,7 @@
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { RoleName, SocialPlatform } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { HashingService } from '../../shared/services/hashing.service';
 import { AccountProfileRepository } from './account-profile.repo';
 import { AccountProfileService } from './account-profile.service';
 
@@ -22,17 +23,28 @@ describe('AccountProfileService', () => {
     deleteSocialLink: jest.fn(),
     findFavorites: jest.fn(),
     findFollowing: jest.fn(),
+    findDiscoverableFreelancers: jest.fn(),
     findFollow: jest.fn(),
-    createFollow: jest.fn(),
+    createFollowWithNotification: jest.fn(),
     deleteFollow: jest.fn(),
+    findGeneralProfile: jest.fn(),
+    findPasswordCredential: jest.fn(),
+    updateGeneralProfile: jest.fn(),
+    updatePassword: jest.fn(),
+    updateAvatar: jest.fn(),
   };
   const cloudinary = {
     isConfigured: jest.fn(),
     uploadFile: jest.fn(),
   };
+  const hashing = {
+    hash: jest.fn(),
+    verify: jest.fn(),
+  };
   const service = new AccountProfileService(
     repository as unknown as AccountProfileRepository,
     cloudinary as unknown as CloudinaryService,
+    hashing as unknown as HashingService,
   );
 
   beforeEach(() => jest.clearAllMocks());
@@ -131,5 +143,120 @@ describe('AccountProfileService', () => {
     await service.unfollowFreelancer(1, 2);
 
     expect(repository.deleteFollow).toHaveBeenCalledWith(1, 2);
+  });
+
+  it('creates a notification for the freelancer when a client follows them', async () => {
+    repository.findUserWithRoles
+      .mockResolvedValueOnce({
+        ...userWithRole(RoleName.CLIENT, 1),
+        profile: { id: 10, userId: 1, displayName: 'Northstar Studio' },
+      })
+      .mockResolvedValueOnce(userWithRole(RoleName.FREELANCER, 2));
+    repository.findFollow.mockResolvedValue(null);
+    repository.createFollowWithNotification.mockResolvedValue({
+      clientId: 1,
+      freelancerId: 2,
+    });
+
+    await expect(service.followFreelancer(1, 2)).resolves.toEqual({
+      message: 'You are now following this freelancer.',
+    });
+    expect(repository.createFollowWithNotification).toHaveBeenCalledWith(
+      1,
+      2,
+      'Northstar Studio',
+    );
+  });
+
+  it('returns discoverable freelancers with their following state', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.CLIENT),
+    );
+    repository.findDiscoverableFreelancers.mockResolvedValue([
+      {
+        id: 2,
+        profile: {
+          id: 20,
+          freelancerProfile: { id: 30 },
+        },
+        followsAsFreelancer: [{ clientId: 1 }],
+      },
+      {
+        id: 3,
+        profile: {
+          id: 21,
+          freelancerProfile: { id: 31 },
+        },
+        followsAsFreelancer: [],
+      },
+    ]);
+
+    await expect(service.discoverFreelancers(1)).resolves.toEqual([
+      {
+        freelancerId: 2,
+        isFollowing: true,
+        profile: { id: 20, freelancerProfile: { id: 30 } },
+      },
+      {
+        freelancerId: 3,
+        isFollowing: false,
+        profile: { id: 21, freelancerProfile: { id: 31 } },
+      },
+    ]);
+  });
+
+  it('does not create another notification for a duplicate follow', async () => {
+    repository.findUserWithRoles
+      .mockResolvedValueOnce(userWithRole(RoleName.CLIENT, 1))
+      .mockResolvedValueOnce(userWithRole(RoleName.FREELANCER, 2));
+    repository.findFollow.mockResolvedValue({
+      clientId: 1,
+      freelancerId: 2,
+    });
+
+    await expect(service.followFreelancer(1, 2)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+    expect(repository.createFollowWithNotification).not.toHaveBeenCalled();
+  });
+
+  it('updates a password only after verifying the current password', async () => {
+    const currentCredential = ['current', 'credential'].join('-');
+    const replacementCredential = ['replacement', 'credential'].join('-');
+    const storedHash = ['stored', 'hash'].join('-');
+    const replacementHash = ['replacement', 'hash'].join('-');
+    repository.findPasswordCredential.mockResolvedValue({
+      profile: { id: 10 },
+      password: storedHash,
+    });
+    hashing.verify.mockResolvedValue(true);
+    hashing.hash.mockResolvedValue(replacementHash);
+
+    await service.changePassword(1, {
+      currentPassword: currentCredential,
+      newPassword: replacementCredential,
+      confirmPassword: replacementCredential,
+    });
+
+    expect(hashing.verify).toHaveBeenCalledWith(currentCredential, storedHash);
+    expect(repository.updatePassword).toHaveBeenCalledWith(1, replacementHash);
+  });
+
+  it('rejects avatar files whose content does not match the image MIME type', async () => {
+    repository.findGeneralProfile.mockResolvedValue({
+      ...userWithRole(RoleName.CLIENT),
+      email: 'client@example.com',
+    });
+    const file = {
+      originalname: 'not-really-an-image.png',
+      mimetype: 'image/png',
+      size: 12,
+      buffer: Buffer.from('plain text'),
+    } as Express.Multer.File;
+
+    await expect(service.uploadAvatar(1, file)).rejects.toMatchObject({
+      status: 400,
+    });
+    expect(repository.updateAvatar).not.toHaveBeenCalled();
   });
 });

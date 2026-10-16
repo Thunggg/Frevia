@@ -1,0 +1,21 @@
+meta {
+  name: Respond to Review
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/reviews/{{reviewId}}/response
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "responseText": "Thank you for the thoughtful feedback."
+  }
+}

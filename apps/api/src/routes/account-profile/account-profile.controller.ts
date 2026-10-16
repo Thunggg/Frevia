@@ -17,6 +17,8 @@ import type {
   AddSocialLinkType,
   UpdateClientProfileType,
   UploadIdentityDocumentType,
+  ChangePasswordType,
+  UpdateGeneralProfileType,
 } from '@shared/types';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
@@ -26,16 +28,80 @@ import {
   ClientProfileDetailDto,
   FavoriteFreelancerListDto,
   FollowingFreelancerListDto,
+  DiscoverFreelancerListDto,
   IdentityVerificationDocumentDto,
   IdentityVerificationStatusDto,
   SocialLinkDto,
   SocialLinkListDto,
   UpdateClientProfileDto,
   UploadIdentityDocumentDto,
+  AvatarUploadResponseDto,
+  ChangePasswordDto,
+  GeneralProfileDto,
+  UpdateGeneralProfileDto,
 } from './account-profile.dto';
 import { AccountProfileService } from './account-profile.service';
 import { createReadStream } from 'fs';
 import type { Response } from 'express';
+
+@Controller('account-profile')
+export class GeneralAccountProfileController {
+  constructor(private readonly service: AccountProfileService) {}
+
+  @Get()
+  @ZodSerializerDto(GeneralProfileDto)
+  get(@UserActive('userId') userId: number) {
+    return this.service.getGeneralProfile(userId);
+  }
+
+  @Put()
+  @ZodSerializerDto(GeneralProfileDto)
+  update(
+    @UserActive('userId') userId: number,
+    @Body() body: UpdateGeneralProfileDto,
+  ) {
+    return this.service.updateGeneralProfile(
+      userId,
+      body as UpdateGeneralProfileType,
+    );
+  }
+
+  @Put('password')
+  changePassword(
+    @UserActive('userId') userId: number,
+    @Body() body: ChangePasswordDto,
+  ) {
+    return this.service.changePassword(userId, body as ChangePasswordType);
+  }
+
+  @Post('avatar')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }),
+  )
+  @ZodSerializerDto(AvatarUploadResponseDto)
+  uploadAvatar(
+    @UserActive('userId') userId: number,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.service.uploadAvatar(userId, file);
+  }
+
+  @Get('avatar/:userId/file')
+  @IsPublic()
+  async getAvatarFile(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const file = await this.service.getAvatarFile(userId);
+    response.setHeader(
+      'Content-Disposition',
+      `inline; filename="${file.fileName.replace(/"/g, '')}"`,
+    );
+    response.setHeader('Content-Type', file.contentType);
+    response.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
+    return new StreamableFile(createReadStream(file.absolutePath));
+  }
+}
 
 @Controller('identity-verifications')
 export class IdentityVerificationController {
@@ -156,6 +222,12 @@ export class FavoriteFreelancerController {
 @Controller('following/freelancers')
 export class FollowingFreelancerController {
   constructor(private readonly service: AccountProfileService) {}
+
+  @Get('discover')
+  @ZodSerializerDto(DiscoverFreelancerListDto)
+  discover(@UserActive('userId') userId: number) {
+    return this.service.discoverFreelancers(userId);
+  }
 
   @Get()
   @ZodSerializerDto(FollowingFreelancerListDto)

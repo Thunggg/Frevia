@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
@@ -19,10 +18,11 @@ import {
   Search,
   ShieldCheck,
   SwitchCamera,
+  UserPlus,
   UserRound,
   UserCheck,
   X,
-} from "lucide-react";
+} from "@/components/icons";
 
 import {
   Avatar,
@@ -45,7 +45,7 @@ import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { authApiRequest } from "@/apiRequests/auth";
 import { RoleName } from "@shared/types";
-import { toastError } from "@repo/ui/components/shadcn/toast";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -61,9 +61,17 @@ type NavLink = {
 };
 
 const roleConfig: Record<
-  Exclude<UserRole, "GUEST">,
+  UserRole,
   { name: string; links: NavLink[] }
 > = {
+  GUEST: {
+    name: "Guest",
+    links: [
+      { href: "/find-work", label: "Find Work" },
+      { href: "/client/jobs", label: "Hire Talent" },
+      { href: "/forum", label: "Forum" },
+    ],
+  },
   CLIENT: {
     name: "Client",
     links: [
@@ -103,20 +111,12 @@ function isNavLinkActive(link: NavLink, pathname: string) {
 
 function Logo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2.5">
-      <Image
-        src="/frevia-mark.png"
-        alt="Frevia logo"
-        width={26}
-        height={26}
-        className="size-[26px] object-contain"
-        priority
-      />
-      <span className="text-lg font-bold tracking-tight text-[#4fae2e]">
-        Frevia
+    <Link href="/" className="flex shrink-0 items-center gap-2 mr-1 sm:mr-3">
+      <span className="text-3xl font-aquire tracking-tight sm:text-4xl">
+        frevia
       </span>
     </Link>
-  );
+  )
 }
 
 function HeaderNavigation({
@@ -125,11 +125,11 @@ function HeaderNavigation({
   onNavigate,
 }: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
-  const links = role === "GUEST" ? [] : roleConfig[role].links;
+  const links = roleConfig[role]?.links ?? [];
 
   return (
     <div
-      className={mobile ? "space-y-0.5" : "hidden items-center gap-1 md:flex"}
+      className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}
     >
       {links.map((link) => {
         const isActive = isNavLinkActive(link, pathname);
@@ -138,32 +138,48 @@ function HeaderNavigation({
             key={link.label}
             href={link.href}
             onClick={onNavigate}
-            className={`rounded-lg text-[13px] font-medium transition-all duration-150 ${
-              mobile ? "block px-3 py-2" : "px-3 py-1.5"
-            } ${
-              isActive
-                ? "bg-[#4fae2e]/10 text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06] dark:hover:text-foreground/90"
-            }`}
+            className={`rounded-full text-sm font-medium transition-all duration-150 ${mobile ? "block px-4 py-2" : "px-3.5 py-1.5"
+              } ${isActive
+                ? "bg-slate-100 text-gray-950 font-semibold dark:bg-zinc-800 dark:text-white"
+                : "text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
+              }`}
           >
             {link.label}
           </Link>
         );
       })}
+      {role === "GUEST" && (
+        <ContactDialog
+          triggerClassName={`rounded-full text-sm font-medium transition-all duration-150 ${mobile ? "block w-full text-left px-4 py-2" : "px-3.5 py-1.5"
+            } text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white`}
+        />
+      )}
     </div>
   );
 }
 
 function HeaderSearch({
-  className = "hidden max-w-md flex-1 md:block",
+  className = "hidden max-w-xs flex-1 md:block lg:max-w-sm",
 }: {
   className?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => setQuery(searchParams.get("keyword") ?? ""), [searchParams]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <form
@@ -181,33 +197,105 @@ function HeaderSearch({
         router.push(`/find-work?${params.toString()}`);
       }}
     >
-      <div className="relative">
+      <div className="relative flex items-center">
         <Search
-          className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          className="absolute left-3.5 size-4 text-muted-foreground"
           strokeWidth={1.75}
         />
         <input
+          ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search for projects, skills..."
-          className="h-9 w-full rounded-lg border border-border/60 bg-white/60 pl-9 pr-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 transition-colors focus:border-[#4fae2e]/50 focus:bg-white focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:text-foreground dark:placeholder:text-white/30 dark:focus:border-[#4fae2e]/40 dark:focus:bg-white/[0.06] dark:focus:ring-[#4fae2e]/15"
+          placeholder="Search products..."
+          className="h-9 w-full rounded-full border border-slate-200/80 dark:border-zinc-700/60 dark:bg-zinc-800/60 dark:text-foreground dark:placeholder:text-zinc-400 dark:focus:bg-zinc-900 focus:ring-blue-500/15 dark:focus:bg-zinc-900 bg-slate-100/70 pl-9.5 pr-14 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-2"
         />
+        <kbd className="pointer-events-none font-semibold bg-slate-100/70 absolute right-2.5 hidden items-center gap-1 rounded-full border border-slate-300/80  px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground dark:border-zinc-700 dark:bg-zinc-900 sm:flex">
+          <span className="text-xs">Ctrl K</span>
+        </kbd>
       </div>
     </form>
   );
 }
 
-function ProfileDropdown({ role }: HeaderProps) {
+function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const profile = roleConfig[role as Exclude<UserRole, "GUEST">];
   const { data: me, isLoading: isMeLoading } = useMe();
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
-  const displayName = me?.profile?.displayName || profile.name;
-  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
+  const [isRoleActionPending, setIsRoleActionPending] = useState(false);
   const targetRole =
     role === "FREELANCER" ? RoleName.CLIENT : RoleName.FREELANCER;
-  const canSwitchRole = me?.roles.some((item) => item.name === targetRole);
+  const hasTargetRole =
+    me?.roles.some((item) => item.name === targetRole) === true;
+  const targetRoleLabel =
+    targetRole === RoleName.CLIENT ? "Client" : "Freelancer";
+
+  const updateRoleContext = async () => {
+    if (isMeLoading || !me || isRoleActionPending) return false;
+
+    setIsRoleActionPending(true);
+    try {
+      if (hasTargetRole) {
+        await authApiRequest.switchRole({ role: targetRole });
+      } else {
+        await authApiRequest.joinRole({ role: targetRole });
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      toastSuccess({
+        message: hasTargetRole
+          ? `Switched to ${targetRoleLabel}`
+          : `${targetRoleLabel} role added`,
+      });
+      router.push(
+        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
+      );
+      router.refresh();
+      return true;
+    } catch {
+      toastError({
+        message: hasTargetRole
+          ? "Unable to switch role. Please try again."
+          : "Unable to add role. Please try again.",
+      });
+      return false;
+    } finally {
+      setIsRoleActionPending(false);
+    }
+  };
+
+  const roleActionLabel = isMeLoading
+    ? "Loading roles..."
+    : isRoleActionPending
+      ? hasTargetRole
+        ? "Switching role..."
+        : "Adding role..."
+      : hasTargetRole
+        ? `Switch to ${targetRoleLabel}`
+        : `Add ${targetRoleLabel} role`;
+
+  return {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  };
+}
+
+function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
+  const router = useRouter();
+  const profile = roleConfig[role];
+  const {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  } = useRoleContextAction(role);
+  const displayName = me?.profile?.displayName || profile.name;
+  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -218,22 +306,6 @@ function ProfileDropdown({ role }: HeaderProps) {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
-  };
-
-  const switchRole = async () => {
-    if (!canSwitchRole || isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: targetRole });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push(
-        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
-      );
-      router.refresh();
-    } catch {
-      toastError({ message: "Unable to switch role. Please try again." });
-      setIsSwitchingRole(false);
-    }
   };
 
   return (
@@ -359,20 +431,18 @@ function ProfileDropdown({ role }: HeaderProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
-          disabled={isMeLoading || !canSwitchRole || isSwitchingRole}
+          disabled={isMeLoading || isRoleActionPending}
           onSelect={(event) => {
             event.preventDefault();
-            void switchRole();
+            void updateRoleContext();
           }}
         >
-          <SwitchCamera className="size-4 text-muted-foreground" />
-          {isMeLoading
-            ? "Loading roles..."
-            : isSwitchingRole
-              ? "Switching role..."
-              : canSwitchRole
-                ? `Switch to ${role === "FREELANCER" ? "Client" : "Freelancer"}`
-                : "Second role not available"}
+          {hasTargetRole ? (
+            <SwitchCamera className="size-4 text-muted-foreground" />
+          ) : (
+            <UserPlus className="size-4 text-muted-foreground" />
+          )}
+          {roleActionLabel}
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/sessions" className="cursor-pointer">
@@ -397,22 +467,22 @@ function ProfileDropdown({ role }: HeaderProps) {
 function HeaderActions({ role }: HeaderProps) {
   if (role === "GUEST") {
     return (
-      <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
-        <ContactDialog />
-        <ThemeToggle />
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <Button
+          asChild
+          className="hidden h-8.5 rounded-full bg-green-300 px-4 text-xs sm:text-sm font-semibold text-green-800 shadow-xs hover:bg-green-400 sm:inline-flex dark:bg-green-500 dark:hover:bg-green-700"
+        >
+          <Link href="/register">Register</Link>
+        </Button>
         <Button
           variant="ghost"
           asChild
-          className="hidden h-8 px-3 text-[13px] font-medium text-foreground/70 hover:text-foreground sm:inline-flex"
+          className="hidden h-8.5 rounded-full px-3 text-xs sm:text-sm font-medium text-foreground/80 hover:bg-black/[0.04] hover:text-foreground sm:inline-flex dark:hover:bg-white/[0.06]"
         >
-          <Link href="/login">Log in</Link>
+          <Link href="/login">Login</Link>
         </Button>
-        <Button
-          asChild
-          className="hidden h-8 rounded-lg bg-[#4fae2e] px-4 text-[13px] font-semibold text-white shadow-sm shadow-[#4fae2e]/20 hover:bg-[#459928] hover:shadow-md hover:shadow-[#4fae2e]/25 sm:inline-flex dark:hover:bg-[#5bc03a]"
-        >
-          <Link href="/register">Get started</Link>
-        </Button>
+        <div className="hidden h-4 w-px bg-border/70 sm:block" />
+        <ThemeToggle />
       </div>
     );
   }
@@ -431,8 +501,18 @@ function HeaderActions({ role }: HeaderProps) {
 function MobileProfileNavigation({
   role,
   onNavigate,
-}: HeaderProps & { onNavigate: () => void }) {
-  const { data: me } = useMe();
+}: {
+  role: Exclude<UserRole, "GUEST">;
+  onNavigate: () => void;
+}) {
+  const {
+    hasTargetRole,
+    isMeLoading,
+    isRoleActionPending,
+    me,
+    roleActionLabel,
+    updateRoleContext,
+  } = useRoleContextAction(role);
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -459,6 +539,23 @@ function MobileProfileNavigation({
         <UserRound className="size-4 text-muted-foreground" />
         Profile settings
       </Link>
+      <button
+        type="button"
+        disabled={isMeLoading || isRoleActionPending}
+        onClick={() => {
+          void updateRoleContext().then((didUpdate) => {
+            if (didUpdate) onNavigate();
+          });
+        }}
+        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/[0.06]"
+      >
+        {hasTargetRole ? (
+          <SwitchCamera className="size-4 text-muted-foreground" />
+        ) : (
+          <UserPlus className="size-4 text-muted-foreground" />
+        )}
+        {roleActionLabel}
+      </button>
     </div>
   );
 }
@@ -468,48 +565,60 @@ export function Header({ role }: HeaderProps) {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-[#eaf8df]/80 backdrop-blur-xl text-foreground dark:border-white/[0.06] dark:bg-[#161716]/80">
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
-        <Logo />
-        {role === "FREELANCER" && <HeaderSearch />}
-        <HeaderNavigation role={role} />
-        <HeaderActions role={role} />
-        <button
-          onClick={() => setIsMenuOpen((open) => !open)}
-          className="rounded-full p-2 text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground md:hidden dark:hover:bg-white/[0.06]"
-          aria-label="Toggle menu"
-          aria-expanded={isMenuOpen}
-        >
-          {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-white/[0.08] dark:bg-zinc-950/90">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Logo />
+          <HeaderNavigation role={role} />
+        </div>
+
+        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
+          {(role === "FREELANCER" || role === "GUEST") && (
+            <HeaderSearch className="hidden max-w-xs flex-1 md:block lg:max-w-sm" />
+          )}
+          <HeaderActions role={role} />
+          <button
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className="rounded-full p-2 text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground md:hidden dark:hover:bg-white/[0.06]"
+            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+          >
+            {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
       {isMenuOpen && (
-        <div className="space-y-2 border-t border-border/40 bg-[#eaf8df]/95 p-4 backdrop-blur-xl md:hidden dark:border-white/[0.06] dark:bg-[#161716]/95">
-          {role === "FREELANCER" && <HeaderSearch className="block w-full" />}
+        <div className="space-y-3 border-t border-border/50 bg-white/98 p-4 backdrop-blur-xl shadow-xl md:hidden dark:border-white/[0.08] dark:bg-zinc-950/98">
+          {(role === "FREELANCER" || role === "GUEST") && (
+            <HeaderSearch className="block w-full" />
+          )}
           <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
           {role === "GUEST" ? (
-            <div className="flex flex-col gap-2 border-t border-border/40 pt-3 dark:border-white/[0.06]">
-              <ContactDialog />
+            <div className="flex flex-col gap-2 border-t border-border/50 pt-3 dark:border-white/[0.08]">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                <ThemeToggle />
+              </div>
               <Button
                 variant="outline"
                 asChild
-                className="h-9 w-full border-border/60 bg-transparent text-[13px] font-medium dark:border-white/10"
+                className="h-9 w-full rounded-full border-border/60 bg-transparent text-sm font-medium dark:border-white/10"
               >
                 <Link href="/login" onClick={closeMenu}>
-                  Log in
+                  Login
                 </Link>
               </Button>
               <Button
                 asChild
-                className="h-9 w-full rounded-lg bg-[#4fae2e] text-[13px] font-semibold text-white shadow-sm shadow-[#4fae2e]/20 hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
+                className="h-9 w-full rounded-full bg-blue-600 text-sm font-semibold text-white shadow-xs hover:bg-blue-700"
               >
                 <Link href="/register" onClick={closeMenu}>
-                  Get started
+                  Register
                 </Link>
               </Button>
             </div>
           ) : (
-            <div className="space-y-1 border-t border-border/40 pt-3 dark:border-white/[0.06]">
+            <div className="space-y-1 border-t border-border/50 pt-3 dark:border-white/[0.08]">
               <Link
                 href="/conversations"
                 onClick={closeMenu}
@@ -529,3 +638,4 @@ export function Header({ role }: HeaderProps) {
     </header>
   );
 }
+

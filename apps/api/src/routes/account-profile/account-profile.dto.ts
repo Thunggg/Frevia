@@ -4,11 +4,16 @@ import {
   ClientProfileDetailSchema,
   FavoriteFreelancerSchema,
   FollowingFreelancerSchema,
+  DiscoverFreelancerSchema,
   IdentityVerificationDocumentSchema,
   IdentityVerificationStatusSchema,
   SocialLinkSchema,
   UpdateClientProfileSchema,
   UploadIdentityDocumentSchema,
+  GeneralProfileSchema,
+  UpdateGeneralProfileSchema,
+  ChangePasswordSchema,
+  AvatarUploadResponseSchema,
 } from '@shared/types';
 import { z } from 'zod';
 
@@ -40,4 +45,15 @@ export class FavoriteFreelancerListDto extends createZodDto(
 ) {}
 export class FollowingFreelancerListDto extends createZodDto(
   z.array(FollowingFreelancerSchema),
+) {}
+export class DiscoverFreelancerListDto extends createZodDto(
+  z.array(DiscoverFreelancerSchema),
+) {}
+export class GeneralProfileDto extends createZodDto(GeneralProfileSchema) {}
+export class UpdateGeneralProfileDto extends createZodDto(
+  UpdateGeneralProfileSchema,
+) {}
+export class ChangePasswordDto extends createZodDto(ChangePasswordSchema) {}
+export class AvatarUploadResponseDto extends createZodDto(
+  AvatarUploadResponseSchema,
 ) {}

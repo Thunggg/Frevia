@@ -34,6 +34,9 @@ import { IdentityVerificationsAdminModule } from './routes/identity-verification
 import { ProposalModule } from './routes/proposals/proposal.module';
 import { UsersModule } from './routes/users/users.module';
 import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
+import { ReviewModule } from './routes/reviews/review.module';
+import { BannersModule } from './routes/banners/banners.module';
+import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
 
 @Module({
   imports: [
@@ -64,6 +67,9 @@ import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
     ProposalModule,
     UsersModule,
     SkillsAdminModule,
+    ReviewModule,
+    BannersModule,
+    BannersAdminModule,
   ],
   controllers: [AppController],
   providers: [

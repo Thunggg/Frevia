@@ -20,6 +20,7 @@ import {
   FailedToLoadContractException,
   FailedToUpdateContractException,
   ProposalNotFoundException,
+  ProposalNotAcceptedException,
   ProposalNotPendingException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
@@ -35,7 +36,8 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+      if (proposal.status !== 'PENDING' && proposal.status !== 'ACCEPTED')
+        throw ProposalNotPendingException();
       if (proposal.job.clientId !== clientId)
         throw ContractForbiddenException();
 
@@ -43,6 +45,7 @@ export class ContractService {
         body.proposalId,
       );
       if (existing) throw ContractAlreadyExistsException();
+      if (proposal.status !== 'ACCEPTED') throw ProposalNotAcceptedException();
 
       return await this.contractRepository.createContract(
         body,
@@ -101,15 +104,7 @@ export class ContractService {
         throw AlreadySignedException();
 
       const role = isClient ? 'client' : 'freelancer';
-      const alreadySigned = isClient
-        ? contract.signedByFreelancer
-        : contract.signedByClient;
-
-      return await this.contractRepository.signContract(
-        contractId,
-        role,
-        alreadySigned,
-      );
+      return await this.contractRepository.signContract(contractId, role);
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
@@ -127,7 +122,10 @@ export class ContractService {
 
       if (contract.status !== 'ACTIVE') throw ContractNotActiveException();
 
-      return await this.contractRepository.completeContract(contractId);
+      return await this.contractRepository.completeContract(
+        contractId,
+        contract.jobId,
+      );
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
