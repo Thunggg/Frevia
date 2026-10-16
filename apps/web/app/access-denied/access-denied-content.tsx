@@ -51,7 +51,7 @@ export function AccessDeniedContent({
         ? RoleName.FREELANCER
         : null;
 
-  // Kiểm tra xem user có vai trò được yêu cầu hay không
+  // Check if current user has the required role and can switch to it
   const canSwitchToRequired = Boolean(
     user &&
       targetRequiredRole &&
@@ -68,9 +68,9 @@ export function AccessDeniedContent({
       await authApiRequest.switchRole({ role: targetRole });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toastSuccess({
-        message: `Đã chuyển sang vai trò ${
+        message: `Switched to ${
           targetRole === RoleName.CLIENT ? "Client" : "Freelancer"
-        }`,
+        } role successfully.`,
       });
       if (from && from.startsWith("/") && !from.startsWith("//")) {
         router.push(from);
@@ -81,7 +81,7 @@ export function AccessDeniedContent({
       }
       router.refresh();
     } catch {
-      toastError({ message: "Không thể chuyển vai trò. Vui lòng thử lại sau." });
+      toastError({ message: "Unable to switch role. Please try again." });
       setIsSwitchingRole(false);
     }
   };
@@ -110,12 +110,12 @@ export function AccessDeniedContent({
 
   const currentRoleLabel =
     primaryRole === RoleName.CLIENT
-      ? "Client (Khách hàng)"
+      ? "Client"
       : primaryRole === RoleName.FREELANCER
-        ? "Freelancer (Ứng viên)"
+        ? "Freelancer"
         : primaryRole === RoleName.ADMIN
-          ? "Quản trị viên (Admin)"
-          : "Người dùng";
+          ? "Administrator"
+          : "User";
 
   const requiredRoleLabel =
     targetRequiredRole === RoleName.CLIENT
@@ -123,8 +123,8 @@ export function AccessDeniedContent({
       : targetRequiredRole === RoleName.FREELANCER
         ? "Freelancer"
         : requiredRole?.toLowerCase() === "admin"
-          ? "Quản trị viên (Admin)"
-          : "vai trò phù hợp";
+          ? "Administrator"
+          : "required role";
 
   const headerRole: UserRole =
     primaryRole === RoleName.CLIENT
@@ -149,18 +149,18 @@ export function AccessDeniedContent({
           </div>
 
           <Badge variant="outline" className="mb-3 px-3 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 border-amber-500/30">
-            403 • Quyền truy cập bị hạn chế
+            403 • Restricted Access
           </Badge>
 
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Không có quyền truy cập
+            Access Denied
           </h1>
 
           {/* Unauthenticated State */}
           {!user ? (
             <div className="mt-4 space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Trang này yêu cầu bạn phải đăng nhập vào hệ thống với tài khoản có quyền truy cập phù hợp.
+                You must be signed in to access this page. Please sign in with an account that has the required permissions.
               </p>
               <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
@@ -168,11 +168,11 @@ export function AccessDeniedContent({
                   asChild
                 >
                   <Link href={from ? `/login?redirect=${encodeURIComponent(from)}` : "/login"}>
-                    Đăng nhập ngay
+                    Sign In Now
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/">Về trang chủ</Link>
+                  <Link href="/">Back to Home</Link>
                 </Button>
               </div>
             </div>
@@ -203,26 +203,26 @@ export function AccessDeniedContent({
 
               {/* Message */}
               <p className="text-sm text-muted-foreground leading-relaxed text-left">
-                Khu vực này được bảo vệ và chỉ dành riêng cho tài khoản vai trò{" "}
-                <strong className="text-foreground">{requiredRoleLabel}</strong>. Tài khoản của bạn hiện đang ở vai trò{" "}
-                <strong className="text-foreground">{primaryRole}</strong>.
+                This area is restricted and requires a{" "}
+                <strong className="text-foreground">{requiredRoleLabel}</strong> account. You are currently operating under the{" "}
+                <strong className="text-foreground">{primaryRole}</strong> role.
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-col gap-2.5 pt-2">
-                {/* 1. Đi đến Dashboard vai trò hiện tại */}
+                {/* 1. Go to current role's dashboard */}
                 <Button
                   className="w-full bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:hover:bg-[#5bc03a] font-medium"
                   asChild
                 >
                   <Link href={currentRoleDashboardUrl}>
                     <LayoutDashboard className="mr-2 size-4" />
-                    Vào Dashboard {primaryRole === RoleName.CLIENT ? "Client" : primaryRole === RoleName.FREELANCER ? "Freelancer" : "Admin"} của bạn
+                    Go to Your {primaryRole === RoleName.CLIENT ? "Client" : primaryRole === RoleName.FREELANCER ? "Freelancer" : "Admin"} Dashboard
                     <ArrowRight className="ml-2 size-4" />
                   </Link>
                 </Button>
 
-                {/* 2. Switch Role nếu có role yêu cầu */}
+                {/* 2. Switch role if user has target role */}
                 {canSwitchToRequired && targetRequiredRole && (
                   <Button
                     variant="outline"
@@ -235,7 +235,7 @@ export function AccessDeniedContent({
                     ) : (
                       <RefreshCw className="mr-2 size-4" />
                     )}
-                    Chuyển sang vai trò {requiredRoleLabel}
+                    Switch to {requiredRoleLabel} Role
                   </Button>
                 )}
 
@@ -246,7 +246,7 @@ export function AccessDeniedContent({
                     className="flex-1 text-xs text-muted-foreground hover:text-foreground"
                     asChild
                   >
-                    <Link href="/">Về trang chủ</Link>
+                    <Link href="/">Back to Home</Link>
                   </Button>
 
                   <Button
@@ -260,7 +260,7 @@ export function AccessDeniedContent({
                     ) : (
                       <LogOut className="mr-1.5 size-3.5" />
                     )}
-                    Đổi tài khoản khác
+                    Switch Account
                   </Button>
                 </div>
               </div>
