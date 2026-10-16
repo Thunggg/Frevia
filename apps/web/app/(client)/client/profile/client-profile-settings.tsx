@@ -679,7 +679,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                   key={skill.id}
                                   className="rounded-full bg-[#D0E1F8]/60 dark:bg-[#0069D3]/20 text-[#0069D3] dark:text-blue-200 px-2 py-0.5 text-[10px] font-medium"
                                 >
-                                  {skill.skillName}
+                                  {skill.skill.name}
                                 </span>
                               ))}
                           </div>
@@ -784,7 +784,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                   key={skill.id}
                                   className="rounded-full bg-[#D0E1F8]/60 dark:bg-[#0069D3]/20 text-[#0069D3] dark:text-blue-200 px-2 py-0.5 text-[10px] font-medium"
                                 >
-                                  {skill.skillName}
+                                  {skill.skill.name}
                                 </span>
                               ))}
                           </div>

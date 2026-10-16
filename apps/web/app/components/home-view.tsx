@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { RoleName, type GetMeResType } from "@shared/types";
 
+import { Button } from "@repo/ui/components/shadcn/button";
 import { BackToTop } from "./back-to-top";
 import { BannerSlot } from "@/components/banner-slot";
-import { FaqSection } from "./faq-section";
 import { HeroSlider } from "./hero-slider";
 import { RevealOnScroll } from "./reveal-on-scroll";
 import { SkillsHighlight } from "./skills-highlight";
@@ -87,16 +89,19 @@ export function HomeView({ user }: HomeViewProps) {
             </RevealOnScroll>
             <div className={styles.partnersRow}>
               {PARTNERS.map((partner, i) => (
-                <RevealOnScroll key={partner.src} delayMs={i * 70}>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- SVG wordmarks need currentColor via img */}
-                  <img
-                    src={partner.src}
-                    alt={partner.alt}
-                    width={partner.width}
+                <RevealOnScroll key={partner.name} delayMs={i * 70}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    role="img"
+                    aria-label={partner.name}
+                    width="24"
                     height={32}
+                    fill="currentColor"
                     className={`${styles.partnerLogo} opacity-40 grayscale dark:opacity-50 dark:invert`}
                     style={{ animationDelay: `${i * 0.6}s` }}
-                  />
+                  >
+                    <path d={partner.path} />
+                  </svg>
                 </RevealOnScroll>
               ))}
             </div>
@@ -154,7 +159,7 @@ export function HomeView({ user }: HomeViewProps) {
                 <Button
                   asChild
                   size="lg"
-                  className={`${styles.ctaPrimary} min-w-[11rem] bg-[#4fae2e] px-8 text-sm font-semibold text-white shadow-lg shadow-[#4fae2e]/20 hover:bg-[#459928] dark:shadow-[#4fae2e]/25 dark:hover:bg-[#5bc03a]`}
+                  className={`min-w-[11rem] bg-[#4fae2e] px-8 text-sm font-semibold text-white shadow-lg shadow-[#4fae2e]/20 hover:bg-[#459928] dark:shadow-[#4fae2e]/25 dark:hover:bg-[#5bc03a]`}
                 >
                   <Link href="/forum">Join the Forum</Link>
                 </Button>
@@ -162,7 +167,7 @@ export function HomeView({ user }: HomeViewProps) {
                   asChild
                   variant="outline"
                   size="lg"
-                  className={`${styles.ctaSecondary} min-w-[9rem] border-border/60 bg-transparent text-sm font-medium text-foreground/70 hover:border-[#4fae2e]/40 hover:bg-[#4fae2e]/5 hover:text-foreground dark:border-white/10 dark:text-foreground/60 dark:hover:border-[#4fae2e]/30 dark:hover:bg-[#4fae2e]/10`}
+                  className={`min-w-[9rem] border-border/60 bg-transparent text-sm font-medium text-foreground/70 hover:border-[#4fae2e]/40 hover:bg-[#4fae2e]/5 hover:text-foreground dark:border-white/10 dark:text-foreground/60 dark:hover:border-[#4fae2e]/30 dark:hover:bg-[#4fae2e]/10`}
                 >
                   <Link href="/register">Get started</Link>
                 </Button>

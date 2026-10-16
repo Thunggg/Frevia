@@ -353,7 +353,7 @@ export function FreelancerProfileSheet({
                               className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-background px-2.5 py-1 text-xs text-foreground"
                             >
                               <Code2 className="size-3 text-muted-foreground" />
-                              <span>{skill.skillName}</span>
+                              <span>{skill.skill.name}</span>
                               <span className="text-[11px] text-muted-foreground">
                                 · Lv.{skill.proficiencyLevel}
                               </span>
