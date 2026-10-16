@@ -97,7 +97,8 @@ export class GeneralAccountProfileController {
       'Content-Disposition',
       `inline; filename="${file.fileName.replace(/"/g, '')}"`,
     );
-    response.setHeader('Content-Type', 'application/octet-stream');
+    response.setHeader('Content-Type', file.contentType);
+    response.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
     return new StreamableFile(createReadStream(file.absolutePath));
   }
 }

@@ -252,10 +252,10 @@ model FreelancerProfile {
 }
 
 model FreelancerSkill {
-  id                  Int    @id @default(autoincrement())
+  id                  Int @id @default(autoincrement())
   freelancerProfileId Int
   skillId             Int
-  proficiencyLevel    Int    @db.SmallInt // Range 1-10.
+  proficiencyLevel    Int @db.SmallInt // Range 1-10.
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skill             Skill             @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -767,6 +767,7 @@ model ReviewResponse {
   userId       Int
   responseText String
   createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -1162,6 +1163,7 @@ enum NotificationType {
   PAYMENT_RELEASED
   DISPUTE_OPENED
   REVIEW_RECEIVED
+  REVIEW_RESPONSE_RECEIVED
   SYSTEM_ANNOUNCEMENT
   MESSAGE_NEW
   MILESTONE_COMPLETED

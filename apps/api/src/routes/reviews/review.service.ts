@@ -1,8 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { ContractStatus, Prisma } from '@prisma/client';
 import type { CreateReviewType, UpdateReviewType } from '@shared/types';
 import {
   ReviewAlreadyExistsException,
+  ReviewContractNotCompletedException,
   ReviewContractNotFoundException,
   ReviewForbiddenException,
   ReviewNotFoundException,
@@ -52,14 +53,28 @@ export class ReviewService {
 
   async create(userId: number, contractId: number, input: CreateReviewType) {
     const contract = await this.requireContractParticipant(userId, contractId);
+    if (contract.status !== ContractStatus.COMPLETED) {
+      throw ReviewContractNotCompletedException();
+    }
     if (await this.repository.findByContractAndReviewer(contractId, userId)) {
       throw ReviewAlreadyExistsException();
     }
     const revieweeId =
       contract.clientId === userId ? contract.freelancerId : contract.clientId;
+    const reviewerName =
+      (contract.clientId === userId
+        ? contract.client.profile?.displayName
+        : contract.freelancer.profile?.displayName
+      )?.trim() || 'A contract participant';
     try {
       return this.present(
-        await this.repository.create(contractId, userId, revieweeId, input),
+        await this.repository.create(
+          contractId,
+          userId,
+          revieweeId,
+          reviewerName,
+          input,
+        ),
       );
     } catch (error) {
       if (
@@ -91,14 +106,22 @@ export class ReviewService {
     const review = await this.repository.findById(reviewId);
     if (!review) throw ReviewNotFoundException();
     if (review.revieweeId !== userId) throw ReviewForbiddenException();
-    if (await this.repository.findResponseByReview(reviewId)) {
+    const existingResponse =
+      await this.repository.findResponseByReview(reviewId);
+    if (existingResponse && !existingResponse.deletedAt) {
       throw ReviewResponseAlreadyExistsException();
     }
+    const responderName =
+      review.reviewee.profile?.displayName?.trim() || 'A contract participant';
     try {
       return await this.repository.createResponse(
         reviewId,
         userId,
+        review.reviewerId,
+        review.contractId,
+        responderName,
         responseText,
+        existingResponse?.id,
       );
     } catch (error) {
       if (
