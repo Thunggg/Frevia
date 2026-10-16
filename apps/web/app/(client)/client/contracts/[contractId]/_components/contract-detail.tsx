@@ -52,6 +52,7 @@ import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
   GetMilestoneListResponseType,
+  GetSharedFilesResponseType,
   GetSubmissionResponseType,
   MilestoneType,
 } from "@shared/types";
@@ -59,6 +60,7 @@ import { CreateMilestoneDialog } from "./create-milestone-dialog";
 import { EditContractSheet } from "./edit-contract-sheet";
 import { MilestoneCard } from "./milestone-card";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
+import { SharedFilesSection } from "./shared-files-section";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
 
@@ -82,12 +84,14 @@ function formatDate(date: string | Date | null) {
 interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialMilestones?: GetMilestoneListResponseType | null;
+  initialSharedFiles?: GetSharedFilesResponseType | null;
   basePath?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialMilestones,
+  initialSharedFiles,
   basePath = "/client",
 }: ContractDetailProps) {
   const router = useRouter();
@@ -753,6 +757,20 @@ export function ContractDetail({
               </div>
             )}
           </div>
+
+          {/* Card 3: Shared Project Files */}
+          <SharedFilesSection
+            contractId={contract.id}
+            initialFiles={initialSharedFiles}
+            currentUserId={
+              isFreelancer ? contract.freelancerId : contract.clientId
+            }
+            clientId={contract.clientId}
+            freelancerId={contract.freelancerId}
+            clientName={clientName}
+            freelancerName={freelancerName}
+            isFreelancer={isFreelancer}
+          />
         </div>
 
         {/* Right Column (4 cols) */}
