@@ -80,6 +80,7 @@ interface MilestoneCardProps {
   milestone: MilestoneType;
   index: number;
   isFreelancer?: boolean;
+  hasOtherInProgressMilestone?: boolean;
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType, submission: GetSubmissionResponseType) => void;
@@ -92,6 +93,7 @@ export function MilestoneCard({
   milestone,
   index,
   isFreelancer = false,
+  hasOtherInProgressMilestone = false,
   onEdit,
   onDelete,
   onReview,
@@ -265,13 +267,21 @@ export function MilestoneCard({
 
           {/* Revision Requested Message Banner */}
           {milestone.status === "CHANGES_REQUESTED" && latestSubmission?.changeRequestMessage && (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1">
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1.5">
               <span className="font-semibold text-amber-600 dark:text-amber-400 block">
                 Feedback / Changes Requested by Client:
               </span>
               <p className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
                 {latestSubmission.changeRequestMessage}
               </p>
+              {latestSubmission.changeRequestDueDate && (
+                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-medium pt-1 border-t border-amber-500/20 text-[11px]">
+                  <CalendarDays className="size-3.5 shrink-0" />
+                  <span>
+                    Revision Due: {formatDate(latestSubmission.changeRequestDueDate)}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
@@ -427,22 +437,81 @@ export function MilestoneCard({
                 )}
               </div>
             )}
+            {/* Previous Submission Revisions History */}
+            {submissions && submissions.length > 1 && (
+              <div className="pt-2">
+                <details className="text-xs group/history">
+                  <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 select-none">
+                    <span>View previous submission history ({submissions.length - 1})</span>
+                  </summary>
+                  <div className="mt-2 space-y-2 pl-2 border-l-2 border-border/80">
+                    {submissions.slice(1).map((sub, sIdx) => (
+                      <div
+                        key={sub.id || sIdx}
+                        className="rounded-xl bg-card border border-border/60 p-2.5 space-y-1 text-xs"
+                      >
+                        <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                          <span>
+                            Submission #{submissions.length - 1 - sIdx} •{" "}
+                            {formatDate(sub.submittedAt)}
+                          </span>
+                          <span className="font-semibold text-amber-600 dark:text-amber-400">
+                            {sub.status}
+                          </span>
+                        </div>
+                        {sub.message && (
+                          <p className="text-foreground/80 line-clamp-2">
+                            {sub.message}
+                          </p>
+                        )}
+                        {sub.changeRequestMessage && (
+                          <p className="text-amber-700 dark:text-amber-300 text-[11px] italic bg-amber-500/10 p-1.5 rounded-lg">
+                            Feedback: {sub.changeRequestMessage}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              </div>
+            )}
           </div>
 
           {/* FREELANCER WORK ACTIONS */}
           {isFreelancer && (
-            <div className="pt-2 border-t border-border/60 flex items-center justify-end gap-2">
+            <div className="pt-2 border-t border-border/60 flex flex-wrap items-center justify-end gap-2">
               {/* 1. Start milestone (when PENDING and FUNDED) */}
               {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && onStartWork && (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => onStartWork(milestone)}
-                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
-                >
-                  <Play className="mr-1.5 size-3.5" />
-                  Start Working on Milestone
-                </Button>
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                  {hasOtherInProgressMilestone && (
+                    <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                      Another milestone is currently in progress
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={hasOtherInProgressMilestone}
+                    onClick={() => onStartWork(milestone)}
+                    title={
+                      hasOtherInProgressMilestone
+                        ? "Only one milestone can be in progress at a time"
+                        : "Start working on this milestone"
+                    }
+                    className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Play className="mr-1.5 size-3.5" />
+                    Start Working on Milestone
+                  </Button>
+                </div>
+              )}
+
+              {/* Notice when milestone is PENDING but payment is PENDING */}
+              {milestone.status === "PENDING" && milestone.paymentStatus === "PENDING" && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full font-medium">
+                  <Clock className="size-3.5 text-amber-500 shrink-0" />
+                  <span>Awaiting client escrow funding before work can begin</span>
+                </div>
               )}
 
               {/* 2. Submit Work (when IN_PROGRESS) */}

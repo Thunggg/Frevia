@@ -176,6 +176,10 @@ export function ContractDetail({
       : 0;
   const remainingPaidAmount = Math.max(0, totalContractAmount - paidAmount);
   const remainingBudget = Math.max(0, totalContractAmount - allocatedAmount);
+  const hasAnyInProgressMilestone = useMemo(
+    () => milestones.some((m: MilestoneType) => m.status === "IN_PROGRESS"),
+    [milestones],
+  );
 
   const freelancer = contract.freelancer;
   const freelancerName = freelancer?.profile?.displayName || "Freelancer";
@@ -702,6 +706,10 @@ export function ContractDetail({
                     milestone={milestone}
                     index={index}
                     isFreelancer={isFreelancer}
+                    hasOtherInProgressMilestone={
+                      hasAnyInProgressMilestone &&
+                      milestone.status !== "IN_PROGRESS"
+                    }
                     onEdit={
                       !isFreelancer
                         ? (m) => {

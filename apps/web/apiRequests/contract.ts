@@ -1,13 +1,16 @@
-import { http } from "@/lib/http";
+import { ApiFail, http } from "@/lib/http";
 import type {
+  ApiError,
   ApiResponse,
   ApproveMilestoneResponseType,
   ContractDetailType,
   ContractType,
   CreateContractBodyType,
   CreateMilestoneBodyType,
+  DeleteMilestoneFileResponseType,
   GetContractListQueryType,
   GetContractListResponseType,
+  GetMilestoneFilesResponseType,
   GetMilestoneListQueryType,
   GetMilestoneListResponseType,
   GetSubmissionsResponseType,
@@ -17,6 +20,7 @@ import type {
   SubmitMilestoneBodyType,
   UpdateContractBodyType,
   UpdateMilestoneBodyType,
+  UploadMilestoneFileResponseType,
 } from "@shared/types";
 
 export const contractApi = {
@@ -160,6 +164,39 @@ export const contractApiRequest = {
     return http.patch<MilestoneSubmissionType>(
       `/api/contracts/${contractId}/milestones/${milestoneId}/submissions/${submissionId}/request-changes`,
       body,
+    );
+  },
+
+  // --- Milestone Files ---
+  getMilestoneFiles(contractId: number, milestoneId: number) {
+    return http.get<GetMilestoneFilesResponseType>(
+      `/api/contracts/${contractId}/milestones/${milestoneId}/files`,
+    );
+  },
+
+  uploadMilestoneFile(contractId: number, milestoneId: number, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch(
+      `/api/backend/api/contracts/${contractId}/milestones/${milestoneId}/files`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    ).then(async (res) => {
+      const data: ApiResponse<UploadMilestoneFileResponseType> =
+        await res.json();
+      if (!res.ok) {
+        throw new ApiFail(data as ApiError, res.status);
+      }
+      return data;
+    });
+  },
+
+  deleteMilestoneFile(contractId: number, milestoneId: number, fileId: number) {
+    return http.delete<DeleteMilestoneFileResponseType>(
+      `/api/contracts/${contractId}/milestones/${milestoneId}/files/${fileId}`,
     );
   },
 };
