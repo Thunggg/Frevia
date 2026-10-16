@@ -23,8 +23,9 @@ describe('AccountProfileService', () => {
     deleteSocialLink: jest.fn(),
     findFavorites: jest.fn(),
     findFollowing: jest.fn(),
+    findDiscoverableFreelancers: jest.fn(),
     findFollow: jest.fn(),
-    createFollow: jest.fn(),
+    createFollowWithNotification: jest.fn(),
     deleteFollow: jest.fn(),
     findGeneralProfile: jest.fn(),
     updateGeneralProfile: jest.fn(),
@@ -141,6 +142,81 @@ describe('AccountProfileService', () => {
     await service.unfollowFreelancer(1, 2);
 
     expect(repository.deleteFollow).toHaveBeenCalledWith(1, 2);
+  });
+
+  it('creates a notification for the freelancer when a client follows them', async () => {
+    repository.findUserWithRoles
+      .mockResolvedValueOnce({
+        ...userWithRole(RoleName.CLIENT, 1),
+        profile: { id: 10, userId: 1, displayName: 'Northstar Studio' },
+      })
+      .mockResolvedValueOnce(userWithRole(RoleName.FREELANCER, 2));
+    repository.findFollow.mockResolvedValue(null);
+    repository.createFollowWithNotification.mockResolvedValue({
+      clientId: 1,
+      freelancerId: 2,
+    });
+
+    await expect(service.followFreelancer(1, 2)).resolves.toEqual({
+      message: 'You are now following this freelancer.',
+    });
+    expect(repository.createFollowWithNotification).toHaveBeenCalledWith(
+      1,
+      2,
+      'Northstar Studio',
+    );
+  });
+
+  it('returns discoverable freelancers with their following state', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.CLIENT),
+    );
+    repository.findDiscoverableFreelancers.mockResolvedValue([
+      {
+        id: 2,
+        profile: {
+          id: 20,
+          freelancerProfile: { id: 30 },
+        },
+        followsAsFreelancer: [{ clientId: 1 }],
+      },
+      {
+        id: 3,
+        profile: {
+          id: 21,
+          freelancerProfile: { id: 31 },
+        },
+        followsAsFreelancer: [],
+      },
+    ]);
+
+    await expect(service.discoverFreelancers(1)).resolves.toEqual([
+      {
+        freelancerId: 2,
+        isFollowing: true,
+        profile: { id: 20, freelancerProfile: { id: 30 } },
+      },
+      {
+        freelancerId: 3,
+        isFollowing: false,
+        profile: { id: 21, freelancerProfile: { id: 31 } },
+      },
+    ]);
+  });
+
+  it('does not create another notification for a duplicate follow', async () => {
+    repository.findUserWithRoles
+      .mockResolvedValueOnce(userWithRole(RoleName.CLIENT, 1))
+      .mockResolvedValueOnce(userWithRole(RoleName.FREELANCER, 2));
+    repository.findFollow.mockResolvedValue({
+      clientId: 1,
+      freelancerId: 2,
+    });
+
+    await expect(service.followFreelancer(1, 2)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+    expect(repository.createFollowWithNotification).not.toHaveBeenCalled();
   });
 
   it('updates a password only after verifying the current password', async () => {

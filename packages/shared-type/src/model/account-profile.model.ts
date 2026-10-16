@@ -95,34 +95,42 @@ export const UpdateClientProfileSchema = z
   })
   .strict();
 
-export const FavoriteFreelancerSchema = z.object({
-  freelancerId: z.number(),
-  createdAt: DateTimeSchema,
-  profile: z.object({
-    id: z.number(),
-    displayName: z.string().nullable(),
-    avatarUrl: z.string().nullable(),
-    bio: z.string().nullable(),
-    availabilityStatus: z.string(),
-    freelancerProfile: z.object({
-      title: z.string().nullable(),
-      idVerified: z.boolean(),
-      skills: z.array(
-        z.object({
+const FreelancerRelationshipProfileSchema = z.object({
+  id: z.number(),
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  bio: z.string().nullable(),
+  availabilityStatus: z.string(),
+  freelancerProfile: z.object({
+    title: z.string().nullable(),
+    idVerified: z.boolean(),
+    skills: z.array(
+      z.object({
+        id: z.number(),
+        skillId: z.number(),
+        proficiencyLevel: z.number(),
+        skill: z.object({
           id: z.number(),
-          skillId: z.number(),
-          proficiencyLevel: z.number(),
-          skill: z.object({
-            id: z.number(),
-            name: z.string(),
-          }),
+          name: z.string(),
         }),
-      ),
-    }),
+      }),
+    ),
   }),
 });
 
+export const FavoriteFreelancerSchema = z.object({
+  freelancerId: z.number(),
+  createdAt: DateTimeSchema,
+  profile: FreelancerRelationshipProfileSchema,
+});
+
 export const FollowingFreelancerSchema = FavoriteFreelancerSchema;
+
+export const DiscoverFreelancerSchema = z.object({
+  freelancerId: z.number(),
+  isFollowing: z.boolean(),
+  profile: FreelancerRelationshipProfileSchema,
+});
 
 export const GeneralProfileSchema = z.object({
   id: z.number(),
@@ -205,6 +213,7 @@ export type ClientProfileDetailType = z.infer<typeof ClientProfileDetailSchema>;
 export type UpdateClientProfileType = z.infer<typeof UpdateClientProfileSchema>;
 export type FavoriteFreelancerType = z.infer<typeof FavoriteFreelancerSchema>;
 export type FollowingFreelancerType = z.infer<typeof FollowingFreelancerSchema>;
+export type DiscoverFreelancerType = z.infer<typeof DiscoverFreelancerSchema>;
 export type GeneralProfileType = z.infer<typeof GeneralProfileSchema>;
 export type UpdateGeneralProfileType = z.infer<
   typeof UpdateGeneralProfileSchema

@@ -331,14 +331,32 @@ export class AccountProfileService {
       }));
   }
 
-  async followFreelancer(clientId: number, freelancerId: number) {
+  async discoverFreelancers(clientId: number) {
     await this.requireRole(clientId, RoleName.CLIENT);
+    const freelancers =
+      await this.repository.findDiscoverableFreelancers(clientId);
+    return freelancers
+      .filter((freelancer) => freelancer.profile?.freelancerProfile)
+      .map((freelancer) => ({
+        freelancerId: freelancer.id,
+        isFollowing: freelancer.followsAsFreelancer.length > 0,
+        profile: freelancer.profile,
+      }));
+  }
+
+  async followFreelancer(clientId: number, freelancerId: number) {
+    const client = await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
     await this.requireRole(freelancerId, RoleName.FREELANCER);
     if (await this.repository.findFollow(clientId, freelancerId)) {
       throw FollowDuplicateException();
     }
-    await this.repository.createFollow(clientId, freelancerId);
+    const followerName = client.profile?.displayName?.trim() || 'A client';
+    await this.repository.createFollowWithNotification(
+      clientId,
+      freelancerId,
+      followerName,
+    );
     return { message: 'You are now following this freelancer.' };
   }
 
