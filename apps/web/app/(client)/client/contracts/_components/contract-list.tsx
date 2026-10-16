@@ -84,14 +84,16 @@ function getStatusBadge(status: ContractStatus) {
 
 export function ContractList({
   initialData,
+  basePath = "/client",
 }: {
   initialData?: GetContractListResponseType | null;
+  basePath?: string;
 }) {
   const [selectedTab, setSelectedTab] = useState<ContractStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: contractListRes } = useQuery<GetContractListResponseType>({
-    queryKey: ["client-contracts", selectedTab],
+    queryKey: ["contracts-list", basePath, selectedTab],
     queryFn: () =>
       contractApiRequest
         .getContractList({
@@ -201,7 +203,7 @@ export function ContractList({
                   {/* Job Title */}
                   <h3 className="text-base font-bold text-foreground line-clamp-1">
                     <Link
-                      href={`/client/contracts/${contract.id}`}
+                      href={`${basePath}/contracts/${contract.id}`}
                       className="hover:text-[#0069D3] transition-colors"
                     >
                       {contract.job?.title || "Contract Agreement"}
@@ -262,7 +264,7 @@ export function ContractList({
                     size="sm"
                     className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium px-4 h-8"
                   >
-                    <Link href={`/client/contracts/${contract.id}`}>
+                    <Link href={`${basePath}/contracts/${contract.id}`}>
                       View Details
                       <ChevronRight className="ml-1 size-3.5" />
                     </Link>

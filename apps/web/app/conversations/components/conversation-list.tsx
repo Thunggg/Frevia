@@ -88,7 +88,9 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   >(null);
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
-    : "/conversations";
+    : pathname.startsWith("/freelancer/conversations")
+      ? "/freelancer/conversations"
+      : "/conversations";
 
   const deleting = hideConversation.isPending;
 

@@ -162,7 +162,7 @@ export function ClientSidebar() {
     try {
       await authApiRequest.switchRole({ role: RoleName.FREELANCER });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/find-work");
+      router.push("/freelancer/find-work");
       router.refresh();
     } catch {
       toastError({ message: "Unable to switch role. Please try again." });

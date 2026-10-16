@@ -1,5 +1,8 @@
+import { redirect } from "next/navigation";
+import authServerRequest from "@/apiRequests/auth.server";
 import { MessageSquare, Plus } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { RoleName } from "@shared/types";
 import { NewConversationDialog } from "./components/new-conversation-dialog";
 import { UserIdAutoRedirect } from "./components/user-id-auto-redirect";
 
@@ -9,6 +12,26 @@ type ConversationsPageProps = {
 
 const ConversationsPage = async ({ searchParams }: ConversationsPageProps) => {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const user = await authServerRequest.getMe();
+  const primaryRole =
+    user?.roles.find((role) => role.isPrimary)?.name ?? user?.roles[0]?.name;
+
+  if (primaryRole === RoleName.CLIENT) {
+    redirect(
+      resolvedSearchParams?.userId
+        ? `/client/conversations?userId=${resolvedSearchParams.userId}`
+        : "/client/conversations",
+    );
+  }
+
+  if (primaryRole === RoleName.FREELANCER) {
+    redirect(
+      resolvedSearchParams?.userId
+        ? `/freelancer/conversations?userId=${resolvedSearchParams.userId}`
+        : "/freelancer/conversations",
+    );
+  }
+
   const targetUserId = resolvedSearchParams?.userId
     ? Number(resolvedSearchParams.userId)
     : null;

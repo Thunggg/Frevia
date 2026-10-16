@@ -81,11 +81,13 @@ function formatDate(date: string | Date | null) {
 interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialMilestones?: GetMilestoneListResponseType | null;
+  basePath?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialMilestones,
+  basePath = "/client",
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -237,7 +239,7 @@ export function ContractDetail({
       });
       toastSuccess({ message: "Contract has been cancelled." });
       setConfirmCancel(false);
-      router.push("/client/contracts");
+      router.push(`${basePath}/contracts`);
     } catch (error) {
       toastError({
         message:

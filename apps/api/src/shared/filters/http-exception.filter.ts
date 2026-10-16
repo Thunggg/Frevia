@@ -44,12 +44,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
         error: {
           code: String(500),
           message: 'Response validation failed',
-          details: zodError instanceof ZodError
-            ? zodError.issues.map((issue) => ({
-                message: issue.message,
-                path: issue.path.join('.'),
-              }))
-            : undefined,
+          details:
+            zodError instanceof ZodError
+              ? zodError.issues.map((issue) => ({
+                  message: issue.message,
+                  path: issue.path.join('.'),
+                }))
+              : undefined,
         },
         timestamp: new Date().toISOString(),
       };

@@ -13,7 +13,9 @@ export function UserIdAutoRedirect({ targetUserId }: { targetUserId: number }) {
 
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
-    : "/conversations";
+    : pathname.startsWith("/freelancer/conversations")
+      ? "/freelancer/conversations"
+      : "/conversations";
 
   useEffect(() => {
     if (triggeredRef.current || !targetUserId || targetUserId <= 0) return;

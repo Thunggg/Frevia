@@ -34,6 +34,8 @@ import type { ViewBookmarkedJobResponseType } from "@shared/types";
 type BookmarksContentProps = {
   initialJobs: ViewBookmarkedJobResponseType["data"];
   pagination: ViewBookmarkedJobResponseType["pagination"];
+  embedded?: boolean;
+  basePath?: string;
 };
 
 function formatBudget(job: ViewBookmarkedJobResponseType["data"][number]) {
@@ -63,8 +65,14 @@ function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
 export function BookmarksContent({
   initialJobs,
   pagination,
+  embedded = false,
+  basePath,
 }: BookmarksContentProps) {
   const router = useRouter();
+  const effectiveBasePath =
+    basePath ?? (embedded ? "/freelancer/bookmarks" : "/bookmarks");
+  const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
+
   const [pendingRemoveJobSlug, setPendingRemoveJobSlug] = useState<
     string | null
   >(null);
@@ -85,29 +93,39 @@ export function BookmarksContent({
   };
 
   const goToPage = (page: number) => {
-    router.push(`/bookmarks?page=${page}`);
+    router.push(`${effectiveBasePath}?page=${page}`);
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role="FREELANCER" />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role="FREELANCER" />}
 
       <main className="flex-1 font-sans">
         {/* Page Header */}
         <section className="border-b border-border bg-background">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
-              <Link
-                href="/"
-                className="transition-colors hover:text-foreground font-medium"
-              >
-                Home
-              </Link>
-              <span className="text-muted-foreground/30">/</span>
-              <span className="text-foreground font-medium">Bookmarks</span>
-            </nav>
+            {!embedded && (
+              <nav className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
+                <Link
+                  href="/"
+                  className="transition-colors hover:text-foreground font-medium"
+                >
+                  Home
+                </Link>
+                <span className="text-muted-foreground/30">/</span>
+                <span className="text-foreground font-medium">Bookmarks</span>
+              </nav>
+            )}
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+              className={`${
+                !embedded ? "mt-4" : ""
+              } flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}
+            >
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
                   Saved Jobs
@@ -180,7 +198,7 @@ export function BookmarksContent({
                       {/* Job Title & Budget */}
                       <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                         <Link
-                          href={`/job/${job.slug}`}
+                          href={`${jobBaseUrl}/${job.slug}`}
                           className="text-base sm:text-lg font-bold text-foreground hover:text-[#4fae2e] transition-colors line-clamp-1"
                         >
                           {job.title}
@@ -222,7 +240,7 @@ export function BookmarksContent({
                       </div>
 
                       <Link
-                        href={`/job/${job.slug}`}
+                        href={`${jobBaseUrl}/${job.slug}`}
                         className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
                       >
                         <BriefcaseBusiness className="size-3.5" />
@@ -254,7 +272,7 @@ export function BookmarksContent({
                 asChild
                 className="mt-6 gap-2 rounded-full bg-[#4fae2e] text-xs font-medium text-white hover:bg-[#459928]"
               >
-                <Link href="/find-work">
+                <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
                   Browse jobs
                   <ArrowRight className="size-3.5" />
                 </Link>
@@ -351,7 +369,7 @@ export function BookmarksContent({
         </AlertDialogContent>
       </AlertDialog>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }

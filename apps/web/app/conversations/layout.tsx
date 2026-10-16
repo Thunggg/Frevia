@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import authServerRequest from "@/apiRequests/auth.server";
@@ -32,10 +31,6 @@ const ConversationsLayout = async ({ children }: ConversationsLayoutProps) => {
   const token = cookieStore.get("accessToken")?.value ?? null;
   const user = await authServerRequest.getMe();
   const role = resolveHeaderRole(user);
-
-  if (role === "CLIENT") {
-    redirect("/client/conversations");
-  }
 
   return (
     <div className="flex h-dvh flex-col bg-background font-sans">
