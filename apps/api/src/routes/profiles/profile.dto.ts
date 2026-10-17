@@ -4,6 +4,7 @@ import {
   FreelancerProfileDetailSchema,
   AddFreelancerSkillSchema,
   AddFreelancerSkillResponseSchema,
+  CvUploadResponseSchema,
 } from '@shared/types';
 
 export class UpdateFreelancerProfileDto extends createZodDto(
@@ -21,3 +22,5 @@ export class AddFreelancerSkillDto extends createZodDto(
 export class AddFreelancerSkillResponseDto extends createZodDto(
   AddFreelancerSkillResponseSchema,
 ) {}
+
+export class CvUploadResponseDto extends createZodDto(CvUploadResponseSchema) {}

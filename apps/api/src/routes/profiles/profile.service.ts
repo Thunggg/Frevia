@@ -5,17 +5,110 @@ import {
   type UpdateFreelancerProfileType,
 } from '@shared/types';
 import { ProfileRepository } from './profile.repo';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { randomUUID } from 'crypto';
+import { mkdir, writeFile } from 'fs/promises';
+import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
   FreelancerProfileNotFoundException,
   FreelancerSkillNotFoundException,
   FreelancerSkillDuplicateException,
   ProfileForbiddenException,
   SkillForbiddenException,
+  CvFileInvalidException,
+  CvFileRequiredException,
+  CvNotFoundException,
 } from './profile.error';
 
 @Injectable()
 export class ProfileService {
-  constructor(private readonly profileRepository: ProfileRepository) {}
+  constructor(
+    private readonly profileRepository: ProfileRepository,
+    private readonly cloudinary: CloudinaryService,
+  ) {}
+
+  private async getOwnedFreelancerProfile(profileId: number, userId: number) {
+    const profile =
+      await this.profileRepository.findFreelancerProfileById(profileId);
+    if (
+      !profile ||
+      !profile.freelancerProfile ||
+      !profile.user.userRoles.some(
+        (item) => item.role.name === RoleName.FREELANCER,
+      )
+    ) {
+      throw FreelancerProfileNotFoundException();
+    }
+    if (profile.userId !== userId) throw ProfileForbiddenException();
+    return profile;
+  }
+
+  async uploadCv(
+    profileId: number,
+    userId: number,
+    file?: Express.Multer.File,
+  ) {
+    const profile = await this.getOwnedFreelancerProfile(profileId, userId);
+    if (!file) throw CvFileRequiredException();
+    const isPdf = file.buffer.subarray(0, 5).toString('ascii') === '%PDF-';
+    if (
+      file.mimetype !== 'application/pdf' ||
+      !isPdf ||
+      file.size > 10 * 1024 * 1024
+    ) {
+      throw CvFileInvalidException();
+    }
+
+    let cvUrl: string;
+    let cvPublicId: string | null = null;
+    if (this.cloudinary.isConfigured()) {
+      const uploaded = await this.cloudinary.uploadFile(
+        file,
+        `frevia/cvs/${userId}`,
+      );
+      cvUrl = uploaded.secure_url;
+      cvPublicId = uploaded.public_id ?? null;
+    } else {
+      const relativePath = join('cvs', String(userId), `${randomUUID()}.pdf`);
+      const absolutePath = join(process.cwd(), 'uploads', relativePath);
+      await mkdir(dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, file.buffer);
+      cvUrl = `local://${relativePath.replace(/\\/g, '/')}`;
+    }
+    const cv = await this.profileRepository.updateCv(profile.id, {
+      cvUrl,
+      cvFileName: file.originalname,
+      cvPublicId,
+    });
+    if (profile.freelancerProfile.cvPublicId) {
+      await this.cloudinary
+        .deleteFile(profile.freelancerProfile.cvPublicId)
+        .catch(() => undefined);
+    }
+    return {
+      cvUrl: cv.cvUrl?.startsWith('local://')
+        ? `/api/backend/profiles/${profile.id}/cv/file`
+        : cv.cvUrl,
+      cvFileName: cv.cvFileName,
+    };
+  }
+
+  async getCvFile(profileId: number, userId: number) {
+    const profile = await this.getOwnedFreelancerProfile(profileId, userId);
+    const cv = profile.freelancerProfile;
+    const cvUrl = cv?.cvUrl;
+    if (!cvUrl) throw CvNotFoundException();
+    if (!cvUrl.startsWith('local://')) {
+      return { remoteUrl: cvUrl, fileName: cv.cvFileName ?? 'cv.pdf' };
+    }
+    const uploadsRoot = resolve(process.cwd(), 'uploads');
+    const absolutePath = resolve(uploadsRoot, cvUrl.slice('local://'.length));
+    const pathFromRoot = relative(uploadsRoot, absolutePath);
+    if (pathFromRoot.startsWith('..') || isAbsolute(pathFromRoot)) {
+      throw CvNotFoundException();
+    }
+    return { absolutePath, fileName: cv.cvFileName ?? 'cv.pdf' };
+  }
 
   async viewProfile(profileId: number) {
     const profile =

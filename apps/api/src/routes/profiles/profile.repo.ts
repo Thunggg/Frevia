@@ -80,6 +80,17 @@ export class ProfileRepository {
     });
   }
 
+  updateCv(
+    profileId: number,
+    data: { cvUrl: string; cvFileName: string; cvPublicId: string | null },
+  ) {
+    return this.prisma.freelancerProfile.upsert({
+      where: { profileId },
+      update: data,
+      create: { profileId, ...data },
+    });
+  }
+
   async findSkillsByProfileId(profileId: number) {
     const freelancerProfile = await this.prisma.freelancerProfile.findFirst({
       where: {

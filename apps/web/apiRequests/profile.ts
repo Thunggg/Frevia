@@ -6,8 +6,10 @@ import {
   PortfolioItemType,
   AddPortfolioType,
   UpdatePortfolioType,
+  CvUploadResponseType,
+  ApiError,
 } from "@shared/types";
-import { http } from "@/lib/http";
+import { ApiFail, http } from "@/lib/http";
 
 export const profileApiRequest = {
   getProfileDetail: (id: number) =>
@@ -15,6 +17,18 @@ export const profileApiRequest = {
 
   updateProfile: (id: number, body: UpdateFreelancerProfileType) =>
     http.put<FreelancerProfileDetailType>(`/profiles/${id}`, body),
+
+  async uploadCv(id: number, file: File) {
+    const formData = new FormData();
+    formData.set("file", file);
+    const response = await fetch(`/api/backend/profiles/${id}/cv`, {
+      method: "POST",
+      body: formData,
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new ApiFail(payload as ApiError, response.status);
+    return payload as { success: true; data: CvUploadResponseType };
+  },
 
   getSkills: (id: number) =>
     http.get<FreelancerSkillType[]>(`/profiles/${id}/skills`),

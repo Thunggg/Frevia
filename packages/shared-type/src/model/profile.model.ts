@@ -29,6 +29,7 @@ export const FreelancerProfileDetailSchema = z.object({
       education: ProfileStringListSchema.nullable(),
       certifications: ProfileStringListSchema.nullable(),
       languages: ProfileStringListSchema.nullable(),
+      cvFileName: z.string().min(1).nullable(),
       idVerified: z.boolean(),
       createdAt: DateTimeSchema,
       updatedAt: DateTimeSchema,
@@ -67,9 +68,15 @@ export type UpdateFreelancerProfileType = z.infer<
 export const UpdateFreelancerProfileResponseSchema =
   FreelancerProfileDetailSchema;
 
+export const CvUploadResponseSchema = z.object({
+  cvUrl: z.string().min(1),
+  cvFileName: z.string().min(1),
+});
+
 export type UpdateFreelancerProfileResponseType = z.infer<
   typeof UpdateFreelancerProfileResponseSchema
 >;
+export type CvUploadResponseType = z.infer<typeof CvUploadResponseSchema>;
 
 export const FreelancerSkillSchema = z.object({
   id: z.number(),

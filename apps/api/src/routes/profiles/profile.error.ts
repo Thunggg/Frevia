@@ -29,3 +29,16 @@ export const SkillForbiddenException = () =>
   new ForbiddenException([
     { message: 'You can only delete your own skills.', path: 'userId' },
   ]);
+
+export const CvFileRequiredException = () =>
+  new BadRequestException([
+    { message: 'Please select a CV file.', path: 'file' },
+  ]);
+
+export const CvFileInvalidException = () =>
+  new BadRequestException([
+    { message: 'Only PDF CV files up to 10 MB are accepted.', path: 'file' },
+  ]);
+
+export const CvNotFoundException = () =>
+  new NotFoundException([{ message: 'CV not found.', path: 'cv' }]);
