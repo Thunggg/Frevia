@@ -31,7 +31,7 @@ import type {
   BannerPosition,
   BannerUpdateBodyType,
 } from "@shared/types";
-import { ImageIcon, Loader2, Plus, RefreshCw } from "lucide-react";
+import { ImageIcon, Loader2, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BANNER_POSITIONS } from "../constants";
@@ -227,7 +227,7 @@ export function BannerFormDialog({
             title="Edit banner"
             aria-label={`Edit banner ${banner?.title}`}
           >
-            <RefreshCw className="h-4 w-4" />
+            <Pencil className="h-4 w-4" />
           </Button>
         ) : (
           <Button className="gap-2 bg-[#4fae2e] text-white hover:bg-[#3f9225]">
@@ -236,7 +236,7 @@ export function BannerFormDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[640px] max-h-[85vh] overflow-x-hidden overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-x-hidden overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
