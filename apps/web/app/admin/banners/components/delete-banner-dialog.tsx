@@ -60,8 +60,7 @@ export function DeleteBannerDialog({
           <AlertDialogTitle>Delete Banner: {banner.title}</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete banner &quot;{banner.title}&quot;?
-            This action moves the banner to trash and can be undone via
-            restore.
+            This action permanently deletes the banner and cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

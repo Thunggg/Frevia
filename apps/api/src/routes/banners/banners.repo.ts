@@ -6,7 +6,7 @@ import { PrismaService } from '../../shared/services/prisma.service';
 export class BannersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Lấy các banner active (chưa soft-delete) hợp lệ theo vị trí hiển thị
+  // Lấy các banner active hợp lệ theo vị trí hiển thị
   async findActiveByPosition(
     position: BannerPosition,
   ): Promise<AdvertisementBanner[]> {
@@ -16,7 +16,6 @@ export class BannersRepository {
       where: {
         position,
         isActive: true,
-        deletedAt: null,
         OR: [
           { startDate: null, endDate: null },
           { startDate: { lte: now }, endDate: null },

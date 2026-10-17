@@ -55,12 +55,6 @@ export class BannersAdminController {
     return this.service.updateBanner(id, body as BannerUpdateBodyType);
   }
 
-  @Patch(':id/restore')
-  @ZodSerializerDto(BannerAdminDetailResponseDto)
-  restoreBanner(@Param('id', ParseIntPipe) id: number) {
-    return this.service.restoreBanner(id);
-  }
-
   @Delete(':id')
   @ZodSerializerDto(BannerAdminDeleteResponseDto)
   deleteBanner(@Param('id', ParseIntPipe) id: number) {

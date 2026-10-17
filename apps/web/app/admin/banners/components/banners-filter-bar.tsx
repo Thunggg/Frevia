@@ -13,13 +13,12 @@ import {
 } from "@repo/ui/components/shadcn/select";
 import { BANNER_POSITIONS } from "../constants";
 
-// Thanh lọc danh sách banner: tìm kiếm (title) + lọc vị trí + lọc Active/Deleted
+// Thanh lọc danh sách banner: tìm kiếm (title) + lọc vị trí
 export function BannersFilterBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
-  const currentStatus = searchParams.get("deleted") || "all";
   const currentPosition = searchParams.get("position") || "all";
 
   const updateQueryParams = (newParams: Record<string, string | undefined>) => {
@@ -88,23 +87,6 @@ export function BannersFilterBar() {
                 {item.label}
               </SelectItem>
             ))}
-          </SelectContent>
-        </Select>
-
-        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-          Status:
-        </span>
-        <Select
-          value={currentStatus}
-          onValueChange={(value) => updateQueryParams({ deleted: value })}
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="All statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="false">Active</SelectItem>
-            <SelectItem value="true">Deleted</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -65,14 +65,6 @@ export const FailedToDeleteBannerException = () =>
     },
   ]);
 
-export const FailedToRestoreBannerException = () =>
-  new InternalServerErrorException([
-    {
-      message: BannerMessage.FAILED_TO_RESTORE_BANNER,
-      path: 'bannerId',
-    },
-  ]);
-
 // ====== Upload ảnh banner ======
 
 // Không có file đính kèm

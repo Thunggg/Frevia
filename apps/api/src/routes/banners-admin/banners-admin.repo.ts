@@ -23,7 +23,6 @@ const bannerListSelect = {
   startDate: true,
   endDate: true,
   isActive: true,
-  deletedAt: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -32,19 +31,13 @@ const bannerListSelect = {
 export class BannersAdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Danh sách banner: phân trang + tìm kiếm (title) + lọc vị trí + lọc soft-deleted + sort
+  // Danh sách banner: phân trang + tìm kiếm (title) + lọc vị trí + sort
   async listBanners(
     query: BannerAdminQueryType,
   ): Promise<BannerAdminListResponseType> {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const search = query.search?.trim();
-    const showDeleted =
-      query.deleted === 'true'
-        ? true
-        : query.deleted === 'false'
-          ? false
-          : undefined;
 
     const sortBy = query.sortBy ?? 'id';
     const sortOrder = query.sortOrder ?? 'desc';
@@ -55,9 +48,6 @@ export class BannersAdminRepository {
     const where: Prisma.AdvertisementBannerWhereInput = {
       ...(search ? { title: { contains: search, mode: 'insensitive' } } : {}),
       ...(query.position ? { position: query.position } : {}),
-      ...(showDeleted !== undefined
-        ? { deletedAt: showDeleted ? { not: null } : null }
-        : {}),
     };
 
     const [banners, total] = await this.prisma.$transaction([
@@ -99,7 +89,7 @@ export class BannersAdminRepository {
     const position = data.position ?? 'GLOBAL_HEADER';
 
     const existing = await this.prisma.advertisementBanner.findFirst({
-      where: { position, deletedAt: null },
+      where: { position },
       select: { id: true },
     });
 
@@ -139,7 +129,7 @@ export class BannersAdminRepository {
 
     if (data.position !== undefined && data.position !== banner.position) {
       const existing = await this.prisma.advertisementBanner.findFirst({
-        where: { position: newPosition, deletedAt: null, id: { not: id } },
+        where: { position: newPosition, id: { not: id } },
         select: { id: true },
       });
 
@@ -163,45 +153,16 @@ export class BannersAdminRepository {
     });
   }
 
-  // Xóa banner (soft delete: set deletedAt)
+  // Xóa banner cứng (hard delete)
   async deleteBanner(id: number): Promise<BannerAdminDeleteResponseType> {
-    const banner = await this.prisma.advertisementBanner.findFirst({
+    const result = await this.prisma.advertisementBanner.deleteMany({
       where: { id },
-      select: { id: true },
-    });
-
-    if (!banner) {
-      throw BannerAdminNotFoundException();
-    }
-
-    await this.prisma.advertisementBanner.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
-
-    return { message: 'Banner deleted successfully' };
-  }
-
-  // Khôi phục banner đã soft-delete (chỉ những banner đang bị xóa mới restore được)
-  async restoreBanner(id: number): Promise<BannerAdminDetailResponseType> {
-    const result = await this.prisma.advertisementBanner.updateMany({
-      where: { id, deletedAt: { not: null } },
-      data: { deletedAt: null },
     });
 
     if (result.count === 0) {
       throw BannerAdminNotFoundException();
     }
 
-    const updated = await this.prisma.advertisementBanner.findUnique({
-      where: { id },
-      select: bannerListSelect,
-    });
-
-    if (!updated) {
-      throw BannerAdminNotFoundException();
-    }
-
-    return updated;
+    return { message: 'Banner deleted successfully' };
   }
 }

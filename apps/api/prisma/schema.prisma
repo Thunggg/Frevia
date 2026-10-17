@@ -962,7 +962,6 @@ model AdvertisementBanner {
   isActive  Boolean        @default(true)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  deletedAt DateTime?
 
   @@index([position, startDate, endDate])
 }

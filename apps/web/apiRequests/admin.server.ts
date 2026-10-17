@@ -98,12 +98,11 @@ const adminServerRequest = {
     );
   },
 
-  // Danh sách banner (phân trang + search + lọc deleted/position + sort) — trang Admin Banners
+  // Danh sách banner (phân trang + search + lọc vị trí + sort) — trang Admin Banners
   getBanners(params?: {
     page?: number;
     limit?: number;
     search?: string;
-    deleted?: string;
     position?: string;
     sortBy?: string;
     sortOrder?: string;

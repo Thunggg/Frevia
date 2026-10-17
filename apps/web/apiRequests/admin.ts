@@ -283,12 +283,6 @@ export const adminApiRequest = {
   updateBanner: (id: number, body: BannerUpdateBodyType) =>
     http.patch<BannerAdminDetailResponseType>(`/api/admin/banners/${id}`, body),
 
-  restoreBanner: (id: number) =>
-    http.patch<BannerAdminDetailResponseType>(
-      `/api/admin/banners/${id}/restore`,
-      {},
-    ),
-
   deleteBanner: (id: number) =>
     http.delete<BannerAdminDeleteResponseType>(`/api/admin/banners/${id}`),
 };

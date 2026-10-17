@@ -24,17 +24,15 @@ export const BannerAdminItemSchema = z.object({
   startDate: z.coerce.date().nullable(),
   endDate: z.coerce.date().nullable(),
   isActive: z.boolean(),
-  deletedAt: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
 
-// Query: phân trang + tìm kiếm (title) + lọc trạng thái soft-deleted + vị trí + sort
+// Query: phân trang + tìm kiếm (title) + lọc vị trí + sort
 export const BannerAdminQuerySchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(10),
   search: z.string().optional(),
-  deleted: z.enum(["true", "false"]).optional(),
   position: BannerPositionEnum.optional(),
   sortBy: z.enum(["id", "createdAt"]).optional().default("id"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
