@@ -88,7 +88,10 @@ export class ProfileRepository {
     });
     if (!freelancerProfile) return [];
     return this.prisma.freelancerSkill.findMany({
-      where: { freelancerProfileId: freelancerProfile.id },
+      where: {
+        freelancerProfileId: freelancerProfile.id,
+        skill: { deletedAt: null },
+      },
       include: { skill: true },
       orderBy: { skill: { name: 'asc' } },
     });
@@ -115,7 +118,10 @@ export class ProfileRepository {
     }
 
     const existing = await this.prisma.skill.findFirst({
-      where: { name: { equals: trimmed, mode: Prisma.QueryMode.insensitive } },
+      where: {
+        deletedAt: null,
+        name: { equals: trimmed, mode: Prisma.QueryMode.insensitive },
+      },
     });
     if (existing) return existing;
 

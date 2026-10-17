@@ -230,7 +230,8 @@ export class SkillsAdminRepository {
     };
   }
 
-  // Xóa skill (soft delete: set deletedAt; chặn nếu còn job đang hoạt động dùng)
+  // Xóa skill (soft delete: set deletedAt; chặn nếu còn job đang hoạt động dùng;
+  // gỡ skill khỏi hồ sơ freelancer đã chọn)
   async deleteSkill(id: number): Promise<SkillAdminDeleteResponseType> {
     const skill = await this.prisma.skill.findFirst({
       where: { id },
@@ -249,16 +250,44 @@ export class SkillsAdminRepository {
       throw SkillInUseException();
     }
 
-    await this.prisma.skill.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    await this.prisma.$transaction([
+      this.prisma.freelancerSkill.deleteMany({
+        where: { skillId: id },
+      }),
+      this.prisma.skill.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      }),
+    ]);
 
     return { message: 'Skill deleted successfully' };
   }
 
-  // Khôi phục skill đã soft-delete (chỉ những skill đang bị xóa mới restore được)
+  // Khôi phục skill đã soft-delete (chỉ những skill đang bị xóa mới restore được;
+  // kiểm tra trùng tên với skill active khác trước khi khôi phục)
   async restoreSkill(id: number): Promise<SkillAdminDetailResponseType> {
+    const skill = await this.prisma.skill.findFirst({
+      where: { id, deletedAt: { not: null } },
+      select: { id: true, name: true },
+    });
+
+    if (!skill) {
+      throw SkillAdminNotFoundException();
+    }
+
+    const nameConflict = await this.prisma.skill.findFirst({
+      where: {
+        deletedAt: null,
+        id: { not: id },
+        name: { equals: skill.name, mode: 'insensitive' },
+      },
+      select: { id: true },
+    });
+
+    if (nameConflict) {
+      throw SkillNameAlreadyExistsException();
+    }
+
     const result = await this.prisma.skill.updateMany({
       where: { id, deletedAt: { not: null } },
       data: { deletedAt: null },

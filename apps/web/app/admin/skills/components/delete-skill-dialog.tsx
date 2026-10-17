@@ -79,14 +79,20 @@ export function DeleteSkillDialog({
                   deleting it.
                 </div>
               ) : (
-                <p>
-                  Are you sure you want to delete skill{" "}
-                  <span className="font-semibold text-foreground">
-                    &quot;{skill.name}&quot;
-                  </span>
-                  ? This action moves the skill to trash and can be undone via
-                  restore.
-                </p>
+                <div className="space-y-2">
+                  <p>
+                    Are you sure you want to delete skill{" "}
+                    <span className="font-semibold text-foreground">
+                      &quot;{skill.name}&quot;
+                    </span>
+                    ?
+                  </p>
+                  <p className="text-xs">
+                    The skill will be soft-deleted (restorable). Freelancers who
+                    have selected this skill will have it removed from their
+                    profiles and must re-add it if restored.
+                  </p>
+                </div>
               )}
             </div>
           </AlertDialogDescription>

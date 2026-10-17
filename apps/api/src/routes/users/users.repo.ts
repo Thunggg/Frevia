@@ -537,7 +537,10 @@ export class UsersRepository {
     }
 
     const existing = await tx.skill.findFirst({
-      where: { name: { equals: trimmed, mode: Prisma.QueryMode.insensitive } },
+      where: {
+        deletedAt: null,
+        name: { equals: trimmed, mode: Prisma.QueryMode.insensitive },
+      },
     });
     if (existing) return existing;
 
