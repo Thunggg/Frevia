@@ -481,6 +481,20 @@ export function ProfilePageClient({
 
     setPendingAction("skill-add");
     try {
+      const catalogResponse =
+        await profileApiRequest.searchSkillSuggestions(normalizedName);
+      const inCatalog =
+        catalogResponse.success &&
+        catalogResponse.data.some(
+          (option) =>
+            option.name.toLowerCase() === normalizedName.toLowerCase(),
+        );
+      if (!inCatalog) {
+        toastError({
+          message: "Please select a skill from the catalog.",
+        });
+        return;
+      }
       const response = await profileApiRequest.addSkill(profileId, {
         skillName: normalizedName,
         proficiencyLevel,
@@ -1258,8 +1272,7 @@ export function ProfilePageClient({
           <DialogHeader>
             <DialogTitle>Add freelancer skill</DialogTitle>
             <DialogDescription>
-              Choose from the same skill catalog clients use for jobs, or add a
-              skill that is not listed yet.
+              Choose a skill from the catalog that clients use for jobs.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
@@ -1295,14 +1308,14 @@ export function ProfilePageClient({
                     ) : null}
                     {skillSuggestionStatus === "error" ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        Suggestions are unavailable. You can still type a skill.
+                        Could not load the skill catalog. Please try again.
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success" &&
                     availableSkillOptions.length === 0 ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        No matching skill. Your custom skill will still be
-                        saved.
+                        No matching skill in the catalog. Try a different
+                        keyword.
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success"
