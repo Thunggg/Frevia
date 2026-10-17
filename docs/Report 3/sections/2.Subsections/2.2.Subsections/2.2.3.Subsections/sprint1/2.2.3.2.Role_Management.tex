@@ -135,65 +135,57 @@ UC ID and Name & \multicolumn{3}{l|}{UC-13.3 Create New Role} \\ \hline
 Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Role'' button on the Role Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows administrators to create a new role by providing a name, optional description, and selecting at least one permission from the available permission list.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows administrators to create a new role by providing a name and an optional description. Permissions are assigned to the role separately through UC-13.6 Update Role Permissions.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is authenticated as an Admin. \newline
-\textbf{PRE-2} At least one permission exists in the system.
+\textbf{PRE-1} The user is authenticated as an Admin.
 } \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A new role record is created in the roles table. \newline
-\textbf{POST-2} The selected permissions are associated with the newly created role. \newline
-\textbf{POST-3} The new role appears in the active role list.
+\textbf{POST-2} The new role appears in the active role list.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Create New Role} \newline
 1. Admin clicks the ``Create Role'' button. \newline
-2. The system retrieves all active permissions and displays the Create Role form with a checkbox list of available permissions. \newline
+2. The system displays the Create Role form with fields for the role name and an optional description. \newline
 3. Admin enters the role name and optional description. \newline
-4. Admin selects one or more permissions from the checkbox list to assign to the role. \newline
-5. Admin clicks the ``Save'' button. \newline
-6. The system validates the input data. \newline
-7. The system creates a new record in the roles table. \newline
-8. The system associates the selected permissions with the new role. \newline
-9. The system redirects the admin to the role detail page of the newly created role.
+4. Admin clicks the ``Save'' button. \newline
+5. The system validates the input data. \newline
+6. The system creates a new record in the roles table. \newline
+7. The system redirects the admin to the role detail page of the newly created role.
 } \\ \hline
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Admin Cancels Creation} \newline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Admin Cancels Creation} \newline
 1. Admin clicks the ``Cancel'' button (instead of ``Save''). \newline
 2. The system discards all unsaved data. \newline
 3. The system returns to the Role Management page. \newline
 4. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Required Fields Missing} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Required Fields Missing} \newline
 1. The system detects the role name is empty. \newline
 2. The system displays the message ``Role name is required.'' \newline
 3. Return to step A.3.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Duplicate Role Name} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Duplicate Role Name} \newline
 1. The system detects that a role with the same name already exists. \newline
 2. The system displays the message ``A role with this name already exists.'' \newline
 3. Return to step A.3.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 No Permission Selected} \newline
-1. The system detects that no permissions are selected. \newline
-2. The system displays the message ``At least one permission must be selected.'' \newline
-3. Return to step A.4.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Invalid Permission} \newline
-1. The system detects that one or more selected permissions do not exist. \newline
-2. The system displays the message ``One or more selected permissions are invalid.'' \newline
-3. Return to step A.4.} \\ \hline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 System Role Name Not Allowed} \newline
+1. The system detects that the entered name matches a system role name (Admin, Client, or Freelancer). \newline
+2. The system displays the message ``Cannot use a system role name.'' \newline
+3. Return to step A.3.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
-1. The system displays the message ``Unable to create role. Please try again later.'' \newline
-2. The use case ends.} \\ \hline
+1. The system fails to create the role. \newline
+2. The system displays the message ``Unable to create role. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 BR-RM-07: Only authenticated Admins can create roles. \newline
 BR-RM-08: Role name is a required field and must be unique across all active roles. \newline
-BR-RM-09: A role must be assigned at least one valid permission upon creation. \newline
-BR-RM-10: Permissions are selected via a checkbox list of all active permissions in the system.
+BR-RM-09: System role names (Admin, Client, Freelancer) cannot be used for custom roles. \newline
+BR-RM-10: A role is created without permissions; route access is granted separately via UC-13.6 Update Role Permissions.
 } \\ \hline
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-The list of available permissions is retrieved from the permissions table and reflects only active permissions. \newline
-Permission assignment is performed via checkbox selection.
+The newly created role has no permissions until they are assigned through the Assign Role page.
 } \\ \hline
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permissions are predefined and managed separately in the system.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the creation process.} \\ \hline
 \end{longtable}
 }
 
@@ -217,67 +209,61 @@ UC ID and Name & \multicolumn{3}{l|}{UC-13.4 Update Role} \\ \hline
 Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects the ``Edit'' option on a specific role from the Role Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows administrators to update a role's name and description, and replace all currently assigned permissions with a new set of permissions selected from the checkbox list.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows administrators to update a role's name and description. Permissions are revised separately through UC-13.6 Update Role Permissions.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The selected role exists and has not been soft-deleted.
 } \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The role's name and description are updated in the roles table. \newline
-\textbf{POST-2} All previously assigned permissions are replaced with the newly selected permissions. \newline
-\textbf{POST-3} Users currently assigned to this role will immediately reflect the updated permission set.
+\textbf{POST-2} The role's assigned permissions and the users assigned to it are not affected by the update.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Update Role} \newline
 1. Admin selects the ``Edit'' option on a role. \newline
-2. The system retrieves the current role information and displays it in an editable form, with the current permissions pre-checked in the checkbox list. \newline
+2. The system retrieves the current role information and displays it in an editable form. \newline
 3. Admin modifies the role name and/or description. \newline
-4. Admin adjusts the permission selection to replace the existing ones. \newline
-5. Admin clicks the ``Save Changes'' button. \newline
-6. The system validates the updated input data. \newline
-7. The system updates the role record in the roles table. \newline
-8. The system removes all existing permission associations and assigns the newly selected permissions. \newline
-9. The system displays the updated role detail page.
+4. Admin clicks the ``Save Changes'' button. \newline
+5. The system validates the updated input data. \newline
+6. The system updates the role record in the roles table. \newline
+7. The system displays the updated role detail page.
 } \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.2 Role Not Found} \newline
 1. The system determines the role does not exist or is soft-deleted. \newline
 2. The system displays the message ``Role not found.'' \newline
 3. Return to step A.1.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Admin Cancels Update} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Admin Cancels Update} \newline
 1. Admin clicks the ``Cancel'' button (instead of ``Save Changes''). \newline
 2. The system discards all unsaved changes. \newline
 3. The system returns to the role detail page. \newline
 4. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Required Fields Missing} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Required Fields Missing} \newline
 1. The system detects the role name is empty. \newline
 2. The system displays the message ``Role name is required.'' \newline
 3. Return to step A.3.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Duplicate Role Name} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Duplicate Role Name} \newline
 1. The system detects that the updated name conflicts with another existing role. \newline
 2. The system displays the message ``A role with this name already exists.'' \newline
 3. Return to step A.3.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 No Permission Selected} \newline
-1. The system detects that all permissions have been deselected. \newline
-2. The system displays the message ``At least one permission must be selected.'' \newline
-3. Return to step A.4.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Invalid Permission} \newline
-1. The system detects that one or more selected permissions do not exist. \newline
-2. The system displays the message ``One or more selected permissions are invalid.'' \newline
-3. Return to step A.4.} \\ \hline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 System Role Name Not Allowed} \newline
+1. The system detects that the updated name matches a system role name (Admin, Client, or Freelancer). \newline
+2. The system displays the message ``Cannot use a system role name.'' \newline
+3. Return to step A.3.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
-1. The system displays the message ``Unable to update role. Please try again later.'' \newline
-2. The use case ends.} \\ \hline
+1. The system fails to update the role. \newline
+2. The system displays the message ``Unable to update role. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 BR-RM-11: Only authenticated Admins can update roles. \newline
 BR-RM-12: Role name is a required field and must remain unique across all active roles. \newline
-BR-RM-13: Updating a role's permissions shall replace all existing permission assignments entirely. \newline
-BR-RM-14: The updated permission set takes effect immediately for all users currently assigned to this role.
+BR-RM-13: Updating a role's name or description shall not alter its assigned permissions or its users. \newline
+BR-RM-14: System role names (Admin, Client, Freelancer) cannot be used for custom roles.
 } \\ \hline
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
 The original role ID remains unchanged after the update. \newline
-Because permission replacement takes effect immediately, updating a role that is assigned to active users will alter their access rights without further confirmation.
+The role name shown for users assigned to the role is updated along with the role record.
 } \\ \hline
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the update process.} \\ \hline
 \end{longtable}
@@ -353,5 +339,88 @@ BR-RM-18: A role that is currently assigned to active users shall not be deleted
 } \\ \hline
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Deleted roles remain stored in the database for auditing and recovery purposes.} \\ \hline
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the deletion process.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-13.6 Update Role Permissions
+% =================================================================
+\subparagraph{UC-13.6 Update Role Permissions}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.6 Update Role Permissions} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a role on the Assign Role page and clicks the ``Save permissions'' button.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows administrators to assign route access rights to a role by granting or revoking permissions. Each permission represents a server route defined by an HTTP method and path within a module. The system replaces the role's entire permission set with the newly selected permissions and the change takes effect immediately.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin. \newline
+\textbf{PRE-2} The selected role exists and has not been soft-deleted. \newline
+\textbf{PRE-3} Permissions are predefined in the system.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} All existing permissions of the role are replaced with the newly selected set. \newline
+\textbf{POST-2} The role's route access rights take effect immediately for all users assigned to the role.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Role Permissions} \newline
+1. Admin navigates to the Assign Role page. \newline
+2. Admin selects a role from the role dropdown. \newline
+3. The system retrieves the role detail including its current permissions. \newline
+4. The system retrieves all active permissions and displays them grouped by module, pre-checking the role's current permissions. \newline
+5. Admin selects or deselects permissions individually or by module. \newline
+6. Admin clicks the ``Save permissions'' button. \newline
+7. The system validates that all selected permissions exist and are active. \newline
+8. The system removes all existing permission associations of the role. \newline
+9. The system creates new permission associations for the selected permissions. \newline
+10. The system displays the message ``Updated permissions for [role name]'' and the role detail reflects the new permission set.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.2 No Role Selected} \newline
+1. Admin does not select a role before proceeding. \newline
+2. The system displays the message ``Choose a role to start assigning permissions.'' \newline
+3. Return to step A.1.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.3 Role Not Found} \newline
+1. The system determines the selected role does not exist or is soft-deleted. \newline
+2. The system displays the message ``Role not found.'' \newline
+3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Clear All Permissions} \newline
+1. Admin deselects all permissions and clicks the ``Save permissions'' button. \newline
+2. The system validates the empty selection. \newline
+3. The system removes all existing permission associations of the role. \newline
+4. The role is left with no route access rights. \newline
+5. Proceed to step A.10.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 Invalid Permission Selected} \newline
+1. The system detects that one or more selected permissions do not exist or are inactive. \newline
+2. The system displays the message ``One or more selected permissions are invalid.'' \newline
+3. Return to step A.5.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
+1. The system fails to replace the role's permission associations. \newline
+2. The system displays the message ``Unable to update role permissions. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-RM-19: Only authenticated Admins can update role permissions. \newline
+BR-RM-20: Each permission maps to a server route defined by an HTTP method and path within a module; assigning permissions grants the role access to those routes. \newline
+BR-RM-21: Updating a role's permissions shall replace the role's entire existing permission set with the newly selected set. \newline
+BR-RM-22: All selected permission IDs must exist and be active in the permissions table. \newline
+BR-RM-23: Permission changes take effect immediately for all users currently assigned to the role.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The Assign Role page lists permissions grouped by module and supports filtering by HTTP method and module. \newline
+An empty permission set clears all route access for the role. \newline
+Because replacement takes effect immediately, updating a role that is assigned to active users will alter their access rights without further confirmation.
+} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permissions are predefined and managed separately in the system. The admin remains authenticated throughout the process.} \\ \hline
 \end{longtable}
 }
