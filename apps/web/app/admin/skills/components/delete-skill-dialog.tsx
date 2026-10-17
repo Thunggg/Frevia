@@ -37,11 +37,6 @@ export function DeleteSkillDialog({
   const hasJobs = (skill.jobCount ?? 0) > 0;
 
   const handleDelete = async () => {
-    if (hasJobs) {
-      toastError({ message: "Error.SkillInUse" });
-      return;
-    }
-
     setLoading(true);
     try {
       await adminApiRequest.deleteSkill(skill.id);
@@ -70,52 +65,43 @@ export function DeleteSkillDialog({
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-2 pt-1 text-sm text-muted-foreground">
-              {hasJobs ? (
+              {hasJobs && (
                 <div className="rounded-md bg-amber-50 dark:bg-amber-950/40 p-3 border border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-300 text-xs">
-                  <p className="font-semibold mb-1">Cannot Delete Skill</p>
+                  <p className="font-semibold mb-1">Skill in use</p>
                   This skill is currently used by{" "}
                   <span className="font-bold">{skill.jobCount}</span> active
-                  job(s). Please remove the skill from those jobs before
-                  deleting it.
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <p>
-                    Are you sure you want to delete skill{" "}
-                    <span className="font-semibold text-foreground">
-                      &quot;{skill.name}&quot;
-                    </span>
-                    ?
-                  </p>
-                  <p className="text-xs">
-                    The skill will be soft-deleted (restorable). Freelancers who
-                    have selected this skill will have it removed from their
-                    profiles and must re-add it if restored.
-                  </p>
+                  job(s). Those jobs will keep showing this skill as legacy
+                  until they are updated.
                 </div>
               )}
+              <p>
+                Are you sure you want to delete skill{" "}
+                <span className="font-semibold text-foreground">
+                  &quot;{skill.name}&quot;
+                </span>
+                ?
+              </p>
+              <p className="text-xs">
+                The skill will be soft-deleted (restorable) and removed from
+                freelancer profiles. It will no longer be offered for new jobs.
+                Existing jobs keep their skill reference until updated.
+              </p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
-          {hasJobs ? (
-            <Button disabled variant="destructive">
-              Cannot Delete
-            </Button>
-          ) : (
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                void handleDelete();
-              }}
-              disabled={loading}
-              variant="destructive"
-            >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Delete Skill
-            </Button>
-          )}
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              void handleDelete();
+            }}
+            disabled={loading}
+            variant="destructive"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Delete Skill
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

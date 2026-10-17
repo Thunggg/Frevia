@@ -11,7 +11,6 @@ import {
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
   SkillAdminNotFoundException,
-  SkillInUseException,
   SkillNameAlreadyExistsException,
 } from './skills-admin.error';
 
@@ -230,8 +229,9 @@ export class SkillsAdminRepository {
     };
   }
 
-  // Xóa skill (soft delete: set deletedAt; chặn nếu còn job đang hoạt động dùng;
-  // gỡ skill khỏi hồ sơ freelancer đã chọn)
+  // Xóa skill (soft delete: set deletedAt; gỡ skill khỏi hồ sơ freelancer đã chọn).
+  // Job đang đăng vẫn giữ nguyên reference (JobSkill row tồn tại) nên vẫn hiển thị
+  // skill như "legacy" cho tới khi job đó được cập nhật.
   async deleteSkill(id: number): Promise<SkillAdminDeleteResponseType> {
     const skill = await this.prisma.skill.findFirst({
       where: { id },
@@ -240,14 +240,6 @@ export class SkillsAdminRepository {
 
     if (!skill) {
       throw SkillAdminNotFoundException();
-    }
-
-    const activeJobs = await this.prisma.jobSkill.count({
-      where: { skillId: id, job: { deletedAt: null } },
-    });
-
-    if (activeJobs > 0) {
-      throw SkillInUseException();
     }
 
     await this.prisma.$transaction([
