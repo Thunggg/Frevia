@@ -158,6 +158,12 @@ export const adminApiRequest = {
       `/api/forums/admin/categories/${id}`,
     ),
 
+  restoreCategory: (id: number) =>
+    http.patch<ForumCategoryType>(
+      `/api/forums/admin/categories/${id}/restore`,
+      {},
+    ),
+
   getPosts: (
     page: number = 1,
     limit: number = 10,

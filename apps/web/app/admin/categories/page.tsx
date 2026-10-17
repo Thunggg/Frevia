@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { CategoriesTable } from "./components/categories-table";
 import { CreateCategoryDialog } from "./components/create-category-dialog";
-import { SearchBar } from "../components/search-bar";
+import { CategoriesFilterBar } from "./components/categories-filter-bar";
 
 export default async function AdminCategoriesPage({
   searchParams,
@@ -10,6 +10,7 @@ export default async function AdminCategoriesPage({
   searchParams: Promise<{
     page?: string;
     search?: string;
+    deleted?: string;
     sortBy?: string;
     sortOrder?: string;
   }>;
@@ -18,6 +19,7 @@ export default async function AdminCategoriesPage({
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
+  const deleted = params.deleted || undefined;
   const sortBy = params.sortBy || undefined;
   const sortOrder = params.sortOrder || undefined;
 
@@ -27,6 +29,7 @@ export default async function AdminCategoriesPage({
     search,
     sortBy,
     sortOrder,
+    deleted,
   );
 
   return (
@@ -44,10 +47,7 @@ export default async function AdminCategoriesPage({
       </div>
 
       <Suspense>
-        <SearchBar
-          placeholder="Search categories by name..."
-          initialSearch={search}
-        />
+        <CategoriesFilterBar initialSearch={search} />
       </Suspense>
       <CategoriesTable
         categories={data.categories}

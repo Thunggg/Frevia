@@ -148,8 +148,9 @@ const adminServerRequest = {
     search?: string,
     sortBy?: string,
     sortOrder?: string,
+    deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
-    const query = buildQueryString({ page, limit, search, sortBy, sortOrder });
+    const query = buildQueryString({ page, limit, search, sortBy, sortOrder, deleted });
     const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
       `/api/forums/admin/categories${query}`,
     );

@@ -63,15 +63,23 @@ export const ForumAdminCategoryFilterSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).default(10),
   search: z.string().optional(),
+  deleted: z.enum(["true", "false"]).optional(),
   sortBy: z.enum(["id", "name", "createdAt"]).optional().default("id"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
+export const ForumAdminCategorySchema = ForumCategorySchema.extend({
+  deletedAt: z.coerce.date().nullable(),
+});
+
 export const ForumAdminCategoryListResponseSchema = z.object({
-  categories: z.array(ForumCategorySchema),
+  categories: z.array(ForumAdminCategorySchema),
   pagination: PaginationSchema,
 });
 
+export type ForumAdminCategoryType = z.infer<
+  typeof ForumAdminCategorySchema
+>;
 export type ForumAdminCategoryFilterType = z.infer<
   typeof ForumAdminCategoryFilterSchema
 >;
