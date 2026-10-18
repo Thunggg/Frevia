@@ -86,10 +86,11 @@ const roleConfig: Record<
   FREELANCER: {
     name: "Freelancer",
     links: [
-      { href: "/find-work", label: "Find Work" },
-      { href: "/bookmarks", label: "Bookmarks" },
-      { href: "/proposals", label: "My Proposals" },
-      { href: "/saved-searches", label: "Saved searches" },
+      { href: "/freelancer/find-work", label: "Find Work" },
+      { href: "/freelancer/bookmarks", label: "Bookmarks" },
+      { href: "/freelancer/proposals", label: "My Proposals" },
+      { href: "/freelancer/contracts", label: "Contracts" },
+      { href: "/freelancer/saved-searches", label: "Saved searches" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -160,8 +161,10 @@ function HeaderNavigation({
 
 function HeaderSearch({
   className = "hidden max-w-xs flex-1 md:block lg:max-w-sm",
+  role,
 }: {
   className?: string;
+  role?: UserRole;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,7 +197,9 @@ function HeaderSearch({
           params.delete("keyword");
         }
         params.set("page", "1");
-        router.push(`/find-work?${params.toString()}`);
+        const searchBase =
+          role === "FREELANCER" ? "/freelancer/find-work" : "/find-work";
+        router.push(`${searchBase}?${params.toString()}`);
       }}
     >
       <div className="relative flex items-center">
@@ -247,7 +252,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
           : `${targetRoleLabel} role added`,
       });
       router.push(
-        targetRole === RoleName.CLIENT ? "/client/jobs" : "/find-work",
+        targetRole === RoleName.CLIENT ? "/client/jobs" : "/freelancer/find-work",
       );
       router.refresh();
       return true;
@@ -361,7 +366,10 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem asChild>
-          <Link href="/account-profile" className="cursor-pointer">
+          <Link
+            href={role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"}
+            className="cursor-pointer"
+          >
             <UserRound className="size-4 text-muted-foreground" />
             Profile settings
           </Link>
@@ -369,25 +377,31 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         {role === "FREELANCER" && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/account-profile" className="cursor-pointer">
+              <Link href="/freelancer/profile" className="cursor-pointer">
                 <ShieldCheck className="size-4 text-muted-foreground" />
                 Identity verification
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/bookmarks" className="cursor-pointer">
+              <Link href="/freelancer/bookmarks" className="cursor-pointer">
                 <Bookmark className="size-4 text-muted-foreground" />
                 My Bookmarks
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/proposals" className="cursor-pointer">
+              <Link href="/freelancer/proposals" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />
                 My Proposals
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/saved-searches" className="cursor-pointer">
+              <Link href="/freelancer/contracts" className="cursor-pointer">
+                <FileText className="size-4 text-muted-foreground" />
+                Contracts
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/freelancer/saved-searches" className="cursor-pointer">
                 <Search className="size-4 text-muted-foreground" />
                 Saved searches
               </Link>
@@ -532,7 +546,7 @@ function MobileProfileNavigation({
         </Link>
       ) : null}
       <Link
-        href="/account-profile"
+        href={role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"}
         onClick={onNavigate}
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
       >
@@ -574,7 +588,10 @@ export function Header({ role }: HeaderProps) {
 
         <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
           {(role === "FREELANCER" || role === "GUEST") && (
-            <HeaderSearch className="hidden max-w-xs flex-1 md:block lg:max-w-sm" />
+            <HeaderSearch
+              role={role}
+              className="hidden max-w-xs flex-1 md:block lg:max-w-sm"
+            />
           )}
           <HeaderActions role={role} />
           <button
@@ -590,7 +607,7 @@ export function Header({ role }: HeaderProps) {
       {isMenuOpen && (
         <div className="space-y-3 border-t border-border/50 bg-white/98 p-4 backdrop-blur-xl shadow-xl md:hidden dark:border-white/[0.08] dark:bg-zinc-950/98">
           {(role === "FREELANCER" || role === "GUEST") && (
-            <HeaderSearch className="block w-full" />
+            <HeaderSearch role={role} className="block w-full" />
           )}
           <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
           {role === "GUEST" ? (
@@ -620,7 +637,13 @@ export function Header({ role }: HeaderProps) {
           ) : (
             <div className="space-y-1 border-t border-border/50 pt-3 dark:border-white/[0.08]">
               <Link
-                href="/conversations"
+                href={
+                  role === "FREELANCER"
+                    ? "/freelancer/conversations"
+                    : role === "CLIENT"
+                      ? "/client/conversations"
+                      : "/conversations"
+                }
                 onClick={closeMenu}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
               >

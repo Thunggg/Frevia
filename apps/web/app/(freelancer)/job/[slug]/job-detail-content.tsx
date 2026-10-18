@@ -45,6 +45,8 @@ type JobDetailContentProps = {
   relatedJobs?: JobType[];
   relatedSkill?: string;
   existingProposal: ProposalType | null;
+  embedded?: boolean;
+  basePath?: string;
 };
 
 function formatBudget(
@@ -177,6 +179,8 @@ export function JobDetailContent({
   relatedJobs = [],
   relatedSkill,
   existingProposal,
+  embedded = false,
+  basePath = embedded ? "/freelancer/find-work" : "/find-work",
 }: JobDetailContentProps) {
   const router = useRouter();
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
@@ -366,8 +370,8 @@ export function JobDetailContent({
   );
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={role} />
+    <div className="flex min-h-screen flex-col bg-background">
+      {!embedded ? <Header role={role} /> : null}
 
       <main className="flex-1 pb-24 lg:pb-0">
         <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
@@ -382,7 +386,7 @@ export function JobDetailContent({
                 </Link>
                 <span className="text-foreground/35">/</span>
                 <Link
-                  href="/find-work"
+                  href={basePath}
                   className="transition-colors hover:text-[#4fae2e]"
                 >
                   Find Work
@@ -393,7 +397,7 @@ export function JobDetailContent({
                 </span>
               </nav>
               <Link
-                href="/find-work"
+                href={basePath}
                 className="inline-flex items-center gap-1.5 font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
               >
                 <ArrowLeft className="size-4" />
@@ -519,7 +523,7 @@ export function JobDetailContent({
                   </div>
                   {relatedSkill ? (
                     <Link
-                      href={`/find-work?keyword=${encodeURIComponent(relatedSkill)}`}
+                      href={`${basePath}?keyword=${encodeURIComponent(relatedSkill)}`}
                       className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
                     >
                       View more
@@ -532,7 +536,7 @@ export function JobDetailContent({
                   {relatedJobs.map((item) => (
                     <li key={item.id}>
                       <Link
-                        href={`/job/${item.slug}`}
+                        href={`${embedded ? "/freelancer/jobs" : "/job"}/${item.slug}`}
                         className="group flex flex-col gap-1 py-4 transition-colors sm:flex-row sm:items-center sm:justify-between"
                       >
                         <span className="font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
@@ -683,7 +687,7 @@ export function JobDetailContent({
         onOpenChange={setIsProposalDialogOpen}
       />
 
-      <Footer />
+      {!embedded ? <Footer /> : null}
     </div>
   );
 }

@@ -11,5 +11,9 @@ export default async function NotificationsPage() {
     redirect("/client/notifications");
   }
 
+  if (activeRole === RoleName.FREELANCER) {
+    redirect("/freelancer/notifications");
+  }
+
   return <NotificationsClient headerRole="FREELANCER" />;
 }

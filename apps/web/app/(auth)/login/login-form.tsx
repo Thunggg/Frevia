@@ -17,7 +17,7 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { LoginBodySchema } from "@shared/types";
+import { LoginBodySchema, RoleName } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "@/components/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -59,13 +59,18 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;
-            if (primaryRole === "Admin") {
+            if (primaryRole === RoleName.ADMIN) {
               router.push("/admin");
+            } else if (primaryRole === RoleName.CLIENT) {
+              router.push("/client/jobs");
+            } else if (primaryRole === RoleName.FREELANCER) {
+              router.push("/freelancer/find-work");
             } else {
               router.push("/");
             }
+            router.refresh();
           } catch {
-            router.push("/");
+            router.push("/dashboard");
           }
         }
       },

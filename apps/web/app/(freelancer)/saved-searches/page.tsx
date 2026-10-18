@@ -1,8 +1,5 @@
-import savedSearchServerRequest from "@/apiRequests/saved-search.server";
-import { SavedSearchesContent } from "./saved-searches-content";
+import { redirect } from "next/navigation";
 
-export default async function SavedSearchesPage() {
-  const savedSearches = await savedSearchServerRequest.getSavedSearches();
-
-  return <SavedSearchesContent savedSearches={savedSearches ?? []} />;
+export default function SavedSearchesPage() {
+  redirect("/freelancer/saved-searches");
 }

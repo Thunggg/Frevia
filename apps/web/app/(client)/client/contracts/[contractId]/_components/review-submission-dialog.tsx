@@ -61,6 +61,7 @@ export function ReviewSubmissionDialog({
   const queryClient = useQueryClient();
   const [showChangesForm, setShowChangesForm] = useState(false);
   const [changeRequestMessage, setChangeRequestMessage] = useState("");
+  const [changeRequestDueDate, setChangeRequestDueDate] = useState("");
   const [isApproving, setIsApproving] = useState(false);
   const [isRequestingChanges, setIsRequestingChanges] = useState(false);
 
@@ -107,6 +108,17 @@ export function ReviewSubmissionDialog({
       return;
     }
 
+    let formattedDueDate: string | undefined = undefined;
+    if (changeRequestDueDate) {
+      const d = new Date(changeRequestDueDate);
+      d.setHours(23, 59, 59, 999);
+      if (d <= new Date()) {
+        toastError({ message: "Revision due date must be in the future." });
+        return;
+      }
+      formattedDueDate = d.toISOString();
+    }
+
     setIsRequestingChanges(true);
     try {
       await contractApiRequest.requestChanges(
@@ -115,6 +127,7 @@ export function ReviewSubmissionDialog({
         submission.id,
         {
           changeRequestMessage: changeRequestMessage.trim(),
+          changeRequestDueDate: formattedDueDate,
         },
       );
       toastSuccess({ message: "Revisions requested from freelancer." });
@@ -252,6 +265,26 @@ export function ReviewSubmissionDialog({
                     placeholder="Explain clearly what changes or adjustments are required before approval..."
                     className="mt-1.5 w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] resize-none leading-relaxed"
                   />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-foreground block">
+                    Revision Due Date (Optional)
+                  </label>
+                  <input
+                    type="date"
+                    min={
+                      new Date(Date.now() + 86400000)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                    value={changeRequestDueDate}
+                    onChange={(e) => setChangeRequestDueDate(e.target.value)}
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background p-2.5 text-xs text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Set an optional target deadline for the freelancer to return revised work.
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-end gap-2">

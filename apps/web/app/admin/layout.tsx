@@ -1,28 +1,24 @@
-"use client";
+import authServerRequest from "@/apiRequests/auth.server";
+import { RoleName } from "@shared/types";
+import { redirect } from "next/navigation";
+import { AdminShell } from "./components/admin-shell";
 
-import { Separator } from "@repo/ui/components/shadcn/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@repo/ui/components/shadcn/sidebar";
-import { AppSidebar } from "./components/app-sidebar";
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger />
-          <Separator orientation="vertical" className="h-4" />
-        </header>
-        <div className="p-8 max-w-7xl">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  const user = await authServerRequest.getMe();
+
+  if (!user) {
+    redirect("/login?redirect=/admin");
+  }
+
+  const hasAdminRole = user.roles.some((r) => r.name === RoleName.ADMIN);
+
+  if (!hasAdminRole) {
+    redirect("/access-denied?requiredRole=admin");
+  }
+
+  return <AdminShell>{children}</AdminShell>;
 }

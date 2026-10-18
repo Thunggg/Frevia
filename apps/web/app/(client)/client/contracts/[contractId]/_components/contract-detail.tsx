@@ -52,6 +52,7 @@ import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
   GetMilestoneListResponseType,
+  GetSharedFilesResponseType,
   GetSubmissionResponseType,
   MilestoneType,
 } from "@shared/types";
@@ -59,6 +60,8 @@ import { CreateMilestoneDialog } from "./create-milestone-dialog";
 import { EditContractSheet } from "./edit-contract-sheet";
 import { MilestoneCard } from "./milestone-card";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
+import { SharedFilesSection } from "./shared-files-section";
+import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
 
 function money(amount: number) {
@@ -81,14 +84,22 @@ function formatDate(date: string | Date | null) {
 interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialMilestones?: GetMilestoneListResponseType | null;
+  initialSharedFiles?: GetSharedFilesResponseType | null;
+  basePath?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialMilestones,
+  initialSharedFiles,
+  basePath = "/client",
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const isFreelancer = basePath === "/freelancer";
+  const [milestoneToSubmit, setMilestoneToSubmit] =
+    useState<MilestoneType | null>(null);
 
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
   const [createMilestoneOpen, setCreateMilestoneOpen] = useState(false);
@@ -98,7 +109,7 @@ export function ContractDetail({
     null,
   );
 
-  // Review submission state
+  // Review submission state (Client only)
   const [reviewOpen, setReviewOpen] = useState(false);
   const [activeReviewMilestone, setActiveReviewMilestone] =
     useState<MilestoneType | null>(null);
@@ -169,10 +180,44 @@ export function ContractDetail({
       : 0;
   const remainingPaidAmount = Math.max(0, totalContractAmount - paidAmount);
   const remainingBudget = Math.max(0, totalContractAmount - allocatedAmount);
+  const hasAnyInProgressMilestone = useMemo(
+    () => milestones.some((m: MilestoneType) => m.status === "IN_PROGRESS"),
+    [milestones],
+  );
 
   const freelancer = contract.freelancer;
   const freelancerName = freelancer?.profile?.displayName || "Freelancer";
   const avatarUrl = freelancer?.profile?.avatarUrl;
+
+  const client = contract.client;
+  const clientName = client?.profile?.displayName || "Client";
+  const clientAvatarUrl = client?.profile?.avatarUrl;
+
+  const isSignedByMe = isFreelancer
+    ? contract.signedByFreelancer
+    : contract.signedByClient;
+
+  const handleStartMilestone = async (milestone: MilestoneType) => {
+    try {
+      await contractApiRequest.progressMilestone(contract.id, milestone.id);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      toastSuccess({
+        message: `Started work on milestone "${milestone.title}"!`,
+      });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to start milestone.",
+      });
+    }
+  };
 
   // Actions
   const handleSign = async () => {
@@ -237,7 +282,7 @@ export function ContractDetail({
       });
       toastSuccess({ message: "Contract has been cancelled." });
       setConfirmCancel(false);
-      router.push("/client/contracts");
+      router.push(`${basePath}/contracts`);
     } catch (error) {
       toastError({
         message:
@@ -314,24 +359,28 @@ export function ContractDetail({
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
-  const handleMessageFreelancer = async () => {
-    if (!contract.freelancerId) {
-      router.push("/client/conversations");
+  const handleMessageCounterparty = async () => {
+    const targetUserId = isFreelancer
+      ? contract.clientId
+      : contract.freelancerId;
+
+    if (!targetUserId) {
+      router.push(`${basePath}/conversations`);
       return;
     }
 
     setIsStartingChat(true);
     try {
-      const conv = await createConversation.mutateAsync(contract.freelancerId);
-      router.push(`/client/conversations/${conv.id}`);
+      const conv = await createConversation.mutateAsync(targetUserId);
+      router.push(`${basePath}/conversations/${conv.id}`);
     } catch (error) {
       toastError({
         message:
           error instanceof Error
             ? error.message
-            : "Failed to open conversation with freelancer.",
+            : `Failed to open conversation with ${isFreelancer ? "client" : "freelancer"}.`,
       });
-      router.push("/client/conversations");
+      router.push(`${basePath}/conversations`);
     } finally {
       setIsStartingChat(false);
     }
@@ -362,17 +411,20 @@ export function ContractDetail({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 rounded-xl p-1">
-                <DropdownMenuItem
-                  onClick={() => {
-                    setMilestoneToEdit(null);
-                    setCreateMilestoneOpen(true);
-                  }}
-                  className="cursor-pointer text-xs font-medium"
-                >
-                  <Plus className="mr-2 size-3.5" />
-                  Add Milestone
-                </DropdownMenuItem>
-                {contract.status === "PENDING_SIGN" &&
+                {!isFreelancer && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setMilestoneToEdit(null);
+                      setCreateMilestoneOpen(true);
+                    }}
+                    className="cursor-pointer text-xs font-medium"
+                  >
+                    <Plus className="mr-2 size-3.5" />
+                    Add Milestone
+                  </DropdownMenuItem>
+                )}
+                {!isFreelancer &&
+                  contract.status === "PENDING_SIGN" &&
                   !contract.signedByClient && (
                     <DropdownMenuItem
                       onClick={() => setEditContractOpen(true)}
@@ -389,7 +441,7 @@ export function ContractDetail({
                   <FileText className="mr-2 size-3.5" />
                   View Full Agreement
                 </DropdownMenuItem>
-                {contract.status === "ACTIVE" && (
+                {!isFreelancer && contract.status === "ACTIVE" && (
                   <DropdownMenuItem
                     onClick={() => setConfirmComplete(true)}
                     className="cursor-pointer text-xs font-medium text-emerald-600"
@@ -427,17 +479,19 @@ export function ContractDetail({
                 </div>
                 <h2 className="text-base font-semibold">Contract Details</h2>
               </div>
-              {contract.status === "PENDING_SIGN" && !contract.signedByClient && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditContractOpen(true)}
-                  className="rounded-full text-xs gap-1.5 h-8 border-border hover:bg-accent"
-                >
-                  <FileText className="size-3.5 text-[#0069D3]" />
-                  Edit Contract
-                </Button>
-              )}
+              {!isFreelancer &&
+                contract.status === "PENDING_SIGN" &&
+                !contract.signedByClient && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditContractOpen(true)}
+                    className="rounded-full text-xs gap-1.5 h-8 border-border hover:bg-accent"
+                  >
+                    <FileText className="size-3.5 text-[#0069D3]" />
+                    Edit Contract
+                  </Button>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-5">
@@ -448,34 +502,65 @@ export function ContractDetail({
                     Job
                   </span>
                   <Link
-                    href={`/client/jobs/${contract.jobId}`}
+                    href={
+                      isFreelancer
+                        ? `/freelancer/jobs/${contract.job?.slug || contract.jobId}`
+                        : `/client/jobs/${contract.jobId}`
+                    }
                     className="text-sm font-semibold text-[#0069D3] hover:underline mt-0.5 inline-block"
                   >
                     {contract.job?.title || "View Job Posting"}
                   </Link>
                 </div>
 
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    Freelancer
-                  </span>
-                  <div
-                    onClick={() => setProfileSheetOpen(true)}
-                    className="flex items-center gap-2.5 mt-1 cursor-pointer group"
-                  >
-                    <Avatar className="size-8 border border-border">
-                      <AvatarImage src={avatarUrl || undefined} />
-                      <AvatarFallback className="text-xs font-bold">
-                        {freelancerName.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <span className="text-xs font-bold text-foreground group-hover:text-[#0069D3] transition-colors block">
-                        {freelancerName}
-                      </span>
+                {isFreelancer ? (
+                  <div>
+                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                      Client
+                    </span>
+                    <Link
+                      href={`/clients/${contract.clientId}`}
+                      className="flex items-center gap-2.5 mt-1 cursor-pointer group"
+                    >
+                      <Avatar className="size-8 border border-border">
+                        <AvatarImage src={clientAvatarUrl || undefined} />
+                        <AvatarFallback className="text-xs font-bold">
+                          {clientName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors block">
+                          {clientName}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground block">
+                          View Client Profile &rarr;
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
+                ) : (
+                  <div>
+                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                      Freelancer
+                    </span>
+                    <div
+                      onClick={() => setProfileSheetOpen(true)}
+                      className="flex items-center gap-2.5 mt-1 cursor-pointer group"
+                    >
+                      <Avatar className="size-8 border border-border">
+                        <AvatarImage src={avatarUrl || undefined} />
+                        <AvatarFallback className="text-xs font-bold">
+                          {freelancerName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <span className="text-xs font-bold text-foreground group-hover:text-[#0069D3] transition-colors block">
+                          {freelancerName}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div>
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
@@ -572,17 +657,19 @@ export function ContractDetail({
                 <span className="text-xs text-muted-foreground font-medium">
                   {milestones.length} milestone{milestones.length !== 1 ? "s" : ""}
                 </span>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setMilestoneToEdit(null);
-                    setCreateMilestoneOpen(true);
-                  }}
-                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-3.5 shadow-xs"
-                >
-                  <Plus className="mr-1 size-3.5" />
-                  Add Milestone
-                </Button>
+                {!isFreelancer && (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setMilestoneToEdit(null);
+                      setCreateMilestoneOpen(true);
+                    }}
+                    className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-3.5 shadow-xs"
+                  >
+                    <Plus className="mr-1 size-3.5" />
+                    Add Milestone
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -596,19 +683,23 @@ export function ContractDetail({
                   No milestones defined yet
                 </p>
                 <p className="mt-1 text-[11px] text-muted-foreground max-w-xs">
-                  Add phases to break down work and safely release payments.
+                  {isFreelancer
+                    ? "The client has not created any milestones for this contract yet."
+                    : "Add phases to break down work and safely release payments."}
                 </p>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setMilestoneToEdit(null);
-                    setCreateMilestoneOpen(true);
-                  }}
-                  className="mt-3 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium"
-                >
-                  <Plus className="mr-1 size-3" />
-                  Add First Milestone
-                </Button>
+                {!isFreelancer && (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setMilestoneToEdit(null);
+                      setCreateMilestoneOpen(true);
+                    }}
+                    className="mt-3 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium"
+                  >
+                    <Plus className="mr-1 size-3" />
+                    Add First Milestone
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -618,18 +709,49 @@ export function ContractDetail({
                     contractId={contract.id}
                     milestone={milestone}
                     index={index}
-                    onEdit={(m) => {
-                      setMilestoneToEdit(m);
-                      setCreateMilestoneOpen(true);
-                    }}
-                    onDelete={(m) => {
-                      setMilestoneToDelete(m);
-                    }}
-                    onReview={(m, sub) => {
-                      setActiveReviewMilestone(m);
-                      setActiveSubmission(sub);
-                      setReviewOpen(true);
-                    }}
+                    isFreelancer={isFreelancer}
+                    hasOtherInProgressMilestone={
+                      hasAnyInProgressMilestone &&
+                      milestone.status !== "IN_PROGRESS"
+                    }
+                    onEdit={
+                      !isFreelancer
+                        ? (m) => {
+                            setMilestoneToEdit(m);
+                            setCreateMilestoneOpen(true);
+                          }
+                        : undefined
+                    }
+                    onDelete={
+                      !isFreelancer
+                        ? (m) => {
+                            setMilestoneToDelete(m);
+                          }
+                        : undefined
+                    }
+                    onReview={
+                      !isFreelancer
+                        ? (m, sub) => {
+                            setActiveReviewMilestone(m);
+                            setActiveSubmission(sub);
+                            setReviewOpen(true);
+                          }
+                        : undefined
+                    }
+                    onSubmitWork={
+                      isFreelancer
+                        ? (m) => {
+                            setMilestoneToSubmit(m);
+                          }
+                        : undefined
+                    }
+                    onStartWork={
+                      isFreelancer
+                        ? (m) => {
+                            void handleStartMilestone(m);
+                          }
+                        : undefined
+                    }
                   />
                 ))}
               </div>
@@ -674,7 +796,7 @@ export function ContractDetail({
             {/* Action Buttons */}
             <div className="mt-6 space-y-2.5">
               {contract.status === "PENDING_SIGN" ? (
-                !contract.signedByClient ? (
+                !isSignedByMe ? (
                   <Button
                     onClick={() => setConfirmSign(true)}
                     className="w-full rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold py-2.5 shadow-xs"
@@ -688,10 +810,12 @@ export function ContractDetail({
                     className="w-full rounded-xl bg-[#F1F0F5] border border-border text-muted-foreground text-xs font-semibold py-2.5 opacity-80"
                   >
                     <Clock className="mr-1.5 size-4" />
-                    Awaiting Freelancer Signature
+                    {isFreelancer
+                      ? "Awaiting Client Signature"
+                      : "Awaiting Freelancer Signature"}
                   </Button>
                 )
-              ) : (
+              ) : !isFreelancer ? (
                 <Button
                   onClick={() => {
                     setMilestoneToEdit(null);
@@ -701,13 +825,13 @@ export function ContractDetail({
                 >
                   Make a Payment / Add Milestone
                 </Button>
-              )}
+              ) : null}
 
               <Button
                 type="button"
                 variant="outline"
                 disabled={isStartingChat}
-                onClick={() => void handleMessageFreelancer()}
+                onClick={() => void handleMessageCounterparty()}
                 className="w-full rounded-xl border-border text-foreground hover:bg-muted text-xs font-semibold py-2.5 cursor-pointer flex items-center justify-center gap-1.5"
               >
                 {isStartingChat ? (
@@ -715,12 +839,26 @@ export function ContractDetail({
                 ) : (
                   <MessageSquare className="size-3.5 text-muted-foreground" />
                 )}
-                <span>Message Freelancer</span>
+                <span>Message {isFreelancer ? "Client" : "Freelancer"}</span>
               </Button>
             </div>
           </div>
 
-          {/* Card 2: How milestones work? */}
+          {/* Card 2: Shared Project Files */}
+          <SharedFilesSection
+            contractId={contract.id}
+            initialFiles={initialSharedFiles}
+            currentUserId={
+              isFreelancer ? contract.freelancerId : contract.clientId
+            }
+            clientId={contract.clientId}
+            freelancerId={contract.freelancerId}
+            clientName={clientName}
+            freelancerName={freelancerName}
+            isFreelancer={isFreelancer}
+          />
+
+          {/* Card 3: How milestones work? */}
           <div className="p-6 space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex size-7 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3]">
@@ -732,9 +870,9 @@ export function ContractDetail({
             </div>
 
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Funds are kept secure and released only when you approve each
-              milestone. This ensures both you and the freelancer are protected
-              throughout the project.
+              {isFreelancer
+                ? "Funds are securely deposited in escrow for each active milestone and released automatically once the client reviews and approves your submission."
+                : "Funds are kept secure and released only when you approve each milestone. This ensures both you and the freelancer are protected throughout the project."}
             </p>
 
             <div className="pt-1">
@@ -750,27 +888,31 @@ export function ContractDetail({
       </div>
 
       {/* Sheet: Create or Edit Milestone */}
-      <CreateMilestoneDialog
-        open={createMilestoneOpen}
-        onOpenChange={(open) => {
-          setCreateMilestoneOpen(open);
-          if (!open) setMilestoneToEdit(null);
-        }}
-        contractId={contract.id}
-        maxAllowedAmount={remainingBudget}
-        milestoneToEdit={milestoneToEdit}
-      />
+      {!isFreelancer && (
+        <CreateMilestoneDialog
+          open={createMilestoneOpen}
+          onOpenChange={(open) => {
+            setCreateMilestoneOpen(open);
+            if (!open) setMilestoneToEdit(null);
+          }}
+          contractId={contract.id}
+          maxAllowedAmount={remainingBudget}
+          milestoneToEdit={milestoneToEdit}
+        />
+      )}
 
       {/* Sheet: Edit Contract Agreement */}
-      <EditContractSheet
-        open={editContractOpen}
-        onOpenChange={setEditContractOpen}
-        contract={contract}
-        minAllowedAmount={allocatedAmount}
-      />
+      {!isFreelancer && (
+        <EditContractSheet
+          open={editContractOpen}
+          onOpenChange={setEditContractOpen}
+          contract={contract}
+          minAllowedAmount={allocatedAmount}
+        />
+      )}
 
       {/* Sheet: Review Submission */}
-      {activeReviewMilestone && (
+      {!isFreelancer && activeReviewMilestone && (
         <ReviewSubmissionDialog
           open={reviewOpen}
           onOpenChange={setReviewOpen}
@@ -779,6 +921,18 @@ export function ContractDetail({
           milestoneTitle={activeReviewMilestone.title}
           milestoneAmount={Number(activeReviewMilestone.amount)}
           submission={activeSubmission}
+        />
+      )}
+
+      {/* Dialog: Submit Milestone Deliverables (Freelancer) */}
+      {isFreelancer && (
+        <SubmitMilestoneDialog
+          contractId={contract.id}
+          milestone={milestoneToSubmit}
+          open={!!milestoneToSubmit}
+          onOpenChange={(open) => {
+            if (!open) setMilestoneToSubmit(null);
+          }}
         />
       )}
 
@@ -847,7 +1001,7 @@ export function ContractDetail({
               <span className="font-semibold text-foreground">
                 {money(totalContractAmount)}
               </span>{" "}
-              for this project with {freelancerName}.
+              for this project with {isFreelancer ? clientName : freelancerName}.
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -994,17 +1148,19 @@ export function ContractDetail({
       </AlertDialog>
 
       {/* Embedded Freelancer Profile Sheet */}
-      <FreelancerProfileSheet
-        open={profileSheetOpen}
-        onOpenChange={setProfileSheetOpen}
-        profileId={freelancer?.id ?? null}
-        initialData={{
-          displayName: freelancerName,
-          avatarUrl: avatarUrl ?? null,
-          title: null,
-          freelancerId: freelancer?.id,
-        }}
-      />
+      {!isFreelancer && (
+        <FreelancerProfileSheet
+          open={profileSheetOpen}
+          onOpenChange={setProfileSheetOpen}
+          profileId={freelancer?.id ?? null}
+          initialData={{
+            displayName: freelancerName,
+            avatarUrl: avatarUrl ?? null,
+            title: null,
+            freelancerId: freelancer?.id,
+          }}
+        />
+      )}
     </div>
   );
 }

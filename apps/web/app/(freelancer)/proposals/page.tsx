@@ -1,5 +1,4 @@
-import proposalServerRequest from "@/apiRequests/proposal.server";
-import { MyProposalsContent } from "./proposals-content";
+import { redirect } from "next/navigation";
 
 type ProposalsPageProps = {
   searchParams: Promise<{ page?: string; status?: string }>;
@@ -9,20 +8,9 @@ export default async function ProposalsPage({
   searchParams,
 }: ProposalsPageProps) {
   const params = await searchParams;
-  const candidatePage = Number(params.page);
-  const page =
-    Number.isInteger(candidatePage) && candidatePage > 0 ? candidatePage : 1;
-  const status = params.status as
-    | "DRAFT"
-    | "PENDING"
-    | "ACCEPTED"
-    | "REJECTED"
-    | "WITHDRAWN"
-    | undefined;
-  const proposals = await proposalServerRequest.getMyProposals({
-    page,
-    limit: 10,
-    status,
-  });
-  return <MyProposalsContent result={proposals} />;
+  const queryParams = new URLSearchParams();
+  if (params.page) queryParams.set("page", params.page);
+  if (params.status) queryParams.set("status", params.status);
+  const qs = queryParams.toString();
+  redirect(qs ? `/freelancer/proposals?${qs}` : "/freelancer/proposals");
 }

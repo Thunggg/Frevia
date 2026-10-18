@@ -58,6 +58,8 @@ type FindWorkContentProps = {
   initialSort?: string;
   initialBookmarkedSlugs?: string[];
   initialSavedSearches?: SavedSearchType[];
+  embedded?: boolean;
+  basePath?: string;
 };
 
 const BUDGET_LABELS: Record<string, string> = {
@@ -150,6 +152,8 @@ export function FindWorkContent({
   initialSort = "newest",
   initialBookmarkedSlugs = [],
   initialSavedSearches = [],
+  embedded = false,
+  basePath,
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -165,6 +169,10 @@ export function FindWorkContent({
   const [savedSearches, setSavedSearches] = useState(
     initialSavedSearches ?? [],
   );
+
+  const effectiveBasePath =
+    basePath ?? (embedded ? "/freelancer/find-work" : "/find-work");
+  const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
 
   useEffect(() => {
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
@@ -207,7 +215,7 @@ export function FindWorkContent({
 
     const query = params.toString();
     startTransition(() => {
-      router.push(query ? `/find-work?${query}` : "/find-work");
+      router.push(query ? `${effectiveBasePath}?${query}` : effectiveBasePath);
     });
   };
 
@@ -228,7 +236,7 @@ export function FindWorkContent({
   const clearAllFilters = () => {
     setSearchInput("");
     startTransition(() => {
-      router.push("/find-work");
+      router.push(effectiveBasePath);
     });
   };
 
@@ -253,7 +261,7 @@ export function FindWorkContent({
 
     const query = params.toString();
     startTransition(() => {
-      router.push(query ? `/find-work?${query}` : "/find-work");
+      router.push(query ? `${effectiveBasePath}?${query}` : effectiveBasePath);
     });
   };
 
@@ -393,43 +401,82 @@ export function FindWorkContent({
   );
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={role} />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role={role} />}
 
-      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+      {!embedded && (
+        <BannerSlot
+          position="GLOBAL_HEADER"
+          className="border-b border-border/50 bg-background"
+        />
+      )}
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-            <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
-              </Link>
-              <span className="text-muted-foreground/30">/</span>
-              <span className="text-foreground font-medium">Find Work</span>
-            </nav>
+        {embedded ? (
+          <section className="border-b border-border bg-background">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
+                    Find Work
+                  </h1>
+                  <p className="mt-1 text-xs font-normal text-muted-foreground">
+                    Browse open projects and apply to work that fits your skills.
+                  </p>
+                </div>
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                  Find Work
-                </h1>
-                <p className="mt-1 text-xs font-normal text-muted-foreground">
-                  Browse open projects and apply to work that fits your skills.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
-                  {resultsLabel}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
+                    {resultsLabel}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+            <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+              <nav className="text-sm text-foreground/60">
+                <Link
+                  href="/"
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
+                  Home
+                </Link>
+                <span className="text-muted-foreground/30">/</span>
+                <span className="text-foreground font-medium">Find Work</span>
+              </nav>
+
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
+                    Find Work
+                  </h1>
+                  <p className="mt-1 text-xs font-normal text-muted-foreground">
+                    Browse open projects and apply to work that fits your skills.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
+                    {resultsLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Filter & Search Bar */}
-        <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 py-3.5">
+        <div
+          className={`sticky ${
+            embedded ? "top-0" : "top-16"
+          } z-30 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 py-3.5`}
+        >
           <div className="mx-auto max-w-7xl space-y-3 px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               {/* Keyword search bar */}
@@ -658,7 +705,7 @@ export function FindWorkContent({
                       {/* Job Title & Budget */}
                       <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                         <Link
-                          href={`/job/${job.slug}`}
+                          href={`${jobBaseUrl}/${job.slug}`}
                           className="text-base sm:text-lg font-bold text-foreground hover:text-[#4fae2e] transition-colors line-clamp-1"
                         >
                           {job.title}
@@ -700,7 +747,7 @@ export function FindWorkContent({
                       </div>
 
                       <Link
-                        href={`/job/${job.slug}`}
+                        href={`${jobBaseUrl}/${job.slug}`}
                         className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
                       >
                         <span>View details</span>
@@ -744,7 +791,7 @@ export function FindWorkContent({
         </div>
       </main>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }
