@@ -242,6 +242,7 @@ model FreelancerProfile {
   education      String[] @default([])
   certifications String[] @default([])
   languages      String[] @default([])
+  experience     String[] @default([])
 
   // CV
   cvUrl      String? @db.VarChar(500)

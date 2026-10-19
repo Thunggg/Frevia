@@ -29,6 +29,7 @@ export const FreelancerProfileDetailSchema = z.object({
       education: ProfileStringListSchema.nullable(),
       certifications: ProfileStringListSchema.nullable(),
       languages: ProfileStringListSchema.nullable(),
+      experience: ProfileStringListSchema.nullable(),
       cvFileName: z.string().min(1).nullable(),
       idVerified: z.boolean(),
       createdAt: DateTimeSchema,
@@ -58,6 +59,7 @@ export const UpdateFreelancerProfileSchema = z
     education: ProfileStringListSchema.nullable().optional(),
     certifications: ProfileStringListSchema.nullable().optional(),
     languages: ProfileStringListSchema.nullable().optional(),
+    experience: ProfileStringListSchema.nullable().optional(),
   })
   .strict();
 
