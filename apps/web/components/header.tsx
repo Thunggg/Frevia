@@ -60,15 +60,12 @@ type NavLink = {
   excludePaths?: string[];
 };
 
-const roleConfig: Record<
-  UserRole,
-  { name: string; links: NavLink[] }
-> = {
+const roleConfig: Record<UserRole, { name: string; links: NavLink[] }> = {
   GUEST: {
     name: "Guest",
     links: [
       { href: "/find-work", label: "Find Work" },
-      { href: "/client/jobs", label: "Hire Talent" },
+      { href: "/experts", label: "Hire Talent" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -80,6 +77,7 @@ const roleConfig: Record<
         label: "My Jobs",
         excludePaths: ["/client/jobs/new"],
       },
+      { href: "/experts", label: "Find Experts" },
       { href: "/forum", label: "Forum" },
     ],
   },
@@ -117,7 +115,7 @@ function Logo() {
         frevia
       </span>
     </Link>
-  )
+  );
 }
 
 function HeaderNavigation({
@@ -129,9 +127,7 @@ function HeaderNavigation({
   const links = roleConfig[role]?.links ?? [];
 
   return (
-    <div
-      className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}
-    >
+    <div className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}>
       {links.map((link) => {
         const isActive = isNavLinkActive(link, pathname);
         return (
@@ -139,11 +135,13 @@ function HeaderNavigation({
             key={link.label}
             href={link.href}
             onClick={onNavigate}
-            className={`rounded-full text-sm font-medium transition-all duration-150 ${mobile ? "block px-4 py-2" : "px-3.5 py-1.5"
-              } ${isActive
+            className={`rounded-full text-sm font-medium transition-all duration-150 ${
+              mobile ? "block px-4 py-2" : "px-3.5 py-1.5"
+            } ${
+              isActive
                 ? "bg-slate-100 text-gray-950 font-semibold dark:bg-zinc-800 dark:text-white"
                 : "text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
-              }`}
+            }`}
           >
             {link.label}
           </Link>
@@ -151,8 +149,9 @@ function HeaderNavigation({
       })}
       {role === "GUEST" && (
         <ContactDialog
-          triggerClassName={`rounded-full text-sm font-medium transition-all duration-150 ${mobile ? "block w-full text-left px-4 py-2" : "px-3.5 py-1.5"
-            } text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white`}
+          triggerClassName={`rounded-full text-sm font-medium transition-all duration-150 ${
+            mobile ? "block w-full text-left px-4 py-2" : "px-3.5 py-1.5"
+          } text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white`}
         />
       )}
     </div>
@@ -252,7 +251,9 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
           : `${targetRoleLabel} role added`,
       });
       router.push(
-        targetRole === RoleName.CLIENT ? "/client/jobs" : "/freelancer/find-work",
+        targetRole === RoleName.CLIENT
+          ? "/client/jobs"
+          : "/freelancer/find-work",
       );
       router.refresh();
       return true;
@@ -367,7 +368,9 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         ) : null}
         <DropdownMenuItem asChild>
           <Link
-            href={role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"}
+            href={
+              role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+            }
             className="cursor-pointer"
           >
             <UserRound className="size-4 text-muted-foreground" />
@@ -401,7 +404,10 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/freelancer/saved-searches" className="cursor-pointer">
+              <Link
+                href="/freelancer/saved-searches"
+                className="cursor-pointer"
+              >
                 <Search className="size-4 text-muted-foreground" />
                 Saved searches
               </Link>
@@ -546,7 +552,9 @@ function MobileProfileNavigation({
         </Link>
       ) : null}
       <Link
-        href={role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"}
+        href={
+          role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+        }
         onClick={onNavigate}
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
       >
@@ -600,7 +608,11 @@ export function Header({ role }: HeaderProps) {
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
           >
-            {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {isMenuOpen ? (
+              <X className="size-5" />
+            ) : (
+              <Menu className="size-5" />
+            )}
           </button>
         </div>
       </div>
@@ -613,7 +625,9 @@ export function Header({ role }: HeaderProps) {
           {role === "GUEST" ? (
             <div className="flex flex-col gap-2 border-t border-border/50 pt-3 dark:border-white/[0.08]">
               <div className="flex items-center justify-between px-1">
-                <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  Theme
+                </span>
                 <ThemeToggle />
               </div>
               <Button
@@ -661,4 +675,3 @@ export function Header({ role }: HeaderProps) {
     </header>
   );
 }
-

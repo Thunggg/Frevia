@@ -328,12 +328,12 @@ export function AccountProfileClient({
     event.preventDefault();
     setPending("company");
     try {
-      await accountProfileApi.updateClientProfile({
+      const response = await accountProfileApi.updateClientProfile({
         companyName,
         companyDescription,
         website,
       });
-      toastSuccess({ message: "Company profile updated." });
+      toastSuccess({ message: response.data.message });
     } catch (error) {
       toastError({ message: errorMessage(error) });
     } finally {
@@ -422,8 +422,9 @@ export function AccountProfileClient({
                   Profile & trust settings
                 </h1>
                 <p className="mt-1 text-xs font-normal text-muted-foreground">
-                  Manage your identity verification documents and public social
-                  connections.
+                  {headerRole === "FREELANCER"
+                    ? "Manage your freelancer profile, identity verification and public social connections."
+                    : "Manage your company profile and public social connections."}
                 </p>
               </div>
               {publicProfileHref ? (
@@ -435,7 +436,9 @@ export function AccountProfileClient({
                 >
                   <Link href={publicProfileHref}>
                     <Eye className="mr-2 size-4" />
-                    View public profile
+                    {headerRole === "FREELANCER"
+                      ? "View and edit freelancer profile"
+                      : "View public profile"}
                   </Link>
                 </Button>
               ) : null}

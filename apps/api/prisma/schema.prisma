@@ -88,10 +88,12 @@ model User {
   profile       Profile?
 
   // --- Verification / profile visits ---
-  idVerificationDocuments IdVerificationDocument[] @relation("IdVerificationUser")
-  idVerificationsReviewed IdVerificationDocument[] @relation("IdVerificationAdmin")
-  profileVisitsMade       ProfileVisitLog[]        @relation("ProfileVisitViewer")
-  profileVisitsReceived   ProfileVisitLog[]        @relation("ProfileVisitTarget")
+  idVerificationDocuments  IdVerificationDocument[] @relation("IdVerificationUser")
+  idVerificationsReviewed  IdVerificationDocument[] @relation("IdVerificationAdmin")
+  profileRevisions         ProfileRevision[]        @relation("ProfileRevisionUser")
+  profileRevisionsReviewed ProfileRevision[]        @relation("ProfileRevisionAdmin")
+  profileVisitsMade        ProfileVisitLog[]        @relation("ProfileVisitViewer")
+  profileVisitsReceived    ProfileVisitLog[]        @relation("ProfileVisitTarget")
 
   // --- Jobs ---
   jobsPosted         Job[]
@@ -230,7 +232,9 @@ model Profile {
   user              User               @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancerProfile FreelancerProfile?
   clientProfile     ClientProfile?
+  expertProfile     Expert?
   socialLinks       SocialLink[]
+  revisions         ProfileRevision[]
 }
 
 model FreelancerProfile {
@@ -275,6 +279,48 @@ model ClientProfile {
   updatedAt          DateTime @updatedAt
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model Expert {
+  id                Int      @id @default(autoincrement())
+  profileId         Int      @unique
+  title             String?  @db.VarChar(255)
+  expertise         String[] @default([])
+  yearsOfExperience Int      @default(0)
+  education         String[] @default([])
+  certifications    String[] @default([])
+  website           String?  @db.VarChar(500)
+  isActive          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([isActive])
+}
+
+model ProfileRevision {
+  id              Int                 @id @default(autoincrement())
+  userId          Int
+  profileId       Int
+  profileType     ProfileRevisionType
+  status          RevisionStatus      @default(PENDING)
+  currentData     Json
+  proposedData    Json
+  profileStrength Int
+  adminId         Int?
+  reviewNotes     String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  reviewedAt      DateTime?
+
+  user    User    @relation("ProfileRevisionUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  admin   User?   @relation("ProfileRevisionAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([userId, profileType, status])
+  @@index([status, createdAt])
+  @@index([profileId])
 }
 
 model PortfolioItem {
@@ -1243,6 +1289,12 @@ enum RevisionStatus {
   APPROVED
   REJECTED
   COMPLETED
+}
+
+enum ProfileRevisionType {
+  CLIENT
+  FREELANCER
+  EXPERT
 }
 
 enum InvoiceStatus {

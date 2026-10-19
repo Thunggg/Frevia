@@ -5,6 +5,7 @@ import {
   type UpdateFreelancerProfileType,
 } from '@shared/types';
 import { ProfileRepository } from './profile.repo';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import {
   FreelancerProfileNotFoundException,
   FreelancerSkillNotFoundException,
@@ -15,7 +16,10 @@ import {
 
 @Injectable()
 export class ProfileService {
-  constructor(private readonly profileRepository: ProfileRepository) {}
+  constructor(
+    private readonly profileRepository: ProfileRepository,
+    private readonly profileRevisionService: ProfileRevisionService,
+  ) {}
 
   async viewProfile(profileId: number) {
     const profile =
@@ -51,7 +55,7 @@ export class ProfileService {
       throw ProfileForbiddenException();
     }
 
-    return this.profileRepository.updateFreelancerProfile(profileId, {
+    const update = {
       displayName: dto.displayName,
       title: dto.title,
       bio: dto.bio,
@@ -59,7 +63,28 @@ export class ProfileService {
       education: dto.education,
       certifications: dto.certifications,
       languages: dto.languages,
-    });
+    };
+
+    if (
+      this.profileRevisionService.requiresManualReview(
+        profile.profileCompletionPercent,
+      )
+    ) {
+      return this.profileRevisionService.submitFreelancer(
+        currentUserId,
+        profile.id,
+        update,
+        profile.profileCompletionPercent,
+      );
+    }
+
+    const updated = await this.profileRepository.updateFreelancerProfile(
+      profile.id,
+      update,
+    );
+    return this.profileRevisionService.directUpdateResult(
+      updated?.profileCompletionPercent ?? profile.profileCompletionPercent,
+    );
   }
 
   async getSkills(profileId: number) {

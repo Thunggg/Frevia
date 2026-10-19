@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AvailabilityStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { calculateFreelancerProfileStrength } from '../../shared/utils/profile-strength';
 
 @Injectable()
 export class ProfileRepository {
@@ -40,6 +41,23 @@ export class ProfileRepository {
     },
   ) {
     return this.prisma.$transaction(async (tx) => {
+      const freelancerProfile = await tx.freelancerProfile.findUnique({
+        where: { profileId },
+        select: {
+          _count: {
+            select: {
+              skills: true,
+              portfolioItems: { where: { deletedAt: null } },
+            },
+          },
+        },
+      });
+      const profileCompletionPercent = calculateFreelancerProfileStrength({
+        ...data,
+        skillCount: freelancerProfile?._count.skills ?? 0,
+        portfolioCount: freelancerProfile?._count.portfolioItems ?? 0,
+      });
+
       // 1. Update Profile fields
       await tx.profile.update({
         where: { id: profileId },
@@ -47,6 +65,7 @@ export class ProfileRepository {
           displayName: data.displayName,
           bio: data.bio ?? null,
           availabilityStatus: data.availabilityStatus,
+          profileCompletionPercent,
         },
       });
 

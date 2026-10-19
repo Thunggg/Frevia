@@ -638,6 +638,13 @@ export class AuthService {
       });
     }
 
+    if (user.isBanned) {
+      this.logger.warn(
+        `Banned user attempted to login via Google: ${data.email}`,
+      );
+      throw UserBannedException();
+    }
+
     const primaryRole = user.userRoles[0]?.role;
     if (!primaryRole) {
       throw RoleNotFoundException();

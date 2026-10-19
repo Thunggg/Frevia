@@ -152,7 +152,12 @@ export const GetMeProfileSchema = z.object({
 });
 
 export const GetMeRoleSchema = z.object({
-  name: z.enum([RoleName.FREELANCER, RoleName.CLIENT, RoleName.ADMIN]),
+  name: z.enum([
+    RoleName.FREELANCER,
+    RoleName.CLIENT,
+    RoleName.ADMIN,
+    RoleName.EXPERT,
+  ]),
   isPrimary: z.boolean(),
 });
 
@@ -312,6 +317,19 @@ export const AdminUserFreelancerProfileSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
+export const AdminUserExpertProfileSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  expertise: z.array(z.string()).default([]),
+  yearsOfExperience: z.number().int().min(0).nullable().optional(),
+  education: z.array(z.string()).default([]),
+  certifications: z.array(z.string()).default([]),
+  website: z.string().nullable().optional(),
+  isActive: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
 export const AdminUserPermissionItemSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -346,6 +364,7 @@ export const AdminUserDetailResponseSchema = z.object({
   stats: AdminUserStatsSchema,
   clientProfile: AdminUserClientProfileSchema.nullable().optional(),
   freelancerProfile: AdminUserFreelancerProfileSchema.nullable().optional(),
+  expertProfile: AdminUserExpertProfileSchema.nullable().optional(),
   customRoleProfiles: z.array(AdminUserCustomRoleProfileSchema).default([]),
 });
 
@@ -359,6 +378,9 @@ export type AdminUserClientProfileType = z.infer<
 >;
 export type AdminUserFreelancerProfileType = z.infer<
   typeof AdminUserFreelancerProfileSchema
+>;
+export type AdminUserExpertProfileType = z.infer<
+  typeof AdminUserExpertProfileSchema
 >;
 export type AdminUserFreelancerSkillType = z.infer<
   typeof AdminUserFreelancerSkillSchema
