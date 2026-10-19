@@ -230,6 +230,7 @@ model Profile {
   user              User               @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   freelancerProfile FreelancerProfile?
   clientProfile     ClientProfile?
+  expertProfile     Expert?
   socialLinks       SocialLink[]
 }
 
@@ -273,6 +274,18 @@ model ClientProfile {
   website            String?  @db.VarChar(255)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+}
+
+model Expert {
+  id                Int      @id @default(autoincrement())
+  profileId         Int      @unique
+  yearsOfExperience Int      @default(0)
+  certifications    String[] @default([])
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 }

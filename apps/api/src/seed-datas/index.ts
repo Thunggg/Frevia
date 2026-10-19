@@ -42,6 +42,10 @@ const DEFAULT_EMAIL_AND_PASSWORD: Record<
     email: requireSeedCredential('SEED_CLIENT_EMAIL'),
     password: requireSeedCredential('SEED_CLIENT_PASSWORD'),
   },
+  [RoleName.EXPERT]: {
+    email: requireSeedCredential('SEED_EXPERT_EMAIL'),
+    password: requireSeedCredential('SEED_EXPERT_PASSWORD'),
+  },
 };
 
 async function createAccountRole({
@@ -148,6 +152,7 @@ async function main() {
       { name: RoleName.ADMIN, description: 'Administrator role' },
       { name: RoleName.FREELANCER, description: 'Seller role' },
       { name: RoleName.CLIENT, description: 'Client role' },
+      { name: RoleName.EXPERT, description: 'Expert role' },
     ],
     skipDuplicates: true,
   });
@@ -166,6 +171,11 @@ async function main() {
   await createAccountRole({
     email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.CLIENT].email,
     role: RoleName.CLIENT,
+  });
+
+  await createAccountRole({
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.EXPERT].email,
+    role: RoleName.EXPERT,
   });
 }
 

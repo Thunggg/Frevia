@@ -152,7 +152,12 @@ export const GetMeProfileSchema = z.object({
 });
 
 export const GetMeRoleSchema = z.object({
-  name: z.enum([RoleName.FREELANCER, RoleName.CLIENT, RoleName.ADMIN]),
+  name: z.enum([
+    RoleName.FREELANCER,
+    RoleName.CLIENT,
+    RoleName.ADMIN,
+    RoleName.EXPERT,
+  ]),
   isPrimary: z.boolean(),
 });
 
