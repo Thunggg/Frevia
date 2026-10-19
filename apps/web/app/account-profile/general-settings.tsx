@@ -1,6 +1,7 @@
 "use client";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
+import { profileApiRequest } from "@/apiRequests/profile";
 import { ApiFail } from "@/lib/http";
 import {
   Avatar,
@@ -15,6 +16,7 @@ import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
   ChangePasswordSchema,
+  RoleName,
   UpdateGeneralProfileSchema,
   type GeneralProfileType,
 } from "@shared/types";
@@ -25,11 +27,13 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  FileText,
   Loader2,
   LockKeyhole,
   RefreshCw,
   Save,
   ShieldCheck,
+  Upload,
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -44,6 +48,7 @@ import {
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_CV_SIZE = 10 * 1024 * 1024;
 type FieldErrors = Record<string, string>;
 
 function messageFrom(error: unknown) {
@@ -121,10 +126,13 @@ export function GeneralSettings() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cvInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
+  const [cvFileName, setCvFileName] = useState<string | null>(null);
+  const [cvError, setCvError] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -153,6 +161,19 @@ export function GeneralSettings() {
       setProfile(response.data);
       setDisplayName(response.data.displayName ?? "");
       setBio(response.data.bio ?? "");
+      const isFreelancer = response.data.roles.some(
+        (role) => role.name === RoleName.FREELANCER,
+      );
+      if (isFreelancer) {
+        try {
+          const detail = await profileApiRequest.getProfileDetail(
+            response.data.id,
+          );
+          setCvFileName(detail.data.freelancerProfile?.cvFileName ?? null);
+        } catch {
+          setCvFileName(null);
+        }
+      }
     } catch (error) {
       setLoadError(messageFrom(error));
     } finally {
@@ -162,9 +183,41 @@ export function GeneralSettings() {
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
+  const isFreelancer =
+    profile?.roles.some((role) => role.name === RoleName.FREELANCER) ?? false;
   const profileChanged =
     displayName !== (profile?.displayName ?? "") ||
     bio !== (profile?.bio ?? "");
+
+  const chooseCvFile = (file: File | null) => {
+    setCvError(null);
+    if (!file) {
+      if (cvInputRef.current) cvInputRef.current.value = "";
+      return;
+    }
+    if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
+      setCvError("Choose a PDF file no larger than 10 MB.");
+      if (cvInputRef.current) cvInputRef.current.value = "";
+      return;
+    }
+    void uploadCv(file);
+  };
+
+  const uploadCv = async (file: File) => {
+    if (!profile) return;
+    setPending("cv");
+    try {
+      const response = await profileApiRequest.uploadCv(profile.id, file);
+      setCvFileName(response.data.cvFileName);
+      if (cvInputRef.current) cvInputRef.current.value = "";
+      toastSuccess({ message: "CV uploaded successfully." });
+    } catch (error) {
+      setCvError(messageFrom(error));
+      toastError({ message: messageFrom(error) });
+    } finally {
+      setPending(null);
+    }
+  };
 
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
@@ -459,6 +512,63 @@ export function GeneralSettings() {
             </Button>
           </form>
         </section>
+
+        {profile && isFreelancer ? (
+          <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+            <div className="flex items-center gap-2">
+              <FileText className="size-5 text-[#4fae2e]" />
+              <h2 className="text-lg font-semibold text-foreground">
+                Curriculum vitae
+              </h2>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              PDF only, up to 10 MB.
+            </p>
+            {cvFileName ? (
+              <a
+                className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
+                href={`/api/backend/profiles/${profile.id}/cv/file`}
+              >
+                <FileText className="size-4 shrink-0" />
+                <span className="min-w-0 truncate">{cvFileName}</span>
+              </a>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Upload a CV so it is ready when you need it.
+              </p>
+            )}
+            <input
+              ref={cvInputRef}
+              id="profile-cv"
+              className="sr-only"
+              type="file"
+              accept="application/pdf,.pdf"
+              disabled={busy}
+              onChange={(event) =>
+                chooseCvFile(event.target.files?.[0] ?? null)
+              }
+            />
+            <Button
+              type="button"
+              className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+              disabled={busy}
+              onClick={() => cvInputRef.current?.click()}
+            >
+              {pending === "cv" ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Upload />
+              )}
+              {cvFileName ? "Replace CV" : "Upload CV"}
+            </Button>
+            <p
+              id="profile-cv-help"
+              className={`mt-2 text-xs ${cvError ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {cvError ?? "Available to clients when you apply to a job."}
+            </p>
+          </section>
+        ) : null}
       </div>
 
       <div className="space-y-5">

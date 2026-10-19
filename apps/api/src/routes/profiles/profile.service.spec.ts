@@ -1,5 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { RoleName } from '@shared/types';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { ProfileRepository } from './profile.repo';
 import { ProfileService } from './profile.service';
 
@@ -24,6 +25,7 @@ describe('ProfileService', () => {
   };
   const service = new ProfileService(
     repository as unknown as ProfileRepository,
+    {} as CloudinaryService,
   );
 
   beforeEach(() => jest.clearAllMocks());

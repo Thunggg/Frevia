@@ -7,9 +7,28 @@ export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
+    const byId = await this.prisma.profile.findFirst({
+      where: {
+        id: profileId,
+        user: {
+          deletedAt: null,
+        },
+      },
+      include: {
+        freelancerProfile: true,
+        user: {
+          include: {
+            userRoles: {
+              include: { role: true },
+            },
+          },
+        },
+      },
+    });
+    if (byId) return byId;
     return this.prisma.profile.findFirst({
       where: {
-        OR: [{ id: profileId }, { userId: profileId }],
+        userId: profileId,
         user: {
           deletedAt: null,
         },
@@ -37,6 +56,7 @@ export class ProfileRepository {
       education?: string[] | null;
       certifications?: string[] | null;
       languages?: string[] | null;
+      experience?: string[] | null;
     },
   ) {
     return this.prisma.$transaction(async (tx) => {
@@ -60,6 +80,7 @@ export class ProfileRepository {
           education: data.education ?? [],
           certifications: data.certifications ?? [],
           languages: data.languages ?? [],
+          experience: data.experience ?? [],
         },
         create: {
           profileId,
@@ -67,6 +88,7 @@ export class ProfileRepository {
           education: data.education ?? [],
           certifications: data.certifications ?? [],
           languages: data.languages ?? [],
+          experience: data.experience ?? [],
         },
       });
 
@@ -92,11 +114,13 @@ export class ProfileRepository {
   }
 
   async findSkillsByProfileId(profileId: number) {
-    const freelancerProfile = await this.prisma.freelancerProfile.findFirst({
-      where: {
-        OR: [{ profileId }, { profile: { userId: profileId } }],
-      },
-    });
+    const freelancerProfile =
+      (await this.prisma.freelancerProfile.findUnique({
+        where: { profileId },
+      })) ??
+      (await this.prisma.freelancerProfile.findFirst({
+        where: { profile: { userId: profileId } },
+      }));
     if (!freelancerProfile) return [];
     return this.prisma.freelancerSkill.findMany({
       where: {

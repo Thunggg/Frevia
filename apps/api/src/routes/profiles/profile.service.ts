@@ -32,7 +32,6 @@ export class ProfileService {
       await this.profileRepository.findFreelancerProfileById(profileId);
     if (
       !profile ||
-      !profile.freelancerProfile ||
       !profile.user.userRoles.some(
         (item) => item.role.name === RoleName.FREELANCER,
       )
@@ -80,9 +79,10 @@ export class ProfileService {
       cvFileName: file.originalname,
       cvPublicId,
     });
-    if (profile.freelancerProfile.cvPublicId) {
+    const { freelancerProfile } = profile;
+    if (freelancerProfile?.cvPublicId) {
       await this.cloudinary
-        .deleteFile(profile.freelancerProfile.cvPublicId)
+        .deleteFile(freelancerProfile.cvPublicId)
         .catch(() => undefined);
     }
     return {
@@ -152,6 +152,7 @@ export class ProfileService {
       education: dto.education,
       certifications: dto.certifications,
       languages: dto.languages,
+      experience: dto.experience,
     });
   }
 

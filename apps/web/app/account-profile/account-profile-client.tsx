@@ -384,12 +384,12 @@ export function AccountProfileClient({
   return (
     <div
       className={`flex flex-col bg-background font-sans ${
-        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+        embedded ? "min-h-0 flex-1 overflow-hidden" : "min-h-dvh"
       }`}
     >
       {!embedded && <Header role={headerRole} />}
 
-      <main className="flex-1">
+      <main className={embedded ? "min-h-0 flex-1 overflow-y-auto" : "flex-1"}>
         <section
           className={
             embedded

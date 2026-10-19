@@ -15,7 +15,6 @@ import {
   BriefcaseBusiness,
   CheckCircle2,
   ExternalLink,
-  FileText,
   GraduationCap,
   Heart,
   Languages,
@@ -24,7 +23,6 @@ import {
   Plus,
   RefreshCw,
   Trash2,
-  Upload,
   UserRound,
   UserCheck,
   UserMinus,
@@ -225,7 +223,6 @@ export function ProfilePageClient({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [unfollowDialogOpen, setUnfollowDialogOpen] = useState(false);
-  const cvInputRef = useRef<HTMLInputElement>(null);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -334,34 +331,6 @@ export function ProfilePageClient({
       });
     } finally {
       setPendingAction(null);
-    }
-  };
-
-  const uploadCv = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !profile) return;
-    setPendingAction("cv");
-    try {
-      const response = await profileApiRequest.uploadCv(profile.id, file);
-      setProfile((current) =>
-        current?.freelancerProfile
-          ? {
-              ...current,
-              freelancerProfile: {
-                ...current.freelancerProfile,
-                cvFileName: response.data.cvFileName,
-              },
-            }
-          : current,
-      );
-      toastSuccess({ message: "CV uploaded successfully." });
-    } catch (error) {
-      toastError({
-        message: getErrorMessage(error, "Couldn't upload CV. Try again."),
-      });
-    } finally {
-      setPendingAction(null);
-      event.target.value = "";
     }
   };
 
@@ -1096,52 +1065,6 @@ export function ProfilePageClient({
             </Tabs>
 
             <aside className="space-y-6">
-              {isOwner ? (
-                <div className="rounded-xl border border-border p-5 sm:p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-base font-semibold tracking-tight text-foreground">
-                        Curriculum vitae
-                      </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        PDF only, up to 10 MB.
-                      </p>
-                    </div>
-                    <FileText className="size-5 shrink-0 text-[#4fae2e]" />
-                  </div>
-                  {freelancer?.cvFileName ? (
-                    <a
-                      className="mt-4 block truncate text-sm font-medium text-[#438f2b] hover:underline"
-                      href={`/api/backend/profiles/${profile.id}/cv/file`}
-                    >
-                      {freelancer.cvFileName}
-                    </a>
-                  ) : (
-                    <p className="mt-4 text-sm text-muted-foreground">
-                      Upload a CV so it is ready when you need it.
-                    </p>
-                  )}
-                  <input
-                    ref={cvInputRef}
-                    className="sr-only"
-                    type="file"
-                    accept="application/pdf,.pdf"
-                    onChange={(event) => void uploadCv(event)}
-                  />
-                  <Button
-                    className="mt-4 w-full bg-[#4fae2e] text-white hover:bg-[#459928]"
-                    disabled={pendingAction === "cv"}
-                    onClick={() => cvInputRef.current?.click()}
-                  >
-                    {pendingAction === "cv" ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <Upload />
-                    )}
-                    {freelancer?.cvFileName ? "Replace CV" : "Upload CV"}
-                  </Button>
-                </div>
-              ) : null}
               <div className="rounded-xl border border-border p-5 sm:p-6">
                 <h3 className="text-base font-semibold tracking-tight text-foreground">
                   Profile strength
