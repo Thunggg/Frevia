@@ -19,6 +19,9 @@ import {
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { MessageSquare, Paperclip } from "@/components/icons";
 
+import { useMe } from "@/hooks/use-auth";
+import { RoleName } from "@shared/types";
+
 function formatTime(createdAt?: string | Date | null): string {
   if (!createdAt) return "";
   const date = new Date(createdAt);
@@ -39,7 +42,17 @@ function formatTime(createdAt?: string | Date | null): string {
 export function MessageBell() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: me } = useMe();
   const { data: conversations } = useConversations();
+
+  const primaryRole =
+    me?.roles.find((r) => r.isPrimary)?.name ?? me?.roles[0]?.name;
+  const conversationBasePath =
+    primaryRole === RoleName.CLIENT
+      ? "/client/conversations"
+      : primaryRole === RoleName.FREELANCER
+        ? "/freelancer/conversations"
+        : "/conversations";
 
   const unreadConversations =
     conversations?.filter((c) => c.unreadCount > 0) ?? [];
@@ -49,7 +62,9 @@ export function MessageBell() {
   );
 
   const isActive =
-    pathname === "/conversations" || pathname.startsWith("/conversations/");
+    pathname.startsWith("/conversations") ||
+    pathname.startsWith("/client/conversations") ||
+    pathname.startsWith("/freelancer/conversations");
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -102,7 +117,7 @@ export function MessageBell() {
                   className="cursor-pointer px-4 py-3 focus:bg-black/[0.03] dark:focus:bg-white/[0.04]"
                 >
                   <Link
-                    href={`/conversations/${conversation.id}`}
+                    href={`${conversationBasePath}/${conversation.id}`}
                     onClick={() => setOpen(false)}
                     className="flex items-start gap-3"
                   >
@@ -118,7 +133,7 @@ export function MessageBell() {
                           {name}
                         </span>
                         {conversation.lastMessage && (
-                          <span className="shrink-0 text-xs text-muted-foreground">
+                           <span className="shrink-0 text-xs text-muted-foreground">
                             {formatTime(conversation.lastMessage.createdAt)}
                           </span>
                         )}
@@ -154,7 +169,7 @@ export function MessageBell() {
             asChild
             className="w-full justify-center text-sm font-medium text-[#4fae2e] hover:text-[#3f9225] hover:bg-[#eaf8df]/80 dark:hover:bg-white/5"
           >
-            <Link href="/conversations" onClick={() => setOpen(false)}>
+            <Link href={conversationBasePath} onClick={() => setOpen(false)}>
               View all messages
             </Link>
           </Button>

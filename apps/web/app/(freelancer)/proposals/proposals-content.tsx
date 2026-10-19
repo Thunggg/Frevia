@@ -48,11 +48,17 @@ function date(value: Date | string | null) {
 
 export function MyProposalsContent({
   result,
+  embedded = false,
+  basePath,
 }: {
   result: MyProposalsResponseType | null;
+  embedded?: boolean;
+  basePath?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const effectiveBasePath =
+    basePath ?? (embedded ? "/freelancer/proposals" : "/proposals");
   const selectedStatus = searchParams.get(
     "status",
   ) as ProposalStatusType | null;
@@ -80,15 +86,25 @@ export function MyProposalsContent({
   const currentStatus = selectedStatus ?? "ALL";
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role="FREELANCER" />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role="FREELANCER" />}
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+        <section
+          className={
+            embedded
+              ? "border-b border-border bg-background"
+              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+          }
+        >
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
               My Proposals
             </h1>
-            <p className="mt-2 text-foreground/70">
+            <p className="mt-1 text-xs font-normal text-muted-foreground">
               Track drafts and submitted proposals in one place.
             </p>
           </div>
@@ -103,7 +119,9 @@ export function MyProposalsContent({
               value={currentStatus}
               onValueChange={(value) =>
                 router.push(
-                  value === "ALL" ? "/proposals" : `/proposals?status=${value}`,
+                  value === "ALL"
+                    ? effectiveBasePath
+                    : `${effectiveBasePath}?status=${value}`,
                 )
               }
             >
@@ -151,7 +169,7 @@ export function MyProposalsContent({
                         </span>
                       </div>
                       <Link
-                        href={`/proposals/${proposal.id}`}
+                        href={`${effectiveBasePath}/${proposal.id}`}
                         className="mt-2 block text-lg font-semibold tracking-tight hover:text-[#4fae2e]"
                       >
                         {proposal.job.title}
@@ -178,7 +196,7 @@ export function MyProposalsContent({
                       </div>
                     </div>
                     <Button asChild variant="outline" className="shrink-0">
-                      <Link href={`/proposals/${proposal.id}`}>
+                      <Link href={`${effectiveBasePath}/${proposal.id}`}>
                         View <ArrowRight className="size-4" />
                       </Link>
                     </Button>
@@ -198,7 +216,9 @@ export function MyProposalsContent({
                 asChild
                 className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
               >
-                <Link href="/find-work">Find work</Link>
+                <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
+                  Find work
+                </Link>
               </Button>
             </div>
           )}
@@ -207,7 +227,7 @@ export function MyProposalsContent({
               <Button
                 variant="outline"
                 onClick={() =>
-                  router.push(`/proposals?page=${pagination.page + 1}`)
+                  router.push(`${effectiveBasePath}?page=${pagination.page + 1}`)
                 }
               >
                 Load more
@@ -216,7 +236,7 @@ export function MyProposalsContent({
           ) : null}
         </section>
       </main>
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }

@@ -90,6 +90,13 @@ export function CreateMilestoneDialog({
       if (dueDate) {
         const d = new Date(dueDate);
         d.setHours(23, 59, 59, 999);
+        if (d <= new Date()) {
+          toastError({
+            message: "Target completion date must be in the future",
+          });
+          setIsSubmitting(false);
+          return;
+        }
         formattedDueDate = d.toISOString();
       }
 
@@ -232,7 +239,9 @@ export function CreateMilestoneDialog({
               </label>
               <input
                 type="date"
-                min={new Date().toISOString().split("T")[0]}
+                min={
+                  new Date(Date.now() + 86400000).toISOString().split("T")[0]
+                }
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"

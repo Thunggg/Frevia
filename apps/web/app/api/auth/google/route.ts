@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   // Gắn cookie vào chính response redirect. `cookies().set()` rồi
   // `NextResponse.redirect()` sẽ làm cookie không được gửi kèm → user
   // vào `/` không có session và bị đẩy lại `/login`.
-  const response = NextResponse.redirect(new URL("/", appUrl));
+  const response = NextResponse.redirect(new URL("/dashboard", appUrl));
   response.cookies.set(
     "accessToken",
     accessToken,

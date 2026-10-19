@@ -25,7 +25,9 @@ export function ConversationsShell({
   const socketValue = useConversationSocket(socketUrl, token, currentUserId);
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
-    : "/conversations";
+    : pathname.startsWith("/freelancer/conversations")
+      ? "/freelancer/conversations"
+      : "/conversations";
   const isThread =
     pathname.startsWith(`${basePath}/`) && pathname !== basePath;
 

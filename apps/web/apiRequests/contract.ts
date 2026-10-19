@@ -1,15 +1,20 @@
-import { http } from "@/lib/http";
+import { ApiFail, http } from "@/lib/http";
 import type {
+  ApiError,
   ApiResponse,
   ApproveMilestoneResponseType,
   ContractDetailType,
   ContractType,
   CreateContractBodyType,
   CreateMilestoneBodyType,
+  DeleteMilestoneFileResponseType,
+  DeleteSharedFileResponseType,
   GetContractListQueryType,
   GetContractListResponseType,
+  GetMilestoneFilesResponseType,
   GetMilestoneListQueryType,
   GetMilestoneListResponseType,
+  GetSharedFilesResponseType,
   GetSubmissionsResponseType,
   MilestoneSubmissionType,
   MilestoneType,
@@ -17,6 +22,8 @@ import type {
   SubmitMilestoneBodyType,
   UpdateContractBodyType,
   UpdateMilestoneBodyType,
+  UploadMilestoneFileResponseType,
+  UploadSharedFileResponseType,
 } from "@shared/types";
 
 export const contractApi = {
@@ -160,6 +167,68 @@ export const contractApiRequest = {
     return http.patch<MilestoneSubmissionType>(
       `/api/contracts/${contractId}/milestones/${milestoneId}/submissions/${submissionId}/request-changes`,
       body,
+    );
+  },
+
+  // --- Milestone Files ---
+  getMilestoneFiles(contractId: number, milestoneId: number) {
+    return http.get<GetMilestoneFilesResponseType>(
+      `/api/contracts/${contractId}/milestones/${milestoneId}/files`,
+    );
+  },
+
+  uploadMilestoneFile(contractId: number, milestoneId: number, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch(
+      `/api/backend/api/contracts/${contractId}/milestones/${milestoneId}/files`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    ).then(async (res) => {
+      const data: ApiResponse<UploadMilestoneFileResponseType> =
+        await res.json();
+      if (!res.ok) {
+        throw new ApiFail(data as ApiError, res.status);
+      }
+      return data;
+    });
+  },
+
+  deleteMilestoneFile(contractId: number, milestoneId: number, fileId: number) {
+    return http.delete<DeleteMilestoneFileResponseType>(
+      `/api/contracts/${contractId}/milestones/${milestoneId}/files/${fileId}`,
+    );
+  },
+
+  // --- Shared Files ---
+  getSharedFiles(contractId: number) {
+    return http.get<GetSharedFilesResponseType>(
+      `/api/contracts/${contractId}/files`,
+    );
+  },
+
+  uploadSharedFile(contractId: number, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch(`/api/backend/api/contracts/${contractId}/files`, {
+      method: "POST",
+      body: formData,
+    }).then(async (res) => {
+      const data: ApiResponse<UploadSharedFileResponseType> = await res.json();
+      if (!res.ok) {
+        throw new ApiFail(data as ApiError, res.status);
+      }
+      return data;
+    });
+  },
+
+  deleteSharedFile(contractId: number, fileId: number) {
+    return http.delete<DeleteSharedFileResponseType>(
+      `/api/contracts/${contractId}/files/${fileId}`,
     );
   },
 };
