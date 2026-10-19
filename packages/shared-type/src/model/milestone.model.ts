@@ -15,6 +15,13 @@ export const MilestoneSchema = z.object({
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
     deletedAt: z.coerce.date().nullable(),
+    dispute: z
+        .object({
+            id: z.number(),
+            status: z.string(),
+        })
+        .nullable()
+        .optional(),
 });
 
 export const CreateMilestoneBodySchema = z.object({

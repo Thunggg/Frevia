@@ -115,9 +115,12 @@ model User {
   // --- Certificates / Disputes / Reviews ---
   certificatesAsFreelancer Certificate[]     @relation("CertificateFreelancer")
   certificatesAsClient     Certificate[]     @relation("CertificateClient")
-  disputesRaised           Dispute[]         @relation("DisputeRaisedBy")
-  disputesHandled          Dispute[]         @relation("DisputeAdmin")
-  disputeEvidences         DisputeEvidence[]
+  disputesOpened           Dispute[]               @relation("DisputeOpenedBy")
+  disputesReceived         Dispute[]               @relation("DisputeRespondent")
+  disputesDecided          Dispute[]               @relation("DisputeDecisionBy")
+  disputeFees              DisputeFee[]
+  disputeEvidences         DisputeEvidence[]       @relation("DisputeEvidenceSubmittedBy")
+  disputeDecisionReviews   DisputeDecisionReview[]
   reviewsGiven             Review[]          @relation("ReviewReviewer")
   reviewsReceived          Review[]          @relation("ReviewReviewee")
   reviewResponses          ReviewResponse[]
@@ -513,7 +516,6 @@ model Contract {
   milestones             Milestone[]
   invoice                Invoice?
   certificate            Certificate?
-  disputes               Dispute[]
   reviews                Review[]
   projectProgressUpdates ProjectProgressUpdate[]
   sharedFiles            SharedFile[]
@@ -569,6 +571,7 @@ model Milestone {
 
   files       MilestoneFile[]
   submissions MilestoneSubmission[]
+  dispute     Dispute?
 
   @@index([contractId])
   @@index([status])
@@ -689,51 +692,99 @@ model Certificate {
 // 15. Disputes
 // ============================
 model Dispute {
-  id              Int             @id @default(autoincrement())
-  contractId      Int
-  raisedBy        Int
-  reason          String
-  status          DisputeStatus   @default(OPENED)
-  outcome         DisputeOutcome?
-  adminId         Int?
-  resolutionNotes String?
-  createdAt       DateTime        @default(now())
-  resolvedAt      DateTime?
+  id               Int           @id @default(autoincrement())
+  milestoneId      Int           @unique
+  openedById       Int
+  respondentId     Int
 
-  contract Contract          @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  raiser   User              @relation("DisputeRaisedBy", fields: [raisedBy], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  admin    User?             @relation("DisputeAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  evidence DisputeEvidence[]
-  timeline DisputeTimeline[]
+  reason           String
+  description      String
 
-  @@index([contractId])
+  status           DisputeStatus @default(OPEN)
+
+  arbitrationFee   Decimal       @db.Decimal(10, 2)
+  feeDeadline      DateTime
+  responseDeadline DateTime?
+
+  freelancerAmount Decimal?      @db.Decimal(10, 2)
+  clientAmount     Decimal?      @db.Decimal(10, 2)
+  decisionReason   String?
+
+  decisionById     Int?
+  decisionAt       DateTime?
+
+  finalDecisionAt  DateTime?
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  milestone        Milestone     @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  openedBy         User          @relation("DisputeOpenedBy", fields: [openedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  respondent       User          @relation("DisputeRespondent", fields: [respondentId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  decisionBy       User?         @relation("DisputeDecisionBy", fields: [decisionById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  fees             DisputeFee[]
+  evidences        DisputeEvidence[]
+  decisionReviews  DisputeDecisionReview[]
+
   @@index([status])
+  @@index([openedById])
+  @@index([respondentId])
+}
+
+model DisputeFee {
+  id              Int              @id @default(autoincrement())
+  disputeId       Int
+  userId          Int
+  amount          Decimal          @db.Decimal(10, 2)
+  status          DisputeFeeStatus @default(PENDING)
+  paymentIntentId String?
+  paidAt          DateTime?
+  deadline        DateTime?
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  dispute         Dispute          @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@unique([disputeId, userId])
+  @@index([disputeId])
+  @@index([userId])
 }
 
 model DisputeEvidence {
-  id          Int      @id @default(autoincrement())
-  disputeId   Int
-  userId      Int
-  fileUrl     String   @db.VarChar(500)
-  message     String?
-  submittedAt DateTime @default(now())
+  id            Int                 @id @default(autoincrement())
+  disputeId     Int
+  submittedById Int
+  type          DisputeEvidenceType
+  description   String?
+  fileId        Int?
+  createdAt     DateTime            @default(now())
 
-  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  dispute       Dispute             @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  submittedBy   User                @relation("DisputeEvidenceSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  file          SharedFile?         @relation(fields: [fileId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([disputeId])
+  @@index([submittedById])
+  @@index([fileId])
 }
 
-model DisputeTimeline {
-  id          Int      @id @default(autoincrement())
-  disputeId   Int
-  event       String   @db.VarChar(100)
-  description String?
-  createdAt   DateTime @default(now())
+model DisputeDecisionReview {
+  id        Int                     @id @default(autoincrement())
+  disputeId Int
+  userId    Int
+  response  DisputeDecisionResponse
+  reason    String?
+  createdAt DateTime                @default(now())
 
-  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  dispute   Dispute                 @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User                    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
+  @@unique([disputeId, userId])
   @@index([disputeId])
+  @@index([userId])
 }
 
 // ============================
@@ -1041,6 +1092,8 @@ model SharedFile {
   contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   uploader User     @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
+  disputeEvidences DisputeEvidence[]
+
   @@index([contractId])
   @@index([uploaderId])
 }
@@ -1132,6 +1185,7 @@ enum MilestonePaymentStatus {
   FUNDED
   RELEASED
   REFUNDED
+  DISPUTED
 }
 
 enum SubmissionStatus {
@@ -1141,16 +1195,30 @@ enum SubmissionStatus {
 }
 
 enum DisputeStatus {
-  OPENED
-  EVIDENCE_SUBMITTED
+  OPEN
+  WAITING_RESPONSE
   UNDER_REVIEW
-  RESOLVED
+  DECISION_MADE
+  REVIEW_REQUESTED
+  FINALIZED
+  CANCELLED
 }
 
-enum DisputeOutcome {
-  REFUND_CLIENT
-  RELEASE_FREELANCER
-  SPLIT
+enum DisputeFeeStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum DisputeEvidenceType {
+  CLAIM
+  RESPONSE
+}
+
+enum DisputeDecisionResponse {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum NotificationType {

@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquare,
+  Scale,
   ShieldCheck,
   Tags,
   Users,
@@ -29,6 +30,11 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Disputes",
+    href: "/admin/disputes",
+    icon: Scale,
   },
   {
     title: "Skills",

@@ -9,6 +9,7 @@ import type {
   ApiResponse,
   BannerAdminDetailResponseType,
   BannerAdminListResponseType,
+  DisputeDetailType,
   ForumAdminCategoryListResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminStatsType,
@@ -265,6 +266,27 @@ const adminServerRequest = {
     return (
       result ?? {
         documents: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getDisputes(
+    page: number = 1,
+    limit: number = 10,
+    status?: string,
+  ): Promise<{
+    data: DisputeDetailType[];
+    pagination: { page: number; limit: number; total: number; totalPages: number };
+  }> {
+    const query = buildQueryString({ page, limit, status });
+    const result = await adminServerFetch<{
+      data: DisputeDetailType[];
+      pagination: { page: number; limit: number; total: number; totalPages: number };
+    }>(`/api/admin/disputes${query}`);
+    return (
+      result ?? {
+        data: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

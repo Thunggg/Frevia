@@ -127,6 +127,7 @@ export const Send = createGoogleIcon("send", "Send");
 export const Shield = createGoogleIcon("shield", "Shield");
 export const ShieldAlert = createGoogleIcon("shield_alert", "ShieldAlert");
 export const ShieldCheck = createGoogleIcon("verified_user", "ShieldCheck");
+export const Gavel = createGoogleIcon("gavel", "Gavel");
 export const ShieldOff = createGoogleIcon("shield_lock", "ShieldOff");
 export const SlidersHorizontal = createGoogleIcon("tune", "SlidersHorizontal");
 export const Smile = createGoogleIcon("sentiment_satisfied", "Smile");

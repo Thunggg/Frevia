@@ -48,6 +48,7 @@ const freelancerModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'DISPUTES',
 ];
 
 const clientModules = [
@@ -68,6 +69,7 @@ const clientModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'DISPUTES',
 ];
 
 type AvailableRoute = {

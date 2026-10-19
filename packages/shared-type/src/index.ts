@@ -62,3 +62,6 @@ export * from "./message/manage-identity-verification.message";
 export * from "./model/identity-verification.model";
 export * from "./model/banner.model";
 export * from "./message/banner.message";
+export * from "./constants/dispute.constant";
+export * from "./message/manage-dispute.message";
+export * from "./model/dispute.model";
