@@ -20,6 +20,7 @@ import {
   ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
+  FailedToRestoreForumCategoryException,
   FailedToRestoreForumCommentException,
   FailedToRestoreForumPostException,
   FailedToReviewForumPostException,
@@ -82,6 +83,7 @@ export class ForumAdminService {
     search?: string,
     sortBy?: 'id' | 'name' | 'createdAt',
     sortOrder?: 'asc' | 'desc',
+    deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
     if (roleName !== RoleName.ADMIN) {
       throw ForumReportForbiddenException();
@@ -94,6 +96,7 @@ export class ForumAdminService {
           search,
           sortBy,
           sortOrder,
+          deleted,
         );
 
       return {
@@ -184,6 +187,23 @@ export class ForumAdminService {
         throw error;
       }
       throw FailedToDeleteForumCategoryException();
+    }
+  }
+
+  async restoreAdminCategory(
+    roleName: string,
+    categoryId: number,
+  ): Promise<ForumCategoryType> {
+    if (roleName !== RoleName.ADMIN) {
+      throw ForumReportForbiddenException();
+    }
+    try {
+      return await this.adminRepository.restoreAdminCategory(categoryId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw FailedToRestoreForumCategoryException();
     }
   }
 

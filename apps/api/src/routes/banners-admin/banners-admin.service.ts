@@ -20,7 +20,6 @@ import {
   FailedToDeleteBannerException,
   FailedToLoadBannerDetailException,
   FailedToLoadBannerListException,
-  FailedToRestoreBannerException,
   FailedToUpdateBannerException,
   FailedToUploadBannerImageException,
 } from './banners-admin.error';
@@ -148,7 +147,7 @@ export class BannersAdminService {
     }
   }
 
-  // Xóa banner (soft delete)
+  // Xóa banner cứng (hard delete)
   async deleteBanner(id: number): Promise<BannerAdminDeleteResponseType> {
     try {
       return await this.repository.deleteBanner(id);
@@ -157,18 +156,6 @@ export class BannersAdminService {
         throw error;
       }
       throw FailedToDeleteBannerException();
-    }
-  }
-
-  // Khôi phục banner đã xóa
-  async restoreBanner(id: number): Promise<BannerAdminDetailResponseType> {
-    try {
-      return await this.repository.restoreBanner(id);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw FailedToRestoreBannerException();
     }
   }
 }

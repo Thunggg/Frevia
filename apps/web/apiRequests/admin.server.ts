@@ -98,12 +98,11 @@ const adminServerRequest = {
     );
   },
 
-  // Danh sách banner (phân trang + search + lọc deleted/position + sort) — trang Admin Banners
+  // Danh sách banner (phân trang + search + lọc vị trí + sort) — trang Admin Banners
   getBanners(params?: {
     page?: number;
     limit?: number;
     search?: string;
-    deleted?: string;
     position?: string;
     sortBy?: string;
     sortOrder?: string;
@@ -149,8 +148,9 @@ const adminServerRequest = {
     search?: string,
     sortBy?: string,
     sortOrder?: string,
+    deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
-    const query = buildQueryString({ page, limit, search, sortBy, sortOrder });
+    const query = buildQueryString({ page, limit, search, sortBy, sortOrder, deleted });
     const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
       `/api/forums/admin/categories${query}`,
     );

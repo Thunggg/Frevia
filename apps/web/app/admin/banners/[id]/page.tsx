@@ -89,16 +89,14 @@ export default async function AdminBannerDetailPage({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {banner.deletedAt !== null ? (
-              <Badge variant="destructive">Deleted</Badge>
-            ) : banner.isActive ? (
+            {banner.isActive ? (
               <Badge className="border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                 Active
               </Badge>
             ) : (
               <Badge variant="outline">Inactive</Badge>
             )}
-            {banner.deletedAt === null && <BannerFormDialog banner={banner} />}
+            <BannerFormDialog banner={banner} />
           </div>
         </div>
       </div>

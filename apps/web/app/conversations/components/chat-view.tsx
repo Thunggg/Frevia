@@ -253,7 +253,9 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   const pathname = usePathname();
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
-    : "/conversations";
+    : pathname.startsWith("/freelancer/conversations")
+      ? "/freelancer/conversations"
+      : "/conversations";
 
   const displayName =
     otherUser?.profile?.displayName ?? `User #${otherUser?.id ?? ""}`;

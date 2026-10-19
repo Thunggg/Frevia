@@ -11,19 +11,28 @@ import type { SavedSearchType } from "@shared/types";
 
 type SavedSearchesContentProps = {
   savedSearches: SavedSearchType[];
+  embedded?: boolean;
+  basePath?: string;
 };
 
-function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
+function toFindWorkHref(
+  searchParams: SavedSearchType["searchParams"],
+  baseUrl = "/find-work",
+) {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(searchParams)) {
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean"
+    ) {
       params.set(key, String(value));
     }
   }
 
   const query = params.toString();
-  return query ? `/find-work?${query}` : "/find-work";
+  return query ? `${baseUrl}?${query}` : baseUrl;
 }
 
 function filterSummary(searchParams: SavedSearchType["searchParams"]) {
@@ -33,8 +42,10 @@ function filterSummary(searchParams: SavedSearchType["searchParams"]) {
   const time = searchParams.time;
 
   if (typeof keyword === "string" && keyword) labels.push(keyword);
-  if (typeof budget === "string" && budget !== "all") labels.push(budget.replaceAll("-", " "));
-  if (typeof time === "string" && time !== "all") labels.push(time.replaceAll("-", " "));
+  if (typeof budget === "string" && budget !== "all")
+    labels.push(budget.replaceAll("-", " "));
+  if (typeof time === "string" && time !== "all")
+    labels.push(time.replaceAll("-", " "));
 
   return labels.length ? labels : ["All open projects"];
 }
@@ -47,31 +58,64 @@ function formatDate(value: string | Date) {
   }).format(new Date(value));
 }
 
-export function SavedSearchesContent({ savedSearches }: SavedSearchesContentProps) {
+export function SavedSearchesContent({
+  savedSearches,
+  embedded = false,
+  basePath,
+}: SavedSearchesContentProps) {
+  const effectiveBasePath =
+    basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
+  const findWorkBaseUrl = embedded ? "/freelancer/find-work" : "/find-work";
+
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role="FREELANCER" />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role="FREELANCER" />}
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-            <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">Home</Link>
-              <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">Saved searches</span>
-            </nav>
-            <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <section
+          className={
+            embedded
+              ? "border-b border-border bg-background"
+              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+          }
+        >
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            {!embedded && (
+              <nav className="text-sm text-foreground/60">
+                <Link
+                  href="/"
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
+                  Home
+                </Link>
+                <span className="mx-2 text-foreground/35">/</span>
+                <span className="font-medium text-foreground">
+                  Saved searches
+                </span>
+              </nav>
+            )}
+            <div
+              className={`${
+                !embedded ? "mt-4" : ""
+              } flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between`}
+            >
               <div>
-                <h1 className="flex items-center gap-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                  <BookmarkCheck className="size-7 text-[#4fae2e]" />
+                <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
+                  <BookmarkCheck className="size-6 text-[#4fae2e]" />
                   Saved searches
                 </h1>
-                <p className="mt-2 max-w-[46ch] text-base text-foreground/70 dark:text-foreground/75">
+                <p className="mt-1 text-xs font-normal text-muted-foreground">
                   Return to your preferred job filters in one click.
                 </p>
               </div>
-              <p className="text-sm text-foreground/65">
-                <span className="font-semibold text-foreground">{savedSearches.length}</span>{" "}
+              <p className="text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">
+                  {savedSearches.length}
+                </span>{" "}
                 {savedSearches.length === 1 ? "saved search" : "saved searches"}
               </p>
             </div>
@@ -92,24 +136,46 @@ export function SavedSearchesContent({ savedSearches }: SavedSearchesContentProp
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                         <SlidersHorizontal className="size-5" />
                       </div>
-                      <span className="text-xs text-muted-foreground">Saved {formatDate(savedSearch.createdAt)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        Saved {formatDate(savedSearch.createdAt)}
+                      </span>
                     </div>
-                    <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">{savedSearch.name}</h2>
+                    <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">
+                      {savedSearch.name}
+                    </h2>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {filters.map((filter) => (
-                        <Badge key={filter} variant="secondary" className="max-w-full truncate font-normal capitalize">
+                        <Badge
+                          key={filter}
+                          variant="secondary"
+                          className="max-w-full truncate font-normal capitalize"
+                        >
                           {filter}
                         </Badge>
                       ))}
                     </div>
-                    <Button asChild className="mt-auto w-full bg-[#4fae2e] text-white hover:bg-[#459928]">
-                      <Link href={toFindWorkHref(savedSearch.searchParams)}>
+                    <Button
+                      asChild
+                      className="mt-auto w-full bg-[#4fae2e] text-white hover:bg-[#459928]"
+                    >
+                      <Link
+                        href={toFindWorkHref(
+                          savedSearch.searchParams,
+                          findWorkBaseUrl,
+                        )}
+                      >
                         <Search className="mr-2 size-4" />
                         View matching jobs
                       </Link>
                     </Button>
-                    <Button asChild variant="ghost" className="mt-2 w-full text-foreground/70 hover:text-foreground">
-                      <Link href={`/saved-searches/${savedSearch.id}`}>View details</Link>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="mt-2 w-full text-foreground/70 hover:text-foreground"
+                    >
+                      <Link href={`${effectiveBasePath}/${savedSearch.id}`}>
+                        View details
+                      </Link>
                     </Button>
                   </article>
                 );
@@ -120,19 +186,24 @@ export function SavedSearchesContent({ savedSearches }: SavedSearchesContentProp
               <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
                 <BookmarkCheck className="size-7" />
               </div>
-              <h2 className="text-lg font-medium text-foreground">No saved searches yet</h2>
+              <h2 className="text-lg font-medium text-foreground">
+                No saved searches yet
+              </h2>
               <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
                 Set up filters in Find Work, then save the search for later.
               </p>
-              <Button asChild className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]">
-                <Link href="/find-work">Find work</Link>
+              <Button
+                asChild
+                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+              >
+                <Link href={findWorkBaseUrl}>Find work</Link>
               </Button>
             </div>
           )}
         </section>
       </main>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }

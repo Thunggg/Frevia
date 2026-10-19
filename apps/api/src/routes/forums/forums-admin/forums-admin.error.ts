@@ -60,6 +60,14 @@ export const FailedToDeleteForumCategoryException = () =>
     },
   ]);
 
+export const FailedToRestoreForumCategoryException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManageForumMessage.FAILED_TO_RESTORE_FORUM_CATEGORY,
+      path: 'restoreCategory',
+    },
+  ]);
+
 export const FailedToReviewForumPostException = () =>
   new InternalServerErrorException([
     {

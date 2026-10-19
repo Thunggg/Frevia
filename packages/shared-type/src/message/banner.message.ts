@@ -12,7 +12,6 @@ export const BannerMessage = {
   FAILED_TO_CREATE_BANNER: "Error.FailedToCreateBanner",
   FAILED_TO_UPDATE_BANNER: "Error.FailedToUpdateBanner",
   FAILED_TO_DELETE_BANNER: "Error.FailedToDeleteBanner",
-  FAILED_TO_RESTORE_BANNER: "Error.FailedToRestoreBanner",
   BANNER_IMAGE_REQUIRED: "Error.BannerImageRequired",
   BANNER_IMAGE_INVALID_TYPE: "Error.BannerImageInvalidType",
   BANNER_IMAGE_TOO_LARGE: "Error.BannerImageTooLarge",

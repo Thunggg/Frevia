@@ -81,6 +81,7 @@ type Props = {
   userId: number | null;
   profileId: number | null;
   headerRole: UserRole;
+  embedded?: boolean;
 };
 
 function errorMessage(error: unknown) {
@@ -129,7 +130,12 @@ function FreelancerListSkeleton({ label }: { label: string }) {
   );
 }
 
-export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
+export function AccountProfileClient({
+  userId,
+  profileId,
+  headerRole,
+  embedded = false,
+}: Props) {
   const searchParams = useSearchParams();
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
@@ -376,27 +382,46 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
         : null;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={headerRole} />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role={headerRole} />}
 
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-            <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
-              </Link>
-              <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">
-                Profile & trust settings
-              </span>
-            </nav>
-            <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <section
+          className={
+            embedded
+              ? "border-b border-border bg-background"
+              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+          }
+        >
+          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+            {!embedded && (
+              <nav className="text-sm text-foreground/60">
+                <Link
+                  href="/"
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
+                  Home
+                </Link>
+                <span className="mx-2 text-foreground/35">/</span>
+                <span className="font-medium text-foreground">
+                  Profile & trust settings
+                </span>
+              </nav>
+            )}
+            <div
+              className={`${
+                !embedded ? "mt-4" : ""
+              } flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between`}
+            >
               <div>
-                <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                   Profile & trust settings
                 </h1>
-                <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
+                <p className="mt-1 text-xs font-normal text-muted-foreground">
                   Manage your identity verification documents and public social
                   connections.
                 </p>
@@ -404,7 +429,8 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
               {publicProfileHref ? (
                 <Button
                   variant="outline"
-                  className="w-full shrink-0 border-[#4fae2e]/35 bg-background/80 text-foreground hover:bg-background sm:w-auto"
+                  size="sm"
+                  className="w-full shrink-0 border-border bg-background/80 text-foreground hover:bg-accent sm:w-auto text-xs"
                   asChild
                 >
                   <Link href={publicProfileHref}>
@@ -1115,7 +1141,7 @@ export function AccountProfileClient({ userId, profileId, headerRole }: Props) {
           )}
         </div>
       </main>
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }

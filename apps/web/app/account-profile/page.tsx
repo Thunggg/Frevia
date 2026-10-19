@@ -19,7 +19,12 @@ export default async function AccountProfilePage({
     redirect(`/client/profile${query}`);
   }
 
-  const headerRole = role === RoleName.FREELANCER ? "FREELANCER" : "GUEST";
+  if (role === RoleName.FREELANCER) {
+    const query = tab ? `?tab=${tab}` : "";
+    redirect(`/freelancer/profile${query}`);
+  }
+
+  const headerRole = "GUEST";
 
   return (
     <AccountProfileClient

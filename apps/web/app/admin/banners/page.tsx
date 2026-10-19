@@ -14,7 +14,6 @@ export default async function AdminBannersPage({
   searchParams: Promise<{
     page?: string;
     search?: string;
-    deleted?: string;
     position?: string;
     sortBy?: string;
     sortOrder?: string;
@@ -24,7 +23,6 @@ export default async function AdminBannersPage({
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
-  const deleted = params.deleted || undefined;
   const position = params.position || undefined;
   const sortBy =
     params.sortBy === "id" || params.sortBy === "createdAt"
@@ -39,7 +37,6 @@ export default async function AdminBannersPage({
     page,
     limit,
     search,
-    deleted,
     position,
     sortBy,
     sortOrder,

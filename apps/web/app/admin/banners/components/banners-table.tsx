@@ -18,7 +18,6 @@ import Link from "next/link";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { BannerFormDialog } from "./banner-form-dialog";
 import { DeleteBannerDialog } from "./delete-banner-dialog";
-import { RestoreBannerDialog } from "./restore-banner-dialog";
 import { bannerPositionLabel } from "../constants";
 
 interface BannersTableProps {
@@ -146,9 +145,7 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      {banner.deletedAt !== null ? (
-                        <Badge variant="destructive">Deleted</Badge>
-                      ) : banner.isActive ? (
+                      {banner.isActive ? (
                         <Badge
                           variant="secondary"
                           className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
@@ -165,23 +162,17 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      {banner.deletedAt === null ? (
-                        <>
-                          <BannerFormDialog banner={banner} />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                            title="Delete banner"
-                            aria-label={`Delete banner ${banner.title}`}
-                            onClick={() => setDeletingBanner(banner)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>
-                      ) : (
-                        <RestoreBannerDialog banner={banner} />
-                      )}
+                      <BannerFormDialog banner={banner} />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        title="Delete banner"
+                        aria-label={`Delete banner ${banner.title}`}
+                        onClick={() => setDeletingBanner(banner)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import {
+  ForumAdminCategoryType,
   ForumAdminCommentType,
   ForumAdminStatsType,
   ForumCategoryType,
@@ -10,7 +12,6 @@ import { PrismaService } from '../../../shared/services/prisma.service';
 import { slugify } from '../forums-post/forums.slug';
 import {
   ForumCategoryAlreadyExistsException,
-  ForumCategoryHasPostsException,
   ForumCategoryNotFoundException,
   ForumCommentNotFoundException,
   ForumPostNotFoundException,
@@ -234,16 +235,24 @@ export class ForumAdminRepository {
     search?: string,
     sortBy: 'id' | 'name' | 'createdAt' = 'id',
     sortOrder: 'asc' | 'desc' = 'desc',
+    deleted?: string,
   ): Promise<{
-    categories: ForumCategoryType[];
+    categories: ForumAdminCategoryType[];
     total: number;
   }> {
     const skip = (page - 1) * limit;
-    const where = {
-      deletedAt: null,
+
+    const showDeleted =
+      deleted === 'true' ? true : deleted === 'false' ? false : undefined;
+
+    const where: Prisma.ForumCategoryWhereInput = {
+      ...(showDeleted !== undefined
+        ? showDeleted
+          ? { deletedAt: { not: null } }
+          : { deletedAt: null }
+        : {}),
       ...(search && {
-        // kiếm theo tên không phân biệt hoa thường
-        name: { contains: search, mode: 'insensitive' as const },
+        name: { contains: search, mode: 'insensitive' },
       }),
     };
 
@@ -257,6 +266,7 @@ export class ForumAdminRepository {
           description: true,
           createdAt: true,
           updatedAt: true,
+          deletedAt: true,
           _count: {
             select: {
               posts: { where: { deletedAt: null } },
@@ -278,6 +288,7 @@ export class ForumAdminRepository {
         description: c.description,
         createdAt: c.createdAt,
         updatedAt: c.updatedAt,
+        deletedAt: c.deletedAt,
         postCount: c._count.posts,
       })),
       total,
@@ -342,7 +353,7 @@ export class ForumAdminRepository {
 
     while (
       await this.prisma.forumCategory.findFirst({
-        where: { slug, deletedAt: null },
+        where: { slug },
       })
     ) {
       counter++;
@@ -409,7 +420,7 @@ export class ForumAdminRepository {
 
       while (
         await this.prisma.forumCategory.findFirst({
-          where: { slug, id: { not: id }, deletedAt: null },
+          where: { slug, id: { not: id } },
         })
       ) {
         counter++;
@@ -452,7 +463,7 @@ export class ForumAdminRepository {
     };
   }
 
-  // Xóa danh mục (Soft delete, kiểm tra nếu còn bài viết thì không cho xóa)
+  // Xóa danh mục (Soft delete; tách bài sang Uncategorized trước khi xóa)
   async deleteAdminCategory(id: number): Promise<{ message: string }> {
     const category = await this.prisma.forumCategory.findFirst({
       where: { id, deletedAt: null },
@@ -462,25 +473,83 @@ export class ForumAdminRepository {
       throw ForumCategoryNotFoundException();
     }
 
-    const postCount = await this.prisma.forumPost.count({
-      where: {
-        categoryId: id,
-        deletedAt: null,
-      },
-    });
-
-    if (postCount > 0) {
-      throw ForumCategoryHasPostsException();
-    }
-
-    await this.prisma.forumCategory.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
+    await this.prisma.$transaction([
+      this.prisma.forumPost.updateMany({
+        where: { categoryId: id, deletedAt: null },
+        data: { categoryId: null },
+      }),
+      this.prisma.forumCategory.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      }),
+    ]);
 
     return { message: 'Category deleted successfully' };
+  }
+
+  // Khôi phục category đã soft-delete
+  async restoreAdminCategory(id: number): Promise<ForumCategoryType> {
+    const category = await this.prisma.forumCategory.findFirst({
+      where: { id, deletedAt: { not: null } },
+      select: { id: true, name: true },
+    });
+
+    if (!category) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    const nameConflict = await this.prisma.forumCategory.findFirst({
+      where: {
+        deletedAt: null,
+        id: { not: id },
+        name: { equals: category.name, mode: 'insensitive' },
+      },
+      select: { id: true },
+    });
+
+    if (nameConflict) {
+      throw ForumCategoryAlreadyExistsException();
+    }
+
+    const result = await this.prisma.forumCategory.updateMany({
+      where: { id, deletedAt: { not: null } },
+      data: { deletedAt: null },
+    });
+
+    if (result.count === 0) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    const updated = await this.prisma.forumCategory.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            posts: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    if (!updated) {
+      throw ForumCategoryNotFoundException();
+    }
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      description: updated.description,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      postCount: updated._count.posts,
+    };
   }
 
   // Danh sách bài viết trong trash (đã xóa hoặc bị reject)

@@ -158,6 +158,12 @@ export const adminApiRequest = {
       `/api/forums/admin/categories/${id}`,
     ),
 
+  restoreCategory: (id: number) =>
+    http.patch<ForumCategoryType>(
+      `/api/forums/admin/categories/${id}/restore`,
+      {},
+    ),
+
   getPosts: (
     page: number = 1,
     limit: number = 10,
@@ -282,12 +288,6 @@ export const adminApiRequest = {
 
   updateBanner: (id: number, body: BannerUpdateBodyType) =>
     http.patch<BannerAdminDetailResponseType>(`/api/admin/banners/${id}`, body),
-
-  restoreBanner: (id: number) =>
-    http.patch<BannerAdminDetailResponseType>(
-      `/api/admin/banners/${id}/restore`,
-      {},
-    ),
 
   deleteBanner: (id: number) =>
     http.delete<BannerAdminDeleteResponseType>(`/api/admin/banners/${id}`),

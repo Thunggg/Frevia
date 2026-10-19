@@ -14,29 +14,33 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { BannerAdminItemType } from "@shared/types";
+import type { ForumAdminCategoryType } from "@shared/types";
 import { Loader2, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface RestoreBannerDialogProps {
-  banner: Pick<BannerAdminItemType, "id" | "title">;
+interface RestoreCategoryDialogProps {
+  category: Pick<ForumAdminCategoryType, "id" | "name">;
 }
 
-export function RestoreBannerDialog({ banner }: RestoreBannerDialogProps) {
+export function RestoreCategoryDialog({
+  category,
+}: RestoreCategoryDialogProps) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleRestore = async () => {
     setLoading(true);
     try {
-      await adminApiRequest.restoreBanner(banner.id);
-      toastSuccess({ message: "Banner restored successfully!" });
+      await adminApiRequest.restoreCategory(category.id);
+      toastSuccess({ message: "Category restored successfully." });
+      setOpen(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const errorDetail = err.response?.error?.details?.[0]?.message;
-        toastError({ message: errorDetail ?? "Failed to restore banner." });
+        toastError({ message: errorDetail ?? "Failed to restore category." });
       } else {
         toastError({ message: "An unexpected error occurred." });
       }
@@ -46,23 +50,31 @@ export function RestoreBannerDialog({ banner }: RestoreBannerDialogProps) {
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-          title="Restore banner"
-          aria-label={`Restore banner ${banner.title}`}
+          title="Restore category"
+          aria-label={`Restore category ${category.name}`}
         >
           <RotateCcw className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Restore Banner: {banner.title}</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to restore banner &quot;{banner.title}&quot;?
+          <AlertDialogTitle className="flex items-center gap-2">
+            Restore Category
+          </AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <p className="text-sm text-muted-foreground">
+              Are you sure you want to restore category{" "}
+              <span className="font-semibold text-foreground">
+                &quot;{category.name}&quot;
+              </span>
+              ? It will become active again in the forum.
+            </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -76,7 +88,7 @@ export function RestoreBannerDialog({ banner }: RestoreBannerDialogProps) {
             className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Restore Banner
+            Restore Category
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
