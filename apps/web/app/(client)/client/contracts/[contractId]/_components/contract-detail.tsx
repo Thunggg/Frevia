@@ -62,6 +62,7 @@ import { MilestoneCard } from "./milestone-card";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { SharedFilesSection } from "./shared-files-section";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
+import { DisputeDialog } from "./dispute-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
 
 function money(amount: number) {
@@ -115,6 +116,11 @@ export function ContractDetail({
     useState<MilestoneType | null>(null);
   const [activeSubmission, setActiveSubmission] =
     useState<GetSubmissionResponseType | null>(null);
+
+  // Dispute state (Both Client and Freelancer)
+  const [disputeModalOpen, setDisputeModalOpen] = useState(false);
+  const [disputeMilestone, setDisputeMilestone] = useState<MilestoneType | null>(null);
+  const [disputeMode, setDisputeMode] = useState<"CREATE" | "VIEW">("VIEW");
 
   // Confirmation dialogs
   const [confirmSign, setConfirmSign] = useState(false);
@@ -752,6 +758,16 @@ export function ContractDetail({
                           }
                         : undefined
                     }
+                    onOpenDispute={(m) => {
+                      setDisputeMilestone(m);
+                      setDisputeMode("CREATE");
+                      setDisputeModalOpen(true);
+                    }}
+                    onViewDispute={(m) => {
+                      setDisputeMilestone(m);
+                      setDisputeMode("VIEW");
+                      setDisputeModalOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -1161,6 +1177,26 @@ export function ContractDetail({
           }}
         />
       )}
+
+      {/* Dispute Dialog for both Client and Freelancer */}
+      <DisputeDialog
+        open={disputeModalOpen}
+        onOpenChange={setDisputeModalOpen}
+        contractId={contract.id}
+        milestone={disputeMilestone}
+        sharedFiles={initialSharedFiles ?? []}
+        currentUserId={isFreelancer ? contract.freelancerId : contract.clientId}
+        isFreelancer={isFreelancer}
+        mode={disputeMode}
+        onSuccess={() => {
+          void queryClient.invalidateQueries({
+            queryKey: ["client-contract-detail", contract.id],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["client-contract-milestones", contract.id],
+          });
+        }}
+      />
     </div>
   );
 }

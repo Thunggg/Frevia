@@ -48,6 +48,7 @@ const freelancerModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'DISPUTES',
   'PROFILE-REVISIONS',
 ];
 

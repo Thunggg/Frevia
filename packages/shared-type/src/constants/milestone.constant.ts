@@ -14,6 +14,7 @@ export const MilestonePaymentStatusEnum = z.enum([
     'FUNDED',
     'RELEASED',
     'REFUNDED',
+    'DISPUTED',
 ]);
 
 export const SubmissionStatusEnum = z.enum([
