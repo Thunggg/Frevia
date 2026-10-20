@@ -48,6 +48,7 @@ const freelancerModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'PROFILE-REVISIONS',
 ];
 
 const clientModules = [
@@ -68,6 +69,15 @@ const clientModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'PROFILE-REVISIONS',
+];
+
+const expertModules = [
+  'AUTH',
+  'SESSIONS',
+  'EXPERT-PROFILE',
+  'PROFILE-REVISIONS',
+  'NOTIFICATIONS',
 ];
 
 type AvailableRoute = {
@@ -270,6 +280,16 @@ async function bootstrap() {
     )
     .map((item) => item.id);
 
+  const expertPermissionIds = updatedPermissionInDb
+    .filter(
+      (item) =>
+        expertModules.includes(item.module ?? '') &&
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        !item.path.startsWith('/api/users/') &&
+        !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path),
+    )
+    .map((item) => item.id);
+
   const freelancerProfileCount = updatedPermissionInDb.filter(
     (item) =>
       freelancerModules.includes(item.module ?? '') &&
@@ -298,6 +318,7 @@ async function bootstrap() {
     updateRolePermissions(adminPermissionIds, RoleName.ADMIN),
     updateRolePermissions(freelancerPermissionIds, RoleName.FREELANCER),
     updateRolePermissions(clientPermissionIds, RoleName.CLIENT),
+    updateRolePermissions(expertPermissionIds, RoleName.EXPERT),
   ]);
 
   await app.close();

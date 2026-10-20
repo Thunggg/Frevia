@@ -31,9 +31,11 @@ import {
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
+import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { VerifiedBadge } from "@/components/verified-badge";
+import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { ApiFail } from "@/lib/http";
 import {
   AvailabilityStatus,
@@ -42,6 +44,7 @@ import {
   type FreelancerSkillType,
   type PortfolioItemType,
   type UpdatePortfolioType,
+  type ProfileRevisionType,
 } from "@shared/types";
 import {
   AlertDialog,
@@ -223,6 +226,8 @@ export function ProfilePageClient({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [unfollowDialogOpen, setUnfollowDialogOpen] = useState(false);
+  const [profileRevision, setProfileRevision] =
+    useState<ProfileRevisionType | null>(null);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -263,6 +268,15 @@ export function ProfilePageClient({
       }
 
       setProfile(profileResponse.data);
+      if (currentUserId === profileResponse.data.userId) {
+        try {
+          const revisionResponse =
+            await profileRevisionApiRequest.getMine("FREELANCER");
+          setProfileRevision(revisionResponse.data.revision);
+        } catch {
+          setProfileRevision(null);
+        }
+      }
       setSkills(skillsResponse.data);
       setPortfolios(portfoliosResponse.data);
       setIsFavorite(
@@ -280,7 +294,7 @@ export function ProfilePageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [headerRole, profileId]);
+  }, [currentUserId, headerRole, profileId]);
 
   const toggleFavorite = async () => {
     if (!profile) return;
@@ -380,23 +394,7 @@ export function ProfilePageClient({
     return () => document.removeEventListener("mousedown", closeSkillMenu);
   }, []);
 
-  const completionItems = useMemo(() => {
-    if (!profile) return [];
-    return [
-      Boolean(profile.displayName),
-      Boolean(profile.bio),
-      Boolean(profile.freelancerProfile?.title),
-      Boolean(profile.freelancerProfile?.education?.length),
-      Boolean(profile.freelancerProfile?.certifications?.length),
-      skills.length > 0,
-      portfolios.length > 0,
-    ];
-  }, [profile, skills.length, portfolios.length]);
-  const completion = completionItems.length
-    ? Math.round(
-        (completionItems.filter(Boolean).length / completionItems.length) * 100,
-      )
-    : 0;
+  const completion = profile?.profileCompletionPercent ?? 0;
   const availableSkillOptions = useMemo(
     () =>
       skillOptions.filter(
@@ -444,9 +442,31 @@ export function ProfilePageClient({
         languages: splitValues(profileForm.languages),
       });
       if (!response.success) throw new Error("Profile update failed.");
-      setProfile(response.data);
+      setProfileRevision(response.data.revision);
+      if (!response.data.reviewRequired) {
+        setProfile((current) =>
+          current
+            ? {
+                ...current,
+                displayName: profileForm.displayName,
+                bio: profileForm.bio || null,
+                availabilityStatus: profileForm.availabilityStatus,
+                profileCompletionPercent: response.data.profileStrength,
+                freelancerProfile: current.freelancerProfile
+                  ? {
+                      ...current.freelancerProfile,
+                      title: profileForm.title,
+                      education: splitValues(profileForm.education),
+                      certifications: splitValues(profileForm.certifications),
+                      languages: splitValues(profileForm.languages),
+                    }
+                  : current.freelancerProfile,
+              }
+            : current,
+        );
+      }
       setProfileEditorOpen(false);
-      toastSuccess({ message: "Profile updated successfully." });
+      toastSuccess({ message: response.data.message });
     } catch (error) {
       toastError({
         message: getErrorMessage(
@@ -652,7 +672,7 @@ export function ProfilePageClient({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex min-h-dvh flex-col bg-background">
         <Header role={headerRole} />
         <main className="flex flex-1 items-center justify-center">
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -666,7 +686,7 @@ export function ProfilePageClient({
 
   if (loadError || !profile) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex min-h-dvh flex-col bg-background">
         <Header role={headerRole} />
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
@@ -710,6 +730,14 @@ export function ProfilePageClient({
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          {isOwner ? (
+            <div className="mb-5">
+              <ProfileReviewStatus
+                revision={profileRevision}
+                profileStrength={completion}
+              />
+            </div>
+          ) : null}
           <div className="overflow-hidden rounded-xl border border-border">
             <div
               className="h-44 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"

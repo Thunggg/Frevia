@@ -1,0 +1,1 @@
+ALTER TABLE "Expert" ALTER COLUMN "isActive" SET DEFAULT false;

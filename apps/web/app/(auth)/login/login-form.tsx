@@ -65,6 +65,8 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
               router.push("/client/jobs");
             } else if (primaryRole === RoleName.FREELANCER) {
               router.push("/freelancer/find-work");
+            } else if (primaryRole === RoleName.EXPERT) {
+              router.push("/expert/profile");
             } else {
               router.push("/");
             }

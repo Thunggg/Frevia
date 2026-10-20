@@ -58,15 +58,10 @@ export class SharedRoleRepository {
 
   async getExpertRoleId() {
     if (this.expertRoleId) return this.expertRoleId;
-
     const role = await this.prisma.role.findFirst({
       where: { name: RoleName.EXPERT, deletedAt: null },
     });
-
-    if (!role) {
-      throw new Error('Expert role not found!');
-    }
-
+    if (!role) throw new Error('Expert role not found!');
     this.expertRoleId = role.id;
     return this.expertRoleId;
   }

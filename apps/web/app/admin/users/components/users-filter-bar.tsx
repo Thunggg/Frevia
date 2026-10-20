@@ -87,6 +87,7 @@ export function UsersFilterBar() {
             <SelectItem value="ADMIN">Admin</SelectItem>
             <SelectItem value="CLIENT">Client</SelectItem>
             <SelectItem value="FREELANCER">Freelancer</SelectItem>
+            <SelectItem value="EXPERT">Expert</SelectItem>
             <SelectItem value="CUSTOM">Custom Roles (Other)</SelectItem>
           </SelectContent>
         </Select>

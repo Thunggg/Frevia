@@ -46,6 +46,7 @@ const navItems: NavItem[] = [
     children: [
       { title: "User Management", href: "/admin/users" },
       { title: "Identity Verification", href: "/admin/identity-verifications" },
+      { title: "Profile Reviews", href: "/admin/profile-revisions" },
     ],
   },
   {

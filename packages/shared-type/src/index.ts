@@ -22,6 +22,8 @@ export * from "./model/forum-report.model";
 export * from "./message/manage-forum-report.message";
 export * from "./message/profile.message";
 export * from "./model/profile.model";
+export * from "./model/profile-revision.model";
+export * from "./model/expert-profile.model";
 export * from "./model/account-profile.model";
 export * from "./model/review.model";
 export * from "./message/portfolio.message";
