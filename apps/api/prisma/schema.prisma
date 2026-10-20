@@ -293,9 +293,7 @@ model Expert {
   isActive          Boolean  @default(false)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-
   @@index([isActive])
 }
 
