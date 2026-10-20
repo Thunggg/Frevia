@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{tocloft}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{times}
+
+% ===== CÀI ĐẶT LỀ (hai bên bằng nhau) =====
+\geometry{a4paper, left=2.5cm, right=2.5cm, top=2cm, bottom=2cm}
+
+% Đường dẫn ảnh
+\graphicspath{{./image/}}
+
+% ===== MỤC LỤC CÓ DẤU CHẤM DẪN =====
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+
+% ===== TĂNG KHOẢNG CÁCH DÒNG CHO BẢNG =====
+\renewcommand{\arraystretch}{1.8}
+
+\begin{document}
+
+% ==================== TRANG BÌA ====================
+\input{introduction}
+
+% ==================== MỤC LỤC ====================
+\tableofcontents
+\newpage
+
+% ==================== NỘI DUNG ====================
+\section{Overview}
+    \subsection{Scope \& Estimation}
+    \input{sections/1.1-scope-and-estimation}
+    
+    \subsection{Project Objectives}
+    \input{sections/1-2-objective}
+    
+    \subsection{Project Risks}
+    \input{sections/1.3-project-risk}
+
+\section{Management Approach}
+    \input{sections/2-management-approach}
+    \subsection{Project Process}
+    \input{sections/2.1-project-process}
+    
+    \subsection{Quality Management}
+    \input{sections/2.2-quality-management}
+    
+    \subsection{Training Plan}
+    \input{sections/2.3-training-plan}
+
+\section{Project Organization}
+    \subsection{Team \& Structure}
+    \input{sections/3.1-team-structures}
+    
+    \subsection{Role \& Responsibilities}
+    \input{sections/3.2-role-responsibilities}
+    
+\section{Project Deliverables}
+\input{sections/4-project-deliverables}
+
+\section{Responsibility Assignments}
+\input{sections/5-responsibility-assignments}
+
+\section{Project Communications}
+\input{sections/6-project-communications}
+
+\section{Configuration Management}
+
+\subsection{Document Management}
+\input{sections/7.1-document-management}
+
+\subsection{Source Code Management}
+\input{sections/7.2-source-code-management}
+
+\subsection{Tools \& Infrastructures}
+\input{sections/7.3-tools-infrastructures}
+    
+\end{document}

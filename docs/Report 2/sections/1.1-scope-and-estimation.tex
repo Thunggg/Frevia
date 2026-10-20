@@ -1,0 +1,399 @@
+﻿\setlength\LTleft{\fill}\setlength\LTright{\fill}
+
+\begin{longtable}{|
+c|
+c|
+>{\raggedright\arraybackslash}p{5cm}|
+>{\centering\arraybackslash}p{1.5cm}|
+c|
+c|}
+
+\hline
+\rowcolor{orange} \textbf{No} & \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{orange} \textbf{No} & \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+\hline\hline
+\endlastfoot
+
+% ========== SPRINT 1 ==========
+
+% ---- Authentication ----
+1  & & \textbf{Authentication}              &                               & --     & -- \\
+2  & 1.1  & Google Login                    & \multirow{3}{*}{Sprint 1}     & Low    & 2  \\
+3  & 1.2  & Login                           &                               & Medium & 2  \\
+4  & 1.3  & Logout                          &                               & Low    & 1  \\
+\hline
+
+% ---- User Registration ----
+5  & & \textbf{User Registration}           &                               & --     & -- \\
+6  & 1.4  & Register                        & \multirow{3}{*}{Sprint 1}     & Medium & 2  \\
+7  & 1.5  & Protected routes                &                               & Medium & 2  \\
+8  & 1.6  & Role-based access               &                               & Medium & 3  \\
+\hline
+
+% ---- Permission Management ----
+9  & & \textbf{Permission Management}       &                               & --     & -- \\
+10 & 1.7  & Create Permission               & \multirow{4}{*}{Sprint 1}     & Medium & 2  \\
+11 & 1.8  & View Permissions List           &                               & Medium & 1  \\
+12 & 1.9  & Edit Permission                 &                               & Medium & 2  \\
+13 & 1.10 & Delete Permission               &                               & Medium & 1  \\
+\hline
+
+% ---- User Management (Sprint 1) ----
+14 & & \textbf{User Management}             &                               & --     & -- \\
+15 & 1.11 & Assign User Roles               & \multirow{5}{*}{Sprint 1}     & Medium & 2  \\
+16 & 1.12 & Avatar Cropping Tool            &                               & Low    & 2  \\
+17 & 1.13 & Upload avatar                   &                               & Medium & 2  \\
+18 & 1.14 & View Public Profile             &                               & Low    & 1  \\
+19 & 1.15 & User Online Status              &                               & Medium & 2  \\  % giảm 3->2
+\hline
+
+% ---- Job Management (Sprint 1) ----
+20 & & \textbf{Job Management}              &                               & --     & -- \\
+21 & 1.16 & Create job                      & \multirow{8}{*}{Sprint 1}     & Medium & 2  \\  % giảm 3->2
+22 & 1.17 & View job list                   &                               & Low    & 1  \\
+23 & 1.18 & Job listing UI                  &                               & Medium & 2  \\
+24 & 1.19 & Job detail UI                   &                               & Medium & 2  \\
+25 & 1.20 & Edit job / Delete job           &                               & Medium & 2  \\
+26 & 1.21 & Search jobs                     &                               & Medium & 2  \\  % giảm 3->2
+27 & 1.22 & Filter jobs                     &                               & Medium & 2  \\  % giảm 3->2
+28 & 1.23 & Job ownership validation        &                               & Low    & 1  \\
+\hline
+
+% ---- Contract Management (Sprint 1) ----
+29 & & \textbf{Contract Management}         &                               & --     & -- \\
+30 & 1.24 & Create Contract                 & \multirow{7}{*}{Sprint 1}     & High   & 4  \\
+31 & 1.25 & Update Contract                 &                               & Medium & 2  \\
+32 & 1.26 & Complete Contract               &                               & Medium & 2  \\
+33 & 1.27 & Get Contract List               &                               & Low    & 1  \\
+34 & 1.28 & Get Contract Detail             &                               & Low    & 1  \\
+35 & 1.29 & Sign Contract                   &                               & High   & 3  \\
+36 & 1.30 & Cancel Contract                 &                               & Medium & 2  \\
+\hline
+
+% ---- Contract Files (Sprint 1) ----
+37 & & \textbf{Contract Files}             &                               & --     & -- \\
+38 & 1.31 & Contract Files                  & \multirow{3}{*}{Sprint 1}     & Low    & 1  \\
+39 & 1.32 & Upload Contract File            &                               & Medium & 2  \\
+40 & 1.33 & Delete Contract File            &                               & Low    & 1  \\
+\hline
+
+% ========== SPRINT 2 ==========
+
+% ---- Account Security ----
+37 & & \textbf{Account Security}            &                               & --     & -- \\
+38 & 2.1  & Email Verification              & \multirow{9}{*}{Sprint 2}     & Medium & 2  \\
+39 & 2.2  & Forgot Password                 &                               & Medium & 2  \\
+40 & 2.3  & Reset Password                  &                               & Medium & 2  \\
+41 & 2.4  & Session Management              &                               & Medium & 2  \\  % 3->2
+42 & 2.5  & Phone Number Verification       &                               & Medium & 2  \\  % 3->2
+43 & 2.6  & Resend OTP                      &                               & Low    & 1  \\
+44 & 2.7  & Change Password                 &                               & Low    & 1  \\
+45 & 2.8  & Email Notification Preferences  &                               & Low    & 1  \\
+46 & 2.9  & Account Security Logs           &                               & Medium & 2  \\  % 3->2
+\hline
+
+% ---- Profile Management ----
+47 & & \textbf{Profile Management}          &                               & --     & -- \\
+48 & 2.10 & Edit client profile             & \multirow{10}{*}{Sprint 2}    & Medium & 2  \\
+49 & 2.11 & Edit freelancer profile         &                               & Medium & 2  \\
+50 & 2.12 & Education \& Certifications     &                               & Low    & 2  \\
+51 & 2.13 & Language Proficiency            &                               & Low    & 1  \\
+52 & 2.14 & Add freelancer skills           &                               & Low    & 1  \\
+53 & 2.15 & Edit/Delete freelancer skills   &                               & Low    & 1  \\
+54 & 2.16 & Add portfolio                   &                               & Low    & 2  \\
+55 & 2.17 & Edit/Delete portfolio           &                               & Low    & 1  \\
+56 & 2.18 & Portfolio Media Upload          &                               & Medium & 2  \\  % 3->2
+57 & 2.19 & Social Link Management          &                               & Low    & 1  \\
+\hline
+
+% ---- Job Management (Sprint 2) ----
+58 & & \textbf{Job Management}              &                               & --     & -- \\
+59 & 2.20 & Job status management           & \multirow{4}{*}{Sprint 2}     & Medium & 2  \\
+60 & 2.21 & Job Draft                       &                               & Low    & 1  \\
+61 & 2.22 & Re-open Job                     &                               & Low    & 1  \\
+62 & 2.23 & Sort Jobs                       &                               & Low    & 1  \\
+\hline
+
+% ---- Milestone Management ----
+63 & & \textbf{Milestone Management}        &                               & --     & -- \\
+64 & 2.24 & View Milestones List            & \multirow{8}{*}{Sprint 2}      & Low    & 1  \\
+65 & 2.25 & View Milestone Detail           &                               & Low    & 1  \\
+66 & 2.26 & Add Milestone                   &                               & Medium & 2  \\
+67 & 2.27 & Edit Milestone                  &                               & Medium & 2  \\
+68 & 2.28 & Delete Milestone                &                               & Low    & 1  \\
+69 & 2.29 & Request Changes                 &                               & Medium & 2  \\
+70 & 2.30 & Approve Milestone               &                               & Medium & 2  \\
+71 & 2.31 & Progress Milestone              &                               & Medium & 2  \\
+\hline
+
+% ---- Milestone Files ----
+72 & & \textbf{Milestone Files}            &                               & --     & -- \\
+73 & 2.32 & View Milestone Files            & \multirow{3}{*}{Sprint 2}      & Low    & 1  \\
+74 & 2.33 & Upload Milestone File           &                               & Medium & 2  \\
+75 & 2.34 & Delete Milestone File           &                               & Low    & 1  \\
+\hline
+
+% ---- Submission Management ----
+76 & & \textbf{Submission Management}      &                               & --     & -- \\
+77 & 2.35 & Submit Milestone                & \multirow{4}{*}{Sprint 2}      & Medium & 2  \\
+78 & 2.36 & Delete Submission               &                               & Low    & 1  \\
+79 & 2.37 & View Submission                 &                               & Low    & 1  \\
+80 & 2.38 & View Submission Detail          &                               & Low    & 1  \\
+\hline
+
+% ---- AI Features ----
+69 & & \textbf{AI Features}                 &                               & --     & -- \\
+70 & 2.29 & AI freelancer recommendation    & \multirow{6}{*}{Sprint 2}     & High   & 4  \\  % 5->4
+71 & 2.30 & Match score calculation         &                               & High   & 4  \\  % 5->4
+72 & 2.31 & Recommended freelancer list     &                               & Medium & 2  \\  % 3->2
+73 & 2.32 & AI Job Recommendation           &                               & High   & 4  \\  % 5->4
+74 & 2.33 & AI Proposal Assistant           &                               & High   & 4  \\  % 5->4
+75 & 2.34 & AI Sensitive Word Detection     &                               & High   & 4  \\  % 5->4
+\hline
+
+% ========== SPRINT 3 ==========
+
+% ---- Account Management (Sprint 3) ----
+76 & & \textbf{Account Management}          &                               & --     & -- \\
+77 & 3.1  & Account Deactivation            & \multirow{4}{*}{Sprint 3}     & Low    & 2  \\
+78 & 3.2  & OAuth Account Linking           &                               & Medium & 2  \\  % 3->2
+79 & 3.3  & Unlink OAuth Account            &                               & Medium & 2  \\
+80 & 3.4  & Linked Accounts UI              &                               & Low    & 1  \\
+\hline
+
+% ---- Admin: Client Management ----
+81 & & \textbf{Admin: Client Management}    &                               & --     & -- \\
+82 & 3.5  & Create client (Admin)           & \multirow{5}{*}{Sprint 3}     & Low    & 2  \\
+83 & 3.6  & View client list (Admin)        &                               & Medium & 2  \\
+84 & 3.7  & View client detail (Admin)      &                               & Low    & 1  \\
+85 & 3.8  & Edit client (Admin)             &                               & Medium & 2  \\
+86 & 3.9  & Delete client (Admin)           &                               & Medium & 2  \\
+\hline
+
+% ---- Profile Extras ----
+87 & & \textbf{Profile Extras}              &                               & --     & -- \\
+88 & 3.10 & Skill Endorsement               & \multirow{6}{*}{Sprint 3}     & Low    & 2  \\
+89 & 3.11 & Cover Image Upload              &                               & Low    & 1  \\
+90 & 3.12 & Profile Completion Progress     &                               & Low    & 2  \\
+91 & 3.13 & Upload ID Documents             &                               & Low    & 2  \\
+92 & 3.14 & Admin Review ID Verification    &                               & Medium & 2  \\  % 3->2
+93 & 3.15 & ID Verified Badge Display       &                               & Low    & 1  \\
+\hline
+
+% ---- Proposal Management ----
+94 & & \textbf{Proposal Management}         &                               & --     & -- \\
+95  & 3.16 & Submit proposal                & \multirow{9}{*}{Sprint 3}     & Medium & 2  \\  % 3->2
+96  & 3.17 & Edit proposal                  &                               & Medium & 2  \\
+97  & 3.18 & Withdraw proposal              &                               & Low    & 1  \\
+98  & 3.19 & View submitted proposals       &                               & Low    & 1  \\
+99  & 3.20 & Proposal status tracking       &                               & Low    & 2  \\
+100 & 3.21 & View proposal list (Client)    &                               & Low    & 1  \\
+101 & 3.22 & View proposal detail (Client)  &                               & Low    & 1  \\
+102 & 3.23 & Accept proposal                &                               & Medium & 2  \\
+103 & 3.24 & Reject proposal                &                               & Low    & 1  \\
+\hline
+
+% ---- Review \& Rating ----
+117 & & \textbf{Review \& Rating}            &                               & --     & -- \\
+118 & 3.36 & Add freelancer review          & \multirow{7}{*}{Sprint 3}     & Medium & 2  \\
+119 & 3.37 & Add client review              &                               & Medium & 2  \\
+120 & 3.38 & Edit review                    &                               & Low    & 1  \\
+121 & 3.39 & Delete review                  &                               & Low    & 1  \\
+122 & 3.40 & View review list               &                               & Low    & 1  \\
+123 & 3.41 & Calculate average rating       &                               & Low    & 2  \\
+124 & 3.42 & Review authorization           &                               & Low    & 1  \\
+\hline
+
+% ---- Dashboard \& Notifications (Sprint 3) ----
+125 & & \textbf{Dashboard \& Notifications}  &                               & --     & -- \\
+126 & 3.43 & View freelancer dashboard      & \multirow{3}{*}{Sprint 3}     & Medium & 2  \\  % 3->2
+127 & 3.44 & View client dashboard          &                               & Medium & 2  \\  % 3->2
+128 & 3.45 & In-app Notification Preferences &                              & Low    & 1  \\
+\hline
+
+% ========== SPRINT 4 ==========
+
+% ---- Admin: Freelancer Management ----
+129 & & \textbf{Admin: Freelancer Management} &                             & --     & -- \\
+130 & 4.1  & Create freelancer (Admin)      & \multirow{7}{*}{Sprint 4}     & Medium & 2  \\
+131 & 4.2  & View freelancer list (Admin)   &                               & Medium & 2  \\
+132 & 4.3  & View freelancer detail (Admin) &                               & Low    & 1  \\
+133 & 4.4  & Edit freelancer (Admin)        &                               & Medium & 2  \\
+134 & 4.5  & Delete freelancer (Admin)      &                               & Medium & 2  \\
+135 & 4.6  & Admin Moderation Queue         &                               & Medium & 2  \\  % 3->2
+136 & 4.7  & User Activity Log              &                               & Medium & 2  \\  % 3->2
+\hline
+
+% ---- Freelancer Discovery ----
+137 & & \textbf{Freelancer Discovery}        &                               & --     & -- \\
+138 & 4.8  & Search freelancer              & \multirow{9}{*}{Sprint 4}     & Medium & 2  \\  % 3->2
+139 & 4.9  & Filter freelancer              &                               & Medium & 2  \\  % 3->2
+140 & 4.10 & Sort Freelancer List           &                               & Low    & 1  \\
+141 & 4.11 & Ranking freelancer             &                               & Medium & 2  \\  % 3->2
+142 & 4.12 & Saved Search                   &                               & Low    & 2  \\
+143 & 4.13 & Recently Viewed Jobs           &                               & Low    & 1  \\
+144 & 4.14 & Freelancer Availability Status &                               & Low    & 1  \\
+145 & 4.15 & Portfolio Like \& Save         &                               & Low    & 2  \\
+146 & 4.16 & Profile Visit Analytics        &                               & Low    & 2  \\
+\hline
+
+% ---- Social \& Bookmarks ----
+147 & & \textbf{Social \& Bookmarks}         &                               & --     & -- \\
+148 & 4.17 & Follow Freelancer              & \multirow{4}{*}{Sprint 4}     & Medium & 2  \\
+149 & 4.18 & Favorite Freelancer List       &                               & Low    & 1  \\
+150 & 4.19 & Save / Bookmark Job            &                               & Low    & 1  \\
+151 & 4.20 & Job Alert                      &                               & Medium & 2  \\  % 3->2
+\hline
+
+% ---- Proposal Enhancements ----
+152 & & \textbf{Proposal Enhancements}       &                               & --     & -- \\
+153 & 4.21 & Proposal Template              & \multirow{4}{*}{Sprint 4}     & Low    & 2  \\
+154 & 4.22 & Proposal Archive               &                               & Low    & 1  \\
+155 & 4.23 & Attach File to Proposal        &                               & Low    & 2  \\
+156 & 4.24 & Proposal Auto Save Draft       &                               & Medium & 2  \\
+\hline
+
+% ---- Collaboration Tools ----
+157 & & \textbf{Collaboration Tools}         &                               & --     & -- \\
+158 & 4.25 & Direct Messaging (Basic)       & \multirow{7}{*}{Sprint 4}     & High   & 4  \\  % 5->4
+159 & 4.26 & Task Progress Tracking         &                               & Medium & 2  \\  % 3->2
+160 & 4.27 & Shared File Upload             &                               & Medium & 2  \\  % 3->2
+161 & 4.28 & Task Checklist                 &                               & Low    & 2  \\
+162 & 4.29 & Add Task Checklist Item        &                               & Low    & 1  \\
+163 & 4.30 & Edit / Delete Task Item        &                               & Low    & 1  \\
+164 & 4.31 & Mark Task Complete             &                               & Low    & 1  \\
+\hline
+
+% ---- Delivery \& Review ----
+174 & & \textbf{Delivery \& Review}          &                               & --     & -- \\
+175 & 4.40 & Accept / Reject Final Delivery & \multirow{3}{*}{Sprint 4}     & Medium & 2  \\
+176 & 4.41 & Review Response                &                               & Low    & 1  \\
+177 & 4.42 & Breakdown Rating               &                               & Medium & 2  \\  % 3->2
+\hline
+
+% ---- Analytics \& Admin ----
+178 & & \textbf{Analytics \& Admin}          &                               & --     & -- \\
+179 & 4.43 & Advanced Analytics Dashboard   & \multirow{4}{*}{Sprint 4}     & Medium & 4  \\  % 5->4
+180 & 4.44 & Export Reports (CSV/PDF)       &                               & Low    & 2  \\
+181 & 4.45 & Multi-language Support (i18n)  &                               & Medium & 4  \\  % 5->4
+182 & 4.46 & Admin Panel (MVP)              &                               & Medium & 4  \\  % 5->4
+\hline
+
+% ========== SPRINT 5 ==========
+
+% ---- Admin: Content \& Settings ----
+183 & & \textbf{Admin: Content \& Settings}  &                               & --     & -- \\
+184 & 5.1  & Banned Keyword Management      & \multirow{9}{*}{Sprint 5}     & Low    & 2  \\
+185 & 5.2  & Static Content Management      &                               & Low    & 2  \\
+186 & 5.3  & System Overview Dashboard      &                               & Medium & 2  \\  % 3->2
+187 & 5.4  & Enable TOTP 2FA                &                               & Medium & 2  \\  % 3->2
+188 & 5.5  & TOTP Challenge on Login        &                               & Medium & 2  \\  % 3->2
+189 & 5.6  & Disable TOTP 2FA               &                               & Low    & 1  \\
+190 & 5.7  & General Platform Settings      &                               & Medium & 2  \\  % 3->2
+191 & 5.8  & Email \& SMTP Configuration    &                               & Medium & 2  \\  % 3->2
+192 & 5.9  & Job Automation Defaults        &                               & Low    & 2  \\
+\hline
+
+% ---- Forum Management ----
+193 & & \textbf{Forum Management}            &                               & --     & -- \\
+194 & 5.10 & Create forum post              & \multirow{10}{*}{Sprint 5}    & Medium & 2  \\
+195 & 5.11 & View forum posts               &                               & Low    & 1  \\
+196 & 5.12 & View forum post detail         &                               & Low    & 1  \\
+197 & 5.13 & Edit forum post                &                               & Low    & 1  \\
+198 & 5.14 & Delete forum post              &                               & Low    & 1  \\
+199 & 5.15 & Add forum comment              &                               & Low    & 1  \\
+200 & 5.16 & Edit/Delete forum comment      &                               & Low    & 1  \\
+201 & 5.17 & Like forum post                &                               & Low    & 1  \\
+202 & 5.18 & Search forum posts             &                               & Low    & 2  \\
+203 & 5.19 & Report forum content           &                               & Low    & 1  \\
+\hline
+
+% ---- Job \& Proposal Enhancements (Sprint 5) ----
+204 & & \textbf{Job \& Proposal Enhancements} &                             & --     & -- \\
+205 & 5.20 & Recent Job Search History      & \multirow{6}{*}{Sprint 5}     & Low    & 1  \\
+206 & 5.21 & Proposal Deadline Validation   &                               & Low    & 1  \\
+207 & 5.22 & Client Proposal Comparison     &                               & Medium & 2  \\  % 3->2
+208 & 5.23 & Proposal Notification          &                               & Medium & 2  \\
+209 & 5.24 & Job Expiration System          &                               & Medium & 2  \\  % 3->2
+210 & 5.25 & Sort proposal list             &                               & Low    & 1  \\
+\hline
+
+% ---- Admin: Job Management ----
+211 & & \textbf{Admin: Job Management}       &                               & --     & -- \\
+212 & 5.26 & View All Jobs (Admin)          & \multirow{3}{*}{Sprint 5}     & Medium & 2  \\
+213 & 5.27 & Set Featured Job Manually      &                               & Low    & 1  \\
+214 & 5.28 & Extend Job Posting Duration    &                               & Low    & 1  \\
+\hline
+
+% ---- Dispute Management ----
+215 & & \textbf{Dispute Management}          &                               & --     & -- \\
+216 & 3.1  & Open Dispute                   & \multirow{6}{*}{Sprint 3}     & Medium & 2  \\
+217 & 3.2  & View Dispute Detail            &                               & Low    & 1  \\
+218 & 3.3  & View Dispute List              &                               & Low    & 1  \\
+219 & 3.4  & Respond to Dispute             &                               & Medium & 2  \\
+220 & 3.5  & Respond to Dispute Resolution  &                               & Medium & 2  \\
+221 & 3.6  & Propose Dispute Resolution     &                               & High   & 3  \\
+\hline
+
+% ---- Admin Contract Dispute Management ----
+222 & & \textbf{Admin Contract Dispute Management} &                         & --     & -- \\
+223 & 3.7  & Admin Cancel Contract          & \multirow{3}{*}{Sprint 3}     & High   & 3  \\
+224 & 3.8  & Admin Update Contract Status   &                               & Medium & 2  \\
+225 & 3.9  & View Contract Disputes         &                               & Low    & 1  \\
+\hline
+
+% ---- Admin: Contract Management ----
+222 & & \textbf{Admin: Contract Management}  &                               & --     & -- \\
+223 & 5.35 & View All Contracts (Admin)     & \multirow{4}{*}{Sprint 5}     & Medium & 2  \\
+224 & 5.36 & View Contract Detail (Admin)   &                               & Low    & 1  \\
+225 & 5.37 & Admin Cancel Contract (Force)  &                               & High   & 4  \\  % 5->4
+226 & 5.38 & Contract Audit Dashboard       &                               & Medium & 2  \\  % 3->2
+\hline
+
+% ---- Payment (Sprint 4) ----
+227 & & \textbf{Payment}                     &                               & --     & -- \\
+228 & 4.1  & Stripe Connect Account         & \multirow{9}{*}{Sprint 4}     & High   & 4  \\
+229 & 4.2  & Payout History                 &                               & Medium & 2  \\
+230 & 4.3  & Payout Detail                  &                               & Low    & 1  \\
+231 & 4.4  & Create Payment Intent           &                               & High   & 3  \\
+232 & 4.5  & Refund Payment                  &                               & High   & 3  \\
+233 & 4.6  & Payment History                 &                               & Low    & 1  \\
+234 & 4.7  & Payment Detail                  &                               & Low    & 1  \\
+235 & 4.8  & Release Payment                 &                               & High   & 3  \\
+236 & 4.9  & Execute Dispute Resolution Payment &                         & High   & 4  \\
+\hline
+
+% ---- Notifications \& Announcements ----
+232 & & \textbf{Notifications \& Announcements} &                           & --     & -- \\
+233 & 5.43 & Real-time Notification Center  & \multirow{2}{*}{Sprint 5}     & High   & 4  \\  % 5->4
+234 & 5.44 & System Announcement Banner     &                               & Low    & 1  \\
+\hline
+
+% ---- Forum Categories ----
+235 & & \textbf{Forum Categories}            &                               & --     & -- \\
+236 & 5.45 & Create forum category          & \multirow{4}{*}{Sprint 5}     & Low    & 1  \\
+237 & 5.46 & View forum category list       &                               & Low    & 1  \\
+238 & 5.47 & Edit forum category            &                               & Low    & 1  \\
+239 & 5.48 & Delete forum category          &                               & Low    & 1  \\
+\hline
+
+% ---- Admin: Moderation \& Reports ----
+240 & & \textbf{Admin: Moderation \& Reports} &                             & --     & -- \\
+241 & 5.49 & View Hidden / Reported Proposals & \multirow{5}{*}{Sprint 5}   & Low    & 1  \\
+242 & 5.50 & Restore Removed Jobs           &                               & Low    & 1  \\
+243 & 5.51 & Admin Action Log               &                               & Medium & 2  \\  % 3->2
+244 & 5.52 & Scheduled Report Export        &                               & Medium & 2  \\  % 3->2
+245 & 5.53 & Advertisement Banner Management &                              & Low    & 2  \\
+\hline
+
+\end{longtable}

@@ -1,0 +1,46 @@
+The \textbf{Frevia} (codename GFY) project develops a freelance marketplace platform connecting Clients and Freelancers in areas such as design, programming, editing, consulting, etc. The system allows Clients to post jobs, Freelancers to submit proposals, create contracts, manage milestones, process secure Stripe payments, write reviews, and includes AI support for recommendations and sensitive‑content detection. Additionally, the platform integrates a community forum, collaboration tools (chat, file sharing, checklists), analytics dashboards, and a comprehensive administration system.
+Based on the established backlog of \textbf{207 functional tasks} (MVP + extended sprints), the project is divided into 5 sprints with a total estimated effort of \textbf{372 man‑days} (see the \textit{Scope and Estimation} table).
+\subsubsection{Key Performance Objectives}
+\begin{itemize}
+    \item \textbf{Timeliness (\%):} Deliver all sprints and milestones on schedule.\\
+    \textit{Target:} 95\% of the tasks (i.e., 197 out of 207) must be completed on time per sprint plan. Delayed tasks shall not exceed 5\% of the total.
+    \item \textbf{Allocated Effort (man‑days):} Optimise development resources, aligning effort with task complexity (Low/Medium/High).\\
+    \textit{Target:} Actual total man‑days shall not exceed 372 ± 5\% (max. 391 man‑days). High‑complexity tasks (AI, Stripe payment integration, dispute resolution) are prioritised for experienced team members.
+    \item \textbf{Defect Distribution:} Maintain high software quality throughout development, testing, and production.\\
+    \textit{Target:}
+    \begin{itemize}
+        \item No critical defects in the production environment after launch.
+        \item 95\% of high‑priority defects fixed within 48 hours of detection.
+        \item Medium‑priority defects not exceeding 5\% of the total system defects.
+    \end{itemize}
+\end{itemize}
+\subsubsection{Testing Strategy \& Quality Gates}
+All 207 tasks must pass through the following testing stages. The table below summarises test coverage targets and defect resolution KPIs.
+\begin{table}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|>{\raggedright\arraybackslash}p{5cm}|c|c|c|}
+\hline
+\rowcolor{orange} \textbf{\#} & \textbf{Testing Stage} & \textbf{Test Coverage (\%)} & \textbf{No. of Defects} & \textbf{\% of Defect Solved} \\
+\hline
+1 & Reviewing (Code review \& design review) & 100 & 0 & 100 \\
+\hline
+2 & Unit Test & 100 & 0 & 100 \\
+\hline
+3 & Integration Test & 100 & 0 & 100 \\
+\hline
+4 & System Test & 100 & 0 & 100 \\
+\hline
+5 & Acceptance Test & 95 & 0 & 100 \\
+\hline
+\end{tabular}%
+}
+\par\smallskip
+\begin{itemize}
+    \item Reviewing includes peer review, static analysis for backend (NestJS) and frontend (NextJS), as well as Stripe API and webhook integration review.
+    \item Unit Test requires at least 80\% coverage for critical modules (authentication, job, proposal, contract, and payment).
+    \item Integration Test verifies main flows: create job $\rightarrow$ submit proposal $\rightarrow$ accept $\rightarrow$ create Stripe PaymentIntent $\rightarrow$ create milestone $\rightarrow$ confirm or transfer payment.
+    \item System Test executes end‑to‑end scenarios on a staging environment using Stripe test mode and webhook events.
+    \item Acceptance Test is performed with at least 3 Clients and 5 Freelancers, ensuring 95\% of key business workflows function correctly.
+\end{itemize}
+\end{table}

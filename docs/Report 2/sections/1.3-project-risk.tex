@@ -1,0 +1,67 @@
+The following risks have been identified based on the project backlog and technical complexity (Stripe integration, AI modules, distributed system, etc.). Mitigation strategies are defined to ensure timely delivery and quality.
+\begingroup
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{6cm}|}
+\hline
+\rowcolor{orange} \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
+\hline
+\endfirsthead
+\hline
+\rowcolor{orange} \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
+\hline
+\endhead
+\hline
+\endfoot
+\textbf{Stripe Payment Integration Failures}
+(PaymentIntent, webhook, milestone payment, and refund processing)
+    & High & High &
+    Use Stripe test mode and automated integration tests. Verify webhook signatures, make handlers idempotent, and reconcile payment status from Stripe before updating local records. Define retry and refund procedures. \\
+\hline
+\textbf{AI Model Integration Failure}
+(recommendation engine, sensitive word detection, proposal assistant)
+    & High & High &
+    Build fallback rule‑based models. Validate AI outputs with human review in early sprints. Use A/B testing. Prepare mock APIs to avoid blocking frontend development. \\
+\hline
+\textbf{Payment Failure and Dispute Management}
+(card declines, payment disputes, refunds, or delayed webhook events)
+    & Medium & High &
+    Display clear payment status and error messages. Support payment retries and refunds, log all Stripe events, and provide an admin workflow for reviewing disputes and reconciliation differences. \\
+\hline
+\textbf{Scope Creep from 207 Tasks}
+(many features across 5 sprints)
+    & High & High &
+    Strictly follow the backlog prioritisation (MVP first). Use change control board for any addition. Reject non‑critical features beyond planned man‑days (532 ±5\%). \\
+\hline
+\textbf{Dispute Resolution Delays}
+(admin handling payment disputes or milestone disagreements may be slow)
+    & Medium & Medium &
+    Define SLAs for dispute processing (max 48 hours). Automate evidence collection. Train at least 3 admins. Implement escalation path. \\
+\hline
+\textbf{Real‑time Notification System Overload}
+(high concurrency, WebSocket)
+    & Medium & Medium &
+    Use message queue (Redis/RabbitMQ). Design idempotent consumers. Horizontal scaling for notification service. Perform load testing before sprint 5. \\
+\hline
+\textbf{Third‑party API Availability}
+(Google OAuth, email SMTP, cloud storage)
+    & Medium & Low &
+    Implement circuit breakers and retry logic. Cache frequently used data. Have fallback authentication (email/password) always available. \\
+\hline
+\textbf{Team Knowledge Gap in Stripe Integration}
+(only a few members experienced with payment APIs and webhooks)
+    & High & Medium &
+    Conduct internal Stripe training before sprint 3. Use official Stripe documentation, test-mode fixtures, pair programming, and code review for payment and webhook flows. \\
+\hline
+\textbf{Data Privacy Compliance}
+(GDPR, local laws for personal data)
+    & Medium & Medium &
+    Anonymise user data in logs. Provide data export/deletion endpoints. Add privacy policy and consent checkboxes. Regular legal review. \\
+\hline
+\textbf{Integration Testing Bottleneck}
+(207 tasks, many cross‑module dependencies)
+    & Medium & High &
+    Automate integration tests in CI/CD pipeline. Use contract testing (Pact) between frontend/backend. Allocate dedicated testing environment. \\
+\hline
+\end{longtable}
+\endgroup
