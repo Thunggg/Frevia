@@ -23,6 +23,7 @@ const PUBLIC_ROUTES = [
   "/forum",
   "/profiles",
   "/clients",
+  "/experts",
 ];
 
 const isAuthRoute = (pathname: string) =>

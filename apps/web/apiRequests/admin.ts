@@ -36,6 +36,9 @@ import {
   AdminUserListResponseType,
   AdminUserDetailResponseType,
   ApiError,
+  ProfileRevisionType,
+  ProfileRevisionAdminListType,
+  AdminUpdateExpertProfileType,
 } from "@shared/types";
 import { ApiFail, http } from "@/lib/http";
 
@@ -112,21 +115,23 @@ export const adminApiRequest = {
   updateFreelancerProfile: (
     id: number,
     body: AdminUpdateFreelancerProfileBodyType,
-  ) =>
-    http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+  ) => http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+
+  updateExpertProfile: (id: number, body: AdminUpdateExpertProfileType) =>
+    http.patch<MessageResType>(`/api/users/${id}/expert-profile`, body),
 
   // Thay thế toàn bộ kỹ năng (danh sách chọn từ catalog)
   replaceFreelancerSkills: (
     id: number,
     body: AdminReplaceFreelancerSkillsBodyType,
   ) =>
-    http.put<MessageResType>(`/api/users/${id}/freelancer-profile/skills`, body),
+    http.put<MessageResType>(
+      `/api/users/${id}/freelancer-profile/skills`,
+      body,
+    ),
 
   // Portfolio items (tạo mới / sửa / xoá mềm)
-  createPortfolioItem: (
-    id: number,
-    body: AdminCreatePortfolioItemBodyType,
-  ) =>
+  createPortfolioItem: (id: number, body: AdminCreatePortfolioItemBodyType) =>
     http.post<MessageResType>(
       `/api/users/${id}/freelancer-profile/portfolio-items`,
       body,
@@ -262,6 +267,34 @@ export const adminApiRequest = {
       { reviewNotes: reviewNotes ?? null },
     ),
 
+  getProfileRevisions: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    profileType?: string;
+    search?: string;
+  }) => {
+    const query = buildQueryString(params || {});
+    return http.get<ProfileRevisionAdminListType>(
+      `/api/admin/profile-revisions${query}`,
+    );
+  },
+
+  getProfileRevision: (id: number) =>
+    http.get<ProfileRevisionType>(`/api/admin/profile-revisions/${id}`),
+
+  approveProfileRevision: (id: number, reviewNotes?: string | null) =>
+    http.patch<ProfileRevisionType>(
+      `/api/admin/profile-revisions/${id}/approve`,
+      { reviewNotes: reviewNotes ?? null },
+    ),
+
+  rejectProfileRevision: (id: number, reviewNotes: string) =>
+    http.patch<ProfileRevisionType>(
+      `/api/admin/profile-revisions/${id}/reject`,
+      { reviewNotes },
+    ),
+
   // ====== Admin quản lý Banner quảng cáo ======
   uploadBannerImage: (file: File) => {
     const formData = new FormData();
@@ -274,10 +307,7 @@ export const adminApiRequest = {
       const data: { success: boolean; data: BannerUploadImageResponseType } =
         await res.json();
       if (!res.ok) {
-        throw new ApiFail(
-          data as unknown as ApiError,
-          res.status,
-        );
+        throw new ApiFail(data as unknown as ApiError, res.status);
       }
       return data.data;
     });

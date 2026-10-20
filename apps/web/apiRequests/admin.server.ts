@@ -22,6 +22,7 @@ import type {
   PendingForumPostListResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
+  ProfileRevisionAdminListType,
 } from "@shared/types";
 
 // Hàm fomat thành ?page=2&limit=10&search=john&role=CLIENT
@@ -151,7 +152,14 @@ const adminServerRequest = {
     sortOrder?: string,
     deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
-    const query = buildQueryString({ page, limit, search, sortBy, sortOrder, deleted });
+    const query = buildQueryString({
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder,
+      deleted,
+    });
     const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
       `/api/forums/admin/categories${query}`,
     );
@@ -277,16 +285,45 @@ const adminServerRequest = {
     status?: string,
   ): Promise<{
     data: DisputeDetailType[];
-    pagination: { page: number; limit: number; total: number; totalPages: number };
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
   }> {
     const query = buildQueryString({ page, limit, status });
     const result = await adminServerFetch<{
       data: DisputeDetailType[];
-      pagination: { page: number; limit: number; total: number; totalPages: number };
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
     }>(`/api/admin/disputes${query}`);
     return (
       result ?? {
         data: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getProfileRevisions(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    profileType?: string;
+    search?: string;
+  }): Promise<ProfileRevisionAdminListType> {
+    const query = buildQueryString(params || {});
+    const result = await adminServerFetch<ProfileRevisionAdminListType>(
+      `/api/admin/profile-revisions${query}`,
+    );
+    return (
+      result ?? {
+        revisions: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

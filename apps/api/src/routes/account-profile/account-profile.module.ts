@@ -10,9 +10,10 @@ import {
 import { AccountProfileRepository } from './account-profile.repo';
 import { AccountProfileService } from './account-profile.service';
 import { SharedModule } from '../../shared/shared.module';
+import { ProfileRevisionModule } from '../profile-revisions/profile-revision.module';
 
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, ProfileRevisionModule],
   controllers: [
     IdentityVerificationController,
     ClientProfileController,

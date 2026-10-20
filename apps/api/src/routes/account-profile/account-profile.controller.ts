@@ -39,6 +39,7 @@ import {
   ChangePasswordDto,
   GeneralProfileDto,
   UpdateGeneralProfileDto,
+  ProfileRevisionSubmissionDto,
 } from './account-profile.dto';
 import { AccountProfileService } from './account-profile.service';
 import { createReadStream } from 'fs';
@@ -55,7 +56,7 @@ export class GeneralAccountProfileController {
   }
 
   @Put()
-  @ZodSerializerDto(GeneralProfileDto)
+  @ZodSerializerDto(ProfileRevisionSubmissionDto)
   update(
     @UserActive('userId') userId: number,
     @Body() body: UpdateGeneralProfileDto,
@@ -155,7 +156,7 @@ export class ClientProfileController {
   }
 
   @Put('me/profile')
-  @ZodSerializerDto(ClientProfileDetailDto)
+  @ZodSerializerDto(ProfileRevisionSubmissionDto)
   update(
     @UserActive('userId') userId: number,
     @Body() body: UpdateClientProfileDto,
