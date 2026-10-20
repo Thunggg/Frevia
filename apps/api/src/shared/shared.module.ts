@@ -10,6 +10,7 @@ import { CloudinaryService } from './services/cloudinary.service';
 import { EmailService } from './services/email.service';
 import { HashingService } from './services/hashing.service';
 import { PrismaService } from './services/prisma.service';
+import { AiCvAnalyzerService } from './services/ai-cv-analyzer.service';
 import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
 
@@ -31,6 +32,7 @@ import { TokenService } from './services/token.service';
       useClass: PermissionGuard,
     },
     PrismaService,
+    AiCvAnalyzerService,
     SkillResolverService,
     HashingService,
     EmailService,
@@ -41,6 +43,7 @@ import { TokenService } from './services/token.service';
   ],
   exports: [
     PrismaService,
+    AiCvAnalyzerService,
     SkillResolverService,
     HashingService,
     EmailService,

@@ -27,6 +27,7 @@ import {
   AddFreelancerSkillDto,
   AddFreelancerSkillResponseDto,
   CvUploadResponseDto,
+  CvAnalyzeResponseDto,
 } from './profile.dto';
 import { UseInterceptors } from '@nestjs/common';
 import { createReadStream } from 'fs';
@@ -89,6 +90,15 @@ export class ProfileController {
     );
     response.setHeader('Content-Type', 'application/pdf');
     return new StreamableFile(createReadStream(file.absolutePath));
+  }
+
+  @Post(':id/cv/analyze')
+  @ZodSerializerDto(CvAnalyzeResponseDto)
+  analyzeCv(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.analyzeCv(id, currentUserId);
   }
 
   @Get(':id/skills')

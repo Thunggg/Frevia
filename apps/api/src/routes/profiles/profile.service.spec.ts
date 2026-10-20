@@ -1,6 +1,8 @@
 import { ForbiddenException } from '@nestjs/common';
 import { RoleName } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
+import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRepository } from './profile.repo';
 import { ProfileService } from './profile.service';
 
@@ -26,6 +28,8 @@ describe('ProfileService', () => {
   const service = new ProfileService(
     repository as unknown as ProfileRepository,
     {} as CloudinaryService,
+    {} as AiCvAnalyzerService,
+    {} as SkillResolverService,
   );
 
   beforeEach(() => jest.clearAllMocks());

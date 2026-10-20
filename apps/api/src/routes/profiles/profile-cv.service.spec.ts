@@ -1,8 +1,13 @@
-import { ForbiddenException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { RoleName } from '@shared/types';
 import { ProfileRepository } from './profile.repo';
 import { ProfileService } from './profile.service';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
+import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import {
   CvFileInvalidException,
   CvFileRequiredException,
@@ -48,11 +53,19 @@ describe('ProfileService CV', () => {
   let repository: {
     findFreelancerProfileById: jest.Mock;
     updateCv: jest.Mock;
+    findSkillsByProfileId: jest.Mock;
   };
   let cloudinary: {
     isConfigured: jest.Mock;
     uploadFile: jest.Mock;
     deleteFile: jest.Mock;
+  };
+  let cvAnalyzer: {
+    extractSkills: jest.Mock;
+  };
+  let skillResolver: {
+    resolveSkills: jest.Mock;
+    resolveSkillEntries: jest.Mock;
   };
   let service: ProfileService;
 
@@ -61,15 +74,25 @@ describe('ProfileService CV', () => {
     repository = {
       findFreelancerProfileById: jest.fn(),
       updateCv: jest.fn(),
+      findSkillsByProfileId: jest.fn().mockResolvedValue([]),
     };
     cloudinary = {
       isConfigured: jest.fn().mockReturnValue(false),
       uploadFile: jest.fn(),
       deleteFile: jest.fn().mockResolvedValue(undefined),
     };
+    cvAnalyzer = {
+      extractSkills: jest.fn(),
+    };
+    skillResolver = {
+      resolveSkills: jest.fn().mockResolvedValue([]),
+      resolveSkillEntries: jest.fn().mockResolvedValue([]),
+    };
     service = new ProfileService(
       repository as unknown as ProfileRepository,
       cloudinary as unknown as CloudinaryService,
+      cvAnalyzer as unknown as AiCvAnalyzerService,
+      skillResolver as unknown as SkillResolverService,
     );
   });
 
@@ -223,6 +246,92 @@ describe('ProfileService CV', () => {
       await expect(service.getCvFile(5, 10)).rejects.toEqual(
         CvNotFoundException(),
       );
+    });
+  });
+
+  describe('analyzeCv', () => {
+    it('throws when the profile has no CV', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile(),
+      );
+
+      await expect(service.analyzeCv(5, 10)).rejects.toEqual(
+        CvNotFoundException(),
+      );
+      expect(cvAnalyzer.extractSkills).not.toHaveBeenCalled();
+    });
+
+    it('maps AI-extracted skills to catalog names and drops existing ones', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({
+          cvUrl: 'https://cdn.example.com/cv.pdf',
+          cvFileName: 'resume.pdf',
+        }),
+      );
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+      }) as unknown as typeof fetch;
+      cvAnalyzer.extractSkills.mockResolvedValue([
+        { name: 'js', proficiencyLevel: 8 },
+        { name: 'PostgreSQL', proficiencyLevel: 7 },
+        { name: 'Standalone AI Skill', proficiencyLevel: 4 },
+      ]);
+      skillResolver.resolveSkillEntries.mockResolvedValue([
+        { name: 'js', skill: { id: 1, name: 'javascript', slug: 'javascript' } },
+        { name: 'PostgreSQL', skill: { id: 2, name: 'PostgreSQL', slug: 'postgresql' } },
+        { name: 'Standalone AI Skill', skill: null },
+      ]);
+      repository.findSkillsByProfileId.mockResolvedValue([
+        {
+          id: 99,
+          freelancerProfileId: 5,
+          skillId: 2,
+          proficiencyLevel: 7,
+          skill: { id: 2, name: 'PostgreSQL' },
+        },
+      ]);
+
+      await expect(service.analyzeCv(5, 10)).resolves.toEqual({
+        suggestions: [
+          { skillName: 'javascript', proficiencyLevel: 8 },
+          { skillName: 'Standalone AI Skill', proficiencyLevel: 4 },
+        ],
+      });
+      expect(cvAnalyzer.extractSkills).toHaveBeenCalledWith(
+        expect.any(Buffer),
+        'resume.pdf',
+      );
+    });
+
+    it('throws a service-unavailable exception when the AI call fails', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({
+          cvUrl: 'https://cdn.example.com/cv.pdf',
+        }),
+      );
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+      }) as unknown as typeof fetch;
+      cvAnalyzer.extractSkills.mockRejectedValue(
+        new Error('AI CV analysis service is unreachable.'),
+      );
+
+      await expect(service.analyzeCv(5, 10)).rejects.toBeInstanceOf(
+        ServiceUnavailableException,
+      );
+    });
+
+    it('rejects analyzing a profile owned by another user', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ userId: 10, cvUrl: 'https://cdn.example.com/cv.pdf' }),
+      );
+
+      await expect(service.analyzeCv(5, 99)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+      expect(cvAnalyzer.extractSkills).not.toHaveBeenCalled();
     });
   });
 });

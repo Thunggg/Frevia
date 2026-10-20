@@ -84,6 +84,53 @@ export class SkillResolverService {
   }
 
   /**
+   * Resolve a list of skill names and keep the mapping back to the input.
+   *
+   * Each entry exposes the original name (trimmed) plus the catalog skill it
+   * resolved to, or null when the name could not be resolved. Useful when the
+   * caller needs to merge AI-extracted skill names with catalog skills while
+   * keeping per-name metadata.
+   */
+  async resolveSkillEntries(
+    skillNames: readonly string[],
+  ): Promise<{ name: string; skill: ResolvedSkill | null }[]> {
+    const names = skillNames
+      .filter((skillName): skillName is string => typeof skillName === 'string')
+      .map((skillName) => skillName.trim())
+      .filter(Boolean);
+
+    if (!names.length) {
+      return [];
+    }
+
+    const lookupKeys = names.map((name) => this.normalizeSkillName(name));
+    const skills = await this.prisma.skill.findMany({
+      where: { deletedAt: null },
+      select: { id: true, name: true, slug: true },
+    });
+    const skillsByLookupKey = new Map<string, ResolvedSkill>();
+    for (const skill of skills) {
+      for (const value of [skill.name, skill.slug]) {
+        const key = this.normalizeSkillName(value);
+        if (key && !skillsByLookupKey.has(key)) {
+          skillsByLookupKey.set(key, skill);
+        }
+      }
+    }
+
+    return names.map((name, index) => {
+      const lookupKey = lookupKeys[index];
+      if (!lookupKey) {
+        return { name, skill: null };
+      }
+      const canonicalKey = this.skillAliases[lookupKey] ?? lookupKey;
+      const skill =
+        skillsByLookupKey.get(lookupKey) ?? skillsByLookupKey.get(canonicalKey);
+      return { name, skill: skill ?? null };
+    });
+  }
+
+  /**
    * Resolve skills and return only their database IDs.
    *
    * Useful when creating FreelancerSkill or JobSkill records.

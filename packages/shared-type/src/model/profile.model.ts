@@ -75,10 +75,26 @@ export const CvUploadResponseSchema = z.object({
   cvFileName: z.string().min(1),
 });
 
+export const CvAnalyzeSkillSchema = z.object({
+  skillName: z.string().trim().min(1).max(100),
+  proficiencyLevel: z
+    .number()
+    .int()
+    .min(1)
+    .max(10)
+    .nullable(),
+});
+
+export const CvAnalyzeResponseSchema = z.object({
+  suggestions: z.array(CvAnalyzeSkillSchema).max(50),
+});
+
 export type UpdateFreelancerProfileResponseType = z.infer<
   typeof UpdateFreelancerProfileResponseSchema
 >;
 export type CvUploadResponseType = z.infer<typeof CvUploadResponseSchema>;
+export type CvAnalyzeSkillType = z.infer<typeof CvAnalyzeSkillSchema>;
+export type CvAnalyzeResponseType = z.infer<typeof CvAnalyzeResponseSchema>;
 
 export const FreelancerSkillSchema = z.object({
   id: z.number(),
