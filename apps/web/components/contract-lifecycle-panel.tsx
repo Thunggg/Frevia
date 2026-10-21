@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,18 +31,16 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
 type ContractAction = "sign" | "complete";
 
-function errorMessage(error: unknown) {
-  return error instanceof ApiFail
-    ? error.response.error.message
-    : "Unable to update the contract. Please try again.";
-}
+const CONTRACT_STATUSES = [
+  "ACTIVE",
+  "PENDING_SIGN",
+  "COMPLETED",
+  "CANCELLED",
+  "DISPUTED",
+] as const;
 
-function statusLabel(status: string) {
-  return status
-    .toLowerCase()
-    .split("_")
-    .map((word) => word[0]?.toUpperCase() + word.slice(1))
-    .join(" ");
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof ApiFail ? error.response.error.message : fallback;
 }
 
 export function ContractLifecyclePanel({
@@ -52,6 +51,10 @@ export function ContractLifecyclePanel({
   role: "CLIENT" | "FREELANCER";
 }) {
   const queryClient = useQueryClient();
+  const t = useTranslations("contractLifecycle");
+  const tStatus = useTranslations("contractStatus");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [confirmAction, setConfirmAction] = useState<ContractAction | null>(
     null,
   );
@@ -72,15 +75,15 @@ export function ContractLifecyclePanel({
     try {
       if (action === "sign") {
         await contractApi.sign(contract.id);
-        toastSuccess({ message: "Contract signed." });
+        toastSuccess({ message: t("signed") });
       } else {
         await contractApi.complete(contract.id);
-        toastSuccess({ message: "Contract completed. Reviews are now open." });
+        toastSuccess({ message: t("completed") });
       }
       await queryClient.invalidateQueries({ queryKey: ["contracts"] });
       setConfirmAction(null);
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("updateFailed")) });
     } finally {
       setPendingAction(null);
     }
@@ -88,7 +91,7 @@ export function ContractLifecyclePanel({
 
   if (contractsQuery.isLoading) {
     return (
-      <section aria-label="Loading contract" className="rounded-xl border p-5">
+      <section aria-label={t("loadingAria")} className="rounded-xl border p-5">
         <Skeleton className="h-5 w-40" />
         <Skeleton className="mt-4 h-16 w-full" />
         <Skeleton className="mt-4 h-9 w-32" />
@@ -102,16 +105,16 @@ export function ContractLifecyclePanel({
         <div className="flex items-start gap-3">
           <CircleAlert className="mt-0.5 size-5 text-destructive" />
           <div>
-            <h2 className="font-semibold">Contract unavailable</h2>
+            <h2 className="font-semibold">{t("unavailableTitle")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              We could not load the contract for this proposal.
+              {t("unavailableHint")}
             </p>
             <Button
               variant="outline"
               className="mt-4"
               onClick={() => void contractsQuery.refetch()}
             >
-              Try again
+              {t("tryAgain")}
             </Button>
           </div>
         </div>
@@ -125,10 +128,9 @@ export function ContractLifecyclePanel({
         <div className="flex items-start gap-3">
           <CircleAlert className="mt-0.5 size-5 text-amber-500" />
           <div>
-            <h2 className="font-semibold">Contract not created</h2>
+            <h2 className="font-semibold">{t("notCreatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              This accepted proposal does not have a contract yet. Contact
-              support to restore the contract before continuing.
+              {t("notCreatedHint")}
             </p>
           </div>
         </div>
@@ -141,6 +143,11 @@ export function ContractLifecyclePanel({
   const canSign = contract.status === "PENDING_SIGN" && !hasSigned;
   const canComplete = role === "CLIENT" && contract.status === "ACTIVE";
   const isCompleted = contract.status === "COMPLETED";
+  const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
+    contract.status,
+  )
+    ? tStatus(contract.status)
+    : contract.status;
 
   return (
     <>
@@ -151,33 +158,35 @@ export function ContractLifecyclePanel({
               <FileSignature className="size-5" />
             </div>
             <div>
-              <h2 className="font-semibold">Contract #{contract.id}</h2>
+              <h2 className="font-semibold">
+                {t("heading", { id: contract.id })}
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {isCompleted
-                  ? "Work is complete. Both participants can leave a review."
-                  : "Both participants must sign before work can begin."}
+                {isCompleted ? t("completedHint") : t("signHint")}
               </p>
             </div>
           </div>
-          <Badge variant="secondary">{statusLabel(contract.status)}</Badge>
+          <Badge variant="secondary">{statusText}</Badge>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="rounded-lg border bg-background/60 p-3">
-            <p className="text-xs text-muted-foreground">Contract value</p>
+            <p className="text-xs text-muted-foreground">
+              {t("contractValue")}
+            </p>
             <p className="mt-1 font-semibold">
-              {new Intl.NumberFormat("en-US", {
+              {format.number(Number(contract.totalAmount), {
                 style: "currency",
                 currency: "USD",
-              }).format(contract.totalAmount)}
+              })}
             </p>
           </div>
           <SignatureState
-            label="Client signature"
+            label={t("clientSignature")}
             signed={contract.signedByClient}
           />
           <SignatureState
-            label="Freelancer signature"
+            label={t("freelancerSignature")}
             signed={contract.signedByFreelancer}
           />
         </div>
@@ -189,12 +198,12 @@ export function ContractLifecyclePanel({
               onClick={() => setConfirmAction("sign")}
             >
               <FileSignature className="size-4" />
-              Sign contract
+              {t("signAction")}
             </Button>
           ) : null}
           {contract.status === "PENDING_SIGN" && hasSigned ? (
             <p className="self-center text-sm text-muted-foreground">
-              Your signature is complete. Waiting for the other participant.
+              {t("signatureComplete")}
             </p>
           ) : null}
           {canComplete ? (
@@ -203,12 +212,12 @@ export function ContractLifecyclePanel({
               onClick={() => setConfirmAction("complete")}
             >
               <ClipboardCheck className="size-4" />
-              Complete contract
+              {t("completeAction")}
             </Button>
           ) : null}
           {contract.status === "ACTIVE" && role === "FREELANCER" ? (
             <p className="self-center text-sm text-muted-foreground">
-              Work is active. The client will confirm when it is complete.
+              {t("activeHint")}
             </p>
           ) : null}
           {isCompleted ? (
@@ -219,7 +228,7 @@ export function ContractLifecyclePanel({
               <Link
                 href={`/account-profile?tab=reviews&contractId=${contract.id}`}
               >
-                Write review
+                {t("writeReview")}
               </Link>
             </Button>
           ) : null}
@@ -234,18 +243,18 @@ export function ContractLifecyclePanel({
           <AlertDialogHeader>
             <AlertDialogTitle>
               {confirmAction === "sign"
-                ? "Sign this contract?"
-                : "Mark this contract complete?"}
+                ? t("signConfirmTitle")
+                : t("completeConfirmTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {confirmAction === "sign"
-                ? "Your signature confirms that you agree to this contract."
-                : "This closes the work and allows both participants to submit reviews."}
+                ? t("signConfirmHint")
+                : t("completeConfirmHint")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={pendingAction !== null}>
-              Cancel
+              {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               disabled={pendingAction !== null}
@@ -259,8 +268,8 @@ export function ContractLifecyclePanel({
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
               {confirmAction === "sign"
-                ? "Confirm signature"
-                : "Confirm completion"}
+                ? t("confirmSign")
+                : t("confirmComplete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -270,12 +279,14 @@ export function ContractLifecyclePanel({
 }
 
 function SignatureState({ label, signed }: { label: string; signed: boolean }) {
+  const t = useTranslations("contractLifecycle");
+
   return (
     <div className="rounded-lg border bg-background/60 p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-1 flex items-center gap-1.5 text-sm font-medium">
         {signed ? <Check className="size-4 text-[#4fae2e]" /> : null}
-        {signed ? "Signed" : "Waiting"}
+        {signed ? t("signatureSigned") : t("signatureWaiting")}
       </p>
     </div>
   );
