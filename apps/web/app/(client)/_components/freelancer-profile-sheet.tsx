@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -60,6 +61,9 @@ export function FreelancerProfileSheet({
   initialData,
 }: FreelancerProfileSheetProps) {
   const router = useRouter();
+  const t = useTranslations("freelancerSheet");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
@@ -87,7 +91,7 @@ export function FreelancerProfileSheet({
       if (profileRes.status === "fulfilled") {
         setProfile(profileRes.value.data);
       } else {
-        setError("Could not load full freelancer details.");
+        setError(t("loadFailed"));
       }
 
       if (skillsRes.status === "fulfilled") {
@@ -98,11 +102,11 @@ export function FreelancerProfileSheet({
         setPortfolios(portfoliosRes.value.data);
       }
     } catch {
-      setError("An unexpected error occurred while loading profile.");
+      setError(t("loadUnexpected"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (open && profileId) {
@@ -117,11 +121,11 @@ export function FreelancerProfileSheet({
   }, [open, profileId, loadData]);
 
   const displayName =
-    profile?.displayName || initialData?.displayName || "Freelancer";
+    profile?.displayName || initialData?.displayName || tRole("FREELANCER");
   const title =
     profile?.freelancerProfile?.title ||
     initialData?.title ||
-    "Freelancer";
+    tRole("FREELANCER");
   const avatarUrl = profile?.avatarUrl || initialData?.avatarUrl || undefined;
   const isOnline = profile?.onlineStatus ?? false;
   const isVerified = profile?.freelancerProfile?.idVerified ?? false;
@@ -146,14 +150,13 @@ export function FreelancerProfileSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-xl md:max-w-2xl overflow-hidden p-0 flex flex-col gap-0 border-l border-border bg-background shadow-2xl z-50 font-sans"
       >
         {/* Accessible hidden header for screen readers */}
         <SheetHeader className="sr-only">
-          <SheetTitle>{displayName} Profile</SheetTitle>
-          <SheetDescription>
-            Detailed freelancer profile overview, skills, and portfolio.
-          </SheetDescription>
+          <SheetTitle>{t("sheetTitle", { name: displayName })}</SheetTitle>
+          <SheetDescription>{t("sheetDescription")}</SheetDescription>
         </SheetHeader>
 
         {/* Scrollable Container */}
@@ -181,7 +184,7 @@ export function FreelancerProfileSheet({
                 {isOnline && (
                   <span
                     className="absolute bottom-1 right-1 size-3.5 rounded-full bg-emerald-500 border-2 border-background"
-                    title="Online"
+                    title={t("onlineTitle")}
                   />
                 )}
               </div>
@@ -200,7 +203,9 @@ export function FreelancerProfileSheet({
                     ) : (
                       <MessageSquare className="size-3.5" />
                     )}
-                    <span>{isStartingChat ? "Opening..." : "Message"}</span>
+                    <span>
+                      {isStartingChat ? t("opening") : t("message")}
+                    </span>
                   </Button>
                 ) : null}
 
@@ -213,7 +218,9 @@ export function FreelancerProfileSheet({
                   >
                     <Link href={`/profiles/${profileId}`} target="_blank">
                       <ExternalLink className="size-3.5 text-muted-foreground" />
-                      <span className="hidden sm:inline">Open full</span>
+                      <span className="hidden sm:inline">
+                        {t("openFull")}
+                      </span>
                     </Link>
                   </Button>
                 ) : null}
@@ -237,13 +244,17 @@ export function FreelancerProfileSheet({
                 {profile?.createdAt && (
                   <span className="flex items-center gap-1">
                     <Calendar className="size-3.5 text-muted-foreground" />
-                    Joined {new Date(profile.createdAt).getFullYear()}
+                    {t("joinedYear", {
+                      year: new Date(profile.createdAt).getFullYear(),
+                    })}
                   </span>
                 )}
                 {profile?.profileCompletionPercent ? (
                   <span className="flex items-center gap-1">
                     <Sparkles className="size-3.5 text-muted-foreground" />
-                    {profile.profileCompletionPercent}% profile completion
+                    {t("profileCompletion", {
+                      percent: profile.profileCompletionPercent,
+                    })}
                   </span>
                 ) : null}
               </div>
@@ -263,7 +274,7 @@ export function FreelancerProfileSheet({
                 }`}
               >
                 <UserRound className="size-3.5" />
-                <span>Overview & Skills</span>
+                <span>{t("tabOverview")}</span>
               </button>
 
               <button
@@ -276,7 +287,7 @@ export function FreelancerProfileSheet({
                 }`}
               >
                 <Briefcase className="size-3.5" />
-                <span>Portfolio</span>
+                <span>{t("tabPortfolio")}</span>
                 {portfolios.length > 0 && (
                   <span className="rounded-full bg-muted text-foreground px-1.5 py-0.2 text-[10px] font-bold">
                     {portfolios.length}
@@ -294,7 +305,7 @@ export function FreelancerProfileSheet({
                 }`}
               >
                 <GraduationCap className="size-3.5" />
-                <span>Qualifications</span>
+                <span>{t("tabQualifications")}</span>
               </button>
             </div>
           </div>
@@ -305,7 +316,7 @@ export function FreelancerProfileSheet({
               <div className="py-20 flex flex-col items-center justify-center text-center">
                 <Loader2 className="size-7 animate-spin text-muted-foreground" />
                 <p className="mt-3 text-xs text-muted-foreground">
-                  Loading freelancer details...
+                  {t("loadingDetails")}
                 </p>
               </div>
             ) : error ? (
@@ -317,7 +328,7 @@ export function FreelancerProfileSheet({
                   onClick={() => profileId && void loadData(profileId)}
                   className="mt-3 rounded-full text-xs"
                 >
-                  Try again
+                  {t("tryAgain")}
                 </Button>
               </div>
             ) : (
@@ -328,22 +339,21 @@ export function FreelancerProfileSheet({
                     {/* Bio */}
                     <div>
                       <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        About Freelancer
+                        {t("aboutFreelancer")}
                       </h3>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/90 whitespace-pre-line">
-                        {profile?.bio ||
-                          "No introduction provided by this freelancer yet."}
+                        {profile?.bio || t("noBio")}
                       </p>
                     </div>
 
                     {/* Skills */}
                     <div className="pt-2 border-t border-border/60">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        Skills ({skills.length})
+                        {t("skillsCount", { count: skills.length })}
                       </h3>
                       {skills.length === 0 ? (
                         <p className="mt-2 text-xs text-muted-foreground">
-                          No skills listed yet.
+                          {t("noSkills")}
                         </p>
                       ) : (
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -355,7 +365,7 @@ export function FreelancerProfileSheet({
                               <Code2 className="size-3 text-muted-foreground" />
                               <span>{skill.skill.name}</span>
                               <span className="text-[11px] text-muted-foreground">
-                                · Lv.{skill.proficiencyLevel}
+                                {t("level", { level: skill.proficiencyLevel })}
                               </span>
                             </div>
                           ))}
@@ -368,7 +378,7 @@ export function FreelancerProfileSheet({
                       profile.freelancerProfile.languages.length > 0 && (
                         <div className="pt-2 border-t border-border/60">
                           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                            Languages
+                            {t("languages")}
                           </h3>
                           <div className="mt-3 flex flex-wrap gap-2">
                             {profile.freelancerProfile.languages.map(
@@ -395,10 +405,10 @@ export function FreelancerProfileSheet({
                       <div className="py-14 text-center rounded-xl border border-dashed border-border">
                         <Briefcase className="mx-auto size-7 text-muted-foreground/50" />
                         <h4 className="mt-2 text-xs font-semibold text-foreground">
-                          No portfolio items
+                          {t("noPortfolioTitle")}
                         </h4>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          This freelancer has not published any portfolio projects yet.
+                          {t("noPortfolioHint")}
                         </p>
                       </div>
                     ) : (
@@ -425,7 +435,7 @@ export function FreelancerProfileSheet({
                                     rel="noreferrer"
                                     className="flex items-center gap-1"
                                   >
-                                    <span>Link</span>
+                                    <span>{t("link")}</span>
                                     <ExternalLink className="size-3" />
                                   </a>
                                 </Button>
@@ -466,13 +476,13 @@ export function FreelancerProfileSheet({
                       <div className="flex items-center gap-1.5">
                         <GraduationCap className="size-4 text-muted-foreground" />
                         <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Education
+                          {t("education")}
                         </h3>
                       </div>
                       {!profile?.freelancerProfile?.education ||
                       profile.freelancerProfile.education.length === 0 ? (
                         <p className="mt-2 text-xs text-muted-foreground">
-                          No education listed.
+                          {t("noEducation")}
                         </p>
                       ) : (
                         <div className="mt-2 divide-y divide-border/60">
@@ -497,13 +507,13 @@ export function FreelancerProfileSheet({
                       <div className="flex items-center gap-1.5">
                         <Award className="size-4 text-muted-foreground" />
                         <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Certifications
+                          {t("certifications")}
                         </h3>
                       </div>
                       {!profile?.freelancerProfile?.certifications ||
                       profile.freelancerProfile.certifications.length === 0 ? (
                         <p className="mt-2 text-xs text-muted-foreground">
-                          No certifications listed.
+                          {t("noCertifications")}
                         </p>
                       ) : (
                         <div className="mt-2 divide-y divide-border/60">

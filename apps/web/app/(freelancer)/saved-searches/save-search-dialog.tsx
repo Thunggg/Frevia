@@ -1,9 +1,16 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { BookmarkPlus, Pencil, Trash2 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
+import {
+  BUDGET_KEYS,
+  SORT_KEYS,
+  TIME_KEYS,
+  translateFilterOption,
+} from "@/lib/search-filter-labels";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -25,19 +32,6 @@ type SaveSearchDialogProps = {
   onApply: (savedSearch: SavedSearchType) => void;
   onChanged?: () => void;
 };
-
-function searchSummary(searchParams: SavedSearchType["searchParams"]) {
-  const values = [
-    typeof searchParams.keyword === "string" && searchParams.keyword,
-    typeof searchParams.budget === "string" &&
-      searchParams.budget !== "all" &&
-      searchParams.budget.replaceAll("-", " "),
-    typeof searchParams.time === "string" &&
-      searchParams.time !== "all" &&
-      searchParams.time.replaceAll("-", " "),
-  ].filter(Boolean);
-  return values.length ? values.join(" / ") : "All open projects";
-}
 
 function normalizedSearchParams(searchParams: Record<string, unknown>) {
   return Object.entries(searchParams)
@@ -64,7 +58,22 @@ export function SaveSearchDialog({
   onApply,
   onChanged,
 }: SaveSearchDialogProps) {
+  const t = useTranslations("savedSearches");
+  const tFindWork = useTranslations("findWork");
   const [open, setOpen] = useState(false);
+
+  const searchSummary = (searchParams: SavedSearchType["searchParams"]) => {
+    const values = [
+      typeof searchParams.keyword === "string" && searchParams.keyword,
+      typeof searchParams.budget === "string" &&
+        searchParams.budget !== "all" &&
+        translateFilterOption(tFindWork, BUDGET_KEYS, searchParams.budget),
+      typeof searchParams.time === "string" &&
+        searchParams.time !== "all" &&
+        translateFilterOption(tFindWork, TIME_KEYS, searchParams.time),
+    ].filter(Boolean);
+    return values.length ? values.join(" / ") : t("allOpenProjects");
+  };
   const [saveConfirmationOpen, setSaveConfirmationOpen] = useState(false);
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<SavedSearchType | null>(null);
@@ -82,15 +91,15 @@ export function SaveSearchDialog({
 
   const handleCreate = async () => {
     const keyword = searchParams.keyword?.trim();
-    const defaultName = keyword || "All open projects";
+    const defaultName = keyword || t("allOpenProjects");
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.create({ name: defaultName, searchParams });
-      toastSuccess({ message: "Search saved" });
+      toastSuccess({ message: t("saved") });
       setSaveConfirmationOpen(false);
       onChanged?.();
     } catch {
-      toastError({ message: "Couldn't save this search. Try again." });
+      toastError({ message: t("saveFailed") });
     } finally {
       setIsSubmitting(false);
     }
@@ -102,12 +111,12 @@ export function SaveSearchDialog({
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.update(editing.id, { name: name.trim() });
-      toastSuccess({ message: "Saved search updated" });
+      toastSuccess({ message: t("updated") });
       setEditing(null);
       setName("");
       onChanged?.();
     } catch {
-      toastError({ message: "Couldn't update this saved search. Try again." });
+      toastError({ message: t("updateFailed") });
     } finally {
       setIsSubmitting(false);
     }
@@ -118,11 +127,11 @@ export function SaveSearchDialog({
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.delete(deleting.id);
-      toastSuccess({ message: "Saved search deleted" });
+      toastSuccess({ message: t("deleted") });
       setDeleting(null);
       onChanged?.();
     } catch {
-      toastError({ message: "Couldn't delete this saved search. Try again." });
+      toastError({ message: t("deleteFailed") });
     } finally {
       setIsSubmitting(false);
     }
@@ -131,17 +140,39 @@ export function SaveSearchDialog({
   const isCurrentSearchSaved = savedSearches.some((savedSearch) =>
     matchesSearch(searchParams, savedSearch),
   );
-  const defaultSearchName = searchParams.keyword?.trim() || "All open projects";
+  const defaultSearchName = searchParams.keyword?.trim() || t("allOpenProjects");
   const currentFilters = [
-    { label: "Search", value: searchParams.keyword?.trim() || "All jobs" },
+    {
+      label: t("filterSearch"),
+      value: searchParams.keyword?.trim() || t("filterAllJobs"),
+    },
     ...(searchParams.budget && searchParams.budget !== "all"
-      ? [{ label: "Budget", value: searchParams.budget.replaceAll("-", " ") }]
+      ? [
+          {
+            label: t("filterBudget"),
+            value: translateFilterOption(
+              tFindWork,
+              BUDGET_KEYS,
+              searchParams.budget,
+            ),
+          },
+        ]
       : []),
     ...(searchParams.time && searchParams.time !== "all"
-      ? [{ label: "Posted", value: searchParams.time.replaceAll("-", " ") }]
+      ? [
+          {
+            label: t("filterPosted"),
+            value: translateFilterOption(tFindWork, TIME_KEYS, searchParams.time),
+          },
+        ]
       : []),
     ...(searchParams.sort && searchParams.sort !== "newest"
-      ? [{ label: "Sort", value: searchParams.sort.replaceAll("-", " ") }]
+      ? [
+          {
+            label: t("filterSort"),
+            value: translateFilterOption(tFindWork, SORT_KEYS, searchParams.sort),
+          },
+        ]
       : []),
   ];
 
@@ -154,7 +185,7 @@ export function SaveSearchDialog({
             className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none shrink-0"
           >
             <BookmarkPlus className="size-4 text-[#4fae2e]" />
-            <span>Saved Searches</span>
+            <span>{t("triggerLabel")}</span>
             {savedSearches.length > 0 && (
               <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-1.5 text-[11px] font-bold text-foreground">
                 {savedSearches.length}
@@ -165,10 +196,10 @@ export function SaveSearchDialog({
         <DialogContent className="max-h-[min(42rem,calc(100dvh-2rem))] overflow-y-auto sm:max-w-xl rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold text-foreground font-sans">
-              Saved searches
+              {t("dialogTitle")}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground font-sans">
-              Open a saved filter set, rename it, or remove it from your list.
+              {t("dialogDescription")}
             </DialogDescription>
           </DialogHeader>
 
@@ -179,13 +210,13 @@ export function SaveSearchDialog({
             >
               <div className="grid gap-2">
                 <Label htmlFor="saved-search-name" className="text-xs font-semibold">
-                  Saved search name
+                  {t("nameLabel")}
                 </Label>
                 <Input
                   id="saved-search-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="For example, Remote React work"
+                  placeholder={t("namePlaceholder")}
                   maxLength={100}
                   className="rounded-full bg-background"
                   autoFocus
@@ -202,14 +233,14 @@ export function SaveSearchDialog({
                     setName("");
                   }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   type="submit"
                   className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928]"
                   disabled={isSubmitting || !name.trim()}
                 >
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                  {isSubmitting ? t("saving") : t("saveChanges")}
                 </Button>
               </DialogFooter>
             </form>
@@ -220,9 +251,7 @@ export function SaveSearchDialog({
               disabled={isSubmitting || isCurrentSearchSaved}
             >
               <BookmarkPlus className="size-4 mr-1.5" />
-              {isCurrentSearchSaved
-                ? "Current search saved"
-                : "Save current search"}
+              {isCurrentSearchSaved ? t("currentSaved") : t("saveCurrent")}
             </Button>
           )}
 
@@ -244,7 +273,7 @@ export function SaveSearchDialog({
                     <span className="block truncate text-sm font-semibold text-foreground hover:text-[#3f9225]">
                       {savedSearch.name}
                     </span>
-                    <span className="mt-0.5 block truncate text-xs capitalize text-muted-foreground">
+                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                       {searchSummary(savedSearch.searchParams)}
                     </span>
                   </button>
@@ -253,7 +282,7 @@ export function SaveSearchDialog({
                     variant="ghost"
                     size="icon"
                     className="size-9"
-                    aria-label={`Rename ${savedSearch.name}`}
+                    aria-label={t("renameAria", { name: savedSearch.name })}
                     onClick={() => {
                       setEditing(savedSearch);
                       setName(savedSearch.name);
@@ -266,7 +295,7 @@ export function SaveSearchDialog({
                     variant="ghost"
                     size="icon"
                     className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    aria-label={`Delete ${savedSearch.name}`}
+                    aria-label={t("deleteAria", { name: savedSearch.name })}
                     onClick={() => setDeleting(savedSearch)}
                   >
                     <Trash2 className="size-4" />
@@ -275,7 +304,7 @@ export function SaveSearchDialog({
               ))
             ) : (
               <p className="px-4 py-8 text-center text-sm text-muted-foreground">
-                No saved searches yet. Save the filters you use most.
+                {t("emptyList")}
               </p>
             )}
           </div>
@@ -289,11 +318,10 @@ export function SaveSearchDialog({
         <DialogContent className="sm:max-w-md rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold text-foreground font-sans">
-              Save this search?
+              {t("confirmTitle")}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground font-sans">
-              It will be saved as &quot;{defaultSearchName}&quot;. You can
-              rename it later.
+              {t("confirmHint", { name: defaultSearchName })}
             </DialogDescription>
           </DialogHeader>
           <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden my-2">
@@ -303,7 +331,7 @@ export function SaveSearchDialog({
                 className="flex items-center justify-between gap-4 px-4 py-2.5 text-xs"
               >
                 <span className="text-muted-foreground font-medium">{filter.label}</span>
-                <span className="max-w-[60%] truncate text-right font-semibold capitalize text-foreground">
+                <span className="max-w-[60%] truncate text-right font-semibold text-foreground">
                   {filter.value}
                 </span>
               </div>
@@ -316,7 +344,7 @@ export function SaveSearchDialog({
               disabled={isSubmitting}
               onClick={() => setSaveConfirmationOpen(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
@@ -324,7 +352,7 @@ export function SaveSearchDialog({
               onClick={handleCreate}
             >
               <BookmarkPlus className="size-4 mr-1.5" />
-              {isSubmitting ? "Saving..." : "Save search"}
+              {isSubmitting ? t("saving") : t("saveSearch")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -338,11 +366,10 @@ export function SaveSearchDialog({
           <DialogContent className="sm:max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
             <DialogHeader>
               <DialogTitle className="text-lg font-bold text-foreground font-sans">
-                Delete saved search?
+                {t("deleteTitle")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground font-sans">
-                This will permanently remove &quot;{deleting.name}&quot;. Your
-                jobs and search results will not be affected.
+                {t("deleteHint", { name: deleting.name })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-3 flex gap-2">
@@ -352,7 +379,7 @@ export function SaveSearchDialog({
                 disabled={isSubmitting}
                 onClick={() => setDeleting(null)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 variant="destructive"
@@ -360,7 +387,7 @@ export function SaveSearchDialog({
                 disabled={isSubmitting}
                 onClick={handleDelete}
               >
-                {isSubmitting ? "Deleting..." : "Delete"}
+                {isSubmitting ? t("deleting") : t("delete")}
               </Button>
             </DialogFooter>
           </DialogContent>

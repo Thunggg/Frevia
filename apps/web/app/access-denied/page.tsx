@@ -1,10 +1,15 @@
+import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { AccessDeniedContent } from "./access-denied-content";
 
-export const metadata = {
-  title: "Access Denied | Frevia",
-  description: "You do not have permission to access this page.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("pageMeta");
+
+  return {
+    title: t("accessDeniedTitle"),
+    description: t("accessDeniedDescription"),
+  };
+}
 
 type AccessDeniedPageProps = {
   searchParams: Promise<{

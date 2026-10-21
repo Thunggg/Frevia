@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslatedResolver } from "@/lib/form-resolver";
@@ -76,6 +77,8 @@ export function PostJobForm({
   onCancel,
   job,
 }: PostJobFormProps) {
+  const t = useTranslations("postJobForm");
+  const tCommon = useTranslations("common");
   const isDialog = mode === "dialog";
   const isActive = isDialog ? open : true;
   const [skillInput, setSkillInput] = useState("");
@@ -143,7 +146,7 @@ export function PostJobForm({
       const response = job
         ? await jobApiRequest.updateJob(job.id, data)
         : await jobApiRequest.createJob(data);
-      if (!response.success) throw new Error("Unable to save job");
+      if (!response.success) throw new Error(t("saveFailed"));
       onSaved({
         ...response.data,
         skills: selectedSkills.map((skill) => ({
@@ -152,7 +155,7 @@ export function PostJobForm({
           skill: { name: skill.name },
         })),
       });
-      toastSuccess({ message: job ? "Job updated" : "Job created" });
+      toastSuccess({ message: job ? t("updated") : t("created") });
       if (isDialog) {
         onOpenChange?.(false);
         form.reset();
@@ -160,7 +163,7 @@ export function PostJobForm({
     } catch (error) {
       if (error instanceof ApiFail)
         handleErrorApi({ error: error.response, setError: form.setError });
-      else toastError({ message: "Unable to save job" });
+      else toastError({ message: t("saveFailed") });
     }
   };
 
@@ -171,11 +174,11 @@ export function PostJobForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">Job title</FieldLabel>
+            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("titleLabel")}</FieldLabel>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
-              placeholder="Senior Full-stack Developer"
+              placeholder={t("titlePlaceholder")}
               className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -187,13 +190,13 @@ export function PostJobForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">Description</FieldLabel>
+            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("descriptionLabel")}</FieldLabel>
             <Textarea
               {...field}
               value={field.value ?? ""}
               aria-invalid={fieldState.invalid}
               className="min-h-32 rounded-2xl border-0 bg-[#F1F0F5] p-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
-              placeholder="Describe the work, expected deliverables, and required experience..."
+              placeholder={t("descriptionPlaceholder")}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
@@ -205,7 +208,7 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">Minimum budget ($)</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("minBudgetLabel")}</FieldLabel>
               <Input
                 type="number"
                 value={field.value ?? ""}
@@ -217,7 +220,7 @@ export function PostJobForm({
                   )
                 }
                 aria-invalid={fieldState.invalid}
-                placeholder="e.g. 500"
+                placeholder={t("minBudgetPlaceholder")}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -229,7 +232,7 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">Maximum budget ($)</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("maxBudgetLabel")}</FieldLabel>
               <Input
                 type="number"
                 value={field.value ?? ""}
@@ -241,7 +244,7 @@ export function PostJobForm({
                   )
                 }
                 aria-invalid={fieldState.invalid}
-                placeholder="e.g. 2,000"
+                placeholder={t("maxBudgetPlaceholder")}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -255,7 +258,7 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">Deadline</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("deadlineLabel")}</FieldLabel>
               <Input
                 type="date"
                 value={
@@ -280,7 +283,7 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">Expiry date</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("expiryLabel")}</FieldLabel>
               <Input
                 type="date"
                 value={
@@ -306,7 +309,7 @@ export function PostJobForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">Required skills</FieldLabel>
+            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("skillsLabel")}</FieldLabel>
             <div ref={skillPickerRef} className="relative">
               <Input
                 value={skillInput}
@@ -315,7 +318,7 @@ export function PostJobForm({
                   setSkillInput(event.target.value);
                   setIsSkillMenuOpen(true);
                 }}
-                placeholder="Search or scroll to select skills..."
+                placeholder={t("skillsPlaceholder")}
                 aria-invalid={fieldState.invalid}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               />
@@ -342,8 +345,7 @@ export function PostJobForm({
               )}
             </div>
             <p className="text-xs text-muted-foreground font-sans">
-              Search by name or scroll through the available skills to select
-              multiple items.
+              {t("skillsHint")}
             </p>
             <div className="flex flex-wrap gap-2">
               {selectedSkills.map((skill) => (
@@ -384,7 +386,7 @@ export function PostJobForm({
         className="h-10 rounded-full px-5 text-xs font-medium font-sans bg-[#F1F0F5] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-foreground cursor-pointer transition-colors"
         onClick={close}
       >
-        Cancel
+        {t("cancel")}
       </Button>
       <Button
         type="submit"
@@ -394,7 +396,7 @@ export function PostJobForm({
           (Boolean(job) && !form.formState.isDirty)
         }
       >
-        {form.formState.isSubmitting ? "Saving..." : "Save job"}
+        {form.formState.isSubmitting ? t("saving") : t("save")}
       </Button>
     </div>
   );
@@ -410,7 +412,7 @@ export function PostJobForm({
             className="h-10 rounded-full px-5 text-xs font-medium font-sans bg-[#F1F0F5] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-foreground cursor-pointer transition-colors"
             onClick={close}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="submit"
@@ -420,7 +422,7 @@ export function PostJobForm({
               (Boolean(job) && !form.formState.isDirty)
             }
           >
-            {form.formState.isSubmitting ? "Saving..." : "Save job"}
+            {form.formState.isSubmitting ? t("saving") : t("save")}
           </Button>
         </SheetFooter>
       ) : (
@@ -437,17 +439,16 @@ export function PostJobForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl overflow-y-auto p-6 sm:p-8 bg-background border-l border-border shadow-2xl rounded-l-[28px] flex flex-col justify-between font-sans"
       >
         <div className="flex flex-col font-sans">
           <SheetHeader className="p-0 pb-6 border-b border-border/60 font-sans">
             <SheetTitle className="text-xl font-bold tracking-tight text-foreground font-sans">
-              {job ? "Edit job" : "Post a new job"}
+              {job ? t("editTitle") : t("newTitle")}
             </SheetTitle>
             <SheetDescription className="text-xs text-muted-foreground mt-1 font-sans">
-              {job
-                ? "Update your job details, budget, timeline, and required skills."
-                : "Fill in the details to publish a new job posting."}
+              {job ? t("editDescription") : t("newDescription")}
             </SheetDescription>
           </SheetHeader>
           <div className="pt-6 font-sans">

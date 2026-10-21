@@ -22,6 +22,12 @@ import jobApiRequest from "@/apiRequests/job";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { BannerSlot } from "@/components/banner-slot";
+import {
+  BUDGET_KEYS,
+  SORT_KEYS,
+  TIME_KEYS,
+  translateFilterOption,
+} from "@/lib/search-filter-labels";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Select,
@@ -64,28 +70,7 @@ type FindWorkContentProps = {
 };
 
 // Ánh xạ giá trị filter trên URL sang key dịch trong namespace "findWork"
-const BUDGET_KEYS: Record<string, string> = {
-  "under-500": "budget.under500",
-  "500-1000": "budget.500to1000",
-  "1000-5000": "budget.1000to5000",
-  "5000-plus": "budget.over5000",
-};
-
-const TIME_KEYS: Record<string, string> = {
-  today: "time.today",
-  "last-3-days": "time.last3Days",
-  "last-7-days": "time.last7Days",
-  "last-30-days": "time.last30Days",
-};
-
-const SORT_KEYS: Record<string, string> = {
-  newest: "sort.newest",
-  oldest: "sort.oldest",
-  "title-asc": "sort.titleAsc",
-  "title-desc": "sort.titleDesc",
-  "budget-low": "sort.budgetLow",
-  "budget-high": "sort.budgetHigh",
-};
+// được chia sẻ với trang saved searches — xem lib/search-filter-labels.ts
 
 function stripHtml(value: string) {
   return value
@@ -289,10 +274,8 @@ export function FindWorkContent({
     }
   };
 
-  const translateOption = (keys: Record<string, string>, value: string) => {
-    const key = keys[value];
-    return key ? t(key) : value;
-  };
+  const translateOption = (keys: Record<string, string>, value: string) =>
+    translateFilterOption(t, keys, value);
 
   const formatPostedTime = (value: string | Date) => {
     const diffHours = Math.floor(

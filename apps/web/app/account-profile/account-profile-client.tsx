@@ -71,6 +71,7 @@ import {
   UserPlus,
   UserRound,
 } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -84,20 +85,48 @@ type Props = {
   embedded?: boolean;
 };
 
-function errorMessage(error: unknown) {
+const DOCUMENT_TYPE_KEYS = [
+  "ID_CARD",
+  "PASSPORT",
+  "DRIVER_LICENSE",
+  "RESIDENCE_PERMIT",
+  "OTHER",
+] as const;
+
+const VERIFICATION_STATUS_KEYS = ["PENDING", "APPROVED", "REJECTED"] as const;
+
+const SOCIAL_PLATFORM_KEYS = [
+  "GITHUB",
+  "LINKEDIN",
+  "TWITTER",
+  "FACEBOOK",
+  "INSTAGRAM",
+  "YOUTUBE",
+  "WEBSITE",
+  "OTHER",
+] as const;
+
+const AVAILABILITY_STATUS_KEYS = [
+  "AVAILABLE",
+  "BUSY",
+  "AWAY",
+  "OFFLINE",
+] as const;
+
+/**
+ * Lỗi từ ApiFail đi qua proxy BFF đã được dịch sẵn (error.details[].message
+ * chứa key i18n), nên GIỮ NGUYÊN.
+ *
+ * Mọi lỗi khác (ví dụ TypeError "Failed to fetch" khi mất mạng) là text tiếng
+ * Anh do runtime sinh ra, không phải key dịch — trả về fallback đã dịch thay
+ * vì để lộ tiếng Anh cho người dùng.
+ */
+function errorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiFail) {
     return error.response.error.details?.[0]?.message ?? error.message;
   }
-  return error instanceof Error ? error.message : "Something went wrong.";
+  return fallback;
 }
-
-const labels: Record<string, string> = {
-  ID_CARD: "National ID card",
-  PASSPORT: "Passport",
-  DRIVER_LICENSE: "Driver license",
-  RESIDENCE_PERMIT: "Residence permit",
-  OTHER: "Other document",
-};
 
 function FreelancerListSkeleton({ label }: { label: string }) {
   return (
@@ -137,6 +166,42 @@ export function AccountProfileClient({
   embedded = false,
 }: Props) {
   const searchParams = useSearchParams();
+  const t = useTranslations("accountProfile");
+  const tSettings = useTranslations("clientProfileSettings");
+  const tVerification = useTranslations("verificationStatus");
+  const tDocument = useTranslations("documentType");
+  const tPlatform = useTranslations("socialPlatform");
+  const tAvailability = useTranslations("freelancerProfile.availability");
+  const tCommon = useTranslations("common");
+  const tSidebar = useTranslations("sidebar");
+  const tRole = useTranslations("roleName");
+  const format = useFormatter();
+
+  const toMessage = useCallback(
+    (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
+    [tSettings],
+  );
+
+  const documentTypeLabel = (value: string) =>
+    (DOCUMENT_TYPE_KEYS as readonly string[]).includes(value)
+      ? tDocument(value)
+      : value;
+
+  const verificationStatusLabel = (value: string | null | undefined) =>
+    value && (VERIFICATION_STATUS_KEYS as readonly string[]).includes(value)
+      ? tVerification(value)
+      : tVerification("NOT_SUBMITTED");
+
+  const platformLabel = (value: string) =>
+    (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(value)
+      ? tPlatform(value)
+      : value;
+
+  const availabilityLabel = (value: string) =>
+    (AVAILABILITY_STATUS_KEYS as readonly string[]).includes(value)
+      ? tAvailability(value)
+      : value;
+
   const [identity, setIdentity] =
     useState<IdentityVerificationStatusType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
@@ -189,11 +254,11 @@ export function AccountProfileClient({
         setFavorites(favoritesResponse.data);
       }
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setLoading(false);
     }
-  }, [headerRole, userId]);
+  }, [headerRole, userId, toMessage]);
 
   const loadFreelancers = useCallback(async () => {
     setFreelancersLoading(true);
@@ -202,11 +267,11 @@ export function AccountProfileClient({
       const response = await accountProfileApi.discoverFreelancers();
       setFreelancers(response.data);
     } catch (error) {
-      setFreelancersError(errorMessage(error));
+      setFreelancersError(toMessage(error));
     } finally {
       setFreelancersLoading(false);
     }
-  }, []);
+  }, [toMessage]);
 
   useEffect(() => void load(), [load]);
 
@@ -219,7 +284,7 @@ export function AccountProfileClient({
   const uploadDocument = async (event: FormEvent) => {
     event.preventDefault();
     if (!documentFile) {
-      toastError({ message: "Please select a document file." });
+      toastError({ message: t("selectFileFirst") });
       return;
     }
     setPending("identity");
@@ -228,11 +293,11 @@ export function AccountProfileClient({
         { documentType },
         documentFile,
       );
-      toastSuccess({ message: "Document uploaded for review." });
+      toastSuccess({ message: t("documentUploaded") });
       setDocumentFile(null);
       await load();
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -248,9 +313,9 @@ export function AccountProfileClient({
       });
       setSocialLinks((current) => [...current, response.data]);
       setSocialUrl("");
-      toastSuccess({ message: "Social link added." });
+      toastSuccess({ message: tSettings("socialLinkAdded") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -263,9 +328,9 @@ export function AccountProfileClient({
       setSocialLinks((current) =>
         current.filter((item) => item.id !== link.id),
       );
-      toastSuccess({ message: "Social link removed." });
+      toastSuccess({ message: tSettings("socialLinkRemoved") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -282,9 +347,9 @@ export function AccountProfileClient({
             : item,
         ),
       );
-      toastSuccess({ message: "Unfollowed freelancer." });
+      toastSuccess({ message: tSettings("unfollowed") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -297,9 +362,9 @@ export function AccountProfileClient({
       setFavorites((current) =>
         current.filter((item) => item.freelancerId !== freelancerId),
       );
-      toastSuccess({ message: "Removed from favorites." });
+      toastSuccess({ message: tSettings("favoriteRemoved") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -316,9 +381,9 @@ export function AccountProfileClient({
             : item,
         ),
       );
-      toastSuccess({ message: "You are now following this freelancer." });
+      toastSuccess({ message: tSettings("followed") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -335,7 +400,7 @@ export function AccountProfileClient({
       });
       toastSuccess({ message: response.data.message });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -404,11 +469,11 @@ export function AccountProfileClient({
                   href="/"
                   className="transition-colors hover:text-[#4fae2e]"
                 >
-                  Home
+                  {tCommon("home")}
                 </Link>
                 <span className="mx-2 text-foreground/35">/</span>
                 <span className="font-medium text-foreground">
-                  Profile & trust settings
+                  {t("breadcrumb")}
                 </span>
               </nav>
             )}
@@ -419,12 +484,12 @@ export function AccountProfileClient({
             >
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                  Profile & trust settings
+                  {t("pageTitle")}
                 </h1>
                 <p className="mt-1 text-xs font-normal text-muted-foreground">
                   {headerRole === "FREELANCER"
-                    ? "Manage your freelancer profile, identity verification and public social connections."
-                    : "Manage your company profile and public social connections."}
+                    ? t("pageSubtitleFreelancer")
+                    : t("pageSubtitleClient")}
                 </p>
               </div>
               {publicProfileHref ? (
@@ -437,8 +502,8 @@ export function AccountProfileClient({
                   <Link href={publicProfileHref}>
                     <Eye className="mr-2 size-4" />
                     {headerRole === "FREELANCER"
-                      ? "View and edit freelancer profile"
-                      : "View public profile"}
+                      ? t("viewEditFreelancerProfile")
+                      : tSidebar("viewPublicProfile")}
                   </Link>
                 </Button>
               ) : null}
@@ -458,32 +523,32 @@ export function AccountProfileClient({
                 className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
               >
                 <TabsTrigger value="general">
-                  <UserRound /> General
+                  <UserRound /> {t("navGeneral")}
                 </TabsTrigger>
                 {headerRole === "FREELANCER" ? (
                   <TabsTrigger value="identity">
-                    <ShieldCheck /> Identity
+                    <ShieldCheck /> {t("navIdentity")}
                   </TabsTrigger>
                 ) : null}
                 {headerRole === "CLIENT" ? (
                   <TabsTrigger value="company">
-                    <Building2 /> Company
+                    <Building2 /> {t("navCompany")}
                   </TabsTrigger>
                 ) : null}
                 <TabsTrigger value="social">
-                  <Link2 /> Social links
+                  <Link2 /> {t("navSocial")}
                 </TabsTrigger>
                 <TabsTrigger value="reviews">
-                  <Star /> Reviews
+                  <Star /> {t("navReviews")}
                 </TabsTrigger>
                 {headerRole === "CLIENT" ? (
                   <TabsTrigger value="following">
-                    <UserCheck /> Following
+                    <UserCheck /> {t("navFollowing")}
                   </TabsTrigger>
                 ) : null}
                 {headerRole === "CLIENT" ? (
                   <TabsTrigger value="favorites">
-                    <Heart /> Favorites
+                    <Heart /> {t("navFavorites")}
                   </TabsTrigger>
                 ) : null}
               </TabsList>
@@ -495,27 +560,30 @@ export function AccountProfileClient({
               <TabsContent value="company">
                 <div className="rounded-xl border border-border p-5 sm:p-6">
                   <h2 className="text-base font-semibold tracking-tight text-foreground">
-                    Company information
+                    {t("companyInfoTitle")}
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Tell freelancers about your company. This information is
-                    public on your client profile.
+                    {t("companyInfoHint")}
                   </p>
                   <form
                     className="mt-5 space-y-4"
                     onSubmit={saveCompanyProfile}
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="companyName">Company name</Label>
+                      <Label htmlFor="companyName">
+                        {tSettings("companyName")}
+                      </Label>
                       <Input
                         id="companyName"
                         value={companyName}
                         onChange={(event) => setCompanyName(event.target.value)}
-                        placeholder="Acme Inc."
+                        placeholder={tSettings("companyNamePlaceholder")}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="companyDescription">Description</Label>
+                      <Label htmlFor="companyDescription">
+                        {t("descriptionLabel")}
+                      </Label>
                       <textarea
                         id="companyDescription"
                         value={companyDescription}
@@ -523,18 +591,20 @@ export function AccountProfileClient({
                           setCompanyDescription(event.target.value)
                         }
                         rows={4}
-                        placeholder="A short description about your company..."
+                        placeholder={t("descriptionPlaceholder")}
                         className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="companyWebsite">Website</Label>
+                      <Label htmlFor="companyWebsite">
+                        {tSettings("websiteUrl")}
+                      </Label>
                       <Input
                         id="companyWebsite"
                         type="url"
                         value={website}
                         onChange={(event) => setWebsite(event.target.value)}
-                        placeholder="https://example.com"
+                        placeholder={tSettings("websitePlaceholder")}
                       />
                     </div>
                     <Button
@@ -544,7 +614,7 @@ export function AccountProfileClient({
                       {pending === "company" ? (
                         <Loader2 className="animate-spin" />
                       ) : null}
-                      Save changes
+                      {tSettings("saveChanges")}
                     </Button>
                   </form>
                 </div>
@@ -554,11 +624,11 @@ export function AccountProfileClient({
                 <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
                   <div className="rounded-xl border border-border p-5 sm:p-6">
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      Submit document for review
+                      {t("submitDocumentTitle")}
                     </h2>
                     <form className="mt-5 space-y-4" onSubmit={uploadDocument}>
                       <div className="space-y-2">
-                        <Label>Document type</Label>
+                        <Label>{t("documentTypeLabel")}</Label>
                         <Select
                           value={documentType}
                           onValueChange={(value) =>
@@ -571,14 +641,14 @@ export function AccountProfileClient({
                           <SelectContent>
                             {Object.values(DocumentType).map((value) => (
                               <SelectItem key={value} value={value}>
-                                {labels[value]}
+                                {documentTypeLabel(value)}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label>Document file</Label>
+                        <Label>{t("documentFileLabel")}</Label>
                         <Input
                           type="file"
                           accept=".pdf,.png,.jpg,.jpeg"
@@ -588,7 +658,7 @@ export function AccountProfileClient({
                           required
                         />
                         <p className="text-xs text-muted-foreground">
-                          Upload PDF, PNG, or JPG (max 10MB).
+                          {t("uploadHint")}
                         </p>
                       </div>
                       <Button
@@ -600,14 +670,14 @@ export function AccountProfileClient({
                         ) : (
                           <Upload />
                         )}
-                        Upload document
+                        {t("uploadDocument")}
                       </Button>
                     </form>
                   </div>
 
                   <div className="rounded-xl border border-border p-5 sm:p-6">
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      Verification status
+                      {t("verificationStatusTitle")}
                     </h2>
                     <div className="mt-5 space-y-4">
                       <Badge
@@ -622,7 +692,7 @@ export function AccountProfileClient({
                             : "secondary"
                         }
                       >
-                        {identity?.status ?? "NOT SUBMITTED"}
+                        {verificationStatusLabel(identity?.status)}
                       </Badge>
                       {identity?.documents.length ? (
                         <ul className="divide-y divide-border border-y border-border">
@@ -633,12 +703,16 @@ export function AccountProfileClient({
                             >
                               <div>
                                 <p className="font-medium text-foreground">
-                                  {labels[document.documentType]}
+                                  {documentTypeLabel(document.documentType)}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {new Date(
-                                    document.createdAt,
-                                  ).toLocaleString()}
+                                  {format.dateTime(
+                                    new Date(document.createdAt),
+                                    {
+                                      dateStyle: "medium",
+                                      timeStyle: "short",
+                                    },
+                                  )}
                                 </p>
                                 {document.reviewNotes ? (
                                   <p className="mt-1 text-sm text-destructive">
@@ -660,7 +734,7 @@ export function AccountProfileClient({
                         </ul>
                       ) : (
                         <p className="text-sm text-muted-foreground">
-                          No documents submitted yet.
+                          {t("noDocumentsYet")}
                         </p>
                       )}
                     </div>
@@ -672,7 +746,7 @@ export function AccountProfileClient({
                 <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
                   <div className="rounded-xl border border-border p-5 sm:p-6">
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      Add social link
+                      {tSettings("addSocialLink")}
                     </h2>
                     <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
                       <Select
@@ -687,7 +761,7 @@ export function AccountProfileClient({
                         <SelectContent>
                           {Object.values(SocialPlatform).map((value) => (
                             <SelectItem key={value} value={value}>
-                              {value.replaceAll("_", " ")}
+                              {platformLabel(value)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -703,14 +777,14 @@ export function AccountProfileClient({
                         className="bg-[#4fae2e] text-white hover:bg-[#459928]"
                         disabled={pending === "social"}
                       >
-                        <Plus /> Add link
+                        <Plus /> {tSettings("addLink")}
                       </Button>
                     </form>
                   </div>
 
                   <div>
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      Your links
+                      {t("yourLinksTitle")}
                     </h2>
                     {socialLinks.length ? (
                       <ul className="mt-4 divide-y divide-border border-y border-border">
@@ -727,7 +801,7 @@ export function AccountProfileClient({
                               rel="noreferrer"
                             >
                               <span className="mr-2 font-medium text-foreground">
-                                {link.platform}
+                                {platformLabel(link.platform)}
                               </span>
                               {link.url}
                             </a>
@@ -744,7 +818,7 @@ export function AccountProfileClient({
                       </ul>
                     ) : (
                       <p className="mt-4 text-sm text-muted-foreground">
-                        No social links added yet.
+                        {tSettings("noSocialLinks")}
                       </p>
                     )}
                   </div>
@@ -764,24 +838,23 @@ export function AccountProfileClient({
                           id="following-heading"
                           className="text-xl font-semibold tracking-tight text-foreground"
                         >
-                          Find freelancers
+                          {t("findFreelancersTitle")}
                         </h2>
                         {!freelancersLoading && !freelancersError ? (
                           <Badge variant="secondary">
-                            {followingCount} following
+                            {t("followingBadge", { count: followingCount })}
                           </Badge>
                         ) : null}
                       </div>
                       <p className="mt-1.5 text-sm text-muted-foreground">
-                        Browse profiles and follow people you want to keep in
-                        view.
+                        {t("findFreelancersHint")}
                       </p>
                     </div>
 
                     <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div
                         className="inline-flex w-fit rounded-lg bg-muted p-1"
-                        aria-label="Filter freelancers"
+                        aria-label={tSettings("filterRelationships")}
                       >
                         <Button
                           type="button"
@@ -795,7 +868,7 @@ export function AccountProfileClient({
                           aria-pressed={freelancerView === "all"}
                           onClick={() => setFreelancerView("all")}
                         >
-                          All freelancers
+                          {t("allFreelancers")}
                         </Button>
                         <Button
                           type="button"
@@ -809,13 +882,15 @@ export function AccountProfileClient({
                           aria-pressed={freelancerView === "following"}
                           onClick={() => setFreelancerView("following")}
                         >
-                          Following ({followingCount})
+                          {tSettings("followingTabCount", {
+                            count: followingCount,
+                          })}
                         </Button>
                       </div>
 
                       <div className="relative w-full sm:max-w-xs">
                         <label htmlFor="freelancer-search" className="sr-only">
-                          Search freelancers
+                          {tSettings("searchFreelancers")}
                         </label>
                         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -824,7 +899,7 @@ export function AccountProfileClient({
                           onChange={(event) =>
                             setFreelancerQuery(event.target.value)
                           }
-                          placeholder="Search by name, title, or skill"
+                          placeholder={tSettings("searchPlaceholder")}
                           className="pl-9"
                         />
                       </div>
@@ -832,11 +907,13 @@ export function AccountProfileClient({
                   </div>
 
                   {freelancersLoading ? (
-                    <FreelancerListSkeleton label="Loading freelancers" />
+                    <FreelancerListSkeleton
+                      label={t("loadingFreelancersAria")}
+                    />
                   ) : freelancersError ? (
                     <div className="mt-6 rounded-xl border border-destructive/25 bg-destructive/5 px-5 py-8 text-center">
                       <p className="font-medium text-foreground">
-                        We could not load freelancers
+                        {tSettings("freelancersLoadFailed")}
                       </p>
                       <p className="mx-auto mt-1.5 max-w-md text-sm text-muted-foreground">
                         {freelancersError}
@@ -847,7 +924,7 @@ export function AccountProfileClient({
                         className="mt-4 active:translate-y-px"
                         onClick={() => void loadFreelancers()}
                       >
-                        <RefreshCw /> Try again
+                        <RefreshCw /> {tSettings("tryAgain")}
                       </Button>
                     </div>
                   ) : !freelancers.length ? (
@@ -856,11 +933,10 @@ export function AccountProfileClient({
                         <UserPlus className="size-7" />
                       </div>
                       <p className="text-lg font-medium text-foreground">
-                        No freelancers available
+                        {t("noFreelancersAvailable")}
                       </p>
                       <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                        Freelancer profiles will appear here when they become
-                        available.
+                        {t("noFreelancersHint")}
                       </p>
                     </div>
                   ) : !filteredFreelancers.length ? (
@@ -872,13 +948,13 @@ export function AccountProfileClient({
                       )}
                       <p className="mt-3 font-medium text-foreground">
                         {freelancerView === "following" && !freelancerQuery
-                          ? "You are not following anyone yet"
-                          : "No matching freelancers"}
+                          ? tSettings("notFollowingAnyone")
+                          : tSettings("noMatchingFreelancers")}
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {freelancerView === "following" && !freelancerQuery
-                          ? "Switch to All freelancers to find people to follow."
-                          : "Try another name, title, or skill."}
+                          ? t("notFollowingHint")
+                          : tSettings("noMatchHint")}
                       </p>
                       <Button
                         variant="link"
@@ -891,15 +967,15 @@ export function AccountProfileClient({
                         }}
                       >
                         {freelancerView === "following"
-                          ? "Browse freelancers"
-                          : "Clear search"}
+                          ? tSettings("browseFreelancers")
+                          : tSettings("clearSearch")}
                       </Button>
                     </div>
                   ) : (
                     <ul className="mt-6 grid gap-4 lg:grid-cols-2">
                       {filteredFreelancers.map((freelancer) => {
                         const displayName =
-                          freelancer.profile.displayName ?? "Freelancer";
+                          freelancer.profile.displayName ?? tRole("FREELANCER");
                         const skills =
                           freelancer.profile.freelancerProfile.skills;
                         const isPending =
@@ -933,16 +1009,13 @@ export function AccountProfileClient({
                                 </Link>
                                 <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
                                   {freelancer.profile.freelancerProfile.title ??
-                                    "Freelancer"}
+                                    tRole("FREELANCER")}
                                 </p>
                                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                                  <Badge
-                                    variant="outline"
-                                    className="capitalize"
-                                  >
-                                    {freelancer.profile.availabilityStatus
-                                      .toLowerCase()
-                                      .replaceAll("_", " ")}
+                                  <Badge variant="outline">
+                                    {availabilityLabel(
+                                      freelancer.profile.availabilityStatus,
+                                    )}
                                   </Badge>
                                   {freelancer.profile.freelancerProfile
                                     .idVerified ? (
@@ -950,7 +1023,7 @@ export function AccountProfileClient({
                                       variant="outline"
                                       className="border-[#4fae2e]/25 text-[#438f2b] dark:text-[#78c85d]"
                                     >
-                                      <ShieldCheck /> Verified
+                                      <ShieldCheck /> {tCommon("verified")}
                                     </Badge>
                                   ) : null}
                                 </div>
@@ -976,7 +1049,7 @@ export function AccountProfileClient({
                               </div>
                             ) : (
                               <p className="mt-4 text-xs text-muted-foreground">
-                                No skills listed yet
+                                {tSettings("noSkills")}
                               </p>
                             )}
 
@@ -990,7 +1063,7 @@ export function AccountProfileClient({
                                 <Link
                                   href={`/profiles/${freelancer.profile.id}`}
                                 >
-                                  View profile
+                                  {tSettings("viewProfile")}
                                 </Link>
                               </Button>
 
@@ -1008,23 +1081,23 @@ export function AccountProfileClient({
                                       ) : (
                                         <UserCheck />
                                       )}
-                                      Following
+                                      {t("followingState")}
                                     </Button>
                                   </AlertDialogTrigger>
                                   <AlertDialogContent>
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>
-                                        Unfollow {displayName}?
+                                        {t("unfollowTitle", {
+                                          name: displayName,
+                                        })}
                                       </AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Their profile will be removed from your
-                                        following list. You can follow them
-                                        again at any time.
+                                        {t("unfollowHint")}
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>
-                                        Keep following
+                                        {t("keepFollowing")}
                                       </AlertDialogCancel>
                                       <AlertDialogAction
                                         className="bg-destructive text-white hover:bg-destructive/90"
@@ -1034,7 +1107,7 @@ export function AccountProfileClient({
                                           )
                                         }
                                       >
-                                        <UserMinus /> Unfollow
+                                        <UserMinus /> {tSettings("unfollow")}
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
@@ -1053,7 +1126,7 @@ export function AccountProfileClient({
                                   ) : (
                                     <UserPlus />
                                   )}
-                                  Follow
+                                  {tSettings("follow")}
                                 </Button>
                               )}
                             </div>
@@ -1073,11 +1146,11 @@ export function AccountProfileClient({
                         <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
                           <div className="min-w-0 flex-1">
                             <p className="text-lg font-semibold tracking-tight text-foreground">
-                              {favorite.profile.displayName ?? "Freelancer"}
+                              {favorite.profile.displayName ?? tRole("FREELANCER")}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {favorite.profile.freelancerProfile.title ??
-                                "Freelancer"}
+                                tRole("FREELANCER")}
                             </p>
                             <div className="mt-3 flex flex-wrap gap-1">
                               {favorite.profile.freelancerProfile.skills
@@ -1099,7 +1172,7 @@ export function AccountProfileClient({
                               asChild
                             >
                               <Link href={`/profiles/${favorite.profile.id}`}>
-                                View profile
+                                {tSettings("viewProfile")}
                               </Link>
                             </Button>
                           </div>
@@ -1125,17 +1198,16 @@ export function AccountProfileClient({
                       <Heart className="size-7" />
                     </div>
                     <p className="text-lg font-medium text-foreground">
-                      No favorite freelancers yet
+                      {tSettings("noFavoritesTitle")}
                     </p>
                     <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                      Open a freelancer profile and tap Add to favorites to keep
-                      them here.
+                      {tSettings("noFavoritesHint")}
                     </p>
                     <Button
                       className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                       asChild
                     >
-                      <Link href="/forum">Visit Forum</Link>
+                      <Link href="/forum">{t("visitForum")}</Link>
                     </Button>
                   </div>
                 )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -74,25 +75,6 @@ export interface ProposalDetailSheetProps {
   onReject?: (proposalId: number) => Promise<void> | void;
 }
 
-function money(value: number | null) {
-  return value === null
-    ? "Not set"
-    : new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(value);
-}
-
-function formatDate(value: string | Date | null) {
-  if (!value) return "Not set";
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function ProposalDetailSheet({
   proposalId,
   jobId,
@@ -104,6 +86,29 @@ export function ProposalDetailSheet({
 }: ProposalDetailSheetProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("clientProposals");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const money = (value: number | null) =>
+    value === null
+      ? tCommon("notSet")
+      : format.number(value, {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0,
+        });
+
+  const formatDate = (value: string | Date | null) =>
+    value
+      ? format.dateTime(new Date(value), {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : tCommon("notSet");
+
   const [confirmReject, setConfirmReject] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
@@ -138,13 +143,13 @@ export function ProposalDetailSheet({
   const displayName =
     freelancer?.profile?.displayName ||
     initialProposal?.freelancer.displayName ||
-    "Freelancer";
+    tRole("FREELANCER");
   const avatarUrl =
     freelancer?.profile?.avatarUrl || initialProposal?.freelancer.avatarUrl;
   const title =
     freelancer?.profile?.freelancerProfile?.title ||
     initialProposal?.freelancer.title ||
-    "Freelancer";
+    tRole("FREELANCER");
   const isVerified =
     freelancer?.profile?.freelancerProfile?.idVerified ??
     initialProposal?.freelancer.verified ??
@@ -192,7 +197,7 @@ export function ProposalDetailSheet({
         await queryClient.invalidateQueries({
           queryKey: ["client-job-proposals", jobId],
         });
-        toastSuccess({ message: "Proposal rejected" });
+        toastSuccess({ message: t("rejected") });
       }
       setConfirmReject(false);
     } catch (error) {
@@ -200,7 +205,7 @@ export function ProposalDetailSheet({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Unable to reject proposal. Please try again.",
+            : t("rejectFailed"),
       });
     } finally {
       setIsRejecting(false);
@@ -221,14 +226,14 @@ export function ProposalDetailSheet({
         await queryClient.invalidateQueries({
           queryKey: ["client-job-proposals", jobId],
         });
-        toastSuccess({ message: "Proposal accepted" });
+        toastSuccess({ message: t("accepted") });
       }
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Unable to accept proposal. Please try again.",
+            : t("acceptFailed"),
       });
     } finally {
       setIsAccepting(false);
@@ -240,20 +245,19 @@ export function ProposalDetailSheet({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
+          closeLabel={tCommon("close")}
           className="w-full sm:max-w-xl md:max-w-2xl overflow-hidden p-0 flex flex-col gap-0 border-l border-border bg-background shadow-2xl z-50 font-sans"
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Proposal #{proposalId} Details</SheetTitle>
-            <SheetDescription>
-              Detailed view of submitted proposal and freelancer information.
-            </SheetDescription>
+            <SheetTitle>{t("sheetTitle", { id: proposalId ?? "" })}</SheetTitle>
+            <SheetDescription>{t("sheetDescription")}</SheetDescription>
           </SheetHeader>
 
           {/* Top Header Bar */}
           <div className="flex items-center justify-between border-b border-border/80 px-6 py-4">
             <div className="flex items-center gap-2.5">
               <h2 className="text-sm font-bold text-foreground">
-                {displayName}&apos;s Proposal
+                {t("proposalOf", { name: displayName })}
               </h2>
             </div>
 
@@ -307,7 +311,9 @@ export function ProposalDetailSheet({
                     ) : (
                       <MessageSquare className="size-3.5 text-[#0069D3]" />
                     )}
-                    <span>{isStartingChat ? "Opening..." : "Message"}</span>
+                    <span>
+                      {isStartingChat ? t("opening") : t("message")}
+                    </span>
                   </Button>
                 )}
 
@@ -318,7 +324,7 @@ export function ProposalDetailSheet({
                   onClick={() => setProfileSheetOpen(true)}
                 >
                   <UserRound className="size-3.5 text-muted-foreground" />
-                  <span>Profile</span>
+                  <span>{t("profile")}</span>
                 </Button>
               </div>
             </div>
@@ -328,7 +334,7 @@ export function ProposalDetailSheet({
               <div>
                 <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                   <DollarSign className="size-3.5 text-muted-foreground" />
-                  Proposed Bid
+                  {t("proposedBid")}
                 </p>
                 <p className="mt-1 text-xl font-bold text-foreground">
                   {money(bidAmount)}
@@ -338,17 +344,17 @@ export function ProposalDetailSheet({
               <div>
                 <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                   <Clock className="size-3.5 text-muted-foreground" />
-                  Delivery Time
+                  {t("deliveryTime")}
                 </p>
                 <p className="mt-1 text-xl font-bold text-foreground">
-                  {deliveryDays} {deliveryDays === 1 ? "day" : "days"}
+                  {t("deliveryDays", { count: deliveryDays })}
                 </p>
               </div>
 
               {jobTitle && (
                 <div className="col-span-2 sm:col-span-1">
                   <p className="text-xs font-medium text-muted-foreground">
-                    Applied For
+                    {t("appliedFor")}
                   </p>
                   <p className="mt-1 text-xs font-semibold text-foreground truncate" title={jobTitle}>
                     {jobTitle}
@@ -360,10 +366,10 @@ export function ProposalDetailSheet({
             {/* Cover Letter - Clean Text Typography (No heavy box or background) */}
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Cover Letter
+                {t("coverLetterHeading")}
               </h4>
               <div className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap font-sans">
-                {coverLetter || "No cover letter provided."}
+                {coverLetter || t("noCoverLetter")}
               </div>
             </div>
           </div>
@@ -380,7 +386,7 @@ export function ProposalDetailSheet({
                   disabled={isAccepting || isRejecting}
                 >
                   <X className="mr-1.5 size-3.5" />
-                  Reject
+                  {t("reject")}
                 </Button>
               )}
 
@@ -398,7 +404,7 @@ export function ProposalDetailSheet({
                     ) : (
                       <Check className="mr-1.5 size-3.5" />
                     )}
-                    Accept Only
+                    {t("acceptOnly")}
                   </Button>
                 )}
 
@@ -409,7 +415,7 @@ export function ProposalDetailSheet({
                   disabled={isAccepting || isRejecting}
                 >
                   <FileText className="mr-1.5 size-3.5" />
-                  Hire & Create Contract
+                  {t("hireCreateContract")}
                 </Button>
               </div>
             </div>
@@ -423,11 +429,10 @@ export function ProposalDetailSheet({
           <div className="flex flex-col gap-3">
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground">
-                Reject proposal
+                {t("rejectTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal">
-                The freelancer will be notified that this proposal was not
-                selected for this job.
+                {t("notSelectedHint")}
               </AlertDialogDescription>
             </div>
 
@@ -447,7 +452,9 @@ export function ProposalDetailSheet({
                   ) : (
                     <X className="size-3.5" />
                   )}
-                  <span className="text-xs font-semibold">Reject proposal</span>
+                  <span className="text-xs font-semibold">
+                    {t("rejectTitle")}
+                  </span>
                 </div>
                 <ChevronRight className="size-3.5 opacity-60" />
               </button>
@@ -458,7 +465,7 @@ export function ProposalDetailSheet({
                   disabled={isRejecting}
                   className="flex w-full items-center justify-center rounded-full px-4 py-2 bg-muted/60 hover:bg-muted text-foreground text-xs font-medium cursor-pointer transition-colors outline-none border-0"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </button>
               </AlertDialogCancel>
             </div>

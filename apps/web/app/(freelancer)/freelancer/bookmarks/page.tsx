@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import jobServerRequest from "@/apiRequests/job.server";
 import { BookmarksContent } from "../../bookmarks/bookmarks-content";
 
@@ -5,10 +6,14 @@ type BookmarksPageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export const metadata = {
-  title: "Saved Jobs | Freelancer Dashboard | Frevia",
-  description: "View all your bookmarked and saved jobs.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("pageMeta");
+
+  return {
+    title: t("bookmarksTitle"),
+    description: t("bookmarksDescription"),
+  };
+}
 
 export default async function FreelancerBookmarksPage({
   searchParams,

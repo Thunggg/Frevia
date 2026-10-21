@@ -19,6 +19,7 @@ import {
   type GeneralProfileType,
 } from "@shared/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import {
   AlertCircle,
   Camera,
@@ -45,18 +46,46 @@ import {
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ROLE_KEYS = ["ADMIN", "CLIENT", "FREELANCER", "EXPERT"] as const;
 type FieldErrors = Record<string, string>;
 
-function messageFrom(error: unknown) {
+/**
+ * `account-profile.model.ts` (trong @shared/types) khai báo message validation
+ * bằng chuỗi tiếng Anh trực tiếp thay vì key i18n như 19 file schema khác của
+ * dự án (auth.message.ts, manage-job.message.ts, ...), và form này gọi
+ * `safeParse` trực tiếp nên không đi qua useTranslatedResolver. Bảng dưới ánh
+ * xạ chuỗi đó sang key đã dịch; message không khớp sẽ rơi về errInvalidValue
+ * nên không bao giờ lộ tiếng Anh. Xem báo cáo để biết cách sửa tận gốc.
+ */
+const ZOD_MESSAGE_KEYS: Record<string, string> = {
+  "Password must contain at least 8 characters.": "errPasswordMin",
+  "Password must contain at most 32 characters.": "errPasswordMax",
+  "Password must contain an uppercase letter.": "errPasswordUppercase",
+  "Password must contain a number.": "errPasswordNumber",
+  "Current password is required.": "errCurrentPasswordRequired",
+  "Password confirmation does not match.": "errPasswordMismatch",
+  "New password must be different from the current password.": "errPasswordSame",
+};
+
+/**
+ * Lỗi từ ApiFail đi qua proxy BFF đã được dịch sẵn (error.details[].message
+ * chứa key i18n), nên GIỮ NGUYÊN. Mọi lỗi khác (TypeError khi mất mạng...) là
+ * text tiếng Anh do runtime sinh ra nên trả về fallback đã dịch.
+ */
+function messageFrom(error: unknown, fallback: string) {
   if (error instanceof ApiFail)
     return error.response.error.details?.[0]?.message ?? error.message;
-  return error instanceof Error ? error.message : "Something went wrong.";
+  return fallback;
 }
 
-function validationErrors(issues: { path: PropertyKey[]; message: string }[]) {
+function validationErrors(
+  issues: { path: PropertyKey[]; message: string }[],
+  translate: (key: string) => string,
+) {
   return issues.reduce<FieldErrors>((errors, issue) => {
     const field = String(issue.path[0] ?? "form");
-    errors[field] ??= issue.message;
+    const key = ZOD_MESSAGE_KEYS[issue.message];
+    errors[field] ??= key ? translate(key) : translate("errInvalidValue");
     return errors;
   }, {});
 }
@@ -78,6 +107,7 @@ function PasswordInput({
   disabled: boolean;
   onChange: (value: string) => void;
 }) {
+  const t = useTranslations("generalSettings");
   const [visible, setVisible] = useState(false);
   const errorId = `${id}-error`;
   return (
@@ -100,8 +130,8 @@ function PasswordInput({
           className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/40"
           aria-label={
             visible
-              ? `Hide ${label.toLowerCase()}`
-              : `Show ${label.toLowerCase()}`
+              ? t("hidePassword", { field: label })
+              : t("showPassword", { field: label })
           }
           disabled={disabled}
           onClick={() => setVisible((current) => !current)}
@@ -121,6 +151,9 @@ function PasswordInput({
 export function GeneralSettings() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("generalSettings");
+  const tSettings = useTranslations("clientProfileSettings");
+  const tRole = useTranslations("roleName");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
   const [displayName, setDisplayName] = useState("");
@@ -146,6 +179,14 @@ export function GeneralSettings() {
     [avatarPreview],
   );
 
+  const toMessage = useCallback(
+    (error: unknown) => messageFrom(error, tSettings("somethingWentWrong")),
+    [tSettings],
+  );
+
+  const roleLabel = (name: string) =>
+    (ROLE_KEYS as readonly string[]).includes(name) ? tRole(name) : name;
+
   const load = useCallback(async () => {
     setPending("load");
     setLoadError(null);
@@ -155,11 +196,11 @@ export function GeneralSettings() {
       setDisplayName(response.data.displayName ?? "");
       setBio(response.data.bio ?? "");
     } catch (error) {
-      setLoadError(messageFrom(error));
+      setLoadError(toMessage(error));
     } finally {
       setPending(null);
     }
-  }, []);
+  }, [toMessage]);
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
@@ -174,7 +215,7 @@ export function GeneralSettings() {
       bio: bio.trim() || null,
     });
     if (!parsed.success) {
-      setProfileErrors(validationErrors(parsed.error.issues));
+      setProfileErrors(validationErrors(parsed.error.issues, t));
       return;
     }
     setProfileErrors({});
@@ -197,8 +238,8 @@ export function GeneralSettings() {
       }
       toastSuccess({ message: response.data.message });
     } catch (error) {
-      setProfileErrors({ form: messageFrom(error) });
-      toastError({ message: messageFrom(error) });
+      setProfileErrors({ form: toMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -213,7 +254,7 @@ export function GeneralSettings() {
     if (!AVATAR_TYPES.includes(file.type) || file.size > MAX_AVATAR_SIZE) {
       setAvatar(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
-      setAvatarError("Choose a JPG, PNG, or WebP image no larger than 5 MB.");
+      setAvatarError(t("avatarTypeError"));
       return;
     }
     setAvatar(file);
@@ -222,7 +263,7 @@ export function GeneralSettings() {
   const uploadAvatar = async (event: FormEvent) => {
     event.preventDefault();
     if (!avatar) {
-      setAvatarError("Please choose an avatar image.");
+      setAvatarError(t("avatarRequired"));
       return;
     }
     setAvatarError(null);
@@ -236,10 +277,10 @@ export function GeneralSettings() {
       if (fileInputRef.current) fileInputRef.current.value = "";
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       router.refresh();
-      toastSuccess({ message: "Profile photo updated." });
+      toastSuccess({ message: t("avatarUpdated") });
     } catch (error) {
-      setAvatarError(messageFrom(error));
-      toastError({ message: messageFrom(error) });
+      setAvatarError(toMessage(error));
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -253,7 +294,7 @@ export function GeneralSettings() {
       confirmPassword,
     });
     if (!parsed.success) {
-      setPasswordErrors(validationErrors(parsed.error.issues));
+      setPasswordErrors(validationErrors(parsed.error.issues, t));
       return;
     }
     setPasswordErrors({});
@@ -263,10 +304,10 @@ export function GeneralSettings() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      toastSuccess({ message: "Password changed successfully." });
+      toastSuccess({ message: t("passwordChanged") });
     } catch (error) {
-      setPasswordErrors({ form: messageFrom(error) });
-      toastError({ message: messageFrom(error) });
+      setPasswordErrors({ form: toMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -276,7 +317,7 @@ export function GeneralSettings() {
     return (
       <div
         className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]"
-        aria-label="Loading profile"
+        aria-label={t("loadingProfileAria")}
       >
         <div className="h-80 animate-pulse rounded-xl border border-border bg-muted/30" />
         <div className="h-96 animate-pulse rounded-xl border border-border bg-muted/30" />
@@ -289,14 +330,14 @@ export function GeneralSettings() {
       <div className="rounded-xl border border-destructive/40 bg-destructive/5 px-6 py-12 text-center">
         <AlertCircle className="mx-auto size-7 text-destructive" />
         <h2 className="mt-3 text-lg font-semibold">
-          We could not load your profile
+          {t("loadFailedTitle")}
         </h2>
         <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-          {loadError ?? "Profile information is unavailable."}
+          {loadError ?? t("profileUnavailable")}
         </p>
         <Button className="mt-5" variant="outline" onClick={() => void load()}>
           <RefreshCw className="size-4" />
-          Try again
+          {tSettings("tryAgain")}
         </Button>
       </div>
     );
@@ -310,7 +351,9 @@ export function GeneralSettings() {
             <Avatar className="size-24 border border-border shadow-sm">
               <AvatarImage
                 src={avatarPreview ?? profile.avatarUrl ?? undefined}
-                alt={`${profile.displayName ?? "User"} profile photo`}
+                alt={t("avatarAlt", {
+                  name: profile.displayName ?? t("userFallback"),
+                })}
               />
               <AvatarFallback className="bg-[#4fae2e]/10 text-2xl font-semibold text-[#4fae2e]">
                 {(profile.displayName ?? profile.email)
@@ -322,7 +365,7 @@ export function GeneralSettings() {
               <div className="flex items-center gap-2">
                 <Camera className="size-4 text-[#4fae2e]" />
                 <h2 className="text-lg font-semibold text-foreground">
-                  Profile photo
+                  {t("profilePhotoTitle")}
                 </h2>
               </div>
               <p className="mt-1 truncate text-sm text-muted-foreground">
@@ -334,15 +377,15 @@ export function GeneralSettings() {
                     key={role.name}
                     variant={role.isPrimary ? "default" : "secondary"}
                   >
-                    {role.name}
-                    {role.isPrimary ? " (active)" : ""}
+                    {roleLabel(role.name)}
+                    {role.isPrimary ? t("activeRoleSuffix") : ""}
                   </Badge>
                 ))}
               </div>
             </div>
           </div>
           <form className="mt-6" onSubmit={uploadAvatar}>
-            <Label htmlFor="profile-avatar">Choose a new photo</Label>
+            <Label htmlFor="profile-avatar">{t("chooseNewPhoto")}</Label>
             <div className="mt-2 flex flex-col gap-3 sm:flex-row">
               <Input
                 ref={fileInputRef}
@@ -366,7 +409,7 @@ export function GeneralSettings() {
                 ) : (
                   <Camera />
                 )}
-                Upload photo
+                {t("uploadPhoto")}
               </Button>
             </div>
             <p
@@ -375,8 +418,8 @@ export function GeneralSettings() {
             >
               {avatarError ??
                 (avatar
-                  ? `${avatar.name} selected.`
-                  : "JPG, PNG, or WebP. Maximum 5 MB.")}
+                  ? t("avatarSelected", { name: avatar.name })
+                  : t("avatarHelp"))}
             </p>
           </form>
         </section>
@@ -385,15 +428,15 @@ export function GeneralSettings() {
           <div className="flex items-center gap-2">
             <UserRound className="size-5 text-[#4fae2e]" />
             <h2 className="text-lg font-semibold text-foreground">
-              General information
+              {t("generalInfoTitle")}
             </h2>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            This information appears across your Frevia profile.
+            {t("generalInfoHint")}
           </p>
           <form className="mt-6 space-y-5" onSubmit={saveProfile} noValidate>
             <div className="space-y-2">
-              <Label htmlFor="display-name">Display name</Label>
+              <Label htmlFor="display-name">{t("displayNameLabel")}</Label>
               <Input
                 id="display-name"
                 maxLength={255}
@@ -420,9 +463,9 @@ export function GeneralSettings() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-4">
-                <Label htmlFor="profile-bio">Bio</Label>
+                <Label htmlFor="profile-bio">{t("bioLabel")}</Label>
                 <span className="text-xs tabular-nums text-muted-foreground">
-                  {bio.length}/5000
+                  {t("bioCounter", { count: bio.length })}
                 </span>
               </div>
               <Textarea
@@ -435,7 +478,7 @@ export function GeneralSettings() {
                 aria-describedby={
                   profileErrors.bio ? "profile-bio-error" : undefined
                 }
-                placeholder="Tell clients and freelancers about your experience and goals."
+                placeholder={t("bioPlaceholder")}
                 onChange={(event) => {
                   setBio(event.target.value);
                   setProfileErrors((errors) => ({
@@ -463,7 +506,7 @@ export function GeneralSettings() {
               ) : (
                 <Save />
               )}
-              Save changes
+              {tSettings("saveChanges")}
             </Button>
           </form>
         </section>
@@ -474,16 +517,16 @@ export function GeneralSettings() {
           <div className="flex items-center gap-2">
             <LockKeyhole className="size-5 text-[#4fae2e]" />
             <h2 className="text-lg font-semibold text-foreground">
-              Change password
+              {t("changePasswordTitle")}
             </h2>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Use 8 to 32 characters with an uppercase letter and a number.
+            {t("passwordHint")}
           </p>
           <form className="mt-5 space-y-4" onSubmit={changePassword} noValidate>
             <PasswordInput
               id="current-password"
-              label="Current password"
+              label={t("currentPasswordLabel")}
               value={currentPassword}
               error={passwordErrors.currentPassword}
               autoComplete="current-password"
@@ -499,7 +542,7 @@ export function GeneralSettings() {
             />
             <PasswordInput
               id="new-password"
-              label="New password"
+              label={t("newPasswordLabel")}
               value={newPassword}
               error={passwordErrors.newPassword}
               autoComplete="new-password"
@@ -515,7 +558,7 @@ export function GeneralSettings() {
             />
             <PasswordInput
               id="confirm-password"
-              label="Confirm new password"
+              label={t("confirmPasswordLabel")}
               value={confirmPassword}
               error={passwordErrors.confirmPassword}
               autoComplete="new-password"
@@ -543,7 +586,7 @@ export function GeneralSettings() {
               ) : (
                 <ShieldCheck />
               )}
-              Change password
+              {t("changePasswordAction")}
             </Button>
           </form>
         </section>
@@ -551,17 +594,14 @@ export function GeneralSettings() {
           <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
             <Clock3 className="mt-0.5 size-4 shrink-0" />
             <p>
-              Your profile strength is {profile.profileCompletionPercent}%.
-              Profile changes require administrator approval until it reaches
-              20%.
+              {t("strengthLow", { percent: profile.profileCompletionPercent })}
             </p>
           </div>
         ) : (
           <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
             <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
             <p className="text-muted-foreground">
-              Your profile meets the 20% threshold, so changes are saved
-              immediately.
+              {t("strengthOk")}
             </p>
           </div>
         )}

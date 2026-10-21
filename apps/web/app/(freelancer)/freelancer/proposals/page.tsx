@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
 import { MyProposalsContent } from "../../proposals/proposals-content";
 
@@ -5,10 +6,14 @@ type ProposalsPageProps = {
   searchParams: Promise<{ page?: string; status?: string }>;
 };
 
-export const metadata = {
-  title: "My Proposals | Freelancer Dashboard | Frevia",
-  description: "View and manage all your submitted and draft proposals.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("pageMeta");
+
+  return {
+    title: t("proposalsTitle"),
+    description: t("proposalsDescription"),
+  };
+}
 
 export default async function FreelancerProposalsPage({
   searchParams,

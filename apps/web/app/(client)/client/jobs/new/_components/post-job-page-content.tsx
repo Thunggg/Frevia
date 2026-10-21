@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -7,6 +8,8 @@ import { PostJobForm } from "@/app/(client)/client/jobs/_components/post-job-for
 
 export function PostJobPageContent() {
   const router = useRouter();
+  const t = useTranslations("postJob");
+  const tSidebar = useTranslations("sidebar");
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -18,10 +21,12 @@ export function PostJobPageContent() {
                 href="/client/jobs"
                 className="transition-colors hover:text-[#0069D3]"
               >
-                My Jobs
+                {tSidebar("navMyJobs")}
               </Link>
               <span className="text-muted-foreground/40">/</span>
-              <span className="font-semibold text-foreground">Post a Job</span>
+              <span className="font-semibold text-foreground">
+                {t("breadcrumb")}
+              </span>
             </nav>
           </div>
         </section>
