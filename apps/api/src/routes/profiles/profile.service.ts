@@ -9,8 +9,9 @@ import { ProfileRepository } from './profile.repo';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { randomUUID } from 'crypto';
-import { mkdir, readFile, writeFile } from 'fs/promises';
+import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
   FreelancerProfileNotFoundException,
@@ -31,6 +32,7 @@ export class ProfileService {
     private readonly cloudinary: CloudinaryService,
     private readonly aiCvAnalyzer: AiCvAnalyzerService,
     private readonly skillResolver: SkillResolverService,
+    private readonly profileRevisionService: ProfileRevisionService,
   ) {}
 
   private async getOwnedFreelancerProfile(profileId: number, userId: number) {
@@ -90,6 +92,9 @@ export class ProfileService {
       await this.cloudinary
         .deleteFile(freelancerProfile.cvPublicId)
         .catch(() => undefined);
+    } else if (freelancerProfile?.cvUrl?.startsWith('local://')) {
+      const oldPath = this.resolveLocalCvPath(freelancerProfile.cvUrl);
+      if (oldPath) await unlink(oldPath).catch(() => undefined);
     }
     return {
       cvUrl: cv.cvUrl?.startsWith('local://')
@@ -97,6 +102,23 @@ export class ProfileService {
         : cv.cvUrl,
       cvFileName: cv.cvFileName,
     };
+  }
+
+  async deleteCv(profileId: number, userId: number) {
+    const profile = await this.getOwnedFreelancerProfile(profileId, userId);
+    const cv = profile.freelancerProfile;
+    const cvUrl = cv?.cvUrl;
+    if (!cvUrl) throw CvNotFoundException();
+
+    if (cv?.cvPublicId) {
+      await this.cloudinary.deleteFile(cv.cvPublicId).catch(() => undefined);
+    } else if (cvUrl.startsWith('local://')) {
+      const absolutePath = this.resolveLocalCvPath(cvUrl);
+      if (absolutePath) await unlink(absolutePath).catch(() => undefined);
+    }
+
+    await this.profileRepository.clearCv(profile.id);
+    return { message: 'CV deleted successfully.' };
   }
 
   async getCvFile(profileId: number, userId: number) {
@@ -131,10 +153,14 @@ export class ProfileService {
     }
 
     const suggestedNames = extracted.map((skill) => skill.name);
-    const entries = await this.skillResolver.resolveSkillEntries(suggestedNames);
+    const entries =
+      await this.skillResolver.resolveSkillEntries(suggestedNames);
     const proficiencyByOriginal = new Map<string, number | null>();
     for (const skill of extracted) {
-      proficiencyByOriginal.set(skill.name.trim().toLowerCase(), skill.proficiencyLevel);
+      proficiencyByOriginal.set(
+        skill.name.trim().toLowerCase(),
+        skill.proficiencyLevel,
+      );
     }
 
     const existingSkills =
@@ -227,7 +253,7 @@ export class ProfileService {
       throw ProfileForbiddenException();
     }
 
-    return this.profileRepository.updateFreelancerProfile(profileId, {
+    const update = {
       displayName: dto.displayName,
       title: dto.title,
       bio: dto.bio,
@@ -236,7 +262,28 @@ export class ProfileService {
       certifications: dto.certifications,
       languages: dto.languages,
       experience: dto.experience,
-    });
+    };
+
+    if (
+      this.profileRevisionService.requiresManualReview(
+        profile.profileCompletionPercent,
+      )
+    ) {
+      return this.profileRevisionService.submitFreelancer(
+        currentUserId,
+        profile.id,
+        update,
+        profile.profileCompletionPercent,
+      );
+    }
+
+    const updated = await this.profileRepository.updateFreelancerProfile(
+      profile.id,
+      update,
+    );
+    return this.profileRevisionService.directUpdateResult(
+      updated?.profileCompletionPercent ?? profile.profileCompletionPercent,
+    );
   }
 
   async getSkills(profileId: number) {

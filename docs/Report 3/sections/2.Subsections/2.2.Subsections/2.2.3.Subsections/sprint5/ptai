@@ -1,0 +1,828 @@
+\paragraph{Manage Job Category}
+% =================================================================
+% UC-________ View Job Categories (User)
+% =================================================================
+\subparagraph{UC View Job Categories (User)}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Categories (User)} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & User & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user browses jobs, filters search results, or opens the job creation form.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to retrieve the list of available job categories for browsing and job creation.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The list of active job categories is displayed with their names and descriptions. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} Active categories are selectable for browsing and job creation.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Categories} \newline
+1. The User opens a page that needs the job category list (browse jobs, search filters, or job creation form). \newline
+2. The system retrieves the active job categories. \newline
+3. The system displays the category list. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Active Categories Found} \textit{(branch at step 2)} \newline
+1. The system determines that no active category exists. \newline
+2. The system treats the list as empty; search, filter, and creation present no category options. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the categories due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the categories. Please try again later.'' \newline
+3. The user remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-01: Only active job categories shall be returned. \newline
+BR-CAT-02: The category list shall be available to all users without authentication. \newline
+BR-CAT-03: Job categories drive job browsing, search filters, and the job creation form.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The category list is typically requested together with the job homepage and the search sidebar.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Category Detail (User)
+% =================================================================
+\subparagraph{UC View Job Category Detail (User)}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (User)} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & User & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a job category from the browse page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view category details and associated jobs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The category name and description are displayed. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The jobs associated with the category are listed (or a filter for the category is applied).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Category Detail} \newline
+1. The User opens a job category. \newline
+2. The system retrieves the category details (name, description). \newline
+3. The system retrieves the jobs belonging to the category. \newline
+4. The system displays the category detail and the associated jobs. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Jobs in Category} \textit{(branch at step 3)} \newline
+1. The system determines that no jobs belong to the selected category. \newline
+2. The system displays the category detail with an empty job list. \newline
+3. The use case ends. \newline
+\textbf{A.2 Browse Jobs by Category} \textit{(branch at step 3)} \newline
+1. The User applies the category as a filter while browsing jobs. \newline
+2. Continue with UC View List Job.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Category Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the category. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the category due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the category. Please try again later.'' \newline
+3. The user remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-04: The category detail shall include name and description. \newline
+BR-CAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View List Job).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more associated jobs.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Categories (Admin)
+% =================================================================
+\subparagraph{UC View Job Categories (Admin)}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Categories (Admin)} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens the job category management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view and manage the list of job categories in the system.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The admin is authenticated with the Admin role. \newline
+\textbf{PRE-2} The admin has permission to manage job categories.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The list of job categories is displayed with their names, descriptions, and statuses. \newline
+\textbf{POST-2} No data is changed by this use case.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Categories} \newline
+1. The Admin opens the job category management page. \newline
+2. The system retrieves all job categories. \newline
+3. The system displays the category list. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Categories Found} \textit{(branch at step 2)} \newline
+1. The system determines that no category exists. \newline
+2. The system displays the list as empty. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the categories due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the categories. Please try again later.'' \newline
+3. The admin remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-06: Only an admin can open the job category management page. \newline
+BR-CAT-07: The admin view shall include all categories regardless of status.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{From this page the admin can create, edit, or delete a category.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Category Detail (Admin)
+% =================================================================
+\subparagraph{UC View Job Category Detail (Admin)}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (Admin)} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens a job category from the management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view category details, status, and associated jobs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The admin is authenticated with the Admin role. \newline
+\textbf{PRE-2} The admin has permission to manage job categories.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The category name, description, and status are displayed. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The jobs associated with the category are listed.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Category Detail} \newline
+1. The Admin opens a job category. \newline
+2. The system retrieves the category details (name, description, status). \newline
+3. The system retrieves the jobs belonging to the category. \newline
+4. The system displays the category detail and the associated jobs. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Jobs in Category} \textit{(branch at step 3)} \newline
+1. The system determines that no jobs belong to the selected category. \newline
+2. The system displays the category detail with an empty job list. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Category Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the category. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the category due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the category. Please try again later.'' \newline
+3. The admin remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-08: The admin category detail shall include name, description, and status. \newline
+BR-CAT-09: The associated jobs shall be listed in the admin detail view.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The admin detail view supports editing or deleting the category.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more associated jobs.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Create Job Category
+% =================================================================
+\subparagraph{UC Create Job Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Create Job Category} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to create a job category in the admin category management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Create a new job category with name, description, and status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The admin is authenticated with the Admin role. \newline
+\textbf{PRE-2} The admin has permission to manage job categories.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new job category is created and stored with its name, description, and status. \newline
+\textbf{POST-2} The new category appears in the admin category list and in public category lists if active.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Job Category} \newline
+1. The Admin chooses to create a job category. \newline
+2. The system presents the creation form. \newline
+3. The Admin enters the name (required and unique), a description (optional), and the status (active or inactive). \newline
+4. The Admin confirms the creation. \newline
+5. The system validates the input. \newline
+6. The system creates the job category. \newline
+7. The system confirms the creation to the Admin. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Create} \textit{(branch at step 4)} \newline
+1. The Admin cancels the creation. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Duplicate Name} \textit{(branch at step 5)} \newline
+1. The system determines that the category name already exists. \newline
+2. The system displays a message indicating the name is already in use. \newline
+3. Return to step 3 of the main flow. \newline
+\textbf{A.3 Validation Failed} \textit{(branch at step 5)} \newline
+1. The system determines that the name is missing or invalid. \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Creating} \textit{(branch at step 6)} \newline
+1. The system cannot create the category due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't create the category. Please try again later.'' \newline
+3. The admin remains on the current page without the category being created. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-10: A job category name is required and must be unique. \newline
+BR-CAT-11: New categories may be created as active or inactive. \newline
+BR-CAT-12: Only an admin can create job categories.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{A category created as inactive is hidden from public browsing.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category names are managed exclusively by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Edit Job Category
+% =================================================================
+\subparagraph{UC Edit Job Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Edit Job Category} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to edit a job category in the admin category management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Update job category information and status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The admin is authenticated with the Admin role. \newline
+\textbf{PRE-2} The admin has permission to manage job categories.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job category is updated with the new information and status. \newline
+\textbf{POST-2} Public lists reflect the changes (e.g., hidden when deactivated).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Job Category} \newline
+1. The Admin selects the edit option on a category. \newline
+2. The system presents the edit form pre-filled with the current values. \newline
+3. The Admin modifies the name, description, and/or status. \newline
+4. The Admin confirms the changes. \newline
+5. The system validates the input. \newline
+6. The system updates the job category. \newline
+7. The system confirms the update to the Admin. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Edit} \textit{(branch at step 4)} \newline
+1. The Admin cancels the edit. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Duplicate Name} \textit{(branch at step 5)} \newline
+1. The system determines that the new name already belongs to another category. \newline
+2. The system displays a message indicating the name is already in use. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Category Not Found} \textit{(branch at step 6)} \newline
+1. The system cannot find the category. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not modify the category. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Updating} \textit{(branch at step 6)} \newline
+1. The system cannot update the category due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't update the category. Please try again later.'' \newline
+3. The admin remains on the current page without the changes being saved. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-13: Only an admin can edit job categories. \newline
+BR-CAT-14: The category name is required and must be unique (excluding the category being edited). \newline
+BR-CAT-15: Deactivating a category hides it from public browsing.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Editing a category does not affect jobs that already reference it.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category metadata is managed exclusively by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Delete Job Category
+% =================================================================
+\subparagraph{UC Delete Job Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Delete Job Category} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to delete a job category in the admin category management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Delete or deactivate a job category after checking associated jobs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The admin is authenticated with the Admin role. \newline
+\textbf{PRE-2} The admin has permission to manage job categories.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The category is deactivated. \newline
+\textbf{POST-2} The category no longer appears in public category lists.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Job Category} \newline
+1. The Admin selects the delete option on a category. \newline
+2. The system checks the jobs associated with the category. \newline
+3. The system asks for confirmation of the deletion. \newline
+4. The Admin confirms the deletion. \newline
+5. The system deactivates the job category. \newline
+6. The system removes the category from the public lists. \newline
+7. The system confirms the deletion to the Admin. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Delete} \textit{(branch at step 4)} \newline
+1. The Admin cancels the deletion. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Category Has Associated Jobs} \textit{(branch at step 2)} \newline
+1. The system determines that active jobs are associated with the category. \newline
+2. The system warns the admin that jobs exist under this category. \newline
+3. The Admin confirms to deactivate the category. \newline
+4. Continue with step 5 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Category Not Found} \textit{(branch at step 5)} \newline
+1. The system cannot find the category. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not modify the category. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Deleting} \textit{(branch at step 5)} \newline
+1. The system cannot delete the category due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't delete the category. Please try again later.'' \newline
+3. The admin remains on the current page without the category being deleted. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CAT-16: Only an admin can delete job categories. \newline
+BR-CAT-17: If the category has associated jobs, it shall be deactivated rather than deleted. \newline
+BR-CAT-18: A deleted category shall not appear in public category lists.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Existing jobs referencing the category retain their category reference.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category deletion is performed exclusively by administrators.} \\ \hline
+
+\end{longtable}
+
+\paragraph{Manage CV}
+% =================================================================
+% UC-________ Upload CV
+% =================================================================
+\subparagraph{UC Upload CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Upload CV} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to upload a CV on their profile page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to upload a CV file in a supported format and associate it with their profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The selected file is in a supported format and within the allowed size limit.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The CV file is stored and linked to the freelancer's profile. \newline
+\textbf{POST-2} The profile shows the CV as available (UC View CV).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Upload CV} \newline
+1. The Freelancer chooses to upload a CV. \newline
+2. The system presents a file selection. \newline
+3. The Freelancer selects a CV file. \newline
+4. The system validates the file format and size. \newline
+5. The system stores the file. \newline
+6. The system associates the CV with the freelancer's profile. \newline
+7. The system confirms the upload to the Freelancer and reflects the new CV in the profile. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Upload} \textit{(branch at step 3)} \newline
+1. The Freelancer abandons the file selection. \newline
+2. No upload is performed. \newline
+3. The use case ends. \newline
+\textbf{A.2 Unsupported Format} \textit{(branch at step 4)} \newline
+1. The system determines that the selected file type is not supported. \newline
+2. The system displays an error message listing the supported formats. \newline
+3. Return to step 3 of the main flow. \newline
+\textbf{A.3 File Too Large} \textit{(branch at step 4)} \newline
+1. The system determines that the file exceeds the allowed size limit. \newline
+2. The system displays an error message indicating the size limit. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Uploading} \textit{(branch at step 5)} \newline
+1. The system cannot store the file due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't upload the CV. Please try again later.'' \newline
+3. The freelancer remains on the current page without the CV being uploaded. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CV-01: Only a freelancer can upload a CV to their own profile. \newline
+BR-CV-02: The supported CV formats are PDF, DOC, and DOCX. \newline
+BR-CV-03: The CV file shall not exceed the allowed size limit. \newline
+BR-CV-04: A freelancer can have at most one CV associated with their profile.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Uploading a CV when one already exists replaces it (UC Replace CV).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The CV file is valid and belongs to the freelancer.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View CV
+% =================================================================
+\subparagraph{UC View CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View CV} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to view or download the CV on their profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view or download the CV they have uploaded to their profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The CV is opened for viewing or downloaded by the freelancer. \newline
+\textbf{POST-2} No data is changed by this use case.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View CV} \newline
+1. The Freelancer chooses to view the CV. \newline
+2. The system retrieves the CV file associated with the freelancer's profile. \newline
+3. The system opens the CV in a viewer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Download CV} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses to download the CV. \newline
+2. The system returns the CV file. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: CV Not Found} \textit{(branch at step 2)} \newline
+1. The system determines that the freelancer has no CV uploaded. \newline
+2. The system displays a message indicating no CV is available. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Opening the CV} \textit{(branch at step 2)} \newline
+1. The system cannot access the CV file due to a processing or connection error. \newline
+2. The system displays an appropriate error message. \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CV-05: Only the owning freelancer can view or download their own CV.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The CV is stored on the profile and made available from the profile.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer has previously uploaded a CV.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Replace CV
+% =================================================================
+\subparagraph{UC Replace CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Replace CV} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer uploads a new CV file while a CV already exists on their profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to replace the existing CV with a new file.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The selected file is in a supported format and within the allowed size limit.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The new CV file replaces the old one on the freelancer's profile. \newline
+\textbf{POST-2} The old file is removed or no longer referenced.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Replace CV} \newline
+1. The Freelancer chooses to upload a new CV while a CV already exists. \newline
+2. The system presents a file selection. \newline
+3. The Freelancer selects a new CV file. \newline
+4. The system validates the file format and size. \newline
+5. The system stores the new file. \newline
+6. The system updates the freelancer's profile to reference the new CV file. \newline
+7. The system confirms the replacement to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Replace} \textit{(branch at step 3)} \newline
+1. The Freelancer abandons the file selection. \newline
+2. No replacement is performed and the old CV remains. \newline
+3. The use case ends. \newline
+\textbf{A.2 Unsupported Format} \textit{(branch at step 4)} \newline
+1. The system determines that the selected file type is not supported. \newline
+2. The system displays an error message listing the supported formats. \newline
+3. Return to step 3 of the main flow. \newline
+\textbf{A.3 File Too Large} \textit{(branch at step 4)} \newline
+1. The system determines that the file exceeds the allowed size limit. \newline
+2. The system displays an error message indicating the size limit. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Replacing} \textit{(branch at step 5)} \newline
+1. The system cannot store the new file due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't replace the CV. Please try again later.'' \newline
+3. The previous CV remains active. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CV-06: Only a freelancer can replace their own CV. \newline
+BR-CV-07: Replacing a CV updates the profile reference to the new file and invalidates the old one.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Replacement keeps at most one CV per profile, consistent with UC Upload CV.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer already has a CV uploaded to their profile.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Delete CV
+% =================================================================
+\subparagraph{UC Delete CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Delete CV} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete the CV on their profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove their uploaded CV from their profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The CV is removed from the freelancer's profile. \newline
+\textbf{POST-2} The profile no longer exposes a CV.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete CV} \newline
+1. The Freelancer chooses to delete the CV. \newline
+2. The system asks for confirmation of the deletion. \newline
+3. The Freelancer confirms the deletion. \newline
+4. The system removes the CV reference from the freelancer's profile. \newline
+5. The system confirms the deletion to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Delete} \textit{(branch at step 3)} \newline
+1. The Freelancer cancels the deletion. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: CV Not Found} \textit{(branch at step 4)} \newline
+1. The system determines that the freelancer has no CV uploaded. \newline
+2. The system displays a message indicating no CV is available. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Deleting} \textit{(branch at step 4)} \newline
+1. The system cannot remove the CV due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't delete the CV. Please try again later.'' \newline
+3. The freelancer remains on the current page without the CV being deleted. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CV-08: Only a freelancer can delete their own CV. \newline
+BR-CV-09: Deleting a CV removes the reference from the profile so it is no longer visible or downloadable.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Deleting the CV does not delete the freelancer's profile or other profile data.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer wants to remove their CV from the profile.} \\ \hline
+
+\end{longtable}

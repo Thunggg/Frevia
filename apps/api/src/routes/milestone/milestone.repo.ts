@@ -20,6 +20,12 @@ const milestoneSelect = {
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
+  dispute: {
+    select: {
+      id: true,
+      status: true,
+    },
+  },
 } satisfies Prisma.MilestoneSelect;
 
 @Injectable()

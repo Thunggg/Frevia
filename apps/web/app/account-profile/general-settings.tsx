@@ -4,6 +4,17 @@ import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { ApiFail } from "@/lib/http";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import {
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -25,6 +36,7 @@ import {
   AlertCircle,
   Camera,
   CheckCircle2,
+  Clock3,
   Eye,
   EyeOff,
   FileText,
@@ -33,6 +45,7 @@ import {
   RefreshCw,
   Save,
   ShieldCheck,
+  Trash2,
   Upload,
   UserRound,
 } from "lucide-react";
@@ -219,6 +232,21 @@ export function GeneralSettings() {
     }
   };
 
+  const deleteCv = async () => {
+    if (!profile) return;
+    setPending("cv-delete");
+    try {
+      await profileApiRequest.deleteCv(profile.id);
+      setCvFileName(null);
+      setCvError(null);
+      toastSuccess({ message: "CV deleted successfully." });
+    } catch (error) {
+      toastError({ message: messageFrom(error) });
+    } finally {
+      setPending(null);
+    }
+  };
+
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
     const parsed = UpdateGeneralProfileSchema.safeParse({
@@ -235,12 +263,19 @@ export function GeneralSettings() {
       const response = await accountProfileApi.updateGeneralProfile(
         parsed.data,
       );
-      setProfile(response.data);
-      setDisplayName(response.data.displayName ?? "");
-      setBio(response.data.bio ?? "");
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.refresh();
-      toastSuccess({ message: "General profile updated." });
+      if (!response.data.reviewRequired) {
+        setProfile((current) =>
+          current
+            ? {
+                ...current,
+                displayName: parsed.data.displayName,
+                bio: parsed.data.bio ?? null,
+                profileCompletionPercent: response.data.profileStrength,
+              }
+            : current,
+        );
+      }
+      toastSuccess({ message: response.data.message });
     } catch (error) {
       setProfileErrors({ form: messageFrom(error) });
       toastError({ message: messageFrom(error) });
@@ -561,6 +596,53 @@ export function GeneralSettings() {
               )}
               {cvFileName ? "Replace CV" : "Upload CV"}
             </Button>
+            {cvFileName ? (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="mt-4 ml-2"
+                    disabled={busy}
+                  >
+                    {pending === "cv-delete" ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Trash2 />
+                    )}
+                    Delete CV
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete your CV?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Your CV will be removed from your profile and will no
+                      longer be downloadable. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={pending === "cv-delete"}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      disabled={pending === "cv-delete"}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        void deleteCv();
+                      }}
+                    >
+                      {pending === "cv-delete" ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Trash2 />
+                      )}
+                      Delete CV
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : null}
             <p
               id="profile-cv-help"
               className={`mt-2 text-xs ${cvError ? "text-destructive" : "text-muted-foreground"}`}
@@ -649,12 +731,24 @@ export function GeneralSettings() {
             </Button>
           </form>
         </section>
-        <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
-          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
-          <p className="text-muted-foreground">
-            Profile updates are saved to the same account for every active role.
-          </p>
-        </div>
+        {profile.profileCompletionPercent < 20 ? (
+          <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+            <Clock3 className="mt-0.5 size-4 shrink-0" />
+            <p>
+              Your profile strength is {profile.profileCompletionPercent}%.
+              Profile changes require administrator approval until it reaches
+              20%.
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
+            <p className="text-muted-foreground">
+              Your profile meets the 20% threshold, so changes are saved
+              immediately.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

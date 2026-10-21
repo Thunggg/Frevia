@@ -37,6 +37,9 @@ import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
 import { ReviewModule } from './routes/reviews/review.module';
 import { BannersModule } from './routes/banners/banners.module';
 import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
+import { DisputeModule } from './routes/disputes/dispute.module';
+import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
+import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
 
 @Module({
   imports: [
@@ -70,6 +73,9 @@ import { BannersAdminModule } from './routes/banners-admin/banners-admin.module'
     ReviewModule,
     BannersModule,
     BannersAdminModule,
+    DisputeModule,
+    ProfileRevisionModule,
+    ExpertProfileModule,
   ],
   controllers: [AppController],
   providers: [

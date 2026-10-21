@@ -8,6 +8,7 @@ import { ProfileService } from './profile.service';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import {
   CvFileInvalidException,
   CvFileRequiredException,
@@ -17,7 +18,10 @@ import {
 jest.mock('fs/promises', () => ({
   mkdir: jest.fn().mockResolvedValue(undefined),
   writeFile: jest.fn().mockResolvedValue(undefined),
+  unlink: jest.fn().mockResolvedValue(undefined),
 }));
+
+import { unlink } from 'fs/promises';
 
 const freelancerProfile = ({
   userId = 10,
@@ -53,6 +57,7 @@ describe('ProfileService CV', () => {
   let repository: {
     findFreelancerProfileById: jest.Mock;
     updateCv: jest.Mock;
+    clearCv: jest.Mock;
     findSkillsByProfileId: jest.Mock;
   };
   let cloudinary: {
@@ -74,6 +79,7 @@ describe('ProfileService CV', () => {
     repository = {
       findFreelancerProfileById: jest.fn(),
       updateCv: jest.fn(),
+      clearCv: jest.fn().mockResolvedValue(undefined),
       findSkillsByProfileId: jest.fn().mockResolvedValue([]),
     };
     cloudinary = {
@@ -93,6 +99,7 @@ describe('ProfileService CV', () => {
       cloudinary as unknown as CloudinaryService,
       cvAnalyzer as unknown as AiCvAnalyzerService,
       skillResolver as unknown as SkillResolverService,
+      {} as ProfileRevisionService,
     );
   });
 
@@ -192,6 +199,85 @@ describe('ProfileService CV', () => {
         'https://res.cloudinary.com/example/frevia/cvs/10/new.pdf',
       );
     });
+
+    it('deletes the replaced local file from disk', async () => {
+      cloudinary.isConfigured.mockReturnValue(false);
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({
+          cvUrl: 'local://cvs/10/old-uuid.pdf',
+          cvFileName: 'old.pdf',
+        }),
+      );
+      repository.updateCv.mockResolvedValue({
+        cvUrl: 'local://cvs/10/new-uuid.pdf',
+        cvFileName: 'new.pdf',
+      });
+
+      await service.uploadCv(5, 10, pdfFile({ originalname: 'new.pdf' }));
+
+      expect(unlink).toHaveBeenCalledWith(
+        expect.stringContaining('old-uuid.pdf'),
+      );
+    });
+  });
+
+  describe('deleteCv', () => {
+    it('rejects deleting when the profile has no CV', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile(),
+      );
+
+      await expect(service.deleteCv(5, 10)).rejects.toEqual(
+        CvNotFoundException(),
+      );
+      expect(repository.clearCv).not.toHaveBeenCalled();
+    });
+
+    it('rejects deleting a CV owned by another user', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({
+          userId: 10,
+          cvUrl: 'https://cdn.example.com/cv.pdf',
+        }),
+      );
+
+      await expect(service.deleteCv(5, 99)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+      expect(repository.clearCv).not.toHaveBeenCalled();
+    });
+
+    it('deletes the Cloudinary asset and clears the CV fields', async () => {
+      const profile = freelancerProfile({
+        cvUrl: 'https://res.cloudinary.com/example/frevia/cvs/10/cv.pdf',
+        cvPublicId: 'frevia/cvs/10/cv',
+        cvFileName: 'resume.pdf',
+      });
+      repository.findFreelancerProfileById.mockResolvedValue(profile);
+
+      const result = await service.deleteCv(5, 10);
+
+      expect(cloudinary.deleteFile).toHaveBeenCalledWith('frevia/cvs/10/cv');
+      expect(repository.clearCv).toHaveBeenCalledWith(5);
+      expect(result).toEqual({ message: 'CV deleted successfully.' });
+    });
+
+    it('removes the local file and clears the CV fields', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({
+          cvUrl: 'local://cvs/10/some-uuid.pdf',
+          cvFileName: 'resume.pdf',
+        }),
+      );
+
+      const result = await service.deleteCv(5, 10);
+
+      expect(unlink).toHaveBeenCalledWith(
+        expect.stringContaining('some-uuid.pdf'),
+      );
+      expect(repository.clearCv).toHaveBeenCalledWith(5);
+      expect(result).toEqual({ message: 'CV deleted successfully.' });
+    });
   });
 
   describe('getCvFile', () => {
@@ -278,8 +364,14 @@ describe('ProfileService CV', () => {
         { name: 'Standalone AI Skill', proficiencyLevel: 4 },
       ]);
       skillResolver.resolveSkillEntries.mockResolvedValue([
-        { name: 'js', skill: { id: 1, name: 'javascript', slug: 'javascript' } },
-        { name: 'PostgreSQL', skill: { id: 2, name: 'PostgreSQL', slug: 'postgresql' } },
+        {
+          name: 'js',
+          skill: { id: 1, name: 'javascript', slug: 'javascript' },
+        },
+        {
+          name: 'PostgreSQL',
+          skill: { id: 2, name: 'PostgreSQL', slug: 'postgresql' },
+        },
         { name: 'Standalone AI Skill', skill: null },
       ]);
       repository.findSkillsByProfileId.mockResolvedValue([
@@ -325,7 +417,10 @@ describe('ProfileService CV', () => {
 
     it('rejects analyzing a profile owned by another user', async () => {
       repository.findFreelancerProfileById.mockResolvedValue(
-        freelancerProfile({ userId: 10, cvUrl: 'https://cdn.example.com/cv.pdf' }),
+        freelancerProfile({
+          userId: 10,
+          cvUrl: 'https://cdn.example.com/cv.pdf',
+        }),
       );
 
       await expect(service.analyzeCv(5, 99)).rejects.toBeInstanceOf(

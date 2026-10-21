@@ -7,6 +7,7 @@ export class SharedRoleRepository {
   private clientRoleId: null | number = null;
   private adminRoleId: null | number = null;
   private freelancerRoleId: null | number = null;
+  private expertRoleId: null | number = null;
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -53,5 +54,15 @@ export class SharedRoleRepository {
 
     this.adminRoleId = role.id;
     return this.adminRoleId;
+  }
+
+  async getExpertRoleId() {
+    if (this.expertRoleId) return this.expertRoleId;
+    const role = await this.prisma.role.findFirst({
+      where: { name: RoleName.EXPERT, deletedAt: null },
+    });
+    if (!role) throw new Error('Expert role not found!');
+    this.expertRoleId = role.id;
+    return this.expertRoleId;
   }
 }

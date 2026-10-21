@@ -29,5 +29,9 @@ export default async function DashboardRedirectPage() {
     redirect("/freelancer/find-work");
   }
 
+  if (primaryRole === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
   redirect("/");
 }

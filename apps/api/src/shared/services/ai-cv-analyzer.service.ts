@@ -24,7 +24,7 @@ export class AiCvAnalyzerService {
     const form = new FormData();
     form.append(
       'file',
-      new Blob([fileBuffer], { type: 'application/pdf' }),
+      new Blob([new Uint8Array(fileBuffer)], { type: 'application/pdf' }),
       fileName || 'cv.pdf',
     );
 

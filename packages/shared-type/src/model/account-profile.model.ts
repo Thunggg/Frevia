@@ -71,6 +71,7 @@ export const ClientProfileDetailSchema = z.object({
   avatarUrl: z.string().nullable(),
   coverUrl: z.string().nullable(),
   bio: z.string().nullable(),
+  profileCompletionPercent: z.number(),
   createdAt: DateTimeSchema,
   clientProfile: z.object({
     id: z.number(),

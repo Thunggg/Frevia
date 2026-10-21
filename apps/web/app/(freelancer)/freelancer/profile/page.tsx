@@ -5,7 +5,8 @@ import { AccountProfileClient } from "@/app/account-profile/account-profile-clie
 
 export const metadata = {
   title: "Profile & Settings | Freelancer Dashboard | Frevia",
-  description: "Manage your freelancer profile, skills, identity verification, and reviews.",
+  description:
+    "Manage your freelancer profile, skills, identity verification, and reviews.",
 };
 
 export default async function FreelancerProfilePage() {

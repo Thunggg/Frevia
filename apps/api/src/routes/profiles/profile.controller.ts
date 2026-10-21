@@ -28,6 +28,7 @@ import {
   AddFreelancerSkillResponseDto,
   CvUploadResponseDto,
   CvAnalyzeResponseDto,
+  ProfileRevisionSubmissionDto,
 } from './profile.dto';
 import { UseInterceptors } from '@nestjs/common';
 import { createReadStream } from 'fs';
@@ -45,7 +46,7 @@ export class ProfileController {
   }
 
   @Put(':id')
-  @ZodSerializerDto(FreelancerProfileDetailDto)
+  @ZodSerializerDto(ProfileRevisionSubmissionDto)
   async updateProfile(
     @Param('id', ParseIntPipe) id: number,
     @UserActive('userId') currentUserId: number,
@@ -99,6 +100,14 @@ export class ProfileController {
     @UserActive('userId') currentUserId: number,
   ) {
     return this.profileService.analyzeCv(id, currentUserId);
+  }
+
+  @Delete(':id/cv')
+  deleteCv(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.deleteCv(id, currentUserId);
   }
 
   @Get(':id/skills')
