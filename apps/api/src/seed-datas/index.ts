@@ -1,8 +1,8 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { RoleName, type RoleNameType } from '@shared/types';
 import 'dotenv/config';
 import { HashingService } from '../shared/services/hashing.service';
-import { RoleName, type RoleNameType } from '@shared/types';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DB URL');
