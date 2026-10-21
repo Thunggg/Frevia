@@ -4,6 +4,8 @@ import {
   FreelancerProfileDetailSchema,
   AddFreelancerSkillSchema,
   AddFreelancerSkillResponseSchema,
+CvUploadResponseSchema,
+  CvAnalyzeResponseSchema,
   ProfileRevisionSubmissionSchema,
 } from '@shared/types';
 
@@ -26,3 +28,7 @@ export class AddFreelancerSkillDto extends createZodDto(
 export class AddFreelancerSkillResponseDto extends createZodDto(
   AddFreelancerSkillResponseSchema,
 ) {}
+
+export class CvUploadResponseDto extends createZodDto(CvUploadResponseSchema) {}
+
+export class CvAnalyzeResponseDto extends createZodDto(CvAnalyzeResponseSchema) {}

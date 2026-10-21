@@ -249,9 +249,17 @@ model FreelancerProfile {
   education      String[] @default([])
   certifications String[] @default([])
   languages      String[] @default([])
-  idVerified     Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  experience     String[] @default([])
+
+  // CV
+  cvUrl        String?   @db.VarChar(500)
+  cvFileName   String?   @db.VarChar(255)
+  cvPublicId   String?   @db.VarChar(255)
+  cvUploadedAt DateTime?
+
+  idVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skills         FreelancerSkill[]
@@ -376,9 +384,6 @@ model ProfileVisitLog {
   @@index([targetFreelancerId])
 }
 
-// ============================
-// 4. Jobs
-// ============================
 // ============================
 // 4. Jobs
 // ============================

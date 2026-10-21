@@ -29,6 +29,8 @@ export const FreelancerProfileDetailSchema = z.object({
       education: ProfileStringListSchema.nullable(),
       certifications: ProfileStringListSchema.nullable(),
       languages: ProfileStringListSchema.nullable(),
+      experience: ProfileStringListSchema.nullable(),
+      cvFileName: z.string().min(1).nullable(),
       idVerified: z.boolean(),
       createdAt: DateTimeSchema,
       updatedAt: DateTimeSchema,
@@ -57,6 +59,7 @@ export const UpdateFreelancerProfileSchema = z
     education: ProfileStringListSchema.nullable().optional(),
     certifications: ProfileStringListSchema.nullable().optional(),
     languages: ProfileStringListSchema.nullable().optional(),
+    experience: ProfileStringListSchema.nullable().optional(),
   })
   .strict();
 
@@ -67,9 +70,31 @@ export type UpdateFreelancerProfileType = z.infer<
 export const UpdateFreelancerProfileResponseSchema =
   FreelancerProfileDetailSchema;
 
+export const CvUploadResponseSchema = z.object({
+  cvUrl: z.string().min(1),
+  cvFileName: z.string().min(1),
+});
+
+export const CvAnalyzeSkillSchema = z.object({
+  skillName: z.string().trim().min(1).max(100),
+  proficiencyLevel: z
+    .number()
+    .int()
+    .min(1)
+    .max(10)
+    .nullable(),
+});
+
+export const CvAnalyzeResponseSchema = z.object({
+  suggestions: z.array(CvAnalyzeSkillSchema).max(50),
+});
+
 export type UpdateFreelancerProfileResponseType = z.infer<
   typeof UpdateFreelancerProfileResponseSchema
 >;
+export type CvUploadResponseType = z.infer<typeof CvUploadResponseSchema>;
+export type CvAnalyzeSkillType = z.infer<typeof CvAnalyzeSkillSchema>;
+export type CvAnalyzeResponseType = z.infer<typeof CvAnalyzeResponseSchema>;
 
 export const FreelancerSkillSchema = z.object({
   id: z.number(),
