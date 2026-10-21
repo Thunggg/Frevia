@@ -5,6 +5,7 @@ import { UsersTable } from "./components/users-table";
 import { CreateUserDialog } from "./components/create-user-dialog";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Users } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function AdminUsersPage({
   }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("adminUsers");
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
@@ -50,14 +52,10 @@ export default async function AdminUsersPage({
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Users className="h-8 w-8 text-[#4fae2e]" />
-            User Management
+            {t("title")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            View, search, filter, and manage all users in the system (
-            <span className="font-semibold text-foreground">
-              {pagination.total}
-            </span>{" "}
-            total users)
+            {t("subtitle")} {t("subtitleTotal", { count: pagination.total })}
           </p>
         </div>
         <CreateUserDialog />

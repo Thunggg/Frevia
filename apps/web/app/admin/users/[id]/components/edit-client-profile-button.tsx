@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useUpdateClientProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -30,7 +30,7 @@ import {
 } from "@shared/types";
 import { Building2, Loader2, Pencil } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FIELD_PATHS = new Set(["companyName", "companyDescription", "website"]);
@@ -69,9 +69,9 @@ export function EditClientProfileButton({
   const clientProfile = user.clientProfile;
 
   const form = useForm<ClientProfileFormValues>({
-    resolver: zodResolver(ClientProfileFormSchema) as Resolver<
-      ClientProfileFormValues
-    >,
+    resolver: useTranslatedResolver<ClientProfileFormValues>(
+      ClientProfileFormSchema,
+    ),
     defaultValues: {
       companyName: "",
       companyDescription: "",

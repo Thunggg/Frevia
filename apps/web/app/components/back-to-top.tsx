@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { ArrowUp } from "@/components/icons";
 
 export function BackToTop() {
+  const t = useTranslations("home");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export function BackToTop() {
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-3 opacity-0"
       }`}
-      aria-label="Back to top"
+      aria-label={t("backToTop")}
     >
       <ArrowUp className="size-4.5" strokeWidth={2} />
     </button>

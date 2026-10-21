@@ -7,12 +7,19 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { RoleName, type PublicExpertType } from "@shared/types";
 import { ArrowRight, Award, Search, ShieldCheck } from "lucide-react";
+import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
-export const metadata = {
-  title: "Verified Experts | Frevia",
-  description: "Meet Frevia's active professional review experts.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("experts");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 type SearchParams = Promise<{
   page?: string;
@@ -54,6 +61,8 @@ export default async function ExpertsPage({
   searchParams: SearchParams;
 }) {
   const filters = await searchParams;
+  const t = await getTranslations("experts");
+  const tCommon = await getTranslations("common");
   const page = Math.max(1, Number(filters.page) || 1);
   const [user, result] = await Promise.all([
     authServerRequest.getMe(),
@@ -80,14 +89,13 @@ export default async function ExpertsPage({
           <div className="mx-auto max-w-7xl px-5 py-16 sm:py-20">
             <div className="max-w-3xl">
               <div className="mb-5 flex w-fit items-center gap-2 rounded-full border border-[#4fae2e]/30 bg-[#4fae2e]/10 px-3 py-1 text-xs font-semibold text-[#3f9225] dark:text-[#78d45a]">
-                <ShieldCheck className="size-4" /> Frevia verified network
+                <ShieldCheck className="size-4" /> {t("networkBadge")}
               </div>
               <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">
-                Trusted expertise, visible by design.
+                {t("heroTitle")}
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-                Explore active experts appointed by Frevia to strengthen
-                professional review quality and marketplace trust.
+                {t("heroDescription")}
               </p>
             </div>
 
@@ -97,18 +105,18 @@ export default async function ExpertsPage({
                 <Input
                   name="search"
                   defaultValue={filters.search}
-                  placeholder="Search by name, title, or bio"
+                  placeholder={t("searchPlaceholder")}
                   className="border-0 pl-9 shadow-none focus-visible:ring-0"
                 />
               </div>
               <Input
                 name="expertise"
                 defaultValue={filters.expertise}
-                placeholder="Expertise, e.g. Product strategy"
+                placeholder={t("expertisePlaceholder")}
                 className="border-0 shadow-none focus-visible:ring-0"
               />
               <Button type="submit" className="bg-[#4fae2e] hover:bg-[#459928]">
-                Find experts
+                {t("searchAction")}
               </Button>
             </form>
           </div>
@@ -118,13 +126,15 @@ export default async function ExpertsPage({
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-[#4fae2e]">
-                {pagination.total} active expert{pagination.total === 1 ? "" : "s"}
+                {t("activeCount", { count: pagination.total })}
               </p>
-              <h2 className="mt-1 text-2xl font-semibold">Meet the network</h2>
+              <h2 className="mt-1 text-2xl font-semibold">
+                {t("networkTitle")}
+              </h2>
             </div>
             {(filters.search || filters.expertise) && (
               <Button asChild variant="ghost" size="sm">
-                <Link href="/experts">Clear filters</Link>
+                <Link href="/experts">{t("clearFilters")}</Link>
               </Button>
             )}
           </div>
@@ -138,9 +148,11 @@ export default async function ExpertsPage({
           ) : (
             <div className="rounded-2xl border border-dashed px-6 py-20 text-center">
               <Award className="mx-auto size-9 text-muted-foreground" />
-              <h2 className="mt-4 text-xl font-semibold">No experts found</h2>
+              <h2 className="mt-4 text-xl font-semibold">
+                {t("emptyTitle")}
+              </h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Try a broader name or expertise filter.
+                {t("emptyDescription")}
               </p>
             </div>
           )}
@@ -152,11 +164,14 @@ export default async function ExpertsPage({
                   href={pageHref(Math.max(1, pagination.page - 1), filters)}
                   aria-disabled={pagination.page <= 1}
                 >
-                  Previous
+                  {tCommon("previous")}
                 </Link>
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {pagination.page} of {pagination.totalPages}
+                {tCommon("pageOf", {
+                  page: pagination.page,
+                  totalPages: pagination.totalPages,
+                })}
               </span>
               <Button
                 asChild
@@ -170,7 +185,7 @@ export default async function ExpertsPage({
                   )}
                   aria-disabled={pagination.page >= pagination.totalPages}
                 >
-                  Next
+                  {tCommon("next")}
                 </Link>
               </Button>
             </div>
@@ -182,6 +197,8 @@ export default async function ExpertsPage({
 }
 
 function ExpertCard({ expert }: { expert: PublicExpertType }) {
+  const t = useTranslations("experts");
+
   return (
     <article className="group flex min-h-80 flex-col rounded-2xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-[#4fae2e]/50 hover:shadow-lg">
       <div className="flex items-start justify-between gap-4">
@@ -190,17 +207,17 @@ function ExpertCard({ expert }: { expert: PublicExpertType }) {
           <AvatarFallback>{initials(expert.displayName)}</AvatarFallback>
         </Avatar>
         <Badge variant="secondary" className="gap-1 text-[#3f9225]">
-          <ShieldCheck className="size-3" /> Verified
+          <ShieldCheck className="size-3" /> {t("verified")}
         </Badge>
       </div>
       <h3 className="mt-5 text-xl font-semibold">
-        {expert.displayName ?? "Frevia Expert"}
+        {expert.displayName ?? t("fallbackName")}
       </h3>
       <p className="mt-1 text-sm font-medium text-[#4fae2e]">
-        {expert.title ?? "Professional Expert"}
+        {expert.title ?? t("fallbackTitle")}
       </p>
       <p className="mt-4 line-clamp-3 text-sm leading-6 text-muted-foreground">
-        {expert.bio ?? "This expert is building their professional profile."}
+        {expert.bio ?? t("fallbackBio")}
       </p>
       <div className="mt-5 flex flex-wrap gap-2">
         {expert.expertise.slice(0, 4).map((item) => (
@@ -213,7 +230,7 @@ function ExpertCard({ expert }: { expert: PublicExpertType }) {
         href={`/experts/${expert.id}`}
         className="mt-auto flex items-center gap-2 pt-6 text-sm font-semibold text-[#4fae2e]"
       >
-        View profile
+        {t("viewProfile")}
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
       </Link>
     </article>

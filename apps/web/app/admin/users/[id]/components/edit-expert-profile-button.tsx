@@ -3,7 +3,7 @@
 import { useUpdateExpertProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -45,7 +45,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 // ====== Dialog "Edit expert profile" (tab EXPERT - User Detail) ======
@@ -152,7 +152,9 @@ export function EditExpertProfileButton({
   );
 
   const form = useForm<EditExpertProfileFormValues>({
-    resolver: zodResolver(EditExpertProfileFormSchema) as Resolver<EditExpertProfileFormValues>,
+    resolver: useTranslatedResolver<EditExpertProfileFormValues>(
+      EditExpertProfileFormSchema,
+    ),
     defaultValues: savedValues,
   });
 

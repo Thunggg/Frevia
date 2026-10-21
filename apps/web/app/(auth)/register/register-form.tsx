@@ -3,7 +3,7 @@
 import { useRegister, useSendOtp } from "@/hooks/use-auth";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
@@ -29,6 +29,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { RegisterBodySchema, RoleName } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,6 +41,9 @@ const inputClass =
 
 export function RegisterForm() {
   const router = useRouter();
+  const t = useTranslations("auth.register");
+  const tField = useTranslations("auth.fields");
+  const tAction = useTranslations("auth.actions");
 
   const registerMutation = useRegister();
   const sendOtpMutation = useSendOtp();
@@ -62,7 +66,9 @@ export function RegisterForm() {
   }, [countdown]);
 
   const form = useForm<z.infer<typeof RegisterBodySchema>>({
-    resolver: zodResolver(RegisterBodySchema),
+    resolver: useTranslatedResolver<z.infer<typeof RegisterBodySchema>>(
+      RegisterBodySchema,
+    ),
     defaultValues: {
       email: "",
       password: "",
@@ -77,7 +83,7 @@ export function RegisterForm() {
     registerMutation.mutate(payload, {
       onSuccess: (response) => {
         if (response.success) {
-          toastSuccess({ message: "Register successful" });
+          toastSuccess({ message: t("success") });
           form.reset();
           router.push("/login");
         }
@@ -86,7 +92,7 @@ export function RegisterForm() {
         if (error instanceof ApiFail) {
           handleErrorApi({ error: error.response, setError: form.setError });
         } else {
-          toastError({ message: "Register failed", duration: 3000 });
+          toastError({ message: t("failed"), duration: 3000 });
         }
       },
     });
@@ -109,7 +115,7 @@ export function RegisterForm() {
           if (error instanceof ApiFail) {
             handleErrorApi({ error: error.response, setError: form.setError });
           } else {
-            toastError({ message: "Send OTP failed", duration: 3000 });
+            toastError({ message: t("sendOtpFailed"), duration: 3000 });
           }
         },
       },
@@ -126,13 +132,13 @@ export function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="register-full-name" className="text-[13px] font-medium text-foreground/70">
-                  Full name
+                  {tField("fullName")}
                 </FieldLabel>
                 <Input
                   {...field}
                   id="register-full-name"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Your full name"
+                  placeholder={t("fullNamePlaceholder")}
                   autoComplete="name"
                   className={inputClass}
                 />
@@ -149,14 +155,14 @@ export function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="register-email" className="text-[13px] font-medium text-foreground/70">
-                  Email address
+                  {tField("email")}
                 </FieldLabel>
                 <Input
                   {...field}
                   id="register-email"
                   type="email"
                   aria-invalid={fieldState.invalid}
-                  placeholder="you@company.com"
+                  placeholder={tField("emailPlaceholder")}
                   autoComplete="email"
                   className={inputClass}
                 />
@@ -173,7 +179,7 @@ export function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="register-password" className="text-[13px] font-medium text-foreground/70">
-                  Password
+                  {tField("password")}
                 </FieldLabel>
                 <div className="relative">
                   <Input
@@ -181,7 +187,7 @@ export function RegisterForm() {
                     id="register-password"
                     type={showPassword ? "text" : "password"}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Create a password"
+                    placeholder={t("passwordPlaceholder")}
                     autoComplete="new-password"
                     className={`${inputClass} pr-10`}
                   />
@@ -189,7 +195,11 @@ export function RegisterForm() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword
+                        ? tAction("hidePassword")
+                        : tAction("showPassword")
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="size-4" />
@@ -211,7 +221,7 @@ export function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="register-confirm-password" className="text-[13px] font-medium text-foreground/70">
-                  Confirm password
+                  {tField("confirmPassword")}
                 </FieldLabel>
                 <div className="relative">
                   <Input
@@ -219,7 +229,7 @@ export function RegisterForm() {
                     id="register-confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Confirm your password"
+                    placeholder={t("confirmPasswordPlaceholder")}
                     autoComplete="new-password"
                     className={`${inputClass} pr-10`}
                   />
@@ -229,8 +239,8 @@ export function RegisterForm() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
                     aria-label={
                       showConfirmPassword
-                        ? "Hide confirm password"
-                        : "Show confirm password"
+                        ? tAction("hideConfirmPassword")
+                        : tAction("showConfirmPassword")
                     }
                   >
                     {showConfirmPassword ? (
@@ -253,13 +263,13 @@ export function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="register-otp" className="text-[13px] font-medium text-foreground/70">
-                  OTP code
+                  {tField("otpCode")}
                 </FieldLabel>
                 <InputGroup>
                   <InputGroupInput
                     {...field}
                     id="register-otp"
-                    placeholder="6-digit code"
+                    placeholder={tField("otpPlaceholder")}
                     maxLength={6}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, "");
@@ -278,12 +288,12 @@ export function RegisterForm() {
                       {sendOtpMutation.isPending ? (
                         <>
                           <Loader2 className="size-4 animate-spin" />
-                          <span>Sending...</span>
+                          <span>{tAction("sending")}</span>
                         </>
                       ) : countdown > 0 ? (
-                        `Resend in ${countdown}s`
+                        tAction("resendIn", { seconds: countdown })
                       ) : (
-                        "Send OTP"
+                        tAction("sendOtp")
                       )}
                     </InputGroupButton>
                   </InputGroupAddon>
@@ -300,7 +310,7 @@ export function RegisterForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-3">
-                <FieldLabel className="text-[13px] font-medium text-foreground/70">I want to</FieldLabel>
+                <FieldLabel className="text-[13px] font-medium text-foreground/70">{t("intent")}</FieldLabel>
                 <RadioGroup
                   value={field.value}
                   onValueChange={field.onChange}
@@ -312,9 +322,9 @@ export function RegisterForm() {
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
-                        <FieldTitle className="text-[14px]">Find work</FieldTitle>
+                        <FieldTitle className="text-[14px]">{t("findWorkTitle")}</FieldTitle>
                         <FieldDescription className="text-[13px] text-muted-foreground/60">
-                          Join as a freelancer and apply to projects.
+                          {t("findWorkDescription")}
                         </FieldDescription>
                       </FieldContent>
                       <RadioGroupItem
@@ -330,9 +340,9 @@ export function RegisterForm() {
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
-                        <FieldTitle className="text-[14px]">Hire talent</FieldTitle>
+                        <FieldTitle className="text-[14px]">{t("hireTalentTitle")}</FieldTitle>
                         <FieldDescription className="text-[13px] text-muted-foreground/60">
-                          Join as an employer and post jobs.
+                          {t("hireTalentDescription")}
                         </FieldDescription>
                       </FieldContent>
                       <RadioGroupItem
@@ -359,7 +369,7 @@ export function RegisterForm() {
               htmlFor="terms-checkbox"
               className="cursor-pointer text-[13px] font-normal leading-snug text-muted-foreground/70"
             >
-              I accept the terms and conditions
+              {t("acceptTerms")}
             </FieldLabel>
           </Field>
         </FieldGroup>
@@ -372,7 +382,7 @@ export function RegisterForm() {
           className="h-11 flex-1 rounded-lg border-border/60 bg-white/60 text-[14px] font-medium transition-all dark:border-white/10 dark:bg-white/[0.03] active:scale-[0.99]"
           onClick={() => form.reset()}
         >
-          Reset
+          {tAction("reset")}
         </Button>
         <Button
           type="submit"
@@ -383,21 +393,21 @@ export function RegisterForm() {
           {registerMutation.isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              <span>Creating...</span>
+              <span>{t("submitting")}</span>
             </>
           ) : (
-            "Create account"
+            t("submit")
           )}
         </Button>
       </div>
 
       <p className="mt-8 text-center text-[13px] text-muted-foreground/60">
-        Already have an account?{" "}
+        {t("haveAccount")}{" "}
         <Link
           href="/login"
           className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
         >
-          Log in
+          {t("logIn")}
         </Link>
       </p>
     </div>

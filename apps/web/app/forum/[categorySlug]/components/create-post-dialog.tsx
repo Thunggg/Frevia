@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -38,6 +39,7 @@ export function CreatePostDialog({
   currentUserId,
 }: CreatePostDialogProps) {
   const router = useRouter();
+  const t = useTranslations("forum");
   const createPost = useCreatePost();
 
   const [open, setOpen] = useState(false);
@@ -63,9 +65,7 @@ export function CreatePostDialog({
           // Bài bị AI đưa vào trạng thái PENDING -> chưa hiển thị công khai,
           // không điều hướng tới chi tiết (sẽ 404), chỉ báo cho người dùng.
           if (result?.moderationStatus === "PENDING") {
-            toast.success(
-              "Bài viết của bạn đã được lưu và đang chờ quản trị viên kiểm duyệt.",
-            );
+            toast.success(t("pendingModeration"));
             return;
           }
           if (result?.id && result?.slug) {
@@ -76,9 +76,7 @@ export function CreatePostDialog({
         },
         onError: (error) => {
           toast.error(
-            error instanceof Error
-              ? error.message
-              : "Something went wrong. Please try again.",
+            error instanceof Error ? error.message : t("genericError"),
           );
         },
       },
@@ -91,6 +89,7 @@ export function CreatePostDialog({
     isSubmitting,
     createPost,
     router,
+    t,
   ]);
 
   if (!currentUserId) {
@@ -98,7 +97,7 @@ export function CreatePostDialog({
       <Button asChild className={brandButtonClass}>
         <Link href="/login">
           <Plus className="h-4 w-4" />
-          New Post
+          {t("newPost")}
         </Link>
       </Button>
     );
@@ -109,33 +108,33 @@ export function CreatePostDialog({
       <DialogTrigger asChild>
         <Button className={brandButtonClass}>
           <Plus className="h-4 w-4" />
-          New Post
+          {t("newPost")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Post in {categoryName}</DialogTitle>
+          <DialogTitle>{t("createTitle", { category: categoryName })}</DialogTitle>
           <DialogDescription>
-            Share your thoughts with the community.
+            {t("createDescription")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="post-title">Title</Label>
+            <Label htmlFor="post-title">{t("fieldTitle")}</Label>
             <Input
               id="post-title"
-              placeholder="What's on your mind?"
+              placeholder={t("titlePlaceholder")}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={isSubmitting}
             />
           </div>
           <div className="space-y-2">
-            <Label>Content</Label>
+            <Label>{t("fieldContent")}</Label>
             <RichTextEditor
               value={content}
               onChange={setContent}
-              placeholder="Write your post content here..."
+              placeholder={t("contentPlaceholder")}
               disabled={isSubmitting}
             />
           </div>
@@ -146,7 +145,7 @@ export function CreatePostDialog({
             onClick={() => setOpen(false)}
             disabled={isSubmitting}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
@@ -158,7 +157,7 @@ export function CreatePostDialog({
             ) : (
               <Plus className="h-4 w-4" />
             )}
-            Post
+            {t("post")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
@@ -62,27 +63,28 @@ type FindWorkContentProps = {
   basePath?: string;
 };
 
-const BUDGET_LABELS: Record<string, string> = {
-  "under-500": "Under $500",
-  "500-1000": "$500 - $1,000",
-  "1000-5000": "$1,000 - $5,000",
-  "5000-plus": "$5,000+",
+// Ánh xạ giá trị filter trên URL sang key dịch trong namespace "findWork"
+const BUDGET_KEYS: Record<string, string> = {
+  "under-500": "budget.under500",
+  "500-1000": "budget.500to1000",
+  "1000-5000": "budget.1000to5000",
+  "5000-plus": "budget.over5000",
 };
 
-const TIME_LABELS: Record<string, string> = {
-  today: "Posted today",
-  "last-3-days": "Last 3 days",
-  "last-7-days": "Last 7 days",
-  "last-30-days": "Last 30 days",
+const TIME_KEYS: Record<string, string> = {
+  today: "time.today",
+  "last-3-days": "time.last3Days",
+  "last-7-days": "time.last7Days",
+  "last-30-days": "time.last30Days",
 };
 
-const SORT_LABELS: Record<string, string> = {
-  newest: "Newest first",
-  oldest: "Oldest first",
-  "title-asc": "Title (A-Z)",
-  "title-desc": "Title (Z-A)",
-  "budget-low": "Budget: Low to High",
-  "budget-high": "Budget: High to Low",
+const SORT_KEYS: Record<string, string> = {
+  newest: "sort.newest",
+  oldest: "sort.oldest",
+  "title-asc": "sort.titleAsc",
+  "title-desc": "sort.titleDesc",
+  "budget-low": "sort.budgetLow",
+  "budget-high": "sort.budgetHigh",
 };
 
 function stripHtml(value: string) {
@@ -90,24 +92,6 @@ function stripHtml(value: string) {
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function formatPostedTime(value: string | Date) {
-  const diffMs = Date.now() - new Date(value).getTime();
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-  if (diffHours < 1) return "Just now";
-  if (diffHours < 24) return `${diffHours}h ago`;
-
-  return `${Math.floor(diffHours / 24)}d ago`;
-}
-
-function getBudgetText(job: JobItem) {
-  if (job.budgetMin === null || job.budgetMax === null) {
-    return "Negotiable";
-  }
-
-  return `$${job.budgetMin.toLocaleString()} – $${job.budgetMax.toLocaleString()}`;
 }
 
 function JobListSkeleton() {
@@ -157,6 +141,12 @@ export function FindWorkContent({
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("findWork");
+  const tStatus = useTranslations("jobStatus");
+  const tBudgetType = useTranslations("jobBudgetType");
+  const tBookmark = useTranslations("bookmark");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [isPending, startTransition] = useTransition();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchInput, setSearchInput] = useState(initialKeyword);
@@ -282,28 +272,52 @@ export function FindWorkContent({
           next.delete(slug);
           return next;
         });
-        toastSuccess({ message: "Bookmark removed" });
+        toastSuccess({ message: tBookmark("removed") });
       } else {
         await jobApiRequest.bookmarkJob(slug);
         setBookmarkedSlugs((current) => new Set(current).add(slug));
-        toastSuccess({ message: "Job saved to bookmarks" });
+        toastSuccess({ message: tBookmark("added") });
       }
     } catch {
       toastError({
         message: isBookmarked
-          ? "Couldn't remove bookmark. Try again."
-          : "Couldn't update bookmark. Try again.",
+          ? tBookmark("removeFailed")
+          : tBookmark("updateFailed"),
       });
     } finally {
       setPendingBookmarkSlug(null);
     }
   };
 
+  const translateOption = (keys: Record<string, string>, value: string) => {
+    const key = keys[value];
+    return key ? t(key) : value;
+  };
+
+  const formatPostedTime = (value: string | Date) => {
+    const diffHours = Math.floor(
+      (Date.now() - new Date(value).getTime()) / (1000 * 60 * 60),
+    );
+
+    if (diffHours < 1) return tCommon("justNow");
+    if (diffHours < 24) return tCommon("hoursAgo", { hours: diffHours });
+
+    return tCommon("daysAgo", { days: Math.floor(diffHours / 24) });
+  };
+
+  const getBudgetText = (job: JobItem) => {
+    if (job.budgetMin === null || job.budgetMax === null) {
+      return t("negotiable");
+    }
+
+    return `$${format.number(job.budgetMin)} – $${format.number(job.budgetMax)}`;
+  };
+
   const activeChips = [
     initialKeyword
       ? {
           key: "keyword",
-          label: `Search: ${initialKeyword}`,
+          label: t("chip.search", { value: initialKeyword }),
           onClear: () => {
             setSearchInput("");
             updateParams({ keyword: null });
@@ -313,21 +327,27 @@ export function FindWorkContent({
     initialBudget !== "all"
       ? {
           key: "budget",
-          label: `Budget: ${BUDGET_LABELS[initialBudget] ?? initialBudget}`,
+          label: t("chip.budget", {
+            value: translateOption(BUDGET_KEYS, initialBudget),
+          }),
           onClear: () => updateParams({ budget: null }),
         }
       : null,
     initialTime !== "all"
       ? {
           key: "time",
-          label: `Posted: ${TIME_LABELS[initialTime] ?? initialTime}`,
+          label: t("chip.posted", {
+            value: translateOption(TIME_KEYS, initialTime),
+          }),
           onClear: () => updateParams({ time: null }),
         }
       : null,
     initialSort !== "newest"
       ? {
           key: "sort",
-          label: `Sort: ${SORT_LABELS[initialSort] ?? initialSort}`,
+          label: t("chip.sort", {
+            value: translateOption(SORT_KEYS, initialSort),
+          }),
           onClear: () => updateParams({ sort: null }),
         }
       : null,
@@ -339,10 +359,8 @@ export function FindWorkContent({
 
   const hasActiveFilters = activeChips.length > 0;
   const resultsLabel = initialKeyword
-    ? `Results for "${initialKeyword}"`
-    : pagination.total > 0
-      ? `${pagination.total} open project${pagination.total === 1 ? "" : "s"}`
-      : "No open projects";
+    ? t("resultsFor", { keyword: initialKeyword })
+    : t("openProjects", { count: pagination.total });
 
   const filterControls = (
     <>
@@ -352,14 +370,21 @@ export function FindWorkContent({
         onValueChange={(value) => value && updateFilter("budget", value)}
       >
         <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[130px]">
-          <SelectValue placeholder="Budget" />
+          <SelectValue placeholder={t("budget.label")} />
         </SelectTrigger>
         <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
-          <SelectItem value="all" className="rounded-full cursor-pointer">Any budget</SelectItem>
-          <SelectItem value="under-500" className="rounded-full cursor-pointer">Under $500</SelectItem>
-          <SelectItem value="500-1000" className="rounded-full cursor-pointer">$500 - $1,000</SelectItem>
-          <SelectItem value="1000-5000" className="rounded-full cursor-pointer">$1,000 - $5,000</SelectItem>
-          <SelectItem value="5000-plus" className="rounded-full cursor-pointer">$5,000+</SelectItem>
+          <SelectItem value="all" className="rounded-full cursor-pointer">
+            {t("budget.any")}
+          </SelectItem>
+          {Object.entries(BUDGET_KEYS).map(([value, key]) => (
+            <SelectItem
+              key={value}
+              value={value}
+              className="rounded-full cursor-pointer"
+            >
+              {t(key)}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
@@ -369,14 +394,21 @@ export function FindWorkContent({
         onValueChange={(value) => value && updateFilter("time", value)}
       >
         <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[130px]">
-          <SelectValue placeholder="Posted" />
+          <SelectValue placeholder={t("time.label")} />
         </SelectTrigger>
         <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
-          <SelectItem value="all" className="rounded-full cursor-pointer">Any time</SelectItem>
-          <SelectItem value="today" className="rounded-full cursor-pointer">Posted today</SelectItem>
-          <SelectItem value="last-3-days" className="rounded-full cursor-pointer">Last 3 days</SelectItem>
-          <SelectItem value="last-7-days" className="rounded-full cursor-pointer">Last 7 days</SelectItem>
-          <SelectItem value="last-30-days" className="rounded-full cursor-pointer">Last 30 days</SelectItem>
+          <SelectItem value="all" className="rounded-full cursor-pointer">
+            {t("time.any")}
+          </SelectItem>
+          {Object.entries(TIME_KEYS).map(([value, key]) => (
+            <SelectItem
+              key={value}
+              value={value}
+              className="rounded-full cursor-pointer"
+            >
+              {t(key)}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
@@ -389,12 +421,15 @@ export function FindWorkContent({
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
-          <SelectItem value="newest" className="rounded-full cursor-pointer">Newest first</SelectItem>
-          <SelectItem value="oldest" className="rounded-full cursor-pointer">Oldest first</SelectItem>
-          <SelectItem value="title-asc" className="rounded-full cursor-pointer">Title: A to Z</SelectItem>
-          <SelectItem value="title-desc" className="rounded-full cursor-pointer">Title: Z to A</SelectItem>
-          <SelectItem value="budget-low" className="rounded-full cursor-pointer">Budget: low to high</SelectItem>
-          <SelectItem value="budget-high" className="rounded-full cursor-pointer">Budget: high to low</SelectItem>
+          {Object.entries(SORT_KEYS).map(([value, key]) => (
+            <SelectItem
+              key={value}
+              value={value}
+              className="rounded-full cursor-pointer"
+            >
+              {t(key)}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </>
@@ -422,10 +457,10 @@ export function FindWorkContent({
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                    Find Work
+                    {t("title")}
                   </h1>
                   <p className="mt-1 text-xs font-normal text-muted-foreground">
-                    Browse open projects and apply to work that fits your skills.
+                    {t("subtitle")}
                   </p>
                 </div>
 
@@ -445,19 +480,19 @@ export function FindWorkContent({
                   href="/"
                   className="transition-colors hover:text-[#4fae2e]"
                 >
-                  Home
+                  {tCommon("home")}
                 </Link>
                 <span className="text-muted-foreground/30">/</span>
-                <span className="text-foreground font-medium">Find Work</span>
+                <span className="text-foreground font-medium">{t("title")}</span>
               </nav>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                    Find Work
+                    {t("title")}
                   </h1>
                   <p className="mt-1 text-xs font-normal text-muted-foreground">
-                    Browse open projects and apply to work that fits your skills.
+                    {t("subtitle")}
                   </p>
                 </div>
 
@@ -490,7 +525,7 @@ export function FindWorkContent({
                     type="text"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Search jobs by title or skill..."
+                    placeholder={t("searchPlaceholder")}
                     className="h-10 w-full rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 pl-10 pr-9 text-xs sm:text-sm font-medium text-foreground placeholder:text-muted-foreground border border-black/5 dark:border-white/10 outline-none focus:ring-2 focus:ring-[#4fae2e]/30 transition-all"
                   />
                   {searchInput ? (
@@ -501,7 +536,7 @@ export function FindWorkContent({
                         updateParams({ keyword: null });
                       }}
                       className="absolute right-3 flex size-5 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
-                      title="Clear search"
+                      title={t("clearSearch")}
                     >
                       <X className="size-3" />
                     </button>
@@ -531,7 +566,7 @@ export function FindWorkContent({
                       className="h-10 rounded-full gap-2 text-xs font-medium"
                     >
                       <SlidersHorizontal className="size-3.5" />
-                      Filters
+                      {t("filters")}
                       {hasActiveFilters ? (
                         <span className="rounded-full bg-[#4fae2e] px-1.5 py-0.5 text-[10px] font-bold text-white">
                           {activeChips.length}
@@ -541,11 +576,12 @@ export function FindWorkContent({
                   </SheetTrigger>
                   <SheetContent
                     side="bottom"
+                    closeLabel={tCommon("close")}
                     className="rounded-t-[28px] p-6 font-sans"
                   >
                     <SheetHeader>
                       <SheetTitle className="text-base font-bold text-foreground">
-                        Filters
+                        {t("filters")}
                       </SheetTitle>
                     </SheetHeader>
                     <div className="mt-4 flex flex-col gap-3 pb-6">
@@ -555,7 +591,7 @@ export function FindWorkContent({
                       className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10"
                       onClick={() => setFiltersOpen(false)}
                     >
-                      Show results
+                      {t("showResults")}
                     </Button>
                   </SheetContent>
                 </Sheet>
@@ -590,7 +626,7 @@ export function FindWorkContent({
                   onClick={clearAllFilters}
                   className="text-xs font-medium text-[#4fae2e] hover:underline ml-1 cursor-pointer"
                 >
-                  Clear all
+                  {t("clearAll")}
                 </button>
               </div>
             ) : null}
@@ -613,10 +649,10 @@ export function FindWorkContent({
                 <SearchX className="size-6 text-muted-foreground" />
               </div>
               <p className="text-base font-semibold text-foreground">
-                No projects match these filters
+                {t("emptyTitle")}
               </p>
               <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-                Try a broader budget or time range, or clear your search keyword.
+                {t("emptyDescription")}
               </p>
               <Button
                 variant="outline"
@@ -624,7 +660,7 @@ export function FindWorkContent({
                 className="mt-4 rounded-full text-xs cursor-pointer"
                 onClick={clearAllFilters}
               >
-                Clear all filters
+                {t("clearAllFilters")}
               </Button>
             </motion.div>
           ) : (
@@ -632,7 +668,7 @@ export function FindWorkContent({
               {jobs.map((job, index) => {
                 const preview = job.description
                   ? stripHtml(job.description)
-                  : "No description provided yet.";
+                  : t("noDescription");
                 const skills = job.skills?.slice(0, 5) ?? [];
                 const isBookmarked = bookmarkedSlugs.has(job.slug);
                 const isBookmarkPending = pendingBookmarkSlug === job.slug;
@@ -654,11 +690,11 @@ export function FindWorkContent({
                         <div className="flex flex-wrap items-center gap-2">
                           {job.featured ? (
                             <span className="inline-flex items-center rounded-full bg-[#4fae2e] text-white px-3 py-0.5 text-xs font-semibold">
-                              Featured
+                              {t("featured")}
                             </span>
                           ) : null}
                           <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
-                            {job.status.replaceAll("_", " ")}
+                            {tStatus(job.status)}
                           </span>
                           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
                             <Clock className="size-3.5" />
@@ -671,7 +707,9 @@ export function FindWorkContent({
                             type="button"
                             disabled={isBookmarkPending}
                             aria-label={
-                              isBookmarked ? "Remove bookmark" : "Save job"
+                              isBookmarked
+                                ? tBookmark("remove")
+                                : tBookmark("save")
                             }
                             onClick={(event) =>
                               toggleBookmark(job.slug, event)
@@ -683,8 +721,8 @@ export function FindWorkContent({
                             }`}
                             title={
                               isBookmarked
-                                ? "Remove from bookmarks"
-                                : "Save to bookmarks"
+                                ? tBookmark("removeTitle")
+                                : tBookmark("saveTitle")
                             }
                           >
                             {isBookmarkPending ? (
@@ -713,7 +751,7 @@ export function FindWorkContent({
                         <div className="shrink-0 text-xs sm:text-sm font-semibold text-foreground">
                           {getBudgetText(job)}{" "}
                           <span className="font-normal text-muted-foreground capitalize">
-                            ({job.budgetType.toLowerCase().replace("_", " ")})
+                            ({tBudgetType(job.budgetType)})
                           </span>
                         </div>
                       </div>
@@ -741,7 +779,9 @@ export function FindWorkContent({
                         ))}
                         {(job.skills?.length ?? 0) > 5 ? (
                           <span className="text-xs text-muted-foreground self-center ml-1">
-                            +{(job.skills?.length ?? 0) - 5} more
+                            {t("moreSkills", {
+                              count: (job.skills?.length ?? 0) - 5,
+                            })}
                           </span>
                         ) : null}
                       </div>
@@ -750,7 +790,7 @@ export function FindWorkContent({
                         href={`${jobBaseUrl}/${job.slug}`}
                         className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
                       >
-                        <span>View details</span>
+                        <span>{t("viewDetails")}</span>
                         <ArrowRight className="size-3.5" />
                       </Link>
                     </div>
@@ -764,7 +804,10 @@ export function FindWorkContent({
           {!isPending && pagination.totalPages > 1 ? (
             <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
               <p className="font-sans text-xs text-muted-foreground">
-                Page {pagination.page} of {pagination.totalPages}
+                {t("pageOf", {
+                  page: pagination.page,
+                  totalPages: pagination.totalPages,
+                })}
               </p>
               <div className="flex gap-1.5">
                 <Button

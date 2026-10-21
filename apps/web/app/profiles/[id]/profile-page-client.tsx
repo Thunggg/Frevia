@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import {
   useCallback,
@@ -151,19 +152,13 @@ function joinValues(values: string[] | null | undefined) {
   return values?.join("\n") ?? "";
 }
 
-function getInitials(displayName: string | null) {
-  return (displayName ?? "Freelancer")
+function getInitials(displayName: string | null, fallback: string) {
+  return (displayName ?? fallback)
     .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0])
     .join("")
     .toUpperCase();
-}
-
-function getProficiencyLabel(level: number) {
-  if (level >= 8) return "Expert";
-  if (level >= 4) return "Intermediate";
-  return "Beginner";
 }
 
 function SectionEmpty({
@@ -191,6 +186,8 @@ export function ProfilePageClient({
   currentUserId,
   headerRole,
 }: ProfilePageClientProps) {
+  const t = useTranslations("freelancerProfile");
+  const tCommon = useTranslations("common");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -231,9 +228,15 @@ export function ProfilePageClient({
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
+  const getProficiencyLabel = (level: number) => {
+    if (level >= 8) return t("proficiencyExpert");
+    if (level >= 4) return t("proficiencyIntermediate");
+    return t("proficiencyBeginner");
+  };
+
   const loadProfile = useCallback(async () => {
     if (!Number.isInteger(profileId) || profileId <= 0) {
-      setLoadError("Freelancer profile not found.");
+      setLoadError(t("toast.profileNotFound"));
       setIsLoading(false);
       return;
     }
@@ -264,7 +267,7 @@ export function ProfilePageClient({
         !skillsResponse.success ||
         !portfoliosResponse.success
       ) {
-        throw new Error("Couldn't load freelancer profile.");
+        throw new Error(t("toast.loadFailed"));
       }
 
       setProfile(profileResponse.data);
@@ -290,11 +293,11 @@ export function ProfilePageClient({
         ) ?? false,
       );
     } catch (error) {
-      setLoadError(getErrorMessage(error, "Couldn't load profile. Try again."));
+      setLoadError(getErrorMessage(error, t("toast.loadFailedRetry")));
     } finally {
       setIsLoading(false);
     }
-  }, [currentUserId, headerRole, profileId]);
+  }, [currentUserId, headerRole, profileId, t]);
 
   const toggleFavorite = async () => {
     if (!profile) return;
@@ -308,15 +311,12 @@ export function ProfilePageClient({
       setIsFavorite((current) => !current);
       toastSuccess({
         message: isFavorite
-          ? "Freelancer removed from favorites."
-          : "Freelancer added to favorites.",
+          ? t("toast.favoriteRemoved")
+          : t("toast.favoriteAdded"),
       });
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          "Couldn't update favorites. Try again.",
-        ),
+        message: getErrorMessage(error, t("toast.favoriteFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -336,12 +336,12 @@ export function ProfilePageClient({
       if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
         message: isFollowing
-          ? "You unfollowed this freelancer."
-          : "You are now following this freelancer.",
+          ? t("toast.unfollowed")
+          : t("toast.followed"),
       });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, "Couldn't update following status."),
+        message: getErrorMessage(error, t("toast.followFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -425,7 +425,7 @@ export function ProfilePageClient({
     event.preventDefault();
     if (!profileForm.displayName.trim() || !profileForm.title.trim()) {
       toastError({
-        message: "Display name and professional title are required.",
+        message: t("toast.requiredFields"),
       });
       return;
     }
@@ -441,7 +441,7 @@ export function ProfilePageClient({
         certifications: splitValues(profileForm.certifications),
         languages: splitValues(profileForm.languages),
       });
-      if (!response.success) throw new Error("Profile update failed.");
+      if (!response.success) throw new Error(t("toast.profileUpdateFailed"));
       setProfileRevision(response.data.revision);
       if (!response.data.reviewRequired) {
         setProfile((current) =>
@@ -471,7 +471,7 @@ export function ProfilePageClient({
       toastError({
         message: getErrorMessage(
           error,
-          "Profile update failed. Please try again later.",
+          t("toast.profileUpdateFailedRetry"),
         ),
       });
     } finally {
@@ -484,7 +484,7 @@ export function ProfilePageClient({
     const normalizedName = skillName.trim();
     const proficiencyLevel = Number(skillLevel);
     if (!normalizedName || !Number.isInteger(proficiencyLevel)) {
-      toastError({ message: "Please select a skill and a proficiency level." });
+      toastError({ message: t("toast.selectSkill") });
       return;
     }
     if (
@@ -494,7 +494,7 @@ export function ProfilePageClient({
       )
     ) {
       toastError({
-        message: "This skill has already been added to your profile.",
+        message: t("toast.skillAlreadyAdded"),
       });
       return;
     }
@@ -511,7 +511,7 @@ export function ProfilePageClient({
         );
       if (!inCatalog) {
         toastError({
-          message: "Please select a skill from the catalog.",
+          message: t("toast.selectFromCatalog"),
         });
         return;
       }
@@ -519,7 +519,7 @@ export function ProfilePageClient({
         skillName: normalizedName,
         proficiencyLevel,
       });
-      if (!response.success) throw new Error("Unable to add skill.");
+      if (!response.success) throw new Error(t("toast.addSkillFailed"));
       setSkills((current) =>
         [...current, response.data].sort((first, second) =>
           first.skill.name.localeCompare(second.skill.name),
@@ -530,12 +530,12 @@ export function ProfilePageClient({
       setSkillOptions([]);
       setIsSkillMenuOpen(false);
       setSkillEditorOpen(false);
-      toastSuccess({ message: "Skill added successfully." });
+      toastSuccess({ message: t("toast.skillAdded") });
     } catch (error) {
       toastError({
         message: getErrorMessage(
           error,
-          "Unable to add skill. Please try again later.",
+          t("toast.addSkillFailedRetry"),
         ),
       });
     } finally {
@@ -552,12 +552,12 @@ export function ProfilePageClient({
         current.filter((skill) => skill.id !== skillToDelete.id),
       );
       setSkillToDelete(null);
-      toastSuccess({ message: "Skill removed successfully." });
+      toastSuccess({ message: t("toast.skillRemoved") });
     } catch (error) {
       toastError({
         message: getErrorMessage(
           error,
-          "Unable to remove skill. Please try again later.",
+          t("toast.removeSkillFailed"),
         ),
       });
     } finally {
@@ -582,7 +582,7 @@ export function ProfilePageClient({
   const savePortfolio = async (event: FormEvent) => {
     event.preventDefault();
     if (!portfolioEditor || !portfolioForm.title.trim()) {
-      toastError({ message: "Portfolio title is required." });
+      toastError({ message: t("toast.portfolioTitleRequired") });
       return;
     }
 
@@ -597,15 +597,17 @@ export function ProfilePageClient({
     try {
       if (portfolioEditor === "new") {
         const response = await profileApiRequest.addPortfolio(profileId, body);
-        if (!response.success) throw new Error("Unable to create portfolio.");
+        if (!response.success)
+          throw new Error(t("toast.createPortfolioFailed"));
         setPortfolios((current) => [response.data, ...current]);
-        toastSuccess({ message: "Portfolio created successfully." });
+        toastSuccess({ message: t("toast.portfolioCreated") });
       } else {
         const response = await profileApiRequest.updatePortfolio(
           portfolioEditor.id,
           body,
         );
-        if (!response.success) throw new Error("Unable to update portfolio.");
+        if (!response.success)
+          throw new Error(t("toast.updatePortfolioFailed"));
         setPortfolios((current) =>
           current.map((portfolio) =>
             portfolio.id === portfolioEditor.id ? response.data : portfolio,
@@ -614,14 +616,14 @@ export function ProfilePageClient({
         setPortfolioDetail((current) =>
           current?.id === response.data.id ? response.data : current,
         );
-        toastSuccess({ message: "Portfolio updated successfully." });
+        toastSuccess({ message: t("toast.portfolioUpdated") });
       }
       setPortfolioEditor(null);
     } catch (error) {
       toastError({
         message: getErrorMessage(
           error,
-          "Unable to save portfolio. Please try again later.",
+          t("toast.savePortfolioFailed"),
         ),
       });
     } finally {
@@ -637,7 +639,7 @@ export function ProfilePageClient({
       if (response.success) setPortfolioDetail(response.data);
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, "Unable to load portfolio details."),
+        message: getErrorMessage(error, t("toast.loadPortfolioFailed")),
       });
       setPortfolioDetail(null);
     } finally {
@@ -657,12 +659,12 @@ export function ProfilePageClient({
         current?.id === portfolioToDelete.id ? null : current,
       );
       setPortfolioToDelete(null);
-      toastSuccess({ message: "Portfolio deleted successfully." });
+      toastSuccess({ message: t("toast.portfolioDeleted") });
     } catch (error) {
       toastError({
         message: getErrorMessage(
           error,
-          "Unable to delete portfolio. Please try again later.",
+          t("toast.deletePortfolioFailed"),
         ),
       });
     } finally {
@@ -676,8 +678,7 @@ export function ProfilePageClient({
         <Header role={headerRole} />
         <main className="flex flex-1 items-center justify-center">
           <div className="flex items-center gap-3 text-muted-foreground">
-            <Loader2 className="size-5 animate-spin" /> Loading freelancer
-            profile...
+            <Loader2 className="size-5 animate-spin" /> {t("loadingProfile")}
           </div>
         </main>
       </div>
@@ -691,11 +692,11 @@ export function ProfilePageClient({
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-bold">
-            Freelancer profile unavailable
+            {t("unavailableTitle")}
           </h1>
           <p className="mt-2 text-muted-foreground">{loadError}</p>
           <Button className="mt-6" onClick={() => void loadProfile()}>
-            <RefreshCw /> Try again
+            <RefreshCw /> {t("tryAgain")}
           </Button>
         </main>
         <Footer />
@@ -708,23 +709,22 @@ export function ProfilePageClient({
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
-      <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+      <main className="flex-1">        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
+                {tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
               <span className="font-medium text-foreground">
-                Freelancer profile
+                {t("breadcrumbProfile")}
               </span>
             </nav>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              {profile.displayName ?? "Unnamed freelancer"}
+              {profile.displayName ?? t("unnamed")}
             </h1>
             <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
-              {freelancer?.title ?? "Professional title not added"}
+              {freelancer?.title ?? t("noTitle")}
             </p>
           </div>
         </section>
@@ -754,28 +754,28 @@ export function ProfilePageClient({
                     {profile.avatarUrl ? (
                       <AvatarImage
                         src={profile.avatarUrl}
-                        alt={profile.displayName ?? "Freelancer"}
+                        alt={profile.displayName ?? t("unnamed")}
                       />
                     ) : null}
                     <AvatarFallback className="bg-[#eaf8df] text-2xl font-bold text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                      {getInitials(profile.displayName)}
+                      {getInitials(profile.displayName, t("unnamed"))}
                     </AvatarFallback>
                   </Avatar>
                   <div className="pb-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                        {profile.displayName ?? "Unnamed freelancer"}
+                        {profile.displayName ?? t("unnamed")}
                       </h2>
                       {freelancer?.idVerified ? (
                         <VerifiedBadge size="sm" />
                       ) : null}
                     </div>
                     <p className="mt-1 text-lg text-muted-foreground">
-                      {freelancer?.title ?? "Professional title not added"}
+                      {freelancer?.title ?? t("noTitle")}
                     </p>
                     {profile.onlineStatus ? (
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <Badge variant="secondary">Online now</Badge>
+                        <Badge variant="secondary">{t("onlineNow")}</Badge>
                       </div>
                     ) : null}
                   </div>
@@ -784,14 +784,14 @@ export function ProfilePageClient({
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                     <Button variant="outline" asChild>
                       <Link href="/account-profile">
-                        <UserRound /> Profile settings
+                        <UserRound /> {t("profileSettings")}
                       </Link>
                     </Button>
                     <Button
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
                       onClick={openProfileEditor}
                     >
-                      <Pencil /> Edit profile
+                      <Pencil /> {t("editProfile")}
                     </Button>
                   </div>
                 ) : headerRole === "CLIENT" ? (
@@ -819,7 +819,7 @@ export function ProfilePageClient({
                       ) : (
                         <UserPlus />
                       )}
-                      {isFollowing ? "Following" : "Follow"}
+                      {isFollowing ? t("following") : t("follow")}
                     </Button>
                     <AlertDialog
                       open={unfollowDialogOpen}
@@ -828,18 +828,20 @@ export function ProfilePageClient({
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Unfollow {profile.displayName ?? "this freelancer"}?
+                            {t("unfollowTitle", {
+                              name:
+                                profile.displayName ?? t("noNameFallback"),
+                            })}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Their profile will be removed from your following
-                            list. You can follow them again at any time.
+                            {t("unfollowDescription")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel
                             disabled={pendingAction === "follow"}
                           >
-                            Keep following
+                            {t("keepFollowing")}
                           </AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-destructive text-white hover:bg-destructive/90"
@@ -854,7 +856,7 @@ export function ProfilePageClient({
                             ) : (
                               <UserMinus />
                             )}
-                            Unfollow
+                            {t("unfollow")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -874,7 +876,7 @@ export function ProfilePageClient({
                       ) : (
                         <Heart className={isFavorite ? "fill-current" : ""} />
                       )}
-                      {isFavorite ? "Favorited" : "Add to favorites"}
+                      {isFavorite ? t("favorited") : t("addToFavorites")}
                     </Button>
                   </div>
                 ) : null}
@@ -888,43 +890,43 @@ export function ProfilePageClient({
                 variant="line"
                 className="w-full justify-start overflow-x-auto border-b"
               >
-                <TabsTrigger value="about">About</TabsTrigger>
+                <TabsTrigger value="about">{t("tabAbout")}</TabsTrigger>
                 <TabsTrigger value="skills">
-                  Skills ({skills.length})
+                  {t("tabSkills", { count: skills.length })}
                 </TabsTrigger>
                 <TabsTrigger value="portfolio">
-                  Portfolio ({portfolios.length})
+                  {t("tabPortfolio", { count: portfolios.length })}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="about" className="mt-5 space-y-8">
                 <section>
                   <h3 className="text-base font-semibold tracking-tight text-foreground">
-                    About me
+                    {t("aboutMe")}
                   </h3>
                   <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
-                    {profile.bio || "This freelancer has not added a bio yet."}
+                    {profile.bio || t("noBio")}
                   </p>
                 </section>
                 <div className="grid gap-8 md:grid-cols-2">
                   <DetailListCard
                     icon={GraduationCap}
-                    title="Education"
+                    title={t("education")}
                     items={freelancer?.education}
-                    empty="No education added yet."
+                    empty={t("noEducation")}
                   />
                   <DetailListCard
                     icon={Award}
-                    title="Certifications"
+                    title={t("certifications")}
                     items={freelancer?.certifications}
-                    empty="No certifications added yet."
+                    empty={t("noCertifications")}
                   />
                 </div>
                 <DetailListCard
                   icon={Languages}
-                  title="Languages"
+                  title={t("languages")}
                   items={freelancer?.languages}
-                  empty="No languages added yet."
+                  empty={t("noLanguages")}
                 />
               </TabsContent>
 
@@ -932,10 +934,10 @@ export function ProfilePageClient({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
-                      Professional skills
+                      {t("skillsTitle")}
                     </h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Skill names and proficiency levels.
+                      {t("skillsDescription")}
                     </p>
                   </div>
                   {isOwner ? (
@@ -944,18 +946,16 @@ export function ProfilePageClient({
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
                       onClick={() => setSkillEditorOpen(true)}
                     >
-                      <Plus /> Add skill
+                      <Plus /> {t("addSkill")}
                     </Button>
                   ) : null}
                 </div>
                 {skills.length === 0 ? (
                   <div className="mt-5">
                     <SectionEmpty
-                      title="No skills added yet"
+                      title={t("noSkillsTitle")}
                       description={
-                        isOwner
-                          ? "Add your first skill to help clients understand your expertise."
-                          : "This freelancer has not added any skills."
+                        isOwner ? t("noSkillsOwner") : t("noSkillsOther")
                       }
                     />
                   </div>
@@ -981,7 +981,9 @@ export function ProfilePageClient({
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
-                                aria-label={`Delete ${skill.skill.name}`}
+                                aria-label={t("deleteSkillAria", {
+                                  name: skill.skill.name,
+                                })}
                                 onClick={() => setSkillToDelete(skill)}
                               >
                                 <Trash2 className="text-destructive" />
@@ -1007,10 +1009,10 @@ export function ProfilePageClient({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
-                      Portfolio
+                      {t("portfolioTitle")}
                     </h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Selected projects, work samples and technologies.
+                      {t("portfolioDescription")}
                     </p>
                   </div>
                   {isOwner ? (
@@ -1019,18 +1021,18 @@ export function ProfilePageClient({
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
                       onClick={() => openPortfolioEditor("new")}
                     >
-                      <Plus /> Add portfolio
+                      <Plus /> {t("addPortfolio")}
                     </Button>
                   ) : null}
                 </div>
                 {portfolios.length === 0 ? (
                   <div className="mt-5">
                     <SectionEmpty
-                      title="No portfolios available"
+                      title={t("noPortfolioTitle")}
                       description={
                         isOwner
-                          ? "Showcase your work by adding a portfolio project."
-                          : "This freelancer has not published a portfolio yet."
+                          ? t("noPortfolioOwner")
+                          : t("noPortfolioOther")
                       }
                     />
                   </div>
@@ -1048,8 +1050,7 @@ export function ProfilePageClient({
                               {portfolio.title}
                             </h3>
                             <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                              {portfolio.description ||
-                                "No description provided."}
+                              {portfolio.description || t("noDescription")}
                             </p>
                             <div className="mt-3 flex flex-wrap gap-1.5">
                               {portfolio.technologies
@@ -1073,7 +1074,7 @@ export function ProfilePageClient({
                               size="sm"
                               onClick={() => openPortfolioEditor(portfolio)}
                             >
-                              <Pencil /> Edit
+                              <Pencil /> {t("edit")}
                             </Button>
                             <Button
                               variant="ghost"
@@ -1081,7 +1082,7 @@ export function ProfilePageClient({
                               className="text-destructive"
                               onClick={() => setPortfolioToDelete(portfolio)}
                             >
-                              <Trash2 /> Delete
+                              <Trash2 /> {t("delete")}
                             </Button>
                           </div>
                         ) : null}
@@ -1095,10 +1096,10 @@ export function ProfilePageClient({
             <aside className="space-y-6">
               <div className="rounded-xl border border-border p-5 sm:p-6">
                 <h3 className="text-base font-semibold tracking-tight text-foreground">
-                  Profile strength
+                  {t("profileStrength")}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {completion}% complete
+                  {t("percentComplete", { percent: completion })}
                 </p>
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
                   <div
@@ -1107,25 +1108,25 @@ export function ProfilePageClient({
                   />
                 </div>
                 <p className="mt-3 text-xs text-muted-foreground">
-                  Complete your bio, professional details, skills and portfolio
-                  to stand out.
+                  {t("profileStrengthHint")}
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 sm:p-6">
                 <h3 className="text-base font-semibold tracking-tight text-foreground">
-                  At a glance
+                  {t("atAGlance")}
                 </h3>
                 <ul className="mt-4 divide-y divide-border text-sm">
                   <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
-                      <Award className="size-4 text-[#4fae2e]" /> Skills
+                      <Award className="size-4 text-[#4fae2e]" />{" "}
+                      {t("skillsCount")}
                     </span>
                     <span className="font-medium">{skills.length}</span>
                   </li>
                   <li className="flex items-center justify-between py-2.5">
                     <span className="flex items-center gap-2 text-muted-foreground">
                       <BriefcaseBusiness className="size-4 text-[#4fae2e]" />{" "}
-                      Projects
+                      {t("projectsCount")}
                     </span>
                     <span className="font-medium">{portfolios.length}</span>
                   </li>
@@ -1140,14 +1141,14 @@ export function ProfilePageClient({
       <Dialog open={profileEditorOpen} onOpenChange={setProfileEditorOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit detailed profile</DialogTitle>
+            <DialogTitle>{t("editProfileTitle")}</DialogTitle>
             <DialogDescription>
-              Update your public personal and professional information.
+              {t("editProfileDescription")}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={updateProfile} className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Display name" htmlFor="display-name">
+              <FormField label={t("fieldDisplayName")} htmlFor="display-name">
                 <Input
                   id="display-name"
                   value={profileForm.displayName}
@@ -1162,7 +1163,7 @@ export function ProfilePageClient({
                 />
               </FormField>
               <FormField
-                label="Professional title"
+                label={t("fieldProfessionalTitle")}
                 htmlFor="professional-title"
               >
                 <Input
@@ -1179,7 +1180,7 @@ export function ProfilePageClient({
                 />
               </FormField>
             </div>
-            <FormField label="Bio" htmlFor="profile-bio">
+            <FormField label={t("fieldBio")} htmlFor="profile-bio">
               <Textarea
                 id="profile-bio"
                 rows={5}
@@ -1193,7 +1194,7 @@ export function ProfilePageClient({
                 }
               />
             </FormField>
-            <FormField label="Availability" htmlFor="availability">
+            <FormField label={t("fieldAvailability")} htmlFor="availability">
               <Select
                 value={profileForm.availabilityStatus}
                 onValueChange={(value) =>
@@ -1210,7 +1211,7 @@ export function ProfilePageClient({
                 <SelectContent>
                   {Object.values(AvailabilityStatus).map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status.toLowerCase()}
+                      {t(`availability.${status}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1218,9 +1219,9 @@ export function ProfilePageClient({
             </FormField>
             <div className="grid gap-4 sm:grid-cols-3">
               <FormField
-                label="Education"
+                label={t("education")}
                 htmlFor="education"
-                hint="One item per line"
+                hint={t("hintOnePerLine")}
               >
                 <Textarea
                   id="education"
@@ -1234,9 +1235,9 @@ export function ProfilePageClient({
                 />
               </FormField>
               <FormField
-                label="Certifications"
+                label={t("certifications")}
                 htmlFor="certifications"
-                hint="One item per line"
+                hint={t("hintOnePerLine")}
               >
                 <Textarea
                   id="certifications"
@@ -1250,9 +1251,9 @@ export function ProfilePageClient({
                 />
               </FormField>
               <FormField
-                label="Languages"
+                label={t("languages")}
                 htmlFor="languages"
-                hint="One item per line"
+                hint={t("hintOnePerLine")}
               >
                 <Textarea
                   id="languages"
@@ -1272,13 +1273,13 @@ export function ProfilePageClient({
                 variant="outline"
                 onClick={() => setProfileEditorOpen(false)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" disabled={pendingAction === "profile"}>
                 {pendingAction === "profile" ? (
                   <Loader2 className="animate-spin" />
                 ) : null}{" "}
-                Save changes
+                {t("saveChanges")}
               </Button>
             </DialogFooter>
           </form>
@@ -1298,13 +1299,13 @@ export function ProfilePageClient({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add freelancer skill</DialogTitle>
+            <DialogTitle>{t("addSkillTitle")}</DialogTitle>
             <DialogDescription>
-              Choose a skill from the catalog that clients use for jobs.
+              {t("addSkillDescription")}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
-            <FormField label="Skill name" htmlFor="skill-name">
+            <FormField label={t("fieldSkillName")} htmlFor="skill-name">
               <div ref={skillPickerRef} className="relative">
                 <Input
                   id="skill-name"
@@ -1315,7 +1316,7 @@ export function ProfilePageClient({
                   aria-autocomplete="list"
                   aria-controls="skill-suggestions"
                   aria-expanded={isSkillMenuOpen}
-                  placeholder="Search skills used in jobs..."
+                  placeholder={t("skillSearchPlaceholder")}
                   onFocus={() => setIsSkillMenuOpen(true)}
                   onChange={(event) => {
                     setSkillName(event.target.value);
@@ -1326,24 +1327,23 @@ export function ProfilePageClient({
                   <div
                     id="skill-suggestions"
                     role="listbox"
-                    aria-label="Suggested skills"
+                    aria-label={t("suggestedSkills")}
                     className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
                   >
                     {skillSuggestionStatus === "loading" ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        Loading suggestions...
+                        {t("loadingSuggestions")}
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "error" ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        Could not load the skill catalog. Please try again.
+                        {t("suggestionsError")}
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success" &&
                     availableSkillOptions.length === 0 ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        No matching skill in the catalog. Try a different
-                        keyword.
+                        {t("noSuggestions")}
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success"
@@ -1367,10 +1367,10 @@ export function ProfilePageClient({
                 ) : null}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Selecting a suggestion improves matching with client jobs.
+                {t("skillSuggestionHint")}
               </p>
             </FormField>
-            <FormField label="Proficiency level" htmlFor="skill-level">
+            <FormField label={t("fieldProficiency")} htmlFor="skill-level">
               <Select
                 value={skillLevel}
                 onValueChange={(value) => value && setSkillLevel(value)}
@@ -1395,7 +1395,7 @@ export function ProfilePageClient({
                 variant="outline"
                 onClick={() => setSkillEditorOpen(false)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" disabled={pendingAction === "skill-add"}>
                 {pendingAction === "skill-add" ? (
@@ -1403,7 +1403,7 @@ export function ProfilePageClient({
                 ) : (
                   <Plus />
                 )}{" "}
-                Save skill
+                {t("saveSkill")}
               </Button>
             </DialogFooter>
           </form>
@@ -1417,14 +1417,16 @@ export function ProfilePageClient({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {portfolioEditor === "new" ? "Add portfolio" : "Edit portfolio"}
+              {portfolioEditor === "new"
+                ? t("addPortfolioTitle")
+                : t("editPortfolioTitle")}
             </DialogTitle>
             <DialogDescription>
-              Add project details and technologies.
+              {t("portfolioFormDescription")}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={savePortfolio} className="space-y-5">
-            <FormField label="Project title" htmlFor="portfolio-title">
+            <FormField label={t("fieldProjectTitle")} htmlFor="portfolio-title">
               <Input
                 id="portfolio-title"
                 value={portfolioForm.title}
@@ -1438,7 +1440,7 @@ export function ProfilePageClient({
                 }
               />
             </FormField>
-            <FormField label="Description" htmlFor="portfolio-description">
+            <FormField label={t("fieldDescription")} htmlFor="portfolio-description">
               <Textarea
                 id="portfolio-description"
                 rows={5}
@@ -1453,14 +1455,14 @@ export function ProfilePageClient({
               />
             </FormField>
             <FormField
-              label="Technologies"
+              label={t("fieldTechnologies")}
               htmlFor="portfolio-technologies"
-              hint="Comma-separated, up to 20"
+              hint={t("hintTechnologies")}
             >
               <Input
                 id="portfolio-technologies"
                 value={portfolioForm.technologies}
-                placeholder="Next.js, NestJS, PostgreSQL"
+                placeholder={t("technologiesPlaceholder")}
                 onChange={(event) =>
                   setPortfolioForm((current) => ({
                     ...current,
@@ -1469,12 +1471,12 @@ export function ProfilePageClient({
                 }
               />
             </FormField>
-            <FormField label="Project URL" htmlFor="portfolio-url">
+            <FormField label={t("fieldProjectUrl")} htmlFor="portfolio-url">
               <Input
                 id="portfolio-url"
                 type="url"
                 value={portfolioForm.projectUrl}
-                placeholder="https://example.com/project"
+                placeholder={t("projectUrlPlaceholder")}
                 onChange={(event) =>
                   setPortfolioForm((current) => ({
                     ...current,
@@ -1489,7 +1491,7 @@ export function ProfilePageClient({
                 variant="outline"
                 onClick={() => setPortfolioEditor(null)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -1499,8 +1501,8 @@ export function ProfilePageClient({
                   <Loader2 className="animate-spin" />
                 ) : null}{" "}
                 {portfolioEditor === "new"
-                  ? "Create portfolio"
-                  : "Save changes"}
+                  ? t("createPortfolio")
+                  : t("saveChanges")}
               </Button>
             </DialogFooter>
           </form>
@@ -1516,7 +1518,9 @@ export function ProfilePageClient({
             <>
               <DialogHeader>
                 <DialogTitle>{portfolioDetail.title}</DialogTitle>
-                <DialogDescription>Portfolio project details</DialogDescription>
+                <DialogDescription>
+                  {t("portfolioDetailDescription")}
+                </DialogDescription>
               </DialogHeader>
               {isDetailLoading ? (
                 <div className="flex justify-center py-12">
@@ -1525,7 +1529,7 @@ export function ProfilePageClient({
               ) : (
                 <div className="space-y-5">
                   <p className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
-                    {portfolioDetail.description || "No description provided."}
+                    {portfolioDetail.description || t("noDescription")}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {portfolioDetail.technologies.map((technology) => (
@@ -1541,7 +1545,7 @@ export function ProfilePageClient({
                         target="_blank"
                         rel="noreferrer"
                       >
-                        Visit project <ExternalLink />
+                        {t("visitProject")} <ExternalLink />
                       </a>
                     </Button>
                   ) : null}
@@ -1554,10 +1558,10 @@ export function ProfilePageClient({
 
       <DeleteDialog
         open={skillToDelete !== null}
-        title="Delete this skill?"
+        title={t("deleteSkillTitle")}
         description={
           skillToDelete
-            ? `${skillToDelete.skill.name} will be permanently removed from your profile.`
+            ? t("deleteSkillDescription", { name: skillToDelete.skill.name })
             : ""
         }
         pending={pendingAction === "skill-delete"}
@@ -1566,10 +1570,12 @@ export function ProfilePageClient({
       />
       <DeleteDialog
         open={portfolioToDelete !== null}
-        title="Delete this portfolio?"
+        title={t("deletePortfolioTitle")}
         description={
           portfolioToDelete
-            ? `${portfolioToDelete.title} will be removed from your public portfolio.`
+            ? t("deletePortfolioDescription", {
+                title: portfolioToDelete.title,
+              })
             : ""
         }
         pending={pendingAction === "portfolio-delete"}
@@ -1651,6 +1657,8 @@ function DeleteDialog({
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }) {
+  const t = useTranslations("freelancerProfile");
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -1659,14 +1667,16 @@ function DeleteDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-white hover:bg-destructive/90"
             disabled={pending}
             onClick={onConfirm}
           >
             {pending ? <Loader2 className="animate-spin" /> : <Trash2 />}{" "}
-            Confirm delete
+            {t("confirmDelete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

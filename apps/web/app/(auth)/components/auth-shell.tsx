@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import styles from "./auth-shell.module.css";
@@ -23,6 +25,8 @@ export function AuthShell({
   panelDescription,
   children,
 }: AuthShellProps) {
+  const t = useTranslations("auth.shell");
+
   return (
     <div className="flex min-h-dvh font-sans">
       <aside className="sticky top-0 hidden h-dvh w-[42%] overflow-hidden lg:block">
@@ -78,18 +82,17 @@ export function AuthShell({
           className={`absolute bottom-10 left-10 right-10 ${styles.reveal} ${styles.delay3}`}
         >
           <p className="text-xs leading-relaxed text-foreground/50 dark:text-foreground/40">
-            A curated marketplace connecting talented freelancers with
-            visionary clients.
+            {t("tagline")}
           </p>
           <div className="mt-3 flex items-center gap-3 text-[11px] text-foreground/35 dark:text-foreground/30">
             <span>&copy; {new Date().getFullYear()} Frevia</span>
             <span className="text-foreground/15">·</span>
             <Link href="/forum" className="transition-colors hover:text-[#4fae2e]/70">
-              Help Center
+              {t("helpCenter")}
             </Link>
             <span className="text-foreground/15">·</span>
             <Link href="/forum" className="transition-colors hover:text-[#4fae2e]/70">
-              Guidelines
+              {t("guidelines")}
             </Link>
           </div>
         </div>
@@ -102,7 +105,8 @@ export function AuthShell({
         />
 
         <div className="relative flex min-h-dvh flex-1 flex-col justify-center px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
-          <div className="absolute right-4 top-4 sm:right-8 sm:top-6 lg:right-12">
+          <div className="absolute right-4 top-4 flex items-center gap-1 sm:right-8 sm:top-6 lg:right-12">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
 

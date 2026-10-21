@@ -10,14 +10,31 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import type { AdminUserDetailResponseType } from "@shared/types";
 import { ArrowLeft, Calendar, Shield, User } from "lucide-react";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
+
+const KNOWN_ROLES = new Set(["ADMIN", "CLIENT", "FREELANCER", "EXPERT"]);
 
 interface UserDetailHeaderProps {
   user: AdminUserDetailResponseType;
 }
 
 export function UserDetailHeader({ user }: UserDetailHeaderProps) {
+  const t = useTranslations("adminUserDetail");
+  const tRole = useTranslations("roleName");
+  const format = useFormatter();
+
   const renderRoleBadge = (roleName: string, isPrimary?: boolean) => {
     const nameLower = roleName.toLowerCase();
+    const label = KNOWN_ROLES.has(roleName.toUpperCase())
+      ? tRole(roleName.toUpperCase())
+      : roleName;
+    const withPrimarySuffix = `${label}${
+      isPrimary ? ` ${t("primarySuffix")}` : ""
+    }`;
+    const withPrimaryMark = `${label}${
+      isPrimary ? ` ${t("primaryMark")}` : ""
+    }`;
+
     if (nameLower === "client") {
       return (
         <Badge
@@ -25,7 +42,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800"
         >
-          Client {isPrimary && "★ (Primary)"}
+          {withPrimarySuffix}
         </Badge>
       );
     }
@@ -36,7 +53,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800"
         >
-          Freelancer {isPrimary && "★ (Primary)"}
+          {withPrimarySuffix}
         </Badge>
       );
     }
@@ -47,7 +64,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
         >
-          <Shield className="mr-1 h-3 w-3" /> Admin {isPrimary && "★"}
+          <Shield className="mr-1 h-3 w-3" /> {withPrimaryMark}
         </Badge>
       );
     }
@@ -58,7 +75,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800"
         >
-          Expert
+          {label}
         </Badge>
       );
     }
@@ -68,7 +85,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
         variant="outline"
         className="bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700"
       >
-        {roleName} {isPrimary && "★"}
+        {withPrimaryMark}
       </Badge>
     );
   };
@@ -85,7 +102,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
         >
           <Link href="/admin/users">
             <ArrowLeft className="h-4 w-4" />
-            Back to Users
+            {t("backToUsers")}
           </Link>
         </Button>
         <span className="text-muted-foreground">/</span>
@@ -115,21 +132,21 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                  {user.displayName || "No Display Name"}
+                  {user.displayName || t("noDisplayName")}
                 </h1>
                 <Badge variant="outline" className="font-mono text-xs">
-                  ID: #{user.id}
+                  {t("idBadge", { id: user.id })}
                 </Badge>
                 {user.isBanned ? (
                   <Badge variant="destructive" className="text-xs">
-                    Banned
+                    {t("banned")}
                   </Badge>
                 ) : (
                   <Badge
                     variant="secondary"
                     className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border text-xs"
                   >
-                    Active Account
+                    {t("activeAccount")}
                   </Badge>
                 )}
               </div>
@@ -141,7 +158,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {user.roles.length === 0 ? (
                   <span className="text-xs text-muted-foreground">
-                    No roles assigned
+                    {t("noRolesAssigned")}
                   </span>
                 ) : (
                   user.roles.map((r) => renderRoleBadge(r.name, r.isPrimary))
@@ -154,12 +171,24 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
               <span>
-                Joined: {new Date(user.createdAt).toLocaleDateString()}
+                {t("joinedAt", {
+                  date: format.dateTime(new Date(user.createdAt), {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }),
+                })}
               </span>
             </div>
             <div>
               <span>
-                Updated: {new Date(user.updatedAt).toLocaleDateString()}
+                {t("updatedAt", {
+                  date: format.dateTime(new Date(user.updatedAt), {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }),
+                })}
               </span>
             </div>
           </div>

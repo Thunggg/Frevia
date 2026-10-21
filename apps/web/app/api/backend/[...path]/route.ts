@@ -1,4 +1,6 @@
 import { envConfig } from "@/configs/validate-env";
+import { translateBackendErrorPayload } from "@/i18n/backend-message";
+import { defaultLocale, isLocale, LOCALE_COOKIE, type Locale } from "@/i18n/config";
 import { refreshAuthTokens } from "@/lib/auth-session";
 import { cookies } from "next/headers";
 
@@ -14,15 +16,53 @@ const PROXY_API = proxyApiUrl?.endsWith("/api")
 
 type RouteContext = { params: Promise<{ path: string[] }> };
 
-const proxyHandler = async (request: Request, { params }: RouteContext) => {
-  if (!NEST_API) {
-    return Response.json(
-      { success: false, error: { message: "Backend API is not configured." } },
-      { status: 500 },
-    );
+const resolveLocale = (value: string | undefined): Locale =>
+  isLocale(value) ? value : defaultLocale;
+
+/**
+ * Backend trả về mã lỗi dạng key i18n (ví dụ "Error.EmailAlreadyExists")
+ * trong `error.details[].message`, còn `error.message` là cụm HTTP status
+ * chung. Dịch ngay tại tầng BFF để mọi component phía client nhận được
+ * nội dung đã bản địa hoá mà không cần biết tới i18n.
+ */
+const localizeErrorBody = (
+  responseBody: ArrayBuffer,
+  contentType: string,
+  status: number,
+  locale: Locale,
+): ArrayBuffer | string => {
+  if (status < 400) return responseBody;
+  if (!contentType.includes("application/json")) return responseBody;
+  if (responseBody.byteLength === 0) return responseBody;
+
+  let payload: unknown;
+  try {
+    payload = JSON.parse(new TextDecoder().decode(responseBody));
+  } catch {
+    return responseBody;
   }
 
+  const translated = translateBackendErrorPayload(payload, locale);
+  if (translated === payload) return responseBody;
+
+  return JSON.stringify(translated);
+};
+
+const proxyHandler = async (request: Request, { params }: RouteContext) => {
   const cookieStore = await cookies();
+  const locale = resolveLocale(cookieStore.get(LOCALE_COOKIE)?.value);
+
+  if (!NEST_API) {
+    const payload = {
+      success: false,
+      error: { message: "Backend API is not configured." },
+    };
+
+    return Response.json(translateBackendErrorPayload(payload, locale), {
+      status: 500,
+    });
+  }
+
   let accessToken = cookieStore.get("accessToken")?.value;
 
   const { path } = await params;
@@ -78,16 +118,26 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
   }
 
   const responseBody = await nestRes.arrayBuffer();
+  const responseContentType =
+    nestRes.headers.get("content-type") ?? "application/json";
 
   // Chỉ forward Content-Type, KHÔNG forward nguyên res.headers
   // (content-encoding/content-length của NestJS có thể làm browser
   // decode lỗi vì fetch() đã tự giải nén sẵn).
-  return new Response(responseBody, {
-    status: nestRes.status,
-    headers: {
-      "Content-Type": nestRes.headers.get("content-type") ?? "application/json",
+  return new Response(
+    localizeErrorBody(
+      responseBody,
+      responseContentType,
+      nestRes.status,
+      locale,
+    ),
+    {
+      status: nestRes.status,
+      headers: {
+        "Content-Type": responseContentType,
+      },
     },
-  });
+  );
 };
 
 export async function GET(request: Request, ctx: RouteContext) {

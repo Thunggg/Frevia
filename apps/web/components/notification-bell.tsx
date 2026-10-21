@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useConversations } from "@/hooks/use-conversation";
@@ -22,28 +23,33 @@ import { MessageSquare, Paperclip } from "@/components/icons";
 import { useMe } from "@/hooks/use-auth";
 import { RoleName } from "@shared/types";
 
-function formatTime(createdAt?: string | Date | null): string {
-  if (!createdAt) return "";
-  const date = new Date(createdAt);
-  const now = new Date();
-  const sameDay = date.toDateString() === now.toDateString();
-  if (sameDay) {
-    return date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  }
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
 export function MessageBell() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("notifications");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { data: me } = useMe();
   const { data: conversations } = useConversations();
+
+  const formatTime = (createdAt?: string | Date | null): string => {
+    if (!createdAt) return "";
+    const date = new Date(createdAt);
+    const now = new Date();
+    const sameDay = date.toDateString() === now.toDateString();
+    if (sameDay) {
+      return format.dateTime(date, {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    }
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) {
+      return tCommon("yesterday");
+    }
+    return format.dateTime(date, { month: "short", day: "numeric" });
+  };
 
   const primaryRole =
     me?.roles.find((r) => r.isPrimary)?.name ?? me?.roles[0]?.name;
@@ -75,7 +81,7 @@ export function MessageBell() {
               ? "bg-[#4fae2e]/10 text-[#4fae2e] dark:bg-[#4fae2e]/15"
               : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
           }`}
-          aria-label={`Messages${totalUnread > 0 ? `, ${totalUnread} unread` : ""}`}
+          aria-label={t("messagesAria", { count: totalUnread })}
         >
           <MessageSquare className="size-5" />
           {totalUnread > 0 && (
@@ -87,10 +93,12 @@ export function MessageBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between px-4 py-3">
-          <h3 className="text-sm font-semibold text-foreground">Messages</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            {t("messages")}
+          </h3>
           {totalUnread > 0 && (
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600 dark:bg-red-900/30 dark:text-red-400">
-              {totalUnread} unread
+              {t("unreadCount", { count: totalUnread })}
             </span>
           )}
         </div>
@@ -100,14 +108,14 @@ export function MessageBell() {
             <div className="px-4 py-8 text-center">
               <MessageSquare className="mx-auto mb-2 size-8 text-muted-foreground/40" />
               <p className="text-sm text-muted-foreground">
-                No unread messages
+                {t("noUnreadMessages")}
               </p>
             </div>
           ) : (
             unreadConversations.map((conversation) => {
               const name =
                 conversation.otherUser.profile?.displayName ??
-                `User #${conversation.otherUser.id}`;
+                tCommon("userFallback", { id: conversation.otherUser.id });
               const avatar =
                 conversation.otherUser.profile?.avatarUrl ?? undefined;
               return (
@@ -144,11 +152,11 @@ export function MessageBell() {
                             <span className="inline-flex items-center gap-1">
                               <Paperclip className="h-3 w-3" />
                               {conversation.lastMessage.fileName ??
-                                "Attachment"}
+                                t("attachment")}
                             </span>
                           ) : (
                             (conversation.lastMessage?.message ??
-                            "No messages yet")
+                            t("noMessagesYet"))
                           )}
                         </p>
                         <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
@@ -170,7 +178,7 @@ export function MessageBell() {
             className="w-full justify-center text-sm font-medium text-[#4fae2e] hover:text-[#3f9225] hover:bg-[#eaf8df]/80 dark:hover:bg-white/5"
           >
             <Link href={conversationBasePath} onClick={() => setOpen(false)}>
-              View all messages
+              {t("viewAllMessages")}
             </Link>
           </Button>
         </div>

@@ -1,13 +1,16 @@
+import { getTranslations } from "next-intl/server";
 import { AuthShell } from "../components/auth-shell";
 import { ForgotPasswordForm } from "./forgot-password-form";
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage() {
+  const t = await getTranslations("auth.forgotPassword");
+
   return (
     <AuthShell
-      title="Reset your password"
-      description="Enter your email, choose a new password, and confirm with the OTP code."
+      title={t("title")}
+      description={t("description")}
       imageSrc="/auth/forgot-password.jpg"
-      panelTitle="Get back into your account."
+      panelTitle={t("panelTitle")}
     >
       <ForgotPasswordForm />
     </AuthShell>

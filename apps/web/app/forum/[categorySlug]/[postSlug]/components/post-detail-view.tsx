@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -50,14 +51,6 @@ type PostDetailViewProps = {
   currentUserId: number | null;
 };
 
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function PostDetailView({
   post,
   categoryId,
@@ -65,9 +58,12 @@ export function PostDetailView({
   currentUserId,
 }: PostDetailViewProps) {
   const router = useRouter();
+  const t = useTranslations("forum");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const isAuthor = currentUserId === post.userId;
   const resolvedCategoryId = post.category?.id ?? categoryId;
-  const categoryName = post.category?.name ?? "Category";
+  const categoryName = post.category?.name ?? t("categoryFallback");
 
   const { data: likes } = useForumPostLikes(post.id);
   const { data: commentsData } = useForumComments(post.id, 1, 50);
@@ -109,20 +105,27 @@ export function PostDetailView({
   const wasEdited =
     new Date(post.updatedAt).getTime() !== new Date(post.createdAt).getTime();
 
+  const formatPostDate = (value: string | Date) =>
+    format.dateTime(new Date(value), {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+
   return (
     <div>
       <section className="border-b border-border/40 bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <nav className="text-[13px] text-muted-foreground/60">
             <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-              Home
+              {tCommon("home")}
             </Link>
             <span className="mx-2 text-foreground/25">/</span>
             <Link
               href="/forum"
               className="transition-colors hover:text-[#4fae2e]"
             >
-              Forum
+              {tCommon("forum")}
             </Link>
             <span className="mx-2 text-foreground/25">/</span>
             <Link
@@ -138,7 +141,7 @@ export function PostDetailView({
           </nav>
 
           <p className="mt-4 text-[13px] text-foreground/50">
-            Discussion in{" "}
+            {t("discussionIn")}{" "}
             <Link
               href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
               className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
@@ -172,24 +175,25 @@ export function PostDetailView({
                       className="gap-1 text-muted-foreground hover:text-red-500"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      Delete
+                      {t("delete")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        {t("deletePostTitle")}
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this post? This action
-                        cannot be undone.
+                        {t("deletePostDescription")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeletePost}
                         className="bg-destructive text-white hover:bg-destructive/90"
                       >
-                        Delete
+                        {t("delete")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -202,7 +206,7 @@ export function PostDetailView({
             <Avatar>
               <AvatarImage
                 src={post.user?.profile?.avatarUrl ?? undefined}
-                alt={post.user?.profile?.displayName ?? "User"}
+                alt={post.user?.profile?.displayName ?? t("userAlt")}
               />
               <AvatarFallback>
                 {post.user?.profile?.displayName?.charAt(0)?.toUpperCase() ??
@@ -211,17 +215,22 @@ export function PostDetailView({
             </Avatar>
             <div>
               <p className="text-sm font-medium text-foreground/80">
-                {post.user?.profile?.displayName ?? `User #${post.userId}`}
+                {post.user?.profile?.displayName ??
+                  t("userFallback", { id: post.userId })}
               </p>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-muted-foreground/50">
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="size-3 text-[#4fae2e]/60" />
-                  {formatDate(post.createdAt)}
+                  {formatPostDate(post.createdAt)}
                 </span>
                 {wasEdited ? (
                   <>
                     <span className="text-foreground/20">·</span>
-                    <span>Edited {formatDate(post.updatedAt)}</span>
+                    <span>
+                      {t("editedAt", {
+                        date: formatPostDate(post.updatedAt),
+                      })}
+                    </span>
                   </>
                 ) : null}
               </div>

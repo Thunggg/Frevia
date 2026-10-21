@@ -1,13 +1,14 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const platformLinks = [
-  { href: "/find-work", label: "Find Work" },
-  { href: "/conversations", label: "Messages" },
+  { href: "/find-work", labelKey: "findWork" },
+  { href: "/conversations", labelKey: "messages" },
 ] as const;
 
 const communityLinks = [
-  { href: "/forum", label: "Forum" },
-  { href: "/register", label: "Become a Freelancer" },
+  { href: "/forum", labelKey: "forum" },
+  { href: "/register", labelKey: "becomeFreelancer" },
 ] as const;
 
 function SocialButton({
@@ -33,6 +34,8 @@ function SocialButton({
 }
 
 function CenterTechWidget() {
+  const t = useTranslations("footer");
+
   return (
     <div className="flex items-center justify-center gap-1 sm:gap-2">
       {/* Left Dot Matrix & Bracket */}
@@ -82,9 +85,11 @@ function CenterTechWidget() {
         href="/find-work"
         className="group inline-flex shrink-0 items-center gap-3 rounded-xl bg-[#18181b] px-6 py-3.5 text-sm font-medium text-white shadow-xl shadow-emerald-950/15 transition-all duration-200 hover:scale-[1.03] hover:bg-black hover:shadow-2xl active:scale-[0.98] dark:border dark:border-white/10 dark:bg-black"
       >
-        <span className="font-semibold text-white tracking-wide">Find Work</span>
+        <span className="font-semibold text-white tracking-wide">
+          {t("findWork")}
+        </span>
         <span className="rounded-md bg-[#27272a] px-2 py-0.5 text-[11px] font-bold tracking-wider text-[#34d399]">
-          NOW
+          {t("now")}
         </span>
       </Link>
 
@@ -134,6 +139,7 @@ function CenterTechWidget() {
 }
 
 export function Footer() {
+  const t = useTranslations("footer");
   const year = new Date().getFullYear();
 
   return (
@@ -199,16 +205,16 @@ export function Footer() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                  Platform
+                  {t("platform")}
                 </h3>
                 <ul className="mt-3 space-y-2">
                   {platformLinks.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.href}>
                       <Link
                         href={link.href}
                         className="text-sm font-medium text-gray-700 transition-colors hover:text-emerald-700 dark:text-gray-300 dark:hover:text-emerald-400"
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </Link>
                     </li>
                   ))}
@@ -217,16 +223,16 @@ export function Footer() {
 
               <div>
                 <h3 className="text-base font-bold tracking-tight text-gray-950 dark:text-white">
-                  Community
+                  {t("community")}
                 </h3>
                 <ul className="mt-3 space-y-2">
                   {communityLinks.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.href}>
                       <Link
                         href={link.href}
                         className="text-sm font-medium text-gray-700 transition-colors hover:text-emerald-700 dark:text-gray-300 dark:hover:text-emerald-400"
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </Link>
                     </li>
                   ))}
@@ -242,18 +248,16 @@ export function Footer() {
             href="/forum"
             className="underline underline-offset-4 transition-colors hover:text-gray-900 dark:hover:text-white"
           >
-            Terms and conditions
+            {t("termsAndConditions")}
           </Link>
 
-          <p className="text-center">
-            &copy; {year} Frevia. All Rights Reserved
-          </p>
+          <p className="text-center">{t("rights", { year })}</p>
 
           <Link
             href="/forum"
             className="transition-colors hover:text-gray-900 dark:hover:text-white"
           >
-            Privacy Policy
+            {t("privacyPolicy")}
           </Link>
         </div>
 

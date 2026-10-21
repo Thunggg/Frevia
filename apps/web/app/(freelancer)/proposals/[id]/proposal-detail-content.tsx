@@ -1,11 +1,11 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Loader2 } from "@/components/icons";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { proposalApiRequest } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
@@ -76,9 +76,9 @@ export function ProposalDetailContent({
     !isPast(proposal.job.expiryDate) &&
     !isPast(proposal.job.deadline);
   const form = useForm<CreateProposalBodyType>({
-    resolver: zodResolver(
+    resolver: useTranslatedResolver<CreateProposalBodyType>(
       CreateProposalBodySchema,
-    ) as Resolver<CreateProposalBodyType>,
+    ),
     defaultValues: {
       coverLetter: proposal.coverLetter ?? "",
       bidAmount: proposal.bidAmount ?? undefined,

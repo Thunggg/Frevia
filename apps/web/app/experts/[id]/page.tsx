@@ -13,6 +13,8 @@ import {
   GraduationCap,
   ShieldCheck,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -31,6 +33,7 @@ export default async function ExpertDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations("experts");
   const expertId = Number(id);
   if (!Number.isInteger(expertId) || expertId <= 0) notFound();
 
@@ -53,7 +56,7 @@ export default async function ExpertDetailPage({
       <main className="mx-auto max-w-6xl px-5 py-10">
         <Button asChild variant="ghost" className="mb-6 -ml-3">
           <Link href="/experts">
-            <ArrowLeft className="size-4" /> Back to experts
+            <ArrowLeft className="size-4" /> {t("backToExperts")}
           </Link>
         </Button>
 
@@ -66,26 +69,26 @@ export default async function ExpertDetailPage({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <Badge variant="secondary" className="gap-1 text-[#3f9225]">
-                  <ShieldCheck className="size-3" /> Frevia verified expert
+                  <ShieldCheck className="size-3" /> {t("verifiedExpert")}
                 </Badge>
                 <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                  {expert.displayName ?? "Frevia Expert"}
+                  {expert.displayName ?? t("fallbackName")}
                 </h1>
                 <p className="mt-2 text-lg font-medium text-[#4fae2e]">
-                  {expert.title ?? "Professional Expert"}
+                  {expert.title ?? t("fallbackTitle")}
                 </p>
               </div>
             </div>
 
             <section className="mt-9 border-t pt-8">
-              <h2 className="text-lg font-semibold">Professional overview</h2>
+              <h2 className="text-lg font-semibold">{t("overviewTitle")}</h2>
               <p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">
-                {expert.bio ?? "No professional overview has been added yet."}
+                {expert.bio ?? t("noOverview")}
               </p>
             </section>
 
             <section className="mt-8">
-              <h2 className="text-lg font-semibold">Areas of expertise</h2>
+              <h2 className="text-lg font-semibold">{t("expertiseTitle")}</h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {expert.expertise.length ? (
                   expert.expertise.map((item) => (
@@ -94,7 +97,9 @@ export default async function ExpertDetailPage({
                     </Badge>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">Not provided.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("notProvided")}
+                  </p>
                 )}
               </div>
             </section>
@@ -102,25 +107,29 @@ export default async function ExpertDetailPage({
 
           <aside className="space-y-5">
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="font-semibold">Expert credentials</h2>
+              <h2 className="font-semibold">{t("credentialsTitle")}</h2>
               <dl className="mt-5 space-y-5 text-sm">
                 <div className="flex gap-3">
                   <BriefcaseBusiness className="mt-0.5 size-4 text-[#4fae2e]" />
                   <div>
-                    <dt className="text-muted-foreground">Experience</dt>
+                    <dt className="text-muted-foreground">
+                      {t("experience")}
+                    </dt>
                     <dd className="mt-1 font-medium">
-                      {expert.yearsOfExperience} years
+                      {t("yearsOfExperience", {
+                        years: expert.yearsOfExperience ?? 0,
+                      })}
                     </dd>
                   </div>
                 </div>
                 <CredentialList
                   icon={<GraduationCap className="size-4" />}
-                  label="Education"
+                  label={t("education")}
                   items={expert.education}
                 />
                 <CredentialList
                   icon={<Award className="size-4" />}
-                  label="Certifications"
+                  label={t("certifications")}
                   items={expert.certifications}
                 />
               </dl>
@@ -129,7 +138,8 @@ export default async function ExpertDetailPage({
             {expert.website && (
               <Button asChild className="w-full bg-[#4fae2e] hover:bg-[#459928]">
                 <a href={expert.website} target="_blank" rel="noreferrer">
-                  Visit professional website <ExternalLink className="size-4" />
+                  {t("visitWebsite")}{" "}
+                  <ExternalLink className="size-4" />
                 </a>
               </Button>
             )}
@@ -149,6 +159,8 @@ function CredentialList({
   label: string;
   items: string[];
 }) {
+  const t = useTranslations("experts");
+
   return (
     <div className="flex gap-3">
       <span className="mt-0.5 text-[#4fae2e]">{icon}</span>
@@ -157,7 +169,7 @@ function CredentialList({
         <dd className="mt-1 space-y-1 font-medium">
           {items.length
             ? items.map((item) => <p key={item}>{item}</p>)
-            : "Not provided"}
+            : t("notProvided")}
         </dd>
       </div>
     </div>

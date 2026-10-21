@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { X } from "@/components/icons";
 import {
   CreateJobBodySchema,
@@ -88,7 +88,7 @@ export function PostJobForm({
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const skillPickerRef = useRef<HTMLDivElement>(null);
   const form = useForm<CreateJobBodyType>({
-    resolver: zodResolver(CreateJobBodySchema) as Resolver<CreateJobBodyType>,
+    resolver: useTranslatedResolver<CreateJobBodyType>(CreateJobBodySchema),
     defaultValues: emptyJobForm,
   });
 

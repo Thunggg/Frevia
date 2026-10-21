@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
+import { useBackendMessage } from "@/hooks/use-backend-message";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +25,7 @@ function extractData<T>(response: ApiResponse<T>): T {
   if (response.success && "data" in response) {
     return response.data;
   }
-  throw new Error("Unexpected API error response");
+  throw new Error("Error.Internal");
 }
 
 type ReportDialogProps = {
@@ -38,6 +40,8 @@ export function ReportDialog({
   trigger,
 }: ReportDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("forum");
+  const translateMessage = useBackendMessage();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
 
@@ -69,7 +73,7 @@ export function ReportDialog({
     },
     onSuccess: () => {
       setReason("");
-      toastSuccess({ message: "Report submitted successfully" });
+      toastSuccess({ message: t("reportSubmitted") });
 
       // Cập nhật cache report status
       queryClient.setQueryData(
@@ -83,8 +87,8 @@ export function ReportDialog({
     },
     onError: (error: unknown) => {
       const message =
-        error instanceof Error ? error.message : "Failed to submit report";
-      toastError({ message });
+        error instanceof Error ? error.message : "Error.Internal";
+      toastError({ message: translateMessage(message) });
     },
   });
 
@@ -100,7 +104,7 @@ export function ReportDialog({
     return (
       <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-400/25">
         <CheckCircle2 className="h-3.5 w-3.5" />
-        Reported
+        {t("reported")}
       </span>
     );
   }
@@ -115,17 +119,15 @@ export function ReportDialog({
             className="gap-1 text-muted-foreground hover:!text-amber-600"
           >
             <Flag className="h-3.5 w-3.5" />
-            Report
+            {t("report")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Report Content</DialogTitle>
+          <DialogTitle>{t("reportTitle")}</DialogTitle>
           <DialogDescription>
-            {reported
-              ? "You have already reported this content."
-              : "Please provide a reason for reporting this content."}
+            {reported ? t("alreadyReported") : t("reportPrompt")}
           </DialogDescription>
         </DialogHeader>
 
@@ -133,15 +135,15 @@ export function ReportDialog({
           <div className="flex flex-col items-center gap-3 py-6">
             <CheckCircle2 className="h-12 w-12 text-amber-500" />
             <p className="text-sm text-muted-foreground">
-              You have already reported this content. Our team will review it.
+              {t("alreadyReportedDetail")}
             </p>
           </div>
         ) : (
           <div className="space-y-2">
-            <Label htmlFor="report-reason">Reason</Label>
+            <Label htmlFor="report-reason">{t("reportReason")}</Label>
             <Textarea
               id="report-reason"
-              placeholder="Why are you reporting this content?"
+              placeholder={t("reportReasonPlaceholder")}
               rows={4}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -157,7 +159,7 @@ export function ReportDialog({
             onClick={() => setOpen(false)}
             disabled={reportMutation.isPending}
           >
-            {reported ? "Close" : "Cancel"}
+            {reported ? t("close") : t("cancel")}
           </Button>
           {!reported && (
             <Button
@@ -170,7 +172,7 @@ export function ReportDialog({
               ) : (
                 <Flag className="h-4 w-4" />
               )}
-              Report
+              {t("report")}
             </Button>
           )}
         </DialogFooter>

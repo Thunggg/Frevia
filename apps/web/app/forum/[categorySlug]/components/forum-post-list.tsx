@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -65,14 +66,6 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function ForumPostList({
   posts,
   pagination,
@@ -85,6 +78,9 @@ export function ForumPostList({
   topPosts,
 }: ForumPostListProps) {
   const router = useRouter();
+  const t = useTranslations("forum");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [isPending, startTransition] = useTransition();
   const [searchInput, setSearchInput] = useState(currentSearch ?? "");
 
@@ -175,7 +171,7 @@ export function ForumPostList({
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/50" strokeWidth={1.75} />
             <Input
               type="text"
-              placeholder="Search posts..."
+              placeholder={t("searchPlaceholder")}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="h-9 rounded-lg border-border/60 bg-white/60 pl-9 pr-9 text-[13px] focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:bg-white/[0.03]"
@@ -185,7 +181,7 @@ export function ForumPostList({
                 type="button"
                 onClick={clearSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-muted-foreground/50 transition-colors hover:text-foreground"
-                aria-label="Clear search"
+                aria-label={t("clearSearch")}
               >
                 <X className="size-3.5" />
               </button>
@@ -207,7 +203,7 @@ export function ForumPostList({
               aria-pressed={isMyPosts}
             >
               <User className="size-3.5" />
-              My Posts
+              {t("myPosts")}
             </Button>
           ) : null}
           <CreatePostDialog
@@ -221,10 +217,10 @@ export function ForumPostList({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5 / page</SelectItem>
-              <SelectItem value="10">10 / page</SelectItem>
-              <SelectItem value="20">20 / page</SelectItem>
-              <SelectItem value="50">50 / page</SelectItem>
+              <SelectItem value="5">{t("perPage", { count: 5 })}</SelectItem>
+              <SelectItem value="10">{t("perPage", { count: 10 })}</SelectItem>
+              <SelectItem value="20">{t("perPage", { count: 20 })}</SelectItem>
+              <SelectItem value="50">{t("perPage", { count: 50 })}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -233,7 +229,9 @@ export function ForumPostList({
       {/* Filter chips */}
       {hasActiveFilters ? (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[13px] text-muted-foreground/50">Filters:</span>
+          <span className="text-[13px] text-muted-foreground/50">
+            {t("filtersLabel")}
+          </span>
           {currentSearch ? (
             <button
               type="button"
@@ -250,7 +248,7 @@ export function ForumPostList({
               onClick={() => navigateToPage(1, searchInput, undefined, false)}
               className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/20 bg-[#4fae2e]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#4fae2e] transition-colors hover:border-[#4fae2e]/40"
             >
-              My posts
+              {t("myPosts")}
               <X className="size-3" />
             </button>
           ) : null}
@@ -259,7 +257,7 @@ export function ForumPostList({
             onClick={clearAllFilters}
             className="text-[12px] font-medium text-muted-foreground/50 transition-colors hover:text-[#4fae2e]"
           >
-            Clear all
+            {t("clearAll")}
           </button>
         </div>
       ) : null}
@@ -275,7 +273,7 @@ export function ForumPostList({
           <aside className="order-2 lg:order-1 lg:col-span-4">
             <div className="sticky top-20 rounded-xl border border-border/40 bg-background p-5 sm:p-6">
               <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">
-                Trending in {categoryName}
+                {t("trendingIn", { category: categoryName })}
               </h2>
               <ul className="mt-4 space-y-1">
                 {topPosts.map((post, index) => (
@@ -316,17 +314,17 @@ export function ForumPostList({
         >
           {pagination.total > 0 ? (
             <p className="mb-4 text-[13px] text-muted-foreground/50">
-              Showing{" "}
+              {t("showing")}{" "}
               <span className="font-medium text-foreground/70">
                 {Math.min((currentPage - 1) * limit + 1, pagination.total)}–
                 {Math.min(currentPage * limit, pagination.total)}
               </span>{" "}
-              of{" "}
+              {t("of")}{" "}
               <span className="font-medium text-foreground/70">
                 {pagination.total}
               </span>{" "}
-              {pagination.total === 1 ? "post" : "posts"}
-              {isMyPosts ? " (yours)" : ""}
+              {tCommon("posts", { count: pagination.total })}
+              {isMyPosts ? ` ${t("yours")}` : ""}
             </p>
           ) : null}
 
@@ -342,17 +340,17 @@ export function ForumPostList({
                 </div>
                 <p className="text-lg font-medium text-foreground">
                   {isMyPosts
-                    ? "You have no posts here"
+                    ? t("noPostsHere")
                     : currentSearch
-                      ? "No posts found"
-                      : "No posts yet"}
+                      ? t("noPostsFound")
+                      : t("noPostsYet")}
                 </p>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground/60">
                   {isMyPosts
-                    ? "Create a post to get started."
+                    ? t("createToStart")
                     : currentSearch
-                      ? `No results for "${currentSearch}". Try a different search.`
-                      : "Be the first to create a post in this category."}
+                      ? t("noResultsFor", { query: currentSearch })
+                      : t("beFirst")}
                 </p>
                 {hasActiveFilters ? (
                   <Button
@@ -360,7 +358,7 @@ export function ForumPostList({
                     className="mt-6 h-8 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
                     onClick={clearAllFilters}
                   >
-                    Clear filters
+                    {t("clearFilters")}
                   </Button>
                 ) : null}
               </div>
@@ -387,7 +385,7 @@ export function ForumPostList({
                             }
                             alt={
                               post.user?.profile?.displayName ??
-                              `User #${post.userId}`
+                              t("userFallback", { id: post.userId })
                             }
                           />
                           <AvatarFallback className="text-[10px]">
@@ -398,12 +396,16 @@ export function ForumPostList({
                         </Avatar>
                         <span className="font-medium text-foreground/70">
                           {post.user?.profile?.displayName ??
-                            `User #${post.userId}`}
+                            t("userFallback", { id: post.userId })}
                         </span>
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Calendar className="size-3 text-[#4fae2e]/60" />
-                        {formatDate(post.createdAt)}
+                        {format.dateTime(new Date(post.createdAt), {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Heart className="size-3 text-[#4fae2e]/60" />
@@ -427,6 +429,8 @@ export function ForumPostList({
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
+                      label={tCommon("previous")}
+                      ariaLabel={tCommon("previous")}
                       onClick={(e) => {
                         e.preventDefault();
                         if (currentPage > 1) {
@@ -450,7 +454,7 @@ export function ForumPostList({
                   {getPageNumbers().map((pageNum, index) =>
                     pageNum === "ellipsis" ? (
                       <PaginationItem key={`ellipsis-${index}`}>
-                        <PaginationEllipsis />
+                        <PaginationEllipsis label={tCommon("morePages")} />
                       </PaginationItem>
                     ) : (
                       <PaginationItem key={pageNum}>
@@ -476,6 +480,8 @@ export function ForumPostList({
                   <PaginationItem>
                     <PaginationNext
                       href="#"
+                      label={tCommon("next")}
+                      ariaLabel={tCommon("next")}
                       onClick={(e) => {
                         e.preventDefault();
                         if (currentPage < totalPages) {

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { MessageSquare } from "@/components/icons";
 
@@ -29,6 +30,8 @@ export function ForumCategoryView({
   topCategories,
   topUsers,
 }: ForumCategoryViewProps) {
+  const t = useTranslations("forum");
+  const tCommon = useTranslations("common");
   const hasTopCategories = topCategories.length > 0;
   const hasTopUsers = topUsers.length > 0;
 
@@ -42,19 +45,20 @@ export function ForumCategoryView({
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
+                {tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">Forum</span>
+              <span className="font-medium text-foreground">
+                {tCommon("forum")}
+              </span>
             </nav>
 
             <div className="mt-6 max-w-2xl">
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Community Forum
+                {t("title")}
               </h1>
               <p className="mt-2.5 text-sm leading-relaxed text-foreground/65">
-                Ask questions, share tips, and learn from freelancers and
-                clients on Frevia.
+                {t("description")}
               </p>
             </div>
           </div>
@@ -69,10 +73,10 @@ export function ForumCategoryView({
                   <MessageSquare className="size-7" />
                 </div>
                 <p className="text-lg font-medium text-foreground">
-                  No categories yet
+                  {t("noCategoriesTitle")}
                 </p>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                  Categories will show up here once they are created.
+                  {t("noCategoriesDescription")}
                 </p>
               </div>
             ) : (
@@ -93,7 +97,7 @@ export function ForumCategoryView({
                         </h3>
                       </div>
                       <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                        {category.description ?? "No description provided."}
+                        {category.description ?? t("noCategoryDescription")}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
@@ -101,7 +105,7 @@ export function ForumCategoryView({
                         {category.postCount}
                       </p>
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        {category.postCount === 1 ? "post" : "posts"}
+                        {tCommon("posts", { count: category.postCount })}
                       </p>
                     </div>
                   </Link>
@@ -114,7 +118,7 @@ export function ForumCategoryView({
             {hasTopCategories ? (
               <section className="rounded-xl border border-border p-5 sm:p-6">
                 <h2 className="text-sm font-semibold text-foreground">
-                  Most Active
+                  {t("mostActive")}
                 </h2>
                 <ul className="mt-4 divide-y divide-border">
                   {topCategories.map((category) => (
@@ -128,7 +132,7 @@ export function ForumCategoryView({
                         </p>
                         <span className="ml-4 shrink-0 text-xs tabular-nums text-muted-foreground">
                           {category.postCount}{" "}
-                          {category.postCount === 1 ? "post" : "posts"}
+                          {tCommon("posts", { count: category.postCount })}
                         </span>
                       </Link>
                     </li>
@@ -140,7 +144,7 @@ export function ForumCategoryView({
             {hasTopUsers ? (
               <section className="rounded-xl border border-border p-5 sm:p-6">
                 <h2 className="text-sm font-semibold text-foreground">
-                  Top Contributors
+                  {t("topContributors")}
                 </h2>
                 <ul className="mt-4 space-y-4">
                   {topUsers.map((user) => (
@@ -148,7 +152,7 @@ export function ForumCategoryView({
                       <Avatar>
                         <AvatarImage
                           src={user.avatarUrl ?? undefined}
-                          alt={user.displayName ?? "Member"}
+                          alt={user.displayName ?? t("member")}
                         />
                         <AvatarFallback>
                           {user.displayName?.charAt(0)?.toUpperCase() ?? "?"}
@@ -156,14 +160,12 @@ export function ForumCategoryView({
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-foreground">
-                          {user.displayName ?? "Anonymous"}
+                          {user.displayName ?? t("anonymous")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {user.postCount}{" "}
-                          {user.postCount === 1 ? "post" : "posts"}
+                          {tCommon("posts", { count: user.postCount })}
                           <span className="mx-1">·</span>
-                          {user.commentCount}{" "}
-                          {user.commentCount === 1 ? "comment" : "comments"}
+                          {tCommon("comments", { count: user.commentCount })}
                         </p>
                       </div>
                     </li>

@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { AdminUserDetailResponseType } from "@shared/types";
+import { useTranslations } from "next-intl";
 import { EditClientProfileButton } from "./edit-client-profile-button";
 import { EditFreelancerProfileButton } from "./edit-freelancer-profile-button";
 import { ManageFreelancerSkillsButton } from "./manage-freelancer-skills-button";
@@ -42,6 +43,9 @@ interface UserRoleTabsProps {
 }
 
 export function UserRoleTabs({ user }: UserRoleTabsProps) {
+  const t = useTranslations("adminUserDetail");
+  const tCommon = useTranslations("adminCommon");
+
   const hasClientProfile =
     Boolean(user.clientProfile) ||
     user.roles.some((r) => r.name.toLowerCase() === "client");
@@ -149,11 +153,10 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
     <div className="rounded-xl border bg-card p-6 shadow-sm space-y-6">
       <div className="border-b pb-4">
         <h2 className="text-lg font-bold text-foreground">
-          Role Profiles & Granted Privileges
+          {t("rolesTitle")}
         </h2>
         <p className="text-xs text-muted-foreground">
-          Detailed profile and permissions for each role associated with this
-          account.
+          {t("rolesDescription")}
         </p>
       </div>
 
@@ -162,7 +165,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
           {hasClientProfile && (
             <TabsTrigger value="client" className="flex items-center gap-1.5">
               <Building className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              Client Profile
+              {t("tabClient")}
             </TabsTrigger>
           )}
 
@@ -172,21 +175,21 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
               className="flex items-center gap-1.5"
             >
               <UserCheck className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-              Freelancer Profile
+              {t("tabFreelancer")}
             </TabsTrigger>
           )}
 
           {hasExpertProfile && (
             <TabsTrigger value="expert" className="flex items-center gap-1.5">
               <BrainCircuit className="h-4 w-4 text-[#4fae2e]" />
-              Expert Profile
+              {t("tabExpert")}
             </TabsTrigger>
           )}
 
           {hasAdminOrCustomRoles && (
             <TabsTrigger value="roles" className="flex items-center gap-1.5">
               <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              Admin & Custom Roles
+              {t("tabRoles")}
             </TabsTrigger>
           )}
         </TabsList>
@@ -197,7 +200,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Building className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                Client Company Profile
+                {t("clientSectionTitle")}
               </h3>
               <EditClientProfileButton user={user} />
             </div>
@@ -208,10 +211,10 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                     <div>
                       <h3 className="text-base font-bold text-foreground">
                         {user.clientProfile.companyName ||
-                          "Personal / Independent Client"}
+                          t("independentClient")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Client Profile ID: #{user.clientProfile.id}
+                        {t("clientProfileId", { id: user.clientProfile.id })}
                       </p>
                     </div>
 
@@ -222,7 +225,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs text-[#4fae2e] hover:underline"
                       >
-                        Visit Website
+                        {t("visitWebsite")}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     )}
@@ -230,11 +233,11 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
 
                   <div>
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Company Overview
+                      {t("companyOverview")}
                     </h4>
                     <p className="mt-1.5 text-sm leading-relaxed text-foreground whitespace-pre-wrap">
                       {user.clientProfile.companyDescription ||
-                        "No company description provided yet."}
+                        t("noCompanyDescription")}
                     </p>
                   </div>
                 </div>
@@ -243,7 +246,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="rounded-lg border p-4 bg-card">
                     <p className="text-xs text-muted-foreground">
-                      Jobs Posted by Client
+                      {t("clientJobsPosted")}
                     </p>
                     <p className="text-2xl font-bold text-foreground mt-1">
                       {user.stats.jobsPosted}
@@ -251,7 +254,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                   </div>
                   <div className="rounded-lg border p-4 bg-card">
                     <p className="text-xs text-muted-foreground">
-                      Contracts Commissioned
+                      {t("clientContracts")}
                     </p>
                     <p className="text-2xl font-bold text-foreground mt-1">
                       {user.stats.contractsAsClient}
@@ -261,8 +264,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
               </div>
             ) : (
               <div className="py-8 text-center text-sm text-muted-foreground border rounded-lg border-dashed">
-                User has the Client role assigned, but has not completed their
-                company profile.
+                {t("clientNoProfile")}
               </div>
             )}
           </TabsContent>
@@ -274,7 +276,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <UserCheck className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                Freelancer Professional Profile
+                {t("freelancerSectionTitle")}
               </h3>
               <div className="flex flex-wrap items-center gap-2">
                 <EditFreelancerProfileButton user={user} />
@@ -290,10 +292,10 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                     <div>
                       <h3 className="text-base font-bold text-foreground">
                         {user.freelancerProfile.title ||
-                          "Freelancer Professional"}
+                          t("freelancerFallbackTitle")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Profile ID: #{user.freelancerProfile.id}
+                        {t("profileId", { id: user.freelancerProfile.id })}
                       </p>
                     </div>
 
@@ -303,16 +305,16 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                           variant="secondary"
                           className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 flex items-center gap-1.5"
                         >
-                          <CheckCircle className="h-3.5 w-3.5" /> Identity
-                          Verified
+                          <CheckCircle className="h-3.5 w-3.5" />{" "}
+                          {t("identityVerified")}
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
                           className="text-amber-700 border-amber-300 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-300 flex items-center gap-1.5"
                         >
-                          <XCircle className="h-3.5 w-3.5" /> Identity Not
-                          Verified
+                          <XCircle className="h-3.5 w-3.5" />{" "}
+                          {t("identityNotVerified")}
                         </Badge>
                       )}
                     </div>
@@ -322,11 +324,11 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                   <div>
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-2">
                       <Code2 className="h-3.5 w-3.5 text-[#4fae2e]" />
-                      Technical & Domain Skills
+                      {t("skillsTitle")}
                     </h4>
                     {user.freelancerProfile.skills.length === 0 ? (
                       <p className="text-xs italic text-muted-foreground">
-                        No skills specified.
+                        {t("noSkills")}
                       </p>
                     ) : (
                       <div className="flex flex-wrap gap-2">
@@ -340,7 +342,9 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                               {skill.skill.name}
                             </span>
                             <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                              Level {skill.proficiencyLevel}/10
+                              {t("skillLevel", {
+                                level: skill.proficiencyLevel,
+                              })}
                             </span>
                           </Badge>
                         ))}
@@ -353,35 +357,35 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                     <div>
                       <h5 className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
                         <Languages className="h-3.5 w-3.5" />
-                        Languages
+                        {t("languages")}
                       </h5>
                       {renderJsonList(user.freelancerProfile.languages) || (
                         <p className="text-xs italic text-muted-foreground mt-1">
-                          Not added
+                          {t("notAdded")}
                         </p>
                       )}
                     </div>
                     <div>
                       <h5 className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
                         <GraduationCap className="h-3.5 w-3.5" />
-                        Education
+                        {t("education")}
                       </h5>
                       {renderJsonList(user.freelancerProfile.education) || (
                         <p className="text-xs italic text-muted-foreground mt-1">
-                          Not added
+                          {t("notAdded")}
                         </p>
                       )}
                     </div>
                     <div>
                       <h5 className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
                         <Award className="h-3.5 w-3.5" />
-                        Certifications
+                        {t("certifications")}
                       </h5>
                       {renderJsonList(
                         user.freelancerProfile.certifications,
                       ) || (
                         <p className="text-xs italic text-muted-foreground mt-1">
-                          Not added
+                          {t("notAdded")}
                         </p>
                       )}
                     </div>
@@ -392,13 +396,14 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                     <FolderGit2 className="h-4 w-4 text-[#4fae2e]" />
-                    Showcased Portfolio Items (
-                    {user.freelancerProfile.portfolioItems.length})
+                    {t("portfolioTitle", {
+                      count: user.freelancerProfile.portfolioItems.length,
+                    })}
                   </h4>
 
                   {user.freelancerProfile.portfolioItems.length === 0 ? (
                     <div className="rounded-lg border border-dashed py-8 text-center text-xs text-muted-foreground">
-                      No portfolio items added yet.
+                      {t("noPortfolioItems")}
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -425,7 +430,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                             </div>
                             <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-3">
                               {item.description ||
-                                "No project description provided."}
+                                t("noProjectDescription")}
                             </p>
                           </div>
 
@@ -451,8 +456,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
               </div>
             ) : (
               <div className="py-8 text-center text-sm text-muted-foreground border rounded-lg border-dashed">
-                User has the Freelancer role assigned, but has not completed
-                their freelancer profile.
+                {t("freelancerNoProfile")}
               </div>
             )}
           </TabsContent>
@@ -463,7 +467,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 <BrainCircuit className="h-4 w-4 text-[#4fae2e]" />
-                Expert Professional Profile
+                {t("expertSectionTitle")}
               </h3>
               <EditExpertProfileButton user={user} />
             </div>
@@ -471,50 +475,52 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
               <div className="space-y-5 rounded-lg border bg-muted/20 p-5">
                 <div className="border-b pb-4">
                   <h3 className="text-base font-bold">
-                    {user.expertProfile.title || "Expert"}
+                    {user.expertProfile.title || t("expertFallbackTitle")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
-                    {user.bio || "No professional bio provided."}
+                    {user.bio || t("noProfessionalBio")}
                   </p>
                 </div>
                 <div className="grid gap-5 md:grid-cols-2">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Expertise
+                      {t("expertise")}
                     </p>
                     {renderJsonList(user.expertProfile.expertise) || (
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Not added
+                        {t("notAdded")}
                       </p>
                     )}
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Experience
+                      {t("experience")}
                     </p>
                     <p className="mt-1 text-sm">
                       {user.expertProfile.yearsOfExperience == null
-                        ? "Not added"
-                        : `${user.expertProfile.yearsOfExperience} years`}
+                        ? t("notAdded")
+                        : t("yearsOfExperience", {
+                            years: user.expertProfile.yearsOfExperience,
+                          })}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Education
+                      {t("education")}
                     </p>
                     {renderJsonList(user.expertProfile.education) || (
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Not added
+                        {t("notAdded")}
                       </p>
                     )}
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Certifications
+                      {t("certifications")}
                     </p>
                     {renderJsonList(user.expertProfile.certifications) || (
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Not added
+                        {t("notAdded")}
                       </p>
                     )}
                   </div>
@@ -526,14 +532,13 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                     rel="noreferrer"
                     className="inline-flex items-center gap-1 text-sm text-[#4fae2e] hover:underline"
                   >
-                    Expert website <ExternalLink className="size-3.5" />
+                    {t("expertWebsite")} <ExternalLink className="size-3.5" />
                   </a>
                 )}
               </div>
             ) : (
               <div className="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground">
-                The Expert role is assigned, but the profile has not been
-                completed.
+                {t("expertNoProfile")}
               </div>
             )}
           </TabsContent>
@@ -546,12 +551,10 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
               <div className="rounded-lg border p-5 bg-muted/20 space-y-2">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
                   <Shield className="h-4 w-4 text-amber-600" />
-                  System Role Overview
+                  {t("systemRoleTitle")}
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  User holds standard administrative or custom privileges.
-                  Detailed dynamic permission entries will appear below when
-                  customized.
+                  {t("systemRoleDescription")}
                 </p>
               </div>
             ) : (
@@ -564,41 +567,45 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
                         <h3 className="text-base font-bold text-foreground">
-                          Role: {cr.roleName}
+                          {t("roleLabel", { name: cr.roleName })}
                         </h3>
                         {cr.isPrimary && (
                           <Badge
                             variant="outline"
                             className="text-[10px] text-amber-700 border-amber-300"
                           >
-                            Primary Role
+                            {t("primaryRole")}
                           </Badge>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {cr.description || "No role description specified."}
+                        {cr.description || t("noRoleDescription")}
                       </p>
                     </div>
 
                     <Badge variant="secondary" className="text-xs">
-                      {cr.permissions.length} Permissions
+                      {t("permissionCount", { count: cr.permissions.length })}
                     </Badge>
                   </div>
 
                   {/* Permissions table */}
                   {cr.permissions.length === 0 ? (
                     <p className="text-xs italic text-muted-foreground py-2">
-                      No specific permissions mapped directly to this role.
+                      {t("noPermissionsForRole")}
                     </p>
                   ) : (
                     <div className="rounded-md border overflow-hidden">
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/40">
-                            <TableHead className="w-[80px]">Method</TableHead>
-                            <TableHead>API Endpoint / Path</TableHead>
-                            <TableHead>Permission Name</TableHead>
-                            <TableHead className="w-[120px]">Module</TableHead>
+                            <TableHead className="w-[80px]">
+                              {tCommon("method")}
+                            </TableHead>
+                            <TableHead>{t("colApiPath")}</TableHead>
+                            <TableHead>{t("colPermissionName")}</TableHead>
+                            <TableHead className="w-[120px]">
+                              {tCommon("module")}
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -618,7 +625,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                                   variant="outline"
                                   className="text-[10px] font-mono"
                                 >
-                                  {perm.module || "GENERAL"}
+                                  {perm.module || t("generalModule")}
                                 </Badge>
                               </TableCell>
                             </TableRow>

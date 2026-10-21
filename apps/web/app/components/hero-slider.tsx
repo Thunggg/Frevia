@@ -2,9 +2,11 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export function HeroSlider() {
+  const t = useTranslations("home.hero");
 
   return (
     <div className="mx-auto max-w-8xl px-4 pt-4 pb-12 sm:px-6 lg:px-8">
@@ -13,7 +15,7 @@ export function HeroSlider() {
         <div className="absolute inset-0 overflow-hidden rounded-[28px] sm:rounded-[36px]">
           <Image
             src="/banner/image.png"
-            alt="Freelance Marketplace Banner"
+            alt={t("imageAlt")}
             fill
             priority
             sizes="(max-width: 1280px) 100vw, 1280px"
@@ -28,7 +30,7 @@ export function HeroSlider() {
           {/* Badge */}
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-300/30 bg-green-300/10 px-3.5 py-1 text-xs font-medium text-green-300 backdrop-blur-md">
             <span className="size-1.5 rounded-full bg-green-300 animate-pulse" />
-            Top 3% Vetted Talent Network
+            {t("badge")}
           </span>
 
           {/* Headline */}
@@ -40,13 +42,14 @@ export function HeroSlider() {
               textShadow: "0 8px 30px rgba(0,0,0,0.6)",
             }}
           >
-            Hire world-class <br className="hidden sm:inline" />
-            freelance talent.
+            {t("titleLine1")}{" "}
+            <br className="hidden sm:inline" />
+            {t("titleLine2")}
           </h1>
 
           {/* Subtitle */}
           <p className="mt-4 max-w-2xl text-sm font-normal text-white/80 sm:text-lg drop-shadow-md">
-            Connect with top developers, designers, and marketers. Scale your dream team on-demand with secure milestone payments.
+            {t("subtitle")}
           </p>
 
           {/* Call To Actions */}
@@ -55,13 +58,13 @@ export function HeroSlider() {
               href="/find-talent"
               className="rounded-full bg-green-300 px-6 py-3 text-xs sm:text-sm font-semibold text-zinc-950 transition-all hover:bg-green-200 hover:shadow-[0_0_20px_rgba(134,239,172,0.45)] hover:scale-105"
             >
-              Hire Top Talent
+              {t("hireTalent")}
             </Link>
             <Link
               href="/find-work"
               className="rounded-full border border-white/25 bg-white/10 px-6 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20 hover:border-white/40"
             >
-              Apply as Freelancer
+              {t("applyAsFreelancer")}
             </Link>
           </div>
         </div>
@@ -75,27 +78,27 @@ export function HeroSlider() {
                 <img
                   className="inline-block size-8 rounded-full ring-2 object-cover"
                   src="https://i.pinimg.com/1200x/6d/10/c3/6d10c39c28732a13a03c99c7245878d1.jpg"
-                  alt="Avatar 1"
+                  alt={t("avatarAlt", { index: 1 })}
                 />
                 <img
                   className="inline-block size-8 rounded-full ring-2 object-cover"
                   src="https://i.pinimg.com/736x/06/52/bf/0652bfda4c1b457989e013ebca7e3f8f.jpg"
-                  alt="Avatar 2"
+                  alt={t("avatarAlt", { index: 2 })}
                 />
                 <img
                   className="inline-block size-8 rounded-full ring-2 object-cover"
                   src="https://i.pinimg.com/1200x/49/1a/38/491a381ccbb6ea8306d8d4b014555d54.jpg"
-                  alt="Avatar 3"
+                  alt={t("avatarAlt", { index: 3 })}
                 />
               </div>
               <div>
-                <p className="text-sm font-bold tracking-wide text-white">5,000+ Active Experts</p>
+                <p className="text-sm font-bold tracking-wide text-white">{t("activeExperts")}</p>
                 <div className="flex text-amber-400 text-xs tracking-tighter">★★★★★</div>
               </div>
             </div>
 
             <p className="text-xs text-white/60">
-              Trusted by tech startups and leading global agencies worldwide.
+              {t("trustedBy")}
             </p>
           </div>
 
@@ -106,7 +109,7 @@ export function HeroSlider() {
                 98.5%
               </span>
               <span className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
-                Job Success Score
+                {t("jobSuccessScore")}
               </span>
             </div>
 
@@ -115,7 +118,7 @@ export function HeroSlider() {
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
                 <div className="h-full w-[98.5%] rounded-full bg-green-300 shadow-[0_0_12px_rgba(134,239,172,0.6)]" />
               </div>
-              <p className="mt-1.5 text-right text-[10px] text-white/40">Across 12,000+ completed contracts</p>
+              <p className="mt-1.5 text-right text-[10px] text-white/40">{t("completedContracts")}</p>
             </div>
           </div>
         </div>

@@ -25,6 +25,7 @@ import {
 import { HttpMethod, type HttpMethodType } from "@shared/types";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search, X } from "lucide-react";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -50,6 +51,9 @@ export function PermissionsTable() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("adminPermissions");
+  const tCommon = useTranslations("adminCommon");
+  const format = useFormatter();
 
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const methodParam = searchParams.get("method") ?? "";
@@ -146,12 +150,12 @@ export function PermissionsTable() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Permission Management
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground mt-1">
-          View all API permissions in the system
-          {!isLoading && !isError ? ` (${total} total)` : ""}
+          {t("subtitle")}
+          {!isLoading && !isError
+            ? ` ${tCommon("total", { count: total })}`
+            : ""}
         </p>
       </div>
 
@@ -165,7 +169,7 @@ export function PermissionsTable() {
             <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, path, module..."
+              placeholder={t("searchPlaceholder")}
               className="pl-9 pr-9"
             />
             {searchInput && (
@@ -189,10 +193,10 @@ export function PermissionsTable() {
             }
           >
             <SelectTrigger className="w-[140px] h-9">
-              <SelectValue placeholder="All methods" />
+              <SelectValue placeholder={t("allMethods")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All methods</SelectItem>
+              <SelectItem value="all">{t("allMethods")}</SelectItem>
               {HTTP_METHODS.map((m) => (
                 <SelectItem key={m} value={m}>
                   {m}
@@ -211,10 +215,10 @@ export function PermissionsTable() {
             }
           >
             <SelectTrigger className="w-[180px] h-9">
-              <SelectValue placeholder="All modules" />
+              <SelectValue placeholder={t("allModules")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All modules</SelectItem>
+              <SelectItem value="all">{t("allModules")}</SelectItem>
               {modules.map((mod) => (
                 <SelectItem key={mod} value={mod}>
                   {mod}
@@ -239,7 +243,7 @@ export function PermissionsTable() {
         </div>
       ) : isError && !data ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Couldn&apos;t load permissions. Try again.
+          {t("loadFailed")}
         </p>
       ) : (
         <>
@@ -257,24 +261,26 @@ export function PermissionsTable() {
                       onClick={() => toggleSort("id")}
                       className="inline-flex items-center gap-1 hover:text-foreground"
                     >
-                      ID
+                      {tCommon("id")}
                       <SortIcon column="id" />
                     </button>
                   </TableHead>
-                  <TableHead className="w-24">Method</TableHead>
-                  <TableHead>Path</TableHead>
-                  <TableHead>Module</TableHead>
+                  <TableHead className="w-24">{tCommon("method")}</TableHead>
+                  <TableHead>{tCommon("path")}</TableHead>
+                  <TableHead>{tCommon("module")}</TableHead>
                   <TableHead>
                     <button
                       type="button"
                       onClick={() => toggleSort("createdAt")}
                       className="inline-flex items-center gap-1 hover:text-foreground"
                     >
-                      Created
+                      {tCommon("created")}
                       <SortIcon column="createdAt" />
                     </button>
                   </TableHead>
-                  <TableHead className="w-20 text-right">Actions</TableHead>
+                  <TableHead className="w-20 text-right">
+                    {tCommon("actions")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -285,8 +291,8 @@ export function PermissionsTable() {
                       className="text-center py-12 text-muted-foreground"
                     >
                       {searchParam || methodParam || moduleParam
-                        ? "No permissions match your filters."
-                        : "No permissions found."}
+                        ? t("noMatch")
+                        : t("noPermissions")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -317,7 +323,11 @@ export function PermissionsTable() {
                         )}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                        {new Date(permission.createdAt).toLocaleDateString()}
+                        {format.dateTime(new Date(permission.createdAt), {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end">
