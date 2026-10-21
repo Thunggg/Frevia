@@ -8,6 +8,10 @@ import {
 } from '@shared/types';
 import { NotificationType } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
+import {
+  calculateClientProfileStrength,
+  calculateFreelancerProfileStrength,
+} from '../../shared/utils/profile-strength';
 
 @Injectable()
 export class AccountProfileRepository {
@@ -45,12 +49,53 @@ export class AccountProfileRepository {
     });
   }
 
-  updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
+  async updateGeneralProfile(
+    userId: number,
+    input: UpdateGeneralProfileType,
+    primaryRole?: string,
+  ) {
+    const current = await this.prisma.profile.findUniqueOrThrow({
+      where: { userId },
+      include: {
+        clientProfile: true,
+        freelancerProfile: {
+          include: {
+            _count: {
+              select: {
+                skills: true,
+                portfolioItems: { where: { deletedAt: null } },
+              },
+            },
+          },
+        },
+      },
+    });
+    const profileCompletionPercent =
+      primaryRole === RoleName.CLIENT
+        ? calculateClientProfileStrength({
+            ...input,
+            companyName: current.clientProfile?.companyName,
+            companyDescription: current.clientProfile?.companyDescription,
+            website: current.clientProfile?.website,
+          })
+        : primaryRole === RoleName.FREELANCER
+          ? calculateFreelancerProfileStrength({
+              ...input,
+              title: current.freelancerProfile?.title,
+              education: current.freelancerProfile?.education,
+              certifications: current.freelancerProfile?.certifications,
+              skillCount: current.freelancerProfile?._count.skills ?? 0,
+              portfolioCount:
+                current.freelancerProfile?._count.portfolioItems ?? 0,
+            })
+          : current.profileCompletionPercent;
+
     return this.prisma.profile.update({
       where: { userId },
       data: {
         displayName: input.displayName,
         bio: input.bio ?? null,
+        profileCompletionPercent,
       },
     });
   }
@@ -85,6 +130,15 @@ export class AccountProfileRepository {
     return this.prisma.$transaction(async (transaction) => {
       const profile = await transaction.profile.findUniqueOrThrow({
         where: { userId },
+      });
+      const profileCompletionPercent = calculateClientProfileStrength({
+        displayName: profile.displayName,
+        bio: profile.bio,
+        ...input,
+      });
+      await transaction.profile.update({
+        where: { id: profile.id },
+        data: { profileCompletionPercent },
       });
       await transaction.clientProfile.upsert({
         where: { profileId: profile.id },

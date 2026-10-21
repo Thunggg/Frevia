@@ -76,6 +76,7 @@ export class UsersService {
         password: hashedPassword,
         fullName: body.fullName,
         roleId: role.id,
+        roleName: role.name,
       });
 
       // Trả về user vừa tạo kèm role để client cập nhật UI

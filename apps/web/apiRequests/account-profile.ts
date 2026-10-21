@@ -15,12 +15,13 @@ import type {
   ChangePasswordType,
   GeneralProfileType,
   UpdateGeneralProfileType,
+  ProfileRevisionSubmissionType,
 } from "@shared/types";
 
 export const accountProfileApi = {
   getGeneralProfile: () => http.get<GeneralProfileType>("/account-profile"),
   updateGeneralProfile: (body: UpdateGeneralProfileType) =>
-    http.put<GeneralProfileType>("/account-profile", body),
+    http.put<ProfileRevisionSubmissionType>("/account-profile", body),
   changePassword: (body: ChangePasswordType) =>
     http.put<{ message: string }>("/account-profile/password", body),
   async uploadAvatar(file: File) {
@@ -56,7 +57,7 @@ export const accountProfileApi = {
   getClientProfile: (userId: number) =>
     http.get<ClientProfileDetailType>(`/clients/${userId}`),
   updateClientProfile: (body: UpdateClientProfileType) =>
-    http.put<ClientProfileDetailType>("/clients/me/profile", body),
+    http.put<ProfileRevisionSubmissionType>("/clients/me/profile", body),
 
   getSocialLinks: () => http.get<SocialLinkType[]>("/social-links"),
   addSocialLink: (body: AddSocialLinkType) =>

@@ -264,7 +264,9 @@ export function FreelancerSidebar() {
                   <p className="truncate text-xs font-semibold text-foreground">
                     {displayName}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Freelancer</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Freelancer
+                  </p>
                 </div>
                 <ChevronDown
                   className={`size-3.5 shrink-0 text-muted-foreground transition-transform ${

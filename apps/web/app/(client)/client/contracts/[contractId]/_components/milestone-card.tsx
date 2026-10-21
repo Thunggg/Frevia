@@ -12,9 +12,11 @@ import {
   Ellipsis,
   ExternalLink,
   FileText,
+  Gavel,
   Loader2,
   Play,
   RotateCcw,
+  ShieldAlert,
   Trash2,
   Upload,
 } from "@/components/icons";
@@ -45,7 +47,17 @@ function formatDate(date: string | Date | null) {
   }).format(new Date(date));
 }
 
-function getMilestoneStatusBadge(status: MilestoneType["status"]) {
+function getMilestoneStatusBadge(
+  status: MilestoneType["status"],
+  paymentStatus?: MilestoneType["paymentStatus"],
+) {
+  if (paymentStatus === "DISPUTED") {
+    return {
+      label: "Disputed",
+      className: "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold",
+    };
+  }
+
   switch (status) {
     case "COMPLETED":
       return {
@@ -86,6 +98,8 @@ interface MilestoneCardProps {
   onReview?: (milestone: MilestoneType, submission: GetSubmissionResponseType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
+  onOpenDispute?: (milestone: MilestoneType) => void;
+  onViewDispute?: (milestone: MilestoneType) => void;
 }
 
 export function MilestoneCard({
@@ -99,6 +113,8 @@ export function MilestoneCard({
   onReview,
   onSubmitWork,
   onStartWork,
+  onOpenDispute,
+  onViewDispute,
 }: MilestoneCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [submissions, setSubmissions] = useState<GetSubmissionResponseType[] | null>(null);
@@ -109,11 +125,12 @@ export function MilestoneCard({
     if (
       milestone.status === "SUBMITTED" ||
       milestone.status === "CHANGES_REQUESTED" ||
-      milestone.status === "IN_PROGRESS"
+      milestone.status === "IN_PROGRESS" ||
+      milestone.paymentStatus === "DISPUTED"
     ) {
       setIsExpanded(true);
     }
-  }, [milestone.status]);
+  }, [milestone.status, milestone.paymentStatus]);
 
   // Fetch submissions when expanded
   useEffect(() => {
@@ -135,7 +152,7 @@ export function MilestoneCard({
   }, [isExpanded, submissions, loadingSubmissions, contractId, milestone.id]);
 
   const latestSubmission = submissions && submissions.length > 0 ? submissions[0] : null;
-  const badge = getMilestoneStatusBadge(milestone.status);
+  const badge = getMilestoneStatusBadge(milestone.status, milestone.paymentStatus);
 
   const handleToggleExpand = () => {
     setIsExpanded((prev) => !prev);
@@ -191,8 +208,8 @@ export function MilestoneCard({
             {badge.label}
           </span>
 
-          {/* 3-dots action menu (Only Client can edit/delete milestones) */}
-          {!isFreelancer && (
+          {/* 3-dots action menu for both Client and Freelancer */}
+          {(onEdit || onDelete || onOpenDispute || onViewDispute) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -206,9 +223,9 @@ export function MilestoneCard({
               <DropdownMenuContent
                 align="end"
                 sideOffset={6}
-                className="w-44 rounded-[20px] border border-border bg-white dark:bg-zinc-900 p-1.5 shadow-xl flex flex-col gap-1"
+                className="w-48 rounded-[20px] border border-border bg-white dark:bg-zinc-900 p-1.5 shadow-xl flex flex-col gap-1"
               >
-                {milestone.status === "PENDING" && onEdit && (
+                {!isFreelancer && milestone.status === "PENDING" && onEdit && (
                   <DropdownMenuItem
                     onClick={() => onEdit(milestone)}
                     className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 cursor-pointer transition-all outline-none"
@@ -221,7 +238,7 @@ export function MilestoneCard({
                   </DropdownMenuItem>
                 )}
 
-                {milestone.status === "PENDING" && onDelete && (
+                {!isFreelancer && milestone.status === "PENDING" && onDelete && (
                   <DropdownMenuItem
                     onClick={() => onDelete(milestone)}
                     className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
@@ -233,6 +250,38 @@ export function MilestoneCard({
                     <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
                   </DropdownMenuItem>
                 )}
+
+                {/* View Dispute option */}
+                {milestone.paymentStatus === "DISPUTED" && onViewDispute && (
+                  <DropdownMenuItem
+                    onClick={() => onViewDispute(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 cursor-pointer transition-all outline-none text-red-600"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Gavel className="size-3.5 text-red-600" />
+                      <span className="text-xs font-bold text-red-600">View Dispute</span>
+                    </div>
+                    <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                  </DropdownMenuItem>
+                )}
+
+                {/* Open Dispute option (available for both roles if eligible) */}
+                {milestone.paymentStatus !== "DISPUTED" &&
+                  milestone.status !== "COMPLETED" &&
+                  milestone.paymentStatus !== "RELEASED" &&
+                  milestone.paymentStatus !== "REFUNDED" &&
+                  onOpenDispute && (
+                    <DropdownMenuItem
+                      onClick={() => onOpenDispute(milestone)}
+                      className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ShieldAlert className="size-3.5 text-red-600" />
+                        <span className="text-xs font-medium text-red-600">Dispute Milestone</span>
+                      </div>
+                      <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                    </DropdownMenuItem>
+                  )}
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -256,6 +305,35 @@ export function MilestoneCard({
       {/* Expanded Details */}
       {isExpanded && (
         <div className="border-t border-border/60 px-5 py-4 space-y-4 bg-[#F1F0F5]/20 dark:bg-zinc-900/20">
+          {/* Dispute Banner if Milestone is Disputed */}
+          {milestone.paymentStatus === "DISPUTED" && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-red-700 dark:text-red-300">
+              <div className="flex items-center gap-2.5">
+                <ShieldAlert className="size-4 shrink-0 text-red-600" />
+                <div>
+                  <span className="font-bold block">Arbitration Case Active</span>
+                  <span className="text-[11px] text-red-600/90 dark:text-red-400">
+                    Funds for this milestone are locked pending arbitration resolution.
+                  </span>
+                </div>
+              </div>
+              {onViewDispute && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewDispute(milestone);
+                  }}
+                  className="rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold h-8 px-3.5 shrink-0"
+                >
+                  <Gavel className="mr-1.5 size-3.5" />
+                  View Dispute
+                </Button>
+              )}
+            </div>
+          )}
+
           {/* Deliverable Scope & Criteria */}
           {milestone.description && (
             <div>

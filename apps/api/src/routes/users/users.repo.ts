@@ -67,12 +67,25 @@ export class UsersRepository {
             },
           },
         };
+      } else if (role === 'EXPERT' || role.toLowerCase() === 'expert') {
+        where.userRoles = {
+          some: {
+            role: {
+              name: { equals: RoleName.EXPERT, mode: 'insensitive' },
+            },
+          },
+        };
       } else if (role === 'CUSTOM' || role.toLowerCase() === 'custom') {
         where.userRoles = {
           some: {
             role: {
               name: {
-                notIn: [RoleName.CLIENT, RoleName.FREELANCER, RoleName.ADMIN],
+                notIn: [
+                  RoleName.CLIENT,
+                  RoleName.FREELANCER,
+                  RoleName.ADMIN,
+                  RoleName.EXPERT,
+                ],
                 mode: 'insensitive',
               },
             },
@@ -167,6 +180,7 @@ export class UsersRepository {
     password: string;
     fullName: string;
     roleId: number;
+    roleName: string;
   }) {
     return this.prisma.user.create({
       data: {
@@ -175,6 +189,10 @@ export class UsersRepository {
         profile: {
           create: {
             displayName: data.fullName,
+            expertProfile:
+              data.roleName.toLowerCase() === 'expert'
+                ? { create: {} }
+                : undefined,
           },
         },
         userRoles: {
@@ -350,6 +368,7 @@ export class UsersRepository {
         profile: {
           select: {
             clientProfile: true,
+            expertProfile: true,
           },
         },
       },
@@ -664,6 +683,7 @@ export class UsersRepository {
               },
             },
             clientProfile: true,
+            expertProfile: true,
           },
         },
         userRoles: {
@@ -699,7 +719,7 @@ export class UsersRepository {
     const customRoleProfiles = user.userRoles
       .filter((ur) => {
         const name = ur.role.name.toLowerCase();
-        return name !== 'client' && name !== 'freelancer';
+        return name !== 'client' && name !== 'freelancer' && name !== 'expert';
       })
       .map((ur) => ({
         roleId: ur.role.id,
@@ -757,6 +777,21 @@ export class UsersRepository {
         }
       : null;
 
+    const expertProfile = user.profile?.expertProfile
+      ? {
+          id: user.profile.expertProfile.id,
+          title: user.profile.expertProfile.title,
+          expertise: user.profile.expertProfile.expertise,
+          yearsOfExperience: user.profile.expertProfile.yearsOfExperience,
+          education: user.profile.expertProfile.education,
+          certifications: user.profile.expertProfile.certifications,
+          website: user.profile.expertProfile.website,
+          isActive: user.profile.expertProfile.isActive,
+          createdAt: user.profile.expertProfile.createdAt,
+          updatedAt: user.profile.expertProfile.updatedAt,
+        }
+      : null;
+
     return {
       id: user.id,
       email: user.email,
@@ -791,6 +826,7 @@ export class UsersRepository {
       },
       clientProfile,
       freelancerProfile,
+      expertProfile,
       customRoleProfiles,
     };
   }

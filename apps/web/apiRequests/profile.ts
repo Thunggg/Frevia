@@ -6,6 +6,7 @@ import {
   PortfolioItemType,
   AddPortfolioType,
   UpdatePortfolioType,
+  ProfileRevisionSubmissionType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -14,7 +15,7 @@ export const profileApiRequest = {
     http.get<FreelancerProfileDetailType>(`/profiles/${id}`),
 
   updateProfile: (id: number, body: UpdateFreelancerProfileType) =>
-    http.put<FreelancerProfileDetailType>(`/profiles/${id}`, body),
+    http.put<ProfileRevisionSubmissionType>(`/profiles/${id}`, body),
 
   getSkills: (id: number) =>
     http.get<FreelancerSkillType[]>(`/profiles/${id}/skills`),

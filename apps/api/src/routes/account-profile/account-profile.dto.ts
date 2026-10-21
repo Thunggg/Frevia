@@ -14,6 +14,7 @@ import {
   UpdateGeneralProfileSchema,
   ChangePasswordSchema,
   AvatarUploadResponseSchema,
+  ProfileRevisionSubmissionSchema,
 } from '@shared/types';
 import { z } from 'zod';
 
@@ -31,6 +32,9 @@ export class ClientProfileDetailDto extends createZodDto(
 ) {}
 export class UpdateClientProfileDto extends createZodDto(
   UpdateClientProfileSchema,
+) {}
+export class ProfileRevisionSubmissionDto extends createZodDto(
+  ProfileRevisionSubmissionSchema,
 ) {}
 export class AddSocialLinkDto extends createZodDto(AddSocialLinkSchema) {}
 export class SocialLinkDto extends createZodDto(SocialLinkSchema) {}

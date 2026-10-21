@@ -23,6 +23,7 @@ import {
   AlertCircle,
   Camera,
   CheckCircle2,
+  Clock3,
   Eye,
   EyeOff,
   Loader2,
@@ -182,12 +183,19 @@ export function GeneralSettings() {
       const response = await accountProfileApi.updateGeneralProfile(
         parsed.data,
       );
-      setProfile(response.data);
-      setDisplayName(response.data.displayName ?? "");
-      setBio(response.data.bio ?? "");
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.refresh();
-      toastSuccess({ message: "General profile updated." });
+      if (!response.data.reviewRequired) {
+        setProfile((current) =>
+          current
+            ? {
+                ...current,
+                displayName: parsed.data.displayName,
+                bio: parsed.data.bio ?? null,
+                profileCompletionPercent: response.data.profileStrength,
+              }
+            : current,
+        );
+      }
+      toastSuccess({ message: response.data.message });
     } catch (error) {
       setProfileErrors({ form: messageFrom(error) });
       toastError({ message: messageFrom(error) });
@@ -539,12 +547,24 @@ export function GeneralSettings() {
             </Button>
           </form>
         </section>
-        <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
-          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
-          <p className="text-muted-foreground">
-            Profile updates are saved to the same account for every active role.
-          </p>
-        </div>
+        {profile.profileCompletionPercent < 20 ? (
+          <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+            <Clock3 className="mt-0.5 size-4 shrink-0" />
+            <p>
+              Your profile strength is {profile.profileCompletionPercent}%.
+              Profile changes require administrator approval until it reaches
+              20%.
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
+            <p className="text-muted-foreground">
+              Your profile meets the 20% threshold, so changes are saved
+              immediately.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -23,8 +23,10 @@ const prisma = new PrismaClient({
 
 const hashingService = new HashingService();
 
+type SeededAccountRole = Exclude<RoleNameType, typeof RoleName.EXPERT>;
+
 const DEFAULT_EMAIL_AND_PASSWORD: Record<
-  RoleNameType,
+  SeededAccountRole,
   {
     email: string;
     password: string;
@@ -53,7 +55,7 @@ async function createAccountRole({
   role,
 }: {
   email: string;
-  role: RoleNameType;
+  role: SeededAccountRole;
 }) {
   const accountIsExist = await prisma.user.findFirst({
     where: {

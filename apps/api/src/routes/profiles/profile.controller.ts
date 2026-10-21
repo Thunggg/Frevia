@@ -22,6 +22,7 @@ import {
   FreelancerProfileDetailDto,
   AddFreelancerSkillDto,
   AddFreelancerSkillResponseDto,
+  ProfileRevisionSubmissionDto,
 } from './profile.dto';
 
 @Controller('profiles')
@@ -36,7 +37,7 @@ export class ProfileController {
   }
 
   @Put(':id')
-  @ZodSerializerDto(FreelancerProfileDetailDto)
+  @ZodSerializerDto(ProfileRevisionSubmissionDto)
   async updateProfile(
     @Param('id', ParseIntPipe) id: number,
     @UserActive('userId') currentUserId: number,

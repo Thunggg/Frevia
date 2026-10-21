@@ -33,11 +33,13 @@ import {
   PasswordUnavailableException,
 } from './account-profile.error';
 import { AccountProfileRepository } from './account-profile.repo';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 
 @Injectable()
 export class AccountProfileService {
   constructor(
     private readonly repository: AccountProfileRepository,
+    private readonly profileRevisionService: ProfileRevisionService,
     private readonly cloudinary: CloudinaryService,
     private readonly hashing: HashingService,
   ) {}
@@ -109,10 +111,43 @@ export class AccountProfileService {
   async updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
     const user = await this.repository.findGeneralProfile(userId);
     if (!user?.profile) throw ProfileNotFoundException();
+    const primaryRole = user.userRoles.find((item) => item.isPrimary)?.role
+      .name;
+    if (
+      primaryRole === RoleName.CLIENT ||
+      primaryRole === RoleName.FREELANCER
+    ) {
+      if (
+        this.profileRevisionService.requiresManualReview(
+          user.profile.profileCompletionPercent,
+        )
+      ) {
+        return this.profileRevisionService.submitGeneral(
+          userId,
+          user.profile.id,
+          primaryRole,
+          input,
+          user.profile.profileCompletionPercent,
+        );
+      }
+      const updated = await this.repository.updateGeneralProfile(
+        userId,
+        input,
+        primaryRole,
+      );
+      return this.profileRevisionService.directUpdateResult(
+        updated.profileCompletionPercent,
+      );
+    }
     await this.repository.updateGeneralProfile(userId, input);
     const updated = await this.repository.findGeneralProfile(userId);
     if (!updated?.profile) throw ProfileNotFoundException();
-    return this.presentGeneralProfile(updated);
+    return {
+      message: 'Profile updated successfully.',
+      reviewRequired: false,
+      profileStrength: updated.profile.profileCompletionPercent,
+      revision: null,
+    };
   }
 
   async changePassword(userId: number, input: ChangePasswordType) {
@@ -303,8 +338,20 @@ export class AccountProfileService {
   }
 
   async updateClientProfile(userId: number, input: UpdateClientProfileType) {
-    await this.requireRole(userId, RoleName.CLIENT);
-    return this.repository.updateClientProfile(userId, input);
+    const user = await this.requireRole(userId, RoleName.CLIENT);
+    const profileStrength = user.profile!.profileCompletionPercent;
+    if (this.profileRevisionService.requiresManualReview(profileStrength)) {
+      return this.profileRevisionService.submitClient(
+        userId,
+        user.profile!.id,
+        input,
+        profileStrength,
+      );
+    }
+    const updated = await this.repository.updateClientProfile(userId, input);
+    return this.profileRevisionService.directUpdateResult(
+      updated.profileCompletionPercent,
+    );
   }
 
   async getSocialLinks(userId: number) {
