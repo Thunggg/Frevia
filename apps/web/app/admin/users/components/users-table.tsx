@@ -1,7 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Table,
   TableBody,
@@ -10,25 +15,20 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/shadcn/table";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { Button } from "@repo/ui/components/shadcn/button";
+import type { AdminUserItemType } from "@shared/types";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/shadcn/avatar";
-import {
-  ArrowUpDown,
-  ArrowUp,
   ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Eye,
   Pencil,
   Shield,
   User,
 } from "lucide-react";
-import { NumberedPagination } from "../../components/numbered-pagination";
-import type { AdminUserItemType } from "@shared/types";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { NumberedPagination } from "../../components/numbered-pagination";
 import { EditUserDialog } from "./edit-user-dialog";
 
 interface UsersTableProps {
@@ -87,7 +87,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800"
         >
-          Client {isPrimary && "★"}
+          Client
         </Badge>
       );
     }
@@ -98,7 +98,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800"
         >
-          Freelancer {isPrimary && "★"}
+          Freelancer
         </Badge>
       );
     }
@@ -113,9 +113,20 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
         </Badge>
       );
     }
+    if (nameLower === "expert") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800"
+        >
+          Expert
+        </Badge>
+      );
+    }
     return (
       <Badge key={roleName} variant="secondary">
-        {roleName} {isPrimary && "★"}
+        {roleName}
       </Badge>
     );
   };
@@ -278,10 +289,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
         </Table>
       </div>
 
-      <EditUserDialog
-        user={editingUser}
-        onClose={() => setEditingUser(null)}
-      />
+      <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
 
       {pagination.totalPages > 1 && (
         <NumberedPagination
