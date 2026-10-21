@@ -50,7 +50,7 @@ import { DisputeRepository } from './dispute.repo';
 export class DisputeService {
   private readonly logger = new Logger(DisputeService.name);
 
-  constructor(private readonly disputeRepo: DisputeRepository) { }
+  constructor(private readonly disputeRepo: DisputeRepository) {}
 
   /**
    * Tạo Dispute mới cho Milestone (chỉ Client hoặc Freelancer của hợp đồng).

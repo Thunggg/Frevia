@@ -1374,13 +1374,6 @@
     "changePasswordAction": "Change password",
     "strengthLow": "Your profile strength is {percent}%. Profile changes require administrator approval until it reaches 20%.",
     "strengthOk": "Your profile meets the 20% threshold, so changes are saved immediately.",
-    "errPasswordMin": "Password must contain at least 8 characters.",
-    "errPasswordMax": "Password must contain at most 32 characters.",
-    "errPasswordUppercase": "Password must contain an uppercase letter.",
-    "errPasswordNumber": "Password must contain a number.",
-    "errCurrentPasswordRequired": "Current password is required.",
-    "errPasswordMismatch": "Password confirmation does not match.",
-    "errPasswordSame": "New password must be different from the current password.",
     "errInvalidValue": "This value is not valid."
   },
   "expertShell": {

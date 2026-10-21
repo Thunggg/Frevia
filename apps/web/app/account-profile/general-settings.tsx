@@ -18,6 +18,7 @@ import {
   UpdateGeneralProfileSchema,
   type GeneralProfileType,
 } from "@shared/types";
+import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import {
@@ -50,22 +51,12 @@ const ROLE_KEYS = ["ADMIN", "CLIENT", "FREELANCER", "EXPERT"] as const;
 type FieldErrors = Record<string, string>;
 
 /**
- * `account-profile.model.ts` (trong @shared/types) khai báo message validation
- * bằng chuỗi tiếng Anh trực tiếp thay vì key i18n như 19 file schema khác của
- * dự án (auth.message.ts, manage-job.message.ts, ...), và form này gọi
- * `safeParse` trực tiếp nên không đi qua useTranslatedResolver. Bảng dưới ánh
- * xạ chuỗi đó sang key đã dịch; message không khớp sẽ rơi về errInvalidValue
- * nên không bao giờ lộ tiếng Anh. Xem báo cáo để biết cách sửa tận gốc.
+ * `account-profile.model.ts` khai báo message validation bằng key i18n dạng
+ * "Error.X" (xem account-profile.message.ts). Form này gọi `safeParse` trực
+ * tiếp nên không đi qua useTranslatedResolver, vì vậy phải tự dịch key đó bằng
+ * useBackendMessage(). Message không phải key (mặc định của zod) rơi về
+ * errInvalidValue nên không bao giờ lộ tiếng Anh.
  */
-const ZOD_MESSAGE_KEYS: Record<string, string> = {
-  "Password must contain at least 8 characters.": "errPasswordMin",
-  "Password must contain at most 32 characters.": "errPasswordMax",
-  "Password must contain an uppercase letter.": "errPasswordUppercase",
-  "Password must contain a number.": "errPasswordNumber",
-  "Current password is required.": "errCurrentPasswordRequired",
-  "Password confirmation does not match.": "errPasswordMismatch",
-  "New password must be different from the current password.": "errPasswordSame",
-};
 
 /**
  * Lỗi từ ApiFail đi qua proxy BFF đã được dịch sẵn (error.details[].message
@@ -80,12 +71,11 @@ function messageFrom(error: unknown, fallback: string) {
 
 function validationErrors(
   issues: { path: PropertyKey[]; message: string }[],
-  translate: (key: string) => string,
+  resolve: (message: string) => string,
 ) {
   return issues.reduce<FieldErrors>((errors, issue) => {
     const field = String(issue.path[0] ?? "form");
-    const key = ZOD_MESSAGE_KEYS[issue.message];
-    errors[field] ??= key ? translate(key) : translate("errInvalidValue");
+    errors[field] ??= resolve(issue.message);
     return errors;
   }, {});
 }
@@ -184,6 +174,15 @@ export function GeneralSettings() {
     [tSettings],
   );
 
+  const toBackendMessage = useBackendMessage();
+  const resolveIssue = useCallback(
+    (message: string) =>
+      message.startsWith("Error.")
+        ? toBackendMessage(message)
+        : t("errInvalidValue"),
+    [toBackendMessage, t],
+  );
+
   const roleLabel = (name: string) =>
     (ROLE_KEYS as readonly string[]).includes(name) ? tRole(name) : name;
 
@@ -215,7 +214,7 @@ export function GeneralSettings() {
       bio: bio.trim() || null,
     });
     if (!parsed.success) {
-      setProfileErrors(validationErrors(parsed.error.issues, t));
+      setProfileErrors(validationErrors(parsed.error.issues, resolveIssue));
       return;
     }
     setProfileErrors({});
@@ -294,7 +293,7 @@ export function GeneralSettings() {
       confirmPassword,
     });
     if (!parsed.success) {
-      setPasswordErrors(validationErrors(parsed.error.issues, t));
+      setPasswordErrors(validationErrors(parsed.error.issues, resolveIssue));
       return;
     }
     setPasswordErrors({});

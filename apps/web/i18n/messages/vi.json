@@ -1374,13 +1374,6 @@
     "changePasswordAction": "Đổi mật khẩu",
     "strengthLow": "Độ hoàn thiện hồ sơ của bạn là {percent}%. Thay đổi hồ sơ cần quản trị viên duyệt cho đến khi đạt 20%.",
     "strengthOk": "Hồ sơ của bạn đã đạt ngưỡng 20%, nên thay đổi được lưu ngay.",
-    "errPasswordMin": "Mật khẩu phải có ít nhất 8 ký tự.",
-    "errPasswordMax": "Mật khẩu tối đa 32 ký tự.",
-    "errPasswordUppercase": "Mật khẩu phải có ít nhất một chữ in hoa.",
-    "errPasswordNumber": "Mật khẩu phải có ít nhất một chữ số.",
-    "errCurrentPasswordRequired": "Vui lòng nhập mật khẩu hiện tại.",
-    "errPasswordMismatch": "Xác nhận mật khẩu không khớp.",
-    "errPasswordSame": "Mật khẩu mới phải khác mật khẩu hiện tại.",
     "errInvalidValue": "Giá trị này không hợp lệ."
   },
   "expertShell": {

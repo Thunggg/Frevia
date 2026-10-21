@@ -24,6 +24,7 @@ export * from "./message/profile.message";
 export * from "./model/profile.model";
 export * from "./model/profile-revision.model";
 export * from "./model/expert-profile.model";
+export * from "./message/account-profile.message";
 export * from "./model/account-profile.model";
 export * from "./model/review.model";
 export * from "./message/portfolio.message";
