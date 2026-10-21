@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, Send } from "@/components/icons";
@@ -22,6 +23,8 @@ export function NewConversationView({
   participantId,
 }: NewConversationViewProps) {
   const router = useRouter();
+  const t = useTranslations("chat");
+  const tCommon = useTranslations("common");
   const [input, setInput] = useState("");
   const [participantName, setParticipantName] = useState<string | null>(null);
   const [participantAvatar, setParticipantAvatar] = useState<string | null>(null);
@@ -39,12 +42,12 @@ export function NewConversationView({
         setParticipantName(
           response.data.clientProfile.companyName ??
             response.data.displayName ??
-            `User #${participantId}`
+            tCommon("userFallback", { id: participantId }),
         );
         setParticipantAvatar(response.data.avatarUrl ?? null);
       } catch {
         if (!active) return;
-        setParticipantName(`User #${participantId}`);
+        setParticipantName(tCommon("userFallback", { id: participantId }));
       } finally {
         if (active) setLoadingParticipant(false);
       }
@@ -53,9 +56,10 @@ export function NewConversationView({
     return () => {
       active = false;
     };
-  }, [participantId]);
+  }, [participantId, tCommon]);
 
-  const displayName = participantName ?? `User #${participantId}`;
+  const displayName =
+    participantName ?? tCommon("userFallback", { id: participantId });
 
   const handleSend = () => {
     const trimmed = input.trim();
@@ -67,7 +71,7 @@ export function NewConversationView({
       },
       onError: (error) => {
         toastError({
-          message: error.message || "Failed to start conversation",
+          message: error.message || t("startChatFailed"),
         });
       },
     });
@@ -92,10 +96,10 @@ export function NewConversationView({
           </Avatar>
           <div className="min-w-0">
             <h3 className="truncate text-sm font-bold text-foreground font-sans">
-              {loadingParticipant ? "Loading..." : displayName}
+              {loadingParticipant ? t("loading") : displayName}
             </h3>
             <p className="text-[11px] text-muted-foreground font-normal">
-              New conversation
+              {t("newConversationLabel")}
             </p>
           </div>
         </div>
@@ -111,10 +115,10 @@ export function NewConversationView({
             </AvatarFallback>
           </Avatar>
           <p className="mt-3 text-base font-bold text-foreground font-sans">
-            {loadingParticipant ? "Loading..." : displayName}
+            {loadingParticipant ? t("loading") : displayName}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Send a message to start the conversation
+            {t("sendToStart")}
           </p>
         </div>
       </div>
@@ -129,7 +133,7 @@ export function NewConversationView({
           }}
         >
           <input
-            placeholder="Type your first message..."
+            placeholder={t("typeFirstMessage")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"

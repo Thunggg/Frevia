@@ -152,7 +152,7 @@ export function MessageBell() {
                             <span className="inline-flex items-center gap-1">
                               <Paperclip className="h-3 w-3" />
                               {conversation.lastMessage.fileName ??
-                                t("attachment")}
+                                tCommon("attachment")}
                             </span>
                           ) : (
                             (conversation.lastMessage?.message ??
