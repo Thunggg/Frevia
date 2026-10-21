@@ -1,0 +1,747 @@
+\paragraph{Manage Proposal}
+% =================================================================
+% UC-________ View My Proposals
+% =================================================================
+\subparagraph{UC View My Proposals}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View My Proposals} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the ``My Proposals'' page from the navigation menu or profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to retrieve the list of all proposals they have submitted across jobs, with their status and the associated job.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of the freelancer's proposals is displayed, each showing the associated job and its status. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The freelancer can select a proposal to view its detail (UC View My Proposal Detail) or navigate between pages.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View My Proposals} \newline
+1. The Freelancer opens the My Proposals page. \newline
+2. The system retrieves the proposals submitted by the Freelancer. \newline
+3. The system displays the proposal list, each item showing the associated job and its status (pending, accepted, rejected, withdrawn). The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Filter by Status} \textit{(branch at step 3)} \newline
+1. The Freelancer selects a status filter (pending, accepted, rejected, withdrawn). \newline
+2. The system refreshes the displayed list with only the proposals of the selected status. \newline
+3. Return to step 3 of the main flow. \newline
+\textbf{A.2 No Proposals Found} \textit{(branch at step 2)} \newline
+1. The system determines that the freelancer has no submitted proposals. \newline
+2. The system displays a message indicating no proposals are available. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the proposals due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load your proposals. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-01: A freelancer can only view their own proposals. \newline
+BR-PROP-02: Deleted proposals shall not be displayed. \newline
+BR-PROP-03: The list shall support pagination with a default page size of 10.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The list may be sorted by submission time, newest first.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more submitted proposals over time.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View My Proposal Detail
+% =================================================================
+\subparagraph{UC View My Proposal Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View My Proposal Detail} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer opens the detail of their proposal from the My Proposals list or navigates to it directly.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the full details of a submitted proposal, including cover letter, bid amount, estimated duration, attachments, job information, and current status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal details are displayed: cover letter, bid amount, estimated duration, attachments, job information, and status. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} Depending on the status, the freelancer can edit (UC Edit Proposal) or withdraw (UC Withdraw Proposal) the proposal.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View My Proposal Detail} \newline
+1. The Freelancer opens a proposal detail. \newline
+2. The system retrieves the proposal together with its job information. \newline
+3. The system displays the proposal with its cover letter, bid amount, estimated duration, attachments, job information, and current status. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Edit Proposal} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses the edit action. \newline
+2. Continue with UC Edit Proposal. \newline
+\textbf{A.2 Withdraw Proposal} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses the withdraw action. \newline
+2. Continue with UC Withdraw Proposal.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the proposal for the freelancer. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the proposal. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-04: The detail shall be accessible only by the owner of the proposal. \newline
+BR-PROP-05: A proposal is considered not found if it does not exist or belongs to another user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The detail also shows the job title, budget range, deadline, and client display name.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The proposal detail is only reachable by the owning freelancer.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Submit Proposal
+% =================================================================
+\subparagraph{UC Submit Proposal}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Submit Proposal} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to respond to a job that is open for proposals.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to submit a proposal for a job, providing a cover letter, bid amount, estimated duration, and optional attachments.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The freelancer is on a job detail page that is open for proposals.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new proposal is created with status pending. \newline
+\textbf{POST-2} The proposal appears in the freelancer's My Proposals list. \newline
+\textbf{POST-3} The submitted proposal becomes visible to the client.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Submit Proposal} \newline
+1. The Freelancer chooses to submit a proposal for a job. \newline
+2. The Freelancer enters the cover letter, the bid amount, and the estimated duration, and optionally attaches files. \newline
+3. The Freelancer confirms the submission. \newline
+4. The system validates the entered data. \newline
+5. The system creates the proposal with status pending. \newline
+6. The system confirms the submission to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Submit} \textit{(branch at step 3)} \newline
+1. The Freelancer cancels the submission. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Validation Failed} \textit{(branch at step 4)} \newline
+1. The system determines that the entered data is invalid or incomplete. \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 2 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Duplicate Proposal} \textit{(branch at step 5)} \newline
+1. The system detects that the freelancer already has an active proposal for this job. \newline
+2. The system displays a message indicating that a proposal for this job already exists. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Job Not Open} \textit{(branch at step 5)} \newline
+1. The system determines that the job no longer exists or is no longer open for proposals. \newline
+2. The system displays an appropriate error message. \newline
+3. The use case ends. \newline
+\textbf{EX-03: System Error While Submitting} \textit{(branch at step 5)} \newline
+1. The system cannot create the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't submit the proposal. Please try again later.'' \newline
+3. The freelancer remains on the current page without the proposal being created. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-06: Proposal status is pending by default upon submission. \newline
+BR-PROP-07: Cover letter is required and must not exceed 5000 characters. \newline
+BR-PROP-08: Bid amount is required and must be a positive number. \newline
+BR-PROP-09: Estimated duration is required and must be a positive integer (days). \newline
+BR-PROP-10: A freelancer can submit only one active proposal per job.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Attachments are optional and are uploaded together with the proposal.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer is a verified registered freelancer with an active account.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Edit Proposal
+% =================================================================
+\subparagraph{UC Edit Proposal}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Edit Proposal} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to edit their proposal from the My Proposals list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a proposal to update its details (cover letter, bid amount, estimated duration) only while the proposal status is pending.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal details are updated. \newline
+\textbf{POST-2} The updated proposal is reflected in the freelancer's My Proposals list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Proposal} \newline
+1. The Freelancer selects the edit option on a pending proposal. \newline
+2. The system presents the edit form pre-filled with the current values. \newline
+3. The Freelancer updates the cover letter, bid amount, and/or estimated duration. \newline
+4. The Freelancer confirms the changes. \newline
+5. The system validates the updated data. \newline
+6. The system updates the proposal. \newline
+7. The system confirms the update to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Edit} \textit{(branch at step 4)} \newline
+1. The Freelancer cancels the edit. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Validation Failed} \textit{(branch at step 5)} \newline
+1. The system determines that the updated data is invalid or incomplete. \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 6)} \newline
+1. The system cannot find the proposal for the freelancer. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not modify the proposal. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Proposal Not Editable} \textit{(branch at step 6)} \newline
+1. The system determines that the proposal status is no longer pending (accepted, rejected, or withdrawn). \newline
+2. The system displays a message indicating the proposal can no longer be edited. \newline
+3. The use case ends. \newline
+\textbf{EX-03: System Error While Updating} \textit{(branch at step 6)} \newline
+1. The system cannot update the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't update the proposal. Please try again later.'' \newline
+3. The freelancer remains on the current page without the changes being saved. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-11: Only the owner of a proposal can edit it. \newline
+BR-PROP-12: A proposal can only be edited while its status is pending. \newline
+BR-PROP-13: All validation rules of UC Submit Proposal apply to edits.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Editing is not allowed once the proposal has been accepted, rejected, or withdrawn.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit proposals they own.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Withdraw Proposal
+% =================================================================
+\subparagraph{UC Withdraw Proposal}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Withdraw Proposal} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to withdraw their proposal from the My Proposals list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a proposal to withdraw it, changing its status to withdrawn. A proposal that has already been accepted cannot be withdrawn.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal status is set to withdrawn. \newline
+\textbf{POST-2} The proposal is no longer active, so the freelancer may submit a new proposal for the same job.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Withdraw Proposal} \newline
+1. The Freelancer selects the withdraw option on a proposal that is not accepted. \newline
+2. The system asks for confirmation of the withdrawal. \newline
+3. The Freelancer confirms the withdrawal. \newline
+4. The system sets the proposal status to withdrawn. \newline
+5. The system confirms the withdrawal to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Withdraw} \textit{(branch at step 3)} \newline
+1. The Freelancer cancels the withdrawal. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 4)} \newline
+1. The system cannot find the proposal for the freelancer. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not modify the proposal. \newline
+4. The use case ends. \newline
+\textbf{EX-02: Proposal Cannot Be Withdrawn} \textit{(branch at step 4)} \newline
+1. The system determines that the proposal has already been accepted. \newline
+2. The system displays a message indicating an accepted proposal cannot be withdrawn. \newline
+3. The use case ends. \newline
+\textbf{EX-03: System Error While Withdrawing} \textit{(branch at step 4)} \newline
+1. The system cannot update the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't withdraw the proposal. Please try again later.'' \newline
+3. The freelancer remains on the current page without the proposal being withdrawn. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-14: Only the owner of a proposal can withdraw it. \newline
+BR-PROP-15: A proposal cannot be withdrawn once it has been accepted. \newline
+BR-PROP-16: Withdrawal changes the proposal status to withdrawn.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{A withdrawn proposal frees the freelancer to submit a new proposal for the same job if it is still open.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only withdraw proposals they own.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Proposals
+% =================================================================
+\subparagraph{UC View Job Proposals}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Proposals} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client opens the proposals of a job they own from the job detail page or job management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to retrieve all proposals submitted for a specific job they own, including freelancer information, bid amount, cover letter, and status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is authenticated. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of proposals submitted for the job is displayed. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The client can select a proposal to view its detail (UC View Proposal Detail), accept (UC Accept Proposal), or reject (UC Reject Proposal) it.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Proposals} \newline
+1. The Client opens the proposals of a job they own. \newline
+2. The system retrieves the proposals submitted for the job. \newline
+3. The system displays the list, each item showing the freelancer information, bid amount, cover letter, and status (pending, accepted, rejected, withdrawn). The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Filter by Status} \textit{(branch at step 3)} \newline
+1. The Client selects a status filter (pending, accepted, rejected, withdrawn). \newline
+2. The system refreshes the displayed list with only the proposals of the selected status. \newline
+3. Return to step 3 of the main flow. \newline
+\textbf{A.2 No Proposals Found} \textit{(branch at step 2)} \newline
+1. The system determines that no proposals have been submitted for the job. \newline
+2. The system displays a message indicating no proposals are available. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Job Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the job. \newline
+2. The system displays the message ``The job could not be found.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Job Deleted or Unavailable} \textit{(branch at step 2)} \newline
+1. The system determines that the job is deleted or unavailable. \newline
+2. The system displays an appropriate error message. \newline
+3. The use case ends. \newline
+\textbf{EX-03: Forbidden Access} \textit{(branch at step 2)} \newline
+1. The system determines that the job belongs to another client. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-04: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the proposals due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the proposals. Please try again later.'' \newline
+3. The client remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-17: Only the client who owns the job can view its proposals. \newline
+BR-PROP-18: Deleted proposals shall not be displayed. \newline
+BR-PROP-19: The list shall support pagination with a default page size of 10.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The list includes each proposal's freelancer profile, bid amount, cover letter, and status.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Only submitted proposals are listed.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Proposal Detail
+% =================================================================
+\subparagraph{UC View Proposal Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Proposal Detail} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client selects a proposal from a job's proposal list, or a freelancer selects one of their own proposals from the My Proposals list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the job owner or the proposal owner to view the full detail of a proposal: cover letter, bid amount, estimated duration, freelancer profile, and attachments.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal detail is displayed: cover letter, bid amount, estimated duration, freelancer profile, and attachments. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} On the client side, the client can accept (UC Accept Proposal) or reject (UC Reject Proposal) the proposal; on the freelancer side, the freelancer can edit or withdraw (UC Edit Proposal / UC Withdraw Proposal) it.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Proposal Detail} \newline
+1. The User selects a proposal from the relevant list. \newline
+2. The system retrieves the proposal together with the job and the associated freelancer/client profile. \newline
+3. The system verifies that the user is the job owner or the proposal owner. \newline
+4. The system displays the full proposal detail: cover letter, bid amount, estimated duration, freelancer profile, and attachments. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Accept Proposal (Client)} \textit{(branch at step 4)} \newline
+1. The Client chooses the accept action. \newline
+2. Continue with UC Accept Proposal. \newline
+\textbf{A.2 Reject Proposal (Client)} \textit{(branch at step 4)} \newline
+1. The Client chooses the reject action. \newline
+2. Continue with UC Reject Proposal.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the proposal. \newline
+2. The system displays the message ``Proposal not found.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Job Unavailable} \textit{(branch at step 2)} \newline
+1. The system determines that the associated job is deleted or unavailable. \newline
+2. The system displays an appropriate error message. \newline
+3. The use case ends. \newline
+\textbf{EX-03: Forbidden Access} \textit{(branch at step 3)} \newline
+1. The system determines that the user is neither the job owner nor the proposal owner. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-04: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the proposal. Please try again later.'' \newline
+3. The user remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-20: Access to a proposal is limited to the job owner (Client) or the proposal owner (Freelancer). \newline
+BR-PROP-21: A proposal is considered not found if it does not exist or belongs to neither the user nor their job.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The freelancer view and the client job-owner view present the same proposal contents.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each proposal is associated with exactly one job and one freelancer.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Accept Proposal
+% =================================================================
+\subparagraph{UC Accept Proposal}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Accept Proposal} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Freelancer, System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client chooses to accept a pending proposal from a job's proposal list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to accept a freelancer's proposal, changing its status to accepted. The system also rejects the other pending proposals of the job, moves the job to in progress, and creates a contract.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal status is set to accepted. \newline
+\textbf{POST-2} All other pending proposals of the job are rejected. \newline
+\textbf{POST-3} The job status is updated to in progress. \newline
+\textbf{POST-4} A new contract is created for the job and the accepted proposal. \newline
+\textbf{POST-5} A notification is sent to the freelancer.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Accept Proposal} \newline
+1. The Client opens the detail of a pending proposal of a job they own. \newline
+2. The Client chooses the accept action. \newline
+3. The system asks for confirmation of the acceptance. \newline
+4. The Client confirms the acceptance. \newline
+5. The system validates the proposal status and that the job belongs to the current client. \newline
+6. The system sets the proposal status to accepted. \newline
+7. The system rejects the other pending proposals of the job. \newline
+8. The system updates the job status to in progress. \newline
+9. The system creates a contract for the job and the accepted proposal. \newline
+10. The system notifies the Freelancer and confirms the acceptance to the Client. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Accept} \textit{(branch at step 4)} \newline
+1. The Client cancels the acceptance. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 5)} \newline
+1. The system cannot find the proposal. \newline
+2. The system displays the message ``Proposal not found.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Job Unavailable} \textit{(branch at step 5)} \newline
+1. The system determines that the job is deleted or no longer open. \newline
+2. The system displays an appropriate error message. \newline
+3. The use case ends. \newline
+\textbf{EX-03: Forbidden Access} \textit{(branch at step 5)} \newline
+1. The system determines that the job belongs to another client. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-04: Proposal Not Pending} \textit{(branch at step 5)} \newline
+1. The system determines that the proposal status is no longer pending. \newline
+2. The system displays a message indicating the proposal can no longer be accepted. \newline
+3. The use case ends. \newline
+\textbf{EX-05: Proposal Incomplete} \textit{(branch at step 5)} \newline
+1. The system determines that the proposal has no valid bid amount. \newline
+2. The system displays a message that the proposal is incomplete. \newline
+3. The use case ends. \newline
+\textbf{EX-06: System Error While Accepting} \textit{(branch at step 6)} \newline
+1. The system cannot complete the acceptance and contract creation due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't accept the proposal. Please try again later.'' \newline
+3. The client remains on the current page and the proposal is not affected. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-22: Only the client who owns the job can accept a proposal. \newline
+BR-PROP-23: Only a pending proposal can be accepted. \newline
+BR-PROP-24: Accepting a proposal rejects all other pending proposals of the same job. \newline
+BR-PROP-25: Accepting a proposal moves the job status to in progress. \newline
+BR-PROP-26: Accepting a proposal creates a contract whose amount equals the proposal bid amount.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Acceptance and contract creation are performed together as a single unit; the freelancer is notified to review the contract.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The proposal carries a valid bid amount required for contract creation.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Reject Proposal
+% =================================================================
+\subparagraph{UC Reject Proposal}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Reject Proposal} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Freelancer, System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client chooses to reject a pending proposal from a job's proposal list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to reject a freelancer's proposal, changing its status to rejected. The client may optionally provide a rejection reason.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The proposal status is set to rejected. \newline
+\textbf{POST-2} The proposal is no longer actionable by the client.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Reject Proposal} \newline
+1. The Client opens the detail of a pending proposal of a job they own. \newline
+2. The Client chooses the reject action. \newline
+3. The system asks for confirmation of the rejection and allows an optional rejection reason. \newline
+4. The Client enters an optional rejection reason and confirms. \newline
+5. The system validates the proposal status and that the job belongs to the current client. \newline
+6. The system sets the proposal status to rejected. \newline
+7. The system confirms the rejection to the Client. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Reject} \textit{(branch at step 4)} \newline
+1. The Client cancels the rejection. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Proposal Not Found} \textit{(branch at step 5)} \newline
+1. The system cannot find the proposal. \newline
+2. The system displays the message ``Proposal not found.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Job Unavailable} \textit{(branch at step 5)} \newline
+1. The system determines that the job is deleted or unavailable. \newline
+2. The system displays an appropriate error message. \newline
+3. The use case ends. \newline
+\textbf{EX-03: Forbidden Access} \textit{(branch at step 5)} \newline
+1. The system determines that the job belongs to another client. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-04: Proposal Not Pending} \textit{(branch at step 5)} \newline
+1. The system determines that the proposal status is no longer pending. \newline
+2. The system displays a message indicating the proposal can no longer be rejected. \newline
+3. The use case ends. \newline
+\textbf{EX-05: System Error While Rejecting} \textit{(branch at step 6)} \newline
+1. The system cannot update the proposal due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't reject the proposal. Please try again later.'' \newline
+3. The client remains on the current page and the proposal is not affected. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROP-27: Only the client who owns the job can reject a proposal. \newline
+BR-PROP-28: Only a pending proposal can be rejected. \newline
+BR-PROP-29: A rejection reason is optional and stored with the proposal.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Rejecting a proposal does not affect the job status or other proposals.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The client can only reject proposals on jobs they own.} \\ \hline
+
+\end{longtable}

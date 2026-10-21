@@ -1,0 +1,754 @@
+\paragraph{Manage Saved Search}
+% =================================================================
+% UC-________ View Saved Searches
+% =================================================================
+\subparagraph{UC View Saved Searches}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Saved Searches} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the ``Saved Searches'' page from the navigation menu or profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to retrieve all saved job search filters with their labels and filter criteria, so they can review the criteria they previously saved.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of saved searches is displayed, each showing its label and filter criteria. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The freelancer can select a saved search to view its details (UC View Saved Search Detail).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Saved Searches} \newline
+1. The Freelancer opens the Saved Searches page. \newline
+2. The system retrieves the saved searches of the Freelancer. \newline
+3. The system displays the list, each item showing its label and filter criteria (keywords, category, skills, budget). The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Saved Searches Found} \textit{(branch at step 2)} \newline
+1. The system determines that the freelancer has no saved searches. \newline
+2. The system displays a message indicating no saved searches are available. \newline
+3. The use case ends. \newline
+\textbf{A.2 View Saved Search Detail} \textit{(branch at step 3)} \newline
+1. The Freelancer selects a saved search from the list. \newline
+2. Continue with UC View Saved Search Detail.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the saved searches due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load saved searches. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SAVE-01: A freelancer can only view their own saved searches. \newline
+BR-SAVE-02: Saved searches shall be sorted by the time they were saved, newest first. \newline
+BR-SAVE-03: Each saved search shall display its label and its filter criteria (keywords, category, skills, budget).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The saved search list is returned without pagination.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more saved searches over time.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Saved Search Detail
+% =================================================================
+\subparagraph{UC View Saved Search Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Saved Search Detail} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer opens the detail of a saved search from the saved searches list or navigates to it directly.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the full details of a saved search, including its label and all filter criteria such as keywords, category, skills, and budget.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The saved search details are displayed: label and filter criteria. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The freelancer can edit (UC Edit Saved Search), delete (UC Delete Saved Search), or apply the saved search to a job search.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Saved Search Detail} \newline
+1. The Freelancer opens a saved search detail. \newline
+2. The system retrieves the saved search. \newline
+3. The system displays the saved search with its label and filter criteria (keywords, category, skills, budget). The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Apply Saved Search} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses to run the saved search. \newline
+2. Continue with UC View List Job. \newline
+\textbf{A.2 Edit Saved Search} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses the edit action. \newline
+2. Continue with UC Edit Saved Search. \newline
+\textbf{A.3 Delete Saved Search} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses the delete action. \newline
+2. Continue with UC Delete Saved Search.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Saved Search Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the saved search for the freelancer. \newline
+2. The system displays the message ``Saved search not found.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the saved search due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the saved search. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SAVE-04: The detail shall be accessible only by the owner of the saved search. \newline
+BR-SAVE-05: A saved search is considered not found if it does not exist or belongs to another user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Filter criteria include keywords, category, skills, and budget.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The saved search detail is only reachable by the owning freelancer.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Create Saved Search
+% =================================================================
+\subparagraph{UC Create Saved Search}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Create Saved Search} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to save the current search from the job search page or the saved searches feature.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to save the current search parameters as a named filter for quick reuse later.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The freelancer is on the job search page with a search form or has access to the saved searches feature. \newline
+\textbf{PRE-3} The current search parameters are valid.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new saved search is created and stored with its label and filter criteria. \newline
+\textbf{POST-2} The saved search appears in the freelancer's saved searches list with its label. \newline
+\textbf{POST-3} The current search is considered saved.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Saved Search} \newline
+1. The Freelancer chooses to save the current search. \newline
+2. The system prepares a save using the current filter criteria and a default name. \newline
+3. The Freelancer enters a name for the saved search. \newline
+4. The Freelancer confirms the save. \newline
+5. The system validates the name. \newline
+6. The system saves the search with the current filter criteria. \newline
+7. The system confirms the save to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Save} \textit{(branch at step 4)} \newline
+1. The Freelancer cancels the save. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Invalid Name} \textit{(branch at step 5)} \newline
+1. The system determines that the name is empty or exceeds 100 characters. \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Saving} \textit{(branch at step 6)} \newline
+1. The system cannot save the search due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't save the search. Please try again later.'' \newline
+3. The freelancer remains on the current page without the saved search being created. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SAVE-06: The saved search name is required and must not exceed 100 characters. \newline
+BR-SAVE-07: A freelancer may create multiple saved searches; there is no uniqueness constraint on the name. \newline
+BR-SAVE-08: The saved search shall capture the current filter criteria including keywords, category, skills, and budget.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The default name is typically derived from the search criteria (e.g., a keyword or category summary).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The current search parameters are valid at the time of saving.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Edit Saved Search
+% =================================================================
+\subparagraph{UC Edit Saved Search}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Edit Saved Search} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to rename or edit a saved search from the saved searches list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a saved search to modify its name or filter criteria. Only the owner can edit a saved search.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The saved search is updated with the new name and/or filter criteria. \newline
+\textbf{POST-2} The updated label is reflected in the saved searches list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Saved Search} \newline
+1. The Freelancer selects the edit option on a saved search. \newline
+2. The system loads the current name and filter criteria of the saved search. \newline
+3. The Freelancer updates the name and/or the filter criteria. \newline
+4. The Freelancer confirms the changes. \newline
+5. The system validates the new name. \newline
+6. The system updates the saved search. \newline
+7. The system confirms the update to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Edit} \textit{(branch at step 4)} \newline
+1. The Freelancer cancels the edit. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Invalid Name} \textit{(branch at step 5)} \newline
+1. The system determines that the name is empty or exceeds 100 characters. \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Saved Search Not Found} \textit{(branch at step 6)} \newline
+1. The system cannot find the saved search, or the saved search belongs to another user. \newline
+2. The system displays the message ``Saved search not found.'' \newline
+3. The system does not modify the saved search. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Updating} \textit{(branch at step 6)} \newline
+1. The system cannot update the saved search due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't update the saved search. Please try again later.'' \newline
+3. The freelancer remains on the current page without the changes being saved. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SAVE-09: Only the owner of a saved search can edit it. \newline
+BR-SAVE-10: The update shall only affect the saved search belonging to the current user. \newline
+BR-SAVE-11: The name is required and must not exceed 100 characters.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The API supports updating the name; filter criteria may be edited via the search page and re-saved.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit saved searches they own.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Delete Saved Search
+% =================================================================
+\subparagraph{UC Delete Saved Search}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Delete Saved Search} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete a saved search from the saved searches list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a saved search to permanently delete it from the system.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The saved search is permanently removed. \newline
+\textbf{POST-2} The saved search no longer appears in the freelancer's saved searches list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Saved Search} \newline
+1. The Freelancer selects the delete option on a saved search. \newline
+2. The system requests confirmation of the deletion. \newline
+3. The Freelancer confirms the deletion. \newline
+4. The system deletes the saved search. \newline
+5. The system removes the saved search from the list. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Delete} \textit{(branch at step 3)} \newline
+1. The Freelancer cancels the deletion. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Saved Search Not Found} \textit{(branch at step 4)} \newline
+1. The system cannot find the saved search, or the saved search belongs to another user. \newline
+2. The system displays the message ``Saved search not found.'' \newline
+3. The system does not delete the saved search. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Deleting} \textit{(branch at step 4)} \newline
+1. The system cannot delete the saved search due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't delete the saved search. Please try again later.'' \newline
+3. The freelancer remains on the current page without the saved search being deleted. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SAVE-12: Only the owner of a saved search can delete it. \newline
+BR-SAVE-13: Deletion is permanent; the saved search cannot be restored. \newline
+BR-SAVE-14: Deletion shall succeed only if the saved search belongs to the current user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Deleting a saved search does not affect any existing jobs or search results.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only delete saved searches they own.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Alerts
+% =================================================================
+\subparagraph{UC View Job Alerts}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Alerts} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the ``Job Alerts'' page from the navigation menu or profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view all of their job alerts, each showing its criteria, frequency (daily, weekly, or instant), and notification channel.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of job alerts is displayed, each showing its criteria, frequency, and notification channel. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The freelancer can select a job alert to view its details (UC View Job Alert Detail), create a new one (UC Create Job Alert), or manage existing alerts.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Alerts} \newline
+1. The Freelancer opens the Job Alerts page. \newline
+2. The system retrieves the job alerts of the Freelancer. \newline
+3. The system displays each job alert with its criteria (keywords/skills), frequency (daily, weekly, or instant), and notification channel (e.g., email, in-app). The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Job Alerts Found} \textit{(branch at step 2)} \newline
+1. The system determines that the freelancer has no job alerts. \newline
+2. The system displays a message indicating no job alerts are available. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Loading the List} \textit{(branch at step 2)} \newline
+1. The system cannot retrieve the job alerts due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load job alerts. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ALERT-01: A freelancer can only view their own job alerts. \newline
+BR-ALERT-02: Each job alert shall display its criteria (keywords/skills), frequency, and notification channel.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The job alerts list is typically sorted by creation date in descending order.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more job alerts over time.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ View Job Alert Detail
+% =================================================================
+\subparagraph{UC View Job Alert Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC View Job Alert Detail} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer opens the detail of a job alert from the job alerts list or navigates to it directly.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the configuration of a job alert, including its filters, frequency, active status, and the time it was last triggered.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job alert configuration is displayed: filters, frequency, active status, and last triggered time. \newline
+\textbf{POST-2} No data is changed by this use case. \newline
+\textbf{POST-3} The freelancer can edit (UC Edit Job Alert), delete (UC Delete Job Alert), or toggle the alert.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Job Alert Detail} \newline
+1. The Freelancer opens a job alert detail. \newline
+2. The system retrieves the job alert. \newline
+3. The system displays the filters (keywords/skills), frequency, active status, and the last triggered time. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Edit Job Alert} \textit{(branch at step 3)} \newline
+1. The Freelancer chooses the edit action. \newline
+2. Continue with UC Edit Job Alert. \newline
+\textbf{A.2 Toggle Active Status} \textit{(branch at step 3)} \newline
+1. The Freelancer toggles the alert on or off. \newline
+2. The system updates the active status. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Job Alert Not Found} \textit{(branch at step 2)} \newline
+1. The system cannot find the job alert for the freelancer. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The use case ends. \newline
+\textbf{EX-02: System Error While Loading the Detail} \textit{(branch at step 2)} \newline
+1. The system cannot load the job alert due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't load the job alert. Please try again later.'' \newline
+3. The freelancer remains on the current page. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ALERT-03: The detail shall be accessible only by the owner of the job alert. \newline
+BR-ALERT-04: A job alert is considered not found if it does not exist or belongs to another user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The last triggered time is updated whenever the system sends a notification for the alert.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The job alert detail page is only reachable by the owning freelancer.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Create Job Alert
+% =================================================================
+\subparagraph{UC Create Job Alert}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Create Job Alert} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to create a job alert from the job alerts page or the job search page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to create a job alert with criteria, frequency, and delivery channel. The system automatically sends notifications for matching job postings from that point on.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated. \newline
+\textbf{PRE-2} The freelancer provides at least one search criterion (e.g., keywords or skills).
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new job alert is created and stored with its criteria, frequency, and notification channels. \newline
+\textbf{POST-2} The alert is active by default. \newline
+\textbf{POST-3} The system starts sending notifications for future jobs matching the alert criteria.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Job Alert} \newline
+1. The Freelancer chooses to create a job alert. \newline
+2. The system prepares an empty alert form. \newline
+3. The Freelancer enters the alert criteria: keywords (optional), required skills (optional), frequency (daily, weekly, or instant), and notification channel (email and/or in-app). \newline
+4. The Freelancer confirms the creation. \newline
+5. The system validates the criteria. \newline
+6. The system saves the job alert (active by default). \newline
+7. The system confirms the creation to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Create} \textit{(branch at step 4)} \newline
+1. The Freelancer cancels the creation. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Missing Criteria} \textit{(branch at step 5)} \newline
+1. The system determines that no search criterion is provided (empty keywords and skills). \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: System Error While Creating} \textit{(branch at step 6)} \newline
+1. The system cannot create the job alert due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't create the job alert. Please try again later.'' \newline
+3. The freelancer remains on the current page without the job alert being created. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ALERT-05: A job alert shall have at least one search criterion (keywords or skills). \newline
+BR-ALERT-06: Supported frequencies are daily, weekly, and instant. \newline
+BR-ALERT-07: Supported notification channels are email and in-app. \newline
+BR-ALERT-08: A new job alert shall be active by default.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Once created, the system evaluates new job postings against the alert criteria and notifies the freelancer according to the frequency and channel. This notification behavior is handled outside the scope of this use case.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer wants to receive automatic notifications for matching jobs.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Edit Job Alert
+% =================================================================
+\subparagraph{UC Edit Job Alert}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Edit Job Alert} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to edit a job alert from the job alerts list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a job alert to update its criteria, frequency, notification channels, and active status (on/off). Only the owner can edit a job alert.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job alert configuration is updated. \newline
+\textbf{POST-2} Future notifications follow the updated configuration.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Job Alert} \newline
+1. The Freelancer selects the edit option on a job alert. \newline
+2. The system loads the current configuration of the job alert. \newline
+3. The Freelancer updates the criteria, frequency, notification channels, and/or active status. \newline
+4. The Freelancer confirms the changes. \newline
+5. The system validates the criteria. \newline
+6. The system updates the job alert. \newline
+7. The system confirms the update to the Freelancer. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Edit} \textit{(branch at step 4)} \newline
+1. The Freelancer cancels the edit. \newline
+2. The system takes no action. \newline
+3. The use case ends. \newline
+\textbf{A.2 Missing Criteria} \textit{(branch at step 5)} \newline
+1. The system determines that no search criterion is provided (empty keywords and skills). \newline
+2. The system displays an appropriate error message. \newline
+3. Return to step 3 of the main flow.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Job Alert Not Found} \textit{(branch at step 6)} \newline
+1. The system cannot find the job alert, or the job alert belongs to another user. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not modify the job alert. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Updating} \textit{(branch at step 6)} \newline
+1. The system cannot update the job alert due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't update the job alert. Please try again later.'' \newline
+3. The freelancer remains on the current page without the changes being saved. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ALERT-09: Only the owner of a job alert can edit it. \newline
+BR-ALERT-10: The update shall only affect the job alert belonging to the current user. \newline
+BR-ALERT-11: Turning an alert off stops future notifications until it is turned on again.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Editing does not affect already-sent notifications.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit job alerts they own.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-________ Delete Job Alert
+% =================================================================
+\subparagraph{UC Delete Job Alert}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC Delete Job Alert} \\ \hline
+
+Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete a job alert from the job alerts list or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a job alert to permanently delete it. Deleting an alert stops all future notifications for that alert.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The job alert is permanently removed. \newline
+\textbf{POST-2} No further notifications are sent for the deleted alert.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Job Alert} \newline
+1. The Freelancer selects the delete option on a job alert. \newline
+2. The system requests confirmation of the deletion. \newline
+3. The Freelancer confirms the deletion. \newline
+4. The system deletes the job alert. \newline
+5. The system removes the job alert from the list. The use case ends.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Cancel Delete} \textit{(branch at step 3)} \newline
+1. The Freelancer cancels the deletion. \newline
+2. The system takes no action. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Job Alert Not Found} \textit{(branch at step 4)} \newline
+1. The system cannot find the job alert, or the job alert belongs to another user. \newline
+2. The system displays a ``Not Found'' page. \newline
+3. The system does not delete the job alert. \newline
+4. The use case ends. \newline
+\textbf{EX-02: System Error While Deleting} \textit{(branch at step 4)} \newline
+1. The system cannot delete the job alert due to a processing or connection error. \newline
+2. The system displays the message ``Couldn't delete the job alert. Please try again later.'' \newline
+3. The freelancer remains on the current page without the job alert being deleted. \newline
+4. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ALERT-12: Only the owner of a job alert can delete it. \newline
+BR-ALERT-13: Deletion is permanent; the job alert cannot be restored. \newline
+BR-ALERT-14: Deletion shall succeed only if the job alert belongs to the current user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Deleting a job alert immediately stops all future notifications. Already-sent notifications are not retracted.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only delete job alerts they own.} \\ \hline
+
+\end{longtable}

@@ -7,6 +7,7 @@ import type {
   AdminCreateUserBodyType,
   AdminReplaceFreelancerSkillsBodyType,
   AdminUpdateClientProfileBodyType,
+  AdminUpdateExpertProfileType,
   AdminUpdateFreelancerProfileBodyType,
   AdminUpdatePortfolioItemBodyType,
   AdminUpdateUserBodyType,
@@ -76,6 +77,20 @@ export function useUpdateFreelancerProfile() {
       id: number;
       body: AdminUpdateFreelancerProfileBodyType;
     }) => adminApiRequest.updateFreelancerProfile(id, body).then(extractData),
+  });
+}
+
+// Sửa toàn bộ hồ sơ Expert (identity + danh sách + trạng thái hiển thị)
+// Endpoint: PATCH /api/users/:id/expert-profile
+export function useUpdateExpertProfile() {
+  return useMutation({
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: number;
+      body: AdminUpdateExpertProfileType;
+    }) => adminApiRequest.updateExpertProfile(id, body).then(extractData),
   });
 }
 
