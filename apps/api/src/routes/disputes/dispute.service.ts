@@ -76,8 +76,7 @@ export class DisputeService {
       }
 
       if (
-        milestone.paymentStatus === MilestonePaymentStatus.RELEASED ||
-        milestone.paymentStatus === MilestonePaymentStatus.REFUNDED ||
+        milestone.paymentStatus !== MilestonePaymentStatus.FUNDED ||
         milestone.status === MilestoneStatus.COMPLETED
       ) {
         throw MilestoneCannotBeDisputedException();

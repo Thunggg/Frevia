@@ -23,6 +23,8 @@ import {
   Shield,
 } from "@/components/icons";
 import { disputeApiRequest } from "@/apiRequests/dispute";
+import { paymentApiRequest } from "@/apiRequests/payment";
+import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
 import { ApiFail } from "@/lib/http";
 import type {
   DisputeDetailType,
@@ -138,6 +140,11 @@ export function DisputeDialog({
 
   // Form states for fee payment and decision review
   const [isPayingFee, setIsPayingFee] = useState(false);
+  const [feeModalOpen, setFeeModalOpen] = useState(false);
+  const [feeModalConfig, setFeeModalConfig] = useState<{
+    clientSecret: string;
+    amount: number;
+  } | null>(null);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [showRejectInput, setShowRejectInput] = useState(false);
@@ -255,19 +262,29 @@ export function DisputeDialog({
     if (!dispute) return;
     setIsPayingFee(true);
     try {
-      await disputeApiRequest.payFee(dispute.id);
-      toastSuccess({
-        message: "Arbitration fee paid successfully! Your case is proceeding.",
+      const res = await paymentApiRequest.createDisputeFeeIntent(dispute.id);
+      setFeeModalConfig({
+        clientSecret: res.data.clientSecret,
+        amount: res.data.amount,
       });
-      await refetchDispute();
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contractId],
-      });
+      setFeeModalOpen(true);
     } catch (error) {
-      if (error instanceof ApiFail) {
-        toastError({ message: error.message });
-      } else {
-        toastError({ message: "Failed to pay arbitration fee." });
+      // Fallback to direct pay endpoint if Stripe intent is already paid or failed
+      try {
+        await disputeApiRequest.payFee(dispute.id);
+        toastSuccess({
+          message: "Arbitration fee paid successfully! Your case is proceeding.",
+        });
+        await refetchDispute();
+        await queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contractId],
+        });
+      } catch {
+        if (error instanceof ApiFail) {
+          toastError({ message: error.message });
+        } else {
+          toastError({ message: "Failed to initiate arbitration fee payment." });
+        }
       }
     } finally {
       setIsPayingFee(false);
@@ -1012,6 +1029,30 @@ export function DisputeDialog({
           </div>
         )}
       </SheetContent>
+
+      {/* Stripe Arbitration Fee Dialog */}
+      {feeModalConfig && (
+        <StripePaymentDialog
+          open={feeModalOpen}
+          onOpenChange={(open) => {
+            setFeeModalOpen(open);
+            if (!open) setFeeModalConfig(null);
+          }}
+          title="Arbitration Filing Fee"
+          description="A $25.00 arbitration fee required to process this dispute resolution with Frevia."
+          amount={feeModalConfig.amount}
+          clientSecret={feeModalConfig.clientSecret}
+          onSuccess={async () => {
+            await refetchDispute();
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contractId],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contractId],
+            });
+          }}
+        />
+      )}
     </Sheet>
   );
 }

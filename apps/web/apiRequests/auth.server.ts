@@ -1,22 +1,47 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { accessTokenNeedsRefresh, exchangeRefreshToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type { ApiResponse, GetMeResType } from "@shared/types";
 
 const authServerRequest = {
   async getMe(): Promise<GetMeResType | null> {
-    const accessToken = (await cookies()).get("accessToken")?.value;
+    const cookieStore = await cookies();
+    let accessToken = cookieStore.get("accessToken")?.value;
+    const refreshToken = cookieStore.get("refreshToken")?.value;
 
-    if (!accessToken || !envConfig?.NESTJS_API_URL) {
+    if (!envConfig?.NESTJS_API_URL || (!accessToken && !refreshToken)) {
       return null;
     }
 
-    const res = await fetch(`${envConfig.NESTJS_API_URL}/api/auth/me`, {
+    if (accessTokenNeedsRefresh(accessToken) && refreshToken) {
+      const refreshed = await exchangeRefreshToken(refreshToken);
+      if (refreshed?.accessToken) {
+        accessToken = refreshed.accessToken;
+      }
+    }
+
+    if (!accessToken) {
+      return null;
+    }
+
+    let res = await fetch(`${envConfig.NESTJS_API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
     });
+
+    if (res.status === 401 && refreshToken) {
+      const refreshed = await exchangeRefreshToken(refreshToken);
+      if (refreshed?.accessToken) {
+        accessToken = refreshed.accessToken;
+        res = await fetch(`${envConfig.NESTJS_API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          cache: "no-store",
+        });
+      }
+    }
 
     const data = (await res.json()) as ApiResponse<GetMeResType>;
 

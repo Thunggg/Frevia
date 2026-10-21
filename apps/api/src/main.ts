@@ -4,7 +4,9 @@ import { AppModule } from './app.module';
 import { UPLOADS_ROOT } from './routes/conversations/conversation-file.storage';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   app.enableCors({
     origin: process.env.NEXT_URL,
     credentials: true,

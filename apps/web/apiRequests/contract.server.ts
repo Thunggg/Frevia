@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { accessTokenNeedsRefresh, exchangeRefreshToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -68,16 +69,24 @@ async function contractServerFetch<T>(
   }
 
   const cookieStore = await cookies();
-  const accessToken =
+  let accessToken =
     cookieStore.get("accessToken")?.value ??
     cookieStore.get("access_token")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  if (requireAuth && !accessToken) {
+  if (requireAuth && !accessToken && !refreshToken) {
     return null;
   }
 
+  if (requireAuth && accessTokenNeedsRefresh(accessToken) && refreshToken) {
+    const refreshed = await exchangeRefreshToken(refreshToken);
+    if (refreshed?.accessToken) {
+      accessToken = refreshed.accessToken;
+    }
+  }
+
   try {
-    const response = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
+    let response = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -85,6 +94,21 @@ async function contractServerFetch<T>(
       },
       cache: "no-store",
     });
+
+    if (response.status === 401 && refreshToken) {
+      const refreshed = await exchangeRefreshToken(refreshToken);
+      if (refreshed?.accessToken) {
+        accessToken = refreshed.accessToken;
+        response = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          cache: "no-store",
+        });
+      }
+    }
 
     const contentType = response.headers.get("content-type");
     if (!contentType?.includes("application/json")) {

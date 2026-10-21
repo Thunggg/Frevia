@@ -41,8 +41,12 @@ describe('AccountProfileService', () => {
     hash: jest.fn(),
     verify: jest.fn(),
   };
+  const profileRevisionService = {
+    submitRevision: jest.fn(),
+  };
   const service = new AccountProfileService(
     repository as unknown as AccountProfileRepository,
+    profileRevisionService as unknown as ProfileRevisionService,
     cloudinary as unknown as CloudinaryService,
     hashing as unknown as HashingService,
   );

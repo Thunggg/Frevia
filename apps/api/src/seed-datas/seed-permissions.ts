@@ -50,6 +50,7 @@ const freelancerModules = [
   'REVIEWS',
   'DISPUTES',
   'PROFILE-REVISIONS',
+  'PAYMENTS',
 ];
 
 const clientModules = [
@@ -71,6 +72,7 @@ const clientModules = [
   'ACCOUNT-PROFILE',
   'REVIEWS',
   'PROFILE-REVISIONS',
+  'PAYMENTS',
 ];
 
 const expertModules = [
@@ -79,6 +81,7 @@ const expertModules = [
   'EXPERT-PROFILE',
   'PROFILE-REVISIONS',
   'NOTIFICATIONS',
+  'PAYMENTS',
 ];
 
 type AvailableRoute = {

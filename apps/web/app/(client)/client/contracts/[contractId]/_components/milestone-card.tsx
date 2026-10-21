@@ -17,6 +17,7 @@ import {
   Play,
   RotateCcw,
   ShieldAlert,
+  ShieldCheck,
   Trash2,
   Upload,
 } from "@/components/icons";
@@ -54,37 +55,66 @@ function getMilestoneStatusBadge(
   if (paymentStatus === "DISPUTED") {
     return {
       label: "Disputed",
-      className: "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold",
+      className:
+        "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold",
     };
   }
 
-  switch (status) {
-    case "COMPLETED":
-      return {
-        label: "Completed",
-        className: "bg-[#F1F0F5] text-foreground border border-border/80",
-      };
-    case "SUBMITTED":
-      return {
-        label: "Ready for Review",
-        className: "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold",
-      };
-    case "IN_PROGRESS":
-      return {
-        label: "In Progress",
-        className: "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium",
-      };
-    case "CHANGES_REQUESTED":
-      return {
-        label: "Revisions Requested",
-        className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium",
-      };
-    default:
-      return {
-        label: "Upcoming",
-        className: "bg-[#F1F0F5] text-muted-foreground border border-border/60",
-      };
+  if (paymentStatus === "RELEASED") {
+    return {
+      label: "Released / Paid",
+      className:
+        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold",
+    };
   }
+
+  if (paymentStatus === "REFUNDED") {
+    return {
+      label: "Refunded",
+      className:
+        "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold",
+    };
+  }
+
+  if (paymentStatus === "FUNDED") {
+    switch (status) {
+      case "COMPLETED":
+        return {
+          label: "Completed",
+          className: "bg-[#F1F0F5] text-foreground border border-border/80 font-medium",
+        };
+      case "SUBMITTED":
+        return {
+          label: "Ready for Review",
+          className:
+            "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold",
+        };
+      case "IN_PROGRESS":
+        return {
+          label: "In Progress (Funded)",
+          className:
+            "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-300 font-medium",
+        };
+      case "CHANGES_REQUESTED":
+        return {
+          label: "Revisions Requested",
+          className:
+            "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium",
+        };
+      default:
+        return {
+          label: "Funded in Escrow",
+          className:
+            "bg-blue-50 text-[#0069D3] border border-blue-200 font-medium",
+        };
+    }
+  }
+
+  return {
+    label: "Awaiting Escrow Deposit",
+    className:
+      "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-medium",
+  };
 }
 
 interface MilestoneCardProps {
@@ -100,6 +130,9 @@ interface MilestoneCardProps {
   onStartWork?: (milestone: MilestoneType) => void;
   onOpenDispute?: (milestone: MilestoneType) => void;
   onViewDispute?: (milestone: MilestoneType) => void;
+  onFund?: (milestone: MilestoneType) => void;
+  onRelease?: (milestone: MilestoneType) => void;
+  onRefund?: (milestone: MilestoneType) => void;
 }
 
 export function MilestoneCard({
@@ -115,6 +148,9 @@ export function MilestoneCard({
   onStartWork,
   onOpenDispute,
   onViewDispute,
+  onFund,
+  onRelease,
+  onRefund,
 }: MilestoneCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [submissions, setSubmissions] = useState<GetSubmissionResponseType[] | null>(null);
@@ -199,11 +235,38 @@ export function MilestoneCard({
           </div>
         </div>
 
-        {/* Right: Status badge + 3 dots action menu (Client only) + Chevron */}
+        {/* Right: Status badge + Payment Action Buttons + 3 dots action menu + Chevron */}
         <div
           className="flex items-center gap-2 shrink-0 self-start sm:self-center"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Client Payment Action Quick Buttons */}
+          {!isFreelancer && milestone.paymentStatus === "PENDING" && onFund && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => onFund(milestone)}
+              className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-7 px-3 shadow-sm shrink-0"
+            >
+              <ShieldCheck className="mr-1 size-3.5" />
+              Fund Milestone
+            </Button>
+          )}
+
+          {!isFreelancer &&
+            milestone.paymentStatus === "FUNDED" &&
+            onRelease && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => onRelease(milestone)}
+                className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-7 px-3 shadow-sm shrink-0"
+              >
+                <CheckCircle2 className="mr-1 size-3.5" />
+                Release Payment
+              </Button>
+            )}
+
           <span className={`rounded-full px-3 py-1 text-xs ${badge.className}`}>
             {badge.label}
           </span>
@@ -250,6 +313,23 @@ export function MilestoneCard({
                     <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
                   </DropdownMenuItem>
                 )}
+
+                {!isFreelancer &&
+                  milestone.paymentStatus === "FUNDED" &&
+                  onRefund && (
+                    <DropdownMenuItem
+                      onClick={() => onRefund(milestone)}
+                      className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-all outline-none text-rose-600"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RotateCcw className="size-3.5 text-rose-600" />
+                        <span className="text-xs font-medium text-rose-600">
+                          Refund to Client
+                        </span>
+                      </div>
+                      <ChevronRight className="size-3 text-muted-foreground/50 transition-all" />
+                    </DropdownMenuItem>
+                  )}
 
                 {/* View Dispute option */}
                 {milestone.paymentStatus === "DISPUTED" && onViewDispute && (

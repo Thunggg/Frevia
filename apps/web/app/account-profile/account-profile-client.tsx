@@ -4,6 +4,7 @@ import { accountProfileApi } from "@/apiRequests/account-profile";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import {
+  CreditCard,
   ExternalLink,
   Eye,
   Link2,
@@ -14,6 +15,7 @@ import {
   Trash2,
   Upload,
 } from "@/components/icons";
+import { PaymentSettings } from "./payment-settings";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -486,6 +488,9 @@ export function AccountProfileClient({
                     <Heart /> Favorites
                   </TabsTrigger>
                 ) : null}
+                <TabsTrigger value="payments">
+                  <CreditCard /> Payments
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="general">
@@ -1139,6 +1144,10 @@ export function AccountProfileClient({
                     </Button>
                   </div>
                 )}
+              </TabsContent>
+
+              <TabsContent value="payments">
+                <PaymentSettings userRole={headerRole} />
               </TabsContent>
             </Tabs>
           )}

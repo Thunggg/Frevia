@@ -8,6 +8,8 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock,
+  CreditCard,
+  ExternalLink,
   FileText,
   Flag,
   Lightbulb,
@@ -15,6 +17,7 @@ import {
   MessageSquare,
   MoreHorizontal,
   Plus,
+  RotateCcw,
   ShieldCheck,
   Trash2,
   XCircle,
@@ -64,13 +67,14 @@ import { SharedFilesSection } from "./shared-files-section";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { DisputeDialog } from "./dispute-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
+import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
+import { paymentApiRequest } from "@/apiRequests/payment";
 
-function money(amount: number) {
+function money(amount: number | string, currency: string = "USD") {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
+    currency: currency.toUpperCase(),
+  }).format(Number(amount));
 }
 
 function formatDate(date: string | Date | null) {
@@ -129,6 +133,25 @@ export function ContractDetail({
   const [milestoneToDelete, setMilestoneToDelete] =
     useState<MilestoneType | null>(null);
 
+  // Stripe Payment dialog state
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentModalConfig, setPaymentModalConfig] = useState<{
+    clientSecret: string;
+    amount: number;
+    title: string;
+    description: string;
+  } | null>(null);
+  const [isInitiatingPayment, setIsInitiatingPayment] = useState(false);
+
+  // Escrow Release / Refund dialog states
+  const [milestoneToRelease, setMilestoneToRelease] =
+    useState<MilestoneType | null>(null);
+  const [isReleasingMilestone, setIsReleasingMilestone] = useState(false);
+
+  const [milestoneToRefund, setMilestoneToRefund] =
+    useState<MilestoneType | null>(null);
+  const [isRefundingMilestone, setIsRefundingMilestone] = useState(false);
+
   // Loading states
   const [isSigning, setIsSigning] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
@@ -153,6 +176,17 @@ export function ContractDetail({
         .then(extractContractData),
     initialData: initialMilestones ?? undefined,
   });
+
+  const { data: contractTransactionsRes, isLoading: isTransactionsLoading } =
+    useQuery({
+      queryKey: ["contract-transactions", initialContract.id],
+      queryFn: () =>
+        paymentApiRequest
+          .getTransactions({ contractId: initialContract.id, limit: 10 })
+          .then((res) => res.data),
+    });
+
+  const contractTransactions = contractTransactionsRes?.data ?? [];
 
   const milestones = useMemo(
     () => milestonesRes?.data ?? initialMilestones?.data ?? [],
@@ -323,6 +357,123 @@ export function ContractDetail({
       });
     } finally {
       setIsDeletingMilestone(false);
+    }
+  };
+
+  // Payment Handlers
+  const handlePayPlatformFee = async () => {
+    setIsInitiatingPayment(true);
+    try {
+      const res = await paymentApiRequest.createPlatformFeeIntent(contract.id);
+      setPaymentModalConfig({
+        clientSecret: res.data.clientSecret,
+        amount: res.data.amount,
+        title: "Contract Platform Activation Fee",
+        description:
+          "A one-time $10.00 platform fee required to activate Escrow and milestone protections.",
+      });
+      setPaymentModalOpen(true);
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to initiate platform fee payment.",
+      });
+    } finally {
+      setIsInitiatingPayment(false);
+    }
+  };
+
+  const handleFundMilestone = async (milestone: MilestoneType) => {
+    setIsInitiatingPayment(true);
+    try {
+      const res = await paymentApiRequest.createMilestoneFundIntent(
+        contract.id,
+        milestone.id,
+      );
+      setPaymentModalConfig({
+        clientSecret: res.data.clientSecret,
+        amount: res.data.amount,
+        title: `Fund Milestone: ${milestone.title}`,
+        description: `Deposit ${money(Number(milestone.amount))} into Frevia Escrow. Funds are safely held until you approve the completed deliverables.`,
+      });
+      setPaymentModalOpen(true);
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to initiate milestone deposit.",
+      });
+    } finally {
+      setIsInitiatingPayment(false);
+    }
+  };
+
+  const handleConfirmRelease = async () => {
+    if (!milestoneToRelease) return;
+    setIsReleasingMilestone(true);
+    try {
+      await paymentApiRequest.releaseMilestone(
+        contract.id,
+        milestoneToRelease.id,
+      );
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["contract-transactions", contract.id],
+      });
+      toastSuccess({
+        message: `Milestone funds (${money(Number(milestoneToRelease.amount))}) transferred to ${freelancerName} successfully!`,
+      });
+      setMilestoneToRelease(null);
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to release milestone payment. Ensure freelancer has connected their Stripe payout account.",
+      });
+    } finally {
+      setIsReleasingMilestone(false);
+    }
+  };
+
+  const handleConfirmRefund = async () => {
+    if (!milestoneToRefund) return;
+    setIsRefundingMilestone(true);
+    try {
+      await paymentApiRequest.refundMilestone(
+        contract.id,
+        milestoneToRefund.id,
+      );
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["contract-transactions", contract.id],
+      });
+      toastSuccess({
+        message: "Milestone payment refunded to client card successfully.",
+      });
+      setMilestoneToRefund(null);
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to refund milestone payment.",
+      });
+    } finally {
+      setIsRefundingMilestone(false);
     }
   };
 
@@ -585,6 +736,42 @@ export function ContractDetail({
                     Escrow / Milestone Release
                   </span>
                 </div>
+
+                <div className="pt-2 border-t border-border/50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                        Platform Fee
+                      </span>
+                      <span className="text-xs font-semibold text-foreground mt-0.5 block">
+                        $10.00 USD
+                      </span>
+                    </div>
+                    {contract.platformFeeStatus === "PAID" ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                        <CheckCircle2 className="size-3 text-emerald-600" />
+                        Paid
+                      </span>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full">
+                          Unpaid
+                        </span>
+                        {!isFreelancer && contract.status !== "CANCELLED" && (
+                          <Button
+                            size="sm"
+                            disabled={isInitiatingPayment}
+                            onClick={() => void handlePayPlatformFee()}
+                            className="h-7 text-xs rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3 font-medium shadow-xs"
+                          >
+                            <CreditCard className="mr-1 size-3" />
+                            Pay Fee ($10)
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Right Subcolumn */}
@@ -758,6 +945,27 @@ export function ContractDetail({
                           }
                         : undefined
                     }
+                    onFund={
+                      !isFreelancer
+                        ? (m) => {
+                            void handleFundMilestone(m);
+                          }
+                        : undefined
+                    }
+                    onRelease={
+                      !isFreelancer
+                        ? (m) => {
+                            setMilestoneToRelease(m);
+                          }
+                        : undefined
+                    }
+                    onRefund={
+                      !isFreelancer
+                        ? (m) => {
+                            setMilestoneToRefund(m);
+                          }
+                        : undefined
+                    }
                     onOpenDispute={(m) => {
                       setDisputeMilestone(m);
                       setDisputeMode("CREATE");
@@ -772,6 +980,105 @@ export function ContractDetail({
                 ))}
               </div>
             )}
+
+            {/* Contract Payment & Escrow History Card */}
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0069D3]">
+                    <CreditCard className="size-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">
+                      Contract Payment & Escrow History
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      All platform fee, escrow deposit, release, and refund records for this contract
+                    </p>
+                  </div>
+                </div>
+
+                {!isFreelancer && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="rounded-full text-xs h-8 px-3.5 self-start sm:self-center"
+                  >
+                    <Link href="/client/payments">
+                      All Transactions
+                      <ExternalLink className="ml-1.5 size-3" />
+                    </Link>
+                  </Button>
+                )}
+              </div>
+
+              {isTransactionsLoading ? (
+                <div className="py-8 text-center text-muted-foreground">
+                  <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
+                  <span className="text-xs">Loading contract transactions...</span>
+                </div>
+              ) : contractTransactions.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-border/70 p-6 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    No transactions recorded for this contract yet.
+                  </p>
+                  <span className="text-[11px] text-muted-foreground/80 mt-1 block">
+                    When you pay the platform fee or fund milestones, transaction records will appear here.
+                  </span>
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-border/80">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-muted/40 text-muted-foreground border-b border-border/80">
+                      <tr>
+                        <th className="px-3.5 py-2.5 font-semibold">Date</th>
+                        <th className="px-3.5 py-2.5 font-semibold">Type</th>
+                        <th className="px-3.5 py-2.5 font-semibold text-right">Amount</th>
+                        <th className="px-3.5 py-2.5 font-semibold">Status</th>
+                        <th className="px-3.5 py-2.5 font-semibold">Reference ID</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/60">
+                      {contractTransactions.map((tx) => (
+                        <tr key={tx.id} className="hover:bg-muted/30 transition-colors">
+                          <td className="px-3.5 py-2.5 text-muted-foreground whitespace-nowrap">
+                            {new Intl.DateTimeFormat("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }).format(new Date(tx.createdAt))}
+                          </td>
+                          <td className="px-3.5 py-2.5 whitespace-nowrap font-medium">
+                            {tx.type.replace(/_/g, " ")}
+                          </td>
+                          <td className="px-3.5 py-2.5 text-right font-bold whitespace-nowrap">
+                            {money(tx.amount, tx.currency)}
+                          </td>
+                          <td className="px-3.5 py-2.5 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                                tx.status === "SUCCEEDED"
+                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                                  : tx.status === "PENDING"
+                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+                                    : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
+                              }`}
+                            >
+                              {tx.status}
+                            </span>
+                          </td>
+                          <td className="px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
+                            {tx.stripePaymentIntentId || tx.stripeTransferId || tx.stripeRefundId || `TX-${tx.id}`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -808,6 +1115,33 @@ export function ContractDetail({
                 <span>{money(remainingPaidAmount)} remaining</span>
               </div>
             </div>
+
+            {/* Platform Fee Notice Banner for Client */}
+            {!isFreelancer &&
+              contract.platformFeeStatus !== "PAID" &&
+              contract.status !== "CANCELLED" && (
+                <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <ShieldCheck className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-foreground">
+                        Platform Fee ($10.00) Required
+                      </p>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        Pay the platform activation fee to secure your contract with Frevia Escrow protection.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => void handlePayPlatformFee()}
+                    disabled={isInitiatingPayment}
+                    className="w-full h-8 rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold shadow-xs"
+                  >
+                    <CreditCard className="mr-1.5 size-3.5" />
+                    Pay Platform Fee ($10.00)
+                  </Button>
+                </div>
+              )}
 
             {/* Action Buttons */}
             <div className="mt-6 space-y-2.5">
@@ -1197,6 +1531,127 @@ export function ContractDetail({
           });
         }}
       />
+
+      {/* Stripe Payment Dialog for Platform Fee and Escrow Milestone Funding */}
+      {paymentModalConfig && (
+        <StripePaymentDialog
+          open={paymentModalOpen}
+          onOpenChange={(open) => {
+            setPaymentModalOpen(open);
+            if (!open) setPaymentModalConfig(null);
+          }}
+          title={paymentModalConfig.title}
+          description={paymentModalConfig.description}
+          amount={paymentModalConfig.amount}
+          clientSecret={paymentModalConfig.clientSecret}
+          onSuccess={async () => {
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contract.id],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contracts"],
+            });
+          }}
+        />
+      )}
+
+      {/* Dialog: Confirm Release Milestone Payment */}
+      <AlertDialog
+        open={!!milestoneToRelease}
+        onOpenChange={(open) => !open && setMilestoneToRelease(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              Release Milestone Payment
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              Are you sure you want to release{" "}
+              <strong className="text-foreground">
+                {money(Number(milestoneToRelease?.amount ?? 0))}
+              </strong>{" "}
+              held in Escrow to{" "}
+              <strong className="text-foreground">{freelancerName}</strong> for milestone &ldquo;{milestoneToRelease?.title}&rdquo;?
+              <span className="block mt-2 font-medium text-emerald-600 dark:text-emerald-400">
+                Funds will be immediately transferred to the freelancer&apos;s connected Stripe payout account.
+              </span>
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                disabled={isReleasingMilestone}
+                onClick={() => void handleConfirmRelease()}
+                className="w-full rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold"
+              >
+                {isReleasingMilestone ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="mr-1.5 size-3.5" />
+                )}
+                Confirm & Release Payment
+              </Button>
+              <AlertDialogCancel asChild>
+                <Button
+                  variant="outline"
+                  disabled={isReleasingMilestone}
+                  className="w-full rounded-full text-xs"
+                >
+                  Cancel
+                </Button>
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog: Confirm Refund Milestone Payment */}
+      <AlertDialog
+        open={!!milestoneToRefund}
+        onOpenChange={(open) => !open && setMilestoneToRefund(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              Refund Milestone Escrow
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              Are you sure you want to refund{" "}
+              <strong className="text-foreground">
+                {money(Number(milestoneToRefund?.amount ?? 0))}
+              </strong>{" "}
+              for milestone &ldquo;{milestoneToRefund?.title}&rdquo;?
+              <span className="block mt-2 font-medium text-rose-600 dark:text-rose-400">
+                The full escrow amount will be refunded directly to your original payment card via Stripe.
+              </span>
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                disabled={isRefundingMilestone}
+                onClick={() => void handleConfirmRefund()}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold"
+              >
+                {isRefundingMilestone ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <RotateCcw className="mr-1.5 size-3.5" />
+                )}
+                Confirm Refund to Card
+              </Button>
+              <AlertDialogCancel asChild>
+                <Button
+                  variant="outline"
+                  disabled={isRefundingMilestone}
+                  className="w-full rounded-full text-xs"
+                >
+                  Cancel
+                </Button>
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

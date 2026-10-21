@@ -23,7 +23,7 @@ const prisma = new PrismaClient({
 
 const hashingService = new HashingService();
 
-type SeededAccountRole = Exclude<RoleNameType, typeof RoleName.EXPERT>;
+type SeededAccountRole = RoleNameType;
 
 const DEFAULT_EMAIL_AND_PASSWORD: Record<
   SeededAccountRole,
