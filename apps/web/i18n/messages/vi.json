@@ -27,7 +27,10 @@
     "userFallback": "Người dùng #{id}",
     "close": "Đóng",
     "cancel": "Huỷ",
-    "attachment": "Tệp đính kèm"
+    "attachment": "Tệp đính kèm",
+    "notSet": "Chưa đặt",
+    "loadMore": "Tải thêm",
+    "view": "Xem"
   },
   "sessions": {
     "title": "Phiên đăng nhập của tôi",
@@ -394,6 +397,45 @@
     "sendToStart": "Gửi tin nhắn để bắt đầu cuộc trò chuyện",
     "typeFirstMessage": "Nhập tin nhắn đầu tiên...",
     "openingConversation": "Đang mở cuộc trò chuyện..."
+  },
+  "proposalStatus": {
+    "DRAFT": "Bản nháp",
+    "PENDING": "Đang chờ",
+    "ACCEPTED": "Đã chấp nhận",
+    "REJECTED": "Bị từ chối",
+    "WITHDRAWN": "Đã rút"
+  },
+  "proposals": {
+    "title": "Đề xuất của tôi",
+    "subtitle": "Theo dõi bản nháp và đề xuất đã gửi ở một nơi.",
+    "count": "{count, plural, other {# đề xuất}}",
+    "allStatuses": "Tất cả trạng thái",
+    "noBid": "Không đặt giá",
+    "notSubmitted": "Chưa gửi",
+    "loadFailed": "Không thể tải đề xuất của bạn. Vui lòng tải lại trang và thử lại.",
+    "bidLabel": "Giá đặt",
+    "deliveryLabel": "Thời gian",
+    "deliveryDays": "{count, plural, other {# ngày}}",
+    "empty": "Chưa có đề xuất nào",
+    "emptyHint": "Tìm dự án phù hợp với kỹ năng của bạn và gửi đề xuất đầu tiên.",
+    "findWork": "Tìm việc"
+  },
+  "createContract": {
+    "defaultJobTitle": "công việc này",
+    "termsWithDelivery": "Hợp đồng cho \"{jobTitle}\". Công việc sẽ được thực hiện theo đề xuất đã gửi, dự kiến bàn giao trong {days} ngày. Các cột mốc sẽ quy định rõ sản phẩm bàn giao và điều kiện giải ngân.",
+    "termsWithoutDelivery": "Hợp đồng cho \"{jobTitle}\". Công việc sẽ được thực hiện theo đề xuất đã gửi. Các cột mốc sẽ quy định rõ sản phẩm bàn giao và điều kiện giải ngân.",
+    "amountRequired": "Tổng giá trị hợp đồng phải lớn hơn 0",
+    "created": "Đã tạo hợp đồng thành công!",
+    "createFailed": "Không thể tạo hợp đồng. Vui lòng thử lại.",
+    "title": "Thuê & Tạo hợp đồng",
+    "description": "Thiết lập điều khoản thoả thuận chính thức với <strong>{name}</strong>. Sau khi tạo, hai bên có thể ký và nạp tiền cho các cột mốc.",
+    "totalBudget": "Tổng ngân sách hợp đồng (USD)",
+    "amountPlaceholder": "ví dụ: 500",
+    "bidDefaultHint": "Mặc định theo giá freelancer đã đề xuất (${amount}).",
+    "expiration": "Ngày hết hạn / Hạn chót hợp đồng (không bắt buộc)",
+    "termsLabel": "Điều khoản & Phạm vi công việc",
+    "termsPlaceholder": "Nêu rõ điều khoản, kỳ vọng và các cột mốc...",
+    "submit": "Tạo & Chuyển tới hợp đồng"
   },
   "notificationText": {
     "NEW_FOLLOWER": {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FileText, ArrowRight } from "@/components/icons";
@@ -25,26 +26,13 @@ import type {
   ProposalStatusType,
 } from "@shared/types";
 
-const statusLabels: Record<ProposalStatusType, string> = {
-  DRAFT: "Draft",
-  PENDING: "Pending",
-  ACCEPTED: "Accepted",
-  REJECTED: "Rejected",
-  WITHDRAWN: "Withdrawn",
-};
-
-function budget(value: number | null) {
-  return value === null ? "No bid" : `$${value.toLocaleString()}`;
-}
-function date(value: Date | string | null) {
-  return value
-    ? new Intl.DateTimeFormat("en-US", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }).format(new Date(value))
-    : "Not submitted";
-}
+const PROPOSAL_STATUSES = [
+  "DRAFT",
+  "PENDING",
+  "ACCEPTED",
+  "REJECTED",
+  "WITHDRAWN",
+] as const satisfies readonly ProposalStatusType[];
 
 export function MyProposalsContent({
   result,
@@ -57,6 +45,22 @@ export function MyProposalsContent({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("proposals");
+  const tStatus = useTranslations("proposalStatus");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const budget = (value: number | null) =>
+    value === null ? t("noBid") : `$${format.number(value)}`;
+
+  const date = (value: Date | string | null) =>
+    value
+      ? format.dateTime(new Date(value), {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : t("notSubmitted");
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/proposals" : "/proposals");
   const selectedStatus = searchParams.get(
@@ -102,18 +106,17 @@ export function MyProposalsContent({
         >
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-              My Proposals
+              {t("title")}
             </h1>
             <p className="mt-1 text-xs font-normal text-muted-foreground">
-              Track drafts and submitted proposals in one place.
+              {t("subtitle")}
             </p>
           </div>
         </section>
         <section className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">
-              {pagination.totalItems} proposal
-              {pagination.totalItems === 1 ? "" : "s"}
+              {t("count", { count: pagination.totalItems })}
             </p>
             <Select
               value={currentStatus}
@@ -129,10 +132,10 @@ export function MyProposalsContent({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All statuses</SelectItem>
-                {Object.entries(statusLabels).map(([value, label]) => (
+                <SelectItem value="ALL">{t("allStatuses")}</SelectItem>
+                {PROPOSAL_STATUSES.map((value) => (
                   <SelectItem key={value} value={value}>
-                    {label}
+                    {tStatus(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -140,8 +143,7 @@ export function MyProposalsContent({
           </div>
           {proposalsQuery.isError ? (
             <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm text-destructive">
-              We couldn&apos;t load your proposals. Please refresh and try
-              again.
+              {t("loadFailed")}
             </div>
           ) : data.length ? (
             <div className="divide-y divide-border border-y border-border">
@@ -162,7 +164,7 @@ export function MyProposalsContent({
                               : ""
                           }
                         >
-                          {statusLabels[proposal.status]}
+                          {tStatus(proposal.status)}
                         </Badge>
                         <span className="text-sm text-muted-foreground">
                           {date(proposal.submittedAt)}
@@ -180,24 +182,29 @@ export function MyProposalsContent({
                       </p>
                       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
                         <span>
-                          <span className="text-muted-foreground">Bid </span>
+                          <span className="text-muted-foreground">
+                            {t("bidLabel")}{" "}
+                          </span>
                           <strong>{budget(proposal.bidAmount)}</strong>
                         </span>
                         <span>
                           <span className="text-muted-foreground">
-                            Delivery{" "}
+                            {t("deliveryLabel")}{" "}
                           </span>
                           <strong>
                             {proposal.deliveryDays
-                              ? `${proposal.deliveryDays} days`
-                              : "Not set"}
+                              ? t("deliveryDays", {
+                                  count: proposal.deliveryDays,
+                                })
+                              : tCommon("notSet")}
                           </strong>
                         </span>
                       </div>
                     </div>
                     <Button asChild variant="outline" className="shrink-0">
                       <Link href={`${effectiveBasePath}/${proposal.id}`}>
-                        View <ArrowRight className="size-4" />
+                        {tCommon("view")}{" "}
+                        <ArrowRight className="size-4" />
                       </Link>
                     </Button>
                   </div>
@@ -207,17 +214,16 @@ export function MyProposalsContent({
           ) : (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
               <FileText className="mx-auto size-8 text-[#4fae2e]" />
-              <h2 className="mt-4 text-lg font-semibold">No proposals yet</h2>
+              <h2 className="mt-4 text-lg font-semibold">{t("empty")}</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Find a project that matches your skills and send your first
-                proposal.
+                {t("emptyHint")}
               </p>
               <Button
                 asChild
                 className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
               >
                 <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
-                  Find work
+                  {t("findWork")}
                 </Link>
               </Button>
             </div>
@@ -230,7 +236,7 @@ export function MyProposalsContent({
                   router.push(`${effectiveBasePath}?page=${pagination.page + 1}`)
                 }
               >
-                Load more
+                {tCommon("loadMore")}
               </Button>
             </div>
           ) : null}

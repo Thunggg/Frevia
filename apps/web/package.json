@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "check-i18n": "node scripts/check-i18n.cjs",
+    "check-icu": "node scripts/check-icu.mjs",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {

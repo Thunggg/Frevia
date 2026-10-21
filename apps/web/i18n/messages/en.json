@@ -27,7 +27,10 @@
     "userFallback": "User #{id}",
     "close": "Close",
     "cancel": "Cancel",
-    "attachment": "Attachment"
+    "attachment": "Attachment",
+    "notSet": "Not set",
+    "loadMore": "Load more",
+    "view": "View"
   },
   "sessions": {
     "title": "My Sessions",
@@ -394,6 +397,45 @@
     "sendToStart": "Send a message to start the conversation",
     "typeFirstMessage": "Type your first message...",
     "openingConversation": "Opening conversation..."
+  },
+  "proposalStatus": {
+    "DRAFT": "Draft",
+    "PENDING": "Pending",
+    "ACCEPTED": "Accepted",
+    "REJECTED": "Rejected",
+    "WITHDRAWN": "Withdrawn"
+  },
+  "proposals": {
+    "title": "My Proposals",
+    "subtitle": "Track drafts and submitted proposals in one place.",
+    "count": "{count, plural, one {# proposal} other {# proposals}}",
+    "allStatuses": "All statuses",
+    "noBid": "No bid",
+    "notSubmitted": "Not submitted",
+    "loadFailed": "We couldn't load your proposals. Please refresh and try again.",
+    "bidLabel": "Bid",
+    "deliveryLabel": "Delivery",
+    "deliveryDays": "{count, plural, one {# day} other {# days}}",
+    "empty": "No proposals yet",
+    "emptyHint": "Find a project that matches your skills and send your first proposal.",
+    "findWork": "Find work"
+  },
+  "createContract": {
+    "defaultJobTitle": "this job",
+    "termsWithDelivery": "Contract for \"{jobTitle}\". Work will be executed according to the submitted proposal with expected delivery within {days} days. Milestones will outline specific deliverables and payment release criteria.",
+    "termsWithoutDelivery": "Contract for \"{jobTitle}\". Work will be executed according to the submitted proposal. Milestones will outline specific deliverables and payment release criteria.",
+    "amountRequired": "Contract total amount must be greater than 0",
+    "created": "Contract created successfully!",
+    "createFailed": "Failed to create contract. Please try again.",
+    "title": "Hire & Create Contract",
+    "description": "Set up the formal agreement terms with <strong>{name}</strong>. Once created, both parties can sign and fund milestones.",
+    "totalBudget": "Contract Total Budget (USD)",
+    "amountPlaceholder": "e.g. 500",
+    "bidDefaultHint": "Defaulted to freelancer's proposed bid (${amount}).",
+    "expiration": "Contract Expiration / Deadline (Optional)",
+    "termsLabel": "Terms of Engagement & Scope",
+    "termsPlaceholder": "Outline specific terms, expectations, and milestones...",
+    "submit": "Create & Proceed to Contract"
   },
   "notificationText": {
     "NEW_FOLLOWER": {
