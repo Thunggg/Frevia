@@ -342,6 +342,37 @@
     "attachment": "Attachment",
     "noMessagesYet": "No messages yet"
   },
+  "notificationText": {
+    "NEW_FOLLOWER": {
+      "title": "You have a new follower",
+      "message": "{name} started following you."
+    },
+    "PROPOSAL_ACCEPTED": {
+      "title": "Your proposal was accepted",
+      "message": "Your proposal for {jobTitle} was accepted. Review and sign the contract to begin work."
+    },
+    "REVIEW_RECEIVED": {
+      "title": "You received a new review",
+      "message": "{name} left you a review for contract #{contractId}."
+    },
+    "REVIEW_RESPONSE_RECEIVED": {
+      "title": "New response to your review",
+      "message": "{name} responded to your review."
+    },
+    "PROFILE_SUPERSEDED": {
+      "title": "Profile request superseded",
+      "message": "An administrator updated your expert profile directly. Your pending request was closed."
+    },
+    "PROFILE_APPROVED": {
+      "title": "Profile update approved",
+      "message": "Your reviewed profile changes are now visible."
+    },
+    "PROFILE_REJECTED": {
+      "title": "Profile update rejected",
+      "message": "Your profile changes were not approved.",
+      "messageWithReason": "Your profile changes were not approved. Reason: {notes}"
+    }
+  },
   "freelancerProfile": {
     "breadcrumbProfile": "Freelancer profile",
     "unnamed": "Unnamed freelancer",

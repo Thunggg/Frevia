@@ -431,6 +431,7 @@ export class ProposalRepository {
             proposalId,
             jobId,
             contractId: contract.id,
+            jobTitle,
           },
         },
       });

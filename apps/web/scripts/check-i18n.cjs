@@ -152,6 +152,83 @@ function checkPair(label, enRelative, viRelative) {
   }
 }
 
+/**
+ * Thông báo hệ thống được dịch theo `NotificationType` (xem
+ * hooks/use-notification-text.ts) chứ không đọc cột `title`/`message` backend
+ * đã lưu. Allowlist trong hook phải khớp từ điển, nếu lệch thì next-intl sẽ
+ * ném lỗi ngay lúc chạy — nên chặn từ đây.
+ */
+function checkNotificationText() {
+  const source = fs.readFileSync(
+    path.join(root, "hooks/use-notification-text.ts"),
+    "utf8",
+  );
+
+  const readStringList = (name) => {
+    const match = source.match(
+      new RegExp(`${name}\\s*=\\s*\\[([^\\]]*)\\]`, "s"),
+    );
+    return match ? [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : null;
+  };
+
+  const types = readStringList("TRANSLATABLE_NOTIFICATION_TYPES");
+  const kinds = readStringList("TRANSLATABLE_NOTIFICATION_KINDS");
+  if (!types || !kinds) {
+    hasError = true;
+    console.error(
+      "✖ notificationText: không đọc được allowlist trong hooks/use-notification-text.ts",
+    );
+    return;
+  }
+
+  const conditionalKeys = [
+    ...source.matchAll(/([A-Z][A-Z_]+):\s*\{\s*param:/g),
+  ].map((match) => match[1]);
+
+  const catalogs = {
+    en: JSON.parse(
+      fs.readFileSync(path.join(root, "i18n/messages/en.json"), "utf8"),
+    ),
+    vi: JSON.parse(
+      fs.readFileSync(path.join(root, "i18n/messages/vi.json"), "utf8"),
+    ),
+  };
+
+  const missing = [];
+  for (const key of [...types, ...kinds]) {
+    for (const [locale, catalog] of Object.entries(catalogs)) {
+      const entry = catalog.notificationText && catalog.notificationText[key];
+      if (!entry) {
+        missing.push(`${locale} notificationText.${key}`);
+        continue;
+      }
+      for (const field of ["title", "message"]) {
+        if (typeof entry[field] !== "string") {
+          missing.push(`${locale} notificationText.${key}.${field}`);
+        }
+      }
+    }
+    if (conditionalKeys.includes(key)) {
+      for (const [locale, catalog] of Object.entries(catalogs)) {
+        const entry = catalog.notificationText && catalog.notificationText[key];
+        if (!entry || typeof entry.messageWithReason !== "string") {
+          missing.push(`${locale} notificationText.${key}.messageWithReason`);
+        }
+      }
+    }
+  }
+
+  if (missing.length) {
+    hasError = true;
+    console.error(`✖ notificationText: thiếu key → ${missing.join(", ")}`);
+    return;
+  }
+
+  console.log(
+    `✓ notificationText: ${types.length + kinds.length} loại thông báo khớp allowlist`,
+  );
+}
+
 checkPair(
   "UI messages",
   "i18n/messages/en.json",
@@ -162,5 +239,6 @@ checkPair(
   "i18n/backend/en.json",
   "i18n/backend/vi.json",
 );
+checkNotificationText();
 
 if (hasError) process.exit(1);

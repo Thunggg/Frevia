@@ -22,6 +22,7 @@ import {
 } from "@/components/icons";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { useNotificationText } from "@/hooks/use-notification-text";
 import {
   useDeleteNotification,
   useMarkAllNotificationsRead,
@@ -87,6 +88,7 @@ export function NotificationsClient({
   const t = useTranslations("notifications");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const notificationText = useNotificationText();
   const { data: notifications = [], isLoading, isError } = useNotifications();
 
   const formatRelativeTime = (dateString: string): string => {
@@ -253,6 +255,10 @@ export function NotificationsClient({
                 notification.type as string | undefined,
               );
               const isUnread = !notification.isRead;
+              const text = notificationText(
+                notification,
+                t("fallbackTitle"),
+              );
 
               return (
                 <motion.div
@@ -288,7 +294,7 @@ export function NotificationsClient({
                             : "font-medium text-foreground/90"
                         }`}
                       >
-                        {notification.title ?? t("fallbackTitle")}
+                        {text.title}
                       </h3>
                       {isUnread && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-[#4fae2e]/10 px-2 py-0.5 text-[10px] font-semibold text-[#3f9225] dark:text-[#70cf50]">
@@ -297,9 +303,9 @@ export function NotificationsClient({
                       )}
                     </div>
 
-                    {notification.message && (
+                    {text.message && (
                       <p className="mt-1 text-xs sm:text-sm leading-relaxed text-muted-foreground">
-                        {notification.message}
+                        {text.message}
                       </p>
                     )}
 

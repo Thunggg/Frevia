@@ -342,6 +342,37 @@
     "attachment": "Tệp đính kèm",
     "noMessagesYet": "Chưa có tin nhắn"
   },
+  "notificationText": {
+    "NEW_FOLLOWER": {
+      "title": "Bạn có người theo dõi mới",
+      "message": "{name} đã bắt đầu theo dõi bạn."
+    },
+    "PROPOSAL_ACCEPTED": {
+      "title": "Đề xuất của bạn đã được chấp nhận",
+      "message": "Đề xuất của bạn cho {jobTitle} đã được chấp nhận. Hãy xem và ký hợp đồng để bắt đầu công việc."
+    },
+    "REVIEW_RECEIVED": {
+      "title": "Bạn có đánh giá mới",
+      "message": "{name} đã để lại đánh giá cho hợp đồng #{contractId}."
+    },
+    "REVIEW_RESPONSE_RECEIVED": {
+      "title": "Phản hồi mới cho đánh giá của bạn",
+      "message": "{name} đã phản hồi đánh giá của bạn."
+    },
+    "PROFILE_SUPERSEDED": {
+      "title": "Yêu cầu hồ sơ đã bị thay thế",
+      "message": "Quản trị viên đã cập nhật trực tiếp hồ sơ chuyên gia của bạn. Yêu cầu đang chờ của bạn đã được đóng lại."
+    },
+    "PROFILE_APPROVED": {
+      "title": "Cập nhật hồ sơ đã được duyệt",
+      "message": "Các thay đổi hồ sơ đã được duyệt của bạn hiện đã hiển thị."
+    },
+    "PROFILE_REJECTED": {
+      "title": "Cập nhật hồ sơ bị từ chối",
+      "message": "Các thay đổi hồ sơ của bạn chưa được duyệt.",
+      "messageWithReason": "Các thay đổi hồ sơ của bạn chưa được duyệt. Lý do: {notes}"
+    }
+  },
   "freelancerProfile": {
     "breadcrumbProfile": "Hồ sơ freelancer",
     "unnamed": "Freelancer chưa đặt tên",

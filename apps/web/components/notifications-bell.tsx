@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Bell, CheckCheck } from "@/components/icons";
+import { useNotificationText } from "@/hooks/use-notification-text";
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
@@ -25,6 +26,7 @@ function notificationHref(data: unknown): string | null {
 
 export function NotificationsBell() {
   const t = useTranslations("notifications");
+  const notificationText = useNotificationText();
   const { data: notifications = [], isLoading } = useNotifications();
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
@@ -84,14 +86,18 @@ export function NotificationsBell() {
           ) : (
             recent.map((notification) => {
               const href = notificationHref(notification.data);
+              const text = notificationText(
+                notification,
+                t("fallbackTitle"),
+              );
               const content = (
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-foreground">
-                    {notification.title ?? t("fallbackTitle")}
+                    {text.title}
                   </p>
-                  {notification.message ? (
+                  {text.message ? (
                     <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                      {notification.message}
+                      {text.message}
                     </p>
                   ) : null}
                 </div>
