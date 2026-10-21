@@ -1,15 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { AvailabilityStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { calculateFreelancerProfileStrength } from '../../shared/utils/profile-strength';
 
 @Injectable()
 export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
+    const byId = await this.prisma.profile.findFirst({
+      where: {
+        id: profileId,
+        user: {
+          deletedAt: null,
+        },
+      },
+      include: {
+        freelancerProfile: true,
+        user: {
+          include: {
+            userRoles: {
+              include: { role: true },
+            },
+          },
+        },
+      },
+    });
+    if (byId) return byId;
     return this.prisma.profile.findFirst({
       where: {
-        OR: [{ id: profileId }, { userId: profileId }],
+        userId: profileId,
         user: {
           deletedAt: null,
         },
@@ -37,9 +57,27 @@ export class ProfileRepository {
       education?: string[] | null;
       certifications?: string[] | null;
       languages?: string[] | null;
+      experience?: string[] | null;
     },
   ) {
     return this.prisma.$transaction(async (tx) => {
+      const freelancerProfile = await tx.freelancerProfile.findUnique({
+        where: { profileId },
+        select: {
+          _count: {
+            select: {
+              skills: true,
+              portfolioItems: { where: { deletedAt: null } },
+            },
+          },
+        },
+      });
+      const profileCompletionPercent = calculateFreelancerProfileStrength({
+        ...data,
+        skillCount: freelancerProfile?._count.skills ?? 0,
+        portfolioCount: freelancerProfile?._count.portfolioItems ?? 0,
+      });
+
       // 1. Update Profile fields
       await tx.profile.update({
         where: { id: profileId },
@@ -47,6 +85,7 @@ export class ProfileRepository {
           displayName: data.displayName,
           bio: data.bio ?? null,
           availabilityStatus: data.availabilityStatus,
+          profileCompletionPercent,
         },
       });
 
@@ -60,6 +99,7 @@ export class ProfileRepository {
           education: data.education ?? [],
           certifications: data.certifications ?? [],
           languages: data.languages ?? [],
+          experience: data.experience ?? [],
         },
         create: {
           profileId,
@@ -67,6 +107,7 @@ export class ProfileRepository {
           education: data.education ?? [],
           certifications: data.certifications ?? [],
           languages: data.languages ?? [],
+          experience: data.experience ?? [],
         },
       });
 
@@ -80,15 +121,43 @@ export class ProfileRepository {
     });
   }
 
-  async findSkillsByProfileId(profileId: number) {
-    const freelancerProfile = await this.prisma.freelancerProfile.findFirst({
-      where: {
-        OR: [{ profileId }, { profile: { userId: profileId } }],
+  updateCv(
+    profileId: number,
+    data: { cvUrl: string; cvFileName: string; cvPublicId: string | null },
+  ) {
+    return this.prisma.freelancerProfile.upsert({
+      where: { profileId },
+      update: { ...data, cvUploadedAt: new Date() },
+      create: { profileId, ...data, cvUploadedAt: new Date() },
+    });
+  }
+
+  async clearCv(profileId: number) {
+    return this.prisma.freelancerProfile.update({
+      where: { profileId },
+      data: {
+        cvUrl: null,
+        cvFileName: null,
+        cvPublicId: null,
+        cvUploadedAt: null,
       },
     });
+  }
+
+  async findSkillsByProfileId(profileId: number) {
+    const freelancerProfile =
+      (await this.prisma.freelancerProfile.findUnique({
+        where: { profileId },
+      })) ??
+      (await this.prisma.freelancerProfile.findFirst({
+        where: { profile: { userId: profileId } },
+      }));
     if (!freelancerProfile) return [];
     return this.prisma.freelancerSkill.findMany({
-      where: { freelancerProfileId: freelancerProfile.id },
+      where: {
+        freelancerProfileId: freelancerProfile.id,
+        skill: { deletedAt: null },
+      },
       include: { skill: true },
       orderBy: { skill: { name: 'asc' } },
     });
@@ -115,7 +184,10 @@ export class ProfileRepository {
     }
 
     const existing = await this.prisma.skill.findFirst({
-      where: { name: { equals: trimmed, mode: Prisma.QueryMode.insensitive } },
+      where: {
+        deletedAt: null,
+        name: { equals: trimmed, mode: Prisma.QueryMode.insensitive },
+      },
     });
     if (existing) return existing;
 

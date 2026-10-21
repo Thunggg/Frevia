@@ -1,0 +1,305 @@
+\paragraph{Manage Freelancer Portfolio}
+
+% =================================================================
+% UC-12.1 View Portfolio List
+% =================================================================
+
+\subparagraph{UC-12.1 View Portfolio List}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-12.1 View Portfolio List} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer accesses the portfolio section of their profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the freelancer to retrieve and view the list of portfolio items they have created.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database. \newline
+\textbf{PRE-2} The freelancer profile exists and the user is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of the freelancer's active portfolios is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Get Portfolio List} \newline
+1. Freelancer navigates to their portfolio section. \newline
+2. The system retrieves all portfolios associated with the freelancer's ID. \newline
+3. The system filters out any soft-deleted portfolios (where deleted\_at is not null). \newline
+4. The system loads portfolio summaries (e.g., thumbnail, title, short description). \newline
+5. The system displays the portfolio list.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 No Portfolios Found} \newline
+1. The system displays the message ``No portfolios available.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
+1. The system displays the message ``Unable to load portfolios. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-01: Only portfolios with deleted\_at = NULL shall be displayed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Portfolios are linked correctly to the freelancer ID.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-12.2 Add New Portfolio
+% =================================================================
+
+\subparagraph{UC-12.2 Add New Portfolio}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-12.2 Add New Portfolio} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer submits a new portfolio through the creation form.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated freelancer to create a new portfolio entry, optionally uploading media files (images, documents, links).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged in. \newline
+\textbf{PRE-2} The freelancer is viewing their own portfolio management section.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new portfolio record is created in the database. \newline
+\textbf{POST-2} Associated media files are uploaded and linked to the new portfolio. \newline
+\textbf{POST-3} The new portfolio is visible in the freelancer's portfolio list.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Add New Portfolio} \newline
+1. Freelancer clicks the ``Add Portfolio'' button. \newline
+2. The system displays the Add Portfolio form. \newline
+3. Freelancer enters portfolio details (title, description, role, technologies used). \newline
+4. Freelancer optionally uploads media files or provides external links. \newline
+5. Freelancer clicks the ``Save'' button. \newline
+6. The system validates the input data and media file formats/sizes. \newline
+7. The system uploads and stores the media files. \newline
+8. The system creates a new portfolio record in the database. \newline
+9. The system displays the message: ``Portfolio created successfully.'' \newline
+10. The system redirects the freelancer to the updated portfolio list.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Cancel Creation} \newline
+1. Freelancer clicks the ``Cancel'' button. \newline
+2. The system discards the input and any pending uploads. \newline
+3. Return to step A.1.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Required Fields Missing} \newline
+1. The system displays the message ``Portfolio title is required.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Invalid Media Upload} \newline
+1. The system displays the message ``Invalid file format or size limit exceeded.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-03 Database or Storage Failure} \newline
+1. The system displays the message ``Unable to create portfolio. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-02: Portfolio title is a required field. \newline
+BR-PORT-03: Media uploads must conform to system-defined size and type restrictions.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The system has sufficient storage to handle media file uploads.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-12.3 View Portfolio Detail
+% =================================================================
+
+\subparagraph{UC-12.3 View Portfolio Detail}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-12.3 View Portfolio Detail} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer selects a specific portfolio item from the portfolio list.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the freelancer to view detailed information of a specific portfolio, including its full description and attached media.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected portfolio item exists. \newline
+\textbf{PRE-2} The portfolio has not been soft-deleted.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The complete details of the portfolio are displayed successfully.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Get Portfolio Detail} \newline
+1. Freelancer clicks on a portfolio item from the list. \newline
+2. The system retrieves the portfolio details using the portfolio ID. \newline
+3. The system retrieves any associated media links/files. \newline
+4. The system displays the portfolio title, description, skills used, and media gallery.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Portfolio Not Found} \newline
+1. The system displays the message ``Portfolio not found.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
+1. The system displays the message ``Unable to load portfolio details. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-04: Only portfolios with deleted\_at = NULL can be accessed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Media URLs associated with the portfolio are valid and accessible.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-12.4 Update Portfolio
+% =================================================================
+
+\subparagraph{UC-12.4 Update Portfolio}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-12.4 Update Portfolio} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer submits modified details for an existing portfolio.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to update the information and/or replace the media files of an existing portfolio.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged in. \newline
+\textbf{PRE-2} The freelancer is the owner of the selected portfolio. \newline
+\textbf{PRE-3} The portfolio exists and is not soft-deleted.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The portfolio information is updated in the database. \newline
+\textbf{POST-2} New media is stored, and old removed media is unlinked/deleted. \newline
+\textbf{POST-3} The updated portfolio details are visible.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Portfolio} \newline
+1. Freelancer clicks the ``Edit'' option for a portfolio. \newline
+2. The system loads the existing portfolio details into an editable form. \newline
+3. Freelancer modifies portfolio fields and/or uploads new media. \newline
+4. Freelancer clicks the ``Save Changes'' button. \newline
+5. The system validates the updated data and new media files. \newline
+6. The system updates the portfolio record in the database. \newline
+7. The system updates associated media files. \newline
+8. The system displays the message: ``Portfolio updated successfully.'' \newline
+9. The system redirects the freelancer to the updated portfolio list view.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Cancel Update} \newline
+1. Freelancer clicks the ``Cancel'' button. \newline
+2. The system discards all unsaved changes. \newline
+3. Return to step A.1.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Required Fields Missing} \newline
+1. The system displays the message ``Portfolio title is required.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Invalid Media Upload} \newline
+1. The system displays the message ``Invalid file format or size limit exceeded.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-03 Database Connection Failure} \newline
+1. The system displays the message ``Unable to update portfolio. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-05: Only the portfolio owner can edit it. \newline
+BR-PORT-06: Portfolio title remains a required field.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Old media files removed during the update may be permanently deleted from storage to save space.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-12.5 Delete Portfolio
+% =================================================================
+
+\subparagraph{UC-12.5 Delete Portfolio}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-12.5 Delete Portfolio} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer clicks the ``Delete'' option next to a specific portfolio.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove a portfolio from their profile by performing a soft delete operation.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged in. \newline
+\textbf{PRE-2} The freelancer is the owner of the portfolio. \newline
+\textbf{PRE-3} The portfolio exists and is not already deleted.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The portfolio is soft-deleted by updating the deleted\_at field. \newline
+\textbf{POST-2} The portfolio is no longer visible in the portfolio list.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Portfolio} \newline
+1. Freelancer clicks the ``Delete'' option next to a portfolio. \newline
+2. The system displays a confirmation dialog. \newline
+3. Freelancer clicks the ``Confirm'' button. \newline
+4. The system performs a soft delete by updating the deleted\_at field for the portfolio record. \newline
+5. The system displays the message: ``Portfolio deleted successfully.'' \newline
+6. The system removes the portfolio from the visible list.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.3 Cancel Deletion} \newline
+1. Freelancer clicks the ``Cancel'' button in the confirmation dialog. \newline
+2. The system closes the dialog. \newline
+3. Return to step A.1.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Portfolio Not Found} \newline
+1. The system displays the message ``Portfolio not found.'' \newline
+2. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
+1. The system displays the message ``Unable to delete portfolio. Please try again later.'' \newline
+2. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-07: Portfolio deletion must be a soft delete (updating the deleted\_at column). \newline
+BR-PORT-08: Soft-deleted portfolios must not be displayed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Soft-deleted portfolios can potentially be restored by the freelancer if an archive page is implemented.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The soft delete does not immediately remove associated media files from storage.} \\ \hline
+\end{longtable}
+}

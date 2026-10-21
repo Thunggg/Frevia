@@ -15,15 +15,6 @@ export const SkillAdminNotFoundException = () =>
     },
   ]);
 
-// Skill đang được 1 job đang hoạt động dùng → không cho xóa
-export const SkillInUseException = () =>
-  new ConflictException([
-    {
-      message: 'Error.SkillInUse',
-      path: 'skillId',
-    },
-  ]);
-
 export const FailedToLoadSkillListException = () =>
   new InternalServerErrorException([
     {

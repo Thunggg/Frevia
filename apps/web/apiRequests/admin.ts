@@ -12,6 +12,11 @@ import {
   AdminUpdatePortfolioItemBodyType,
   AdminUpdateUserBodyType,
   AdminUpdateUserResponseType,
+  BannerAdminDeleteResponseType,
+  BannerAdminDetailResponseType,
+  BannerCreateBodyType,
+  BannerUploadImageResponseType,
+  BannerUpdateBodyType,
   CreateForumCategoryBodyType,
   UpdateForumCategoryBodyType,
   DeleteForumCategoryResponseType,
@@ -30,8 +35,12 @@ import {
   SkillAdminDetailResponseType,
   AdminUserListResponseType,
   AdminUserDetailResponseType,
+  ApiError,
+  ProfileRevisionType,
+  ProfileRevisionAdminListType,
+  AdminUpdateExpertProfileType,
 } from "@shared/types";
-import { http } from "@/lib/http";
+import { ApiFail, http } from "@/lib/http";
 
 function buildQueryString(
   params: Record<string, string | number | undefined>,
@@ -106,21 +115,23 @@ export const adminApiRequest = {
   updateFreelancerProfile: (
     id: number,
     body: AdminUpdateFreelancerProfileBodyType,
-  ) =>
-    http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+  ) => http.patch<MessageResType>(`/api/users/${id}/freelancer-profile`, body),
+
+  updateExpertProfile: (id: number, body: AdminUpdateExpertProfileType) =>
+    http.patch<MessageResType>(`/api/users/${id}/expert-profile`, body),
 
   // Thay thế toàn bộ kỹ năng (danh sách chọn từ catalog)
   replaceFreelancerSkills: (
     id: number,
     body: AdminReplaceFreelancerSkillsBodyType,
   ) =>
-    http.put<MessageResType>(`/api/users/${id}/freelancer-profile/skills`, body),
+    http.put<MessageResType>(
+      `/api/users/${id}/freelancer-profile/skills`,
+      body,
+    ),
 
   // Portfolio items (tạo mới / sửa / xoá mềm)
-  createPortfolioItem: (
-    id: number,
-    body: AdminCreatePortfolioItemBodyType,
-  ) =>
+  createPortfolioItem: (id: number, body: AdminCreatePortfolioItemBodyType) =>
     http.post<MessageResType>(
       `/api/users/${id}/freelancer-profile/portfolio-items`,
       body,
@@ -150,6 +161,12 @@ export const adminApiRequest = {
   deleteCategory: (id: number) =>
     http.delete<DeleteForumCategoryResponseType>(
       `/api/forums/admin/categories/${id}`,
+    ),
+
+  restoreCategory: (id: number) =>
+    http.patch<ForumCategoryType>(
+      `/api/forums/admin/categories/${id}/restore`,
+      {},
     ),
 
   getPosts: (
@@ -249,4 +266,59 @@ export const adminApiRequest = {
       `/api/admin/identity-verifications/${id}/reject`,
       { reviewNotes: reviewNotes ?? null },
     ),
+
+  getProfileRevisions: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    profileType?: string;
+    search?: string;
+  }) => {
+    const query = buildQueryString(params || {});
+    return http.get<ProfileRevisionAdminListType>(
+      `/api/admin/profile-revisions${query}`,
+    );
+  },
+
+  getProfileRevision: (id: number) =>
+    http.get<ProfileRevisionType>(`/api/admin/profile-revisions/${id}`),
+
+  approveProfileRevision: (id: number, reviewNotes?: string | null) =>
+    http.patch<ProfileRevisionType>(
+      `/api/admin/profile-revisions/${id}/approve`,
+      { reviewNotes: reviewNotes ?? null },
+    ),
+
+  rejectProfileRevision: (id: number, reviewNotes: string) =>
+    http.patch<ProfileRevisionType>(
+      `/api/admin/profile-revisions/${id}/reject`,
+      { reviewNotes },
+    ),
+
+  // ====== Admin quản lý Banner quảng cáo ======
+  uploadBannerImage: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch("/api/backend/api/admin/banners/upload-image", {
+      method: "POST",
+      body: formData,
+    }).then(async (res) => {
+      const data: { success: boolean; data: BannerUploadImageResponseType } =
+        await res.json();
+      if (!res.ok) {
+        throw new ApiFail(data as unknown as ApiError, res.status);
+      }
+      return data.data;
+    });
+  },
+
+  createBanner: (body: BannerCreateBodyType) =>
+    http.post<BannerAdminDetailResponseType>("/api/admin/banners", body),
+
+  updateBanner: (id: number, body: BannerUpdateBodyType) =>
+    http.patch<BannerAdminDetailResponseType>(`/api/admin/banners/${id}`, body),
+
+  deleteBanner: (id: number) =>
+    http.delete<BannerAdminDeleteResponseType>(`/api/admin/banners/${id}`),
 };

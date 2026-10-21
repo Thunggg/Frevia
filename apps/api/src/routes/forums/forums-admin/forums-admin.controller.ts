@@ -45,6 +45,7 @@ export class ForumAdminController {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('search') search: string,
+    @Query('deleted') deleted: string,
     @Query('sortBy') sortBy: 'id' | 'name' | 'createdAt',
     @Query('sortOrder') sortOrder: 'asc' | 'desc',
   ) {
@@ -55,6 +56,7 @@ export class ForumAdminController {
       search || undefined,
       sortBy || undefined,
       sortOrder || undefined,
+      deleted || undefined,
     );
   }
 
@@ -93,6 +95,15 @@ export class ForumAdminController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.adminService.deleteAdminCategory(roleName, id);
+  }
+
+  @Patch('categories/:id/restore')
+  @ZodSerializerDto(ForumAdminCategoryDetailResponseDto)
+  restoreAdminCategory(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.restoreAdminCategory(roleName, id);
   }
 
   @Get('comments')

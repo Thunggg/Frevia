@@ -15,15 +15,20 @@ coverage
 
 # Turbo
 .turbo
+**/.turbo
 
 # Vercel
 .vercel
 
 # Build Outputs
 .next
+**/.next
 out
+**/out
 build
+**/build
 dist
+**/dist
 
 # Debug
 npm-debug.log*

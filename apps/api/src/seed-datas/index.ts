@@ -1,8 +1,8 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { RoleName, type RoleNameType } from '@shared/types';
 import 'dotenv/config';
 import { HashingService } from '../shared/services/hashing.service';
-import { RoleName, type RoleNameType } from '@shared/types';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DB URL');
@@ -23,8 +23,10 @@ const prisma = new PrismaClient({
 
 const hashingService = new HashingService();
 
+type SeededAccountRole = RoleNameType;
+
 const DEFAULT_EMAIL_AND_PASSWORD: Record<
-  RoleNameType,
+  SeededAccountRole,
   {
     email: string;
     password: string;
@@ -42,6 +44,10 @@ const DEFAULT_EMAIL_AND_PASSWORD: Record<
     email: requireSeedCredential('SEED_CLIENT_EMAIL'),
     password: requireSeedCredential('SEED_CLIENT_PASSWORD'),
   },
+  [RoleName.EXPERT]: {
+    email: requireSeedCredential('SEED_EXPERT_EMAIL'),
+    password: requireSeedCredential('SEED_EXPERT_PASSWORD'),
+  },
 };
 
 async function createAccountRole({
@@ -49,7 +55,7 @@ async function createAccountRole({
   role,
 }: {
   email: string;
-  role: RoleNameType;
+  role: SeededAccountRole;
 }) {
   const accountIsExist = await prisma.user.findFirst({
     where: {
@@ -148,6 +154,7 @@ async function main() {
       { name: RoleName.ADMIN, description: 'Administrator role' },
       { name: RoleName.FREELANCER, description: 'Seller role' },
       { name: RoleName.CLIENT, description: 'Client role' },
+      { name: RoleName.EXPERT, description: 'Expert role' },
     ],
     skipDuplicates: true,
   });
@@ -166,6 +173,11 @@ async function main() {
   await createAccountRole({
     email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.CLIENT].email,
     role: RoleName.CLIENT,
+  });
+
+  await createAccountRole({
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.EXPERT].email,
+    role: RoleName.EXPERT,
   });
 }
 

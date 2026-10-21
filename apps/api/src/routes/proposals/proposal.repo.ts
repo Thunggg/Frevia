@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, ProposalStatus } from '@prisma/client';
+import { NotificationType, Prisma, ProposalStatus } from '@prisma/client';
 import {
   CreateProposalBodyType,
   ClientJobProposalsResponseType,
@@ -226,10 +226,18 @@ export class ProposalRepository {
       where: { id: proposalId },
       select: {
         id: true,
+        freelancerId: true,
+        bidAmount: true,
         status: true,
         deletedAt: true,
         job: {
-          select: { id: true, clientId: true, deletedAt: true, status: true },
+          select: {
+            id: true,
+            clientId: true,
+            title: true,
+            deletedAt: true,
+            status: true,
+          },
         },
       },
     });
@@ -374,6 +382,10 @@ export class ProposalRepository {
   async acceptProposal(
     proposalId: number,
     jobId: number,
+    clientId: number,
+    freelancerId: number,
+    bidAmount: number,
+    jobTitle: string,
   ): Promise<ProposalType> {
     return this.prisma.$transaction(async (tx) => {
       const acceptedProposal = await tx.proposal.update({
@@ -395,6 +407,32 @@ export class ProposalRepository {
       await tx.job.update({
         where: { id: jobId },
         data: { status: 'IN_PROGRESS' },
+      });
+
+      const contract = await tx.contract.create({
+        data: {
+          jobId,
+          proposalId,
+          clientId,
+          freelancerId,
+          totalAmount: bidAmount,
+        },
+        select: { id: true },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: freelancerId,
+          type: NotificationType.PROPOSAL_ACCEPTED,
+          title: 'Your proposal was accepted',
+          message: `Your proposal for ${jobTitle} was accepted. Review and sign the contract to begin work.`,
+          data: {
+            href: `/proposals/${proposalId}`,
+            proposalId,
+            jobId,
+            contractId: contract.id,
+          },
+        },
       });
 
       return this.normalize(acceptedProposal);

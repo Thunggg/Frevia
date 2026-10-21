@@ -10,6 +10,7 @@ export const ManageForumMessage = {
 
   FORUM_CATEGORY_HAS_POSTS: "Error.ForumCategoryHasPosts",
   FAILED_TO_DELETE_FORUM_CATEGORY: "Error.FailedToDeleteForumCategory",
+  FAILED_TO_RESTORE_FORUM_CATEGORY: "Error.FailedToRestoreForumCategory",
 
   // --- Internal ---
   INTERNAL_ERROR: "Error.Internal",

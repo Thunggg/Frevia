@@ -25,14 +25,17 @@ import {
   Trash2,
   UserRound,
   UserCheck,
+  UserMinus,
   UserPlus,
 } from "@/components/icons";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
+import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { VerifiedBadge } from "@/components/verified-badge";
+import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { ApiFail } from "@/lib/http";
 import {
   AvailabilityStatus,
@@ -41,6 +44,7 @@ import {
   type FreelancerSkillType,
   type PortfolioItemType,
   type UpdatePortfolioType,
+  type ProfileRevisionType,
 } from "@shared/types";
 import {
   AlertDialog,
@@ -221,6 +225,9 @@ export function ProfilePageClient({
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [unfollowDialogOpen, setUnfollowDialogOpen] = useState(false);
+  const [profileRevision, setProfileRevision] =
+    useState<ProfileRevisionType | null>(null);
 
   const isOwner = Boolean(profile && currentUserId === profile.userId);
 
@@ -261,6 +268,15 @@ export function ProfilePageClient({
       }
 
       setProfile(profileResponse.data);
+      if (currentUserId === profileResponse.data.userId) {
+        try {
+          const revisionResponse =
+            await profileRevisionApiRequest.getMine("FREELANCER");
+          setProfileRevision(revisionResponse.data.revision);
+        } catch {
+          setProfileRevision(null);
+        }
+      }
       setSkills(skillsResponse.data);
       setPortfolios(portfoliosResponse.data);
       setIsFavorite(
@@ -278,7 +294,7 @@ export function ProfilePageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [headerRole, profileId]);
+  }, [currentUserId, headerRole, profileId]);
 
   const toggleFavorite = async () => {
     if (!profile) return;
@@ -317,6 +333,7 @@ export function ProfilePageClient({
         await accountProfileApi.followFreelancer(profile.userId);
       }
       setIsFollowing((current) => !current);
+      if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
         message: isFollowing
           ? "You unfollowed this freelancer."
@@ -377,23 +394,7 @@ export function ProfilePageClient({
     return () => document.removeEventListener("mousedown", closeSkillMenu);
   }, []);
 
-  const completionItems = useMemo(() => {
-    if (!profile) return [];
-    return [
-      Boolean(profile.displayName),
-      Boolean(profile.bio),
-      Boolean(profile.freelancerProfile?.title),
-      Boolean(profile.freelancerProfile?.education?.length),
-      Boolean(profile.freelancerProfile?.certifications?.length),
-      skills.length > 0,
-      portfolios.length > 0,
-    ];
-  }, [profile, skills.length, portfolios.length]);
-  const completion = completionItems.length
-    ? Math.round(
-        (completionItems.filter(Boolean).length / completionItems.length) * 100,
-      )
-    : 0;
+  const completion = profile?.profileCompletionPercent ?? 0;
   const availableSkillOptions = useMemo(
     () =>
       skillOptions.filter(
@@ -441,9 +442,31 @@ export function ProfilePageClient({
         languages: splitValues(profileForm.languages),
       });
       if (!response.success) throw new Error("Profile update failed.");
-      setProfile(response.data);
+      setProfileRevision(response.data.revision);
+      if (!response.data.reviewRequired) {
+        setProfile((current) =>
+          current
+            ? {
+                ...current,
+                displayName: profileForm.displayName,
+                bio: profileForm.bio || null,
+                availabilityStatus: profileForm.availabilityStatus,
+                profileCompletionPercent: response.data.profileStrength,
+                freelancerProfile: current.freelancerProfile
+                  ? {
+                      ...current.freelancerProfile,
+                      title: profileForm.title,
+                      education: splitValues(profileForm.education),
+                      certifications: splitValues(profileForm.certifications),
+                      languages: splitValues(profileForm.languages),
+                    }
+                  : current.freelancerProfile,
+              }
+            : current,
+        );
+      }
       setProfileEditorOpen(false);
-      toastSuccess({ message: "Profile updated successfully." });
+      toastSuccess({ message: response.data.message });
     } catch (error) {
       toastError({
         message: getErrorMessage(
@@ -478,6 +501,20 @@ export function ProfilePageClient({
 
     setPendingAction("skill-add");
     try {
+      const catalogResponse =
+        await profileApiRequest.searchSkillSuggestions(normalizedName);
+      const inCatalog =
+        catalogResponse.success &&
+        catalogResponse.data.some(
+          (option) =>
+            option.name.toLowerCase() === normalizedName.toLowerCase(),
+        );
+      if (!inCatalog) {
+        toastError({
+          message: "Please select a skill from the catalog.",
+        });
+        return;
+      }
       const response = await profileApiRequest.addSkill(profileId, {
         skillName: normalizedName,
         proficiencyLevel,
@@ -635,7 +672,7 @@ export function ProfilePageClient({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex min-h-dvh flex-col bg-background">
         <Header role={headerRole} />
         <main className="flex flex-1 items-center justify-center">
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -649,7 +686,7 @@ export function ProfilePageClient({
 
   if (loadError || !profile) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex min-h-dvh flex-col bg-background">
         <Header role={headerRole} />
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
@@ -693,6 +730,14 @@ export function ProfilePageClient({
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          {isOwner ? (
+            <div className="mb-5">
+              <ProfileReviewStatus
+                revision={profileRevision}
+                profileStrength={completion}
+              />
+            </div>
+          ) : null}
           <div className="overflow-hidden rounded-xl border border-border">
             <div
               className="h-44 bg-[#1a1c1a] bg-cover bg-center dark:bg-[#141514]"
@@ -752,13 +797,19 @@ export function ProfilePageClient({
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant={isFollowing ? "default" : "outline"}
+                      variant={isFollowing ? "outline" : "default"}
                       className={
                         isFollowing
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : ""
+                          ? "border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
+                          : "bg-[#4fae2e] text-white hover:bg-[#459928]"
                       }
-                      onClick={() => void toggleFollowing()}
+                      onClick={() => {
+                        if (isFollowing) {
+                          setUnfollowDialogOpen(true);
+                        } else {
+                          void toggleFollowing();
+                        }
+                      }}
                       disabled={pendingAction === "follow"}
                     >
                       {pendingAction === "follow" ? (
@@ -770,6 +821,44 @@ export function ProfilePageClient({
                       )}
                       {isFollowing ? "Following" : "Follow"}
                     </Button>
+                    <AlertDialog
+                      open={unfollowDialogOpen}
+                      onOpenChange={setUnfollowDialogOpen}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Unfollow {profile.displayName ?? "this freelancer"}?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Their profile will be removed from your following
+                            list. You can follow them again at any time.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel
+                            disabled={pendingAction === "follow"}
+                          >
+                            Keep following
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive text-white hover:bg-destructive/90"
+                            disabled={pendingAction === "follow"}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              void toggleFollowing();
+                            }}
+                          >
+                            {pendingAction === "follow" ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <UserMinus />
+                            )}
+                            Unfollow
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       variant={isFavorite ? "default" : "outline"}
                       className={
@@ -1211,8 +1300,7 @@ export function ProfilePageClient({
           <DialogHeader>
             <DialogTitle>Add freelancer skill</DialogTitle>
             <DialogDescription>
-              Choose from the same skill catalog clients use for jobs, or add a
-              skill that is not listed yet.
+              Choose a skill from the catalog that clients use for jobs.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
@@ -1248,14 +1336,14 @@ export function ProfilePageClient({
                     ) : null}
                     {skillSuggestionStatus === "error" ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        Suggestions are unavailable. You can still type a skill.
+                        Could not load the skill catalog. Please try again.
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success" &&
                     availableSkillOptions.length === 0 ? (
                       <p className="px-3 py-2 text-sm text-muted-foreground">
-                        No matching skill. Your custom skill will still be
-                        saved.
+                        No matching skill in the catalog. Try a different
+                        keyword.
                       </p>
                     ) : null}
                     {skillSuggestionStatus === "success"

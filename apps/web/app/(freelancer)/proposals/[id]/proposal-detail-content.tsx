@@ -10,6 +10,7 @@ import { Controller, useForm, type Resolver } from "react-hook-form";
 import { proposalApiRequest } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { ContractLifecyclePanel } from "@/components/contract-lifecycle-panel";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -51,10 +52,18 @@ function isPast(value: string | Date | null) {
 
 export function ProposalDetailContent({
   proposal,
+  embedded = false,
+  basePath,
 }: {
   proposal: ProposalDetailType;
+  embedded?: boolean;
+  basePath?: string;
 }) {
   const router = useRouter();
+  const effectiveBasePath =
+    basePath ?? (embedded ? "/freelancer/proposals" : "/proposals");
+  const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
+
   const [action, setAction] = useState<"save" | "submit" | "withdraw" | null>(
     null,
   );
@@ -160,35 +169,45 @@ export function ProposalDetailContent({
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role="FREELANCER" />
+    <div
+      className={`flex flex-col bg-background font-sans ${
+        embedded ? "min-h-0 flex-1" : "min-h-dvh"
+      }`}
+    >
+      {!embedded && <Header role="FREELANCER" />}
       <main className="flex-1">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-          <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <section
+          className={
+            embedded
+              ? "border-b border-border bg-background"
+              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+          }
+        >
+          <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
             <Link
-              href="/proposals"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#4fae2e]"
+              href={effectiveBasePath}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-[#0069D3] transition-colors"
             >
               <ArrowLeft className="size-4" />
               My proposals
             </Link>
-            <div className="mt-5 flex flex-wrap items-start justify-between gap-3">
+            <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <Badge variant="secondary">
                   {statusLabel(proposal.status)}
                 </Badge>
-                <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                   {proposal.job.title}
                 </h1>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Client:{" "}
                   {proposal.client.profile?.displayName ??
                     proposal.client.email}
                 </p>
               </div>
               <Link
-                href={`/job/${proposal.job.slug}`}
-                className="text-sm font-medium text-[#4fae2e]"
+                href={`${jobBaseUrl}/${proposal.job.slug}`}
+                className="text-xs font-semibold text-[#0069D3] hover:underline"
               >
                 View job
               </Link>
@@ -196,6 +215,14 @@ export function ProposalDetailContent({
           </div>
         </section>
         <div className="mx-auto grid max-w-5xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:px-8">
+          {proposal.status === "ACCEPTED" ? (
+            <div className="lg:col-span-2">
+              <ContractLifecyclePanel
+                proposalId={proposal.id}
+                role="FREELANCER"
+              />
+            </div>
+          ) : null}
           <section>
             <h2 className="text-xl font-semibold">Your proposal</h2>
             <form onSubmit={submit} className="mt-5">
@@ -374,7 +401,7 @@ export function ProposalDetailContent({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 }

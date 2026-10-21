@@ -25,10 +25,11 @@ import {
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateCategoryDialog } from "./update-category-dialog";
 import { DeleteCategoryDialog } from "./delete-category-dialog";
-import type { ForumCategoryType } from "@shared/types";
+import { RestoreCategoryDialog } from "./restore-category-dialog";
+import type { ForumAdminCategoryType } from "@shared/types";
 
 interface CategoriesTableProps {
-  categories: ForumCategoryType[];
+  categories: ForumAdminCategoryType[];
   pagination: {
     page: number;
     limit: number;
@@ -44,9 +45,9 @@ export function CategoriesTable({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [editingCategory, setEditingCategory] =
-    useState<ForumCategoryType | null>(null);
+    useState<ForumAdminCategoryType | null>(null);
   const [deletingCategory, setDeletingCategory] =
-    useState<ForumCategoryType | null>(null);
+    useState<ForumAdminCategoryType | null>(null);
 
   const currentSortBy = searchParams.get("sortBy") || "id";
   const currentSortOrder = searchParams.get("sortOrder") || "desc";
@@ -100,6 +101,7 @@ export function CategoriesTable({
                 </button>
               </TableHead>
               <TableHead>Slug</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Posts</TableHead>
               <TableHead>
                 <button
@@ -117,7 +119,7 @@ export function CategoriesTable({
             {categories.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
                   No categories found.
@@ -145,6 +147,18 @@ export function CategoriesTable({
                     </code>
                   </TableCell>
                   <TableCell>
+                    {category.deletedAt !== null ? (
+                      <Badge variant="destructive">Deleted</Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
+                      >
+                        Active
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
                     <Badge
                       variant="secondary"
                       className="border border-[#4fae2e]/20 bg-[#eaf8df] text-xs text-[#4fae2e] dark:bg-[#4fae2e]/15"
@@ -158,27 +172,38 @@ export function CategoriesTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                        <Link href={`/admin/categories/${category.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        onClick={() => setEditingCategory(category)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeletingCategory(category)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {category.deletedAt !== null ? (
+                        <RestoreCategoryDialog category={category} />
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            asChild
+                          >
+                            <Link href={`/admin/categories/${category.id}`}>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            onClick={() => setEditingCategory(category)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            onClick={() => setDeletingCategory(category)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

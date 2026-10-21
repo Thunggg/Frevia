@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Shield, User, Calendar } from "lucide-react";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { Badge } from "@repo/ui/components/shadcn/badge";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Button } from "@repo/ui/components/shadcn/button";
 import type { AdminUserDetailResponseType } from "@shared/types";
+import { ArrowLeft, Calendar, Shield, User } from "lucide-react";
+import Link from "next/link";
 
 interface UserDetailHeaderProps {
   user: AdminUserDetailResponseType;
@@ -48,6 +48,17 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
         >
           <Shield className="mr-1 h-3 w-3" /> Admin {isPrimary && "★"}
+        </Badge>
+      );
+    }
+    if (nameLower === "expert") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800"
+        >
+          Expert
         </Badge>
       );
     }
@@ -129,7 +140,9 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
 
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {user.roles.length === 0 ? (
-                  <span className="text-xs text-muted-foreground">No roles assigned</span>
+                  <span className="text-xs text-muted-foreground">
+                    No roles assigned
+                  </span>
                 ) : (
                   user.roles.map((r) => renderRoleBadge(r.name, r.isPrimary))
                 )}
@@ -140,10 +153,14 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           <div className="flex flex-col gap-2 text-right sm:items-end text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              <span>Joined: {new Date(user.createdAt).toLocaleDateString()}</span>
+              <span>
+                Joined: {new Date(user.createdAt).toLocaleDateString()}
+              </span>
             </div>
             <div>
-              <span>Updated: {new Date(user.updatedAt).toLocaleDateString()}</span>
+              <span>
+                Updated: {new Date(user.updatedAt).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </div>

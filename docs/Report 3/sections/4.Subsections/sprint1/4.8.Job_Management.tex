@@ -1,0 +1,200 @@
+% =================================================================
+% UC-06.1 View List Job
+% =================================================================
+
+\subparagraph*{4.8.1 UC-06.1 View List Job}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.1 View List Job} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 20/06/2026 \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client accesses the My Jobs section from the navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a client, I want to view a list of all jobs I have posted so that I can manage their status, review proposals, and track hiring progress.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The system is connected to the database. \newline \textbf{PRE-2} The client is logged in and authenticated.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The list of the client's own posted jobs is retrieved and displayed. \newline \textbf{POST-2} The client can select a job to view its details or proposals.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.0 View Own Job List} \newline 1. Client navigates to the ``My Jobs'' page. \newline 2. The system retrieves all job postings associated with the client's account ID from the \texttt{jobs} table. \newline 3. The system displays each job showing: Title, date posted, status, and the number of received proposals. \newline 4. Client selects a specific job to view details.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.1a No Posted Jobs Found} \newline If the client has not posted any jobs, the system displays: ``You have not posted any jobs yet.'' \newline \textbf{1.1b Database Connection Failure} \newline If the system cannot fetch data, it displays: ``Unable to load job list. Please try again later.''} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-JOB-01: Only jobs with client\_id equal to the authenticated user's ID shall be displayed.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.2 Post New Job
+% =================================================================
+
+\subparagraph*{4.8.2 UC-06.2 Post New Job}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Post New Job} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 20/06/2026 \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the ``Create Job'' button on the job listing page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a client, I want to create and publish a new job posting so that freelancers can apply for it.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The client is logged in and verified. \newline \textbf{PRE-2} The system is connected to the database.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} A new job record is inserted with ``Active'' status in the database. \newline \textbf{POST-2} The job details are displayed on the public marketplace.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.0 Create and Publish Job} \newline 1. Client clicks ``Create Job'' button. \newline 2. System displays the job creation form. \newline 3. Client inputs details: Title, description, budget, required skills, and deadline. \newline 4. Client clicks ``Publish''. \newline 5. System validates inputs. \newline 6. System inserts a new record into the \texttt{jobs} table with status = 'Active'. \newline 7. System redirects the client to the Job Detail page.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.3 Save as Draft} \newline 1. Client selects ``Save as Draft'' instead of ``Publish''. \newline 2. System inserts a new record into the \texttt{jobs} table with status = 'Draft'. \newline 3. System returns the client to the My Jobs list page.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.5a Invalid Budget Input} \newline If the entered budget is lower than the minimum allowed value, the system displays: ``Budget must be greater than the minimum threshold.'' \newline \textbf{1.5b Invalid Deadline Input} \newline If the entered deadline is less than 24 hours from the current time, the system displays: ``Deadline must be at least 24 hours in the future.''} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-JOB-02: Only verified Client accounts can publish jobs. \newline BR-JOB-03: Budget must meet the system minimum threshold. \newline BR-JOB-04: Deadline must be at least 24 hours from creation.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.3 Edit Job
+% =================================================================
+
+\subparagraph*{4.8.3 UC-06.3 Edit Job}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Edit Job} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 20/06/2026 \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the ``Edit'' button on their job detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a client, I want to edit the details of an existing active job posting to update requirements or budget.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The job belongs to the logged-in client. \newline \textbf{PRE-2} The job is in ``Active'' or ``Draft'' status. \newline \textbf{PRE-3} No proposals have been accepted for this job.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The job record is updated in the database. \newline \textbf{POST-2} The updated details are displayed to users.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.0 Edit Job Details} \newline 1. Client selects a job and clicks ``Edit''. \newline 2. System displays the form pre-populated with current details. \newline 3. Client modifies the fields and clicks ``Save''. \newline 4. System validates inputs. \newline 5. System updates the record in the \texttt{jobs} table. \newline 6. System redirects the client to the updated Job Detail page.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.4a Edit Restricted} \newline If the job status is already ``In Progress'' or ``Closed'', the system displays: ``This job cannot be edited because a contract has been signed.''} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-JOB-05: Editing is restricted if there are accepted proposals or signed contracts.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.4 Delete Job
+% =================================================================
+
+\subparagraph*{4.8.4 UC-06.4 Delete Job}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.4 Delete Job} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 20/06/2026 \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the ``Delete'' button on their job listing or detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a client, I want to delete a job posting so that it is removed from the public marketplace.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The job belongs to the logged-in client. \newline \textbf{PRE-2} The database is active.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The job status is updated to ``Deleted'' in the database. \newline \textbf{POST-2} The job is removed from public marketplace view.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.0 Delete Job Posting} \newline 1. Client clicks ``Delete'' icon/button. \newline 2. System displays a confirmation dialog. \newline 3. Client clicks ``Confirm''. \newline 4. System updates the status of the job in the \texttt{jobs} table to 'Deleted'. \newline 5. System refreshes the job list and shows a success toast.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-JOB-06: Deleted jobs remain in the database for auditing and dispute history but are hidden from the marketplace.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-06.5 Change Job Status
+% =================================================================
+
+\subparagraph*{4.8.5 UC-06.5 Change Job Status}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Change Job Status} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 20/06/2026 \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the toggle or status dropdown (e.g. Pause, Reopen, Close) on their job detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a client, I want to change the status of a job posting to control proposal submissions.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The job belongs to the logged-in client. \newline \textbf{PRE-2} The job is active.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The job status is updated in the database. \newline \textbf{POST-2} Users see the updated status on the job details screen.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{1.0 Toggle Status} \newline 1. Client selects a new status (e.g. 'Paused') from the dropdown on the Job Detail page. \newline 2. The system updates the status of the job in the \texttt{jobs} table. \newline 3. The page refreshes, and the new status is displayed.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-JOB-07: Paused or Closed jobs do not accept new proposal submissions.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+\end{longtable}
+

@@ -6,9 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Res,
+  StreamableFile,
+  UploadedFile,
   Put,
   Query,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import type {
   AddFreelancerSkillType,
   UpdateFreelancerProfileType,
@@ -22,7 +26,13 @@ import {
   FreelancerProfileDetailDto,
   AddFreelancerSkillDto,
   AddFreelancerSkillResponseDto,
+  CvUploadResponseDto,
+  CvAnalyzeResponseDto,
+  ProfileRevisionSubmissionDto,
 } from './profile.dto';
+import { UseInterceptors } from '@nestjs/common';
+import { createReadStream } from 'fs';
+import type { Response } from 'express';
 
 @Controller('profiles')
 export class ProfileController {
@@ -36,7 +46,7 @@ export class ProfileController {
   }
 
   @Put(':id')
-  @ZodSerializerDto(FreelancerProfileDetailDto)
+  @ZodSerializerDto(ProfileRevisionSubmissionDto)
   async updateProfile(
     @Param('id', ParseIntPipe) id: number,
     @UserActive('userId') currentUserId: number,
@@ -47,6 +57,57 @@ export class ProfileController {
       currentUserId,
       body as UpdateFreelancerProfileType,
     );
+  }
+
+  @Post(':id/cv')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }),
+  )
+  @ZodSerializerDto(CvUploadResponseDto)
+  uploadCv(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.profileService.uploadCv(id, currentUserId, file);
+  }
+
+  @Get(':id/cv/file')
+  async getCvFile(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const file = await this.profileService.getCvFile(id, currentUserId);
+    if (file.remoteUrl) {
+      return response.redirect(file.remoteUrl);
+    }
+    if (!file.absolutePath) {
+      throw new Error('CV file path is unavailable.');
+    }
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${file.fileName.replace(/"/g, '')}"`,
+    );
+    response.setHeader('Content-Type', 'application/pdf');
+    return new StreamableFile(createReadStream(file.absolutePath));
+  }
+
+  @Post(':id/cv/analyze')
+  @ZodSerializerDto(CvAnalyzeResponseDto)
+  analyzeCv(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.analyzeCv(id, currentUserId);
+  }
+
+  @Delete(':id/cv')
+  deleteCv(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.deleteCv(id, currentUserId);
   }
 
   @Get(':id/skills')

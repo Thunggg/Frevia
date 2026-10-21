@@ -37,7 +37,8 @@ export class RolesService {
     return (
       normalizedName === RoleName.ADMIN.toLowerCase() ||
       normalizedName === RoleName.CLIENT.toLowerCase() ||
-      normalizedName === RoleName.FREELANCER.toLowerCase()
+      normalizedName === RoleName.FREELANCER.toLowerCase() ||
+      normalizedName === RoleName.EXPERT.toLowerCase()
     );
   }
 

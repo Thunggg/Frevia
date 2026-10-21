@@ -1,0 +1,181 @@
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% BASIC PACKAGES
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{enumitem}
+
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{longtable}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese,english]{babel}
+
+%====================================================
+% FONT
+%====================================================
+\usepackage{mathptmx}
+
+%====================================================
+% MATH
+%====================================================
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS
+%====================================================
+\usepackage{graphicx}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=3.0cm,
+    right=2.0cm
+}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+%====================================================
+% SECTION FORMAT
+%====================================================
+\usepackage{titlesec}
+
+%====================================================
+% PARAGRAPH NUMBERING
+%====================================================
+
+\makeatletter
+
+\renewcommand{\theparagraph}
+{\thesubsubsection.\arabic{paragraph}}
+
+\@addtoreset{paragraph}{subsubsection}
+
+\def\toclevel@paragraph{4}
+
+\makeatother
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}
+{\theparagraph}
+{1em}
+{}
+
+\titlespacing*{\paragraph}
+{0pt}
+{3.25ex plus 1ex minus .2ex}
+{1em}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+
+\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=blue
+}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{headerbg}{RGB}{242,226,204}
+
+%====================================================
+% CUSTOM COLUMN TYPES
+%====================================================
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+%====================================================
+% COVER PAGE
+%====================================================
+\input{cover}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\input{table_of_contents}
+
+%====================================================
+% MAIN CONTENT
+%====================================================
+
+\input{sections/1.Product_Overview}
+\input{sections/2.User_Requirement}
+\input{sections/3.Business_Rule}
+\input{sections/4.Functional_Requirement}
+\input{sections/5.Non-Functional_Requirements}
+
+\end{document}

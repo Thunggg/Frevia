@@ -1,0 +1,1089 @@
+\paragraph{Manage Advertisement Banner}
+
+% =================================================================
+% UC-18.1 Advertisement Banners List
+% =================================================================
+
+\subparagraph{UC-18.1 Advertisement Banners List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-18.1 Advertisement Banners List} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Banners Management section from the admin dashboard.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve the list of advertisement banners with their id, title, image, link, position, active period, and status, with support for search, filtering by position and deleted status, sorting, and pagination.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access the banners endpoints (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of banners is displayed with \texttt{id}, \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}, \texttt{deletedAt}, \texttt{createdAt}, and \texttt{updatedAt}. \newline
+\textbf{POST-2} The admin can create (UC-18.3), edit (UC-18.4), delete (UC-18.5), or open a banner detail (UC-18.2).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Advertisement Banners List} \newline
+1. The Admin navigates to the Banners Management page (\texttt{/admin/banners}). \newline
+2. The system sends \texttt{GET /api/admin/banners} with \texttt{page} (default 1), \texttt{limit} (default 10, max 100), and optionally \texttt{search}, \texttt{deleted}, \texttt{position}, \texttt{sortBy}, and \texttt{sortOrder}. \newline
+3. The system queries the AdvertisementBanner table applying the keyword search on \texttt{title} (case-insensitive), the \texttt{position} filter, and the \texttt{deleted} filter (\texttt{true}, \texttt{false}, or absent). \newline
+4. The system sorts the result by \texttt{id} or \texttt{createdAt} in ascending or descending order (default \texttt{desc}). \newline
+5. The system returns the \texttt{banners} array and the pagination metadata \texttt{\{ page, limit, total, totalPages \}}. \newline
+6. The system displays each banner row (image, title, position, start/end dates, status) in the BannersTable together with the BannersFilterBar. \newline
+7. The Admin can search by title, filter by position or status (All/Active/Deleted), sort, or paginate.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Search Banners by Title} \newline
+1. The Admin enters a keyword in the search box. \newline
+2. The system re-queries banners whose \texttt{title} contains the keyword (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 6. \newline
+\textbf{A.2 Filter Banners by Position} \newline
+1. The Admin selects a position in the position dropdown (\texttt{GLOBAL\_HEADER}, \texttt{HOME\_HERO}, \texttt{HOME\_BODY}, \texttt{SEARCH\_RESULTS}, \texttt{FOOTER}). \newline
+2. The system re-queries banners whose \texttt{position} equals the selected value. \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 6. \newline
+\textbf{A.3 Filter Banners by Status} \newline
+1. The Admin selects \texttt{All}, \texttt{Active}, or \texttt{Deleted} in the status filter. \newline
+2. The system re-queries banners with the corresponding \texttt{deleted} flag (absent for All, false for Active, true for Deleted). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 6. \newline
+\textbf{A.4 No Banners Found} \newline
+1. The system determines that no banners match the current search or filters. \newline
+2. The system displays an empty table row. \newline
+3. The Admin remains on the page. \newline
+4. Return to step 6.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the banners from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadBanners''. \newline
+4. The frontend displays the message ``Couldn't load banners. Try again.'' \newline
+5. The banner list is not displayed. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the banner data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any banner information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-BAN-01:} The endpoint \texttt{GET /api/admin/banners} is guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}. \newline
+\textbf{BR-BAN-02:} Search shall match the banner \texttt{title} in a case-insensitive manner. \newline
+\textbf{BR-BAN-03:} The \texttt{position} filter accepts only \texttt{GLOBAL\_HEADER}, \texttt{HOME\_HERO}, \texttt{HOME\_BODY}, \texttt{SEARCH\_RESULTS}, and \texttt{FOOTER}. \newline
+\textbf{BR-BAN-04:} The \texttt{deleted} filter returns only active banners when \texttt{false} or absent, and only soft-deleted banners when \texttt{true}. \newline
+\textbf{BR-BAN-05:} Sorting is restricted to the fields \texttt{id} and \texttt{createdAt}; \texttt{sortOrder} is \texttt{asc} or \texttt{desc} (default \texttt{desc}). \newline
+\textbf{BR-BAN-06:} Pagination shall support \texttt{page >= 1} and \texttt{limit} between 1 and 100.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The list page provides Create, Edit, Delete, and View actions to start UC-18.3, UC-18.4, UC-18.5, and UC-18.2.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Banner records are stored in the AdvertisementBanner table of the system database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-18.2 Banner Detail
+% =================================================================
+
+\subparagraph{UC-18.2 Banner Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-18.2 Banner Detail} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a banner from the banner list (UC-18.1) or navigates directly to a banner detail URL.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the detailed information of a single advertisement banner, including its id, title, image, link, position, active period, status, and timestamps. The detail remains accessible even when the banner is soft-deleted.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{GET /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected banner exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The detailed information of the selected banner is displayed, including the \texttt{deletedAt} field. \newline
+\textbf{POST-2} The admin can edit (UC-18.4) or delete (UC-18.5) the displayed banner.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Banner Detail} \newline
+1. The Admin clicks the view action on a banner row (UC-18.1) or navigates directly to \texttt{/admin/banners/:id}. \newline
+2. The system sends \texttt{GET /api/admin/banners/:id}. \newline
+3. The system queries the banner with the matching \texttt{id}. \newline
+4. The system verifies that the banner exists. \newline
+5. The system returns the banner object with \texttt{id}, \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}, \texttt{deletedAt}, \texttt{createdAt}, and \texttt{updatedAt}. \newline
+6. The system displays the banner details together with Edit and Delete actions.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Banner Not Found} \newline
+1. The Admin opens a banner detail page. \newline
+2. The system determines that no banner exists with the given \texttt{id}. \newline
+3. The system returns the message ``Error.BannerNotFound'' and the frontend displays ``Failed to load banner detail. The banner may not exist.'' \newline
+4. The Admin returns to the banner list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Invalid Banner ID} \newline
+1. The Admin navigates to a banner detail URL with a non-positive or non-integer \texttt{id}. \newline
+2. The system displays the Not Found page. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the banner detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadBannerDetail''. \newline
+4. The banner details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the banner detail data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without banner information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-BAN-07:} A banner detail shall be accessible only when a banner with the given \texttt{id} exists. \newline
+\textbf{BR-BAN-08:} The detail shall include \texttt{id}, \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}, \texttt{deletedAt}, \texttt{createdAt}, and \texttt{updatedAt}; the \texttt{deletedAt} value is returned even when the banner is soft-deleted.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+A soft-deleted banner can still be opened in the detail page, which is used to reach the Edit (UC-18.4) and Delete (UC-18.5) flows.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The banner id is a positive integer.} \\ \hline
+
+\end{longtable}
+% =================================================================
+% UC-18.3 Create Banner
+% =================================================================
+
+\subparagraph{UC-18.3 Create Banner}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-18.3 Create Banner} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create'' button on the Banners Management page (UC-18.1).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to create a new advertisement banner by providing a title (required), an image, an optional link, a position, optional start/end dates, and an active status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{POST /api/admin/banners} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new record is created in the AdvertisementBanner table with the provided fields and \texttt{isActive} (default \texttt{true}). \newline
+\textbf{POST-2} The new banner appears in the banner list (UC-18.1).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Banner} \newline
+1. The Admin clicks the ``Create'' button on the Banners Management page (\texttt{/admin/banners}). \newline
+2. The system opens the BannerFormDialog with fields: \texttt{title} (required), \texttt{imageUrl} (with an upload control), \texttt{linkUrl}, \texttt{position} select (default \texttt{GLOBAL\_HEADER}), \texttt{startDate}/\texttt{endDate} date pickers, and an \texttt{isActive} toggle (default \texttt{true}). \newline
+3. The Admin fills in the fields; if an image is selected, the system sends \texttt{POST /api/admin/banners/upload-image} (multipart, max 10MB, allowed types \texttt{image/jpeg}, \texttt{image/png}, \texttt{image/gif}, \texttt{image/webp}, \texttt{image/bmp}, \texttt{image/tiff}) and stores the returned \texttt{imageUrl}. \newline
+4. The Admin clicks the Save button. \newline
+5. The system validates the request body. \newline
+6. The system sends \texttt{POST /api/admin/banners} with \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, and \texttt{isActive}. \newline
+7. The system checks that no other active banner (\texttt{deletedAt = NULL}) occupies the selected \texttt{position}. \newline
+8. The system checks that \texttt{startDate} is not later than \texttt{endDate} when both are present. \newline
+9. The system creates the banner record and returns the created banner detail. \newline
+10. The system displays the message ``Banner created successfully!'' and refreshes the banner list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Missing Required Title} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{title} is empty. \newline
+3. The frontend disables submission until a title is provided; the backend returns ``Error.BannerTitleRequired'' if submitted empty. \newline
+4. Return to step 3. \newline
+\textbf{A.2 Title Too Long} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{title} exceeds 255 characters. \newline
+3. The system returns the message ``Error.BannerTitleTooLong''. \newline
+4. Return to step 3. \newline
+\textbf{A.3 Image URL or Link URL Too Long} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{imageUrl} or \texttt{linkUrl} exceeds 500 characters. \newline
+3. The system returns ``Error.BannerImageUrlTooLong'' or ``Error.BannerLinkUrlTooLong''. \newline
+4. Return to step 3. \newline
+\textbf{A.4 Position Already Taken} \newline
+1. The Admin submits the form. \newline
+2. The system determines that another active banner (\texttt{deletedAt = NULL}) already occupies the selected \texttt{position}. \newline
+3. The system returns the message ``Error.BannerPositionTaken'' (409). \newline
+4. Return to step 3. \newline
+\textbf{A.5 Invalid Date Range} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{startDate} is later than \texttt{endDate}. \newline
+3. The system returns the message ``Error.BannerInvalidDateRange''. \newline
+4. Return to step 3. \newline
+\textbf{A.6 No Image Selected} \newline
+1. The Admin attempts to upload without a file. \newline
+2. The system returns the message ``Error.BannerImageRequired'' (400). \newline
+3. Return to step 3. \newline
+\textbf{A.7 Invalid Image Type} \newline
+1. The Admin uploads a file whose type is not supported. \newline
+2. The system returns the message ``Error.BannerImageInvalidType'' (400). \newline
+3. Return to step 3. \newline
+\textbf{A.8 Image Too Large} \newline
+1. The Admin uploads a file larger than 10MB. \newline
+2. The system returns the message ``Error.BannerImageTooLarge'' (400). \newline
+3. Return to step 3. \newline
+\textbf{A.9 Admin Cancels Creation} \newline
+1. The Admin clicks the ``Cancel'' button in the BannerFormDialog. \newline
+2. The system discards the unsaved data and closes the dialog. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the banner record in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToCreateBanner''. \newline
+4. The frontend displays ``Failed to create banner. Try again.'' \newline
+5. The banner is not created. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Image Upload Failure} \newline
+1. The system attempts to upload the image. \newline
+2. The Cloudinary (or local storage) operation fails. \newline
+3. The system returns the message ``Error.FailedToUploadBannerImage''. \newline
+4. The banner is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while creating the banner. \newline
+2. The system cannot save the banner data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the banner being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-BAN-09:} The banner \texttt{title} is required and shall not exceed 255 characters. \newline
+\textbf{BR-BAN-10:} \texttt{imageUrl} and \texttt{linkUrl} are optional, must be valid URLs when provided, and shall not exceed 500 characters. \newline
+\textbf{BR-BAN-11:} \texttt{position} defaults to \texttt{GLOBAL\_HEADER} and shall be one of the banner position enum values. \newline
+\textbf{BR-BAN-12:} Only one active banner (\texttt{deletedAt = NULL}) is allowed per \texttt{position}; otherwise \texttt{Error.BannerPositionTaken} (409) is returned. \newline
+\textbf{BR-BAN-13:} When both \texttt{startDate} and \texttt{endDate} are present, \texttt{startDate} must be earlier than or equal to \texttt{endDate}; otherwise \texttt{Error.BannerInvalidDateRange}. \newline
+\textbf{BR-BAN-14:} \texttt{isActive} defaults to \texttt{true} when not provided. \newline
+\textbf{BR-BAN-15:} Uploaded images must be at most 10MB and of type \texttt{image/jpeg}, \texttt{image/png}, \texttt{image/gif}, \texttt{image/webp}, \texttt{image/bmp}, or \texttt{image/tiff}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The image is uploaded through \texttt{POST /api/admin/banners/upload-image}; it is uploaded to Cloudinary when configured, otherwise it is saved locally, and \texttt{\{ imageUrl, publicId \}} is returned.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The banner image is provided either by upload or by an image URL.} \\ \hline
+
+\end{longtable}
+% =================================================================
+% UC-18.4 Edit Banner
+% =================================================================
+
+\subparagraph{UC-18.4 Edit Banner}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-18.4 Edit Banner} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a banner row (UC-18.1) or on the banner detail page (UC-18.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update an existing advertisement banner's title, image, link, position, active period, or active status. All fields are optional in the update request.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected banner exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The banner's \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, and/or \texttt{isActive} are updated in the AdvertisementBanner table. \newline
+\textbf{POST-2} The updated banner is displayed in the banner list (UC-18.1).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Banner} \newline
+1. The Admin clicks the edit action on a banner row (UC-18.1) or on the banner detail page (UC-18.2). \newline
+2. The system opens the BannerFormDialog pre-filled with the current banner values (\texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}). \newline
+3. The Admin modifies the desired fields; the image can be replaced through \texttt{POST /api/admin/banners/upload-image}. \newline
+4. The Admin clicks the Save Changes button. \newline
+5. The system sends \texttt{PATCH /api/admin/banners/:id} with only the changed fields. \newline
+6. The system verifies that the banner exists. \newline
+7. If \texttt{position} is changed, the system checks that the new position is not taken by another active banner (\texttt{deletedAt = NULL}), excluding the banner itself. \newline
+8. The system applies the same date range rule as creation when both \texttt{startDate} and \texttt{endDate} are present. \newline
+9. The system updates the banner record and returns the updated banner detail. \newline
+10. The system displays the message ``Banner updated successfully!'' and refreshes the page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Banner Not Found} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that the banner does not exist. \newline
+3. The system returns the message ``Error.BannerNotFound'' (404). \newline
+4. The Admin returns to the banner list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Position Already Taken} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that another active banner already occupies the new \texttt{position}. \newline
+3. The system returns the message ``Error.BannerPositionTaken'' (409). \newline
+4. Return to step 3. \newline
+\textbf{A.3 Invalid Date Range} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that \texttt{startDate} is later than \texttt{endDate}. \newline
+3. The system returns the message ``Error.BannerInvalidDateRange''. \newline
+4. Return to step 3. \newline
+\textbf{A.4 Validation Errors} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that \texttt{title} is empty, exceeds 255 characters, or that \texttt{imageUrl}/\texttt{linkUrl} exceed 500 characters. \newline
+3. The system returns the corresponding validation error (\texttt{BannerTitleRequired}, \texttt{BannerTitleTooLong}, \texttt{BannerImageUrlTooLong}, \texttt{BannerLinkUrlTooLong}). \newline
+4. Return to step 3. \newline
+\textbf{A.5 Admin Cancels Editing} \newline
+1. The Admin clicks the ``Cancel'' button in the BannerFormDialog. \newline
+2. The system discards the unsaved changes and closes the dialog. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the banner record in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToUpdateBanner''. \newline
+4. The frontend displays ``Failed to update banner.'' \newline
+5. The banner is not updated. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Image Upload Failure} \newline
+1. The system attempts to upload a replacement image. \newline
+2. The image upload operation fails. \newline
+3. The system returns the message ``Error.FailedToUploadBannerImage''. \newline
+4. The banner is not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while saving the changes. \newline
+2. The system cannot save the updated banner data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the changes being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-BAN-16:} All fields (\texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}) are optional in the update request (partial update). \newline
+\textbf{BR-BAN-17:} When \texttt{position} is changed, the new position must not be taken by another active banner, excluding the banner itself; otherwise \texttt{Error.BannerPositionTaken} (409). \newline
+\textbf{BR-BAN-18:} The date range rule (\texttt{startDate} earlier than or equal to \texttt{endDate} when both are present) also applies on update. \newline
+\textbf{BR-BAN-19:} An update shall succeed only when the banner with the given \texttt{id} exists; otherwise \texttt{Error.BannerNotFound} (404). \newline
+\textbf{BR-BAN-20:} The original banner \texttt{id}, \texttt{createdAt}, and \texttt{deletedAt} remain unchanged after the update.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+When the position is unchanged, the position uniqueness check is skipped.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the editing process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-18.5 Delete Banner
+% =================================================================
+
+\subparagraph{UC-18.5 Delete Banner}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-18.5 Delete Banner} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on a banner row (UC-18.1) or on the banner detail page (UC-18.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to soft-delete an existing advertisement banner by setting its \texttt{deletedAt} field to the current timestamp.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{DELETE /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected banner exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The banner is soft-deleted by setting its \texttt{deletedAt} field to the current timestamp. \newline
+\textbf{POST-2} The deleted banner no longer appears in the active banner list (UC-18.1) unless the Deleted filter is applied.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Banner} \newline
+1. The Admin clicks the delete action on a banner row (UC-18.1) or on the banner detail page (UC-18.2). \newline
+2. The system opens the DeleteBannerDialog with a confirmation message. \newline
+3. The Admin confirms the deletion request. \newline
+4. The system sends \texttt{DELETE /api/admin/banners/:id}. \newline
+5. The system verifies that the banner exists. \newline
+6. The system sets the \texttt{deletedAt} field of the banner to the current timestamp. \newline
+7. The system returns the message ``Banner deleted successfully.'' and refreshes the banner list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Banner Not Found} \newline
+1. The Admin confirms the deletion request. \newline
+2. The system determines that the banner does not exist. \newline
+3. The system returns the message ``Error.BannerNotFound'' (404). \newline
+4. The Admin returns to the banner list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Admin Cancels Deletion} \newline
+1. The Admin clicks the ``Cancel'' button in the DeleteBannerDialog. \newline
+2. The system closes the dialog. \newline
+3. The banner remains unchanged. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the banner in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToDeleteBanner''. \newline
+4. The frontend displays ``Failed to delete banner.'' \newline
+5. The banner is not deleted. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the banner. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The banner remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-BAN-21:} Banner deletion shall be implemented as a soft delete by setting the \texttt{deletedAt} field to the current timestamp. \newline
+\textbf{BR-BAN-22:} A deletion shall succeed only when the banner with the given \texttt{id} exists; otherwise \texttt{Error.BannerNotFound} (404). \newline
+\textbf{BR-BAN-23:} A soft-deleted banner is excluded from the active banner list by default, and the position occupied by it becomes available for a new active banner.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted banners remain stored in the database and are still accessible through the banner detail endpoint (\texttt{GET /api/admin/banners/:id}).
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the deletion process.} \\ \hline
+
+\end{longtable}
+\paragraph{Manage Skill}
+
+% =================================================================
+% UC-19.1 View List Skill
+% =================================================================
+
+\subparagraph{UC-19.1 View List Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.1 View List Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Skills Management section from the admin dashboard.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve the list of skills with their id, name, slug, description, status, creation date, and the number of jobs using each skill, with support for search, filtering by active status, sorting, and pagination.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access the skills endpoints (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of skills is displayed with \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{deletedAt}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{jobCount}. \newline
+\textbf{POST-2} The admin can create (UC-19.3), edit (UC-19.4), delete (UC-19.5), restore (UC-19.6), or open a skill detail (UC-19.2).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View List Skill} \newline
+1. The Admin navigates to the Skills Management page (\texttt{/admin/skills}). \newline
+2. The system sends \texttt{GET /api/admin/skills} with \texttt{page} (default 1), \texttt{limit} (default 10, max 100), and optionally \texttt{search}, \texttt{deleted}, \texttt{sortBy}, and \texttt{sortOrder}. \newline
+3. The system queries the Skill table applying the keyword search on \texttt{name}, \texttt{slug}, or \texttt{description} (case-insensitive) and the \texttt{deleted} filter (\texttt{true}, \texttt{false}, or absent). \newline
+4. The system sorts the result by \texttt{id} or \texttt{createdAt} in ascending or descending order (default \texttt{desc}). \newline
+5. The system computes \texttt{jobCount} for each skill (count of JobSkill records where \texttt{job.deletedAt} is \texttt{null}). \newline
+6. The system returns the \texttt{skills} array and the pagination metadata \texttt{\{ page, limit, total, totalPages \}}. \newline
+7. The system displays the SkillsTable columns: ID, Name, Slug, Status (Active or Deleted badge), Jobs using it, Created, and Actions (edit/delete for active skills, restore for deleted skills, view details).
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Search Skills} \newline
+1. The Admin enters a keyword in the search box. \newline
+2. The system re-queries skills whose \texttt{name}, \texttt{slug}, or \texttt{description} contains the keyword (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 7. \newline
+\textbf{A.2 Filter Skills by Status} \newline
+1. The Admin selects \texttt{All}, \texttt{Active}, or \texttt{Deleted} in the Filter Status dropdown. \newline
+2. The system re-queries skills with the corresponding \texttt{deleted} flag (absent for All, false for Active, true for Deleted). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 7. \newline
+\textbf{A.3 No Skills Found} \newline
+1. The system determines that no skills match the current search or filters. \newline
+2. The system displays an empty table row. \newline
+3. The Admin remains on the page. \newline
+4. Return to step 7.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the skills from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadSkillList''. \newline
+4. The frontend displays the message ``Couldn't load skills. Try again.'' \newline
+5. The skill list is not displayed. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the skill data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any skill information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-01:} The endpoint \texttt{GET /api/admin/skills} is guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}. \newline
+\textbf{BR-SKL-02:} Search shall match the skill \texttt{name}, \texttt{slug}, or \texttt{description} in a case-insensitive manner. \newline
+\textbf{BR-SKL-03:} The \texttt{deleted} filter returns only active skills when \texttt{false} or absent, and only soft-deleted skills when \texttt{true}. \newline
+\textbf{BR-SKL-04:} Sorting is restricted to the fields \texttt{id} and \texttt{createdAt}; \texttt{sortOrder} is \texttt{asc} or \texttt{desc} (default \texttt{desc}). \newline
+\textbf{BR-SKL-05:} Pagination shall support \texttt{page >= 1} and \texttt{limit} between 1 and 100. \newline
+\textbf{BR-SKL-06:} \texttt{jobCount} counts only JobSkill records whose associated \texttt{job.deletedAt} is \texttt{null}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The list page provides the Actions column to start UC-19.2, UC-19.3, UC-19.4, UC-19.5, and UC-19.6.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Skill records are stored in the Skill table of the system database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-19.2 View Detail Skill
+% =================================================================
+
+\subparagraph{UC-19.2 View Detail Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.2 View Detail Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the view action on a skill row (UC-19.1) or navigates directly to a skill detail URL.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the detailed information of a single skill, including its id, name, slug, description, timestamps, deletion status, and the number of jobs currently using the skill.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{GET /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected skill exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The detailed information of the selected skill is displayed together with its \texttt{jobCount}. \newline
+\textbf{POST-2} The admin can edit (UC-19.4), delete (UC-19.5), or restore (UC-19.6) the displayed skill.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Detail Skill} \newline
+1. The Admin clicks the view action on a skill row (UC-19.1) or navigates directly to \texttt{/admin/skills/:id}. \newline
+2. The system sends \texttt{GET /api/admin/skills/:id}. \newline
+3. The system queries the skill with the matching \texttt{id}. \newline
+4. The system verifies that the skill exists. \newline
+5. The system computes the \texttt{jobCount} (count of JobSkill records where \texttt{job.deletedAt} is \texttt{null}). \newline
+6. The system returns \texttt{\{ id, name, slug, description, deletedAt, createdAt, updatedAt, jobCount \}}. \newline
+7. The system displays the skill details together with Edit, Delete, and Restore actions as applicable.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Skill Not Found} \newline
+1. The Admin opens a skill detail page. \newline
+2. The system determines that no skill exists with the given \texttt{id}. \newline
+3. The system returns the message ``Error.SkillNotFound'' and the frontend displays ``Failed to load skill detail. The skill may not exist.'' \newline
+4. The Admin returns to the skill list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Invalid Skill ID} \newline
+1. The Admin navigates to a skill detail URL with a non-positive or non-integer \texttt{id}. \newline
+2. The system displays the Not Found page. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the skill detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadSkillDetail''. \newline
+4. The skill details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the skill detail data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without skill information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-07:} A skill detail shall be accessible only when a skill with the given \texttt{id} exists; otherwise \texttt{Error.SkillNotFound} (404). \newline
+\textbf{BR-SKL-08:} The detail shall include \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{deletedAt}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{jobCount}. \newline
+\textbf{BR-SKL-09:} \texttt{jobCount} counts only JobSkill records whose associated \texttt{job.deletedAt} is \texttt{null}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The detail page shows the appropriate action buttons depending on the skill status: Edit/Delete for active skills and Restore for deleted skills.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The skill id is a positive integer.} \\ \hline
+
+\end{longtable}
+% =================================================================
+% UC-19.3 Create New Skill
+% =================================================================
+
+\subparagraph{UC-19.3 Create New Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.3 Create New Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Skill'' button on the Skills Management page (UC-19.1).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to create a new skill by providing a name (required) and an optional description. A unique slug is generated automatically from the name.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{POST /api/admin/skills} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new record is created in the Skill table with \texttt{name}, an auto-generated \texttt{slug}, and \texttt{description}. \newline
+\textbf{POST-2} The new skill appears in the skill list (UC-19.1) with \texttt{jobCount} equal to 0.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create New Skill} \newline
+1. The Admin clicks the ``Create Skill'' button on the Skills Management page (\texttt{/admin/skills}). \newline
+2. The system opens the CreateSkillDialog with fields: \texttt{name} (required) and \texttt{description} (optional). \newline
+3. The Admin enters the skill name and an optional description. \newline
+4. The Admin clicks the ``Create'' button. \newline
+5. The system validates the request body. \newline
+6. The system sends \texttt{POST /api/admin/skills} with \texttt{name} and \texttt{description}. \newline
+7. The system checks that no active skill (\texttt{deletedAt = NULL}) has the same name (case-insensitive). \newline
+8. The system generates the slug from the name, appending a numeric suffix (e.g. \texttt{-2}, \texttt{-3}) if the base slug is already taken among active skills. \newline
+9. The system creates the skill record and returns the skill detail with \texttt{jobCount}. \newline
+10. The system displays the message ``Skill created successfully!'' and refreshes the skill list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Missing Required Name} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{name} is empty. \newline
+3. The frontend disables submission until a name is provided; the backend returns ``Error.SkillNameRequired'' if submitted empty. \newline
+4. Return to step 3. \newline
+\textbf{A.2 Name Too Long} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{name} exceeds 100 characters. \newline
+3. The system returns the message ``Error.SkillNameTooLong''. \newline
+4. Return to step 3. \newline
+\textbf{A.3 Description Too Long} \newline
+1. The Admin submits the form. \newline
+2. The system determines that \texttt{description} exceeds 500 characters. \newline
+3. The system returns the message ``Error.SkillDescriptionTooLong''. \newline
+4. Return to step 3. \newline
+\textbf{A.4 Duplicate Skill Name} \newline
+1. The Admin submits the form. \newline
+2. The system determines that an active skill (\texttt{deletedAt = NULL}) with the same name already exists (case-insensitive). \newline
+3. The system returns the message ``Error.SkillNameAlreadyExists'' (409). \newline
+4. Return to step 3. \newline
+\textbf{A.5 Admin Cancels Creation} \newline
+1. The Admin clicks the ``Cancel'' button in the CreateSkillDialog. \newline
+2. The system discards the unsaved data and closes the dialog. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the skill record in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToCreateSkill''. \newline
+4. The frontend displays ``Failed to create skill. Try again.'' \newline
+5. The skill is not created. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while creating the skill. \newline
+2. The system cannot save the skill data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the skill being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-10:} The skill \texttt{name} is required and shall not exceed 100 characters. \newline
+\textbf{BR-SKL-11:} The skill \texttt{description} is optional, is stored as \texttt{NULL} when empty, and shall not exceed 500 characters. \newline
+\textbf{BR-SKL-12:} The skill name must be unique among active skills (\texttt{deletedAt = NULL}) in a case-insensitive manner; otherwise \texttt{Error.SkillNameAlreadyExists} (409). \newline
+\textbf{BR-SKL-13:} The \texttt{slug} is generated automatically from the name; a numeric suffix is appended when the base slug is already taken among active skills.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The returned skill detail includes \texttt{jobCount}, which is 0 for a newly created skill.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the creation process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-19.4 Edit Skill
+% =================================================================
+
+\subparagraph{UC-19.4 Edit Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.4 Edit Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update an existing skill's name and/or description. When the name changes, the slug is regenerated automatically.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected skill exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The skill's \texttt{name} and/or \texttt{description} are updated in the Skill table. \newline
+\textbf{POST-2} The skill's \texttt{slug} is regenerated when the name changes. \newline
+\textbf{POST-3} The updated skill is displayed in the skill list (UC-19.1).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Skill} \newline
+1. The Admin clicks the edit action on a skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+2. The system opens the UpdateSkillDialog pre-filled with the current skill name and description. \newline
+3. The Admin modifies the name and/or description. \newline
+4. The Admin clicks the Save Changes button. \newline
+5. The system sends \texttt{PATCH /api/admin/skills/:id} with only the changed fields. \newline
+6. The system verifies that the skill exists. \newline
+7. If \texttt{name} is changed, the system checks uniqueness against other active skills (\texttt{deletedAt = NULL}), excluding the skill itself. \newline
+8. If \texttt{name} is changed, the system regenerates a unique slug from the new name. \newline
+9. The system updates the skill record and returns the skill detail with \texttt{jobCount}. \newline
+10. The system displays the message ``Skill updated successfully!'' and refreshes the page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Skill Not Found} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that the skill does not exist. \newline
+3. The system returns the message ``Error.SkillNotFound'' (404). \newline
+4. The Admin returns to the skill list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Duplicate Skill Name} \newline
+1. The Admin submits the updated name. \newline
+2. The system determines that another active skill has the same name (case-insensitive). \newline
+3. The system returns the message ``Error.SkillNameAlreadyExists'' (409). \newline
+4. Return to step 3. \newline
+\textbf{A.3 Validation Errors} \newline
+1. The Admin submits the update request. \newline
+2. The system determines that \texttt{name} is empty, exceeds 100 characters, or that \texttt{description} exceeds 500 characters. \newline
+3. The system returns the corresponding validation error (\texttt{SkillNameRequired}, \texttt{SkillNameTooLong}, \texttt{SkillDescriptionTooLong}). \newline
+4. Return to step 3. \newline
+\textbf{A.4 Admin Cancels Editing} \newline
+1. The Admin clicks the ``Cancel'' button in the UpdateSkillDialog. \newline
+2. The system discards the unsaved changes and closes the dialog. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the skill record in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToUpdateSkill''. \newline
+4. The frontend displays ``Failed to update skill.'' \newline
+5. The skill is not updated. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while saving the changes. \newline
+2. The system cannot save the updated skill data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the changes being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-14:} The \texttt{name} and \texttt{description} are optional in the update request (partial update); \texttt{description} may be set to \texttt{NULL}. \newline
+\textbf{BR-SKL-15:} When \texttt{name} is changed, the new name must be unique among other active skills (\texttt{deletedAt = NULL}) in a case-insensitive manner; otherwise \texttt{Error.SkillNameAlreadyExists} (409). \newline
+\textbf{BR-SKL-16:} When \texttt{name} is changed, the \texttt{slug} is regenerated from the new name and a numeric suffix is appended when the slug is already taken. \newline
+\textbf{BR-SKL-17:} An update shall succeed only when the skill with the given \texttt{id} exists; otherwise \texttt{Error.SkillNotFound} (404). \newline
+\textbf{BR-SKL-18:} The original skill \texttt{id}, \texttt{createdAt}, and \texttt{deletedAt} remain unchanged after the update.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+When the name is unchanged, the uniqueness check and slug regeneration are skipped.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the editing process.} \\ \hline
+
+\end{longtable}
+% =================================================================
+% UC-19.5 Delete Skill
+% =================================================================
+
+\subparagraph{UC-19.5 Delete Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.5 Delete Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on an active skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to soft-delete an existing active skill by setting its \texttt{deletedAt} field. Deletion is blocked when the skill is still used by active jobs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{DELETE /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected skill exists in the database. \newline
+\textbf{PRE-3} The selected skill is not used by any active jobs.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The skill is soft-deleted by setting its \texttt{deletedAt} field to the current timestamp. \newline
+\textbf{POST-2} The deleted skill no longer appears in the active skill list (UC-19.1) unless the Deleted filter is applied, and its actions change from Edit/Delete to Restore.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Skill} \newline
+1. The Admin clicks the delete action on an active skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+2. The system opens the DeleteSkillDialog with a confirmation message. \newline
+3. The Admin confirms the deletion request. \newline
+4. The system sends \texttt{DELETE /api/admin/skills/:id}. \newline
+5. The system verifies that the skill exists. \newline
+6. The system checks that no active jobs (JobSkill records where \texttt{job.deletedAt} is \texttt{null}) use this skill. \newline
+7. The system sets the \texttt{deletedAt} field of the skill to the current timestamp. \newline
+8. The system returns the message ``Skill deleted successfully.'' and refreshes the skill list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Skill In Use} \newline
+1. The Admin confirms the deletion request. \newline
+2. The system determines that one or more active jobs (\texttt{job.deletedAt} is \texttt{null}) are linked to this skill through JobSkill. \newline
+3. The system blocks the deletion and returns the message ``Error.SkillInUse'' (409). \newline
+4. The frontend displays the message ``Cannot delete skill. It is currently used by jobs.'' \newline
+5. The use case ends. \newline
+\textbf{A.2 Skill Not Found} \newline
+1. The Admin confirms the deletion request. \newline
+2. The system determines that the skill does not exist or has already been deleted. \newline
+3. The system returns the message ``Error.SkillNotFound'' (404). \newline
+4. The Admin returns to the skill list. \newline
+5. Return to step 1. \newline
+\textbf{A.3 Admin Cancels Deletion} \newline
+1. The Admin clicks the ``Cancel'' button in the DeleteSkillDialog. \newline
+2. The system closes the dialog. \newline
+3. The skill remains unchanged. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the skill in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToDeleteSkill''. \newline
+4. The frontend displays ``Failed to delete skill.'' \newline
+5. The skill is not deleted. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the skill. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The skill remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-19:} Skill deletion shall be implemented as a soft delete by setting the \texttt{deletedAt} field to the current timestamp. \newline
+\textbf{BR-SKL-20:} A deletion shall succeed only when the skill with the given \texttt{id} exists; otherwise \texttt{Error.SkillNotFound} (404). \newline
+\textbf{BR-SKL-21:} A skill that is used by at least one active job (JobSkill record where \texttt{job.deletedAt} is \texttt{null}) shall not be deleted; the system returns \texttt{Error.SkillInUse} (409). \newline
+\textbf{BR-SKL-22:} Only active skills (\texttt{deletedAt = NULL}) shall be deletable.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted skills remain stored in the database and can be restored through UC-19.6.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the deletion process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-19.6 Restore Skill
+% =================================================================
+
+\subparagraph{UC-19.6 Restore Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-19.6 Restore Skill} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the restore action on a deleted skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to restore a soft-deleted skill by setting its \texttt{deletedAt} field to \texttt{null}, making it active again.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/skills/:id/restore} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
+\textbf{PRE-2} The selected skill exists and is currently soft-deleted (\texttt{deletedAt} is not \texttt{null}).
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The skill's \texttt{deletedAt} field is set to \texttt{null}. \newline
+\textbf{POST-2} The restored skill appears again in the active skill list (UC-19.1) with its Edit/Delete actions.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Restore Skill} \newline
+1. The Admin clicks the restore action on a deleted skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+2. The system opens the RestoreSkillDialog with a confirmation message. \newline
+3. The Admin confirms the restoration request. \newline
+4. The system sends \texttt{PATCH /api/admin/skills/:id/restore}. \newline
+5. The system verifies that the skill exists and is currently soft-deleted. \newline
+6. The system sets the \texttt{deletedAt} field of the skill to \texttt{null}. \newline
+7. The system returns the skill detail with \texttt{jobCount}. \newline
+8. The system displays the message ``Skill restored successfully.'' and refreshes the skill list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Skill Not Soft-Deleted} \newline
+1. The Admin submits the restore request. \newline
+2. The system determines that the skill does not exist or is not soft-deleted (\texttt{deletedAt} is \texttt{null}). \newline
+3. The system returns the message ``Error.SkillNotFound'' (404). \newline
+4. The Admin returns to the skill list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Admin Cancels Restoration} \newline
+1. The Admin clicks the ``Cancel'' button in the RestoreSkillDialog. \newline
+2. The system closes the dialog. \newline
+3. The skill remains soft-deleted. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to set the \texttt{deletedAt} field of the skill to \texttt{null} in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToRestoreSkill''. \newline
+4. The frontend displays ``Failed to restore skill.'' \newline
+5. The skill is not restored. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the restore request. \newline
+2. The system cannot complete the restoration of the skill. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The skill remains soft-deleted. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{BR-SKL-23:} A skill shall be restored only when it is soft-deleted (\texttt{deletedAt} is not \texttt{null}); otherwise \texttt{Error.SkillNotFound} (404). \newline
+\textbf{BR-SKL-24:} Restoration sets the skill's \texttt{deletedAt} field to \texttt{null}. \newline
+\textbf{BR-SKL-25:} The original skill \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, and \texttt{updatedAt} values remain unchanged after restoration.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The restore action is shown only for soft-deleted skills in the list and detail pages; it is the counterpart of the Delete action (UC-19.5).
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The restored skill remains linked to the same JobSkill and freelancerSkill relations as before deletion.} \\ \hline
+
+\end{longtable}

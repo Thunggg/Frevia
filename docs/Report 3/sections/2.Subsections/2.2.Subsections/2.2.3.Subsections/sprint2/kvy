@@ -1,0 +1,730 @@
+\paragraph{Manage Conversation}
+% =================================================================
+% UC-05.1 Conversations List
+% =================================================================
+\subparagraph{UC-05.1 View Conversations List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.1 View Conversations List} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Conversations section from the navigation menu or notification bell.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view all active conversations they are participating in, sorted by pinned status and most recent message.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of conversations is displayed with the other user's profile, last message preview, unread count, and pin status. \newline
+\textbf{POST-2} The user can select a conversation to view its details (UC-05.3) or start a new conversation (UC-05.2).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Conversations List} \newline
+1. The User accesses the Conversations page. \newline
+2. The system retrieves all active conversations where the User is a participant and has not hidden the conversation. \newline
+3. For each conversation, the system loads the other participant's profile, the last non-deleted message, and the unread message count. \newline
+4. The system sorts conversations: pinned conversations first (by pinned date descending), then by last message time descending (or conversation creation time if no messages). \newline
+5. The system displays the conversations list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Conversations Found} \newline
+1. The User accesses the Conversations page. \newline
+2. The system determines that no active conversations exist for the User. \newline
+3. The system displays a message indicating no conversations are available. \newline
+4. The User remains on the Conversations page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the conversations list from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load conversations. Please try again later.'' \newline
+4. The conversations list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the conversations data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any conversation information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-01: Only conversations where \texttt{deletedAt = NULL} shall be displayed. \newline
+BR-CONV-02: Conversations hidden by the current user (via \texttt{participant1HiddenAt} or \texttt{participant2HiddenAt}) shall not be displayed. \newline
+BR-CONV-03: Pinned conversations shall appear before non-pinned conversations. \newline
+BR-CONV-04: Unread count shall count only messages from the other participant that are not read and not deleted.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The list is updated in real-time via WebSocket events (\texttt{conversation:updated}).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each user has at least one other user to communicate with in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.2 Start Conversation
+% =================================================================
+
+\subparagraph{UC-05.2 Start Conversation}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.2 Start Conversation} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Start Conversation'' button or navigates to the new conversation page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to start a new conversation with another user. If a conversation already exists between the two users, it is returned and unhidden instead of creating a duplicate.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The target user exists in the system.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new conversation is created or an existing conversation is unhidden. \newline
+\textbf{POST-2} The user is navigated to the conversation detail page.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Start Conversation} \newline
+1. The User clicks the ``Start Conversation'' button or navigates to the new conversation page. \newline
+2. The User enters or selects the participant ID of the user they want to message. \newline
+3. The system verifies that the user is not trying to start a conversation with themselves. \newline
+4. The system checks whether an existing active conversation between the two users already exists. \newline
+5a. If a conversation already exists, the system unhides the conversation for both participants and returns the existing conversation. \newline
+5b. If no conversation exists, the system creates a new conversation record in the Conversation table. \newline
+6. The system navigates the User to the conversation detail page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2a User Not Authenticated} \newline
+1. The User attempts to start a conversation. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the new conversation page. \newline
+6. Return to step 2. \newline
+\textbf{A.2b User Attempts to Message Self} \newline
+1. The User enters their own user ID as the participant. \newline
+2. The system determines that the participant ID matches the current user. \newline
+3. The system displays the message ``You cannot start a conversation with yourself.'' \newline
+4. Return to step 2.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to create or retrieve the conversation from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to start conversation. Please try again later.'' \newline
+4. The conversation is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot save the conversation data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without the conversation being created. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-05: A user cannot start a conversation with themselves. \newline
+BR-CONV-06: Each pair of users may have only one conversation (enforced by the unique constraint on \texttt{participant1, participant2}). \newline
+BR-CONV-07: If an existing conversation is found, it shall be unhidden for both participants rather than creating a duplicate. \newline
+BR-CONV-08: A new conversation record stores the two participant IDs.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The participant ID is provided via a numeric input or a pre-selected user profile.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user exists and is a valid user in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.3 Conversation Detail
+% =================================================================
+
+\subparagraph{UC-05.3 Conversation Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a conversation from the conversations list (UC-05.1) or after starting a new conversation (UC-05.2).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view the complete message history of a conversation including all sent and received messages, file attachments, and other participant information.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The conversation exists and has not been deleted. \newline
+\textbf{PRE-3} The user is a participant of the conversation.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The full message history is displayed in chronological order. \newline
+\textbf{POST-2} The user can send messages, send files, and interact with messages. \newline
+\textbf{POST-3} All unread messages from the other participant are automatically marked as read.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Conversation Detail} \newline
+1. The User opens a conversation from the list. \newline
+2. The system validates that the conversation exists, has not been deleted, and the User is a participant. \newline
+3. The system retrieves the other participant's profile information. \newline
+4. The system retrieves all non-deleted messages associated with the conversation. \newline
+5. The system displays the conversation header with the other participant's name and avatar. \newline
+6. The system displays the message list in chronological order with file attachments where applicable. \newline
+7. The system automatically marks all unread messages from the other participant as read (UC-05.5).
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a Conversation Not Found or Deleted} \newline
+1. The User opens a conversation. \newline
+2. The system determines that the conversation does not exist or has been deleted. \newline
+3. The system displays the message ``Conversation not found.'' \newline
+4. The system redirects the User to the conversations list page. \newline
+5. Return to step 1. \newline
+\textbf{A.1b User Is Not a Participant} \newline
+1. The User opens a conversation. \newline
+2. The system determines that the User is not a participant of the conversation. \newline
+3. The system displays the message ``You do not have access to this conversation.'' \newline
+4. The system redirects the User to the conversations list page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the conversation and messages from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load conversation. Please try again later.'' \newline
+4. The conversation details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the conversation data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any conversation information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-09: Only conversations where \texttt{deletedAt = NULL} shall be accessible. \newline
+BR-CONV-10: Only participants of the conversation may view its messages. \newline
+BR-CONV-11: All messages shall be sorted by \texttt{createdAt} in ascending order. \newline
+BR-CONV-12: Soft-deleted messages (\texttt{deletedAt} not null) shall not be displayed.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{New messages are received in real-time via the \texttt{message:new} WebSocket event.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each conversation is associated with valid participants.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.4 Send Message
+% =================================================================
+
+\subparagraph{UC-05.4 Send Message}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.4 Send Message} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user types a message and clicks the ``Send'' button or presses Enter in the conversation detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to send a text message in an active conversation. The message is delivered in real-time to the other participant.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The conversation exists, has not been deleted, and the User is a participant. \newline
+\textbf{PRE-3} The user is viewing the conversation detail page.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new message record is created in the DirectMessage table. \newline
+\textbf{POST-2} The message appears in the conversation for both participants. \newline
+\textbf{POST-3} Any hidden conversation status is cleared for both participants.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Send Message} \newline
+1. The User enters a message in the message input field. \newline
+2. The User clicks the ``Send'' button or presses Enter. \newline
+3. The system validates the message content. \newline
+4. The system verifies that the User is a participant of the conversation. \newline
+5. The system creates a new message record in the DirectMessage table with \texttt{isRead = false}. \newline
+6. The system clears any hidden conversation status for both participants. \newline
+7. The system displays the new message in the conversation. \newline
+8. The system sends the message to the other participant in real-time via WebSocket.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a Message Too Long} \newline
+1. The User clicks the ``Send'' button. \newline
+2. The system determines that the message exceeds 2000 characters. \newline
+3. The system displays the message ``Message must not exceed 2000 characters.'' \newline
+4. Return to step 1. \newline
+\textbf{A.1b Empty Message Without Attachment} \newline
+1. The User clicks the ``Send'' button. \newline
+2. The system determines that the message is empty and no file is attached. \newline
+3. The system does not create a message. \newline
+4. Return to step 1. \newline
+\textbf{A.1c Conversation Not Found or Not a Participant} \newline
+1. The User attempts to send a message. \newline
+2. The system determines that the conversation does not exist, has been deleted, or the User is not a participant. \newline
+3. The system displays the message ``Conversation not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the new message to the DirectMessage table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to send message. Please try again later.'' \newline
+4. The message is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while sending the message. \newline
+2. The system cannot save the message data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the conversation detail page without the message being sent. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-13: Only authenticated users can send messages. \newline
+BR-CONV-14: The user must be a participant of the conversation to send a message. \newline
+BR-CONV-15: Message content shall not exceed 2000 characters. \newline
+BR-CONV-16: A message must contain either text content or a file attachment. \newline
+BR-CONV-17: New messages shall be created with \texttt{isRead = false}. \newline
+BR-CONV-18: Sending a message shall clear the hidden status for both participants.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Messages are sent primarily via the WebSocket gateway (\texttt{message:send}) with REST API as a fallback. The message is broadcast to both participants' rooms in real-time.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The conversation remains active during the message sending process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.5 Mark Message as Read
+% =================================================================
+
+\subparagraph{UC-05.5 Mark Message as Read}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.5 Mark Message as Read} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a conversation detail page or when a new message arrives from the other participant.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to mark all unread messages from the other participant in a conversation as read, either automatically when opening the conversation or manually via the conversation list menu.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The conversation exists, has not been deleted, and the user is a participant. \newline
+\textbf{PRE-3} There are unread messages from the other participant.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} All unread messages from the other participant have their \texttt{isRead} field updated to \texttt{true}. \newline
+\textbf{POST-2} The unread count for the conversation is updated to zero. \newline
+\textbf{POST-3} Both participants receive a real-time update of the conversation status.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Mark Message as Read} \newline
+1. The User opens a conversation detail page. \newline
+2. The system verifies that the User is a participant of the conversation. \newline
+3. The system marks all unread messages from the other participant as read by updating the \texttt{isRead} field to \texttt{true}. \newline
+4. The system returns the count of messages marked as read. \newline
+5. The system notifies both participants of the updated conversation status via WebSocket.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Manual Mark as Read from List} \newline
+1. The User clicks the ``Mark as Read'' option from the conversation list menu. \newline
+2. The system verifies that the User is a participant of the conversation. \newline
+3. The system marks all unread messages from the other participant as read. \newline
+4. The system returns the count of messages marked as read. \newline
+5. The system notifies both participants of the updated conversation status. \newline
+\textbf{A.2 Conversation Not Found or Not a Participant} \newline
+1. The User attempts to mark messages as read. \newline
+2. The system determines that the conversation does not exist, has been deleted, or the User is not a participant. \newline
+3. The system displays the message ``Conversation not found.'' \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{isRead} field in the DirectMessage table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to mark messages as read. Please try again later.'' \newline
+4. The messages are not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot update the read status. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The unread count remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-19: Only messages from the other participant (where \texttt{senderId != userId}) shall be marked as read. \newline
+BR-CONV-20: Only unread messages (\texttt{isRead = false}) that are not deleted shall be updated. \newline
+BR-CONV-21: The system shall return the count of messages that were marked as read.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Mark as read is performed automatically when the conversation is opened and when a new incoming message arrives. It can also be triggered manually from the conversation list context menu.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during the mark-as-read process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.6 Delete/Recall Message
+% =================================================================
+
+\subparagraph{UC-05.6 Delete/Recall Message}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.6 Delete/Recall Message} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Delete'' option on a message they have sent.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the sender of a message to recall or delete it from the conversation by performing a soft delete operation. The message is removed from view for both participants.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The message exists and has not been deleted. \newline
+\textbf{PRE-3} The user is the sender of the message.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The message is soft-deleted by setting the \texttt{deletedAt} field. \newline
+\textbf{POST-2} The message is no longer displayed to either participant. \newline
+\textbf{POST-3} Both participants receive a real-time notification of the deletion.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete/Recall Message} \newline
+1. The User clicks the ``Delete'' option on a message they sent. \newline
+2. The system verifies that the User is the sender of the message. \newline
+3. The system performs a soft delete by updating the \texttt{deletedAt} field of the message. \newline
+4. The system removes the message from the conversation view for both participants. \newline
+5. The system sends a \texttt{message:deleted} event to both participants via WebSocket. \newline
+6. The system updates the conversation list for both participants via a \texttt{conversation:updated} event.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2 User Is Not the Sender} \newline
+1. The User attempts to delete a message they did not send. \newline
+2. The system determines that the User is not the sender of the message. \newline
+3. The system does not perform the deletion. \newline
+4. The message remains unchanged. \newline
+5. The use case ends. \newline
+\textbf{A.1 Message Not Found or Already Deleted} \newline
+1. The User confirms the deletion request. \newline
+2. The system determines that the message does not exist or has already been deleted. \newline
+3. The system displays the message ``Message not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the message in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to delete message. Please try again later.'' \newline
+4. The message is not deleted. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the message. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The message remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-22: Only the sender of a message can delete it. \newline
+BR-CONV-23: Message deletion shall be implemented as a soft delete using the \texttt{deletedAt} field. \newline
+BR-CONV-24: Soft-deleted messages shall not be displayed in the conversation view or the last message preview. \newline
+BR-CONV-25: Soft-deleted messages shall not be counted in unread counts.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted messages remain stored in the database. The delete action is performed via the WebSocket gateway (\texttt{message:delete}) with REST API as a fallback.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The message has not been permanently removed from the database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.7 Pin/Unpin Conversation
+% =================================================================
+
+\subparagraph{UC-05.7 Pin/Unpin Conversation}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.7 Pin/Unpin Conversation} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects the ``Pin'' or ``Unpin'' option from the conversation list context menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to pin or unpin a conversation to keep it at the top of their conversation list. Pinning is independent per user.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The conversation exists, has not been deleted, and the user is a participant.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The conversation's \texttt{participant1PinnedAt} or \texttt{participant2PinnedAt} field is updated for the current user's side. \newline
+\textbf{POST-2} The conversation list is re-sorted with pinned conversations appearing first.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Pin Conversation} \newline
+1. The User clicks the ``Pin'' option from the conversation list context menu. \newline
+2. The system verifies that the User is a participant of the conversation. \newline
+3. The system sets the \texttt{participant1PinnedAt} or \texttt{participant2PinnedAt} field (depending on which side the user is) to the current timestamp. \newline
+4. The system returns the updated pin status. \newline
+5. The system re-sorts the conversations list to place the pinned conversation first.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Unpin Conversation} \newline
+1. The User clicks the ``Unpin'' option from the conversation list context menu. \newline
+2. The system verifies that the User is a participant of the conversation. \newline
+3. The system sets the \texttt{participant1PinnedAt} or \texttt{participant2PinnedAt} field to \texttt{null}. \newline
+4. The system returns the updated pin status. \newline
+5. The system re-sorts the conversations list. \newline
+\textbf{A.2 Conversation Not Found or Not a Participant} \newline
+1. The User attempts to pin or unpin a conversation. \newline
+2. The system determines that the conversation does not exist, has been deleted, or the User is not a participant. \newline
+3. The system displays the message ``Conversation not found.'' \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the pin status in the Conversation table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to update pin status. Please try again later.'' \newline
+4. The pin status is not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot save the pin status. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The pin status remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-26: Only participants of a conversation may pin or unpin it. \newline
+BR-CONV-27: Pinning is per-user; each participant has their own independent pin flag. \newline
+BR-CONV-28: Pinned conversations shall appear before non-pinned conversations in the list. \newline
+BR-CONV-29: Pinning or unpinning is performed via REST only (no WebSocket event).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The frontend re-sorts the conversation list client-side on successful pin/unpin.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during the pin/unpin process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.8 Send File
+% =================================================================
+
+\subparagraph{UC-05.8 Send File}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.8 Send File} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the file attachment button and selects a file in the conversation detail page (UC-05.3).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to send a file attachment in a conversation. The file is uploaded to cloud storage and a message with the attachment metadata is created.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The conversation exists, has not been deleted, and the user is a participant. \newline
+\textbf{PRE-3} The file to be sent meets the size and type requirements.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The file is uploaded to cloud storage. \newline
+\textbf{POST-2} A new message record is created in the DirectMessage table with the file attachment metadata (\texttt{fileUrl}, \texttt{fileName}, \texttt{fileSize}, \texttt{fileType}). \newline
+\textbf{POST-3} The message with the file attachment is displayed in the conversation for both participants.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Send File} \newline
+1. The User clicks the file attachment button. \newline
+2. The User selects a file from their device. \newline
+3. The system validates the file size (maximum 25 MB) and file type (allowed MIME types). \newline
+4. The system uploads the file to cloud storage. \newline
+5. The system creates a new message record in the DirectMessage table with the file attachment metadata. \newline
+6. The system clears any hidden conversation status for both participants. \newline
+7. The system displays the file message in the conversation. \newline
+8. The system sends the message to the other participant in real-time via WebSocket.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.2a File Too Large} \newline
+1. The User selects a file. \newline
+2. The system determines that the file exceeds the maximum size of 25 MB. \newline
+3. The system displays the message ``File size must not exceed 25 MB.'' \newline
+4. Return to step 2. \newline
+\textbf{A.2b File Type Not Allowed} \newline
+1. The User selects a file. \newline
+2. The system determines that the file type is not in the allowed MIME types list. \newline
+3. The system displays the message ``This file type is not allowed.'' \newline
+4. Return to step 2. \newline
+\textbf{A.1 Conversation Not Found or Not a Participant} \newline
+1. The User attempts to send a file. \newline
+2. The system determines that the conversation does not exist, has been deleted, or the User is not a participant. \newline
+3. The system displays the message ``Conversation not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: File Upload Failure} \newline
+1. The system attempts to upload the file to cloud storage. \newline
+2. The upload operation fails due to a storage service error. \newline
+3. The system displays the message ``Unable to upload file. Please try again later.'' \newline
+4. The file is not uploaded and the message is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to save the message record with the file attachment to the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to send file. Please try again later.'' \newline
+4. The message is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while uploading the file. \newline
+2. The system cannot complete the file upload or message creation. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the conversation detail page without the file being sent. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONV-30: Only authenticated users can send files. \newline
+BR-CONV-31: The user must be a participant of the conversation to send a file. \newline
+BR-CONV-32: The maximum file size is 25 MB. \newline
+BR-CONV-33: Only allowed file types may be uploaded (images, PDF, Office documents, text files, code files, and archives). \newline
+BR-CONV-34: The file shall be uploaded to cloud storage and the message shall store the file URL, name, size, and type. \newline
+BR-CONV-35: Sending a file shall clear the hidden status for both participants.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Files are stored in cloud storage (Cloudinary). Image files are rendered as previews in the chat; other file types are displayed as downloadable file cards.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The cloud storage service is available and accessible.} \\ \hline
+
+\end{longtable}

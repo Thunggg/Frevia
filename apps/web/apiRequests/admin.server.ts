@@ -7,6 +7,9 @@ import type {
   AdminUserDetailResponseType,
   AdminUserListResponseType,
   ApiResponse,
+  BannerAdminDetailResponseType,
+  BannerAdminListResponseType,
+  DisputeDetailType,
   ForumAdminCategoryListResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminStatsType,
@@ -19,6 +22,7 @@ import type {
   PendingForumPostListResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
+  ProfileRevisionAdminListType,
 } from "@shared/types";
 
 // Hàm fomat thành ?page=2&limit=10&search=john&role=CLIENT
@@ -96,6 +100,28 @@ const adminServerRequest = {
     );
   },
 
+  // Danh sách banner (phân trang + search + lọc vị trí + sort) — trang Admin Banners
+  getBanners(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    position?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) {
+    const query = buildQueryString(params || {});
+    return adminServerFetch<BannerAdminListResponseType>(
+      `/api/admin/banners${query}`,
+    );
+  },
+
+  // Chi tiết 1 banner — trang /admin/banners/[id]
+  getBannerById(id: number) {
+    return adminServerFetch<BannerAdminDetailResponseType>(
+      `/api/admin/banners/${id}`,
+    );
+  },
+
   getStats() {
     return adminServerFetch<ForumAdminStatsType>("/api/forums/admin/stats");
   },
@@ -124,8 +150,16 @@ const adminServerRequest = {
     search?: string,
     sortBy?: string,
     sortOrder?: string,
+    deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
-    const query = buildQueryString({ page, limit, search, sortBy, sortOrder });
+    const query = buildQueryString({
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder,
+      deleted,
+    });
     const result = await adminServerFetch<ForumAdminCategoryListResponseType>(
       `/api/forums/admin/categories${query}`,
     );
@@ -240,6 +274,56 @@ const adminServerRequest = {
     return (
       result ?? {
         documents: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getDisputes(
+    page: number = 1,
+    limit: number = 10,
+    status?: string,
+  ): Promise<{
+    data: DisputeDetailType[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }> {
+    const query = buildQueryString({ page, limit, status });
+    const result = await adminServerFetch<{
+      data: DisputeDetailType[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`/api/admin/disputes${query}`);
+    return (
+      result ?? {
+        data: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      }
+    );
+  },
+
+  async getProfileRevisions(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    profileType?: string;
+    search?: string;
+  }): Promise<ProfileRevisionAdminListType> {
+    const query = buildQueryString(params || {});
+    const result = await adminServerFetch<ProfileRevisionAdminListType>(
+      `/api/admin/profile-revisions${query}`,
+    );
+    return (
+      result ?? {
+        revisions: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

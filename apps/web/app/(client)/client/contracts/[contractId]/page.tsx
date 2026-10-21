@@ -23,9 +23,10 @@ export default async function ClientContractDetailPage({
   const parsedId = Number(contractId);
   if (!Number.isInteger(parsedId) || parsedId <= 0) notFound();
 
-  const [contract, milestones] = await Promise.all([
+  const [contract, milestones, sharedFiles] = await Promise.all([
     contractServerRequest.getContractDetail(parsedId),
     contractServerRequest.getMilestones(parsedId, { limit: 50 }),
+    contractServerRequest.getSharedFiles(parsedId),
   ]);
 
   if (!contract) notFound();
@@ -36,6 +37,7 @@ export default async function ClientContractDetailPage({
         <ContractDetail
           initialContract={contract}
           initialMilestones={milestones}
+          initialSharedFiles={sharedFiles}
         />
       </div>
     </div>

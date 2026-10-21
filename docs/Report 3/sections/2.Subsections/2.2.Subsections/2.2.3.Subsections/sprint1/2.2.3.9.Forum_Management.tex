@@ -1,0 +1,1580 @@
+\paragraph{Manage Forum}
+% =================================================================
+% UC-04.1 View Forum Categories
+% =================================================================
+\subparagraph{UC-04.1 View Forum Categories}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.1 View Forum Categories} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When any user accesses the Forum section from the navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{As a guest or registered user, I want to view all active forum categories so that I can browse discussion topics and select a category to explore forum posts.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database. \newline
+\textbf{PRE-2} At least one active (non-deleted) category exists in the ForumCategory table.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The list of active forum categories is displayed with \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}. \newline
+\textbf{POST-2} Users can select a category to view its details and related posts.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Forum Categories} \newline
+1. The User accesses the Forum page from the navigation menu. \newline
+2. The system retrieves all active forum categories from the ForumCategory table. \newline
+3. The system displays the category name, description, and post count for each active category. \newline
+4. The User selects a category from the list. \newline
+5. The system navigates the User to the selected category detail page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Active Categories Found} \newline
+1. The User accesses the Forum page. \newline
+2. The system determines that no active categories exist in the ForumCategory table. \newline
+3. The system displays the message ``No forum categories available.'' \newline
+4. The User remains on the Forum page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the list of active forum categories from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load forum categories. Please try again later.'' \newline
+4. The forum category list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the forum category data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any category information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-01: Only categories with \texttt{deletedAt = NULL} shall be displayed. \newline
+BR-FORUM-02: Categories shall be ordered by \texttt{name} in ascending order. \newline
+BR-FORUM-03: \texttt{postCount} shall count only posts with \texttt{deletedAt = NULL} and \texttt{moderationStatus = APPROVED}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The endpoint is public and does not require authentication.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are created and maintained by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.2 View Forum Category Detail
+% =================================================================
+
+\subparagraph{UC-04.2 View Forum Category Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.2 View Forum Category Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a forum category from the forum category list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view detailed information about a selected forum category including its name, slug, description, and creation date.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is viewing the forum category list (UC-04.1). \newline
+\textbf{PRE-2} The selected category exists and has \texttt{deletedAt = NULL}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The selected category information is displayed successfully including \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}. \newline
+\textbf{POST-2} The user can continue to browse posts belonging to the selected category.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Forum Category Detail} \newline
+1. The User selects a forum category from the Forum Categories page. \newline
+2. The system validates that the selected category exists and is active. \newline
+3. The system retrieves the category information including its name, slug, description, and creation date. \newline
+4. The system displays the category details. \newline
+5. The system renders the post list page for the selected category.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Selected Category Is No Longer Available} \newline
+1. The User selects a forum category. \newline
+2. The system determines that the selected category has been deleted or is not found. \newline
+3. The system displays the message ``The selected category is no longer available.'' \newline
+4. The system redirects the User to the Forum Categories page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the selected forum category from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load category details. Please try again later.'' \newline
+4. The category details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the requested category information. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any category information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-04: Only categories with \texttt{deletedAt = NULL} shall be accessible. \newline
+BR-FORUM-05: Category information displayed includes \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The endpoint is public and does not require authentication.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are created and maintained by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.3 View Post List
+% =================================================================
+
+\subparagraph{UC-04.3 View Post List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.3 View Post List} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a forum category to browse discussion posts.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view a paginated list of forum posts within a selected category. The list includes post titles, authors, creation dates, like counts, and comment counts.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected category exists and is active (\texttt{deletedAt = NULL}). \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of forum posts is displayed with pagination metadata \texttt{\{ page, limit, total, totalPages \}}. \newline
+\textbf{POST-2} Users can select a post to view its details.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Post List} \newline
+1. The User opens a forum category from the Forum Categories page. \newline
+2. The system validates that the selected category exists and is active. \newline
+3. The system retrieves posts associated with the selected category from the ForumPost table, excluding deleted posts and posts that are not approved. \newline
+4. The system optionally filters posts by user or search term, and applies pagination. \newline
+5. The system displays the post titles, authors, creation dates, like counts, and comment counts. \newline
+6. The User selects a post to view its details.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 No Posts Found} \newline
+1. The User opens a forum category. \newline
+2. The system determines that no posts exist in the selected category. \newline
+3. The system displays the message ``No discussion posts available in this category.'' \newline
+4. The User remains on the category page. \newline
+5. Return to step 1. \newline
+\textbf{A.5 Navigate Between Pages} \newline
+1. The User clicks a page number, ``Next,'' or ``Previous'' button, or changes the page size. \newline
+2. The system retrieves the requested page of posts from the ForumPost table. \newline
+3. The system displays the requested page of posts. \newline
+4. Return to step 5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the list of posts for the selected category from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load forum posts. Please try again later.'' \newline
+4. The post list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the requested post data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any post information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-06: Only posts with \texttt{deletedAt = NULL} and \texttt{moderationStatus = APPROVED} shall be displayed. \newline
+BR-FORUM-07: Posts shall be sorted by \texttt{createdAt} in descending order. \newline
+BR-FORUM-08: The system shall support pagination and configurable page sizes. \newline
+BR-FORUM-09: \texttt{commentCount} shall count only comments with \texttt{deletedAt = NULL}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Default page size is 10. A search bar and ``My Posts'' toggle (filter by user) are available on the frontend.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum posts are associated with valid categories and authors.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.4 View Post Detail
+% =================================================================
+
+\subparagraph{UC-04.4 View Post Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.4 View Post Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a post from the post list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view the complete details of a forum post including its title, content, author, category, and creation date.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected post exists. \newline
+\textbf{PRE-2} The post has not been soft-deleted and has \texttt{moderationStatus = APPROVED}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The complete post information is displayed including nested category and user profile. \newline
+\textbf{POST-2} Users can view related comments and reactions associated with the post.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Post Detail} \newline
+1. The User selects a post from the post list. \newline
+2. The system validates that the selected post exists, is not deleted, and is approved. \newline
+3. The system retrieves the post information, author information, and category information. \newline
+4. The system displays the post detail page with the title, content, author, category, and creation date. \newline
+5. The system displays the available comments and reaction count.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a Selected Post Is No Longer Available (soft-deleted)} \newline
+1. The User selects a post. \newline
+2. The system determines that the selected post has been soft-deleted. \newline
+3. The system displays the message ``This post is no longer available.'' \newline
+4. The system redirects the User to the previous post list page. \newline
+5. Return to step 1. \newline
+\textbf{A.1b Selected Post Not Found} \newline
+1. The User selects a post. \newline
+2. The system determines that the selected post does not exist or is not yet approved. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. The system redirects the User to the previous post list page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the post, author, and category information from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load post details. Please try again later.'' \newline
+4. The post details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the requested post information. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any post information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-10: Only posts with \texttt{deletedAt = NULL} and \texttt{moderationStatus = APPROVED} shall be displayed. \newline
+BR-FORUM-11: Post details shall include title, content, author, category, and created date.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Comments and reactions are displayed together with the post details.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each post is associated with a valid author and category.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.5 Create Post
+% =================================================================
+
+\subparagraph{UC-04.5 Create Post}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.5 Create Post} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Create Post'' button in the Forum section.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to create a new forum post by providing a title, content, and optional category.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} At least one active forum category exists (optional for assignment).
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new post is created in the ForumPost table. \newline
+\textbf{POST-2} The new post appears in the selected category after being approved (if moderation applies).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Post} \newline
+1. The User clicks the ``Create Post'' button in the Forum section. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system displays the Create Post dialog. \newline
+4. The User enters the post title and content, and optionally selects a forum category. \newline
+5. The User clicks the ``Publish'' button. \newline
+6. The system validates the input data. \newline
+7. The system creates a new post in the ForumPost table associated with the authenticated User. \newline
+8. If the new post is approved, the system redirects the User to the newly created post detail page; otherwise it shows a message that the post is awaiting admin review.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.3 User Not Authenticated} \newline
+1. The User clicks the ``Create Post'' button. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the Create Post dialog. \newline
+6. Return to step 3. \newline
+\textbf{A.5 User Cancels Creation} \newline
+1. The User clicks the ``Cancel'' button on the Create Post dialog. \newline
+2. The system discards the unsaved data. \newline
+3. The system returns the User to the Forum page. \newline
+4. The use case ends. \newline
+\textbf{A.4a Required Fields Missing} \newline
+1. The User clicks the ``Publish'' button. \newline
+2. The system determines that the title or content is empty. \newline
+3. The system displays the message ``Please complete all required fields.'' \newline
+4. Return to step 4. \newline
+\textbf{A.4b Invalid Category Selected} \newline
+1. The User submits the post. \newline
+2. The system determines that the selected category does not exist. \newline
+3. The system displays the message ``Invalid category selected.'' \newline
+4. Return to step 4. \newline
+\textbf{A.8 Post Awaits Moderation} \newline
+1. The User submits the post. \newline
+2. The post moderation status is PENDING. \newline
+3. The system displays the message ``Your post has been saved and is awaiting admin review.'' \newline
+4. The post is not displayed publicly until approved. \newline
+5. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the new post to the ForumPost table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to create post. Please try again later.'' \newline
+4. The post is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while submitting the post. \newline
+2. The system cannot save the post data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the Create Post dialog without the post being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-12: Only authenticated users can create posts. \newline
+BR-FORUM-13: Every post must belong to exactly one user and may belong to a category. \newline
+BR-FORUM-14: Title and content are required fields. \newline
+BR-FORUM-15: A new post shall default to \texttt{moderationStatus = PENDING} unless moderation data is provided.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The post creator is automatically assigned from the currently authenticated user account.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are available and maintained by administrators.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.6 Edit Post
+% =================================================================
+
+\subparagraph{UC-04.6 Edit Post}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.6 Edit Post} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author selects the ``Edit Post'' option on their post.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of a post to modify its title, content, or category.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user is the author of the selected post.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The post information is updated successfully, including a regenerated slug when the title changes. \newline
+\textbf{POST-2} The updated post is displayed to users.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Post} \newline
+1. The User selects the ``Edit Post'' option on their post. \newline
+2. The system verifies that the User is the author of the selected post. \newline
+3. The system displays the existing post information in an editable dialog. \newline
+4. The User modifies the title, content, or category. \newline
+5. The User clicks the ``Save Changes'' button. \newline
+6. The system validates the updated information. \newline
+7. The system updates the post record in the ForumPost table, regenerating the slug if the title changed. \newline
+8. The system displays the updated post details.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 User Is Not the Author} \newline
+1. The User selects the ``Edit Post'' option on a post. \newline
+2. The system determines that the User is not the author of the selected post. \newline
+3. The system displays the message ``You are not authorized to edit this post.'' \newline
+4. Return to step 1. \newline
+\textbf{A.5 User Cancels Editing} \newline
+1. The User clicks the ``Cancel'' button on the edit dialog. \newline
+2. The system discards the unsaved changes. \newline
+3. The system returns the User to the post detail page. \newline
+4. The use case ends. \newline
+\textbf{A.4 Required Fields Missing} \newline
+1. The User clicks the ``Save Changes'' button. \newline
+2. The system determines that the title or content is empty. \newline
+3. The system displays the message ``Please complete all required fields.'' \newline
+4. Return to step 4. \newline
+% \textbf{A.1 Selected Post Is No Longer Available} \newline
+% 1. The User clicks the ``Save Changes'' button. \newline
+% 2. The system determines that the selected post no longer exists or has been deleted. \newline
+% 3. The system displays the message ``Post not found.'' \newline
+% 4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the post record in the ForumPost table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to update post. Please try again later.'' \newline
+4. The post is not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while saving the changes. \newline
+2. The system cannot save the updated post data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the edit dialog without the changes being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-16: Only the author of a post can edit that post. \newline
+BR-FORUM-17: Title and content are required fields. \newline
+BR-FORUM-18: The original post ID remains unchanged after editing; the slug is regenerated if the title changes.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Editing does not trigger re-moderation.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated throughout the editing process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.7 Delete Post
+% =================================================================
+
+\subparagraph{UC-04.7 Delete Post}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.7 Delete Post} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author or an Admin selects the ``Delete Post'' option on a post.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of a post or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user is the author of the selected post or has the Admin role.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The post is soft-deleted by setting the \texttt{deletedAt} field. \newline
+\textbf{POST-2} The post is no longer displayed in forum post listings.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Post} \newline
+1. The User selects the ``Delete Post'' option on a post. \newline
+2. The system verifies that the User is the author of the selected post or has the Admin role. \newline
+3. The system displays a confirmation message. \newline
+4. The User confirms the deletion request. \newline
+5. The system performs a soft delete by updating the \texttt{deletedAt} field of the selected post. \newline
+6. The system removes the post from public forum listings. \newline
+7. The system redirects the User to the category post list page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authorized} \newline
+1. The User selects the ``Delete Post'' option on a post. \newline
+2. The system determines that the User is not the author nor an Admin. \newline
+3. The system displays the message ``You are not authorized to delete this post.'' \newline
+4. Return to step 1. \newline
+\textbf{A.4 User Cancels Deletion} \newline
+1. The User selects the ``Cancel'' option on the confirmation message. \newline
+2. The system cancels the deletion process. \newline
+3. The system returns the User to the post detail page. \newline
+4. The use case ends. \newline
+\textbf{A.1b Selected Post Not Found or Already Deleted} \newline
+1. The User confirms the deletion request. \newline
+2. The system determines that the selected post does not exist or is already soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the selected post in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to delete post. Please try again later.'' \newline
+4. The post is not deleted. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the post. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The post remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-19: Only the author of a post or an Admin can delete that post. \newline
+BR-FORUM-20: Post deletion shall be implemented as a soft delete using the \texttt{deletedAt} field. \newline
+BR-FORUM-21: Soft-deleted posts shall not appear in public forum listings.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted posts remain stored in the database and can be restored by administrators.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during the deletion process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.8 Like Post
+% =================================================================
+
+\subparagraph{UC-04.8 Like Post}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.8 Like Post} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Like'' button on a forum post.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to express appreciation for a post by adding a like reaction (toggle action).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post exists and has \texttt{deletedAt = NULL}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A like record is created in the ForumLike table associated with the user and post. \newline
+\textbf{POST-2} The post's reaction count is updated and the ``Like'' button is highlighted.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Like Post} \newline
+1. The User clicks the ``Like'' button on a post. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system verifies that the post exists and has not been deleted. \newline
+4. The system verifies that the User has not already liked the post. \newline
+5. The system creates a new like record associated with the User and the post in the ForumLike table. \newline
+6. The system updates the displayed reaction count and highlights the ``Like'' button.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authenticated} \newline
+1. The User clicks the ``Like'' button. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected post. \newline
+6. Return to step 1. \newline
+\textbf{A.1b Selected Post Not Found or Deleted} \newline
+1. The User clicks the ``Like'' button on a post. \newline
+2. The system determines that the selected post does not exist or is soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. Return to step 1. \newline
+\textbf{A.4 Post Already Liked} \newline
+1. The User clicks the ``Like'' button on a post they have already liked. \newline
+2. The system determines that the User has already liked the post. \newline
+3. The system performs the unlike action (see UC-04.9). \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to create a new like record in the ForumLike table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to process your request. Please try again later.'' \newline
+4. The like reaction is not saved. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the like request. \newline
+2. The system cannot save the reaction. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The reaction count remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-22: Only authenticated users can like posts. \newline
+BR-FORUM-23: A user can have only one active like reaction per post. \newline
+BR-FORUM-24: The reaction shall be stored in the ForumLike table.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The like action is a toggle and uses optimistic updates on the frontend.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to the user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.9 Unlike Post
+% =================================================================
+
+\subparagraph{UC-04.9 Unlike Post}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.9 Unlike Post} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks an active ``Like'' button on a post that they have previously liked.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum post.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user has previously liked the selected post.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The corresponding like record is removed from the ForumLike table. \newline
+\textbf{POST-2} The post's reaction count is updated and the ``Like'' button is set to its inactive state.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Unlike Post} \newline
+1. The User clicks the active ``Like'' button on a post. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system verifies the existing like relationship between the User and the post. \newline
+4. The system removes the corresponding like record from the ForumLike table. \newline
+5. The system updates the displayed reaction count and changes the ``Like'' button to its inactive state.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a Selected Post Not Found} \newline
+1. The User clicks the ``Like'' button on a post. \newline
+2. The system determines that the selected post does not exist or is soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. Return to step 1. \newline
+\textbf{A.1b User Not Authenticated} \newline
+1. The User attempts to remove a reaction from a post. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected post. \newline
+6. Return to step 1. \newline
+\textbf{A.3 Like Record Not Found} \newline
+1. The User clicks the ``Like'' button on a post. \newline
+2. The system determines that no like record exists for the User and the selected post. \newline
+3. The system treats the action as a like. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to remove the like record from the ForumLike table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to process your request. Please try again later.'' \newline
+4. The like reaction is not removed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the unlike request. \newline
+2. The system cannot remove the reaction. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The reaction count remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-25: Only authenticated users can remove post reactions. \newline
+BR-FORUM-26: A like reaction can only be removed if a corresponding like record exists. \newline
+BR-FORUM-27: Removing a reaction shall delete the corresponding record from the ForumLike table.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The like/unlike action is a single toggle endpoint.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to the user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.10 View Like Post Detail
+% =================================================================
+
+\subparagraph{UC-04.10 View Like Post Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.10 View Like Post Detail} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the reaction/like count link on a forum post.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view the list of people who have liked a specific forum post.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected post exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-2} The post detail page is displayed successfully.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The list of likes for the selected post is displayed. \newline
+\textbf{POST-2} Users can view each liker's display name and avatar.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Like Post Detail} \newline
+1. The User clicks the reaction count link on the post action bar. \newline
+2. The system retrieves all likes for the selected post from the ForumLike table. \newline
+3. The system displays a dialog listing all likers with their avatars.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a No Likes Found} \newline
+1. The User clicks the reaction count link. \newline
+2. The system determines that no likes exist for the selected post. \newline
+3. The system displays the message ``No likes yet.'' \newline
+4. The User remains on the post detail page. \newline
+5. Return to step 1. \newline
+\textbf{A.1b Selected Post Not Found} \newline
+1. The User clicks the reaction count link. \newline
+2. The system determines that the selected post does not exist or is soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the list of likes for the post from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load reactions. Please try again later.'' \newline
+4. The like list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the requested like data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without like information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-28: The like detail shall include the user id and user profile information for each liker.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+All likes for a post are returned without pagination.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to the user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.11 View Post Comments
+% =================================================================
+
+\subparagraph{UC-04.11 View Post Comments}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.11 View Post Comments} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a forum post detail page (UC-04.4).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view all non-deleted comments associated with a selected forum post.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The selected post exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-2} The post detail page is displayed successfully.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of comments associated with the selected post is displayed. \newline
+\textbf{POST-2} Users can view comment content, authors, creation dates, and like counts.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Post Comments} \newline
+1. The User opens a post detail page (UC-04.4). \newline
+2. The system retrieves comments associated with the selected post from the ForumComment table, excluding deleted comments. \newline
+3. The system retrieves author information for each comment. \newline
+4. The system sorts the comments by creation date and applies pagination. \newline
+5. The system displays the comment content, author information, creation date, and like count for each comment.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a No Comments Found} \newline
+1. The User opens a post detail page. \newline
+2. The system determines that no comments exist for the selected post. \newline
+3. The system displays the message ``No comments available.'' \newline
+4. The User remains on the post detail page. \newline
+5. Return to step 1. \newline
+\textbf{A.1b Associated Post Is No Longer Available} \newline
+1. The User attempts to view comments for a post. \newline
+2. The system determines that the associated post does not exist or is soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. The system redirects the User to the previous page. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to retrieve the comment list for the selected post from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to load comments. Please try again later.'' \newline
+4. The comment list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the requested comment data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any comment information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-29: Only comments with \texttt{deletedAt = NULL} shall be displayed. \newline
+BR-FORUM-30: Comments shall be sorted by creation date. \newline
+BR-FORUM-31: For authenticated users, each comment shall indicate whether it has been liked by the current user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Comments are displayed within the selected post detail page's comment section.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each comment is associated with a valid post and author.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.12 Add Comment
+% =================================================================
+
+\subparagraph{UC-04.12 Add Comment}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.12 Add Comment} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user enters comment content and clicks the ``Submit Comment'' button.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to add a new comment to a forum post and participate in community discussions.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post exists and has \texttt{deletedAt = NULL}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new comment record is inserted into the ForumComment table. \newline
+\textbf{POST-2} The new comment is displayed in the comment list of the post.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Add Comment} \newline
+1. The User enters content into the comment input field on a post detail page. \newline
+2. The User clicks the ``Submit Comment'' button. \newline
+3. The system validates the comment content. \newline
+4. The system creates a new comment record associated with the selected post and the User in the ForumComment table. \newline
+5. The system updates the comment list and displays the new comment.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authenticated} \newline
+1. The User attempts to submit a comment. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected post. \newline
+6. Return to step 1. \newline
+\textbf{A.1b Empty Comment Content} \newline
+1. The User attempts to submit a comment. \newline
+2. The system determines that the comment content is empty. \newline
+3. The system displays the message ``Comment content cannot be empty.'' \newline
+4. Return to step 1. \newline
+\textbf{A.1c Selected Post Not Found} \newline
+1. The User clicks the ``Submit Comment'' button. \newline
+2. The system determines that the selected post does not exist or is soft-deleted. \newline
+3. The system displays the message ``Post not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the new comment to the ForumComment table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to submit comment. Please try again later.'' \newline
+4. The comment is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while submitting the comment. \newline
+2. The system cannot save the comment data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the post detail page without the comment being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-32: Only authenticated users can create comments. \newline
+BR-FORUM-33: Comment content cannot be empty. \newline
+BR-FORUM-34: Each comment shall be associated with a valid post and user.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Comments are displayed in chronological order based on their creation time.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post remains available during the comment submission process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.13 Edit Comment
+% =================================================================
+
+\subparagraph{UC-04.13 Edit Comment}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.13 Edit Comment} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Edit'' option on one of their comments.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to modify the content of a comment that they previously created.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected comment exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user is the owner of the selected comment.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The comment content is updated in the ForumComment table. \newline
+\textbf{POST-2} The updated comment is displayed on the post detail page.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Comment} \newline
+1. The User clicks the ``Edit'' option on their comment. \newline
+2. The system verifies that the User is the owner of the selected comment. \newline
+3. The system displays the current comment content in an editable form. \newline
+4. The User modifies the comment content. \newline
+5. The User clicks the ``Save Changes'' button. \newline
+6. The system validates the updated content. \newline
+7. The system updates the comment record in the ForumComment table. \newline
+8. The system displays the updated comment.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authorized} \newline
+1. The User clicks the ``Edit'' option on a comment. \newline
+2. The system determines that the User is not the owner of the selected comment. \newline
+3. The system displays the message ``You are not authorized to edit this comment.'' \newline
+4. Return to step 1. \newline
+\textbf{A.4a Cancel Comment Editing} \newline
+1. The User clicks the ``Cancel'' button on the edit form. \newline
+2. The system discards all unsaved changes. \newline
+3. The system displays the original comment content. \newline
+4. The use case ends. \newline
+\textbf{A.4b Empty Comment Content} \newline
+1. The User clicks the ``Save Changes'' button. \newline
+2. The system determines that the updated comment content is empty. \newline
+3. The system displays the message ``Comment content cannot be empty.'' \newline
+4. Return to step 4. \newline
+\textbf{A.1b Selected Comment Not Found or Not in Post} \newline
+1. The User clicks the ``Save Changes'' button. \newline
+2. The system determines that the selected comment does not exist, is deleted, or does not belong to the post. \newline
+3. The system displays the message ``Comment not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the comment record in the ForumComment table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to update comment. Please try again later.'' \newline
+4. The comment is not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while saving the changes. \newline
+2. The system cannot save the updated comment data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the edit form without the changes being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-35: Only the owner of a comment can edit it. \newline
+BR-FORUM-36: Comment content cannot be empty. \newline
+BR-FORUM-37: A comment must belong to the specified post to be edited.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The updated comment remains associated with the original post and author.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment has not been deleted or hidden by the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.14 Delete Comment
+% =================================================================
+
+\subparagraph{UC-04.14 Delete Comment}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.14 Delete Comment} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Delete'' option on one of their comments.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a comment or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected comment exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user is the owner of the selected comment or has the Admin role.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The selected comment is soft-deleted by setting the \texttt{deletedAt} field. \newline
+\textbf{POST-2} The comment is no longer displayed to regular users.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Comment} \newline
+1. The User clicks the ``Delete'' option on a comment. \newline
+2. The system verifies that the User is the owner of the selected comment or has the Admin role. \newline
+3. The system displays a confirmation dialog. \newline
+4. The User confirms the deletion request. \newline
+5. The system updates the \texttt{deletedAt} field of the selected comment. \newline
+6. The system removes the comment from the visible comment list and refreshes the comment section.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authorized} \newline
+1. The User clicks the ``Delete'' option on a comment. \newline
+2. The system determines that the User is not the owner nor an Admin. \newline
+3. The system displays the message ``You are not authorized to delete this comment.'' \newline
+4. Return to step 1. \newline
+\textbf{A.4 Cancel Deletion} \newline
+1. The User clicks the ``Cancel'' button on the confirmation dialog. \newline
+2. The system closes the confirmation dialog. \newline
+3. The comment remains unchanged. \newline
+4. The use case ends. \newline
+\textbf{A.1b Selected Comment Not Found or Not in Post} \newline
+1. The User confirms the deletion request. \newline
+2. The system determines that the selected comment does not exist, is already deleted, or does not belong to the post. \newline
+3. The system displays the message ``Comment not found.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the selected comment in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to delete comment. Please try again later.'' \newline
+4. The comment is not deleted. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the comment. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The comment remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-38: Only the owner of a comment or an Admin can delete it. \newline
+BR-FORUM-39: Comment deletion shall be implemented as a soft delete using the \texttt{deletedAt} field. \newline
+BR-FORUM-40: Soft-deleted comments shall not be displayed in normal comment listings.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted comments may remain available for administrative review and auditing purposes.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment has not been permanently removed from the database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.15 Like Comment
+% =================================================================
+
+\subparagraph{UC-04.15 Like Comment}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.15 Like Comment} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Like'' button on a comment.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to express appreciation for a comment by adding a like reaction (toggle action).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected comment exists and has \texttt{deletedAt = NULL}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A like record is created in the ForumLike table associated with the user and comment. \newline
+\textbf{POST-2} The comment's reaction count is updated and the ``Like'' button is highlighted.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Like Comment} \newline
+1. The User clicks the ``Like'' button on a comment. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system verifies that the comment exists and has not been deleted. \newline
+4. The system verifies that the User has not already liked the comment. \newline
+5. The system creates a new like record associated with the User and the comment in the ForumLike table. \newline
+6. The system updates the displayed reaction count and highlights the ``Like'' button.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authenticated} \newline
+1. The User clicks the ``Like'' button on a comment. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected post. \newline
+6. Return to step 1. \newline
+\textbf{A.1b Selected Comment Not Found} \newline
+1. The User clicks the ``Like'' button on a comment. \newline
+2. The system determines that the selected comment does not exist, is deleted, or does not belong to the post. \newline
+3. The system displays the message ``Comment not found.'' \newline
+4. Return to step 1. \newline
+\textbf{A.4 Comment Already Liked} \newline
+1. The User clicks the ``Like'' button on a comment they have already liked. \newline
+2. The system determines that the User has already liked the comment. \newline
+3. The system performs the unlike action (see UC-04.16). \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to create a new like record in the ForumLike table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to process your request. Please try again later.'' \newline
+4. The like reaction is not saved. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the like request. \newline
+2. The system cannot save the reaction. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The reaction count remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-41: Only authenticated users can like comments. \newline
+BR-FORUM-42: A user can have only one active like reaction per comment. \newline
+BR-FORUM-43: The reaction shall be stored in the ForumLike table.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The like action is a toggle and uses optimistic updates on the frontend.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment is accessible to the user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.16 Unlike Comment
+% =================================================================
+
+\subparagraph{UC-04.16 Unlike Comment}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.16 Unlike Comment} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks an active ``Like'' button on a comment that they have previously liked.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum comment.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected comment exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user has previously liked the selected comment.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The corresponding like record is removed from the ForumLike table. \newline
+\textbf{POST-2} The comment's reaction count is updated and the ``Like'' button is set to its inactive state.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Unlike Comment} \newline
+1. The User clicks the active ``Like'' button on a comment. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system verifies the existing like relationship between the User and the comment. \newline
+4. The system removes the corresponding like record from the ForumLike table. \newline
+5. The system updates the displayed reaction count and changes the ``Like'' button to its inactive state.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a Selected Comment Not Found} \newline
+1. The User clicks the ``Like'' button on a comment. \newline
+2. The system determines that the selected comment does not exist or is soft-deleted. \newline
+3. The system displays the message ``Comment not found.'' \newline
+4. Return to step 1. \newline
+\textbf{A.1b User Not Authenticated} \newline
+1. The User attempts to remove a reaction from a comment. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected post. \newline
+6. Return to step 1. \newline
+\textbf{A.3 Like Record Not Found} \newline
+1. The User clicks the ``Like'' button on a comment. \newline
+2. The system determines that no like record exists for the User and the selected comment. \newline
+3. The system treats the action as a like. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to remove the like record from the ForumLike table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to process your request. Please try again later.'' \newline
+4. The like reaction is not removed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the unlike request. \newline
+2. The system cannot remove the reaction. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The reaction count remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-44: Only authenticated users can remove comment reactions. \newline
+BR-FORUM-45: A like reaction can only be removed if a corresponding like record exists. \newline
+BR-FORUM-46: Removing a reaction shall delete the corresponding record from the ForumLike table.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The like/unlike action is a single toggle endpoint.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment is accessible to the user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-04.17 Report Content
+% =================================================================
+
+\subparagraph{UC-04.17 Report Content}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-04.17 Report Content} \\ \hline
+
+Created By: & Pham Kha Vy & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & Admin, Moderator \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects the ``Report'' option for a forum post or comment.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to report forum posts or comments that violate community guidelines so that moderators can review and take appropriate actions.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected post or comment exists and has \texttt{deletedAt = NULL}. \newline
+\textbf{PRE-3} The user has not already reported the selected content.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new report record is created in the ForumReport table. \newline
+\textbf{POST-2} The report status is automatically set to PENDING. \newline
+\textbf{POST-3} Administrators and moderators can review the report.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Report Content} \newline
+1. The User selects the ``Report'' option on a post or comment. \newline
+2. The system verifies that the User is authenticated. \newline
+3. The system displays a report dialog. \newline
+4. The system checks whether the User has already reported this content. \newline
+5. The User enters a report reason in the dialog. \newline
+6. The User clicks the ``Submit Report'' button. \newline
+7. The system validates the submitted information. \newline
+8. The system creates a new record in the ForumReport table with status set to PENDING. \newline
+9. The system displays a confirmation message indicating that the report has been submitted successfully.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1a User Not Authenticated} \newline
+1. The User selects the ``Report'' option on a post or comment. \newline
+2. The system determines that the User is not authenticated. \newline
+3. The system redirects the User to the Login page. \newline
+4. The User logs in successfully. \newline
+5. The system returns the User to the selected content. \newline
+6. Return to step 1. \newline
+\textbf{A.4 User Already Reported (Duplicate Report)} \newline
+1. The User selects the ``Report'' option on a post or comment. \newline
+2. The system determines that the User has already reported the same content. \newline
+3. The system displays the message ``You have already reported this content.'' \newline
+4. The system shows a read-only report dialog. \newline
+5. The use case ends. \newline
+\textbf{A.5a User Cancels Report} \newline
+1. The User closes the report dialog without submitting. \newline
+2. The system discards all entered information. \newline
+3. The system returns the User to the current post or comment page. \newline
+4. The use case ends. \newline
+\textbf{A.5b Reason Not Entered} \newline
+1. The User clicks the ``Submit Report'' button. \newline
+2. The system determines that no report reason was entered. \newline
+3. The system displays the message ``Please enter a report reason.'' \newline
+4. Return to step 5. \newline
+\textbf{A.1b Content Not Found} \newline
+1. The User clicks the ``Submit Report'' button. \newline
+2. The system determines that the selected post or comment no longer exists or is soft-deleted. \newline
+3. The system displays the message ``The selected content is no longer available.'' \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to save the new report to the ForumReport table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Unable to submit your report. Please try again later.'' \newline
+4. The report is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while submitting the report. \newline
+2. The system cannot save the report data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the report dialog without the report being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FORUM-47: Only authenticated users can submit reports. \newline
+BR-FORUM-48: Reports must be associated with either a post or a comment. \newline
+BR-FORUM-49: New reports shall be created with status PENDING. \newline
+BR-FORUM-50: A user may submit only one report for the same content item.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Reports are reviewed by administrators who can list and update report status.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Moderators regularly review pending reports and take appropriate moderation actions.} \\ \hline
+
+\end{longtable}

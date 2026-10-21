@@ -40,7 +40,13 @@ import { Eye, EyeOff, Loader2, Plus, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Controller, useForm, type Resolver } from "react-hook-form";
 
-const ROLE_FIELD_PATHS = new Set(["roleId", "email", "fullName", "password", "confirmPassword"]);
+const ROLE_FIELD_PATHS = new Set([
+  "roleId",
+  "email",
+  "fullName",
+  "password",
+  "confirmPassword",
+]);
 
 // ====== Dialog "Create User" (Admin) ======
 // Tạo tài khoản mới: họ tên / email / password (kèm confirm) + chọn 1 role khởi tạo
@@ -80,7 +86,7 @@ export function CreateUserDialog() {
     for (const role of roles) {
       const lower = role.name.toLowerCase();
       if (lower === "admin") continue;
-      if (lower === "client" || lower === "freelancer") {
+      if (lower === "client" || lower === "freelancer" || lower === "expert") {
         builtIn.push(role);
       } else {
         custom.push(role);
@@ -88,7 +94,12 @@ export function CreateUserDialog() {
     }
 
     builtIn.sort((a, b) => {
-      const rank = (name: string) => (name.toLowerCase() === "client" ? 0 : 1);
+      const rank = (name: string) =>
+        name.toLowerCase() === "client"
+          ? 0
+          : name.toLowerCase() === "freelancer"
+            ? 1
+            : 2;
       return rank(a.name) - rank(b.name);
     });
     custom.sort((a, b) => a.name.localeCompare(b.name));

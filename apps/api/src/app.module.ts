@@ -35,6 +35,12 @@ import { ProposalModule } from './routes/proposals/proposal.module';
 import { UsersModule } from './routes/users/users.module';
 import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
 import { JobAlertModule } from './routes/job-alert/job-alert.module';
+import { ReviewModule } from './routes/reviews/review.module';
+import { BannersModule } from './routes/banners/banners.module';
+import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
+import { DisputeModule } from './routes/disputes/dispute.module';
+import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
+import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
 
 @Module({
   imports: [
@@ -65,7 +71,13 @@ import { JobAlertModule } from './routes/job-alert/job-alert.module';
     ProposalModule,
     UsersModule,
     SkillsAdminModule,
-    JobAlertModule,
+JobAlertModule,
+    ReviewModule,
+    BannersModule,
+    BannersAdminModule,
+    DisputeModule,
+    ProfileRevisionModule,
+    ExpertProfileModule,
   ],
   controllers: [AppController],
   providers: [

@@ -10,7 +10,9 @@ import {
 } from "@repo/ui/components/shadcn/sidebar";
 import {
   LayoutDashboard,
+  Megaphone,
   MessageSquare,
+  Scale,
   ShieldCheck,
   Tags,
   Users,
@@ -30,9 +32,19 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: "Disputes",
+    href: "/admin/disputes",
+    icon: Scale,
+  },
+  {
     title: "Skills",
     href: "/admin/skills",
     icon: Tags,
+  },
+  {
+    title: "Banners",
+    href: "/admin/banners",
+    icon: Megaphone,
   },
   {
     title: "Users",
@@ -40,6 +52,7 @@ const navItems: NavItem[] = [
     children: [
       { title: "User Management", href: "/admin/users" },
       { title: "Identity Verification", href: "/admin/identity-verifications" },
+      { title: "Profile Reviews", href: "/admin/profile-revisions" },
     ],
   },
   {

@@ -10,6 +10,7 @@ import type {
   GetContractListResponseType,
   GetMilestoneListQueryType,
   GetMilestoneListResponseType,
+  GetSharedFilesResponseType,
 } from "@shared/types";
 
 type ServerFetchOptions = {
@@ -127,6 +128,12 @@ const contractServerRequest = {
   ) {
     return contractServerFetch<GetMilestoneListResponseType>(
       `/api/contracts/${encodeURIComponent(String(contractId))}/milestones${buildQueryString(params)}`,
+    );
+  },
+
+  getSharedFiles(contractId: number) {
+    return contractServerFetch<GetSharedFilesResponseType>(
+      `/api/contracts/${encodeURIComponent(String(contractId))}/files`,
     );
   },
 };

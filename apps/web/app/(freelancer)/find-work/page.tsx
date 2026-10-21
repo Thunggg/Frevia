@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
-import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import type { UserRole } from "@/components/header";
 import { RoleName, type SavedSearchType } from "@shared/types";
 
@@ -34,6 +34,20 @@ function resolveHeaderRole(
 
 export default async function FindWorkPage({ searchParams }: FindWorkPageProps) {
   const params = await searchParams;
+  const user = await authServerRequest.getMe();
+  const role = resolveHeaderRole(user);
+
+  if (role === "FREELANCER") {
+    const queryParams = new URLSearchParams();
+    if (params.keyword) queryParams.set("keyword", params.keyword);
+    if (params.page) queryParams.set("page", params.page);
+    if (params.budget) queryParams.set("budget", params.budget);
+    if (params.time) queryParams.set("time", params.time);
+    if (params.sort) queryParams.set("sort", params.sort);
+    const qs = queryParams.toString();
+    redirect(qs ? `/freelancer/find-work?${qs}` : "/freelancer/find-work");
+  }
+
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const keyword = params.keyword?.trim() || undefined;
@@ -72,41 +86,22 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
-  const [user, result] = await Promise.all([
-    authServerRequest.getMe(),
-    jobServerRequest.getJobs({
-      page,
-      limit: 10,
-      search: keyword,
-      ...budgetRanges[budget],
-      createdAfter,
-      ...selectedSort,
-    }),
-  ]);
+  const result = await jobServerRequest.getJobs({
+    page,
+    limit: 10,
+    search: keyword,
+    ...budgetRanges[budget],
+    createdAfter,
+    ...selectedSort,
+  });
 
-  const role = resolveHeaderRole(user);
   const jobs = result?.data ?? [];
   const pagination = result
     ? result.pagination
     : { page: 1, limit: 10, total: 0, totalPages: 0 };
 
-  let initialBookmarkedSlugs: string[] = [];
-  let initialSavedSearches: SavedSearchType[] = [];
-  if (role === "FREELANCER" && jobs.length > 0) {
-    const statuses = await Promise.all(
-      jobs.map(async (job) => {
-        const status = await jobServerRequest.getBookmarkStatus(job.slug);
-        return status?.isBookmarked ? job.slug : null;
-      }),
-    );
-    initialBookmarkedSlugs = statuses.filter(
-      (slug): slug is string => Boolean(slug),
-    );
-  }
-
-  if (role === "FREELANCER") {
-    initialSavedSearches = (await savedSearchServerRequest.getSavedSearches()) ?? [];
-  }
+  const initialBookmarkedSlugs: string[] = [];
+  const initialSavedSearches: SavedSearchType[] = [];
 
   return (
     <FindWorkContent
