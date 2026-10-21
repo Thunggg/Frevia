@@ -161,8 +161,101 @@ UC-13.5 & Delete Role & Admin & Allows admins to delete roles from the system. \
 \hline
 UC-13.6 & Update Role Permissions & Admin & Assigns route access rights to roles by granting or revoking permissions. \\
 \hline
-
-
-
+UC-15 & Identity Verification & Freelancer & Manages freelancer identity verification document submission and review. \\
+\hline
+UC-15.1 & Upload Identity Documents & Freelancer & Allows freelancers to upload ID card, passport, or license documents. \\
+\hline
+UC-15.2 & View Verification Status & Freelancer & Displays current identity verification status (Pending, Approved, Rejected). \\
+\hline
+UC-16 & View Client Profile & Guest, Client, Freelancer & Manages client company profile details and public showcase. \\
+\hline
+UC-16.1 & View Client Profile Detail & Guest, Client, Freelancer & Displays client company details, bio, website, and job history. \\
+\hline
+UC-16.2 & Update Company Information & Client & Allows clients to update company name, bio, website URL, and industry sector. \\
+\hline
+UC-17 & Social Links & Guest, Client, Freelancer & Manages external social and portfolio links on user profiles. \\
+\hline
+UC-17.1 & View Social Links & Guest, Client, Freelancer & Retrieves social links associated with a user profile. \\
+\hline
+UC-17.2 & Add Social Link & Client, Freelancer & Allows users to add external social links to their profile. \\
+\hline
+UC-17.3 & Delete Social Link & Client, Freelancer & Allows users to remove social links from their profile. \\
+\hline
+UC-18 & Favorites & Client & Manages saved favorite freelancer profiles for clients. \\
+\hline
+UC-18.1 & View Favorite Freelancers & Client & Retrieves paginated list of client's favorite freelancers. \\
+\hline
+UC-18.2 & Add to Favorites & Client & Allows clients to save a freelancer profile to their favorites. \\
+\hline
+UC-18.3 & Remove from Favorites & Client & Allows clients to remove a freelancer from their favorites list. \\
+\hline
+UC-19 & Following & Client, Freelancer & Manages followed freelancer network connections. \\
+\hline
+UC-19.1 & View Following List & Client, Freelancer & Retrieves list of freelancers currently followed by the user. \\
+\hline
+UC-19.2 & Follow Freelancer & Client, Freelancer & Allows users to follow a freelancer for activity updates. \\
+\hline
+UC-19.3 & Unfollow Freelancer & Client, Freelancer & Allows users to stop following a freelancer. \\
+\hline
+UC-20 & Manage Notifications & Client, Freelancer, Admin & Manages user in-app notification center and read states. \\
+\hline
+UC-20.1 & View Notification List & Client, Freelancer, Admin & Retrieves user notifications list with unread counter. \\
+\hline
+UC-20.2 & Mark Notification as Read & Client, Freelancer, Admin & Sets read status of a specific notification to true. \\
+\hline
+UC-20.3 & Mark All Notifications as Read & Client, Freelancer, Admin & Bulk marks all user notifications as read. \\
+\hline
+UC-20.4 & Delete Notification & Client, Freelancer, Admin & Soft-deletes a notification from user's notification list. \\
+\hline
+UC-21 & Account Management & Client, Freelancer & Manages user role switching and complementary role activation. \\
+\hline
+UC-21.1 & Switch Role & Client, Freelancer & Allows dual-role users to switch working context between Client and Freelancer. \\
+\hline
+UC-21.2 & Join New Role & Client, Freelancer & Allows single-role users to activate complementary secondary role. \\
+\hline
+UC-22 & Reviews & Guest, Client, Freelancer, Admin & Manages post-contract ratings and detailed feedback reviews. \\
+\hline
+UC-22.1 & View Reviews List & Guest, Client, Freelancer & Retrieves reviews list for a user profile or contract. \\
+\hline
+UC-22.2 & View Review Detail & Guest, Client, Freelancer & Displays rating breakdown scores and detailed comment text. \\
+\hline
+UC-22.3 & Write Review & Client, Freelancer & Allows contract participants to review each other upon project completion. \\
+\hline
+UC-22.4 & Edit Review & Client, Freelancer & Allows review authors to update ratings or feedback text. \\
+\hline
+UC-22.5 & Delete Review & Client, Freelancer, Admin & Soft-deletes a review record. \\
+\hline
+UC-23 & Manage Response Review & Client, Freelancer, Admin & Manages recipient responses to reviews. \\
+\hline
+UC-23.1 & Respond to Review & Client, Freelancer & Allows review recipients to post a public response. \\
+\hline
+UC-23.2 & Edit Response & Client, Freelancer & Allows response authors to modify response text. \\
+\hline
+UC-23.3 & Delete Response & Client, Freelancer, Admin & Soft-deletes a review response. \\
+\hline
+UC-24 & Manage Profile & Client, Freelancer, Admin & Manages account credentials, profile details, and avatar. \\
+\hline
+UC-24.1 & Get Profile & Client, Freelancer, Admin & Retrieves general account profile information. \\
+\hline
+UC-24.2 & Update Profile & Client, Freelancer, Admin & Updates general profile details (name, phone, bio, location). \\
+\hline
+UC-24.3 & Change Password & Client, Freelancer, Admin & Allows authenticated users to change password securely. \\
+\hline
+UC-24.4 & Upload Avatar & Client, Freelancer, Admin & Allows users to upload and crop profile avatar image. \\
+\hline
+UC-25 & Profile Update Review & Admin & Manages manual admin review of profile modification requests. \\
+\hline
+UC-25.1 & View Pending Profile Update Requests & Admin & Retrieves list of profile update requests awaiting review. \\
+\hline
+UC-25.2 & View Profile Update Request Detail & Admin & Displays side-by-side diff comparison for profile changes. \\
+\hline
+UC-25.3 & Approve Profile Update Request & Admin & Approves profile modification request and updates live profile. \\
+\hline
+UC-25.4 & Reject Profile Update Request & Admin & Rejects profile request with mandatory reason note. \\
+\hline
+UC-25.5 & View Profile Update Request History & Admin & Views history of processed profile update requests. \\
+\hline
+UC-25.6 & Update Profile Expert & Expert, Admin & Updates expert consultant profile and homepage showcase. \\
+\hline
 \end{longtable}
 \label{tab:use_cases}

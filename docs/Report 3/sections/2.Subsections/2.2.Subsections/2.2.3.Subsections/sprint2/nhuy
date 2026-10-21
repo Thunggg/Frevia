@@ -1,0 +1,463 @@
+\paragraph{Identity Verification, Profile View, Social Links \& Favorites}
+
+% =================================================================
+% UC-15.1 Upload Identity Documents
+% =================================================================
+\subparagraph{UC-15.1 Upload Identity Documents}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-15.1 Upload Identity Documents} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated freelancer submits identity documents for verification.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to upload identity verification documents (ID card, passport, driver's license) for platform identity verification.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged into the system. \newline
+\textbf{PRE-2} The freelancer has not already submitted an active verification request.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} An identity verification record is created with status PENDING. \newline
+\textbf{POST-2} The verification request is submitted to the admin moderation queue.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Upload Identity Documents} \newline
+1. Freelancer navigates to the Identity Verification section in profile settings. \newline
+2. Freelancer selects the document type (National ID, Passport, Driver's License). \newline
+3. Freelancer uploads front and back document images or files. \newline
+4. Freelancer clicks the ``Submit Verification'' button. \newline
+5. The system validates file format, size (under 5MB), and required fields. \newline
+6. The system securely uploads document files to storage. \newline
+7. The system creates a new record in \texttt{id\_verification\_documents} with status PENDING. \newline
+8. The system displays the message ``Identity documents submitted successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Upload} \newline
+1. Freelancer clicks ``Cancel'' during file upload. \newline
+2. The system discards unsubmitted files and returns to profile settings.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Invalid Document File} \newline
+1. The system detects unsupported format or file size exceeding 5MB. \newline
+2. The system displays ``Invalid file format or size exceeds limit (5MB max).'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Already Verified} \newline
+1. The freelancer's identity is already verified (status APPROVED). \newline
+2. The system displays ``Your identity is already verified.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ID-01: Document files must be image (JPEG/PNG/WebP) or PDF format and less than 5MB. \newline
+BR-ID-02: Each freelancer can have only one active PENDING or APPROVED verification request.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Uploaded identity documents are accessible only by administrators for privacy compliance.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Cloud storage is available and securely configured.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-15.2 View Verification Status
+% =================================================================
+\subparagraph{UC-15.2 View Verification Status}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-15.2 View Verification Status} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the Identity Verification settings page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the current status of their identity verification submission along with admin review notes if rejected.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged into the system.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The current status (NOT\_SUBMITTED, PENDING, APPROVED, REJECTED) and review details are displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Verification Status} \newline
+1. Freelancer opens the Identity Verification section. \newline
+2. The system queries \texttt{id\_verification\_documents} for the freelancer's latest request. \newline
+3. The system displays the current verification badge and status badge (Pending, Approved, Rejected). \newline
+4. If status is REJECTED, the system displays admin review notes explaining the rejection reason.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Request Submitted} \newline
+1. The system finds no verification record for the freelancer. \newline
+2. The system displays status NOT\_SUBMITTED with an option to upload documents (UC-15.1).
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. The system fails to retrieve verification records. \newline
+2. The system displays ``Unable to load verification status. Try again later.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ID-03: Rejection notes must provide clear instructions if resubmission is allowed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{An APPROVED status grants the Verified Badge on the freelancer's public profile.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Verification statuses are updated by admins upon reviewing submissions.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-16.1 View Client Profile Detail
+% =================================================================
+\subparagraph{UC-16.1 View Client Profile Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-16.1 View Client Profile Detail} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a client's name or company name across job posts or contract pages.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays detailed client profile information including company name, description, website, contact info, total job postings, and hiring statistics.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The specified client account exists and is active.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Complete client company profile and project history summary are displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Client Profile Detail} \newline
+1. User clicks on a client's profile link. \newline
+2. The system queries \texttt{profiles} and \texttt{client\_profiles} tables for client user ID. \newline
+3. The system calculates summary metrics (total jobs posted, total contracts awarded, client rating). \newline
+4. The system renders the client profile card with company name, bio, website link, and active jobs list.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Profile Not Found} \newline
+1. The requested client profile does not exist or has been deleted. \newline
+2. The system displays ``Client profile not found.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CPROF-01: Public client details must hide private sensitive fields like phone or payment tokens.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Public view is accessible to unauthenticated guests.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Client profile records are stored in \texttt{client\_profiles}.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-16.2 Update Company Information
+% =================================================================
+\subparagraph{UC-16.2 Update Company Information}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-16.2 Update Company Information} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated client clicks ``Edit Company Profile'' on their profile dashboard.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to update company-related details such as company name, description, website URL, industry sector, and location.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is authenticated and currently in the Client role context.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Updated company details are saved to \texttt{client\_profiles} and reflected publicly.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Company Information} \newline
+1. Client opens the Edit Company Profile modal. \newline
+2. System pre-populates fields with current company information. \newline
+3. Client updates company name, description, website URL, and industry sector. \newline
+4. Client clicks ``Save Changes''. \newline
+5. System validates inputs (valid URL syntax, non-empty company name). \newline
+6. System updates the record in \texttt{client\_profiles}. \newline
+7. System displays success message ``Company profile updated successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Edit} \newline
+1. Client clicks ``Cancel''. \newline
+2. System discards unsaved changes and closes modal.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Invalid Inputs} \newline
+1. System detects invalid website URL format or empty company name. \newline
+2. System highlights error fields with warning text. \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CPROF-02: Company name cannot be left empty. \newline
+BR-CPROF-03: Website URL, if provided, must be a valid HTTP/HTTPS URL.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Updates take effect immediately across all client job postings.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user has active Client role privileges.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-17.1 View Social Links
+% =================================================================
+\subparagraph{UC-17.1 View Social Links}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-17.1 View Social Links} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a user profile card or profile header section.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves all social media and portfolio links (GitHub, LinkedIn, Twitter, Personal Website) belonging to a user profile.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The target user profile exists in the database.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of social platform icons and external URL links is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Social Links} \newline
+1. User accesses a freelancer or client profile page. \newline
+2. System queries \texttt{social\_links} table filtering by \texttt{user\_id}. \newline
+3. System retrieves active links (platform name, URL). \newline
+4. System displays social links with appropriate platform icons.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Social Links} \newline
+1. System finds no social link records. \newline
+2. System hides the social links widget or displays ``No social links provided.''
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. Database query fails. \newline
+2. System gracefully omits social link rendering.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SOC-01: Social links must be opened in a new browser tab with \texttt{rel="noopener noreferrer"}.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Supported platforms include GitHub, LinkedIn, Twitter/X, StackOverflow, and Personal Website.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Social link platform types are validated.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-17.2 Add Social Link
+% =================================================================
+\subparagraph{UC-17.2 Add Social Link}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-17.2 Add Social Link} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user submits a new link in profile settings.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to add a new social platform link or portfolio URL to their profile.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is logged into their account.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new record is inserted in \texttt{social\_links} and displayed on the user's profile.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Add Social Link} \newline
+1. User opens the Social Links management tab in profile settings. \newline
+2. User selects platform name (e.g., GitHub, LinkedIn) and inputs target URL. \newline
+3. User clicks ``Add Link''. \newline
+4. System validates URL format and checks for duplicates. \newline
+5. System inserts a new record into \texttt{social\_links}. \newline
+6. System updates the social links list and shows success message.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Duplicate Platform Link} \newline
+1. The user already added a link for the selected platform. \newline
+2. System displays ``A link for this platform already exists.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Invalid URL Format} \newline
+1. Input URL syntax is invalid. \newline
+2. System displays ``Please enter a valid URL (starting with http:// or https://).'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SOC-02: Each platform type can have at most one link per user profile.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user owns the profile being modified.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-17.3 Delete Social Link
+% =================================================================
+\subparagraph{UC-17.3 Delete Social Link}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-17.3 Delete Social Link} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the delete icon next to a social link on their profile settings page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a user to remove a social link from their profile (hard delete).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is logged in. \newline
+\textbf{PRE-2} The social link belongs to the authenticated user.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The social link record is permanently deleted from \texttt{social\_links}.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Social Link} \newline
+1. User clicks the trash icon next to a social link. \newline
+2. System displays confirmation prompt ``Remove this social link?''. \newline
+3. User confirms deletion. \newline
+4. System deletes the record from \texttt{social\_links}. \newline
+5. System removes the link from the UI and displays a notification.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Deletion} \newline
+1. User clicks ``Cancel''. \newline
+2. System closes confirmation dialog without deleting.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Deletion} \newline
+1. Link does not belong to the user. \newline
+2. System displays ``You do not have permission to delete this link.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SOC-03: Deletion of social links is a hard delete operation.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Record exists before deletion.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-18.1 View Favorite Freelancers
+% =================================================================
+\subparagraph{UC-18.1 View Favorite Freelancers}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-18.1 View Favorite Freelancers} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client navigates to the Favorite Freelancers section from their dashboard menu.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves the paginated list of freelancers marked as favorites by the client, displaying key profile summaries, skills, and availability status.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The client is authenticated and logged in.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated grid of saved favorite freelancer profile cards is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Favorite Freelancers} \newline
+1. Client clicks on ``Favorite Freelancers'' in dashboard navigation. \newline
+2. System queries \texttt{favorite\_freelancers} joining \texttt{profiles} and \texttt{freelancer\_profiles} for the client user ID. \newline
+3. System retrieves favorite items ordered by date added descending. \newline
+4. System displays freelancer cards with avatar, title, rating, top skills, and action buttons (Invite to Job, Remove Favorite).
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Favorites Saved} \newline
+1. System finds no favorite records. \newline
+2. System displays ``You haven't added any freelancers to your favorites list yet.'' with a link to browse talent.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Connection Failure} \newline
+1. Query fails due to connection issue. \newline
+2. System displays ``Unable to load favorites. Try again later.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FAV-01: Only freelancers with active non-suspended accounts shall be listed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Client can quickly invite favorite freelancers directly to posted jobs.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Favorites are mapped per client user ID.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-18.2 Add to Favorites
+% =================================================================
+\subparagraph{UC-18.2 Add to Favorites}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-18.2 Add to Favorites} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the heart / favorite icon on a freelancer's profile or search card.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to add a freelancer to their saved favorites list.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Client is authenticated. \newline
+\textbf{PRE-2} Target freelancer account exists.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A favorite mapping is inserted into \texttt{favorite\_freelancers} and the UI icon updates to filled state.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Add to Favorites} \newline
+1. Client clicks the favorite button on a freelancer card or profile page. \newline
+2. System verifies client authentication and target freelancer ID. \newline
+3. System checks if favorite record already exists. \newline
+4. System inserts record into \texttt{favorite\_freelancers} (client\_id, freelancer\_id). \newline
+5. System toggles button state to active and displays toast message ``Added to favorites.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Already Favorited} \newline
+1. Favorite mapping already exists. \newline
+2. System invokes UC-18.3 Remove from Favorites to toggle state off.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Self Favoriting} \newline
+1. User attempts to favorite their own profile. \newline
+2. System displays ``You cannot add yourself to favorites.'' \newline
+3. Use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FAV-02: Adding to favorites is idempotent; duplicate requests are safely ignored or toggled.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Uses optimistic UI update for immediate response.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Target user is a registered freelancer.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-18.3 Remove from Favorites
+% =================================================================
+\subparagraph{UC-18.3 Remove from Favorites}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-18.3 Remove from Favorites} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the active favorite icon on a freelancer card or profile page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a client to remove a freelancer from their favorites list.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Client is authenticated. \newline
+\textbf{PRE-2} The freelancer is currently saved in client's favorites list.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The record is deleted from \texttt{favorite\_freelancers} and UI updates to outline state.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Remove from Favorites} \newline
+1. Client clicks active favorite button. \newline
+2. System deletes record from \texttt{favorite\_freelancers} for matching client\_id and freelancer\_id. \newline
+3. System updates UI icon state to inactive. \newline
+4. System displays toast message ``Removed from favorites.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Record Not Found} \newline
+1. Favorite record does not exist. \newline
+2. System updates UI state and ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FAV-03: Removal from favorites is a hard delete operation in \texttt{favorite\_freelancers}.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Client is logged in.} \\ \hline
+\end{longtable}
