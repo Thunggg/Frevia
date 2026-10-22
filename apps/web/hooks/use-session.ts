@@ -1,18 +1,12 @@
 import { sessionApiRequest } from "@/apiRequests/session";
-import type { ApiResponse, SessionFilterType } from "@shared/types";
+import { useApiDataExtractor } from "@/hooks/use-api-data-extractor";
+import type { SessionFilterType } from "@shared/types";
 import {
   keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-
-function extractData<T>(response: ApiResponse<T>): T {
-  if (response.success && "data" in response) {
-    return response.data;
-  }
-  throw new Error("Unexpected API error response");
-}
 
 export const sessionKeys = {
   all: ["sessions"] as const,
@@ -31,6 +25,8 @@ export function useSessions(filter: Partial<SessionFilterType> = {}) {
     order: filter.order ?? "desc",
   };
 
+  const extractData = useApiDataExtractor("sessions");
+
   return useQuery({
     queryKey: sessionKeys.list(normalized),
     queryFn: () => sessionApiRequest.getSessions(normalized).then(extractData),
@@ -40,6 +36,8 @@ export function useSessions(filter: Partial<SessionFilterType> = {}) {
 }
 
 export function useSession(id: number, enabled = true) {
+  const extractData = useApiDataExtractor("sessions");
+
   return useQuery({
     queryKey: sessionKeys.detail(id),
     queryFn: () => sessionApiRequest.getSession(id).then(extractData),
@@ -49,6 +47,7 @@ export function useSession(id: number, enabled = true) {
 }
 
 export function useRevokeSession() {
+  const extractData = useApiDataExtractor("sessions");
   const queryClient = useQueryClient();
 
   return useMutation({
