@@ -1,9 +1,11 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
+import { useBackendMessage } from "@/hooks/use-backend-message";
 import { Loader2 } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 
 import { proposalApiRequest } from "@/apiRequests/proposal";
@@ -48,11 +50,13 @@ export function ProposalDialog({
   onOpenChange,
 }: ProposalDialogProps) {
   const router = useRouter();
+  const t = useTranslations("jobProposal");
+  const translateMessage = useBackendMessage();
   const [action, setAction] = useState<"draft" | "submit" | null>(null);
   const form = useForm<CreateProposalBodyType>({
-    resolver: zodResolver(
+    resolver: useTranslatedResolver<CreateProposalBodyType>(
       CreateProposalBodySchema,
-    ) as Resolver<CreateProposalBodyType>,
+    ),
     defaultValues: {
       coverLetter: "",
       bidAmount: undefined,
@@ -70,7 +74,7 @@ export function ProposalDialog({
     if (error instanceof ApiFail && error.status === 409) {
       onOpenChange(false);
       toastError({
-        message: "You already have a proposal for this job. Opening it now.",
+        message: t("alreadyExists"),
       });
       void proposalApiRequest.getMyProposalForJob(jobId).then((proposal) => {
         if (proposal) router.push(`/proposals/${proposal.id}`);
@@ -98,7 +102,7 @@ export function ProposalDialog({
     if (!Object.keys(body).length) {
       form.setError("coverLetter", {
         type: "manual",
-        message: "Error.ProposalDraftContentRequired",
+        message: translateMessage("Error.ProposalDraftContentRequired"),
       });
       return;
     }
@@ -112,7 +116,10 @@ export function ProposalDialog({
           field === "bidAmount" ||
           field === "deliveryDays"
         ) {
-          form.setError(field, { type: "manual", message: issue.message });
+          form.setError(field, {
+            type: "manual",
+            message: translateMessage(issue.message),
+          });
         }
       });
       return;
@@ -124,9 +131,9 @@ export function ProposalDialog({
         jobId,
         validation.data,
       );
-      finish(response.data.id, "Proposal saved as a draft", false);
+      finish(response.data.id, t("draftSaved"), false);
     } catch (error) {
-      handleApiError(error, "Unable to save your proposal. Please try again.");
+      handleApiError(error, t("saveFailed"));
     } finally {
       setAction(null);
     }
@@ -136,12 +143,9 @@ export function ProposalDialog({
     setAction("submit");
     try {
       const response = await proposalApiRequest.create(jobId, body);
-      finish(response.data.id, "Proposal submitted");
+      finish(response.data.id, t("submitted"));
     } catch (error) {
-      handleApiError(
-        error,
-        "Unable to submit your proposal. Please try again.",
-      );
+      handleApiError(error, t("submitFailed"));
     } finally {
       setAction(null);
     }
@@ -151,10 +155,9 @@ export function ProposalDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Submit a proposal</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
-            Share your approach, fixed bid, and estimated delivery for{" "}
-            {jobTitle}.
+            {t("description", { jobTitle })}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="py-2">
@@ -164,11 +167,11 @@ export function ProposalDialog({
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Cover letter</FieldLabel>
+                  <FieldLabel>{t("coverLetter")}</FieldLabel>
                   <Textarea
                     {...field}
                     className="min-h-40 resize-y"
-                    placeholder="Explain why you are a good fit for this project."
+                    placeholder={t("coverLetterPlaceholder")}
                     maxLength={5000}
                     aria-invalid={fieldState.invalid}
                   />
@@ -184,7 +187,7 @@ export function ProposalDialog({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Your bid</FieldLabel>
+                    <FieldLabel>{t("bid")}</FieldLabel>
                     <Input
                       type="number"
                       min="0"
@@ -211,7 +214,7 @@ export function ProposalDialog({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Delivery days</FieldLabel>
+                    <FieldLabel>{t("deliveryDays")}</FieldLabel>
                     <Input
                       type="number"
                       min="1"
@@ -245,7 +248,7 @@ export function ProposalDialog({
               {action === "draft" ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
-              Save draft
+              {t("saveDraft")}
             </Button>
             <Button
               type="submit"
@@ -255,7 +258,7 @@ export function ProposalDialog({
               {action === "submit" ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
-              Submit proposal
+              {t("submit")}
             </Button>
           </DialogFooter>
         </form>

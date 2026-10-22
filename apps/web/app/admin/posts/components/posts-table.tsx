@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { formatDate } from "@/lib/format";
 import {
   Table,
   TableBody,
@@ -59,6 +61,9 @@ interface PostsTableProps {
 }
 
 export function PostsTable({ posts, pagination }: PostsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminPosts");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<ForumPostWithUserType | null>(
@@ -69,11 +74,11 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
     setDeletingId(postId);
     try {
       await adminApiRequest.deletePost(postId);
-      toastSuccess({ message: "Post deleted successfully" });
+      toastSuccess({ message: t("deletedToast") });
       setViewingPost(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't delete post. Try again." });
+      toastError({ message: t("deleteFailed") });
     } finally {
       setDeletingId(null);
     }
@@ -85,11 +90,11 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colTitle")}</TableHead>
+              <TableHead>{t("colAuthor")}</TableHead>
+              <TableHead>{tCommon("created")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,7 +104,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                   colSpan={5}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  No posts found.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -128,7 +133,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {new Date(post.createdAt).toLocaleDateString()}
+                    {formatDate(post.createdAt, locale)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -137,6 +142,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewingPost(post)}
+                        aria-label={t("viewPostLabel", { title: post.title })}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -146,27 +152,27 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
+                            aria-label={t("deletePostLabel", { title: post.title })}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                            <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete &quot;
-                              {post.title}&quot;? This action cannot be undone.
+                              {t("deleteConfirm", { title: post.title })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(post.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               {deletingId === post.id
-                                ? "Deleting..."
-                                : "Delete"}
+                                ? t("deletingAction")
+                                : tCommon("delete")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -216,16 +222,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
-                  <span>
-                    {new Date(viewingPost.createdAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )}
-                  </span>
+                  <span>{formatDate(viewingPost.createdAt, locale)}</span>
                 </div>
               </div>
               <Separator />
@@ -236,7 +233,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
               <Separator />
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  Post ID: {viewingPost.id}
+                  {t("postIdLabel", { id: viewingPost.id })}
                 </p>
                 <Link
                   href={`/forum/${viewingPost.categoryId ?? "general"}/${viewingPost.id}`}
@@ -244,7 +241,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                 >
                   <Button variant="outline" size="sm">
                     <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                    View on Forum
+                    {t("viewOnForum")}
                   </Button>
                 </Link>
               </div>

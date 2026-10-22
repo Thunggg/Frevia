@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -39,13 +40,6 @@ import type {
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
-function formatMessageTime(createdAt: string | Date): string {
-  return new Date(createdAt).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
 function formatFileSize(bytes: number | null): string {
   if (bytes == null) return "";
   if (bytes < 1024) return `${bytes} B`;
@@ -73,6 +67,9 @@ type ChatViewProps = {
 };
 
 export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
+  const t = useTranslations("chat");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { socket, connected } = useConversationSocketContext();
   const { data: messages, isLoading } = useConversationMessages(conversationId);
   const { data: conversations } = useConversations();
@@ -96,6 +93,12 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
   const conversation = conversations?.find((c) => c.id === conversationId);
   const otherUser = conversation?.otherUser;
+
+  const formatMessageTime = (createdAt: string | Date): string =>
+    format.dateTime(new Date(createdAt), {
+      hour: "numeric",
+      minute: "2-digit",
+    });
 
   useEffect(() => {
     if (!conversationId) return;
@@ -220,7 +223,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
     if (file.size > MAX_FILE_SIZE) {
       toastError({
-        message: "File is too large. Maximum size is 25MB.",
+        message: t("fileTooLarge"),
       });
       return;
     }
@@ -234,7 +237,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
         },
         onError: (error) => {
           toastError({
-            message: error.message || "Failed to upload file",
+            message: error.message || t("uploadFailed"),
           });
         },
         onSettled: () => setUploading(false),
@@ -258,7 +261,8 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
       : "/conversations";
 
   const displayName =
-    otherUser?.profile?.displayName ?? `User #${otherUser?.id ?? ""}`;
+    otherUser?.profile?.displayName ??
+    tCommon("userFallback", { id: otherUser?.id ?? "" });
   const avatarUrl = otherUser?.profile?.avatarUrl ?? undefined;
 
   return (
@@ -284,7 +288,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             </h3>
             <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-normal">
               <span className="inline-block size-1.5 rounded-full bg-[#0069D3]" />
-              Active
+              {t("active")}
             </p>
           </div>
         </div>
@@ -295,7 +299,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
           >
             <UserRound className="size-3.5 text-muted-foreground" />
-            <span>Profile</span>
+            <span>{t("profile")}</span>
           </Link>
         ) : null}
       </div>
@@ -343,10 +347,10 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
               </Avatar>
             </div>
             <p className="text-sm font-semibold text-foreground font-sans">
-              Say hello to {displayName}
+              {t("sayHello", { name: displayName })}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground max-w-xs">
-              This is the start of your message history together.
+              {t("historyStart")}
             </p>
           </div>
         ) : (
@@ -393,7 +397,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={message.fileUrl ?? ""}
-                            alt={message.fileName ?? "Attachment"}
+                            alt={message.fileName ?? tCommon("attachment")}
                             className="max-h-72 w-full object-cover transition-transform hover:scale-105"
                           />
                         </a>
@@ -417,7 +421,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                           </span>
                           <span className="min-w-0 pr-2">
                             <span className="block max-w-[180px] truncate text-xs font-semibold">
-                              {message.fileName ?? "Attachment"}
+                              {message.fileName ?? tCommon("attachment")}
                             </span>
                             <span className="block text-[10px] opacity-75">
                               {formatFileSize(message.fileSize)}
@@ -468,9 +472,9 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
                       <button
                         type="button"
                         onClick={() => handleDeleteMessage(message.id)}
-                        aria-label="Delete message"
+                        aria-label={t("deleteMessage")}
                         className="opacity-0 transition-opacity group-hover:opacity-100 text-muted-foreground hover:text-red-500 cursor-pointer ml-1"
-                        title="Delete message"
+                        title={t("deleteMessage")}
                       >
                         <Trash2 className="size-3" />
                       </button>
@@ -488,7 +492,12 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
       {otherTyping && (
         <div className="flex items-center gap-2 px-4 sm:px-6 py-1">
           <div className="flex items-center gap-1.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{displayName}</span> is typing
+            {t.rich("typing", {
+              name: displayName,
+              strong: (chunks) => (
+                <span className="font-semibold text-foreground">{chunks}</span>
+              ),
+            })}
             <span className="flex items-center gap-0.5 ml-1">
               <span className="size-1 rounded-full bg-[#0069D3] animate-bounce" />
               <span className="size-1 rounded-full bg-[#0069D3] animate-bounce [animation-delay:0.2s]" />
@@ -513,14 +522,14 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
             className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none"
-            title="Attach file"
+            title={t("attachFile")}
           >
             {uploading ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Paperclip className="size-4" />
             )}
-            <span className="sr-only">Attach file</span>
+            <span className="sr-only">{t("attachFile")}</span>
           </button>
 
           <input
@@ -544,7 +553,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
           {/* Text Input */}
           <input
             type="text"
-            placeholder="Type a message..."
+            placeholder={t("typeMessage")}
             value={input}
             onChange={(e) => handleInputChange(e.target.value)}
             onKeyDown={(e) => {
@@ -561,10 +570,10 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
             type="submit"
             disabled={!input.trim()}
             className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
-            title="Send message"
+            title={t("sendMessage")}
           >
             <Send className="size-3.5" />
-            <span className="sr-only">Send</span>
+            <span className="sr-only">{t("send")}</span>
           </button>
         </form>
       </div>

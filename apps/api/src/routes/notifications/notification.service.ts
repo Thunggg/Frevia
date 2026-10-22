@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationMessage } from '@shared/types';
 import { NotificationNotFoundException } from './notification.error';
 import { NotificationRepository } from './notification.repo';
 
@@ -19,13 +20,16 @@ export class NotificationService {
 
   async markAllRead(userId: number) {
     const result = await this.repository.markAllRead(userId);
-    return { message: `${result.count} notification(s) marked as read.` };
+    return {
+      message: NotificationMessage.MARKED_ALL_READ,
+      count: result.count,
+    };
   }
 
   async delete(userId: number, notificationId: number) {
     const notification = await this.repository.findById(userId, notificationId);
     if (!notification) throw NotificationNotFoundException();
     await this.repository.softDelete(notificationId);
-    return { message: 'Notification deleted.' };
+    return { message: NotificationMessage.DELETED };
   }
 }

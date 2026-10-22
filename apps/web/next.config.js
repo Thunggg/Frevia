@@ -1,4 +1,9 @@
 /* eslint-disable no-undef */
+import createNextIntlPlugin from "next-intl/plugin";
+
+// Không dùng i18n routing: next-intl đọc ngôn ngữ từ cookie trong i18n/request.ts
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
@@ -13,4 +18,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

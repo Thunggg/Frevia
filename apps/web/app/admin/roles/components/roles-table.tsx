@@ -17,21 +17,27 @@ import {
 } from "@repo/ui/components/shadcn/table";
 import { RoleName } from "@shared/types";
 import { Eye } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 
 const SYSTEM_ROLE_NAMES = new Set<string>(Object.values(RoleName));
 
 export function RolesTable() {
+  const t = useTranslations("adminRoles");
+  const tCommon = useTranslations("adminCommon");
+  const format = useFormatter();
   const { data: roles = [], isLoading, isError } = useRoles();
 
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Role Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-muted-foreground mt-1">
-            View all roles in the system
-            {!isLoading && !isError ? ` (${roles.length} total)` : ""}
+            {t("subtitle")}
+            {!isLoading && !isError
+              ? ` ${tCommon("total", { count: roles.length })}`
+              : ""}
           </p>
         </div>
         <CreateRoleDialog />
@@ -44,19 +50,21 @@ export function RolesTable() {
         />
       ) : isError ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Couldn&apos;t load roles. Try again.
+          {t("loadFailed")}
         </p>
       ) : (
         <div className="rounded-lg border bg-card">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-16">ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-36 text-right">Actions</TableHead>
+                <TableHead className="w-16">{tCommon("id")}</TableHead>
+                <TableHead>{tCommon("name")}</TableHead>
+                <TableHead>{tCommon("description")}</TableHead>
+                <TableHead>{tCommon("type")}</TableHead>
+                <TableHead>{tCommon("created")}</TableHead>
+                <TableHead className="w-36 text-right">
+                  {tCommon("actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -66,7 +74,7 @@ export function RolesTable() {
                     colSpan={6}
                     className="text-center py-12 text-muted-foreground"
                   >
-                    No roles found.
+                    {t("noRoles")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -82,7 +90,7 @@ export function RolesTable() {
                       </TableCell>
                       <TableCell className="font-medium">{role.name}</TableCell>
                       <TableCell className="text-muted-foreground max-w-md truncate">
-                        {role.description || "—"}
+                        {role.description || tCommon("empty")}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -93,11 +101,15 @@ export function RolesTable() {
                               : "border border-border bg-muted text-muted-foreground"
                           }
                         >
-                          {isSystem ? "System" : "Custom"}
+                          {isSystem ? tCommon("system") : tCommon("custom")}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                        {new Date(role.createdAt).toLocaleDateString()}
+                        {format.dateTime(new Date(role.createdAt), {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-1">

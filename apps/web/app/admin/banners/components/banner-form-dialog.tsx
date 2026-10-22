@@ -32,6 +32,7 @@ import type {
   BannerUpdateBodyType,
 } from "@shared/types";
 import { ImageIcon, Loader2, Pencil, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BANNER_POSITIONS } from "../constants";
@@ -54,6 +55,8 @@ export function BannerFormDialog({
   banner,
   triggerClassName,
 }: BannerFormDialogProps) {
+  const t = useTranslations("adminBanners");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const isEdit = !!banner;
   const [open, setOpen] = useState(false);
@@ -147,9 +150,9 @@ export function BannerFormDialog({
   const toastUploadError = (err: unknown) => {
     if (err instanceof ApiFail) {
       const detailMessage = err.response?.error?.details?.[0]?.message;
-      toastError({ message: detailMessage ?? "Failed to upload image." });
+      toastError({ message: detailMessage ?? t("uploadFailed") });
     } else {
-      toastError({ message: "Failed to upload image." });
+      toastError({ message: t("uploadFailed") });
     }
   };
 
@@ -188,25 +191,26 @@ export function BannerFormDialog({
           isActive,
         };
         await adminApiRequest.updateBanner(banner.id, body);
-        toastSuccess({ message: "Banner updated successfully!" });
+        toastSuccess({ message: t("updatedToast") });
       } else {
         const body: BannerCreateBodyType = {
           ...common,
           isActive,
         };
         await adminApiRequest.createBanner(body);
-        toastSuccess({ message: "Banner created successfully!" });
+        toastSuccess({ message: t("createdToast") });
       }
       handleOpenChange(false);
       router.refresh();
     } catch (err) {
+      const fallback = isEdit ? t("updateFailed") : t("createFailed");
       if (err instanceof ApiFail) {
         const detailMessage = err.response?.error?.details?.[0]?.message;
         toastError({
-          message: detailMessage ?? (isEdit ? "Failed to update banner." : "Failed to create banner."),
+          message: detailMessage ?? fallback,
         });
       } else {
-        toastError({ message: isEdit ? "Failed to update banner." : "Failed to create banner." });
+        toastError({ message: fallback });
       }
     } finally {
       setLoading(false);
@@ -224,15 +228,15 @@ export function BannerFormDialog({
               triggerClassName ??
               "h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
             }
-            title="Edit banner"
-            aria-label={`Edit banner ${banner?.title}`}
+            title={t("editTrigger")}
+            aria-label={t("editTriggerOf", { title: banner?.title ?? "" })}
           >
             <Pencil className="h-4 w-4" />
           </Button>
         ) : (
           <Button className="gap-2 bg-[#4fae2e] text-white hover:bg-[#3f9225]">
             <Plus className="h-4 w-4" />
-            Create Banner
+            {t("createTrigger")}
           </Button>
         )}
       </DialogTrigger>
@@ -240,25 +244,23 @@ export function BannerFormDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {isEdit ? "Edit Banner" : "Create New Banner"}
+              {isEdit ? t("editTitle") : t("createTitle")}
             </DialogTitle>
             <DialogDescription>
-              {isEdit
-                ? "Update banner details. Each position allows only one active banner."
-                : "Add a new advertisement banner. Each position allows only one active banner."}
+              {isEdit ? t("editDescription") : t("createDescription")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor={`${isEdit ? "edit" : "create"}-title`} className="text-sm font-medium">
-                Title <span className="text-destructive">*</span>
+                {t("fieldTitle")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id={`${isEdit ? "edit" : "create"}-title`}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Summer campaign 2026"
+                placeholder={t("fieldTitlePlaceholder")}
                 required
                 disabled={loading}
               />
@@ -266,7 +268,7 @@ export function BannerFormDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="banner-position" className="text-sm font-medium">
-                Position <span className="text-destructive">*</span>
+                {t("fieldPosition")} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={position}
@@ -274,12 +276,12 @@ export function BannerFormDialog({
                 disabled={loading}
               >
                 <SelectTrigger id="banner-position" className="w-full">
-                  <SelectValue placeholder="Select position" />
+                  <SelectValue placeholder={t("fieldPositionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {BANNER_POSITIONS.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.label}
+                      {t(`positions.${item.labelKey}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -288,7 +290,7 @@ export function BannerFormDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="banner-image" className="text-sm font-medium">
-                Banner Image <span className="text-destructive">*</span>
+                {t("fieldImage")} <span className="text-destructive">*</span>
               </Label>
               <div className="flex flex-col gap-2">
                 <input
@@ -304,7 +306,7 @@ export function BannerFormDialog({
                     {/* eslint-disable-next-line @next/next/no-img-element -- banner preview */}
                     <img
                       src={previewUrl}
-                      alt="Banner preview"
+                      alt={t("imagePreviewAlt")}
                       className="h-14 w-24 rounded border object-cover bg-muted"
                     />
                     <div className="flex min-w-0 flex-col gap-1">
@@ -317,7 +319,7 @@ export function BannerFormDialog({
                         disabled={loading}
                         className="w-fit text-xs font-medium text-destructive hover:underline"
                       >
-                        Remove image
+                        {t("removeImage")}
                       </button>
                     </div>
                   </div>
@@ -325,7 +327,7 @@ export function BannerFormDialog({
                 {!previewUrl && (
                   <div className="flex items-center gap-2 rounded-md border border-dashed p-2 text-xs text-muted-foreground">
                     <ImageIcon className="h-3.5 w-3.5" />
-                    No image yet. Select a file above to preview.
+                    {t("noImageYet")}
                   </div>
                 )}
               </div>
@@ -333,13 +335,13 @@ export function BannerFormDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="banner-link" className="text-sm font-medium">
-                Link URL
+                {t("fieldLinkUrl")}
               </Label>
               <Input
                 id="banner-link"
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder="https://example.com/promo"
+                placeholder={t("fieldLinkUrlPlaceholder")}
                 disabled={loading}
               />
             </div>
@@ -347,7 +349,7 @@ export function BannerFormDialog({
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-2">
                 <Label htmlFor="banner-start" className="text-sm font-medium">
-                  Start Date
+                  {t("fieldStartDate")}
                 </Label>
                 <Input
                   id="banner-start"
@@ -359,7 +361,7 @@ export function BannerFormDialog({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="banner-end" className="text-sm font-medium">
-                  End Date
+                  {t("fieldEndDate")}
                 </Label>
                 <Input
                   id="banner-end"
@@ -382,7 +384,7 @@ export function BannerFormDialog({
                 htmlFor="banner-active"
                 className="text-sm font-medium cursor-pointer"
               >
-                Active
+                {t("fieldActive")}
               </Label>
             </div>
           </div>
@@ -394,7 +396,7 @@ export function BannerFormDialog({
               onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -407,7 +409,7 @@ export function BannerFormDialog({
               className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? "Save Changes" : "Create Banner"}
+              {isEdit ? t("saveChanges") : t("createTrigger")}
             </Button>
           </DialogFooter>
         </form>

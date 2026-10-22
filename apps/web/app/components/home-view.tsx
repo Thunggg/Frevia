@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { Footer } from "@/components/footer";
@@ -64,6 +65,7 @@ function resolveHeaderRole(user: GetMeResType | null): UserRole {
 }
 
 export function HomeView({ user }: HomeViewProps) {
+  const t = useTranslations("home");
   const role = resolveHeaderRole(user);
 
   return (
@@ -84,7 +86,7 @@ export function HomeView({ user }: HomeViewProps) {
           <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
             <RevealOnScroll>
               <p className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
-                Trusted by forward-thinking teams
+                {t("partnersTitle")}
               </p>
             </RevealOnScroll>
             <div className={styles.partnersRow}>
@@ -115,13 +117,13 @@ export function HomeView({ user }: HomeViewProps) {
               <RevealOnScroll className="lg:col-span-5">
                 <div className="max-w-lg lg:sticky lg:top-28">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-green-600 dark:text-green-400">
-                    Discover
+                    {t("skillsEyebrow")}
                   </p>
                   <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    Skills that get found
+                    {t("skillsTitle")}
                   </h2>
                   <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                    Categories clients search for — highlighted as they surface on Frevia.
+                    {t("skillsDescription")}
                   </p>
                 </div>
               </RevealOnScroll>
@@ -140,18 +142,17 @@ export function HomeView({ user }: HomeViewProps) {
           <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6 sm:py-32">
             <RevealOnScroll>
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4fae2e]/70">
-                Community
+                {t("communityEyebrow")}
               </p>
               <h2
                 className={`${styles.display} text-3xl leading-tight tracking-tight text-foreground sm:text-4xl`}
               >
-                Talk shop with peers
+                {t("communityTitle")}
               </h2>
             </RevealOnScroll>
             <RevealOnScroll delayMs={90}>
               <p className="mx-auto mt-5 max-w-[40ch] text-base leading-relaxed text-foreground/50 sm:text-lg dark:text-foreground/60">
-                Ask questions, share tips, and learn from freelancers and
-                clients building on Frevia.
+                {t("communityDescription")}
               </p>
             </RevealOnScroll>
             <RevealOnScroll delayMs={160}>
@@ -161,7 +162,7 @@ export function HomeView({ user }: HomeViewProps) {
                   size="lg"
                   className={`min-w-[11rem] bg-[#4fae2e] px-8 text-sm font-semibold text-white shadow-lg shadow-[#4fae2e]/20 hover:bg-[#459928] dark:shadow-[#4fae2e]/25 dark:hover:bg-[#5bc03a]`}
                 >
-                  <Link href="/forum">Join the Forum</Link>
+                  <Link href="/forum">{t("joinForum")}</Link>
                 </Button>
                 <Button
                   asChild
@@ -169,7 +170,7 @@ export function HomeView({ user }: HomeViewProps) {
                   size="lg"
                   className={`min-w-[9rem] border-border/60 bg-transparent text-sm font-medium text-foreground/70 hover:border-[#4fae2e]/40 hover:bg-[#4fae2e]/5 hover:text-foreground dark:border-white/10 dark:text-foreground/60 dark:hover:border-[#4fae2e]/30 dark:hover:bg-[#4fae2e]/10`}
                 >
-                  <Link href="/register">Get started</Link>
+                  <Link href="/register">{t("getStarted")}</Link>
                 </Button>
               </div>
             </RevealOnScroll>

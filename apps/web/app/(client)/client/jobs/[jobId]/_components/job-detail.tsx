@@ -1,3 +1,4 @@
+import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -6,34 +7,39 @@ import {
 } from "@/components/icons";
 import type { ViewJobDetailResType } from "@shared/types";
 
-function formatBudget(
-  job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
-) {
-  if (job.budgetMin === null || job.budgetMax === null) {
-    return "Negotiable";
-  }
-  return `$${job.budgetMin.toLocaleString()} - $${job.budgetMax.toLocaleString()}`;
-}
+const JOB_STATUS_KEYS = [
+  "DRAFT",
+  "OPEN",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CLOSED",
+  "CANCELLED",
+] as const;
 
-function formatDate(value: string | Date | null) {
-  if (!value) return "Not set";
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
+const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
+
+const JOB_STATUS_STYLES: Record<string, string> = {
+  OPEN: "text-emerald-600 dark:text-emerald-400",
+  IN_PROGRESS: "text-[#0069D3] dark:text-blue-300",
+  COMPLETED: "text-purple-600 dark:text-purple-400",
+  CLOSED: "text-zinc-600 dark:text-zinc-400",
+  CANCELLED: "text-rose-600 dark:text-rose-400",
+};
 
 function looksLikeHtml(value: string) {
   return /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
-function JobDescription({ description }: { description: string | null }) {
+function JobDescription({
+  description,
+  emptyText,
+}: {
+  description: string | null;
+  emptyText: string;
+}) {
   if (!description) {
     return (
-      <p className="text-sm italic text-muted-foreground">
-        No description provided yet.
-      </p>
+      <p className="text-sm italic text-muted-foreground">{emptyText}</p>
     );
   }
 
@@ -53,18 +59,8 @@ function JobDescription({ description }: { description: string | null }) {
   );
 }
 
-function JobStatusBadge({ status }: { status: string }) {
-  const label = status[0] + status.slice(1).toLowerCase().replace("_", " ");
-
-  const statusStyles: Record<string, string> = {
-    OPEN: "text-emerald-600 dark:text-emerald-400",
-    IN_PROGRESS: "text-[#0069D3] dark:text-blue-300",
-    COMPLETED: "text-purple-600 dark:text-purple-400",
-    CLOSED: "text-zinc-600 dark:text-zinc-400",
-    CANCELLED: "text-rose-600 dark:text-rose-400",
-  };
-
-  const style = statusStyles[status] || "bg-zinc-500/10 text-zinc-600";
+function JobStatusBadge({ status, label }: { status: string; label: string }) {
+  const style = JOB_STATUS_STYLES[status] || "bg-zinc-500/10 text-zinc-600";
 
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${style}`}>
@@ -73,7 +69,51 @@ function JobStatusBadge({ status }: { status: string }) {
   );
 }
 
-export function JobDetail({ job }: { job: ViewJobDetailResType }) {
+export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
+  const t = await getTranslations("jobDetailClient");
+  const tStatus = await getTranslations("jobStatus");
+  const tBudgetType = await getTranslations("jobBudgetType");
+  const tCommon = await getTranslations("common");
+  const tSidebar = await getTranslations("sidebar");
+  const format = await getFormatter();
+
+  const formatBudget = (
+    target: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
+  ) => {
+    if (target.budgetMin === null || target.budgetMax === null) {
+      return t("negotiable");
+    }
+
+    const currency = {
+      style: "currency" as const,
+      currency: "USD",
+      maximumFractionDigits: 0,
+    };
+    return t("budgetRange", {
+      min: format.number(target.budgetMin, currency),
+      max: format.number(target.budgetMax, currency),
+    });
+  };
+
+  const formatDate = (value: string | Date | null) =>
+    value
+      ? format.dateTime(new Date(value), {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : tCommon("notSet");
+
+  const statusLabel = (JOB_STATUS_KEYS as readonly string[]).includes(job.status)
+    ? tStatus(job.status)
+    : job.status;
+
+  const budgetTypeLabel =
+    job.budgetType &&
+    (JOB_BUDGET_TYPE_KEYS as readonly string[]).includes(job.budgetType)
+      ? tBudgetType(job.budgetType)
+      : job.budgetType;
+
   return (
     <div className="min-h-full bg-background font-sans">
       <div className="px-6 py-8 sm:py-12 lg:px-8">
@@ -84,9 +124,11 @@ export function JobDetail({ job }: { job: ViewJobDetailResType }) {
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-[#0069D3]"
           >
             <ArrowLeft className="size-3.5" />
-            <span>My Jobs</span>
+            <span>{tSidebar("navMyJobs")}</span>
             <span className="text-muted-foreground/40">/</span>
-            <span className="text-foreground">Job #{job.id}</span>
+            <span className="text-foreground">
+              {t("jobNumber", { id: job.id })}
+            </span>
           </Link>
         </div>
 
@@ -100,37 +142,42 @@ export function JobDetail({ job }: { job: ViewJobDetailResType }) {
 
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <CalendarDays className="size-3.5 text-muted-foreground/70" />
-            <span>Posted on {formatDate(job.createdAt)}</span>
+            <span>
+              {t("postedOn", { date: formatDate(job.createdAt) })}
+            </span>
           </p>
         </div>
 
         {/* Job Description (Open, spacious, no cards/boxes) */}
         <section className="mt-8">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Description
+            {t("description")}
           </h2>
-          <JobDescription description={job.description} />
+          <JobDescription
+            description={job.description}
+            emptyText={t("noDescription")}
+          />
         </section>
 
         {/* Minimal Meta Row (No cards, just clean columns with divider) */}
         <div className="mt-8 grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-4 sm:gap-6">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Budget
+              {t("budget")}
             </p>
             <p className="mt-1 text-sm sm:text-base font-bold text-foreground">
               {formatBudget(job)}
             </p>
-            {job.budgetType ? (
-              <span className="text-[11px] text-muted-foreground capitalize">
-                {job.budgetType.toLowerCase()}
+            {budgetTypeLabel ? (
+              <span className="text-[11px] text-muted-foreground">
+                {budgetTypeLabel}
               </span>
             ) : null}
           </div>
 
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Deadline
+              {t("deadline")}
             </p>
             <p className="mt-1 text-sm sm:text-base font-semibold text-foreground">
               {formatDate(job.deadline)}
@@ -139,23 +186,23 @@ export function JobDetail({ job }: { job: ViewJobDetailResType }) {
 
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Status
+              {t("status")}
             </p>
             <div className="mt-1">
-              <JobStatusBadge status={job.status} />
+              <JobStatusBadge status={job.status} label={statusLabel} />
             </div>
           </div>
 
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Proposals
+              {t("proposals")}
             </p>
             <div className="mt-1">
               <Link
                 href={`/client/jobs/${job.id}/proposals`}
                 className="inline-flex items-center gap-1 text-xs font-semibold text-[#0069D3] hover:underline"
               >
-                <span>Check proposals</span>
+                <span>{t("checkProposals")}</span>
                 <ChevronRight className="size-3" />
               </Link>
             </div>
@@ -165,7 +212,7 @@ export function JobDetail({ job }: { job: ViewJobDetailResType }) {
         {job.skills && job.skills.length > 0 && (
           <section className="mt-10">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-              Required Skills
+              {t("requiredSkills")}
             </h2>
             <div className="flex flex-wrap gap-1.5">
               {job.skills.map((skill) => (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { useForumPost } from "@/hooks/use-forum";
@@ -131,6 +132,7 @@ export function PostDetailWrapper({
   categorySlug,
   currentUserId,
 }: PostDetailWrapperProps) {
+  const t = useTranslations("forum");
   const { data: post, isLoading: isLoadingPost } = useForumPost(postId);
 
   if (isLoadingPost) {
@@ -140,15 +142,17 @@ export function PostDetailWrapper({
   if (!post) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
-        <p className="text-lg font-medium text-foreground">Post not found</p>
+        <p className="text-lg font-medium text-foreground">
+          {t("postNotFound")}
+        </p>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-          This post may have been deleted or the link is incorrect.
+          {t("postNotFoundDescription")}
         </p>
         <Link
           href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
           className="mt-6 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
         >
-          Back to category
+          {t("backToCategory")}
         </Link>
       </div>
     );

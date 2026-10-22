@@ -26,10 +26,13 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { EditUserDialog } from "./edit-user-dialog";
+
+const KNOWN_ROLES = new Set(["ADMIN", "CLIENT", "FREELANCER", "EXPERT"]);
 
 interface UsersTableProps {
   users: AdminUserItemType[];
@@ -44,6 +47,10 @@ interface UsersTableProps {
 export function UsersTable({ users, pagination }: UsersTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("adminUsers");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("adminCommon");
+  const format = useFormatter();
   // User đang được chọn để mở dialog Edit (null = dialog đóng)
   const [editingUser, setEditingUser] = useState<AdminUserItemType | null>(
     null,
@@ -78,8 +85,12 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
     );
   };
 
-  const renderRoleBadge = (roleName: string, isPrimary?: boolean) => {
+  const renderRoleBadge = (roleName: string) => {
     const nameLower = roleName.toLowerCase();
+    const label = KNOWN_ROLES.has(roleName.toUpperCase())
+      ? tRole(roleName.toUpperCase())
+      : roleName;
+
     if (nameLower === "client") {
       return (
         <Badge
@@ -87,7 +98,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800"
         >
-          Client
+          {label}
         </Badge>
       );
     }
@@ -98,7 +109,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800"
         >
-          Freelancer
+          {label}
         </Badge>
       );
     }
@@ -109,7 +120,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
         >
-          <Shield className="mr-1 h-3 w-3" /> Admin
+          <Shield className="mr-1 h-3 w-3" /> {label}
         </Badge>
       );
     }
@@ -120,13 +131,13 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
           variant="outline"
           className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800"
         >
-          Expert
+          {label}
         </Badge>
       );
     }
     return (
       <Badge key={roleName} variant="secondary">
-        {roleName}
+        {label}
       </Badge>
     );
   };
@@ -143,7 +154,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   onClick={() => handleSort("id")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  ID {renderSortIcon("id")}
+                  {tCommon("id")} {renderSortIcon("id")}
                 </button>
               </TableHead>
               <TableHead>
@@ -152,7 +163,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   onClick={() => handleSort("displayName")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  User {renderSortIcon("displayName")}
+                  {t("colUser")} {renderSortIcon("displayName")}
                 </button>
               </TableHead>
               <TableHead>
@@ -161,21 +172,23 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   onClick={() => handleSort("email")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  Email {renderSortIcon("email")}
+                  {tCommon("email")} {renderSortIcon("email")}
                 </button>
               </TableHead>
-              <TableHead>Roles</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("colRoles")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
               <TableHead className="text-right">
                 <button
                   type="button"
                   onClick={() => handleSort("createdAt")}
                   className="ml-auto flex items-center font-semibold hover:text-foreground"
                 >
-                  Joined {renderSortIcon("createdAt")}
+                  {t("colJoined")} {renderSortIcon("createdAt")}
                 </button>
               </TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">
+                {tCommon("actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -185,7 +198,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
-                  No users found.
+                  {t("noUsers")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -213,7 +226,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                       </Avatar>
                       <div>
                         <p className="font-medium text-sm text-foreground">
-                          {user.displayName || "No Name"}
+                          {user.displayName || t("noName")}
                         </p>
                       </div>
                     </div>
@@ -225,11 +238,11 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                     <div className="flex flex-wrap gap-1">
                       {user.roles.length === 0 ? (
                         <span className="text-xs text-muted-foreground">
-                          No Role
+                          {t("noRole")}
                         </span>
                       ) : (
                         user.roles.map((r) =>
-                          renderRoleBadge(r.name, r.isPrimary),
+                          renderRoleBadge(r.name),
                         )
                       )}
                     </div>
@@ -237,19 +250,23 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   <TableCell>
                     {user.isBanned ? (
                       <Badge variant="destructive" className="text-xs">
-                        Banned
+                        {t("banned")}
                       </Badge>
                     ) : (
                       <Badge
                         variant="secondary"
                         className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                       >
-                        Active
+                        {t("active")}
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {format.dateTime(new Date(user.createdAt), {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </TableCell>
                   <TableCell className="text-right">
                     {/* Cột hành động dạng icon-only: Eye = xem chi tiết, Pencil = sửa user */}
@@ -259,13 +276,13 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                         size="icon"
                         asChild
                         className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title="View details"
+                        title={t("viewDetails")}
                       >
                         <Link
                           href={`/admin/users/${user.id}`}
-                          aria-label={`View details of ${
-                            user.displayName || user.email
-                          }`}
+                          aria-label={t("viewDetailsAria", {
+                            name: user.displayName || user.email,
+                          })}
                         >
                           <Eye className="h-4 w-4" />
                         </Link>
@@ -274,8 +291,10 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title="Edit user"
-                        aria-label={`Edit user ${user.displayName || user.email}`}
+                        title={t("editUser")}
+                        aria-label={t("editUserAria", {
+                          name: user.displayName || user.email,
+                        })}
                         onClick={() => setEditingUser(user)}
                       >
                         <Pencil className="h-4 w-4" />

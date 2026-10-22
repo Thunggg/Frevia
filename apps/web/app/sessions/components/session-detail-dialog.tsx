@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/hooks/use-session";
+import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -12,16 +13,6 @@ import {
 } from "@repo/ui/components/shadcn/dialog";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Eye } from "@/components/icons";
-
-function formatDate(value: Date | string) {
-  return new Date(value).toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 type SessionDetailDialogProps = {
   sessionId: number | null;
@@ -35,7 +26,18 @@ export function SessionDetailDialog({
   onOpenChange,
 }: SessionDetailDialogProps) {
   const id = sessionId ?? 0;
+  const t = useTranslations("sessions");
+  const format = useFormatter();
   const { data: session, isLoading, isError } = useSession(id, open && id > 0);
+
+  const formatDate = (value: Date | string) =>
+    format.dateTime(new Date(value), {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const expired =
     session != null && new Date(session.expiresAt).getTime() < Date.now();
@@ -45,11 +47,11 @@ export function SessionDetailDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {session ? `Session #${session.id}` : "Session detail"}
+            {session
+              ? t("sessionFallback", { id: session.id })
+              : t("detailTitle")}
           </DialogTitle>
-          <DialogDescription>
-            Device session information for your account
-          </DialogDescription>
+          <DialogDescription>{t("detailDescription")}</DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
@@ -61,29 +63,46 @@ export function SessionDetailDialog({
           </div>
         ) : isError || !session ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            Couldn&apos;t load session. It may no longer exist.
+            {t("detailLoadFailed")}
           </p>
         ) : (
           <div className="space-y-4 py-2">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm text-muted-foreground">Status</span>
+              <span className="text-sm text-muted-foreground">
+                {t("colStatus")}
+              </span>
               <div className="flex items-center gap-2">
-                {session.isCurrent && <Badge variant="default">Current</Badge>}
+                {session.isCurrent && (
+                  <Badge variant="default">{t("current")}</Badge>
+                )}
                 <Badge variant={expired ? "destructive" : "secondary"}>
-                  {expired ? "Expired" : "Active"}
+                  {expired ? t("expired") : t("active")}
                 </Badge>
               </div>
             </div>
-            <DetailRow label="ID" value={String(session.id)} mono />
-            <DetailRow label="User ID" value={String(session.userId)} mono />
-            <DetailRow label="Device" value={session.deviceInfo || "—"} />
+            <DetailRow label={t("detailId")} value={String(session.id)} mono />
             <DetailRow
-              label="IP Address"
+              label={t("detailUserId")}
+              value={String(session.userId)}
+              mono
+            />
+            <DetailRow
+              label={t("detailDevice")}
+              value={session.deviceInfo || "—"}
+            />
+            <DetailRow
+              label={t("detailIp")}
               value={session.ipAddress || "—"}
               mono
             />
-            <DetailRow label="Created" value={formatDate(session.createdAt)} />
-            <DetailRow label="Expires" value={formatDate(session.expiresAt)} />
+            <DetailRow
+              label={t("detailCreated")}
+              value={formatDate(session.createdAt)}
+            />
+            <DetailRow
+              label={t("detailExpires")}
+              value={formatDate(session.expiresAt)}
+            />
           </div>
         )}
       </DialogContent>
@@ -117,12 +136,14 @@ export function ViewSessionButton({
   sessionId,
   onView,
 }: ViewSessionButtonProps) {
+  const t = useTranslations("sessions");
+
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
-      aria-label={`View session ${sessionId}`}
+      aria-label={t("viewAria", { id: sessionId })}
       onClick={() => onView(sessionId)}
     >
       <Eye className="size-4" />

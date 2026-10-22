@@ -8,7 +8,12 @@ import {
   UnableToUpdatePortfolioException,
   UnableToDeletePortfolioException,
 } from './portfolio.error';
-import { RoleName, AddPortfolioType, UpdatePortfolioType } from '@shared/types';
+import {
+  RoleName,
+  AddPortfolioType,
+  PortfolioMessage,
+  UpdatePortfolioType,
+} from '@shared/types';
 
 @Injectable()
 export class PortfolioService {
@@ -135,7 +140,7 @@ export class PortfolioService {
       }
 
       await this.portfolioRepository.deletePortfolio(portfolioId);
-      return { message: 'Portfolio deleted successfully.' };
+      return { message: PortfolioMessage.PORTFOLIO_DELETED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

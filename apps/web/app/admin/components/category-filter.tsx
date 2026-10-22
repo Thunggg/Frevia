@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("adminNav");
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,10 +37,10 @@ export function CategoryFilter({
   return (
     <Select value={currentValue ?? ""} onValueChange={handleChange}>
       <SelectTrigger className="w-[160px] h-9">
-        <SelectValue placeholder="All categories" />
+        <SelectValue placeholder={t("allCategories")} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All categories</SelectItem>
+        <SelectItem value="all">{t("allCategories")}</SelectItem>
         {categories.map((cat) => (
           <SelectItem key={cat.id} value={String(cat.id)}>
             {cat.name}

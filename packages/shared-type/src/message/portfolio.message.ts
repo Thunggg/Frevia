@@ -16,4 +16,5 @@ export const PortfolioMessage = {
     "Unable to update portfolio. Please try again later.",
   PORTFOLIO_FAILED_TO_DELETE:
     "Unable to delete portfolio. Please try again later.",
+  PORTFOLIO_DELETED: "Success.PortfolioDeleted",
 } as const;

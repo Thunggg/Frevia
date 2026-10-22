@@ -13,50 +13,53 @@ import {
 } from "lucide-react";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import type { AdminUserDetailResponseType } from "@shared/types";
+import { useTranslations } from "next-intl";
 
 interface UserGeneralInfoProps {
   user: AdminUserDetailResponseType;
 }
 
 export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
+  const t = useTranslations("adminUserDetail");
+
   const statCards = [
     {
-      label: "Jobs Posted",
+      key: "statsJobsPosted",
       value: user.stats.jobsPosted,
       icon: Briefcase,
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900",
     },
     {
-      label: "Client Contracts",
+      key: "statsContractsAsClient",
       value: user.stats.contractsAsClient,
       icon: FileCheck,
       color: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900",
     },
     {
-      label: "Freelancer Contracts",
+      key: "statsContractsAsFreelancer",
       value: user.stats.contractsAsFreelancer,
       icon: FileText,
       color: "text-purple-600 dark:text-purple-400",
       bg: "bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-900",
     },
     {
-      label: "Proposals Submitted",
+      key: "statsProposals",
       value: user.stats.proposals,
       icon: Send,
       color: "text-amber-600 dark:text-amber-400",
       bg: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900",
     },
     {
-      label: "Reviews Received",
+      key: "statsReviewsReceived",
       value: user.stats.reviewsReceived,
       icon: Star,
       color: "text-yellow-600 dark:text-yellow-400",
       bg: "bg-yellow-50 dark:bg-yellow-950/40 border-yellow-200 dark:border-yellow-900",
     },
     {
-      label: "ID Verification Docs",
+      key: "statsIdDocuments",
       value: user.stats.idVerificationDocuments,
       icon: FileBadge,
       color: "text-indigo-600 dark:text-indigo-400",
@@ -69,14 +72,14 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
       {/* Metrics Grid */}
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-          Platform Activity Statistics
+          {t("statsTitle")}
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {statCards.map((stat) => {
             const Icon = stat.icon;
             return (
               <div
-                key={stat.label}
+                key={stat.key}
                 className={`rounded-lg border p-3.5 shadow-sm transition-all hover:shadow-md ${stat.bg}`}
               >
                 <div className="flex items-center justify-between">
@@ -86,7 +89,7 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
                   </span>
                 </div>
                 <p className="mt-2 text-xs font-medium text-muted-foreground">
-                  {stat.label}
+                  {t(stat.key)}
                 </p>
               </div>
             );
@@ -101,7 +104,7 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
           <div className="flex items-center justify-between border-b pb-3">
             <h3 className="font-semibold text-foreground flex items-center gap-2">
               <Activity className="h-4 w-4 text-[#4fae2e]" />
-              Account Overview & Biography
+              {t("overviewTitle")}
             </h3>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
@@ -110,24 +113,26 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
                     user.onlineStatus ? "bg-emerald-500 animate-pulse" : "bg-zinc-400"
                   }`}
                 />
-                {user.onlineStatus ? "Online" : "Offline"}
+                {user.onlineStatus ? t("online") : t("offline")}
               </div>
               <Badge variant="outline" className="text-xs">
-                Availability: {user.availabilityStatus || "OFFLINE"}
+                {t("availability", {
+                  status: user.availabilityStatus || "OFFLINE",
+                })}
               </Badge>
             </div>
           </div>
 
           <div>
             <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Bio / Introduction
+              {t("bioTitle")}
             </h4>
             <p className="mt-1.5 text-sm leading-relaxed text-foreground whitespace-pre-wrap">
               {user.bio ? (
                 user.bio
               ) : (
                 <span className="italic text-muted-foreground">
-                  No personal biography provided yet.
+                  {t("noBio")}
                 </span>
               )}
             </p>
@@ -136,7 +141,7 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
           <div className="border-t pt-4">
             <div className="flex items-center justify-between mb-1.5 text-xs">
               <span className="font-medium text-muted-foreground">
-                Profile Completion Progress
+                {t("profileCompletion")}
               </span>
               <span className="font-semibold text-foreground">
                 {user.profileCompletionPercent ?? 0}%
@@ -155,12 +160,12 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
         <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
           <h3 className="font-semibold text-foreground border-b pb-3 flex items-center gap-2">
             <Globe className="h-4 w-4 text-[#4fae2e]" />
-            Social Profiles & Links
+            {t("socialTitle")}
           </h3>
 
           {user.socialLinks.length === 0 ? (
             <p className="text-xs italic text-muted-foreground">
-              No social links connected.
+              {t("noSocialLinks")}
             </p>
           ) : (
             <div className="space-y-2">
@@ -186,9 +191,9 @@ export function UserGeneralInfo({ user }: UserGeneralInfoProps) {
 
           <div className="border-t pt-3 space-y-2 text-xs text-muted-foreground">
             <div className="flex justify-between">
-              <span>Account Status:</span>
+              <span>{t("accountStatus")}</span>
               <span className="font-medium text-foreground">
-                {user.isBanned ? "Banned" : "Good Standing"}
+                {user.isBanned ? t("banned") : t("goodStanding")}
               </span>
             </div>
           </div>

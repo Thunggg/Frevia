@@ -16,14 +16,16 @@ import {
   SidebarMenuSubItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export type NavItem = {
-  title: string;
+  /** Khoá dịch trong namespace "adminNav" */
+  titleKey: string;
   href?: string;
   icon?: LucideIcon;
-  children?: { title: string; href: string }[];
+  children?: { titleKey: string; href: string }[];
 };
 
 export function NavMain({
@@ -34,6 +36,7 @@ export function NavMain({
   items: NavItem[];
 }) {
   const pathname = usePathname();
+  const t = useTranslations("adminNav");
 
   const isActive = (href?: string) => {
     if (!href) return false;
@@ -53,7 +56,7 @@ export function NavMain({
 
             return (
               <Collapsible
-                key={item.title}
+                key={item.titleKey}
                 asChild
                 defaultOpen={childActive}
                 className="group/collapsible"
@@ -61,11 +64,11 @@ export function NavMain({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      tooltip={item.title}
+                      tooltip={t(item.titleKey)}
                       isActive={childActive}
                     >
                       {item.icon ? <item.icon /> : null}
-                      <span>{item.title}</span>
+                      <span>{t(item.titleKey)}</span>
                       <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -77,7 +80,7 @@ export function NavMain({
                             asChild
                             isActive={isActive(child.href)}
                           >
-                            <Link href={child.href}>{child.title}</Link>
+                            <Link href={child.href}>{t(child.titleKey)}</Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -89,15 +92,15 @@ export function NavMain({
           }
 
           return (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.titleKey}>
               <SidebarMenuButton
                 asChild
-                tooltip={item.title}
+                tooltip={t(item.titleKey)}
                 isActive={isActive(item.href)}
               >
                 <Link href={item.href ?? "#"}>
                   {item.icon ? <item.icon /> : null}
-                  <span>{item.title}</span>
+                  <span>{t(item.titleKey)}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

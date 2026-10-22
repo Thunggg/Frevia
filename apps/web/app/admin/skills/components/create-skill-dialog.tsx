@@ -17,10 +17,13 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function CreateSkillDialog() {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -46,16 +49,16 @@ export function CreateSkillDialog() {
         description: description.trim() || undefined,
       });
 
-      toastSuccess({ message: "Skill created successfully!" });
+      toastSuccess({ message: t("createdToast") });
       handleOpenChange(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const detailMessage = err.response?.error?.details?.[0]?.message;
-        const message = detailMessage || err.message || "Failed to create skill";
+        const message = detailMessage || err.message || t("createFailed");
         toastError({ message });
       } else {
-        toastError({ message: "Failed to create skill." });
+        toastError({ message: t("createFailed") });
       }
     } finally {
       setLoading(false);
@@ -67,28 +70,26 @@ export function CreateSkillDialog() {
       <DialogTrigger asChild>
         <Button className="gap-2 bg-[#4fae2e] text-white hover:bg-[#3f9225]">
           <Plus className="h-4 w-4" />
-          Create Skill
+          {t("createTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[485px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Skill</DialogTitle>
-            <DialogDescription>
-              Add a new skill to the skills catalog.
-            </DialogDescription>
+            <DialogTitle>{t("createTitle")}</DialogTitle>
+            <DialogDescription>{t("createDescription")}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="name" className="text-sm font-medium">
-                Skill Name <span className="text-destructive">*</span>
+                {tCommon("name")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. NestJS, React Native"
+                placeholder={t("namePlaceholder")}
                 required
                 disabled={loading}
               />
@@ -96,13 +97,13 @@ export function CreateSkillDialog() {
 
             <div className="grid gap-2">
               <Label htmlFor="description" className="text-sm font-medium">
-                Description
+                {tCommon("description")}
               </Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief summary of what this skill covers..."
+                placeholder={t("descriptionPlaceholder")}
                 rows={3}
                 disabled={loading}
               />
@@ -116,7 +117,7 @@ export function CreateSkillDialog() {
               onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -124,7 +125,7 @@ export function CreateSkillDialog() {
               className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Skill
+              {t("createTrigger")}
             </Button>
           </DialogFooter>
         </form>

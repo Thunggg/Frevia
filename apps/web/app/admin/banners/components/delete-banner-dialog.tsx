@@ -15,6 +15,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { BannerAdminItemType } from "@shared/types";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -29,6 +30,8 @@ export function DeleteBannerDialog({
   open,
   onOpenChange,
 }: DeleteBannerDialogProps) {
+  const t = useTranslations("adminBanners");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -38,15 +41,15 @@ export function DeleteBannerDialog({
     setLoading(true);
     try {
       await adminApiRequest.deleteBanner(banner.id);
-      toastSuccess({ message: "Banner deleted successfully." });
+      toastSuccess({ message: t("deletedToast") });
       onOpenChange(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const errorDetail = err.response?.error?.details?.[0]?.message;
-        toastError({ message: errorDetail ?? "Failed to delete banner." });
+        toastError({ message: errorDetail ?? t("deleteFailed") });
       } else {
-        toastError({ message: "An unexpected error occurred." });
+        toastError({ message: tCommon("unexpectedError") });
       }
     } finally {
       setLoading(false);
@@ -57,14 +60,17 @@ export function DeleteBannerDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete Banner: {banner.title}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("deleteTitle", { title: banner.title })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete banner &quot;{banner.title}&quot;?
-            This action permanently deletes the banner and cannot be undone.
+            {t("deleteDescription", { title: banner.title })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>
+            {tCommon("cancel")}
+          </AlertDialogCancel>
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -74,7 +80,7 @@ export function DeleteBannerDialog({
             variant="destructive"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Delete Banner
+            {t("deleteAction")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

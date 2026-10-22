@@ -1,6 +1,7 @@
 "use client";
 
 import { useRevokeSession } from "@/hooks/use-session";
+import { useTranslations } from "next-intl";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -19,14 +20,6 @@ import { Loader2, ShieldOff } from "@/components/icons";
 import { useRouter } from "next/navigation";
 import { type MouseEvent } from "react";
 
-function getRevokeSessionErrorMessage(error: unknown): string {
-  if (!(error instanceof ApiFail)) {
-    return "Couldn't revoke session. Try again.";
-  }
-
-  return error.response.error.details?.[0]?.message || error.message;
-}
-
 type RevokeSessionDialogProps = {
   sessionId: number;
   deviceInfo?: string | null;
@@ -43,7 +36,16 @@ export function RevokeSessionDialog({
   onRevoked,
 }: RevokeSessionDialogProps) {
   const router = useRouter();
+  const t = useTranslations("sessions");
   const revokeSession = useRevokeSession();
+
+  function getRevokeSessionErrorMessage(error: unknown): string {
+    if (!(error instanceof ApiFail)) {
+      return t("revokeFailed");
+    }
+
+    return error.response.error.details?.[0]?.message || error.message;
+  }
 
   if (isExpired) {
     return (
@@ -52,8 +54,8 @@ export function RevokeSessionDialog({
         variant="ghost"
         size="icon"
         disabled
-        title="Expired sessions can't be revoked"
-        aria-label="Expired sessions can't be revoked"
+        title={t("expiredCannotRevoke")}
+        aria-label={t("expiredCannotRevoke")}
       >
         <ShieldOff className="size-4 opacity-40" />
       </Button>
@@ -80,7 +82,7 @@ export function RevokeSessionDialog({
     });
   }
 
-  const deviceLabel = deviceInfo?.trim() || `Session #${sessionId}`;
+  const deviceLabel = deviceInfo?.trim() || t("sessionFallback", { id: sessionId });
 
   return (
     <AlertDialog>
@@ -90,7 +92,7 @@ export function RevokeSessionDialog({
           variant="ghost"
           size="icon"
           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          aria-label={`Revoke ${deviceLabel}`}
+          aria-label={t("revokeAria", { device: deviceLabel })}
         >
           <ShieldOff className="size-4" />
         </Button>
@@ -98,17 +100,17 @@ export function RevokeSessionDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {isCurrent ? "Sign out this device?" : "Revoke this session?"}
+            {isCurrent ? t("signOutTitle") : t("revokeTitle")}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {isCurrent
-              ? `You'll be signed out of ${deviceLabel} right away and need to log in again.`
-              : `${deviceLabel} will be signed out and must log in again to continue.`}
+              ? t("signOutDescription", { device: deviceLabel })
+              : t("revokeDescription", { device: deviceLabel })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={revokeSession.isPending}>
-            Cancel
+            {t("cancel")}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleRevoke}
@@ -118,7 +120,7 @@ export function RevokeSessionDialog({
             {revokeSession.isPending ? (
               <Loader2 className="size-4 animate-spin" />
             ) : null}
-            {isCurrent ? "Sign out" : "Revoke"}
+            {isCurrent ? t("signOut") : t("revoke")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

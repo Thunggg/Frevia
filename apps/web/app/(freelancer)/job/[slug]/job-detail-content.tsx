@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -49,61 +50,21 @@ type JobDetailContentProps = {
   basePath?: string;
 };
 
-function formatBudget(
-  job: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
-) {
-  if (job.budgetMin === null || job.budgetMax === null) {
-    return "Negotiable";
-  }
-
-  return `$${job.budgetMin} - $${job.budgetMax}`;
-}
-
-function formatDate(value: string | Date | null) {
-  if (!value) {
-    return "Not set";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function formatPostedTime(value: string | Date) {
-  const hours = Math.max(
-    0,
-    Math.floor((Date.now() - new Date(value).getTime()) / (60 * 60 * 1000)),
-  );
-
-  if (hours < 1) return "Just now";
-  if (hours < 24) return `${hours}h ago`;
-
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
-function formatBudgetType(value: string) {
-  return value.replaceAll("_", " ");
-}
-
 function looksLikeHtml(value: string) {
   return /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
-function getDeadlineUrgency(deadline: string | Date | null) {
+// Trả về "loại" cảnh báo để component dịch theo ngôn ngữ đang chọn
+function getDeadlineUrgencyKind(
+  deadline: string | Date | null,
+): "passed" | "soon" | null {
   if (!deadline) return null;
 
   const hoursUntil =
     (new Date(deadline).getTime() - Date.now()) / (60 * 60 * 1000);
 
-  if (hoursUntil < 0) {
-    return { label: "Deadline passed", urgent: true };
-  }
-
-  if (hoursUntil <= 72) {
-    return { label: "Due soon", urgent: true };
-  }
+  if (hoursUntil < 0) return "passed";
+  if (hoursUntil <= 72) return "soon";
 
   return null;
 }
@@ -112,46 +73,21 @@ function isPast(value: string | Date | null) {
   return value !== null && new Date(value).getTime() <= Date.now();
 }
 
-const proposalStatusPresentation = {
-  DRAFT: {
-    actionLabel: "Continue proposal",
-    message: "You have a saved draft for this job.",
-    badgeClassName: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
-  },
-  PENDING: {
-    actionLabel: "View proposal",
-    message: "You already submitted a proposal for this job.",
-    badgeClassName: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  },
-  ACCEPTED: {
-    actionLabel: "View proposal",
-    message: "Your proposal for this job has been accepted.",
-    badgeClassName: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
-  },
-  REJECTED: {
-    actionLabel: "View proposal",
-    message: "Your proposal for this job was not selected.",
-    badgeClassName: "bg-destructive/10 text-destructive",
-  },
-  WITHDRAWN: {
-    actionLabel: "Apply now",
-    message: "",
-    badgeClassName: "",
-  },
-} satisfies Record<
-  ProposalType["status"],
-  {
-    actionLabel: string;
-    message: string;
-    badgeClassName: string;
-  }
->;
+const proposalStatusStyles = {
+  DRAFT: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
+  PENDING: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  ACCEPTED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+  REJECTED: "bg-destructive/10 text-destructive",
+  WITHDRAWN: "",
+} satisfies Record<ProposalType["status"], string>;
 
 function JobDescription({ description }: { description: string | null }) {
+  const t = useTranslations("jobDetail");
+
   if (!description) {
     return (
       <p className="mt-4 max-w-prose text-[15px] leading-8 text-muted-foreground">
-        No description provided yet.
+        {t("noDescription")}
       </p>
     );
   }
@@ -183,6 +119,12 @@ export function JobDetailContent({
   basePath = embedded ? "/freelancer/find-work" : "/find-work",
 }: JobDetailContentProps) {
   const router = useRouter();
+  const t = useTranslations("jobDetail");
+  const tStatus = useTranslations("jobStatus");
+  const tBudgetType = useTranslations("jobBudgetType");
+  const tBookmark = useTranslations("bookmark");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
@@ -198,13 +140,54 @@ export function JobDetailContent({
     initialData: existingProposal ?? undefined,
     retry: false,
   });
+  const formatBudget = (
+    target: Pick<ViewJobDetailResType, "budgetMin" | "budgetMax">,
+  ) => {
+    if (target.budgetMin === null || target.budgetMax === null) {
+      return t("negotiable");
+    }
+
+    return `$${format.number(target.budgetMin)} - $${format.number(target.budgetMax)}`;
+  };
+
+  const formatDate = (value: string | Date | null) => {
+    if (!value) return t("notSet");
+
+    return format.dateTime(new Date(value), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const formatPostedTime = (value: string | Date) => {
+    const hours = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(value).getTime()) / (60 * 60 * 1000)),
+    );
+
+    if (hours < 1) return tCommon("justNow");
+    if (hours < 24) return tCommon("hoursAgo", { hours });
+
+    return tCommon("daysAgo", { days: Math.floor(hours / 24) });
+  };
+
   const activeProposal = activeProposalQuery.data ?? existingProposal;
   const canReceiveProposals =
     job.status === "OPEN" && !isPast(job.expiryDate) && !isPast(job.deadline);
   const proposalPresentation = activeProposal
-    ? proposalStatusPresentation[activeProposal.status]
+    ? {
+        badgeClassName: proposalStatusStyles[activeProposal.status],
+        message: t(`proposal.${activeProposal.status}.message`),
+      }
     : null;
-  const deadlineUrgency = getDeadlineUrgency(job.deadline);
+  const deadlineUrgencyKind = getDeadlineUrgencyKind(job.deadline);
+  const deadlineUrgencyLabel =
+    deadlineUrgencyKind === "passed"
+      ? t("deadlinePassed")
+      : deadlineUrgencyKind === "soon"
+        ? t("dueSoon")
+        : null;
   const clientInitial = (clientName ?? "C").slice(0, 1).toUpperCase();
 
   useEffect(() => {
@@ -218,12 +201,12 @@ export function JobDetailContent({
         setClientName(
           response.data.clientProfile.companyName ??
             response.data.displayName ??
-            `Client #${job.clientId}`,
+            t("clientFallback", { id: job.clientId }),
         );
         setClientAvatar(response.data.avatarUrl ?? null);
       } catch {
         if (!active) return;
-        setClientName(`Client #${job.clientId}`);
+        setClientName(t("clientFallback", { id: job.clientId }));
         setClientAvatar(null);
       } finally {
         if (active) setClientLoading(false);
@@ -233,7 +216,7 @@ export function JobDetailContent({
     return () => {
       active = false;
     };
-  }, [job.clientId]);
+  }, [job.clientId, t]);
 
   const requireFreelancer = (action: () => void) => {
     if (role === "GUEST") {
@@ -241,7 +224,7 @@ export function JobDetailContent({
       return;
     }
     if (role !== "FREELANCER") {
-      toastError({ message: "Switch to a freelancer account to continue." });
+      toastError({ message: t("switchToFreelancer") });
       return;
     }
     action();
@@ -259,10 +242,10 @@ export function JobDetailContent({
         try {
           await jobApiRequest.bookmarkJob(job.slug);
           setIsBookmarked(true);
-          toastSuccess({ message: "Job saved to bookmarks" });
+          toastSuccess({ message: tBookmark("added") });
         } catch {
           toastError({
-            message: "Couldn't update bookmark. Try again.",
+            message: tBookmark("updateFailed"),
           });
         } finally {
           setIsBookmarkLoading(false);
@@ -277,9 +260,9 @@ export function JobDetailContent({
       await jobApiRequest.removeBookmark(job.slug);
       setIsBookmarked(false);
       setIsRemoveDialogOpen(false);
-      toastSuccess({ message: "Bookmark removed" });
+      toastSuccess({ message: tBookmark("removed") });
     } catch {
-      toastError({ message: "Couldn't remove bookmark. Try again." });
+      toastError({ message: tBookmark("removeFailed") });
     } finally {
       setIsBookmarkLoading(false);
     }
@@ -293,7 +276,7 @@ export function JobDetailContent({
       }
 
       if (!canReceiveProposals) {
-        toastError({ message: "This job is no longer accepting proposals." });
+        toastError({ message: t("notAccepting") });
         return;
       }
 
@@ -317,20 +300,32 @@ export function JobDetailContent({
   };
 
   const summaryRows = [
-    { label: "Budget", value: formatBudget(job) },
-    { label: "Budget type", value: formatBudgetType(job.budgetType) },
-    { label: "Posted", value: formatPostedTime(job.createdAt) },
-    { label: "Deadline", value: formatDate(job.deadline) },
-    { label: "Expires", value: formatDate(job.expiryDate) },
-    { label: "Status", value: job.status.replaceAll("_", " ") },
+    { id: "budget", label: t("summary.budget"), value: formatBudget(job) },
+    {
+      id: "budgetType",
+      label: t("summary.budgetType"),
+      value: tBudgetType(job.budgetType),
+    },
+    {
+      id: "posted",
+      label: t("summary.posted"),
+      value: formatPostedTime(job.createdAt),
+    },
+    {
+      id: "deadline",
+      label: t("summary.deadline"),
+      value: formatDate(job.deadline),
+    },
+    { id: "expires", label: t("summary.expires"), value: formatDate(job.expiryDate) },
+    { id: "status", label: t("summary.status"), value: tStatus(job.status) },
   ];
 
   const proposalActionLabel = activeProposal
     ? activeProposal.status === "DRAFT" && canReceiveProposals
-      ? "Continue proposal"
-      : "View proposal"
+      ? t("continueProposal")
+      : t("viewProposal")
     : canReceiveProposals
-      ? "Apply now"
+      ? t("applyNow")
       : null;
 
   const actionButtons = (
@@ -340,7 +335,7 @@ export function JobDetailContent({
           size="icon"
           variant="outline"
           className="size-11 shrink-0 border-[#4fae2e]/35 bg-background"
-          aria-label={isBookmarked ? "Remove bookmark" : "Save job"}
+          aria-label={isBookmarked ? tBookmark("remove") : tBookmark("save")}
           disabled={isBookmarkLoading}
           onClick={toggleBookmark}
         >
@@ -362,7 +357,7 @@ export function JobDetailContent({
           onClick={openProposalAction}
         >
           {canBookmark && activeProposalQuery.isFetching
-            ? "Checking proposal..."
+            ? t("checkingProposal")
             : proposalActionLabel}
         </Button>
       ) : null}
@@ -382,14 +377,14 @@ export function JobDetailContent({
                   href="/"
                   className="transition-colors hover:text-[#4fae2e]"
                 >
-                  Home
+                  {tCommon("home")}
                 </Link>
                 <span className="text-foreground/35">/</span>
                 <Link
                   href={basePath}
                   className="transition-colors hover:text-[#4fae2e]"
                 >
-                  Find Work
+                  {t("findWork")}
                 </Link>
                 <span className="text-foreground/35">/</span>
                 <span className="truncate font-medium text-foreground">
@@ -401,7 +396,7 @@ export function JobDetailContent({
                 className="inline-flex items-center gap-1.5 font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
               >
                 <ArrowLeft className="size-4" />
-                Back to jobs
+                {t("backToJobs")}
               </Link>
             </div>
 
@@ -410,15 +405,15 @@ export function JobDetailContent({
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   {job.featured ? (
                     <Badge className="bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
-                      Featured
+                      {t("featured")}
                     </Badge>
                   ) : null}
-                  {deadlineUrgency ? (
+                  {deadlineUrgencyLabel ? (
                     <Badge
                       variant="outline"
                       className="border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200"
                     >
-                      {deadlineUrgency.label}
+                      {deadlineUrgencyLabel}
                     </Badge>
                   ) : null}
                 </div>
@@ -431,19 +426,19 @@ export function JobDetailContent({
                   {formatBudget(job)}
                 </p>
                 <p className="mt-1 text-sm text-foreground/65 dark:text-foreground/70">
-                  {formatBudgetType(job.budgetType)}
+                  {tBudgetType(job.budgetType)}
                   <span className="mx-2 text-foreground/35">·</span>
-                  {job.status.replaceAll("_", " ")}
+                  {tStatus(job.status)}
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-foreground/70 dark:text-foreground/75">
                   <span className="inline-flex items-center gap-1.5">
                     <Clock className="size-4 text-[#4fae2e]" />
-                    Posted {formatPostedTime(job.createdAt)}
+                    {t("postedAt", { time: formatPostedTime(job.createdAt) })}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays className="size-4 text-[#4fae2e]" />
-                    Deadline {formatDate(job.deadline)}
+                    {t("deadlineAt", { date: formatDate(job.deadline) })}
                   </span>
                 </div>
               </div>
@@ -456,8 +451,7 @@ export function JobDetailContent({
                       variant="secondary"
                       className={proposalPresentation.badgeClassName}
                     >
-                      {activeProposal.status.charAt(0) +
-                        activeProposal.status.slice(1).toLowerCase()}
+                      {tStatus(activeProposal.status)}
                     </Badge>
                     <span className="text-muted-foreground">
                       {proposalPresentation.message}
@@ -466,7 +460,7 @@ export function JobDetailContent({
                 ) : null}
                 {!canReceiveProposals ? (
                   <p className="mt-3 text-right text-sm text-muted-foreground">
-                    This job is no longer accepting proposals.
+                    {t("notAccepting")}
                   </p>
                 ) : null}
               </div>
@@ -479,14 +473,14 @@ export function JobDetailContent({
             <article>
               <section>
                 <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                  Job description
+                  {t("jobDescription")}
                 </h2>
                 <JobDescription description={job.description} />
               </section>
 
               <section className="mt-10 border-t border-border pt-10">
                 <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                  Skills required
+                  {t("skillsRequired")}
                 </h2>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {job.skills.length ? (
@@ -501,7 +495,7 @@ export function JobDetailContent({
                     ))
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      No skills specified.
+                      {t("noSkills")}
                     </p>
                   )}
                 </div>
@@ -513,11 +507,11 @@ export function JobDetailContent({
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
                     <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                      Similar projects
+                      {t("similarProjects")}
                     </h2>
                     {relatedSkill ? (
                       <p className="mt-1 text-sm text-muted-foreground">
-                        More openings related to {relatedSkill}
+                        {t("relatedTo", { skill: relatedSkill })}
                       </p>
                     ) : null}
                   </div>
@@ -526,7 +520,7 @@ export function JobDetailContent({
                       href={`${basePath}?keyword=${encodeURIComponent(relatedSkill)}`}
                       className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
                     >
-                      View more
+                      {t("viewMore")}
                       <ArrowRight className="size-4" />
                     </Link>
                   ) : null}
@@ -556,7 +550,9 @@ export function JobDetailContent({
           <aside className="lg:col-span-4">
             <div className="sticky top-20 space-y-5 rounded-xl border border-border bg-background p-5 sm:p-6">
               <div>
-                <p className="text-sm text-muted-foreground">Budget</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("summary.budget")}
+                </p>
                 <p className="mt-1 text-2xl font-semibold tracking-tight text-[#4fae2e]">
                   {formatBudget(job)}
                 </p>
@@ -564,10 +560,10 @@ export function JobDetailContent({
 
               <dl className="divide-y divide-border border-y border-border">
                 {summaryRows
-                  .filter((row) => row.label !== "Budget")
+                  .filter((row) => row.id !== "budget")
                   .map((row) => (
                     <div
-                      key={row.label}
+                      key={row.id}
                       className="flex items-center justify-between gap-4 py-3 text-sm"
                     >
                       <dt className="text-muted-foreground">{row.label}</dt>
@@ -579,13 +575,15 @@ export function JobDetailContent({
               </dl>
 
               <div className="border-t border-border pt-4">
-                <p className="text-sm font-medium text-foreground">Client</p>
+                <p className="text-sm font-medium text-foreground">
+                  {t("client")}
+                </p>
                 <div className="mt-3 flex items-center gap-3">
                   {clientAvatar ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={clientAvatar}
-                      alt={clientName ?? "Client"}
+                      alt={clientName ?? t("client")}
                       className="size-11 rounded-full object-cover"
                     />
                   ) : (
@@ -595,16 +593,16 @@ export function JobDetailContent({
                   )}
                   <div className="min-w-0">
                     <p className="truncate font-medium text-foreground">
-                      {clientLoading ? "Loading…" : clientName}
+                      {clientLoading ? t("loading") : clientName}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Client on Frevia
+                      {t("clientOnFrevia")}
                     </p>
                   </div>
                 </div>
                 <Button asChild variant="outline" className="mt-4 h-11 w-full">
                   <Link href={`/clients/${job.clientId}`}>
-                    View client profile
+                    {t("viewClientProfile")}
                   </Link>
                 </Button>
                 {canBookmark || role === "GUEST" ? (
@@ -620,7 +618,7 @@ export function JobDetailContent({
                     }}
                   >
                     <MessageSquare className="size-4" />
-                    Connect with client
+                    {t("connectWithClient")}
                   </Button>
                 ) : null}
               </div>
@@ -636,8 +634,7 @@ export function JobDetailContent({
               variant="secondary"
               className={proposalPresentation.badgeClassName}
             >
-              {activeProposal.status.charAt(0) +
-                activeProposal.status.slice(1).toLowerCase()}
+              {tStatus(activeProposal.status)}
             </Badge>
             <span className="truncate text-muted-foreground">
               {proposalPresentation.message}
@@ -646,7 +643,7 @@ export function JobDetailContent({
         ) : null}
         {!canReceiveProposals ? (
           <p className="mx-auto mb-2 max-w-7xl text-xs text-muted-foreground">
-            This job is no longer accepting proposals.
+            {t("notAccepting")}
           </p>
         ) : null}
         <div className="mx-auto flex max-w-7xl justify-end gap-2">
@@ -660,21 +657,23 @@ export function JobDetailContent({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove saved job?</AlertDialogTitle>
+            <AlertDialogTitle>{t("removeDialog.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This job leaves your Bookmarks. You can save it again anytime.
+              {t("removeDialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isBookmarkLoading}>
-              Cancel
+              {t("removeDialog.cancel")}
             </AlertDialogCancel>
             <Button
               className="bg-destructive text-white hover:bg-destructive/90"
               disabled={isBookmarkLoading}
               onClick={removeBookmark}
             >
-              {isBookmarkLoading ? "Removing…" : "Remove"}
+              {isBookmarkLoading
+                ? t("removeDialog.removing")
+                : t("removeDialog.confirm")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

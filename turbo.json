@@ -19,18 +19,21 @@
         "!.next/dev/**",
         "dist/**",
         "build/**"
-      ]
+      ],
+      "envMode": "loose"
     },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "envMode": "loose"
     },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "envMode": "loose"
     }
   }
 }

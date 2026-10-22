@@ -3,7 +3,7 @@
 import { useUpdateRole } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -30,8 +30,9 @@ import {
   type RoleListItemType,
 } from "@shared/types";
 import { Loader2, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const SYSTEM_ROLE_NAMES = new Set(
   Object.values(RoleName).map((name) => name.toLowerCase()),
@@ -47,11 +48,13 @@ type UpdateRoleDialogProps = {
 };
 
 export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
+  const t = useTranslations("adminRoles");
+  const tCommon = useTranslations("adminCommon");
   const [open, setOpen] = useState(false);
   const updateRole = useUpdateRole();
 
   const form = useForm<CreateRoleBodyType>({
-    resolver: zodResolver(CreateRoleBodySchema) as Resolver<CreateRoleBodyType>,
+    resolver: useTranslatedResolver<CreateRoleBodyType>(CreateRoleBodySchema),
     defaultValues: {
       name: role.name,
       description: role.description ?? "",
@@ -72,7 +75,7 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
     if (isSystemRole(payload.name)) {
       form.setError("name", {
         type: "manual",
-        message: "Cannot use a system role name",
+        message: t("systemRoleNameError"),
       });
       return;
     }
@@ -87,7 +90,7 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
       },
       {
         onSuccess: (updated) => {
-          toastSuccess({ message: `Role "${updated.name}" updated` });
+          toastSuccess({ message: t("updatedToast", { name: updated.name }) });
           setOpen(false);
         },
         onError: (error) => {
@@ -104,7 +107,7 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
               toastError({ message: error.message });
             }
           } else {
-            toastError({ message: "Failed to update role" });
+            toastError({ message: tCommon("updateFailed") });
           }
         },
       },
@@ -126,9 +129,9 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Update role</DialogTitle>
+          <DialogTitle>{t("updateTitle")}</DialogTitle>
           <DialogDescription>
-            Change the name or description of this custom role.
+            {t("updateDescription")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -139,12 +142,12 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={`update-role-name-${role.id}`}>
-                    Name
+                    {t("fieldName")}
                   </FieldLabel>
                   <Input
                     {...field}
                     id={`update-role-name-${role.id}`}
-                    placeholder="Moderator"
+                    placeholder={t("namePlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -159,13 +162,13 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={`update-role-description-${role.id}`}>
-                    Description
+                    {t("fieldDescription")}
                   </FieldLabel>
                   <Textarea
                     {...field}
                     id={`update-role-description-${role.id}`}
                     value={field.value ?? ""}
-                    placeholder="What this role can do"
+                    placeholder={t("descriptionPlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -181,13 +184,13 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
               variant="outline"
               onClick={() => handleOpenChange(false)}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={updateRole.isPending}>
               {updateRole.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              Save
+              {tCommon("save")}
             </Button>
           </DialogFooter>
         </form>

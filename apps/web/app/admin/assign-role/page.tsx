@@ -1,6 +1,16 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { AssignRoleContent } from "./components/assign-role-content";
+
+export async function generateMetadata() {
+  const t = await getTranslations("adminAssignRole");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 function AssignRolePageSkeleton() {
   return (

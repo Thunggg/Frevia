@@ -1,4 +1,4 @@
-﻿export const ManageRoleMessage = {
+export const ManageRoleMessage = {
   ROLE_NOT_FOUND: "Error.RoleNotFound",
   ROLE_ALREADY_EXISTS: "Error.RoleAlreadyExists",
   ROLE_NAME_REQUIRED: "Error.RoleNameRequired",
@@ -13,4 +13,5 @@
   ROLE_IN_USE: "Error.RoleInUse",
   INVALID_PERMISSION_IDS: "Error.InvalidPermissionIds",
   FAILED_TO_SET_ROLE_PERMISSIONS: "Error.FailedToSetRolePermissions",
+  ROLE_DELETED: "Success.RoleDeleted",
 } as const;

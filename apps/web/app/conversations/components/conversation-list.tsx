@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -46,36 +47,14 @@ import {
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { NewConversationDialog } from "./new-conversation-dialog";
 
-function formatTime(createdAt?: string | Date | null): string {
-  if (!createdAt) return "";
-  const date = new Date(createdAt);
-  const now = new Date();
-
-  const sameDay = date.toDateString() === now.toDateString();
-  if (sameDay) {
-    return date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  }
-
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  if (date.toDateString() === yesterday.toDateString()) {
-    return "Yesterday";
-  }
-
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
-
 type ConversationListProps = {
   currentUserId: number | null;
 };
 
 export function ConversationList({ currentUserId }: ConversationListProps) {
+  const t = useTranslations("chat");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { data: conversations, isLoading } = useConversations();
   const pathname = usePathname();
   const router = useRouter();
@@ -94,18 +73,36 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
 
   const deleting = hideConversation.isPending;
 
+  const formatTime = (createdAt?: string | Date | null): string => {
+    if (!createdAt) return "";
+    const date = new Date(createdAt);
+    const now = new Date();
+
+    if (date.toDateString() === now.toDateString()) {
+      return format.dateTime(date, { hour: "numeric", minute: "2-digit" });
+    }
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) {
+      return tCommon("yesterday");
+    }
+
+    return format.dateTime(date, { month: "short", day: "numeric" });
+  };
+
   const handleDelete = () => {
     if (conversationToDelete == null) return;
 
     hideConversation.mutate(conversationToDelete, {
       onSuccess: () => {
-        toastSuccess({ message: "Conversation deleted" });
+        toastSuccess({ message: t("deleted") });
         if (pathname === `${basePath}/${conversationToDelete}`) {
           router.push(basePath);
         }
       },
       onError: (error) => {
-        toastError({ message: error.message || "Couldn't delete chat. Try again." });
+        toastError({ message: error.message || t("deleteFailed") });
       },
       onSettled: () => setConversationToDelete(null),
     });
@@ -115,7 +112,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     if (markRead.isPending) return;
     markRead.mutate(conversationId, {
       onError: (error) => {
-        toastError({ message: error.message || "Couldn't mark as read. Try again." });
+        toastError({ message: error.message || t("markReadFailed") });
       },
     });
   };
@@ -126,7 +123,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
       { conversationId, pinned: !pinned },
       {
         onError: (error) => {
-          toastError({ message: error.message || "Couldn't update pin. Try again." });
+          toastError({ message: error.message || t("pinFailed") });
         },
       },
     );
@@ -137,11 +134,13 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
     if (!searchQuery.trim()) return conversations;
     const query = searchQuery.toLowerCase();
     return conversations.filter((c) => {
-      const name = c.otherUser.profile?.displayName ?? `User #${c.otherUser.id}`;
+      const name =
+        c.otherUser.profile?.displayName ??
+        tCommon("userFallback", { id: c.otherUser.id });
       const msg = c.lastMessage?.message ?? "";
       return name.toLowerCase().includes(query) || msg.toLowerCase().includes(query);
     });
-  }, [conversations, searchQuery]);
+  }, [conversations, searchQuery, tCommon]);
 
   return (
     <aside className="flex h-full w-full flex-col border-r border-border bg-background font-sans">
@@ -149,14 +148,14 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
       <div className="flex flex-col gap-3 border-b border-border bg-background/80 backdrop-blur p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold tracking-tight text-foreground font-sans">
-            Messages
+            {t("messages")}
           </h2>
           <NewConversationDialog
             trigger={
               <button
                 type="button"
                 className="flex size-8 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] shadow-xs cursor-pointer transition-colors outline-none"
-                title="New conversation"
+                title={t("newConversation")}
               >
                 <Plus className="size-4" />
               </button>
@@ -171,7 +170,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search chats..."
+            placeholder={t("searchChats")}
             className="h-8 w-full rounded-full bg-[#F3F3F7] dark:bg-zinc-800/80 pl-8 pr-7 text-xs font-normal text-foreground placeholder:text-muted-foreground border border-black/5 dark:border-white/10 outline-none focus:ring-2 focus:ring-[#0069D3]/30 transition-all"
           />
           {searchQuery ? (
@@ -209,17 +208,17 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
               <MessageSquare className="size-5" />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              No conversations yet
+              {t("noConversations")}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              Start a chat with another user to collaborate on projects.
+              {t("noConversationsHint")}
             </p>
             <div className="mt-4 flex justify-center">
               <NewConversationDialog
                 trigger={
                   <Button className="rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4 py-2 cursor-pointer shadow-xs gap-1.5">
                     <Plus className="size-3.5" />
-                    Start a chat
+                    {t("startChat")}
                   </Button>
                 }
               />
@@ -227,14 +226,14 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="px-4 py-10 text-center text-xs text-muted-foreground">
-            No chats match &quot;{searchQuery}&quot;
+            {t("noChatsMatch", { query: searchQuery })}
           </div>
         ) : (
           <ul className="space-y-0.5">
             {filteredConversations.map((conversation) => {
               const displayName =
                 conversation.otherUser.profile?.displayName ??
-                `User #${conversation.otherUser.id}`;
+                tCommon("userFallback", { id: conversation.otherUser.id });
               const avatarUrl =
                 conversation.otherUser.profile?.avatarUrl ?? undefined;
               const isActive = pathname === `${basePath}/${conversation.id}`;
@@ -286,21 +285,21 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                               {conversation.lastMessage.senderId ===
                                 currentUserId && (
                                 <span className="font-semibold text-foreground/70">
-                                  You:{" "}
+                                  {t("youPrefix")}{" "}
                                 </span>
                               )}
                               {conversation.lastMessage.fileUrl ? (
                                 <span className="inline-flex items-center gap-1">
                                   <Paperclip className="size-3 shrink-0" />
                                   {conversation.lastMessage.fileName ??
-                                    "Attachment"}
+                                    tCommon("attachment")}
                                 </span>
                               ) : (
                                 conversation.lastMessage.message
                               )}
                             </>
                           ) : (
-                            "No messages yet"
+                            t("noMessagesYet")
                           )}
                         </p>
                         {conversation.unreadCount > 0 && (
@@ -324,7 +323,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                         }}
                       >
                         <Ellipsis className="size-3.5" />
-                        <span className="sr-only">More actions</span>
+                        <span className="sr-only">{t("moreActions")}</span>
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -347,7 +346,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                         ) : (
                           <Pin className="size-3.5 mr-2" />
                         )}
-                        {conversation.pinnedAt ? "Unpin chat" : "Pin chat"}
+                        {conversation.pinnedAt ? t("unpinChat") : t("pinChat")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         disabled={
@@ -357,7 +356,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                         onSelect={() => handleMarkAsRead(conversation.id)}
                       >
                         <CheckCheck className="size-3.5 mr-2" />
-                        Mark as read
+                        {t("markAsRead")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         disabled={deleting}
@@ -367,7 +366,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                         }
                       >
                         <Trash2 className="size-3.5 mr-2" />
-                        Delete chat
+                        {t("deleteChat")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -389,10 +388,10 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
           <div className="flex flex-col gap-3">
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
-                Delete conversation
+                {t("deleteConversation")}
               </AlertDialogTitle>
               <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
-                Removes this chat from your list only. The other person keeps their copy.
+                {t("deleteConversationHint")}
               </AlertDialogDescription>
             </div>
 
@@ -411,7 +410,9 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                       <Trash2 className="size-3.5" />
                     )}
                   </div>
-                  <span className="text-xs font-semibold">Delete chat</span>
+                  <span className="text-xs font-semibold">
+                    {t("deleteChat")}
+                  </span>
                 </div>
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
@@ -426,7 +427,9 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
-                    <span className="text-xs font-medium">Cancel</span>
+                    <span className="text-xs font-medium">
+                      {tCommon("cancel")}
+                    </span>
                   </div>
                   <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
                 </button>

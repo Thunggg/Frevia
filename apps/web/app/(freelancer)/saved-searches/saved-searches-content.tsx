@@ -1,10 +1,16 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BookmarkCheck, Search, SlidersHorizontal } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import {
+  BUDGET_KEYS,
+  TIME_KEYS,
+  translateFilterOption,
+} from "@/lib/search-filter-labels";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import type { SavedSearchType } from "@shared/types";
@@ -35,34 +41,38 @@ function toFindWorkHref(
   return query ? `${baseUrl}?${query}` : baseUrl;
 }
 
-function filterSummary(searchParams: SavedSearchType["searchParams"]) {
-  const labels: string[] = [];
-  const keyword = searchParams.keyword;
-  const budget = searchParams.budget;
-  const time = searchParams.time;
-
-  if (typeof keyword === "string" && keyword) labels.push(keyword);
-  if (typeof budget === "string" && budget !== "all")
-    labels.push(budget.replaceAll("-", " "));
-  if (typeof time === "string" && time !== "all")
-    labels.push(time.replaceAll("-", " "));
-
-  return labels.length ? labels : ["All open projects"];
-}
-
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function SavedSearchesContent({
   savedSearches,
   embedded = false,
   basePath,
 }: SavedSearchesContentProps) {
+  const t = useTranslations("savedSearches");
+  const tFindWork = useTranslations("findWork");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const filterSummary = (searchParams: SavedSearchType["searchParams"]) => {
+    const labels: string[] = [];
+    const keyword = searchParams.keyword;
+    const budget = searchParams.budget;
+    const time = searchParams.time;
+
+    if (typeof keyword === "string" && keyword) labels.push(keyword);
+    if (typeof budget === "string" && budget !== "all")
+      labels.push(translateFilterOption(tFindWork, BUDGET_KEYS, budget));
+    if (typeof time === "string" && time !== "all")
+      labels.push(translateFilterOption(tFindWork, TIME_KEYS, time));
+
+    return labels.length ? labels : [t("allOpenProjects")];
+  };
+
+  const formatDate = (value: string | Date) =>
+    format.dateTime(new Date(value), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
   const findWorkBaseUrl = embedded ? "/freelancer/find-work" : "/find-work";
@@ -90,11 +100,11 @@ export function SavedSearchesContent({
                   href="/"
                   className="transition-colors hover:text-[#4fae2e]"
                 >
-                  Home
+                  {tCommon("home")}
                 </Link>
                 <span className="mx-2 text-foreground/35">/</span>
                 <span className="font-medium text-foreground">
-                  Saved searches
+                  {t("breadcrumb")}
                 </span>
               </nav>
             )}
@@ -106,17 +116,14 @@ export function SavedSearchesContent({
               <div>
                 <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
                   <BookmarkCheck className="size-6 text-[#4fae2e]" />
-                  Saved searches
+                  {t("title")}
                 </h1>
                 <p className="mt-1 text-xs font-normal text-muted-foreground">
-                  Return to your preferred job filters in one click.
+                  {t("subtitle")}
                 </p>
               </div>
               <p className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">
-                  {savedSearches.length}
-                </span>{" "}
-                {savedSearches.length === 1 ? "saved search" : "saved searches"}
+                {t("count", { count: savedSearches.length })}
               </p>
             </div>
           </div>
@@ -137,7 +144,7 @@ export function SavedSearchesContent({
                         <SlidersHorizontal className="size-5" />
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        Saved {formatDate(savedSearch.createdAt)}
+                        {t("savedAt", { date: formatDate(savedSearch.createdAt) })}
                       </span>
                     </div>
                     <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">
@@ -148,7 +155,7 @@ export function SavedSearchesContent({
                         <Badge
                           key={filter}
                           variant="secondary"
-                          className="max-w-full truncate font-normal capitalize"
+                          className="max-w-full truncate font-normal"
                         >
                           {filter}
                         </Badge>
@@ -165,7 +172,7 @@ export function SavedSearchesContent({
                         )}
                       >
                         <Search className="mr-2 size-4" />
-                        View matching jobs
+                        {t("viewMatchingJobs")}
                       </Link>
                     </Button>
                     <Button
@@ -174,7 +181,7 @@ export function SavedSearchesContent({
                       className="mt-2 w-full text-foreground/70 hover:text-foreground"
                     >
                       <Link href={`${effectiveBasePath}/${savedSearch.id}`}>
-                        View details
+                        {t("viewDetails")}
                       </Link>
                     </Button>
                   </article>
@@ -187,16 +194,16 @@ export function SavedSearchesContent({
                 <BookmarkCheck className="size-7" />
               </div>
               <h2 className="text-lg font-medium text-foreground">
-                No saved searches yet
+                {t("emptyTitle")}
               </h2>
               <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                Set up filters in Find Work, then save the search for later.
+                {t("emptyHint")}
               </p>
               <Button
                 asChild
                 className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
               >
-                <Link href={findWorkBaseUrl}>Find work</Link>
+                <Link href={findWorkBaseUrl}>{t("findWork")}</Link>
               </Button>
             </div>
           )}

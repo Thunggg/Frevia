@@ -1,12 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { RoleName } from "@shared/types";
 import { redirect } from "next/navigation";
 import { NotificationsClient } from "@/app/notifications/notifications-client";
 
-export const metadata = {
-  title: "Notifications | Freelancer Dashboard | Frevia",
-  description: "View all your notifications and activity updates.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("notifications");
+
+  return {
+    title: t("metaTitleFreelancer"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function FreelancerNotificationsPage() {
   const user = await authServerRequest.getMe();

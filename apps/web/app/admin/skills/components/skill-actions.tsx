@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { SkillAdminDetailResponseType } from "@shared/types";
 import { DeleteSkillDialog } from "./delete-skill-dialog";
 import { RestoreSkillDialog } from "./restore-skill-dialog";
@@ -14,6 +15,8 @@ interface SkillActionsProps {
 }
 
 export function SkillActions({ skill }: SkillActionsProps) {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
   const [deleting, setDeleting] = useState(false);
 
   return (
@@ -33,9 +36,9 @@ export function SkillActions({ skill }: SkillActionsProps) {
             type="button"
             onClick={() => setDeleting(true)}
             className="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-            aria-label={`Delete skill ${skill.name}`}
+            aria-label={t("deleteSkillOf", { name: skill.name })}
           >
-            Delete
+            {tCommon("delete")}
           </button>
           <DeleteSkillDialog
             skill={skill}

@@ -5,7 +5,7 @@ import { useCreateUser } from "@/hooks/use-admin-user";
 import { useRoles } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -37,8 +37,9 @@ import {
   type RoleListItemType,
 } from "@shared/types";
 import { Eye, EyeOff, Loader2, Plus, UserPlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const ROLE_FIELD_PATHS = new Set([
   "roleId",
@@ -53,6 +54,8 @@ const ROLE_FIELD_PATHS = new Set([
 // (Client | Freelancer | custom role — không cho chọn Admin).
 export function CreateUserDialog() {
   const router = useRouter();
+  const t = useTranslations("adminUsers");
+  const tCommon = useTranslations("adminCommon");
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -65,9 +68,9 @@ export function CreateUserDialog() {
   } = useRoles();
 
   const form = useForm<AdminCreateUserBodyType>({
-    resolver: zodResolver(
+    resolver: useTranslatedResolver<AdminCreateUserBodyType>(
       AdminCreateUserBodySchema,
-    ) as Resolver<AdminCreateUserBodyType>,
+    ),
     defaultValues: {
       email: "",
       fullName: "",
@@ -128,7 +131,10 @@ export function CreateUserDialog() {
       {
         onSuccess: (created) => {
           toastSuccess({
-            message: `User "${created.email}" created (${created.roles[0]?.name ?? "no role"})`,
+            message: t("createdToast", {
+              email: created.email,
+              role: created.roles[0]?.name ?? t("noRoleInParentheses"),
+            }),
           });
           handleOpenChange(false);
           router.refresh();
@@ -146,7 +152,7 @@ export function CreateUserDialog() {
               toastError({ message: error.message });
             }
           } else {
-            toastError({ message: "Failed to create user" });
+            toastError({ message: t("createFailed") });
           }
         },
       },
@@ -158,18 +164,17 @@ export function CreateUserDialog() {
       <DialogTrigger asChild>
         <Button size="sm" className="gap-1.5">
           <Plus className="h-4 w-4" />
-          Create User
+          {t("createUser")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-[#4fae2e]" />
-            Create new user
+            {t("createTitle")}
           </DialogTitle>
           <DialogDescription>
-            Create an account and set its initial role. The user can sign in
-            with the password you provide.
+            {t("createDescription")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -180,12 +185,12 @@ export function CreateUserDialog() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="create-user-fullName">
-                    Full name
+                    {t("fieldFullName")}
                   </FieldLabel>
                   <Input
                     {...field}
                     id="create-user-fullName"
-                    placeholder="Jane Doe"
+                    placeholder={t("fullNamePlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -199,12 +204,14 @@ export function CreateUserDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="create-user-email">Email</FieldLabel>
+                  <FieldLabel htmlFor="create-user-email">
+                    {tCommon("email")}
+                  </FieldLabel>
                   <Input
                     {...field}
                     id="create-user-email"
                     type="email"
-                    placeholder="jane@example.com"
+                    placeholder={t("emailPlaceholder")}
                     autoComplete="off"
                     aria-invalid={fieldState.invalid}
                   />
@@ -221,7 +228,7 @@ export function CreateUserDialog() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="create-user-password">
-                      Password
+                      {t("fieldPassword")}
                     </FieldLabel>
                     <div className="relative">
                       <Input
@@ -258,7 +265,7 @@ export function CreateUserDialog() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="create-user-confirmPassword">
-                      Confirm password
+                      {t("fieldConfirmPassword")}
                     </FieldLabel>
                     <div className="relative">
                       <Input
@@ -295,7 +302,7 @@ export function CreateUserDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Initial role</FieldLabel>
+                  <FieldLabel>{t("fieldInitialRole")}</FieldLabel>
                   <Select
                     value={field.value ? String(field.value) : ""}
                     onValueChange={(value) => field.onChange(Number(value))}
@@ -308,10 +315,10 @@ export function CreateUserDialog() {
                       <SelectValue
                         placeholder={
                           isRolesLoading
-                            ? "Loading roles..."
+                            ? t("loadingRoles")
                             : isRolesError
-                              ? "Failed to load roles"
-                              : "Select a role"
+                              ? t("rolesLoadFailed")
+                              : t("selectRole")
                         }
                       />
                     </SelectTrigger>
@@ -328,7 +335,7 @@ export function CreateUserDialog() {
                             disabled
                             className="text-xs font-medium text-muted-foreground"
                           >
-                            Custom roles
+                            {t("customRolesLabel")}
                           </SelectItem>
                           {roleEntries.custom.map((role) => (
                             <SelectItem key={role.id} value={String(role.id)}>
@@ -343,8 +350,7 @@ export function CreateUserDialog() {
                     <FieldError errors={[fieldState.error]} />
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      Password needs 8–32 characters, an uppercase letter and a
-                      number.
+                      {t("passwordHint")}
                     </p>
                   )}
                 </Field>
@@ -357,7 +363,7 @@ export function CreateUserDialog() {
               variant="outline"
               onClick={() => handleOpenChange(false)}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -366,7 +372,7 @@ export function CreateUserDialog() {
               {createUser.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              Create user
+              {t("createSubmit")}
             </Button>
           </DialogFooter>
         </form>

@@ -19,6 +19,7 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { HttpMethod, type PermissionListItemType } from "@shared/types";
 import { Loader2, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 const METHOD_VARIANT: Record<
@@ -35,6 +36,7 @@ const METHOD_VARIANT: Record<
 const HTTP_METHODS = Object.values(HttpMethod);
 
 export function AssignRoleContent() {
+  const t = useTranslations("adminAssignRole");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -160,14 +162,17 @@ export function AssignRoleContent() {
       {
         onSuccess: (updated) => {
           toastSuccess({
-            message: `Updated permissions for "${updated.name}" (${updated.permissions.length})`,
+            message: t("savedToast", {
+              name: updated.name,
+              count: updated.permissions.length,
+            }),
           });
         },
         onError: (error) => {
           if (error instanceof ApiFail) {
             toastError({ message: error.message });
           } else {
-            toastError({ message: "Failed to update role permissions" });
+            toastError({ message: t("updateFailed") });
           }
         },
       },
@@ -178,10 +183,12 @@ export function AssignRoleContent() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Assign Role</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Select a role and assign API permissions
-            {role ? ` · ${selectedIds.size} selected` : ""}
+            {t("pageSubtitle")}
+            {role ? t("selectedCount", { count: selectedIds.size }) : null}
           </p>
         </div>
         {selectedRoleId && role && (
@@ -198,7 +205,7 @@ export function AssignRoleContent() {
             {setRolePermissions.isPending && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Save permissions
+            {t("savePermissions")}
           </Button>
         )}
       </div>
@@ -210,10 +217,10 @@ export function AssignRoleContent() {
           disabled={isRolesLoading || isRolesError}
         >
           <SelectTrigger className="w-full sm:w-[260px] h-9">
-            <SelectValue placeholder="Select a role" />
+            <SelectValue placeholder={t("selectRole")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="none">Select a role</SelectItem>
+            <SelectItem value="none">{t("selectRole")}</SelectItem>
             {roles.map((item) => (
               <SelectItem key={item.id} value={String(item.id)}>
                 {item.name}
@@ -229,7 +236,7 @@ export function AssignRoleContent() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search permissions..."
+                placeholder={t("searchPermissions")}
                 className="pl-9 pr-9"
               />
               {search && (
@@ -237,6 +244,7 @@ export function AssignRoleContent() {
                   type="button"
                   onClick={() => setSearch("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={t("clearSearchLabel")}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -245,10 +253,10 @@ export function AssignRoleContent() {
 
             <Select value={methodFilter} onValueChange={setMethodFilter}>
               <SelectTrigger className="w-[140px] h-9">
-                <SelectValue placeholder="All methods" />
+                <SelectValue placeholder={t("allMethods")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All methods</SelectItem>
+                <SelectItem value="all">{t("allMethods")}</SelectItem>
                 {HTTP_METHODS.map((method) => (
                   <SelectItem key={method} value={method}>
                     {method}
@@ -259,10 +267,10 @@ export function AssignRoleContent() {
 
             <Select value={moduleFilter} onValueChange={setModuleFilter}>
               <SelectTrigger className="w-[180px] h-9">
-                <SelectValue placeholder="All modules" />
+                <SelectValue placeholder={t("allModules")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All modules</SelectItem>
+                <SelectItem value="all">{t("allModules")}</SelectItem>
                 {modules.map((mod) => (
                   <SelectItem key={mod} value={mod}>
                     {mod}
@@ -276,15 +284,15 @@ export function AssignRoleContent() {
 
       {isRolesError ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Failed to load roles. Please try again.
+          {t("rolesLoadFailed")}
         </p>
       ) : !selectedRoleId ? (
         <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground">
-          Choose a role to start assigning permissions.
+          {t("chooseRolePrompt")}
         </div>
       ) : isRoleError ? (
         <p className="text-sm text-muted-foreground py-12 text-center">
-          Failed to load the selected role.
+          {t("roleLoadFailed")}
         </p>
       ) : (
         <div className="rounded-lg border bg-card p-4 space-y-4">
@@ -296,11 +304,11 @@ export function AssignRoleContent() {
             </div>
           ) : isPermissionsError ? (
             <p className="text-sm text-muted-foreground py-12 text-center">
-              Failed to load permissions.
+              {t("permissionsLoadFailed")}
             </p>
           ) : grouped.length === 0 ? (
             <p className="text-sm text-muted-foreground py-12 text-center">
-              No permissions match your filters.
+              {t("noMatches")}
             </p>
           ) : (
             grouped.map(([moduleName, items]) => {
@@ -325,7 +333,7 @@ export function AssignRoleContent() {
                       onCheckedChange={(checked) =>
                         toggleModule(items, checked === true)
                       }
-                      aria-label={`Select all ${moduleName}`}
+                      aria-label={t("selectAllModule", { module: moduleName })}
                     />
                     <Badge variant="outline">{moduleName}</Badge>
                     <span className="text-xs text-muted-foreground">

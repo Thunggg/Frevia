@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowLeft, Briefcase, Tags, TagX } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { formatDateTime } from "@/lib/format";
 import { SkillActions } from "../components/skill-actions";
 
 export const dynamic = "force-dynamic";
@@ -11,24 +13,39 @@ interface SkillDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata() {
+  const t = await getTranslations("adminSkills");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
+
 export default async function AdminSkillDetailPage({
   params,
 }: SkillDetailPageProps) {
   const { id } = await params;
   const skillId = Number(id);
 
+  const t = await getTranslations("adminSkills");
+  const tCommon = await getTranslations("adminCommon");
+  const locale = await getLocale();
+
   if (isNaN(skillId)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <TagX className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-bold text-foreground">Invalid Skill ID</h2>
+        <h2 className="text-xl font-bold text-foreground">
+          {t("detailInvalidId")}
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          The requested skill ID &quot;{id}&quot; is not valid.
+          {t("detailInvalidIdDescription", { id })}
         </p>
         <Button asChild variant="outline" className="mt-6">
           <Link href="/admin/skills">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Skill Management
+            {t("detailBackToSkills")}
           </Link>
         </Button>
       </div>
@@ -41,14 +58,16 @@ export default async function AdminSkillDetailPage({
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <TagX className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-bold text-foreground">Skill Not Found</h2>
+        <h2 className="text-xl font-bold text-foreground">
+          {t("detailNotFound")}
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          No skill exists with ID #{skillId}.
+          {t("detailNotFoundDescription", { id: skillId })}
         </p>
         <Button asChild variant="outline" className="mt-6">
           <Link href="/admin/skills">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Skill Management
+            {t("detailBackToSkills")}
           </Link>
         </Button>
       </div>
@@ -60,7 +79,7 @@ export default async function AdminSkillDetailPage({
       <Button asChild variant="outline" size="sm">
         <Link href="/admin/skills">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Skill Management
+          {t("detailBackToSkills")}
         </Link>
       </Button>
 
@@ -83,10 +102,10 @@ export default async function AdminSkillDetailPage({
           <div className="flex items-center gap-2">
             {skill.deletedAt === null ? (
               <Badge className="border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-                Active
+                {tCommon("active")}
               </Badge>
             ) : (
-              <Badge variant="destructive">Deleted</Badge>
+              <Badge variant="destructive">{t("statusDeleted")}</Badge>
             )}
             <SkillActions skill={skill} />
           </div>
@@ -96,10 +115,10 @@ export default async function AdminSkillDetailPage({
       {/* Description */}
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Description
+          {tCommon("description")}
         </h2>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-          {skill.description || "No description provided for this skill."}
+          {skill.description || t("detailNoDescription")}
         </p>
       </div>
 
@@ -108,24 +127,26 @@ export default async function AdminSkillDetailPage({
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <Briefcase className="size-3.5" />
-            Jobs using this skill
+            {t("detailJobsUsing")}
           </p>
           <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {skill.jobCount}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
-          <p className="text-xs font-medium text-muted-foreground">Created</p>
+          <p className="text-xs font-medium text-muted-foreground">
+            {tCommon("created")}
+          </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            {new Date(skill.createdAt).toLocaleString()}
+            {formatDateTime(skill.createdAt, locale)}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground">
-            Last updated
+            {t("detailLastUpdated")}
           </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            {new Date(skill.updatedAt).toLocaleString()}
+            {formatDateTime(skill.updatedAt, locale)}
           </p>
         </div>
       </div>

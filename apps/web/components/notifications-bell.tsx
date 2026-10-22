@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Bell, CheckCheck } from "@/components/icons";
+import { useNotificationText } from "@/hooks/use-notification-text";
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
@@ -23,6 +25,8 @@ function notificationHref(data: unknown): string | null {
 }
 
 export function NotificationsBell() {
+  const t = useTranslations("notifications");
+  const notificationText = useNotificationText();
   const { data: notifications = [], isLoading } = useNotifications();
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
@@ -34,7 +38,7 @@ export function NotificationsBell() {
       <DropdownMenuTrigger asChild>
         <button
           className="relative rounded-full p-2 text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
-          aria-label={`Notifications${unread.length ? `, ${unread.length} unread` : ""}`}
+          aria-label={t("bellAria", { count: unread.length })}
         >
           <Bell className="size-5" />
           {unread.length ? (
@@ -48,10 +52,10 @@ export function NotificationsBell() {
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              Notifications
+              {t("title")}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {unread.length} unread
+              {t("unreadCount", { count: unread.length })}
             </p>
           </div>
           {unread.length ? (
@@ -62,7 +66,7 @@ export function NotificationsBell() {
               onClick={() => markAllRead.mutate()}
             >
               <CheckCheck className="size-3.5" />
-              Mark all read
+              {t("markAllRead")}
             </button>
           ) : null}
         </div>
@@ -70,26 +74,30 @@ export function NotificationsBell() {
         <div className="max-h-80 overflow-y-auto">
           {isLoading ? (
             <p className="px-4 py-8 text-center text-sm text-muted-foreground">
-              Loading notifications...
+              {t("loading")}
             </p>
           ) : recent.length === 0 ? (
             <div className="px-4 py-8 text-center">
               <Bell className="mx-auto mb-2 size-8 text-muted-foreground/40" />
               <p className="text-sm text-muted-foreground">
-                No notifications yet
+                {t("empty")}
               </p>
             </div>
           ) : (
             recent.map((notification) => {
               const href = notificationHref(notification.data);
+              const text = notificationText(
+                notification,
+                t("fallbackTitle"),
+              );
               const content = (
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-foreground">
-                    {notification.title ?? "Notification"}
+                    {text.title}
                   </p>
-                  {notification.message ? (
+                  {text.message ? (
                     <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                      {notification.message}
+                      {text.message}
                     </p>
                   ) : null}
                 </div>
@@ -121,7 +129,7 @@ export function NotificationsBell() {
             href="/notifications"
             className="block rounded-md px-3 py-2 text-center text-sm font-medium text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/10"
           >
-            View all notifications
+            {t("viewAllNotifications")}
           </Link>
         </div>
       </DropdownMenuContent>

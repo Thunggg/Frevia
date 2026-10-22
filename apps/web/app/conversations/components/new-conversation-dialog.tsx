@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -28,6 +29,8 @@ export function NewConversationDialog({
 }: NewConversationDialogProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("chat");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [participantId, setParticipantId] = useState("");
 
@@ -43,7 +46,7 @@ export function NewConversationDialog({
     const id = Number(participantId);
 
     if (!Number.isInteger(id) || id <= 0) {
-      toastError({ message: "Enter a whole number greater than zero." });
+      toastError({ message: t("enterWholeNumber") });
       return;
     }
 
@@ -55,13 +58,11 @@ export function NewConversationDialog({
       },
       onError: (error: unknown) => {
         const message =
-          error instanceof Error
-            ? error.message
-            : "Failed to start conversation";
+          error instanceof Error ? error.message : t("startChatFailed");
         toastError({ message });
       },
     });
-  }, [participantId, createConversation, router, basePath]);
+  }, [participantId, createConversation, router, basePath, t]);
 
   const handleOpenChange = useCallback((isOpen: boolean) => {
     setOpen(isOpen);
@@ -79,31 +80,30 @@ export function NewConversationDialog({
             className="rounded-full gap-1.5 bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4 py-2 cursor-pointer shadow-xs"
           >
             <Plus className="size-3.5" />
-            New conversation
+            {t("newConversation")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-foreground font-sans">
-            Start a conversation
+            {t("startConversation")}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground font-sans">
-            Open a private chat with another Frevia user. You’ll need their
-            numeric user ID for now.
+            {t("startConversationHint")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2 my-2">
           <Label htmlFor="participant-id" className="text-xs font-semibold">
-            User ID
+            {t("userId")}
           </Label>
           <Input
             id="participant-id"
             type="number"
             min={1}
             inputMode="numeric"
-            placeholder="e.g. 42"
+            placeholder={t("userIdPlaceholder")}
             value={participantId}
             onChange={(e) => setParticipantId(e.target.value)}
             disabled={createConversation.isPending}
@@ -113,9 +113,11 @@ export function NewConversationDialog({
             }}
           />
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Tip: open someone’s profile — the number in the URL (for example{" "}
-            <span className="font-semibold text-foreground">/profiles/42</span>)
-            is their user ID.
+            {t.rich("userIdTip", {
+              code: (chunks) => (
+                <span className="font-semibold text-foreground">{chunks}</span>
+              ),
+            })}
           </p>
         </div>
 
@@ -126,7 +128,7 @@ export function NewConversationDialog({
             onClick={() => setOpen(false)}
             disabled={createConversation.isPending}
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             className="rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4"
@@ -138,7 +140,7 @@ export function NewConversationDialog({
             ) : (
               <MessageSquare className="size-3.5 mr-1.5" />
             )}
-            Start chat
+            {t("startChatAction")}
           </Button>
         </DialogFooter>
       </DialogContent>

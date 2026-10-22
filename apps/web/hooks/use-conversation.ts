@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { conversationApiRequest } from "@/apiRequests/conversation";
-import type { ApiResponse } from "@shared/types";
+import { useApiDataExtractor } from "@/hooks/use-api-data-extractor";
 import type {
   ConversationListItemType,
   DirectMessageType,
@@ -10,13 +10,6 @@ import type {
   GetMessagesResponseType,
   MessageAttachmentType,
 } from "@shared/types";
-
-function extractData<T>(response: ApiResponse<T>): T {
-  if (response.success && "data" in response) {
-    return response.data;
-  }
-  throw new Error("Unexpected API error response");
-}
 
 export const conversationKeys = {
   // Key gốc cho toàn bộ module hội thoại
@@ -50,6 +43,8 @@ function sortByLastMessage(items: GetConversationsResponseType) {
  * Mỗi hội thoại kèm tin nhắn cuối (preview) và số tin nhắn chưa đọc.
  */
 export function useConversations() {
+  const extractData = useApiDataExtractor("chat");
+
   return useQuery({
     queryKey: conversationKeys.list(),
     queryFn: () =>
@@ -62,6 +57,8 @@ export function useConversations() {
  * Lấy danh sách tin nhắn của 1 hội thoại.
  */
 export function useConversationMessages(conversationId: number) {
+  const extractData = useApiDataExtractor("chat");
+
   return useQuery({
     queryKey: conversationKeys.messages(conversationId),
     queryFn: () =>
@@ -77,6 +74,7 @@ export function useConversationMessages(conversationId: number) {
  * Gửi tin nhắn bằng REST (fallback khi socket không hoạt động).
  */
 export function useSendConversationMessage() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -112,6 +110,8 @@ export function useSendConversationMessage() {
  * Sau khi upload thành công, client gửi tin nhắn kèm attachment qua socket/REST.
  */
 export function useUploadConversationFile() {
+  const extractData = useApiDataExtractor("chat");
+
   return useMutation({
     mutationFn: ({
       conversationId,
@@ -130,6 +130,7 @@ export function useUploadConversationFile() {
  * Đánh dấu tin nhắn đã đọc bằng REST.
  */
 export function useMarkConversationRead() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -148,6 +149,7 @@ export function useMarkConversationRead() {
  * Tạo hội thoại mới với 1 user.
  */
 export function useCreateConversation() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -165,6 +167,7 @@ export function useCreateConversation() {
  * Xóa/ẩn hội thoại về phía user hiện tại (soft delete).
  */
 export function useHideConversation() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -188,6 +191,7 @@ export function useHideConversation() {
  * Xóa mềm tin nhắn của bản thân (soft delete).
  */
 export function useDeleteConversationMessage() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -219,6 +223,7 @@ export function useDeleteConversationMessage() {
  * Ghim/bỏ ghim hội thoại về phía user hiện tại.
  */
 export function usePinConversation() {
+  const extractData = useApiDataExtractor("chat");
   const queryClient = useQueryClient();
 
   return useMutation({

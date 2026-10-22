@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import {
   Heart,
@@ -45,15 +46,8 @@ type CommentSectionProps = {
   currentUserId: number | null;
 };
 
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
+  const t = useTranslations("forum");
   const { data: commentsData, isLoading } = useForumComments(postId, 1, 50);
   const createComment = useCreateComment();
   const [newComment, setNewComment] = useState("");
@@ -80,7 +74,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
       <div className="flex items-center gap-2.5">
         <MessageSquare className="size-4 text-[#4fae2e]/70" />
         <h2 className="text-base font-semibold tracking-tight text-foreground/80">
-          Comments
+          {t("commentsTitle")}
         </h2>
         {pagination ? (
           <span className="rounded-full bg-[#4fae2e]/8 px-2 py-0.5 text-[11px] font-medium text-[#4fae2e]/70">
@@ -97,7 +91,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
             </Avatar>
             <div className="flex-1 space-y-3">
               <textarea
-                placeholder="Write a comment..."
+                placeholder={t("commentPlaceholder")}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={3}
@@ -112,11 +106,11 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
               />
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[11px] text-muted-foreground/40">
-                  Press{" "}
+                  {t("pressToSubmit")}{" "}
                   <kbd className="rounded border border-border/60 bg-muted/50 px-1 py-0.5 text-[10px] font-medium">
                     Ctrl+Enter
                   </kbd>{" "}
-                  to submit
+                  {t("keyToSubmit")}
                 </p>
                 <Button
                   size="sm"
@@ -129,7 +123,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   ) : (
                     <Send className="size-3.5" />
                   )}
-                  Comment
+                  {t("commentAction")}
                 </Button>
               </div>
             </div>
@@ -142,9 +136,9 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
               href="/login"
               className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
             >
-              Log in
+              {t("logIn")}
             </Link>{" "}
-            to join the discussion.
+            {t("joinDiscussion")}
           </p>
         </div>
       )}
@@ -169,9 +163,11 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
           <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#4fae2e]/8 text-[#4fae2e]">
             <MessageSquare className="size-6" strokeWidth={1.5} />
           </div>
-          <p className="text-[15px] font-medium text-foreground/80">No comments yet</p>
+          <p className="text-[15px] font-medium text-foreground/80">
+            {t("noCommentsYet")}
+          </p>
           <p className="mx-auto mt-2 max-w-sm text-[13px] text-muted-foreground/50">
-            Be the first to share a tip, question, or experience.
+            {t("noCommentsDescription")}
           </p>
         </div>
       ) : null}
@@ -202,6 +198,8 @@ function CommentItem({
   postId: number;
   currentUserId: number | null;
 }) {
+  const t = useTranslations("forum");
+  const format = useFormatter();
   const toggleLike = useToggleCommentLike(postId);
   const updateComment = useUpdateComment();
   const deleteComment = useDeleteComment();
@@ -215,6 +213,13 @@ function CommentItem({
   const wasEdited =
     new Date(comment.updatedAt).getTime() !==
     new Date(comment.createdAt).getTime();
+
+  const formatDate = (value: string | Date) =>
+    format.dateTime(new Date(value), {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
   const handleToggleLike = useCallback(() => {
     if (!currentUserId) return;
@@ -244,7 +249,7 @@ function CommentItem({
         <Avatar size="sm">
           <AvatarImage
             src={comment.user?.profile?.avatarUrl ?? undefined}
-            alt={comment.user?.profile?.displayName ?? "User"}
+            alt={comment.user?.profile?.displayName ?? t("userAlt")}
           />
           <AvatarFallback className="text-[10px]">
             {comment.user?.profile?.displayName?.charAt(0)?.toUpperCase() ??
@@ -254,7 +259,8 @@ function CommentItem({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="text-[13px] font-medium text-foreground/80">
-              {comment.user?.profile?.displayName ?? `User #${comment.user.id}`}
+              {comment.user?.profile?.displayName ??
+                t("userFallback", { id: comment.user.id })}
             </span>
             <span className="text-foreground/20">·</span>
             <span className="text-[11px] text-muted-foreground/50">
@@ -264,7 +270,7 @@ function CommentItem({
               <>
                 <span className="text-foreground/20">·</span>
                 <span className="text-[11px] italic text-muted-foreground/40">
-                  edited
+                  {t("edited")}
                 </span>
               </>
             ) : null}
@@ -290,7 +296,7 @@ function CommentItem({
                   {updateComment.isPending ? (
                     <Loader2 className="size-3 animate-spin" />
                   ) : (
-                    "Save"
+                    t("save")
                   )}
                 </Button>
                 <Button
@@ -302,7 +308,7 @@ function CommentItem({
                   }}
                   disabled={updateComment.isPending}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </div>
             </div>
@@ -333,7 +339,7 @@ function CommentItem({
                 {likeCount > 0 ? (
                   <span className="text-xs tabular-nums">{likeCount}</span>
                 ) : null}
-                <span className="text-xs">{liked ? "Liked" : "Like"}</span>
+                <span className="text-xs">{liked ? t("liked") : t("like")}</span>
               </Button>
             ) : null}
 
@@ -346,7 +352,7 @@ function CommentItem({
                   onClick={() => setIsEditing(true)}
                 >
                   <Pencil className="size-3.5" />
-                  Edit
+                  {t("edit")}
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -356,24 +362,25 @@ function CommentItem({
                       className="gap-1 text-muted-foreground hover:text-red-500"
                     >
                       <Trash2 className="size-3.5" />
-                      Delete
+                      {t("delete")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        {t("deleteCommentTitle")}
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this comment? This
-                        action cannot be undone.
+                        {t("deleteCommentDescription")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         className="bg-destructive text-white hover:bg-destructive/90"
                       >
-                        Delete
+                        {t("delete")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

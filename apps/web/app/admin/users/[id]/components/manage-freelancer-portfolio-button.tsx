@@ -36,6 +36,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 // ====== Dialog quản lý portfolio (tab FREELANCER - User Detail) ======
@@ -77,9 +78,12 @@ export function ManageFreelancerPortfolioButton({
   user,
 }: ManageFreelancerPortfolioButtonProps) {
   const router = useRouter();
+  const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"list" | "form">("list");
   const [formState, setFormState] = useState<FormState>(EMPTY_FORM);
+  const [pendingDelete, setPendingDelete] =
+    useState<AdminUserPortfolioItemType | null>(null);
 
   const createItem = useCreatePortfolioItem();
   const updateItem = useUpdatePortfolioItem();
@@ -148,13 +152,13 @@ export function ManageFreelancerPortfolioButton({
         { id: user.id, body },
         {
           onSuccess: () => {
-            toastSuccess({ message: "Portfolio item created" });
+            toastSuccess({ message: t("portfolioCreated") });
             cancelForm();
             router.refresh();
           },
           onError: (error) =>
             toastError({
-              message: errorMessage(error, "Failed to create portfolio item"),
+              message: errorMessage(error, t("portfolioCreateFailed")),
             }),
         },
       );
@@ -187,13 +191,13 @@ export function ManageFreelancerPortfolioButton({
       { id: user.id, itemId: formState.id, body },
       {
         onSuccess: () => {
-          toastSuccess({ message: "Portfolio item updated" });
+          toastSuccess({ message: t("portfolioUpdated") });
           cancelForm();
           router.refresh();
         },
         onError: (error) =>
           toastError({
-            message: errorMessage(error, "Failed to update portfolio item"),
+            message: errorMessage(error, t("portfolioUpdateFailed")),
           }),
       },
     );
@@ -208,22 +212,27 @@ export function ManageFreelancerPortfolioButton({
     return fallback;
   }
 
-  // Xoá item (soft-delete): hỏi xác nhận trước khi gọi API
-  function onDelete(item: AdminUserPortfolioItemType) {
-    const ok = window.confirm(`Delete portfolio item "${item.title}"?`);
-    if (!ok) return;
+  // Xoá item (soft-delete): mở dialog xác nhận trước khi gọi API
+  function onRequestDelete(item: AdminUserPortfolioItemType) {
+    setPendingDelete(item);
+  }
+
+  function onConfirmDelete() {
+    const item = pendingDelete;
+    if (!item) return;
+    setPendingDelete(null);
 
     deleteItem.mutate(
       { id: user.id, itemId: item.id },
       {
         onSuccess: () => {
-          toastSuccess({ message: "Portfolio item deleted" });
+          toastSuccess({ message: t("portfolioDeleted") });
           if (formState.id === item.id) cancelForm();
           router.refresh();
         },
         onError: (error) =>
           toastError({
-            message: errorMessage(error, "Failed to delete portfolio item"),
+            message: errorMessage(error, t("portfolioDeleteFailed")),
           }),
       },
     );
@@ -238,18 +247,22 @@ export function ManageFreelancerPortfolioButton({
           className="gap-1.5 hover:bg-purple-500/10 hover:text-purple-500 hover:border-purple-400/40 transition-colors"
         >
           <FolderGit2 className="h-3.5 w-3.5" />
-          Portfolio
+          {t("portfolioTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FolderGit2 className="h-5 w-5 text-purple-500" />
-            Manage portfolio
+            {t("portfolioTitle")}
           </DialogTitle>
           <DialogDescription>
-            Add, edit or remove showcased portfolio items for{" "}
-            <span className="font-medium text-foreground">{user.email}</span>.
+            {t.rich("portfolioDescription", {
+              b: (chunks) => (
+                <span className="font-medium text-foreground">{chunks}</span>
+              ),
+              email: user.email,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -260,7 +273,7 @@ export function ManageFreelancerPortfolioButton({
               onChange={(e) =>
                 setFormState((s) => ({ ...s, title: e.target.value }))
               }
-              placeholder="Project title *"
+              placeholder={t("portfolioTitlePlaceholder")}
               autoFocus
             />
             <Textarea
@@ -268,7 +281,7 @@ export function ManageFreelancerPortfolioButton({
               onChange={(e) =>
                 setFormState((s) => ({ ...s, description: e.target.value }))
               }
-              placeholder="Project description"
+              placeholder={t("portfolioDescriptionPlaceholder")}
               rows={3}
             />
             <Input
@@ -279,7 +292,7 @@ export function ManageFreelancerPortfolioButton({
                   technologiesText: e.target.value,
                 }))
               }
-              placeholder="Technologies (comma separated, e.g. React, Node.js)"
+              placeholder={t("portfolioTechnologiesPlaceholder")}
             />
             <Input
               value={formState.projectUrl}
@@ -287,15 +300,17 @@ export function ManageFreelancerPortfolioButton({
                 setFormState((s) => ({ ...s, projectUrl: e.target.value }))
               }
               type="url"
-              placeholder="Project URL (https://...)"
+              placeholder={t("portfolioUrlPlaceholder")}
             />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={cancelForm}>
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="button" onClick={onSave} disabled={busy}>
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                {formState.id === null ? "Add item" : "Save changes"}
+                {formState.id === null
+                  ? t("portfolioAddAction")
+                  : t("saveChanges")}
               </Button>
             </div>
           </div>
@@ -303,7 +318,7 @@ export function ManageFreelancerPortfolioButton({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                {items.length} item{items.length === 1 ? "" : "s"} shown
+                {t("portfolioItemsShown", { count: items.length })}
               </p>
               <Button
                 type="button"
@@ -312,13 +327,13 @@ export function ManageFreelancerPortfolioButton({
                 onClick={startAdd}
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Add item
+                {t("portfolioAddAction")}
               </Button>
             </div>
 
             {items.length === 0 ? (
               <p className="rounded-lg border border-dashed py-8 text-center text-xs text-muted-foreground">
-                No portfolio items yet.
+                {t("portfolioEmpty")}
               </p>
             ) : (
               <div className="space-y-2 max-h-[45vh] overflow-y-auto pr-1">
@@ -345,7 +360,7 @@ export function ManageFreelancerPortfolioButton({
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                            aria-label="Open project URL"
+                            aria-label={t("portfolioOpenUrlAria", { title: item.title })}
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </a>
@@ -356,7 +371,9 @@ export function ManageFreelancerPortfolioButton({
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           onClick={() => startEdit(item)}
-                          aria-label={`Edit ${item.title}`}
+                          aria-label={t("portfolioEditAria", {
+                            title: item.title,
+                          })}
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
@@ -365,8 +382,10 @@ export function ManageFreelancerPortfolioButton({
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                          onClick={() => onDelete(item)}
-                          aria-label={`Delete ${item.title}`}
+                          onClick={() => onRequestDelete(item)}
+                          aria-label={t("portfolioDeleteAria", {
+                            title: item.title,
+                          })}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -398,10 +417,49 @@ export function ManageFreelancerPortfolioButton({
             variant="outline"
             onClick={() => setOpen(false)}
           >
-            Close
+            {t("portfolioClose")}
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <Dialog
+        open={pendingDelete !== null}
+        onOpenChange={(next) => {
+          if (!next) setPendingDelete(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("portfolioDeleteTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("portfolioDeleteHint", {
+                title: pendingDelete?.title ?? "",
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingDelete(null)}
+              disabled={deleteItem.isPending}
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={onConfirmDelete}
+              disabled={deleteItem.isPending}
+            >
+              {deleteItem.isPending && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
+              {t("portfolioDeleteConfirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

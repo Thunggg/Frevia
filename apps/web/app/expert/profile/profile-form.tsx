@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { expertProfileApi } from "@/apiRequests/expert-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
@@ -21,6 +22,7 @@ const lines = (value: string) =>
     .filter(Boolean);
 
 export function ExpertProfileForm() {
+  const t = useTranslations("expertProfileForm");
   const [profile, setProfile] = useState<ExpertProfileType | null>(null);
   const [revision, setRevision] = useState<ProfileRevisionType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,14 +39,11 @@ export function ExpertProfileForm() {
       })
       .catch((error) =>
         toastError({
-          message:
-            error instanceof ApiFail
-              ? error.message
-              : "Unable to load expert profile.",
+          message: error instanceof ApiFail ? error.message : t("loadFailed"),
         }),
       )
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -78,13 +77,10 @@ export function ExpertProfileForm() {
         website: String(data.get("website") || "") || null,
       });
       setRevision(response.data.revision);
-      toastSuccess({ message: "Changes submitted for administrator review." });
+      toastSuccess({ message: t("submitted") });
     } catch (error) {
       toastError({
-        message:
-          error instanceof ApiFail
-            ? error.message
-            : "Unable to submit profile changes.",
+        message: error instanceof ApiFail ? error.message : t("submitFailed"),
       });
     } finally {
       setSaving(false);
@@ -96,24 +92,22 @@ export function ExpertProfileForm() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2 text-sm font-medium text-[#4fae2e]">
-            <ShieldCheck className="size-4" /> Admin-reviewed expert profile
+            <ShieldCheck className="size-4" /> {t("adminReviewed")}
           </div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            Your expert profile
+            {t("title")}
           </h1>
-          <p className="mt-2 text-muted-foreground">
-            Updates stay private until an administrator approves them.
-          </p>
+          <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Badge
           variant={isPending || !profile.isActive ? "secondary" : "default"}
           className="w-fit"
         >
           {isPending
-            ? "Pending review"
+            ? t("pendingReview")
             : profile.isActive
-              ? "Active"
-              : "Inactive"}
+              ? t("active")
+              : t("inactive")}
         </Badge>
       </div>
 
@@ -121,7 +115,7 @@ export function ExpertProfileForm() {
 
       <div className="rounded-xl border bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium">Profile completion</span>
+          <span className="font-medium">{t("profileCompletion")}</span>
           <span className="font-semibold text-[#4fae2e]">
             {displayedStrength}%
           </span>
@@ -140,8 +134,7 @@ export function ExpertProfileForm() {
         </div>
         {isPending ? (
           <p className="mt-2 text-xs text-muted-foreground">
-            This score belongs to the submitted revision. The fields below show
-            your currently approved profile and are locked until review.
+            {t("pendingHint")}
           </p>
         ) : null}
       </div>
@@ -153,7 +146,7 @@ export function ExpertProfileForm() {
         <fieldset disabled={isPending || saving} className="space-y-6">
           <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="displayName">Display name</Label>
+            <Label htmlFor="displayName">{t("displayName")}</Label>
             <Input
               id="displayName"
               name="displayName"
@@ -162,16 +155,18 @@ export function ExpertProfileForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="title">Professional title</Label>
+            <Label htmlFor="title">{t("professionalTitle")}</Label>
             <Input
               id="title"
               name="title"
               defaultValue={profile.title ?? ""}
-              placeholder="Senior Product Strategy Expert"
+              placeholder={t("titlePlaceholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="yearsOfExperience">Years of experience</Label>
+            <Label htmlFor="yearsOfExperience">
+              {t("yearsOfExperience")}
+            </Label>
             <Input
               id="yearsOfExperience"
               name="yearsOfExperience"
@@ -182,18 +177,18 @@ export function ExpertProfileForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t("website")}</Label>
             <Input
               id="website"
               name="website"
               type="url"
               defaultValue={profile.website ?? ""}
-              placeholder="https://example.com"
+              placeholder={t("websitePlaceholder")}
             />
           </div>
           </div>
           <div className="space-y-2">
-          <Label htmlFor="bio">Professional bio</Label>
+          <Label htmlFor="bio">{t("bio")}</Label>
           <Textarea
             id="bio"
             name="bio"
@@ -204,17 +199,17 @@ export function ExpertProfileForm() {
           <div className="grid gap-5 md:grid-cols-3">
           <ListField
             id="expertise"
-            label="Expertise"
+            label={t("expertise")}
             values={profile.expertise}
           />
           <ListField
             id="education"
-            label="Education"
+            label={t("education")}
             values={profile.education}
           />
           <ListField
             id="certifications"
-            label="Certifications"
+            label={t("certifications")}
             values={profile.certifications}
           />
           </div>
@@ -225,7 +220,7 @@ export function ExpertProfileForm() {
             ) : (
               <Save className="size-4" />
             )}
-              {isPending ? "Awaiting review" : "Submit for review"}
+              {isPending ? t("awaitingReview") : t("submit")}
             </Button>
           </div>
         </fieldset>
@@ -243,6 +238,8 @@ function ListField({
   label: string;
   values: string[];
 }) {
+  const t = useTranslations("expertProfileForm");
+
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
@@ -251,9 +248,9 @@ function ListField({
         name={id}
         rows={6}
         defaultValue={values.join("\n")}
-        placeholder="One item per line"
+        placeholder={t("oneItemPerLine")}
       />
-      <p className="text-xs text-muted-foreground">One item per line</p>
+      <p className="text-xs text-muted-foreground">{t("oneItemPerLine")}</p>
     </div>
   );
 }

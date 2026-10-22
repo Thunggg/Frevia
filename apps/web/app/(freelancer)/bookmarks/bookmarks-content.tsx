@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,28 +39,24 @@ type BookmarksContentProps = {
   basePath?: string;
 };
 
-function formatBudget(job: ViewBookmarkedJobResponseType["data"][number]) {
-  if (job.budgetMin === null || job.budgetMax === null) return "Negotiable";
-  return `$${job.budgetMin.toLocaleString()} – $${job.budgetMax.toLocaleString()}`;
-}
+const JOB_STATUS_KEYS = [
+  "DRAFT",
+  "OPEN",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CLOSED",
+  "CANCELLED",
+] as const;
 
-function formatPostedTime(value: string | Date) {
-  const hours = Math.max(
-    0,
-    Math.floor((Date.now() - new Date(value).getTime()) / 3_600_000),
-  );
-  return hours < 24
-    ? `${hours || "just"} ${hours ? "h" : "now"} ago`
-    : `${Math.floor(hours / 24)}d ago`;
-}
+const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
 
 function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
-  if (!job.expiryDate) return { label: "AVAILABLE", isExpiring: false };
+  if (!job.expiryDate) return { key: "available", isExpiring: false };
   const hoursUntilExpiry =
     (new Date(job.expiryDate).getTime() - Date.now()) / 3_600_000;
   return hoursUntilExpiry <= 24
-    ? { label: "EXPIRING SOON", isExpiring: true }
-    : { label: "AVAILABLE", isExpiring: false };
+    ? { key: "expiringSoon", isExpiring: true }
+    : { key: "available", isExpiring: false };
 }
 
 export function BookmarksContent({
@@ -69,6 +66,37 @@ export function BookmarksContent({
   basePath,
 }: BookmarksContentProps) {
   const router = useRouter();
+  const t = useTranslations("bookmarks");
+  const tStatus = useTranslations("jobStatus");
+  const tBudgetType = useTranslations("jobBudgetType");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const formatBudget = (job: ViewBookmarkedJobResponseType["data"][number]) => {
+    if (job.budgetMin === null || job.budgetMax === null) return t("negotiable");
+
+    const currency = {
+      style: "currency" as const,
+      currency: "USD",
+      maximumFractionDigits: 0,
+    };
+    return t("budgetRange", {
+      min: format.number(job.budgetMin, currency),
+      max: format.number(job.budgetMax, currency),
+    });
+  };
+
+  const formatPostedTime = (value: string | Date) => {
+    const hours = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(value).getTime()) / 3_600_000),
+    );
+    if (hours < 1) return tCommon("justNow");
+    if (hours < 24) return tCommon("hoursAgo", { hours });
+
+    return tCommon("daysAgo", { days: Math.floor(hours / 24) });
+  };
+
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/bookmarks" : "/bookmarks");
   const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
@@ -82,11 +110,11 @@ export function BookmarksContent({
     setIsRemoving(true);
     try {
       await jobApiRequest.removeBookmark(slug);
-      toastSuccess({ message: "Bookmark removed" });
+      toastSuccess({ message: t("removed") });
       setPendingRemoveJobSlug(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't remove bookmark. Try again." });
+      toastError({ message: t("removeFailed") });
     } finally {
       setIsRemoving(false);
     }
@@ -114,10 +142,12 @@ export function BookmarksContent({
                   href="/"
                   className="transition-colors hover:text-foreground font-medium"
                 >
-                  Home
+                  {tCommon("home")}
                 </Link>
                 <span className="text-muted-foreground/30">/</span>
-                <span className="text-foreground font-medium">Bookmarks</span>
+                <span className="text-foreground font-medium">
+                  {t("breadcrumb")}
+                </span>
               </nav>
             )}
 
@@ -128,17 +158,16 @@ export function BookmarksContent({
             >
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                  Saved Jobs
+                  {t("title")}
                 </h1>
                 <p className="mt-1 text-xs font-normal text-muted-foreground">
-                  Jobs you&apos;ve bookmarked for later.
+                  {t("subtitle")}
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
-                  {pagination.total}{" "}
-                  {pagination.total === 1 ? "saved job" : "saved jobs"}
+                  {t("count", { count: pagination.total })}
                 </span>
               </div>
             </div>
@@ -173,10 +202,14 @@ export function BookmarksContent({
                                 : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
                             }`}
                           >
-                            {availability.label}
+                            {t(availability.key)}
                           </span>
                           <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
-                            {job.status.replaceAll("_", " ")}
+                            {(JOB_STATUS_KEYS as readonly string[]).includes(
+                              job.status,
+                            )
+                              ? tStatus(job.status)
+                              : job.status}
                           </span>
                           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
                             <Clock className="size-3.5" />
@@ -189,7 +222,7 @@ export function BookmarksContent({
                           type="button"
                           onClick={() => setPendingRemoveJobSlug(job.slug)}
                           className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer outline-none"
-                          title="Remove from bookmarks"
+                          title={t("removeAria")}
                         >
                           <Trash2 className="size-4" />
                         </button>
@@ -205,8 +238,14 @@ export function BookmarksContent({
                         </Link>
                         <div className="shrink-0 text-xs sm:text-sm font-semibold text-foreground">
                           {formatBudget(job)}{" "}
-                          <span className="font-normal text-muted-foreground capitalize">
-                            ({job.budgetType.toLowerCase().replace("_", " ")})
+                          <span className="font-normal text-muted-foreground">
+                            (
+                            {(JOB_BUDGET_TYPE_KEYS as readonly string[]).includes(
+                              job.budgetType,
+                            )
+                              ? tBudgetType(job.budgetType)
+                              : job.budgetType}
+                            )
                           </span>
                         </div>
                       </div>
@@ -215,7 +254,7 @@ export function BookmarksContent({
                       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground font-normal">
                         <span className="inline-flex items-center gap-1">
                           <MapPin className="size-3.5" />
-                          Remote (Worldwide)
+                          {t("remoteWorldwide")}
                         </span>
                       </div>
                     </div>
@@ -234,7 +273,7 @@ export function BookmarksContent({
                           ))
                         ) : (
                           <span className="text-xs text-muted-foreground">
-                            General project
+                            {t("generalProject")}
                           </span>
                         )}
                       </div>
@@ -244,7 +283,7 @@ export function BookmarksContent({
                         className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
                       >
                         <BriefcaseBusiness className="size-3.5" />
-                        <span>View job</span>
+                        <span>{t("viewJob")}</span>
                         <ArrowRight className="size-3.5" />
                       </Link>
                     </div>
@@ -263,17 +302,17 @@ export function BookmarksContent({
                 <Bookmark className="size-6" />
               </div>
               <p className="text-base font-semibold text-foreground">
-                No saved jobs yet
+                {t("emptyTitle")}
               </p>
               <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-                Bookmark jobs from Find Work to keep track of projects you&apos;re interested in.
+                {t("emptyHint")}
               </p>
               <Button
                 asChild
                 className="mt-6 gap-2 rounded-full bg-[#4fae2e] text-xs font-medium text-white hover:bg-[#459928]"
               >
                 <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
-                  Browse jobs
+                  {t("browseJobs")}
                   <ArrowRight className="size-3.5" />
                 </Link>
               </Button>
@@ -284,7 +323,10 @@ export function BookmarksContent({
           {pagination.totalPages > 1 ? (
             <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
               <p className="font-sans text-xs text-muted-foreground">
-                Page {pagination.page} of {pagination.totalPages}
+                {tCommon("pageOf", {
+                  page: pagination.page,
+                  totalPages: pagination.totalPages,
+                })}
               </p>
               <div className="flex gap-1.5">
                 <Button
@@ -320,10 +362,10 @@ export function BookmarksContent({
           <div className="flex flex-col gap-3">
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
-                Remove saved job
+                {t("removeTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
-                Are you sure you want to remove this job from your bookmarks? You can always save it again from Find Work.
+                {t("removeHint")}
               </AlertDialogDescription>
             </div>
 
@@ -344,7 +386,9 @@ export function BookmarksContent({
                       <Trash2 className="size-3.5" />
                     )}
                   </div>
-                  <span className="text-xs font-semibold">Remove bookmark</span>
+                  <span className="text-xs font-semibold">
+                    {t("removeBookmark")}
+                  </span>
                 </div>
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
@@ -359,7 +403,9 @@ export function BookmarksContent({
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
-                    <span className="text-xs font-medium">Cancel</span>
+                    <span className="text-xs font-medium">
+                      {tCommon("cancel")}
+                    </span>
                   </div>
                   <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
                 </button>

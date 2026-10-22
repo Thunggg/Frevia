@@ -478,6 +478,8 @@ export class ProfileRevisionRepository {
                   ? '/freelancer/profile'
                   : '/expert/profile',
             profileRevisionId: id,
+            kind: approved ? 'PROFILE_APPROVED' : 'PROFILE_REJECTED',
+            reviewNotes: reviewNotes ?? '',
           },
         },
       });
