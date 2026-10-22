@@ -145,6 +145,8 @@
     "notAvailable": "N/A"
   },
   "adminRoles": {
+    "metaTitle": "Roles | Admin Dashboard | Frevia",
+    "metaDescription": "Manage roles and their permission sets.",
     "title": "Role Management",
     "subtitle": "View all roles in the system",
     "loadFailed": "Couldn't load roles. Try again.",
@@ -171,6 +173,8 @@
     "backToRoles": "Back to roles"
   },
   "adminPermissions": {
+    "metaTitle": "Permissions | Admin Dashboard | Frevia",
+    "metaDescription": "Browse the API permissions available in the system.",
     "title": "Permission Management",
     "subtitle": "View all API permissions in the system",
     "loadFailed": "Couldn't load permissions. Try again.",
@@ -598,6 +602,8 @@
     "EXPERT": "Expert"
   },
   "adminUsers": {
+    "metaTitle": "Users | Admin Dashboard | Frevia",
+    "metaDescription": "View, search, and manage all users in the system.",
     "title": "User Management",
     "subtitle": "View, search, filter, and manage all users in the system",
     "subtitleTotal": "({count} total users)",
@@ -649,6 +655,8 @@
     "updatedBannedToast": "User \"{email}\" updated · account banned"
   },
   "adminUserDetail": {
+    "metaTitle": "User Detail | Admin Dashboard | Frevia",
+    "metaDescription": "Review a user account, roles, and profile data.",
     "invalidIdTitle": "Invalid User ID",
     "invalidIdDescription": "The requested user ID \"{id}\" is not valid.",
     "notFoundTitle": "User Not Found",

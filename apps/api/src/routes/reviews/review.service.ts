@@ -1,6 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { ContractStatus, Prisma } from '@prisma/client';
-import { ReviewMessage, type CreateReviewType, type UpdateReviewType } from '@shared/types';
+import {
+  ReviewMessage,
+  type CreateReviewType,
+  type UpdateReviewType,
+} from '@shared/types';
 import {
   ReviewAlreadyExistsException,
   ReviewContractNotCompletedException,

@@ -72,3 +72,4 @@ export * from "./constants/dispute.constant";
 export * from "./message/manage-dispute.message";
 export * from "./model/dispute.model";
 export * from "./message/manage-skill-admin.message";
+export * from "./message/manage-profile-revision.message";

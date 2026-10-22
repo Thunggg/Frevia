@@ -9,7 +9,9 @@ import { ReviewMessage } from '@shared/types';
 const details = (message: string, path: string) => [{ message, path }];
 
 export const ReviewContractNotFoundException = () =>
-  new NotFoundException(details(ReviewMessage.CONTRACT_NOT_FOUND, 'contractId'));
+  new NotFoundException(
+    details(ReviewMessage.CONTRACT_NOT_FOUND, 'contractId'),
+  );
 export const ReviewContractNotCompletedException = () =>
   new BadRequestException(
     details(ReviewMessage.CONTRACT_NOT_COMPLETED, 'contractId'),
@@ -17,7 +19,9 @@ export const ReviewContractNotCompletedException = () =>
 export const ReviewNotFoundException = () =>
   new NotFoundException(details(ReviewMessage.NOT_FOUND, 'reviewId'));
 export const ReviewResponseNotFoundException = () =>
-  new NotFoundException(details(ReviewMessage.RESPONSE_NOT_FOUND, 'responseId'));
+  new NotFoundException(
+    details(ReviewMessage.RESPONSE_NOT_FOUND, 'responseId'),
+  );
 export const ReviewForbiddenException = () =>
   new ForbiddenException(details(ReviewMessage.FORBIDDEN, 'review'));
 export const ReviewAlreadyExistsException = () =>

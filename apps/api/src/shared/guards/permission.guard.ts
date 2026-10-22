@@ -6,7 +6,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenPayload, AuthMessage, REQUEST_USER_KEY } from '@shared/types';
+import {
+  AccessTokenPayload,
+  AuthMessage,
+  REQUEST_USER_KEY,
+} from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { SharedPermissionRepository } from '../repositories/shared-permission.repo';

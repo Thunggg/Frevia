@@ -20,7 +20,10 @@ export class NotificationService {
 
   async markAllRead(userId: number) {
     const result = await this.repository.markAllRead(userId);
-    return { message: NotificationMessage.MARKED_ALL_READ, count: result.count };
+    return {
+      message: NotificationMessage.MARKED_ALL_READ,
+      count: result.count,
+    };
   }
 
   async delete(userId: number, notificationId: number) {
