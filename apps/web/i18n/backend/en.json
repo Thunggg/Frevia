@@ -263,14 +263,23 @@
   "You can only update your own profile.": "You can only update your own profile",
 
   "Success.ExpertProfileUpdated": "Expert profile updated",
+  "Success.FreelancerProfileUpdated": "Freelancer profile updated",
+  "Success.FreelancerSkillsUpdated": "Freelancer skills updated",
   "Success.NotificationDeleted": "Notification deleted",
   "Success.NotificationsMarkedAsRead": "Marked {count} notification(s) as read",
   "Success.PortfolioDeleted": "Portfolio item deleted",
+  "Success.PortfolioItemCreated": "Portfolio item created",
+  "Success.PortfolioItemUpdated": "Portfolio item updated",
+  "Success.PortfolioItemDeleted": "Portfolio item deleted",
   "Success.ProfileRevisionSubmitted": "Your changes were submitted for administrator review",
   "Success.ProfileUpdated": "Profile updated",
   "Success.ReviewDeleted": "Review deleted",
   "Success.ReviewResponseDeleted": "Review response deleted",
+  "Success.RoleDeleted": "Role deleted",
   "Success.SessionRevoked": "Session revoked",
+  "Success.SkillDeleted": "Skill deleted",
+  "Success.BannerDeleted": "Banner deleted",
+  "Success.ForumCategoryDeleted": "Category deleted",
 
   "Fallback.ContractParticipant": "A contract participant",
 

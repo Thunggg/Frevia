@@ -27,6 +27,7 @@ import type {
 } from "@shared/types";
 import { Loader2, PenLine, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 // ====== Dialog "Edit freelancer profile" (tab FREELANCER - User Detail) ======
@@ -73,6 +74,7 @@ export function EditFreelancerProfileButton({
   user,
 }: EditFreelancerProfileButtonProps) {
   const router = useRouter();
+  const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
   const [formState, setFormState] =
     useState<FreelancerProfileFormState>(EMPTY_FORM);
@@ -161,7 +163,7 @@ export function EditFreelancerProfileButton({
       {
         onSuccess: () => {
           toastSuccess({
-            message: `Freelancer profile for "${user.email}" updated`,
+            message: t("freelancerUpdated", { email: user.email }),
           });
           setOpen(false);
           router.refresh();
@@ -179,7 +181,7 @@ export function EditFreelancerProfileButton({
             }
             return;
           }
-          toastError({ message: "Failed to update freelancer profile" });
+          toastError({ message: t("freelancerUpdateFailed") });
         },
       },
     );
@@ -205,7 +207,7 @@ export function EditFreelancerProfileButton({
           ) : (
             <UserRound className="h-3.5 w-3.5" />
           )}
-          {freelancerProfile ? "Edit profile" : "Complete profile"}
+          {freelancerProfile ? t("triggerEdit") : t("triggerComplete")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
@@ -213,14 +215,16 @@ export function EditFreelancerProfileButton({
           <DialogTitle className="flex items-center gap-2">
             <PenLine className="h-5 w-5 text-purple-500" />
             {freelancerProfile
-              ? "Edit freelancer profile"
-              : "Complete freelancer profile"}
+              ? t("freelancerTitleEdit")
+              : t("freelancerTitleComplete")}
           </DialogTitle>
           <DialogDescription>
-            Edit the full freelancer profile for{" "}
-            <span className="font-medium text-foreground">{user.email}</span>:
-            professional title, bio, and the languages / education /
-            certifications lists (one item per line).
+            {t.rich("freelancerDescription", {
+              b: (chunks) => (
+                <span className="font-medium text-foreground">{chunks}</span>
+              ),
+              email: user.email,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -228,25 +232,25 @@ export function EditFreelancerProfileButton({
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="edit-freelancer-title">
-                Professional title
+                {t("freelancerFieldTitle")}
               </FieldLabel>
               <Input
                 id="edit-freelancer-title"
                 value={formState.title}
                 onChange={(e) => updateField("title", e.target.value)}
-                placeholder="e.g. Senior Full-stack Developer"
+                placeholder={t("freelancerTitlePlaceholder")}
                 maxLength={255}
               />
             </Field>
             <Field>
               <FieldLabel htmlFor="edit-freelancer-bio">
-                Bio / Introduction
+                {t("freelancerFieldBio")}
               </FieldLabel>
               <Textarea
                 id="edit-freelancer-bio"
                 value={formState.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
-                placeholder="Short introduction shown on the public profile..."
+                placeholder={t("freelancerBioPlaceholder")}
                 rows={4}
                 maxLength={5000}
               />
@@ -256,46 +260,50 @@ export function EditFreelancerProfileButton({
           <div className="space-y-4 border-t pt-4">
             <Field>
               <FieldLabel htmlFor="edit-freelancer-languages">
-                Languages
+                {t("freelancerFieldLanguages")}
               </FieldLabel>
               <Textarea
                 id="edit-freelancer-languages"
                 value={formState.languages}
                 onChange={(e) => updateField("languages", e.target.value)}
-                placeholder={"English\nVietnamese"}
+                placeholder={t("freelancerLanguagesPlaceholder")}
                 rows={3}
               />
               <FieldDescription>
-                One language per line, e.g. English, Vietnamese.
+                {t("freelancerLanguagesHint")}
               </FieldDescription>
             </Field>
 
             <Field>
               <FieldLabel htmlFor="edit-freelancer-education">
-                Education
+                {t("freelancerFieldEducation")}
               </FieldLabel>
               <Textarea
                 id="edit-freelancer-education"
                 value={formState.education}
                 onChange={(e) => updateField("education", e.target.value)}
-                placeholder={"BSc Computer Science - University of Science"}
+                placeholder={t("freelancerEducationPlaceholder")}
                 rows={3}
               />
-              <FieldDescription>One education entry per line.</FieldDescription>
+              <FieldDescription>
+                {t("freelancerEducationHint")}
+              </FieldDescription>
             </Field>
 
             <Field>
               <FieldLabel htmlFor="edit-freelancer-certifications">
-                Certifications
+                {t("freelancerFieldCertifications")}
               </FieldLabel>
               <Textarea
                 id="edit-freelancer-certifications"
                 value={formState.certifications}
                 onChange={(e) => updateField("certifications", e.target.value)}
-                placeholder={"AWS Certified Developer - Associate"}
+                placeholder={t("freelancerCertificationsPlaceholder")}
                 rows={3}
               />
-              <FieldDescription>One certification per line.</FieldDescription>
+              <FieldDescription>
+                {t("freelancerCertificationsHint")}
+              </FieldDescription>
             </Field>
           </div>
         </div>
@@ -306,7 +314,7 @@ export function EditFreelancerProfileButton({
             variant="outline"
             onClick={() => setOpen(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="button"
@@ -316,7 +324,7 @@ export function EditFreelancerProfileButton({
             {updateFreelancerProfile.isPending && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Save changes
+            {t("saveChanges")}
           </Button>
         </DialogFooter>
       </DialogContent>

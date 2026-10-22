@@ -15,6 +15,8 @@ import {
 import type { SkillAdminItemType } from "@shared/types";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/lib/format";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateSkillDialog } from "./update-skill-dialog";
 import { DeleteSkillDialog } from "./delete-skill-dialog";
@@ -33,6 +35,9 @@ interface SkillsTableProps {
 type SortBy = "id" | "createdAt";
 
 export function SkillsTable({ skills, pagination }: SkillsTableProps) {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deletingSkill, setDeletingSkill] = useState<SkillAdminItemType | null>(
@@ -76,25 +81,27 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                   onClick={() => toggleSort("id")}
                   className="inline-flex items-center gap-1 hover:text-foreground"
                 >
-                  ID
+                  {tCommon("id")}
                   <SortIcon column="id" />
                 </button>
               </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Jobs using it</TableHead>
+              <TableHead>{tCommon("name")}</TableHead>
+              <TableHead>{t("colSlug")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead className="text-right">{t("colJobCount")}</TableHead>
               <TableHead className="text-right">
                 <button
                   type="button"
                   onClick={() => toggleSort("createdAt")}
                   className="inline-flex items-center gap-1 hover:text-foreground"
                 >
-                  Created
+                  {tCommon("created")}
                   <SortIcon column="createdAt" />
                 </button>
               </TableHead>
-              <TableHead className="w-20 text-right">Actions</TableHead>
+              <TableHead className="w-20 text-right">
+                {tCommon("actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,7 +111,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                   colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
-                  No skills found.
+                  {t("noSkills")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -131,17 +138,17 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                         variant="secondary"
                         className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                       >
-                        Active
+                        {tCommon("active")}
                       </Badge>
                     ) : (
-                      <Badge variant="destructive">Deleted</Badge>
+                      <Badge variant="destructive">{t("statusDeleted")}</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right text-sm text-muted-foreground">
                     {skill.jobCount ?? 0}
                   </TableCell>
                   <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {new Date(skill.createdAt).toLocaleDateString()}
+                    {formatDate(skill.createdAt, locale)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
@@ -155,8 +162,8 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                            title="Delete skill"
-                            aria-label={`Delete skill ${skill.name}`}
+                            title={t("deleteSkillAction")}
+                            aria-label={t("deleteSkillOf", { name: skill.name })}
                             onClick={() => setDeletingSkill(skill)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -170,11 +177,11 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                         size="icon"
                         asChild
                         className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title="View details"
+                        title={t("viewDetailsAction")}
                       >
                         <Link
                           href={`/admin/skills/${skill.id}`}
-                          aria-label={`View details of ${skill.name}`}
+                          aria-label={t("viewDetailsOf", { name: skill.name })}
                         >
                           <Eye className="h-4 w-4" />
                         </Link>

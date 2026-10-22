@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Input } from "@repo/ui/components/shadcn/input";
 import {
   Select,
@@ -14,6 +15,8 @@ import {
 
 // Thanh lọc danh sách skill: tìm kiếm (name/slug/description) + lọc Active/Deleted
 export function SkillsFilterBar() {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -56,7 +59,7 @@ export function SkillsFilterBar() {
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Search by name, slug or description..."
+          placeholder={t("filterSearchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9 pr-8"
@@ -74,19 +77,19 @@ export function SkillsFilterBar() {
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-          Filter Status:
+          {t("filterStatusLabel")}
         </span>
         <Select
           value={currentStatus}
           onValueChange={(value) => updateQueryParams({ deleted: value })}
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={t("filterAllStatuses")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="false">Active</SelectItem>
-            <SelectItem value="true">Deleted</SelectItem>
+            <SelectItem value="all">{t("filterAll")}</SelectItem>
+            <SelectItem value="false">{tCommon("active")}</SelectItem>
+            <SelectItem value="true">{t("statusDeleted")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

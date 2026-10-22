@@ -17,10 +17,13 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function CreateCategoryDialog() {
+  const t = useTranslations("adminCategories");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -46,16 +49,16 @@ export function CreateCategoryDialog() {
         description: description.trim() || undefined,
       });
 
-      toastSuccess({ message: "Category created successfully!" });
+      toastSuccess({ message: t("createdToast") });
       handleOpenChange(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const detailMessage = err.response?.error?.details?.[0]?.message;
-        const message = detailMessage || err.message || "Failed to create category";
+        const message = detailMessage || err.message || t("createFailed");
         toastError({ message });
       } else {
-        toastError({ message: "Failed to create category." });
+        toastError({ message: t("createFailed") });
       }
     } finally {
       setLoading(false);
@@ -67,28 +70,27 @@ export function CreateCategoryDialog() {
       <DialogTrigger asChild>
         <Button className="gap-2 bg-[#4fae2e] text-white hover:bg-[#3f9225]">
           <Plus className="h-4 w-4" />
-          Create Category
+          {t("createTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[485px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
-            <DialogDescription>
-              Add a new forum category for users to create posts in.
-            </DialogDescription>
+            <DialogTitle>{t("createTitle")}</DialogTitle>
+            <DialogDescription>{t("createDescription")}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="name" className="text-sm font-medium">
-                Category Name <span className="text-destructive">*</span>
+                {t("detailFieldName")}{" "}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Mobile Development"
+                placeholder={t("createNamePlaceholder")}
                 required
                 disabled={loading}
               />
@@ -96,13 +98,13 @@ export function CreateCategoryDialog() {
 
             <div className="grid gap-2">
               <Label htmlFor="description" className="text-sm font-medium">
-                Description
+                {tCommon("description")}
               </Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief summary of what this category is about..."
+                placeholder={t("descriptionPlaceholder")}
                 rows={3}
                 disabled={loading}
               />
@@ -116,7 +118,7 @@ export function CreateCategoryDialog() {
               onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -124,7 +126,7 @@ export function CreateCategoryDialog() {
               className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Category
+              {t("createTrigger")}
             </Button>
           </DialogFooter>
         </form>

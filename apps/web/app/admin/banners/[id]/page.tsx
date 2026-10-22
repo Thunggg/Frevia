@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowLeft, CalendarClock, ExternalLink, Link2, Megaphone } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { formatDateTime } from "@/lib/format";
 import { BannerFormDialog } from "../components/banner-form-dialog";
 import { bannerPositionLabel } from "../constants";
 
@@ -12,9 +14,13 @@ interface BannerDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-function formatDateTime(value: Date | null | undefined): string {
-  if (!value) return "—";
-  return new Date(value).toLocaleString();
+export async function generateMetadata() {
+  const t = await getTranslations("adminBanners");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
 }
 
 export default async function AdminBannerDetailPage({
@@ -23,24 +29,28 @@ export default async function AdminBannerDetailPage({
   const { id } = await params;
   const bannerId = Number(id);
 
+  const t = await getTranslations("adminBanners");
+  const tCommon = await getTranslations("adminCommon");
+  const locale = await getLocale();
+
   const notFound = (message: string) => (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
       <h2 className="text-xl font-bold text-foreground">{message}</h2>
       <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-        The requested banner ID &quot;{id}&quot; is not valid.
+        {t("invalidIdDescription", { id })}
       </p>
       <Button asChild variant="outline" className="mt-6">
         <Link href="/admin/banners">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Banner Management
+          {t("backToBanners")}
         </Link>
       </Button>
     </div>
   );
 
   if (isNaN(bannerId)) {
-    return notFound("Invalid Banner ID");
+    return notFound(t("invalidId"));
   }
 
   const banner = await adminServerRequest.getBannerById(bannerId);
@@ -49,14 +59,16 @@ export default async function AdminBannerDetailPage({
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-bold text-foreground">Banner Not Found</h2>
+        <h2 className="text-xl font-bold text-foreground">
+          {t("notFoundTitle")}
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          No banner exists with ID #{bannerId}.
+          {t("notFoundDescription", { id: bannerId })}
         </p>
         <Button asChild variant="outline" className="mt-6">
           <Link href="/admin/banners">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Banner Management
+            {t("backToBanners")}
           </Link>
         </Button>
       </div>
@@ -68,7 +80,7 @@ export default async function AdminBannerDetailPage({
       <Button asChild variant="outline" size="sm">
         <Link href="/admin/banners">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Banner Management
+          {t("backToBanners")}
         </Link>
       </Button>
 
@@ -84,17 +96,17 @@ export default async function AdminBannerDetailPage({
                 {banner.title}
               </h1>
               <p className="mt-1 font-mono text-sm text-muted-foreground">
-                ID #{banner.id} · {bannerPositionLabel(banner.position)}
+                ID #{banner.id} · {bannerPositionLabel(banner.position, t)}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {banner.isActive ? (
               <Badge className="border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-                Active
+                {tCommon("active")}
               </Badge>
             ) : (
-              <Badge variant="outline">Inactive</Badge>
+              <Badge variant="outline">{tCommon("inactive")}</Badge>
             )}
             <BannerFormDialog banner={banner} />
           </div>
@@ -105,7 +117,7 @@ export default async function AdminBannerDetailPage({
       {banner.imageUrl && (
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Image Preview
+            {t("imagePreview")}
           </h2>
           <div className="mt-3 flex justify-center rounded-lg border bg-muted/30 p-4">
             {/* eslint-disable-next-line @next/next/no-img-element -- banner preview */}
@@ -123,16 +135,17 @@ export default async function AdminBannerDetailPage({
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <CalendarClock className="size-3.5" />
-            Schedule
+            {t("schedule")}
           </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            {formatDateTime(banner.startDate)} → {formatDateTime(banner.endDate)}
+            {formatDateTime(banner.startDate, locale)} →{" "}
+            {formatDateTime(banner.endDate, locale)}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <ExternalLink className="size-3.5" />
-            Link URL
+            {t("linkUrl")}
           </p>
           {banner.linkUrl ? (
             <a
@@ -144,34 +157,40 @@ export default async function AdminBannerDetailPage({
               {banner.linkUrl}
             </a>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No link set.</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("noLinkSet")}
+            </p>
           )}
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <Link2 className="size-3.5" />
-            Image URL
+            {t("imageUrl")}
           </p>
           {banner.imageUrl ? (
             <p className="mt-2 truncate text-sm text-muted-foreground">
               {banner.imageUrl}
             </p>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No image set.</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("noImageSet")}
+            </p>
           )}
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
-          <p className="text-xs font-medium text-muted-foreground">Created</p>
+          <p className="text-xs font-medium text-muted-foreground">
+            {tCommon("created")}
+          </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            {new Date(banner.createdAt).toLocaleString()}
+            {formatDateTime(banner.createdAt, locale)}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <p className="text-xs font-medium text-muted-foreground">
-            Last updated
+            {t("lastUpdated")}
           </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            {new Date(banner.updatedAt).toLocaleString()}
+            {formatDateTime(banner.updatedAt, locale)}
           </p>
         </div>
       </div>

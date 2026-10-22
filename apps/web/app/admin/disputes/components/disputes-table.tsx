@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/shadcn/tabs";
 import { Eye, Gavel, Scale } from "lucide-react";
+import { formatCurrency, formatDate } from "@/lib/format";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { ArbitrateDialog } from "./arbitrate-dialog";
 import type { DisputeDetailType } from "@shared/types";
@@ -29,73 +31,47 @@ interface DisputesTableProps {
   currentStatus?: string;
 }
 
-function money(amount: number | string | null | undefined) {
-  if (amount === null || amount === undefined) return "$0.00";
-  const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(isNaN(num) ? 0 : num);
-}
+const statusClassName: Record<string, string> = {
+  OPEN: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+  WAITING_RESPONSE:
+    "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+  UNDER_REVIEW:
+    "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+  DECISION_MADE:
+    "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+  REVIEW_REQUESTED:
+    "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
+  FINALIZED:
+    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+};
 
-function formatDate(date: string | Date | null | undefined) {
-  if (!date) return "N/A";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "OPEN":
-      return {
-        label: "Open • Fee Pending",
-        className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
-      };
-    case "WAITING_RESPONSE":
-      return {
-        label: "Waiting Rebuttal",
-        className: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
-      };
-    case "UNDER_REVIEW":
-      return {
-        label: "Under Review",
-        className: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
-      };
-    case "DECISION_MADE":
-      return {
-        label: "Decision Proposed",
-        className: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
-      };
-    case "REVIEW_REQUESTED":
-      return {
-        label: "Review Requested",
-        className: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
-      };
-    case "FINALIZED":
-      return {
-        label: "Finalized",
-        className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
-      };
-    default:
-      return {
-        label: status,
-        className: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/30",
-      };
-  }
-}
+const DEFAULT_STATUS_CLASS =
+  "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/30";
 
 export function DisputesTable({
   disputes,
   pagination,
   currentStatus,
 }: DisputesTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminDisputes");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [selectedDispute, setSelectedDispute] = useState<DisputeDetailType | null>(null);
   const [arbitrateOpen, setArbitrateOpen] = useState(false);
+
+  const statusLabel = (status: string) => {
+    if (status === "OPEN") return t("statusOpenFeePending");
+    if (status === "WAITING_RESPONSE") return t("statusWaitingRebuttal");
+    if (status === "UNDER_REVIEW") return t("statusUnderReview");
+    if (status === "DECISION_MADE") return t("statusDecisionProposed");
+    if (status === "REVIEW_REQUESTED") return t("statusReviewRequested");
+    if (status === "FINALIZED") return t("statusFinalized");
+    return status;
+  };
+
+  const money = (amount: number | string | null | undefined) =>
+    formatCurrency(amount, locale, "USD", 0);
 
   const handleStatusChange = (status: string) => {
     const params = new URLSearchParams();
@@ -121,25 +97,25 @@ export function DisputesTable({
       >
         <TabsList className="flex flex-wrap h-auto p-1 gap-1">
           <TabsTrigger value="ALL" className="text-xs">
-            All ({pagination.total})
+            {t("tabAll", { count: pagination.total })}
           </TabsTrigger>
           <TabsTrigger value="OPEN" className="text-xs">
-            Open
+            {t("tabOpen")}
           </TabsTrigger>
           <TabsTrigger value="WAITING_RESPONSE" className="text-xs">
-            Waiting Rebuttal
+            {t("tabWaitingResponse")}
           </TabsTrigger>
           <TabsTrigger value="UNDER_REVIEW" className="text-xs">
-            Under Review
+            {t("tabUnderReview")}
           </TabsTrigger>
           <TabsTrigger value="DECISION_MADE" className="text-xs">
-            Decision Made
+            {t("tabDecisionMade")}
           </TabsTrigger>
           <TabsTrigger value="REVIEW_REQUESTED" className="text-xs">
-            Review Requested
+            {t("tabReviewRequested")}
           </TabsTrigger>
           <TabsTrigger value="FINALIZED" className="text-xs">
-            Finalized
+            {t("tabFinalized")}
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -149,13 +125,15 @@ export function DisputesTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30">
-              <TableHead className="w-16 font-bold text-xs">ID</TableHead>
-              <TableHead className="font-bold text-xs">Milestone & Value</TableHead>
-              <TableHead className="font-bold text-xs">Parties</TableHead>
-              <TableHead className="font-bold text-xs">Status</TableHead>
-              <TableHead className="font-bold text-xs">Fees</TableHead>
-              <TableHead className="font-bold text-xs">Filed On</TableHead>
-              <TableHead className="text-right font-bold text-xs">Action</TableHead>
+              <TableHead className="w-16 font-bold text-xs">{tCommon("id")}</TableHead>
+              <TableHead className="font-bold text-xs">
+                {t("colMilestoneValue")}
+              </TableHead>
+              <TableHead className="font-bold text-xs">{t("colParties")}</TableHead>
+              <TableHead className="font-bold text-xs">{tCommon("status")}</TableHead>
+              <TableHead className="font-bold text-xs">{t("colFees")}</TableHead>
+              <TableHead className="font-bold text-xs">{t("colFiledOn")}</TableHead>
+              <TableHead className="text-right font-bold text-xs">{t("colAction")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -164,13 +142,12 @@ export function DisputesTable({
                 <TableCell colSpan={7} className="h-36 text-center text-xs text-muted-foreground">
                   <div className="flex flex-col items-center justify-center gap-1">
                     <Scale className="size-6 text-muted-foreground/40" />
-                    <span>No dispute cases found.</span>
+                    <span>{t("empty")}</span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               disputes.map((dispute) => {
-                const badge = getStatusBadge(dispute.status);
                 const paidFees = dispute.fees?.filter((f) => f.status === "PAID").length ?? 0;
                 const totalFees = dispute.fees?.length ?? 2;
 
@@ -186,7 +163,8 @@ export function DisputesTable({
                     <TableCell>
                       <div className="space-y-0.5 max-w-xs truncate">
                         <span className="font-bold text-xs text-foreground block truncate">
-                          {dispute.milestone?.title ?? `Milestone #${dispute.milestoneId}`}
+                          {dispute.milestone?.title ??
+                            t("milestoneFallback", { id: dispute.milestoneId })}
                         </span>
                         <span className="text-[11px] font-extrabold text-[#0069D3]">
                           {money(dispute.milestone?.amount)}
@@ -196,22 +174,27 @@ export function DisputesTable({
                     <TableCell>
                       <div className="text-xs space-y-0.5 max-w-[200px] truncate">
                         <div className="truncate text-muted-foreground text-[11px]">
-                          Claimant:{" "}
+                          {t("claimantLabel")}{" "}
                           <span className="font-semibold text-foreground">
-                            {dispute.openedBy?.email ?? "N/A"}
+                            {dispute.openedBy?.email ?? tCommon("notAvailable")}
                           </span>
                         </div>
                         <div className="truncate text-muted-foreground text-[11px]">
-                          Respondent:{" "}
+                          {t("respondentLabel")}{" "}
                           <span className="font-semibold text-foreground">
-                            {dispute.respondent?.email ?? "N/A"}
+                            {dispute.respondent?.email ?? tCommon("notAvailable")}
                           </span>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={`text-[11px] font-semibold ${badge.className}`}>
-                        {badge.label}
+                      <Badge
+                        variant="outline"
+                        className={`text-[11px] font-semibold ${
+                          statusClassName[dispute.status] ?? DEFAULT_STATUS_CLASS
+                        }`}
+                      >
+                        {statusLabel(dispute.status)}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -222,11 +205,11 @@ export function DisputesTable({
                             : "text-amber-600"
                         }`}
                       >
-                        {paidFees}/{totalFees} Paid
+                        {t("feesPaidCount", { paid: paidFees, total: totalFees })}
                       </span>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {formatDate(dispute.createdAt)}
+                      {formatDate(dispute.createdAt, locale)}
                     </TableCell>
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <Button
@@ -238,12 +221,12 @@ export function DisputesTable({
                         {dispute.status === "FINALIZED" ? (
                           <>
                             <Eye className="mr-1 size-3" />
-                            View
+                            {t("actionView")}
                           </>
                         ) : (
                           <>
                             <Gavel className="mr-1 size-3 text-[#0069D3] group-hover:text-white" />
-                            Arbitrate
+                            {t("actionArbitrate")}
                           </>
                         )}
                       </Button>

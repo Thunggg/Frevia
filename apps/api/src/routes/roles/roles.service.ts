@@ -3,6 +3,7 @@ import {
   CreateRoleBodyType,
   CreateRoleResponseType,
   DeleteRoleResponseType,
+  ManageRoleMessage,
   RoleDetailResponseType,
   RoleListResponseType,
   RoleName,
@@ -159,7 +160,7 @@ export class RolesService {
 
       await this.rolesRepository.softDeleteRole(id);
       this.logger.log(`Role deleted successfully: id=${id}`);
-      return { message: 'Role deleted successfully' };
+      return { message: ManageRoleMessage.ROLE_DELETED };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         this.logger.error(`Failed to delete role: id=${id}`, error);

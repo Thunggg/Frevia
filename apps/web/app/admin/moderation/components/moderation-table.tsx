@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/lib/format";
 import {
   Badge,
 } from "@repo/ui/components/shadcn/badge";
@@ -56,35 +58,38 @@ interface ModerationTableProps {
   };
 }
 
-function scoreBadge(score: number | null) {
-  if (score === null) {
-    return <Badge variant="outline">N/A</Badge>;
-  }
-  if (score >= 0.8) {
-    return <Badge className="bg-destructive text-white">{score.toFixed(2)}</Badge>;
-  }
-  if (score >= 0.3) {
-    return <Badge className="bg-amber-500 text-white">{score.toFixed(2)}</Badge>;
-  }
-  return <Badge className="bg-emerald-500 text-white">{score.toFixed(2)}</Badge>;
-}
-
 export function ModerationTable({ posts, pagination }: ModerationTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminModeration");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [pendingId, setPendingId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<PendingForumPostType | null>(
     null,
   );
 
+  const scoreBadge = (score: number | null) => {
+    if (score === null) {
+      return <Badge variant="outline">{tCommon("notAvailable")}</Badge>;
+    }
+    if (score >= 0.8) {
+      return <Badge className="bg-destructive text-white">{score.toFixed(2)}</Badge>;
+    }
+    if (score >= 0.3) {
+      return <Badge className="bg-amber-500 text-white">{score.toFixed(2)}</Badge>;
+    }
+    return <Badge className="bg-emerald-500 text-white">{score.toFixed(2)}</Badge>;
+  };
+
   const handleApprove = async (postId: number) => {
     setPendingId(postId);
     try {
       await adminApiRequest.approvePost(postId);
-      toastSuccess({ message: "Post approved and now visible publicly" });
+      toastSuccess({ message: t("approvedToast") });
       setViewingPost(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't approve post. Try again." });
+      toastError({ message: t("approveFailed") });
     } finally {
       setPendingId(null);
     }
@@ -94,11 +99,11 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
     setPendingId(postId);
     try {
       await adminApiRequest.rejectPost(postId);
-      toastSuccess({ message: "Post rejected and moved to trash" });
+      toastSuccess({ message: t("rejectedToast") });
       setViewingPost(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't reject post. Try again." });
+      toastError({ message: t("rejectFailed") });
     } finally {
       setPendingId(null);
     }
@@ -110,13 +115,13 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Score</TableHead>
-              <TableHead>Categories</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-40 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colTitle")}</TableHead>
+              <TableHead>{t("colScore")}</TableHead>
+              <TableHead>{t("colCategories")}</TableHead>
+              <TableHead>{t("colAuthor")}</TableHead>
+              <TableHead>{tCommon("created")}</TableHead>
+              <TableHead className="w-40 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -126,7 +131,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                   colSpan={7}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  No posts awaiting moderation.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -151,7 +156,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                         ))}
                       </div>
                     ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
+                      <span className="text-muted-foreground text-sm">{tCommon("empty")}</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -162,7 +167,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {new Date(post.createdAt).toLocaleDateString()}
+                    {formatDate(post.createdAt, locale)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -171,6 +176,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewingPost(post)}
+                        aria-label={t("viewPostLabel", { title: post.title })}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -180,6 +186,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                         className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
                         disabled={pendingId === post.id}
                         onClick={() => handleApprove(post.id)}
+                        aria-label={t("approvePostLabel", { title: post.title })}
                       >
                         <ShieldCheck className="h-4 w-4" />
                       </Button>
@@ -189,25 +196,25 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
+                            aria-label={t("rejectPostLabel", { title: post.title })}
                           >
                             <ShieldAlert className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Reject Post</AlertDialogTitle>
+                            <AlertDialogTitle>{t("rejectTitle")}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Reject &quot;{post.title}&quot;? The post will not
-                              be visible publicly and will be moved to trash.
+                              {t("rejectConfirm", { title: post.title })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleReject(post.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              Reject
+                              {t("rejectAction")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -252,14 +259,15 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
-                  <span>
-                    {new Date(viewingPost.createdAt).toLocaleDateString(
-                      "en-US",
-                      { year: "numeric", month: "long", day: "numeric" },
-                    )}
-                  </span>
+                  <span>{formatDate(viewingPost.createdAt, locale)}</span>
                 </div>
-                <div>Score: {viewingPost.moderationScore?.toFixed(2) ?? "N/A"}</div>
+                <div>
+                  {t("scoreLabel", {
+                    score:
+                      viewingPost.moderationScore?.toFixed(2) ??
+                      tCommon("notAvailable"),
+                  })}
+                </div>
               </div>
               <Separator />
               <div
@@ -275,7 +283,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                   onClick={() => handleApprove(viewingPost.id)}
                 >
                   <Check className="h-4 w-4 mr-1.5" />
-                  Approve
+                  {t("approveAction")}
                 </Button>
                 <Button
                   size="sm"
@@ -284,7 +292,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                   onClick={() => handleReject(viewingPost.id)}
                 >
                   <X className="h-4 w-4 mr-1.5" />
-                  Reject
+                  {t("rejectAction")}
                 </Button>
               </div>
             </div>

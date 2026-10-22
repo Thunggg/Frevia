@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,8 @@ interface CategoriesFilterBarProps {
 export function CategoriesFilterBar({
   initialSearch = "",
 }: CategoriesFilterBarProps) {
+  const t = useTranslations("adminCategories");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -44,22 +47,22 @@ export function CategoriesFilterBar({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <SearchBar
-        placeholder="Search categories by name..."
+        placeholder={t("filterSearchPlaceholder")}
         initialSearch={initialSearch}
       />
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-          Status:
+          {t("filterStatusLabel")}
         </span>
         <Select value={currentStatus} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={t("filterAllStatuses")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="deleted">Deleted</SelectItem>
+            <SelectItem value="all">{t("filterAll")}</SelectItem>
+            <SelectItem value="active">{tCommon("active")}</SelectItem>
+            <SelectItem value="deleted">{t("statusDeleted")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

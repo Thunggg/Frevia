@@ -29,6 +29,7 @@ import {
   type AdminUserDetailResponseType,
 } from "@shared/types";
 import { Building2, Loader2, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -64,6 +65,7 @@ export function EditClientProfileButton({
   user,
 }: EditClientProfileButtonProps) {
   const router = useRouter();
+  const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
   const updateClientProfile = useUpdateClientProfile();
   const clientProfile = user.clientProfile;
@@ -153,7 +155,7 @@ export function EditClientProfileButton({
       {
         onSuccess: () => {
           toastSuccess({
-            message: `Client profile for "${user.email}" updated`,
+            message: t("clientUpdated", { email: user.email }),
           });
           setOpen(false);
           router.refresh();
@@ -179,7 +181,7 @@ export function EditClientProfileButton({
               }
             }
           } else {
-            toastError({ message: "Failed to update client profile" });
+            toastError({ message: t("clientUpdateFailed") });
           }
         },
       },
@@ -200,21 +202,24 @@ export function EditClientProfileButton({
             ) : (
               <Building2 className="h-3.5 w-3.5" />
             )}
-            {clientProfile ? "Edit profile" : "Complete profile"}
+            {clientProfile ? t("triggerEdit") : t("triggerComplete")}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-[#4fae2e]" />
-              {clientProfile ? "Edit client profile" : "Complete client profile"}
+              {clientProfile
+                ? t("clientTitleEdit")
+                : t("clientTitleComplete")}
             </DialogTitle>
             <DialogDescription>
-              Update company information for{" "}
-              <span className="font-medium text-foreground">
-                {user.email}
-              </span>
-              .
+              {t.rich("clientDescription", {
+                b: (chunks) => (
+                  <span className="font-medium text-foreground">{chunks}</span>
+                ),
+                email: user.email,
+              })}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -225,12 +230,12 @@ export function EditClientProfileButton({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="edit-client-companyName">
-                      Company name
+                      {t("clientFieldCompanyName")}
                     </FieldLabel>
                     <Input
                       {...field}
                       id="edit-client-companyName"
-                      placeholder="Acme Inc."
+                      placeholder={t("clientCompanyNamePlaceholder")}
                       aria-invalid={fieldState.invalid}
                     />
                     {fieldState.invalid && (
@@ -245,12 +250,12 @@ export function EditClientProfileButton({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="edit-client-companyDescription">
-                      Company description
+                      {t("clientFieldCompanyDescription")}
                     </FieldLabel>
                     <Textarea
                       {...field}
                       id="edit-client-companyDescription"
-                      placeholder="What does this company do?"
+                      placeholder={t("clientCompanyDescriptionPlaceholder")}
                       rows={4}
                       aria-invalid={fieldState.invalid}
                     />
@@ -266,13 +271,13 @@ export function EditClientProfileButton({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="edit-client-website">
-                      Website
+                      {t("clientFieldWebsite")}
                     </FieldLabel>
                     <Input
                       {...field}
                       id="edit-client-website"
                       type="url"
-                      placeholder="https://example.com"
+                      placeholder={t("clientWebsitePlaceholder")}
                       aria-invalid={fieldState.invalid}
                     />
                     {fieldState.invalid && (
@@ -288,7 +293,7 @@ export function EditClientProfileButton({
                 variant="outline"
                 onClick={() => setOpen(false)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -297,7 +302,7 @@ export function EditClientProfileButton({
                 {updateClientProfile.isPending && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                Save changes
+                {t("saveChanges")}
               </Button>
             </DialogFooter>
           </form>

@@ -263,14 +263,23 @@
   "You can only update your own profile.": "Bạn chỉ có thể cập nhật hồ sơ của chính mình",
 
   "Success.ExpertProfileUpdated": "Đã cập nhật hồ sơ chuyên gia",
+  "Success.FreelancerProfileUpdated": "Đã cập nhật hồ sơ freelancer",
+  "Success.FreelancerSkillsUpdated": "Đã cập nhật kỹ năng freelancer",
   "Success.NotificationDeleted": "Đã xoá thông báo",
   "Success.NotificationsMarkedAsRead": "Đã đánh dấu {count} thông báo là đã đọc",
   "Success.PortfolioDeleted": "Đã xoá mục portfolio",
+  "Success.PortfolioItemCreated": "Đã tạo mục portfolio",
+  "Success.PortfolioItemUpdated": "Đã cập nhật mục portfolio",
+  "Success.PortfolioItemDeleted": "Đã xoá mục portfolio",
   "Success.ProfileRevisionSubmitted": "Thay đổi của bạn đã được gửi để quản trị viên duyệt",
   "Success.ProfileUpdated": "Đã cập nhật hồ sơ",
   "Success.ReviewDeleted": "Đã xoá đánh giá",
   "Success.ReviewResponseDeleted": "Đã xoá phản hồi đánh giá",
+  "Success.RoleDeleted": "Đã xoá vai trò",
   "Success.SessionRevoked": "Đã thu hồi phiên đăng nhập",
+  "Success.SkillDeleted": "Đã xoá kỹ năng",
+  "Success.BannerDeleted": "Đã xoá banner",
+  "Success.ForumCategoryDeleted": "Đã xoá danh mục",
 
   "Fallback.ContractParticipant": "Một bên tham gia hợp đồng",
 

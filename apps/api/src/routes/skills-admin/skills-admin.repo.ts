@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import {
   AdminCreateSkillBodyType,
   AdminUpdateSkillBodyType,
+  ManageSkillAdminMessage,
   SkillAdminDeleteResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
@@ -252,7 +253,7 @@ export class SkillsAdminRepository {
       }),
     ]);
 
-    return { message: 'Skill deleted successfully' };
+    return { message: ManageSkillAdminMessage.SKILL_DELETED };
   }
 
   // Khôi phục skill đã soft-delete (chỉ những skill đang bị xóa mới restore được;

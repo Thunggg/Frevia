@@ -15,6 +15,8 @@ import {
 import type { BannerAdminItemType } from "@shared/types";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/lib/format";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { BannerFormDialog } from "./banner-form-dialog";
 import { DeleteBannerDialog } from "./delete-banner-dialog";
@@ -32,13 +34,10 @@ interface BannersTableProps {
 
 type SortBy = "id" | "createdAt";
 
-function formatDate(value: Date | null): string {
-  if (!value) return "—";
-  const d = new Date(value);
-  return d.toLocaleDateString();
-}
-
 export function BannersTable({ banners, pagination }: BannersTableProps) {
+  const t = useTranslations("adminBanners");
+  const tCommon = useTranslations("adminCommon");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deletingBanner, setDeletingBanner] =
@@ -81,25 +80,27 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                   onClick={() => toggleSort("id")}
                   className="inline-flex items-center gap-1 hover:text-foreground"
                 >
-                  ID
+                  {tCommon("id")}
                   <SortIcon column="id" />
                 </button>
               </TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Schedule</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("colTitle")}</TableHead>
+              <TableHead>{t("colPosition")}</TableHead>
+              <TableHead>{tCommon("schedule")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
               <TableHead className="text-right">
                 <button
                   type="button"
                   onClick={() => toggleSort("createdAt")}
                   className="inline-flex items-center gap-1 hover:text-foreground"
                 >
-                  Created
+                  {tCommon("created")}
                   <SortIcon column="createdAt" />
                 </button>
               </TableHead>
-              <TableHead className="w-20 text-right">Actions</TableHead>
+              <TableHead className="w-20 text-right">
+                {tCommon("actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,7 +110,7 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                   colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
-                  No banners found.
+                  {t("noBanners")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -137,11 +138,12 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">
-                      {bannerPositionLabel(banner.position)}
+                      {bannerPositionLabel(banner.position, t)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                    {formatDate(banner.startDate)} → {formatDate(banner.endDate)}
+                    {formatDate(banner.startDate, locale)} →{" "}
+                    {formatDate(banner.endDate, locale)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
@@ -150,15 +152,15 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                           variant="secondary"
                           className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                         >
-                          Active
+                          {tCommon("active")}
                         </Badge>
                       ) : (
-                        <Badge variant="outline">Inactive</Badge>
+                        <Badge variant="outline">{tCommon("inactive")}</Badge>
                       )}
                     </div>
                   </TableCell>
                   <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {new Date(banner.createdAt).toLocaleDateString()}
+                    {formatDate(banner.createdAt, locale)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
@@ -167,8 +169,10 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                        title="Delete banner"
-                        aria-label={`Delete banner ${banner.title}`}
+                        title={t("deleteBannerAction")}
+                        aria-label={t("deleteBannerOf", {
+                          title: banner.title,
+                        })}
                         onClick={() => setDeletingBanner(banner)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -178,11 +182,13 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                         size="icon"
                         asChild
                         className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title="View details"
+                        title={t("viewDetailsAction")}
                       >
                         <Link
                           href={`/admin/banners/${banner.id}`}
-                          aria-label={`View details of ${banner.title}`}
+                          aria-label={t("viewDetailsOf", {
+                            title: banner.title,
+                          })}
                         >
                           <Eye className="h-4 w-4" />
                         </Link>

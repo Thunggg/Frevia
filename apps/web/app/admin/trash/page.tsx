@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { TrashPostsTable } from "./components/trash-posts-table";
@@ -6,12 +7,22 @@ import { TrashCommentsTable } from "./components/trash-comments-table";
 
 type TrashType = "posts" | "comments";
 
+export async function generateMetadata() {
+  const t = await getTranslations("adminTrash");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
+
 export default async function AdminTrashPage({
   searchParams,
 }: {
   searchParams: Promise<{ type?: string; page?: string }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("adminTrash");
   const type: TrashType = params.type === "comments" ? "comments" : "posts";
   const page = Number(params.page) || 1;
   const limit = 10;
@@ -25,10 +36,10 @@ export default async function AdminTrashPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Trash</h1>
-          <p className="text-muted-foreground mt-1">
-            Deleted posts &amp; comments — including posts rejected in Moderation
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
+          <p className="text-muted-foreground mt-1">{t("pageSubtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -36,14 +47,14 @@ export default async function AdminTrashPage({
             variant={type === "posts" ? "default" : "outline"}
             size="sm"
           >
-            <Link href="/admin/trash?type=posts">Posts</Link>
+            <Link href="/admin/trash?type=posts">{t("tabPosts")}</Link>
           </Button>
           <Button
             asChild
             variant={type === "comments" ? "default" : "outline"}
             size="sm"
           >
-            <Link href="/admin/trash?type=comments">Comments</Link>
+            <Link href="/admin/trash?type=comments">{t("tabComments")}</Link>
           </Button>
         </div>
       </div>

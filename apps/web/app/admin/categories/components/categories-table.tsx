@@ -22,11 +22,13 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateCategoryDialog } from "./update-category-dialog";
 import { DeleteCategoryDialog } from "./delete-category-dialog";
 import { RestoreCategoryDialog } from "./restore-category-dialog";
 import type { ForumAdminCategoryType } from "@shared/types";
+import { formatDate } from "@/lib/format";
 
 interface CategoriesTableProps {
   categories: ForumAdminCategoryType[];
@@ -42,6 +44,9 @@ export function CategoriesTable({
   categories,
   pagination,
 }: CategoriesTableProps) {
+  const t = useTranslations("adminCategories");
+  const tCommon = useTranslations("adminCommon");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [editingCategory, setEditingCategory] =
@@ -88,7 +93,7 @@ export function CategoriesTable({
                   onClick={() => handleSort("id")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  ID {renderSortIcon("id")}
+                  {tCommon("id")} {renderSortIcon("id")}
                 </button>
               </TableHead>
               <TableHead>
@@ -97,22 +102,24 @@ export function CategoriesTable({
                   onClick={() => handleSort("name")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  Name {renderSortIcon("name")}
+                  {tCommon("name")} {renderSortIcon("name")}
                 </button>
               </TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Posts</TableHead>
+              <TableHead>{t("colSlug")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colPosts")}</TableHead>
               <TableHead>
                 <button
                   type="button"
                   onClick={() => handleSort("createdAt")}
                   className="flex items-center font-semibold hover:text-foreground"
                 >
-                  Created {renderSortIcon("createdAt")}
+                  {tCommon("created")} {renderSortIcon("createdAt")}
                 </button>
               </TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-24 text-right">
+                {tCommon("actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,7 +129,7 @@ export function CategoriesTable({
                   colSpan={7}
                   className="py-12 text-center text-muted-foreground"
                 >
-                  No categories found.
+                  {t("noCategories")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -148,13 +155,13 @@ export function CategoriesTable({
                   </TableCell>
                   <TableCell>
                     {category.deletedAt !== null ? (
-                      <Badge variant="destructive">Deleted</Badge>
+                      <Badge variant="destructive">{t("statusDeleted")}</Badge>
                     ) : (
                       <Badge
                         variant="secondary"
                         className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                       >
-                        Active
+                        {tCommon("active")}
                       </Badge>
                     )}
                   </TableCell>
@@ -168,7 +175,7 @@ export function CategoriesTable({
                     </Badge>
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                    {new Date(category.createdAt).toLocaleDateString()}
+                    {formatDate(category.createdAt, locale)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -180,6 +187,8 @@ export function CategoriesTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
+                            title={t("viewDetailsAction")}
+                            aria-label={t("viewDetailsAction")}
                             asChild
                           >
                             <Link href={`/admin/categories/${category.id}`}>
@@ -190,6 +199,8 @@ export function CategoriesTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            title={t("editAction")}
+                            aria-label={t("editAction")}
                             onClick={() => setEditingCategory(category)}
                           >
                             <Pencil className="h-4 w-4" />
@@ -198,6 +209,8 @@ export function CategoriesTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            title={t("deleteActionLabel")}
+                            aria-label={t("deleteActionLabel")}
                             onClick={() => setDeletingCategory(category)}
                           >
                             <Trash2 className="h-4 w-4" />

@@ -1,7 +1,16 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { SearchBar } from "../components/search-bar";
 import { ProfileRevisionsTable } from "./profile-revisions-table";
+
+export async function generateMetadata() {
+  const t = await getTranslations("adminProfileRevisions");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function AdminProfileRevisionsPage({
   searchParams,
@@ -14,6 +23,7 @@ export default async function AdminProfileRevisionsPage({
   }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("adminProfileRevisions");
   const page = Math.max(1, Number(params.page) || 1);
   const selectedStatus = params.status ?? "PENDING";
   const data = await adminServerRequest.getProfileRevisions({
@@ -28,17 +38,14 @@ export default async function AdminProfileRevisionsPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Profile Review Requests
+          {t("pageTitle")}
         </h1>
-        <p className="mt-1 text-muted-foreground">
-          Review existing accounts and submitted changes when profile strength
-          is below 20%.
-        </p>
+        <p className="mt-1 text-muted-foreground">{t("pageSubtitle")}</p>
       </div>
 
       <Suspense>
         <SearchBar
-          placeholder="Search by email or display name..."
+          placeholder={t("searchPlaceholder")}
           initialSearch={params.search}
         />
       </Suspense>
