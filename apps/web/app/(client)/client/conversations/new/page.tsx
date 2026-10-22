@@ -30,6 +30,7 @@ const ClientNewConversationPage = async ({
     <NewConversationView
       participantId={participantIdNum}
       currentUserId={currentUserId}
+      basePath="/client"
     />
   );
 };

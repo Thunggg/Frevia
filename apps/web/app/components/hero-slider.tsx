@@ -55,7 +55,7 @@ export function HeroSlider() {
           {/* Call To Actions */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
             <Link
-              href="/find-talent"
+              href="/experts"
               className="rounded-full bg-green-300 px-6 py-3 text-xs sm:text-sm font-semibold text-zinc-950 transition-all hover:bg-green-200 hover:shadow-[0_0_20px_rgba(134,239,172,0.45)] hover:scale-105"
             >
               {t("hireTalent")}

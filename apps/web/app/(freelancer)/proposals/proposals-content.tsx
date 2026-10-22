@@ -232,9 +232,14 @@ export function MyProposalsContent({
             <div className="mt-7 text-center">
               <Button
                 variant="outline"
-                onClick={() =>
-                  router.push(`${effectiveBasePath}?page=${pagination.page + 1}`)
-                }
+                onClick={() => {
+                  const query = new URLSearchParams();
+                  query.set("page", String(pagination.page + 1));
+                  if (selectedStatus) query.set("status", selectedStatus);
+                  router.replace(`${effectiveBasePath}?${query.toString()}`, {
+                    scroll: false,
+                  });
+                }}
               >
                 {tCommon("loadMore")}
               </Button>

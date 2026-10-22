@@ -17,10 +17,20 @@ import { toastError } from "@repo/ui/components/shadcn/toast";
 type NewConversationViewProps = {
   participantId: number;
   currentUserId: number | null;
+  /**
+   * Tiền tố khu vực đang đứng ("/client" hoặc "/freelancer").
+   *
+   * Component này được dùng chung bởi 3 page (shared, client, freelancer). Nếu
+   * luôn điều hướng về "/conversations/[id]" thì người dùng ở khu vực client/
+   * freelancer sẽ bị đẩy ra khỏi dashboard shell (mất sidebar) sang shell công
+   * khai. Mặc định rỗng để page shared giữ nguyên hành vi cũ.
+   */
+  basePath?: string;
 };
 
 export function NewConversationView({
   participantId,
+  basePath = "",
 }: NewConversationViewProps) {
   const router = useRouter();
   const t = useTranslations("chat");
@@ -67,7 +77,7 @@ export function NewConversationView({
 
     createConversation.mutate(participantId, {
       onSuccess: (conversation) => {
-        router.push(`/conversations/${conversation.id}`);
+        router.push(`${basePath}/conversations/${conversation.id}`);
       },
       onError: (error) => {
         toastError({

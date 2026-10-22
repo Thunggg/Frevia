@@ -2,6 +2,7 @@ import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { RoleName, SocialPlatform } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { HashingService } from '../../shared/services/hashing.service';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { AccountProfileRepository } from './account-profile.repo';
 import { AccountProfileService } from './account-profile.service';
 
@@ -41,8 +42,17 @@ describe('AccountProfileService', () => {
     hash: jest.fn(),
     verify: jest.fn(),
   };
+  const profileRevisionService = {
+    requiresManualReview: jest.fn(),
+    submitGeneral: jest.fn(),
+    submitClient: jest.fn(),
+    directUpdateResult: jest.fn(),
+  };
+  // Thứ tự tham số phải khớp constructor của service:
+  // (repository, profileRevisionService, cloudinary, hashing)
   const service = new AccountProfileService(
     repository as unknown as AccountProfileRepository,
+    profileRevisionService as unknown as ProfileRevisionService,
     cloudinary as unknown as CloudinaryService,
     hashing as unknown as HashingService,
   );

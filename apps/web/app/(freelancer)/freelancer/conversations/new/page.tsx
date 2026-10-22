@@ -30,6 +30,7 @@ const FreelancerNewConversationPage = async ({
     <NewConversationView
       participantId={participantIdNum}
       currentUserId={currentUserId}
+      basePath="/freelancer"
     />
   );
 };
