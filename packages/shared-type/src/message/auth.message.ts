@@ -16,6 +16,8 @@ export const AuthMessage = {
   ROLE_ALREADY_ASSIGNED: "Error.RoleAlreadyAssigned",
   INCORRECT_EMAIL: "Error.IncorrectEmail",
   INCORRECT_PASSWORD: "Error.IncorrectPassword",
+  MISSING_ROLE_IN_TOKEN: "Error.MissingRoleInToken",
+  PERMISSION_DENIED: "Error.PermissionDenied",
 
   // --- Validation messages (dùng trong Zod schema) ---
   PASSWORD_REQUIRED: "Error.PasswordRequired",

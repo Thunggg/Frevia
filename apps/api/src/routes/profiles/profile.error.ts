@@ -27,5 +27,5 @@ export const ProfileForbiddenException = () =>
 
 export const SkillForbiddenException = () =>
   new ForbiddenException([
-    { message: 'You can only delete your own skills.', path: 'userId' },
+    { message: ProfileMessage.SKILL_DELETE_FORBIDDEN, path: 'userId' },
   ]);

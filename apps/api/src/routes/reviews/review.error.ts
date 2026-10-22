@@ -4,31 +4,25 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { ReviewMessage } from '@shared/types';
 
 const details = (message: string, path: string) => [{ message, path }];
 
 export const ReviewContractNotFoundException = () =>
-  new NotFoundException(details('Contract not found.', 'contractId'));
+  new NotFoundException(details(ReviewMessage.CONTRACT_NOT_FOUND, 'contractId'));
 export const ReviewContractNotCompletedException = () =>
   new BadRequestException(
-    details(
-      'Reviews can only be submitted after the contract is completed.',
-      'contractId',
-    ),
+    details(ReviewMessage.CONTRACT_NOT_COMPLETED, 'contractId'),
   );
 export const ReviewNotFoundException = () =>
-  new NotFoundException(details('Review not found.', 'reviewId'));
+  new NotFoundException(details(ReviewMessage.NOT_FOUND, 'reviewId'));
 export const ReviewResponseNotFoundException = () =>
-  new NotFoundException(details('Review response not found.', 'responseId'));
+  new NotFoundException(details(ReviewMessage.RESPONSE_NOT_FOUND, 'responseId'));
 export const ReviewForbiddenException = () =>
-  new ForbiddenException(
-    details('You are not allowed to perform this review action.', 'review'),
-  );
+  new ForbiddenException(details(ReviewMessage.FORBIDDEN, 'review'));
 export const ReviewAlreadyExistsException = () =>
-  new ConflictException(
-    details('You have already reviewed this contract.', 'contractId'),
-  );
+  new ConflictException(details(ReviewMessage.ALREADY_EXISTS, 'contractId'));
 export const ReviewResponseAlreadyExistsException = () =>
   new ConflictException(
-    details('This review already has a response.', 'reviewId'),
+    details(ReviewMessage.RESPONSE_ALREADY_EXISTS, 'reviewId'),
   );

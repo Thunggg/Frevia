@@ -3,15 +3,18 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenPayload, REQUEST_USER_KEY } from '@shared/types';
+import { AccessTokenPayload, AuthMessage, REQUEST_USER_KEY } from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { SharedPermissionRepository } from '../repositories/shared-permission.repo';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionGuard.name);
+
   constructor(
     private readonly reflector: Reflector,
     private readonly sharedPermissionRepository: SharedPermissionRepository,
@@ -31,7 +34,7 @@ export class PermissionGuard implements CanActivate {
     const payload = request[REQUEST_USER_KEY] as AccessTokenPayload | undefined;
 
     if (!payload?.roleId) {
-      throw new ForbiddenException('Missing role in access token');
+      throw new ForbiddenException(AuthMessage.MISSING_ROLE_IN_TOKEN);
     }
 
     const method = request.method;
@@ -44,9 +47,12 @@ export class PermissionGuard implements CanActivate {
     );
 
     if (!allowed) {
-      throw new ForbiddenException(
-        `You do not have permission to ${method} ${path}`,
+      // Method + path chỉ dùng để ghi log phía server: đưa chúng vào message
+      // sẽ lộ nội bộ API cho người dùng.
+      this.logger.warn(
+        `Permission denied: roleId=${payload.roleId}, ${method} ${path}`,
       );
+      throw new ForbiddenException(AuthMessage.PERMISSION_DENIED);
     }
 
     return true;
