@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import { ContractDetail } from "@/app/(client)/client/contracts/[contractId]/_components/contract-detail";
 
@@ -8,9 +9,11 @@ export async function generateMetadata({
   params: Promise<{ contractId: string }>;
 }) {
   const { contractId } = await params;
+  const t = await getTranslations("pageMeta");
+
   return {
-    title: `Contract #${contractId} | Freelancer Dashboard | Frevia`,
-    description: "Manage contract details, milestones, and deliverables.",
+    title: t("contractDetailFreelancerTitle", { contractId }),
+    description: t("contractDetailDescription"),
   };
 }
 

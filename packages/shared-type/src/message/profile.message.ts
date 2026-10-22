@@ -12,7 +12,6 @@ export const ProfileMessage = {
   DUPLICATE_SKILL: "This skill has already been added to your profile.",
   SKILL_NOT_FOUND: "Skill not found or already deleted.",
   SKILL_DELETE_FORBIDDEN: "You can only delete your own skills.",
-  PROFILE_UPDATED: "Profile updated successfully.",
-  PROFILE_REVISION_SUBMITTED:
-    "Your changes were submitted for administrator review.",
+  PROFILE_UPDATED: "Success.ProfileUpdated",
+  PROFILE_REVISION_SUBMITTED: "Success.ProfileRevisionSubmitted",
 } as const;

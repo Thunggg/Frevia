@@ -1,5 +1,5 @@
 import { ForbiddenException } from '@nestjs/common';
-import { RoleName } from '@shared/types';
+import { PortfolioMessage, RoleName } from '@shared/types';
 import { PortfolioRepository } from './portfolio.repo';
 import { PortfolioService } from './portfolio.service';
 
@@ -60,7 +60,7 @@ describe('PortfolioService', () => {
     repository.deletePortfolio.mockResolvedValue({ id: 7 });
 
     await expect(service.deletePortfolio(7, 10)).resolves.toEqual({
-      message: 'Portfolio deleted successfully.',
+      message: PortfolioMessage.PORTFOLIO_DELETED,
     });
     expect(repository.deletePortfolio).toHaveBeenCalledWith(7);
   });

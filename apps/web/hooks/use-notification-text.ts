@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { NotificationItemType } from "@shared/types";
+import { translateBackendMessage } from "@/i18n/backend-message";
+import { isLocale } from "@/i18n/config";
 
 /**
  * Các loại thông báo đã có câu chữ trong namespace `notificationText`.
@@ -95,6 +97,7 @@ function resolveDictionaryKey(notification: NotificationSource): string | null {
  */
 export function useNotificationText() {
   const t = useTranslations("notificationText");
+  const locale = useLocale();
 
   return useCallback(
     (notification: NotificationSource, fallbackTitle: string) => {
@@ -107,11 +110,16 @@ export function useNotificationText() {
       }
 
       const payload = toPayload(notification.data);
+      const rawName =
+        NAME_PARAM_KEYS.map((paramKey) => readText(payload, paramKey)).find(
+          (value) => value !== "",
+        ) ?? "";
+      // Backend có thể lưu khoá `Fallback.*` thay cho tên (ví dụ đối tác hợp
+      // đồng không có displayName); dịch để không lộ khoá thô cho người dùng.
       const params = {
-        name:
-          NAME_PARAM_KEYS.map((paramKey) => readText(payload, paramKey)).find(
-            (value) => value !== "",
-          ) ?? "",
+        name: isLocale(locale)
+          ? (translateBackendMessage(rawName, locale) ?? rawName)
+          : rawName,
         jobTitle: readText(payload, "jobTitle"),
         contractId: readText(payload, "contractId"),
         notes: readText(payload, "reviewNotes"),
@@ -128,6 +136,6 @@ export function useNotificationText() {
         message: t(messageKey, params),
       };
     },
-    [t],
+    [t, locale],
   );
 }
