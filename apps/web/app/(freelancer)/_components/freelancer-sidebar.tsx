@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   Sun,
   SwitchCamera,
+  Tag,
   UserRound,
 } from "@/components/icons";
 
@@ -121,6 +122,12 @@ export function FreelancerSidebar() {
       href: "/freelancer/find-work",
       labelKey: "navFindWork",
       icon: Search,
+      matchPrefix: true,
+    },
+    {
+      href: "/freelancer/categories",
+      labelKey: "navJobCategories",
+      icon: Tag,
       matchPrefix: true,
     },
     {

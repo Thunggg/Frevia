@@ -25,6 +25,7 @@
     "seed:account-profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-account-profile-demo.ts",
     "seed:relationships-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-relationships-demo.ts",
     "seed:jobs": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-jobs.ts",
+    "seed:job-categories": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-job-categories.ts",
     "seed:proposals": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-proposals.ts"
   },
   "dependencies": {

@@ -265,8 +265,8 @@ export function GeneralSettings() {
       if (cvInputRef.current) cvInputRef.current.value = "";
       toastSuccess({ message: "CV uploaded successfully." });
     } catch (error) {
-      setCvError(messageFrom(error));
-      toastError({ message: messageFrom(error) });
+      setCvError(messageFrom(error, "Unable to upload the CV."));
+      toastError({ message: messageFrom(error, "Unable to upload the CV.") });
     } finally {
       setPending(null);
     }
@@ -281,7 +281,7 @@ export function GeneralSettings() {
       setCvError(null);
       toastSuccess({ message: "CV deleted successfully." });
     } catch (error) {
-      toastError({ message: messageFrom(error) });
+      toastError({ message: messageFrom(error, "Unable to delete the CV.") });
     } finally {
       setPending(null);
     }

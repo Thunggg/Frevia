@@ -2,6 +2,11 @@ import { z } from "zod";
 
 import { BrowseJobMessage } from "../message/browse-job.message";
 import { ManageJobMessage } from "../message/manage-job.message";
+import { PaginationSchema } from "./forum-post.model";
+import {
+  JobCategoryBrowseItemSchema,
+  JobCategoryRefSchema,
+} from "./job-category.model";
 import { JobSkillSchema } from "./job-skill.model";
 
 const QueryBooleanSchema = z.preprocess((value) => {
@@ -52,6 +57,9 @@ export const JobSchema = z.object({
   updatedAt: z.date(),
 
   skills: z.array(JobSkillSchema).optional(),
+
+  // Danh mục công việc gắn với job (quan hệ N-N qua JobJobCategory).
+  jobCategories: z.array(JobCategoryRefSchema).optional(),
 });
 
 export const CreateJobBodySchema = z
@@ -105,6 +113,13 @@ export const CreateJobBodySchema = z
     skills: z
       .array(z.number().int().positive(ManageJobMessage.SKILL_NAME_REQUIRED))
       .min(1, ManageJobMessage.SKILLS_REQUIRED),
+
+    // Danh mục công việc gắn vào job (BR-CAT-03): freelancer dùng danh mục để tìm/lọc job.
+    // Có thể chọn nhiều danh mục; bỏ trống nghĩa là job không thuộc danh mục nào.
+    jobCategories: z
+      .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
+      .optional()
+      .default([]),
   })
   .strict()
   .superRefine((data, ctx) => {
@@ -194,6 +209,14 @@ export const ViewListJobFilterSchema = z
       .optional()
       .transform((value) => value || undefined),
 
+    // Lọc theo danh mục công việc (slug). Dùng cho flow tìm kiếm/lọc job (UC-46.07 A.2).
+    category: z
+      .string()
+      .trim()
+      .max(120)
+      .optional()
+      .transform((value) => value || undefined),
+
     featured: QueryBooleanSchema.optional(),
 
     clientId: z.coerce.number().int().positive().optional(),
@@ -246,6 +269,14 @@ export const ViewJobDetailResSchema = JobSchema.extend({
   skills: z.array(JobSkillSchema),
 });
 
+// UC-46.07 — View Job Category Detail (Freelancer):
+// chi tiết danh mục kèm danh sách công việc đang mở thuộc danh mục (có phân trang).
+export const ViewJobCategoryDetailResponseSchema =
+  JobCategoryBrowseItemSchema.extend({
+    jobs: z.array(ViewJobDetailResSchema),
+    pagination: PaginationSchema,
+  });
+
 export const UpdateJobResponseSchema = JobSchema;
 
 export const ChangeJobStatusResponseSchema = JobSchema;
@@ -277,6 +308,10 @@ export type ViewListJobParsedFilterType = z.output<
 export type ViewListJobResponseType = z.infer<typeof ViewListJobResponseSchema>;
 
 export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
+
+export type ViewJobCategoryDetailResponseType = z.infer<
+  typeof ViewJobCategoryDetailResponseSchema
+>;
 
 export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
 

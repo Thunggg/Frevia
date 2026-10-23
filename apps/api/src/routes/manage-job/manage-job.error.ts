@@ -24,6 +24,10 @@ export const BookmarkJobOnlyForFreelancerException = () =>
 export const JobNotFoundException = () =>
   new NotFoundException(ManageJobMessage.JOB_NOT_FOUND);
 
+// Danh mục công việc gửi lên không tồn tại / đã bị vô hiệu hoá (UC-46: chỉ danh mục ACTIVE dùng được).
+export const JobCategoriesNotFoundException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CATEGORIES_NOT_FOUND);
+
 export const FailedToLoadBookmarkedJobsException = () =>
   new InternalServerErrorException(
     ManageJobMessage.FAILED_TO_LOAD_BOOKMARKED_JOBS,

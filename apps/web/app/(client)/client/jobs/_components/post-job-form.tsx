@@ -12,6 +12,7 @@ import {
 } from "@shared/types";
 
 import jobApiRequest from "@/apiRequests/job";
+import jobCategoryApiRequest from "@/apiRequests/job-category";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -52,6 +53,7 @@ const emptyJobForm: CreateJobBodyType = {
   deadline: null,
   expiryDate: null,
   skills: [],
+  jobCategories: [],
 };
 
 function getJobFormValues(job?: JobType): CreateJobBodyType {
@@ -66,6 +68,7 @@ function getJobFormValues(job?: JobType): CreateJobBodyType {
     deadline: job.deadline,
     expiryDate: job.expiryDate,
     skills: job.skills?.map((skill) => skill.skillId) ?? [],
+    jobCategories: job.jobCategories?.map((jobCategory) => jobCategory.id) ?? [],
   };
 }
 
@@ -90,6 +93,10 @@ export function PostJobForm({
   >([]);
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const skillPickerRef = useRef<HTMLDivElement>(null);
+  const [categoryOptions, setCategoryOptions] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const form = useForm<CreateJobBodyType>({
     resolver: useTranslatedResolver<CreateJobBodyType>(CreateJobBodySchema),
     defaultValues: emptyJobForm,
@@ -108,6 +115,38 @@ export function PostJobForm({
     setSkillOptions([]);
     setIsSkillMenuOpen(false);
   }, [form, job, isActive]);
+
+  // UC-46.06: danh mục công việc đang hoạt động để gắn vào tin tuyển dụng.
+  useEffect(() => {
+    if (!isActive) return;
+
+    let active = true;
+    setCategoriesLoading(true);
+
+    void (async () => {
+      try {
+        const response = await jobCategoryApiRequest.getJobCategories({
+          limit: 50,
+        });
+        if (!active) return;
+        setCategoryOptions(
+          response.data.jobCategories.map((jobCategory) => ({
+            id: jobCategory.id,
+            name: jobCategory.name,
+          })),
+        );
+      } catch {
+        if (!active) return;
+        setCategoryOptions([]);
+      } finally {
+        if (active) setCategoriesLoading(false);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [isActive]);
 
   useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
@@ -371,6 +410,52 @@ export function PostJobForm({
                 </Badge>
               ))}
             </div>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+      <Controller
+        name="jobCategories"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("categoriesLabel")}</FieldLabel>
+            {categoryOptions.length === 0 ? (
+              <p className="text-xs text-muted-foreground font-sans">
+                {categoriesLoading ? t("categoriesLoading") : t("categoriesEmpty")}
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {categoryOptions.map((jobCategory) => {
+                  const isSelected = field.value.includes(jobCategory.id);
+
+                  return (
+                    <button
+                      key={jobCategory.id}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() =>
+                        field.onChange(
+                          isSelected
+                            ? field.value.filter((id) => id !== jobCategory.id)
+                            : [...field.value, jobCategory.id],
+                        )
+                      }
+                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer ${
+                        isSelected
+                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                          : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                      }`}
+                    >
+                      {jobCategory.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground font-sans">
+              {t("categoriesHint")}
+            </p>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

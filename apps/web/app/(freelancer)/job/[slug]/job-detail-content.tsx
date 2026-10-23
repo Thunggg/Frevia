@@ -487,7 +487,7 @@ export function JobDetailContent({
                     job.skills.map((skill) => (
                       <Link
                         key={skill.skillId}
-                        href={`/find-work?keyword=${encodeURIComponent(skill.skill.name)}`}
+                        href={`${basePath}?keyword=${encodeURIComponent(skill.skill.name)}`}
                         className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
                       >
                         {skill.skill.name}
@@ -496,6 +496,30 @@ export function JobDetailContent({
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       {t("noSkills")}
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* UC-46: danh mục công việc giúp freelancer duyệt/lọc các job cùng nhóm. */}
+              <section className="mt-10 border-t border-border pt-10">
+                <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                  {t("categories")}
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {job.jobCategories?.length ? (
+                    job.jobCategories.map((jobCategory) => (
+                      <Link
+                        key={jobCategory.id}
+                        href={`${basePath}?category=${encodeURIComponent(jobCategory.slug)}`}
+                        className="rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1.5 text-sm font-medium text-[#3f9225] transition-colors hover:border-[#4fae2e]/60 hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:hover:bg-[#4fae2e]/25"
+                      >
+                        {jobCategory.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {t("noCategories")}
                     </p>
                   )}
                 </div>

@@ -45,6 +45,9 @@ export const ManageJobMessage = {
   SKILL_NAME_REQUIRED: "Error.SkillNameRequired",
   SKILL_NAME_TOO_LONG: "Error.SkillNameTooLong",
 
+  JOB_CATEGORY_INVALID: "Error.JobCategoryInvalid",
+  JOB_CATEGORIES_NOT_FOUND: "Error.JobCategoriesNotFound",
+
   // =========================
   // Edit Job
   // =========================

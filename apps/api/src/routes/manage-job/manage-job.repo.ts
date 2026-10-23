@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JobStatus, Prisma } from '@prisma/client';
+import { JobCategoryStatus, JobStatus, Prisma } from '@prisma/client';
 
 import {
   CreateJobBodyType,
@@ -12,7 +12,10 @@ import {
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
-import { JobNotFoundException } from './manage-job.error';
+import {
+  JobCategoriesNotFoundException,
+  JobNotFoundException,
+} from './manage-job.error';
 
 const jobSelect = {
   id: true,
@@ -29,6 +32,9 @@ const jobSelect = {
   expiryDate: true,
   createdAt: true,
   updatedAt: true,
+  jobCategories: {
+    select: { category: { select: { id: true, name: true, slug: true } } },
+  },
 } satisfies Prisma.JobSelect;
 
 @Injectable()
@@ -186,6 +192,8 @@ export class ManageJobRepository {
 
   async createJob(clientId: number, data: CreateJobBodyType): Promise<JobType> {
     const job = await this.prisma.$transaction(async (tx) => {
+      await this.assertJobCategoriesUsable(tx, data.jobCategories);
+
       const createdJob = await tx.job.create({
         data: {
           clientId,
@@ -203,8 +211,13 @@ export class ManageJobRepository {
       });
 
       await this.replaceJobSkills(tx, createdJob.id, data.skills);
+      await this.replaceJobCategories(tx, createdJob.id, data.jobCategories);
 
-      return createdJob;
+      // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
+      return tx.job.findUniqueOrThrow({
+        where: { id: createdJob.id },
+        select: jobSelect,
+      });
     });
 
     return this.normalizeJob(job);
@@ -218,6 +231,8 @@ export class ManageJobRepository {
     await this.checkJobOwner(userId, jobId);
 
     const updatedJob = await this.prisma.$transaction(async (tx) => {
+      await this.assertJobCategoriesUsable(tx, data.jobCategories);
+
       const job = await tx.job.update({
         where: {
           id: jobId,
@@ -242,9 +257,20 @@ export class ManageJobRepository {
         },
       });
 
-      await this.replaceJobSkills(tx, jobId, data.skills);
+      await tx.jobJobCategory.deleteMany({
+        where: {
+          jobId,
+        },
+      });
 
-      return job;
+      await this.replaceJobSkills(tx, jobId, data.skills);
+      await this.replaceJobCategories(tx, jobId, data.jobCategories);
+
+      // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
+      return tx.job.findUniqueOrThrow({
+        where: { id: job.id },
+        select: jobSelect,
+      });
     });
 
     return this.normalizeJob(updatedJob);
@@ -308,19 +334,37 @@ export class ManageJobRepository {
     T extends {
       budgetMin: Prisma.Decimal | number | null;
       budgetMax: Prisma.Decimal | number | null;
+      jobCategories?: Array<{
+        category: { id: number; name: string; slug: string };
+      }>;
     },
   >(
     job: T,
-  ): Omit<T, 'budgetMin' | 'budgetMax'> & {
+  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
     budgetMin: number | null;
     budgetMax: number | null;
+    jobCategories?: Array<{ id: number; name: string; slug: string }>;
   } {
-    return {
-      ...job,
+    const { jobCategories, budgetMin, budgetMax, ...rest } = job;
 
-      budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+    const normalized = {
+      ...rest,
+      budgetMin: budgetMin === null ? null : Number(budgetMin),
+      budgetMax: budgetMax === null ? null : Number(budgetMax),
+    };
 
-      budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
+    // Quan hệ N-N: làm phẳng JobJobCategory về danh mục thực tế.
+    return (
+      jobCategories
+        ? {
+            ...normalized,
+            jobCategories: jobCategories.map(({ category }) => category),
+          }
+        : normalized
+    ) as Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
+      budgetMin: number | null;
+      budgetMax: number | null;
+      jobCategories?: Array<{ id: number; name: string; slug: string }>;
     };
   }
 
@@ -331,6 +375,48 @@ export class ManageJobRepository {
   ): Promise<void> {
     await tx.jobSkill.createMany({
       data: skillIds.map((skillId) => ({ jobId, skillId })),
+      skipDuplicates: true,
+    });
+  }
+
+  // Kiểm tra danh mục gửi lên: chỉ chấp nhận danh mục đang ACTIVE và chưa bị xoá
+  // (danh mục INACTIVE/đã xoá không còn dùng được để gắn vào job — BR-CAT-15, BR-CAT-18).
+  private async assertJobCategoriesUsable(
+    tx: Prisma.TransactionClient,
+    categoryIds: number[],
+  ): Promise<void> {
+    const uniqueIds = [...new Set(categoryIds)];
+
+    if (uniqueIds.length === 0) {
+      return;
+    }
+
+    const usableCount = await tx.jobCategory.count({
+      where: {
+        id: { in: uniqueIds },
+        status: JobCategoryStatus.ACTIVE,
+        deletedAt: null,
+      },
+    });
+
+    if (usableCount !== uniqueIds.length) {
+      throw JobCategoriesNotFoundException();
+    }
+  }
+
+  private async replaceJobCategories(
+    tx: Prisma.TransactionClient,
+    jobId: number,
+    categoryIds: number[],
+  ): Promise<void> {
+    const uniqueIds = [...new Set(categoryIds)];
+
+    if (uniqueIds.length === 0) {
+      return;
+    }
+
+    await tx.jobJobCategory.createMany({
+      data: uniqueIds.map((categoryId) => ({ jobId, categoryId })),
       skipDuplicates: true,
     });
   }
