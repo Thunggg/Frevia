@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { NotificationType, Prisma, ProposalStatus } from '@prisma/client';
+import {
+  HiringType,
+  JobStatus,
+  NotificationType,
+  Prisma,
+  ProposalStatus,
+} from '@prisma/client';
 import {
   CreateProposalBodyType,
   ClientJobProposalsResponseType,
@@ -10,10 +16,21 @@ import {
   MyProposalsResponseType,
   ProposalDetailType,
   ProposalType,
+  resolveProposalExpiryDate,
   SaveProposalDraftBodyType,
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
+import {
+  ProposalJobPositionsFilledException,
+  ProposalNotSubmittedException,
+} from './proposal.error';
+
+// Trạng thái khách hàng còn có thể phỏng vấn / từ chối / tuyển.
+const ACTIONABLE_STATUSES = [
+  ProposalStatus.SUBMITTED,
+  ProposalStatus.INTERVIEWING,
+];
 
 const proposalSelect = {
   id: true,
@@ -28,6 +45,7 @@ const proposalSelect = {
   acceptedAt: true,
   rejectedAt: true,
   withdrawnAt: true,
+  expiresAt: true,
   updatedAt: true,
 } satisfies Prisma.ProposalSelect;
 
@@ -45,6 +63,9 @@ const proposalDetailSelect = {
       deadline: true,
       expiryDate: true,
       status: true,
+      hiringType: true,
+      positionsRequired: true,
+      positionsFilled: true,
       client: {
         select: {
           id: true,
@@ -70,6 +91,9 @@ export class ProposalRepository {
         deadline: true,
         expiryDate: true,
         deletedAt: true,
+        hiringType: true,
+        positionsRequired: true,
+        positionsFilled: true,
         client: { select: { isBanned: true, deletedAt: true } },
       },
     });
@@ -183,8 +207,9 @@ export class ProposalRepository {
         status: {
           in: [
             ProposalStatus.DRAFT,
-            ProposalStatus.PENDING,
-            ProposalStatus.ACCEPTED,
+            ProposalStatus.SUBMITTED,
+            ProposalStatus.INTERVIEWING,
+            ProposalStatus.HIRED,
           ],
         },
         ...(ignoredProposalId && { id: { not: ignoredProposalId } }),
@@ -202,8 +227,9 @@ export class ProposalRepository {
         status: {
           in: [
             ProposalStatus.DRAFT,
-            ProposalStatus.PENDING,
-            ProposalStatus.ACCEPTED,
+            ProposalStatus.SUBMITTED,
+            ProposalStatus.INTERVIEWING,
+            ProposalStatus.HIRED,
             ProposalStatus.REJECTED,
           ],
         },
@@ -212,6 +238,21 @@ export class ProposalRepository {
       orderBy: { updatedAt: 'desc' },
     });
     return proposal ? this.normalize(proposal) : null;
+  }
+
+  // Đề xuất đã gửi quá hạn xử lý (khách hàng không hoạt động) chuyển sang EXPIRED.
+  async expireOverdueProposals(jobId?: number): Promise<number> {
+    const result = await this.prisma.proposal.updateMany({
+      where: {
+        deletedAt: null,
+        status: { in: ACTIONABLE_STATUSES },
+        expiresAt: { lte: new Date() },
+        ...(jobId && { jobId }),
+      },
+      data: { status: ProposalStatus.EXPIRED },
+    });
+
+    return result.count;
   }
 
   async findProposal(proposalId: number) {
@@ -237,6 +278,9 @@ export class ProposalRepository {
             title: true,
             deletedAt: true,
             status: true,
+            hiringType: true,
+            positionsRequired: true,
+            positionsFilled: true,
           },
         },
       },
@@ -269,6 +313,9 @@ export class ProposalRepository {
             status: true,
             clientId: true,
             deletedAt: true,
+            hiringType: true,
+            positionsRequired: true,
+            positionsFilled: true,
           },
         },
         freelancer: {
@@ -319,18 +366,20 @@ export class ProposalRepository {
     return this.normalize(proposal);
   }
 
-  async createPending(
+  async createSubmitted(
     jobId: number,
     freelancerId: number,
     data: CreateProposalBodyType,
   ): Promise<ProposalType> {
+    const submittedAt = new Date();
     const proposal = await this.prisma.proposal.create({
       data: {
         jobId,
         freelancerId,
         ...data,
-        status: ProposalStatus.PENDING,
-        submittedAt: new Date(),
+        status: ProposalStatus.SUBMITTED,
+        submittedAt,
+        expiresAt: resolveProposalExpiryDate(submittedAt),
       },
       select: proposalSelect,
     });
@@ -350,9 +399,14 @@ export class ProposalRepository {
   }
 
   async submitDraft(proposalId: number): Promise<ProposalType> {
+    const submittedAt = new Date();
     const proposal = await this.prisma.proposal.update({
       where: { id: proposalId },
-      data: { status: ProposalStatus.PENDING, submittedAt: new Date() },
+      data: {
+        status: ProposalStatus.SUBMITTED,
+        submittedAt,
+        expiresAt: resolveProposalExpiryDate(submittedAt),
+      },
       select: proposalSelect,
     });
     return this.normalize(proposal);
@@ -370,44 +424,109 @@ export class ProposalRepository {
     return this.normalize(proposal);
   }
 
-  async rejectProposal(proposalId: number): Promise<ProposalType> {
+  // Khách hàng bắt đầu phỏng vấn/trao đổi: gia hạn thêm một chu kỳ xử lý.
+  async interviewProposal(proposalId: number): Promise<ProposalType> {
     const proposal = await this.prisma.proposal.update({
       where: { id: proposalId },
-      data: { status: ProposalStatus.REJECTED, rejectedAt: new Date() },
+      data: {
+        status: ProposalStatus.INTERVIEWING,
+        expiresAt: resolveProposalExpiryDate(new Date()),
+      },
       select: proposalSelect,
     });
     return this.normalize(proposal);
   }
 
-  async acceptProposal(
-    proposalId: number,
-    jobId: number,
-    clientId: number,
-    freelancerId: number,
-    bidAmount: number,
-    jobTitle: string,
-  ): Promise<ProposalType> {
+  async rejectProposal(proposalId: number): Promise<ProposalType> {
+    const proposal = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data: {
+        status: ProposalStatus.REJECTED,
+        rejectedAt: new Date(),
+        expiresAt: null,
+      },
+      select: proposalSelect,
+    });
+    return this.normalize(proposal);
+  }
+
+  /**
+   * Tuyển (hire) một đề xuất.
+   *
+   * - Chỉ chốt được đề xuất đang ở trạng thái khách hàng xử lý được (SUBMITTED/INTERVIEWING).
+   * - Chiếm 1 vị trí: điều kiện `positionsFilled < positionsRequired` được kiểm tra trong
+   *   transaction nên không thể tuyển vượt số lượng.
+   * - Job SINGLE: các đề xuất còn lại bị REJECTED. Job MULTIPLE: giữ nguyên trạng thái.
+   * - Đủ số vị trí thì job chuyển sang IN_PROGRESS, mỗi lượt tuyển tạo 1 hợp đồng riêng.
+   */
+  async hireProposal(params: {
+    proposalId: number;
+    jobId: number;
+    clientId: number;
+    freelancerId: number;
+    bidAmount: number;
+    jobTitle: string;
+    hiringType: HiringType;
+    positionsRequired: number;
+  }): Promise<ProposalType> {
+    const {
+      proposalId,
+      jobId,
+      clientId,
+      freelancerId,
+      bidAmount,
+      jobTitle,
+      hiringType,
+      positionsRequired,
+    } = params;
+    const now = new Date();
+
     return this.prisma.$transaction(async (tx) => {
-      const acceptedProposal = await tx.proposal.update({
-        where: { id: proposalId },
-        data: { status: ProposalStatus.ACCEPTED, acceptedAt: new Date() },
-        select: proposalSelect,
-      });
-
-      await tx.proposal.updateMany({
+      const hired = await tx.proposal.updateMany({
         where: {
-          jobId,
-          id: { not: proposalId },
+          id: proposalId,
           deletedAt: null,
-          status: ProposalStatus.PENDING,
+          status: { in: ACTIONABLE_STATUSES },
         },
-        data: { status: ProposalStatus.REJECTED, rejectedAt: new Date() },
+        data: {
+          status: ProposalStatus.HIRED,
+          acceptedAt: now,
+          expiresAt: null,
+        },
       });
 
-      await tx.job.update({
-        where: { id: jobId },
-        data: { status: 'IN_PROGRESS' },
+      if (hired.count === 0) throw ProposalNotSubmittedException();
+
+      const slot = await tx.job.updateMany({
+        where: { id: jobId, positionsFilled: { lt: positionsRequired } },
+        data: { positionsFilled: { increment: 1 } },
       });
+
+      if (slot.count === 0) throw ProposalJobPositionsFilledException();
+
+      if (hiringType === HiringType.SINGLE) {
+        await tx.proposal.updateMany({
+          where: {
+            jobId,
+            id: { not: proposalId },
+            deletedAt: null,
+            status: { in: ACTIONABLE_STATUSES },
+          },
+          data: { status: ProposalStatus.REJECTED, rejectedAt: now },
+        });
+      }
+
+      const job = await tx.job.findUniqueOrThrow({
+        where: { id: jobId },
+        select: { positionsFilled: true, positionsRequired: true },
+      });
+
+      if (job.positionsFilled >= job.positionsRequired) {
+        await tx.job.update({
+          where: { id: jobId },
+          data: { status: JobStatus.IN_PROGRESS },
+        });
+      }
 
       const contract = await tx.contract.create({
         data: {
@@ -425,7 +544,7 @@ export class ProposalRepository {
           userId: freelancerId,
           type: NotificationType.PROPOSAL_ACCEPTED,
           title: 'Your proposal was accepted',
-          message: `Your proposal for ${jobTitle} was accepted. Review and sign the contract to begin work.`,
+          message: `You have been hired for ${jobTitle}. Review and sign the contract to begin work.`,
           data: {
             href: `/proposals/${proposalId}`,
             proposalId,
@@ -436,7 +555,12 @@ export class ProposalRepository {
         },
       });
 
-      return this.normalize(acceptedProposal);
+      const proposal = await tx.proposal.findUniqueOrThrow({
+        where: { id: proposalId },
+        select: proposalSelect,
+      });
+
+      return this.normalize(proposal);
     });
   }
 
@@ -489,6 +613,9 @@ export class ProposalRepository {
         deadline: true,
         expiryDate: true,
         status: true,
+        hiringType: true,
+        positionsRequired: true,
+        positionsFilled: true,
       },
     });
     const clients = await this.prisma.user.findMany({

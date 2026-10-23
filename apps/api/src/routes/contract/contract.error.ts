@@ -12,18 +12,10 @@ export const ProposalNotFoundException = () =>
     { message: ManageContractMessage.PROPOSAL_NOT_FOUND, path: 'proposalId' },
   ]);
 
-export const ProposalNotAcceptedException = () =>
+export const ProposalNotHiredException = () =>
   new UnprocessableEntityException([
     {
-      message: ManageContractMessage.PROPOSAL_NOT_ACCEPTED,
-      path: 'proposalId',
-    },
-  ]);
-
-export const ProposalNotPendingException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManageContractMessage.PROPOSAL_NOT_PENDING,
+      message: ManageContractMessage.PROPOSAL_NOT_HIRED,
       path: 'proposalId',
     },
   ]);

@@ -73,7 +73,9 @@ export function ProposalDetailContent({
   );
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const isDraft = proposal.status === "DRAFT";
-  const isPending = proposal.status === "PENDING";
+  // Freelancer chỉ rút được đề xuất đang chờ khách hàng xử lý.
+  const isActionable =
+    proposal.status === "SUBMITTED" || proposal.status === "INTERVIEWING";
   const canEditDraft =
     isDraft &&
     proposal.job.status === "OPEN" &&
@@ -223,7 +225,7 @@ export function ProposalDetailContent({
           </div>
         </section>
         <div className="mx-auto grid max-w-5xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:px-8">
-          {proposal.status === "ACCEPTED" ? (
+          {proposal.status === "HIRED" ? (
             <div className="lg:col-span-2">
               <ContractLifecyclePanel
                 proposalId={proposal.id}
@@ -379,7 +381,7 @@ export function ProposalDetailContent({
                 </dd>
               </div>
             </dl>
-            {isPending ? (
+            {isActionable ? (
               <Button
                 variant="outline"
                 className="mt-6 w-full text-destructive hover:text-destructive"

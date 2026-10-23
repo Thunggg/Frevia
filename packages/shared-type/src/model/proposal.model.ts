@@ -1,13 +1,34 @@
 import { z } from "zod";
 
 import { ManageProposalMessage } from "../message/manage-proposal.message";
+import { JobHiringTypeSchema } from "./job.model";
 
+// Vòng đời đề xuất:
+// DRAFT -> SUBMITTED -> (INTERVIEWING) -> HIRED | REJECTED | WITHDRAWN | EXPIRED
 export const ProposalStatusSchema = z.enum([
   "DRAFT",
-  "PENDING",
-  "ACCEPTED",
+  "SUBMITTED",
+  "INTERVIEWING",
+  "HIRED",
   "REJECTED",
   "WITHDRAWN",
+  "EXPIRED",
+]);
+
+// Trạng thái đã gửi cho khách hàng (dùng cho bộ lọc phía client).
+export const SubmittedProposalStatusSchema = z.enum([
+  "SUBMITTED",
+  "INTERVIEWING",
+  "HIRED",
+  "REJECTED",
+  "WITHDRAWN",
+  "EXPIRED",
+]);
+
+// Khách hàng còn có thể ra quyết định (phỏng vấn / từ chối / tuyển) trên các trạng thái này.
+export const ActionableProposalStatusSchema = z.enum([
+  "SUBMITTED",
+  "INTERVIEWING",
 ]);
 
 const CoverLetterSchema = z
@@ -38,6 +59,7 @@ export const ProposalSchema = z.object({
   acceptedAt: z.date().nullable(),
   rejectedAt: z.date().nullable(),
   withdrawnAt: z.date().nullable(),
+  expiresAt: z.date().nullable(),
   updatedAt: z.date(),
 });
 
@@ -59,6 +81,10 @@ const ProposalJobSchema = z.object({
     "CLOSED",
     "CANCELLED",
   ]),
+  // Thông tin tuyển dụng để client biết job còn bao nhiêu vị trí.
+  hiringType: JobHiringTypeSchema,
+  positionsRequired: z.number().int(),
+  positionsFilled: z.number().int(),
 });
 
 const ProposalClientSchema = z.object({
@@ -105,7 +131,7 @@ export const ClientJobProposalsResponseSchema = z.array(
 export const ClientJobProposalsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
-  status: z.enum(["PENDING", "ACCEPTED", "REJECTED", "WITHDRAWN"]).optional(),
+  status: SubmittedProposalStatusSchema.optional(),
 });
 
 export const ClientJobProposalsPageSchema = z.object({
@@ -156,6 +182,12 @@ export const SaveProposalDraftBodySchema = z
 
 export type ProposalType = z.infer<typeof ProposalSchema>;
 export type ProposalStatusType = z.infer<typeof ProposalStatusSchema>;
+export type SubmittedProposalStatusType = z.infer<
+  typeof SubmittedProposalStatusSchema
+>;
+export type ActionableProposalStatusType = z.infer<
+  typeof ActionableProposalStatusSchema
+>;
 export type CreateProposalBodyType = z.output<typeof CreateProposalBodySchema>;
 export type SaveProposalDraftBodyType = z.output<
   typeof SaveProposalDraftBodySchema

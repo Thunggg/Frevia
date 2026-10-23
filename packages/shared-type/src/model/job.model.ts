@@ -2,6 +2,11 @@ import { z } from "zod";
 
 import { BrowseJobMessage } from "../message/browse-job.message";
 import { ManageJobMessage } from "../message/manage-job.message";
+import { PaginationSchema } from "./forum-post.model";
+import {
+  JobCategoryBrowseItemSchema,
+  JobCategoryRefSchema,
+} from "./job-category.model";
 import { JobSkillSchema } from "./job-skill.model";
 
 const QueryBooleanSchema = z.preprocess((value) => {
@@ -21,6 +26,10 @@ export const JobStatusSchema = z.enum([
 ]);
 
 export const JobBudgetTypeSchema = z.enum(["FIXED_PRICE"]);
+
+// SINGLE = chỉ tuyển 1 freelancer (nhận 1 người là các đề xuất còn lại bị từ chối).
+// MULTIPLE = tuyển nhiều người theo positionsRequired, các đề xuất khác giữ nguyên trạng thái.
+export const JobHiringTypeSchema = z.enum(["SINGLE", "MULTIPLE"]);
 
 export const JobSchema = z.object({
   id: z.number(),
@@ -47,11 +56,20 @@ export const JobSchema = z.object({
 
   expiryDate: z.date().nullable(),
 
+  hiringType: JobHiringTypeSchema,
+
+  positionsRequired: z.number().int(),
+
+  positionsFilled: z.number().int(),
+
   createdAt: z.date(),
 
   updatedAt: z.date(),
 
   skills: z.array(JobSkillSchema).optional(),
+
+  // Danh mục công việc gắn với job (quan hệ N-N qua JobJobCategory).
+  jobCategories: z.array(JobCategoryRefSchema).optional(),
 });
 
 export const CreateJobBodySchema = z
@@ -105,10 +123,37 @@ export const CreateJobBodySchema = z
     skills: z
       .array(z.number().int().positive(ManageJobMessage.SKILL_NAME_REQUIRED))
       .min(1, ManageJobMessage.SKILLS_REQUIRED),
+
+    // Danh mục công việc gắn vào job (BR-CAT-03): freelancer dùng danh mục để tìm/lọc job.
+    // Có thể chọn nhiều danh mục; bỏ trống nghĩa là job không thuộc danh mục nào.
+    jobCategories: z
+      .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
+      .optional()
+      .default([]),
+
+    // Kiểu tuyển dụng + số lượng cần tuyển (positionsFilled do hệ thống quản lý).
+    hiringType: JobHiringTypeSchema.optional().default("SINGLE"),
+
+    positionsRequired: z.coerce
+      .number({ error: ManageJobMessage.POSITIONS_REQUIRED_INVALID })
+      .int(ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .min(1, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .max(100, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .optional()
+      .default(1),
   })
   .strict()
   .superRefine((data, ctx) => {
     const now = new Date();
+
+    // SINGLE chỉ tuyển đúng 1 người; muốn tuyển nhiều phải chọn MULTIPLE.
+    if (data.hiringType === "SINGLE" && data.positionsRequired !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["positionsRequired"],
+        message: ManageJobMessage.POSITIONS_REQUIRED_MUST_BE_ONE_FOR_SINGLE,
+      });
+    }
 
     if (
       data.budgetMin != null &&
@@ -194,6 +239,14 @@ export const ViewListJobFilterSchema = z
       .optional()
       .transform((value) => value || undefined),
 
+    // Lọc theo danh mục công việc (slug). Dùng cho flow tìm kiếm/lọc job (UC-46.07 A.2).
+    category: z
+      .string()
+      .trim()
+      .max(120)
+      .optional()
+      .transform((value) => value || undefined),
+
     featured: QueryBooleanSchema.optional(),
 
     clientId: z.coerce.number().int().positive().optional(),
@@ -246,6 +299,14 @@ export const ViewJobDetailResSchema = JobSchema.extend({
   skills: z.array(JobSkillSchema),
 });
 
+// UC-46.07 — View Job Category Detail (Freelancer):
+// chi tiết danh mục kèm danh sách công việc đang mở thuộc danh mục (có phân trang).
+export const ViewJobCategoryDetailResponseSchema =
+  JobCategoryBrowseItemSchema.extend({
+    jobs: z.array(ViewJobDetailResSchema),
+    pagination: PaginationSchema,
+  });
+
 export const UpdateJobResponseSchema = JobSchema;
 
 export const ChangeJobStatusResponseSchema = JobSchema;
@@ -253,6 +314,8 @@ export const ChangeJobStatusResponseSchema = JobSchema;
 export type JobStatusType = z.infer<typeof JobStatusSchema>;
 
 export type JobBudgetType = z.infer<typeof JobBudgetTypeSchema>;
+
+export type JobHiringType = z.infer<typeof JobHiringTypeSchema>;
 
 export type JobType = z.infer<typeof JobSchema>;
 
@@ -277,6 +340,10 @@ export type ViewListJobParsedFilterType = z.output<
 export type ViewListJobResponseType = z.infer<typeof ViewListJobResponseSchema>;
 
 export type ViewJobDetailResType = z.infer<typeof ViewJobDetailResSchema>;
+
+export type ViewJobCategoryDetailResponseType = z.infer<
+  typeof ViewJobCategoryDetailResponseSchema
+>;
 
 export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
 

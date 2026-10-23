@@ -75,10 +75,13 @@ function isPast(value: string | Date | null) {
 
 const proposalStatusStyles = {
   DRAFT: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
-  PENDING: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  ACCEPTED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+  SUBMITTED: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  INTERVIEWING:
+    "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
+  HIRED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
   REJECTED: "bg-destructive/10 text-destructive",
   WITHDRAWN: "",
+  EXPIRED: "bg-slate-500/10 text-slate-500 dark:text-slate-400",
 } satisfies Record<ProposalType["status"], string>;
 
 function JobDescription({ description }: { description: string | null }) {
@@ -318,6 +321,19 @@ export function JobDetailContent({
     },
     { id: "expires", label: t("summary.expires"), value: formatDate(job.expiryDate) },
     { id: "status", label: t("summary.status"), value: tStatus(job.status) },
+    // Job tuyển nhiều người: hiển thị số vị trí đã tuyển / cần tuyển.
+    ...(job.hiringType === "MULTIPLE"
+      ? [
+          {
+            id: "positions",
+            label: t("summary.positions"),
+            value: t("positionsFilled", {
+              filled: job.positionsFilled,
+              required: job.positionsRequired,
+            }),
+          },
+        ]
+      : []),
   ];
 
   const proposalActionLabel = activeProposal
@@ -408,6 +424,17 @@ export function JobDetailContent({
                       {t("featured")}
                     </Badge>
                   ) : null}
+                  {job.hiringType === "MULTIPLE" ? (
+                    <Badge
+                      variant="outline"
+                      className="border-[#4fae2e]/40 bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]"
+                    >
+                      {t("positionsBadge", {
+                        filled: job.positionsFilled,
+                        required: job.positionsRequired,
+                      })}
+                    </Badge>
+                  ) : null}
                   {deadlineUrgencyLabel ? (
                     <Badge
                       variant="outline"
@@ -487,7 +514,7 @@ export function JobDetailContent({
                     job.skills.map((skill) => (
                       <Link
                         key={skill.skillId}
-                        href={`/find-work?keyword=${encodeURIComponent(skill.skill.name)}`}
+                        href={`${basePath}?keyword=${encodeURIComponent(skill.skill.name)}`}
                         className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
                       >
                         {skill.skill.name}
@@ -496,6 +523,30 @@ export function JobDetailContent({
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       {t("noSkills")}
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* UC-46: danh mục công việc giúp freelancer duyệt/lọc các job cùng nhóm. */}
+              <section className="mt-10 border-t border-border pt-10">
+                <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                  {t("categories")}
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {job.jobCategories?.length ? (
+                    job.jobCategories.map((jobCategory) => (
+                      <Link
+                        key={jobCategory.id}
+                        href={`${basePath}?category=${encodeURIComponent(jobCategory.slug)}`}
+                        className="rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1.5 text-sm font-medium text-[#3f9225] transition-colors hover:border-[#4fae2e]/60 hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:hover:bg-[#4fae2e]/25"
+                      >
+                        {jobCategory.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {t("noCategories")}
                     </p>
                   )}
                 </div>

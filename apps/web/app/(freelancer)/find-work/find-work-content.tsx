@@ -1,17 +1,13 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
 import { motion } from "motion/react";
 import {
-  ArrowRight,
-  Bookmark,
-  Clock,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   Search,
   SearchX,
   SlidersHorizontal,
@@ -45,10 +41,13 @@ import {
 } from "@repo/ui/components/shadcn/sheet";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { SavedSearchType, ViewListJobResponseType } from "@shared/types";
+import type {
+  JobCategoryBrowseItemType,
+  SavedSearchType,
+  ViewListJobResponseType,
+} from "@shared/types";
 import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
-
-type JobItem = ViewListJobResponseType["data"][number];
+import { JobCard } from "../_components/job-card";
 
 type FindWorkContentProps = {
   role: UserRole;
@@ -60,24 +59,19 @@ type FindWorkContentProps = {
     totalPages: number;
   };
   initialKeyword?: string;
+  initialCategory?: string;
   initialBudget?: string;
   initialTime?: string;
   initialSort?: string;
   initialBookmarkedSlugs?: string[];
   initialSavedSearches?: SavedSearchType[];
+  initialCategories?: JobCategoryBrowseItemType[];
   embedded?: boolean;
   basePath?: string;
 };
 
 // Ánh xạ giá trị filter trên URL sang key dịch trong namespace "findWork"
 // được chia sẻ với trang saved searches — xem lib/search-filter-labels.ts
-
-function stripHtml(value: string) {
-  return value
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 function JobListSkeleton() {
   return (
@@ -116,22 +110,21 @@ export function FindWorkContent({
   initialJobs,
   initialPagination,
   initialKeyword = "",
+  initialCategory = "all",
   initialBudget = "all",
   initialTime = "all",
   initialSort = "newest",
   initialBookmarkedSlugs = [],
   initialSavedSearches = [],
+  initialCategories = [],
   embedded = false,
   basePath,
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("findWork");
-  const tStatus = useTranslations("jobStatus");
-  const tBudgetType = useTranslations("jobBudgetType");
   const tBookmark = useTranslations("bookmark");
   const tCommon = useTranslations("common");
-  const format = useFormatter();
   const [isPending, startTransition] = useTransition();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchInput, setSearchInput] = useState(initialKeyword);
@@ -199,7 +192,10 @@ export function FindWorkContent({
     updateParams({ keyword: searchInput.trim() || null });
   };
 
-  const updateFilter = (name: "budget" | "time" | "sort", value: string) => {
+  const updateFilter = (
+    name: "category" | "budget" | "time" | "sort",
+    value: string,
+  ) => {
     updateParams({ [name]: value });
     setFiltersOpen(false);
   };
@@ -213,13 +209,6 @@ export function FindWorkContent({
     startTransition(() => {
       router.push(effectiveBasePath);
     });
-  };
-
-  const applySkillFilter = (skillName: string, event: MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setSearchInput(skillName);
-    updateParams({ keyword: skillName });
   };
 
   const applySavedSearch = (savedSearch: SavedSearchType) => {
@@ -277,24 +266,9 @@ export function FindWorkContent({
   const translateOption = (keys: Record<string, string>, value: string) =>
     translateFilterOption(t, keys, value);
 
-  const formatPostedTime = (value: string | Date) => {
-    const diffHours = Math.floor(
-      (Date.now() - new Date(value).getTime()) / (1000 * 60 * 60),
-    );
-
-    if (diffHours < 1) return tCommon("justNow");
-    if (diffHours < 24) return tCommon("hoursAgo", { hours: diffHours });
-
-    return tCommon("daysAgo", { days: Math.floor(diffHours / 24) });
-  };
-
-  const getBudgetText = (job: JobItem) => {
-    if (job.budgetMin === null || job.budgetMax === null) {
-      return t("negotiable");
-    }
-
-    return `$${format.number(job.budgetMin)} – $${format.number(job.budgetMax)}`;
-  };
+  const selectedCategory = initialCategories.find(
+    (category) => category.slug === initialCategory,
+  );
 
   const activeChips = [
     initialKeyword
@@ -305,6 +279,13 @@ export function FindWorkContent({
             setSearchInput("");
             updateParams({ keyword: null });
           },
+        }
+      : null,
+    selectedCategory
+      ? {
+          key: "category",
+          label: t("chip.category", { value: selectedCategory.name }),
+          onClear: () => updateParams({ category: null }),
         }
       : null,
     initialBudget !== "all"
@@ -343,10 +324,38 @@ export function FindWorkContent({
   const hasActiveFilters = activeChips.length > 0;
   const resultsLabel = initialKeyword
     ? t("resultsFor", { keyword: initialKeyword })
-    : t("openProjects", { count: pagination.total });
+    : selectedCategory
+      ? t("resultsInCategory", { category: selectedCategory.name })
+      : t("openProjects", { count: pagination.total });
 
   const filterControls = (
     <>
+      {/* Category Select (UC-46.07 A.2 — lọc job theo danh mục công việc) */}
+      {initialCategories.length > 0 ? (
+        <Select
+          value={initialCategory}
+          onValueChange={(value) => value && updateFilter("category", value)}
+        >
+          <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[150px]">
+            <SelectValue placeholder={t("category.label")} />
+          </SelectTrigger>
+          <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
+            <SelectItem value="all" className="rounded-full cursor-pointer">
+              {t("category.any")}
+            </SelectItem>
+            {initialCategories.map((jobCategory) => (
+              <SelectItem
+                key={jobCategory.id}
+                value={jobCategory.slug}
+                className="rounded-full cursor-pointer"
+              >
+                {jobCategory.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : null}
+
       {/* Budget Select */}
       <Select
         value={initialBudget}
@@ -648,138 +657,19 @@ export function FindWorkContent({
             </motion.div>
           ) : (
             <div className="space-y-3">
-              {jobs.map((job, index) => {
-                const preview = job.description
-                  ? stripHtml(job.description)
-                  : t("noDescription");
-                const skills = job.skills?.slice(0, 5) ?? [];
-                const isBookmarked = bookmarkedSlugs.has(job.slug);
-                const isBookmarkPending = pendingBookmarkSlug === job.slug;
-
-                return (
-                  <motion.div
-                    key={job.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.35,
-                      delay: index * 0.03,
-                    }}
-                    className="group relative flex flex-col justify-between rounded-[28px] border border-border bg-card p-5 sm:p-6 transition-all hover:bg-accent/10 shadow-xs font-sans"
-                  >
-                    <div>
-                      {/* Top Header Row: Status, Badges & Bookmark Button */}
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {job.featured ? (
-                            <span className="inline-flex items-center rounded-full bg-[#4fae2e] text-white px-3 py-0.5 text-xs font-semibold">
-                              {t("featured")}
-                            </span>
-                          ) : null}
-                          <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
-                            {tStatus(job.status)}
-                          </span>
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
-                            <Clock className="size-3.5" />
-                            {formatPostedTime(job.createdAt)}
-                          </span>
-                        </div>
-
-                        {canBookmark ? (
-                          <button
-                            type="button"
-                            disabled={isBookmarkPending}
-                            aria-label={
-                              isBookmarked
-                                ? tBookmark("remove")
-                                : tBookmark("save")
-                            }
-                            onClick={(event) =>
-                              toggleBookmark(job.slug, event)
-                            }
-                            className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-all cursor-pointer outline-none ${
-                              isBookmarked
-                                ? "bg-[#4fae2e]/10 text-[#4fae2e] hover:bg-[#4fae2e]/20"
-                                : "bg-[#F3F3F7] dark:bg-zinc-800 text-muted-foreground hover:text-foreground hover:bg-[#EAE9F0] dark:hover:bg-zinc-700"
-                            }`}
-                            title={
-                              isBookmarked
-                                ? tBookmark("removeTitle")
-                                : tBookmark("saveTitle")
-                            }
-                          >
-                            {isBookmarkPending ? (
-                              <Loader2 className="size-4 animate-spin" />
-                            ) : (
-                              <Bookmark
-                                className={`size-4 ${
-                                  isBookmarked
-                                    ? "fill-[#4fae2e] text-[#4fae2e]"
-                                    : ""
-                                }`}
-                              />
-                            )}
-                          </button>
-                        ) : null}
-                      </div>
-
-                      {/* Job Title & Budget */}
-                      <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                        <Link
-                          href={`${jobBaseUrl}/${job.slug}`}
-                          className="text-base sm:text-lg font-bold text-foreground hover:text-[#4fae2e] transition-colors line-clamp-1"
-                        >
-                          {job.title}
-                        </Link>
-                        <div className="shrink-0 text-xs sm:text-sm font-semibold text-foreground">
-                          {getBudgetText(job)}{" "}
-                          <span className="font-normal text-muted-foreground capitalize">
-                            ({tBudgetType(job.budgetType)})
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Description Preview */}
-                      <p className="mt-2 text-xs sm:text-sm font-normal text-muted-foreground leading-relaxed line-clamp-2">
-                        {preview}
-                      </p>
-                    </div>
-
-                    {/* Bottom Row: Skills & View Action */}
-                    <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {skills.map((skill) => (
-                          <button
-                            key={`${job.id}-${skill.skillId}`}
-                            type="button"
-                            onClick={(event) =>
-                              applySkillFilter(skill.skill.name, event)
-                            }
-                            className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800/80 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 px-3 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
-                          >
-                            {skill.skill.name}
-                          </button>
-                        ))}
-                        {(job.skills?.length ?? 0) > 5 ? (
-                          <span className="text-xs text-muted-foreground self-center ml-1">
-                            {t("moreSkills", {
-                              count: (job.skills?.length ?? 0) - 5,
-                            })}
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <Link
-                        href={`${jobBaseUrl}/${job.slug}`}
-                        className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
-                      >
-                        <span>{t("viewDetails")}</span>
-                        <ArrowRight className="size-3.5" />
-                      </Link>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {jobs.map((job, index) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  index={index}
+                  jobBaseUrl={jobBaseUrl}
+                  filterBasePath={effectiveBasePath}
+                  canBookmark={canBookmark}
+                  isBookmarked={bookmarkedSlugs.has(job.slug)}
+                  isBookmarkPending={pendingBookmarkSlug === job.slug}
+                  onToggleBookmark={toggleBookmark}
+                />
+              ))}
             </div>
           )}
 

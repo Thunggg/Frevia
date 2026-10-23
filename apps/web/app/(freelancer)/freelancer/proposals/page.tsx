@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
+import type { ProposalStatusType } from "@shared/types";
 import { MyProposalsContent } from "../../proposals/proposals-content";
 
 type ProposalsPageProps = {
@@ -22,13 +23,7 @@ export default async function FreelancerProposalsPage({
   const candidatePage = Number(params.page);
   const page =
     Number.isInteger(candidatePage) && candidatePage > 0 ? candidatePage : 1;
-  const status = params.status as
-    | "DRAFT"
-    | "PENDING"
-    | "ACCEPTED"
-    | "REJECTED"
-    | "WITHDRAWN"
-    | undefined;
+  const status = params.status as ProposalStatusType | undefined;
   const proposals = await proposalServerRequest.getMyProposals({
     page,
     limit: 10,

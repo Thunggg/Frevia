@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
+import jobCategoryServerRequest from "@/apiRequests/job-category.server";
 import type { UserRole } from "@/components/header";
 import { RoleName, type SavedSearchType } from "@shared/types";
 
@@ -8,6 +9,7 @@ import { FindWorkContent } from "./find-work-content";
 
 type FindWorkSearchParams = Promise<{
   keyword?: string;
+  category?: string;
   page?: string;
   budget?: string;
   time?: string;
@@ -40,6 +42,7 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
   if (role === "FREELANCER") {
     const queryParams = new URLSearchParams();
     if (params.keyword) queryParams.set("keyword", params.keyword);
+    if (params.category) queryParams.set("category", params.category);
     if (params.page) queryParams.set("page", params.page);
     if (params.budget) queryParams.set("budget", params.budget);
     if (params.time) queryParams.set("time", params.time);
@@ -86,10 +89,20 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
+  // UC-46.06: danh mục công việc đang hoạt động dùng cho bộ lọc tìm kiếm.
+  const categoriesResult = await jobCategoryServerRequest.getJobCategories({
+    limit: 50,
+  });
+  const jobCategories = categoriesResult?.jobCategories ?? [];
+  const category = jobCategories.some((item) => item.slug === params.category)
+    ? params.category
+    : undefined;
+
   const result = await jobServerRequest.getJobs({
     page,
     limit: 10,
     search: keyword,
+    category,
     ...budgetRanges[budget],
     createdAfter,
     ...selectedSort,
@@ -109,6 +122,8 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
       initialJobs={jobs}
       initialPagination={pagination}
       initialKeyword={keyword ?? ""}
+      initialCategory={category ?? "all"}
+      initialCategories={jobCategories}
       initialBudget={budgetRanges[budget] ? budget : "all"}
       initialTime={timeRange ? time : "all"}
       initialSort={

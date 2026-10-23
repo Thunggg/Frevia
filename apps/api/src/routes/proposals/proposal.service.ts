@@ -10,6 +10,7 @@ import {
   MyProposalsResponseType,
   ProposalDetailType,
   ProposalType,
+  ProposalStatusType,
   RoleName,
   SaveProposalDraftBodyType,
 } from '@shared/types';
@@ -25,13 +26,17 @@ import {
   ProposalFreelancerOnlyException,
   ProposalJobExpiredException,
   ProposalJobNotFoundException,
+  ProposalJobPositionsFilledException,
   ProposalJobUnavailableException,
   ProposalIncompleteException,
   ProposalNotDraftException,
   ProposalNotFoundException,
-  ProposalNotPendingException,
+  ProposalNotSubmittedException,
 } from './proposal.error';
 import { ProposalRepository } from './proposal.repo';
+
+// Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên các trạng thái này.
+const ACTIONABLE_STATUSES: ProposalStatusType[] = ['SUBMITTED', 'INTERVIEWING'];
 
 @Injectable()
 export class ProposalService {
@@ -45,7 +50,7 @@ export class ProposalService {
   ): Promise<ProposalType> {
     await this.assertCanPropose(userId, roleName, jobId);
     try {
-      return await this.proposalRepository.createPending(jobId, userId, body);
+      return await this.proposalRepository.createSubmitted(jobId, userId, body);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToCreateProposalException();
@@ -129,6 +134,7 @@ export class ProposalService {
   ): Promise<MyProposalsResponseType> {
     this.assertFreelancer(roleName);
     try {
+      await this.expireStaleProposals();
       return await this.proposalRepository.getMyProposals(userId, query);
     } catch (error) {
       if (error instanceof HttpException) throw error;
@@ -163,6 +169,7 @@ export class ProposalService {
     if (job.clientId !== userId) throw ProposalForbiddenException();
 
     try {
+      await this.expireStaleProposals();
       return await this.proposalRepository.findSubmittedProposalsForClientJob(
         job.id,
       );
@@ -186,6 +193,7 @@ export class ProposalService {
     if (job.clientId !== userId) throw ProposalForbiddenException();
 
     try {
+      await this.expireStaleProposals();
       return await this.proposalRepository.findSubmittedProposalsPageForClientJob(
         job.id,
         query,
@@ -204,6 +212,7 @@ export class ProposalService {
     if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
 
     try {
+      await this.expireStaleProposals();
       const access =
         await this.proposalRepository.findProposalForClientDecision(proposalId);
       if (!access || access.deletedAt) throw ProposalNotFoundException();
@@ -228,13 +237,42 @@ export class ProposalService {
     proposalId: number,
   ): Promise<ProposalType> {
     this.assertFreelancer(roleName);
+    await this.expireStaleProposals();
     const proposal = await this.proposalRepository.findProposal(proposalId);
     if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
     if (proposal.freelancerId !== userId) throw ProposalForbiddenException();
-    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+    this.assertActionable(proposal.status);
 
     try {
       return await this.proposalRepository.withdrawProposal(proposal.id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateProposalException();
+      }
+      throw error;
+    }
+  }
+
+  // Khách hàng phản hồi và bắt đầu trao đổi/phỏng vấn freelancer.
+  async interviewProposal(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+  ): Promise<ProposalType> {
+    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
+
+    await this.expireStaleProposals();
+    const proposal =
+      await this.proposalRepository.findProposalForClientDecision(proposalId);
+    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
+    if (!proposal.job || proposal.job.deletedAt) {
+      throw ProposalJobUnavailableException();
+    }
+    if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
+    this.assertActionable(proposal.status);
+
+    try {
+      return await this.proposalRepository.interviewProposal(proposal.id);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateProposalException();
@@ -250,6 +288,7 @@ export class ProposalService {
   ): Promise<ProposalType> {
     if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
 
+    await this.expireStaleProposals();
     const proposal =
       await this.proposalRepository.findProposalForClientDecision(proposalId);
     if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
@@ -257,7 +296,7 @@ export class ProposalService {
       throw ProposalJobUnavailableException();
     }
     if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
-    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+    this.assertActionable(proposal.status);
 
     try {
       return await this.proposalRepository.rejectProposal(proposal.id);
@@ -269,6 +308,12 @@ export class ProposalService {
     }
   }
 
+  /**
+   * UC-32.06 — Tuyển (hire) một đề xuất.
+   *
+   * Job SINGLE: nhận 1 người thì các đề xuất còn lại bị REJECTED.
+   * Job MULTIPLE: các đề xuất khác giữ nguyên trạng thái; job chỉ đóng khi đủ số vị trí.
+   */
   async acceptProposal(
     userId: number,
     roleName: string,
@@ -276,6 +321,7 @@ export class ProposalService {
   ): Promise<ProposalType> {
     if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
 
+    await this.expireStaleProposals();
     const proposal =
       await this.proposalRepository.findProposalForClientDecision(proposalId);
     if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
@@ -283,19 +329,24 @@ export class ProposalService {
       throw ProposalJobUnavailableException();
     }
     if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
-    if (proposal.status !== 'PENDING') throw ProposalNotPendingException();
+    this.assertActionable(proposal.status);
     if (proposal.job.status !== 'OPEN') throw ProposalJobUnavailableException();
     if (proposal.bidAmount === null) throw ProposalIncompleteException();
+    if (proposal.job.positionsFilled >= proposal.job.positionsRequired) {
+      throw ProposalJobPositionsFilledException();
+    }
 
     try {
-      return await this.proposalRepository.acceptProposal(
-        proposal.id,
-        proposal.job.id,
-        proposal.job.clientId,
-        proposal.freelancerId,
-        Number(proposal.bidAmount),
-        proposal.job.title,
-      );
+      return await this.proposalRepository.hireProposal({
+        proposalId: proposal.id,
+        jobId: proposal.job.id,
+        clientId: proposal.job.clientId,
+        freelancerId: proposal.freelancerId,
+        bidAmount: Number(proposal.bidAmount),
+        jobTitle: proposal.job.title,
+        hiringType: proposal.job.hiringType,
+        positionsRequired: proposal.job.positionsRequired,
+      });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateProposalException();
@@ -311,6 +362,7 @@ export class ProposalService {
   ): Promise<ProposalDetailType> {
     this.assertFreelancer(roleName);
     try {
+      await this.expireStaleProposals();
       const proposal =
         await this.proposalRepository.getProposalDetail(proposalId);
       if (!proposal) throw ProposalNotFoundException();
@@ -325,6 +377,19 @@ export class ProposalService {
   private assertFreelancer(roleName: string): void {
     if (roleName !== RoleName.FREELANCER)
       throw ProposalFreelancerOnlyException();
+  }
+
+  // Chỉ đề xuất đang chờ khách hàng xử lý mới được phỏng vấn/từ chối/tuyển/rút.
+  private assertActionable(status: ProposalStatusType): void {
+    if (!ACTIONABLE_STATUSES.includes(status)) {
+      throw ProposalNotSubmittedException();
+    }
+  }
+
+  // Đề xuất quá hạn xử lý (khách hàng không hoạt động) được chuyển sang EXPIRED
+  // trước khi đọc/quyết định để trạng thái hiển thị luôn đúng.
+  private async expireStaleProposals(): Promise<void> {
+    await this.proposalRepository.expireOverdueProposals();
   }
 
   private async assertCanPropose(
@@ -351,12 +416,17 @@ export class ProposalService {
     }
     if (job.clientId === userId) throw CannotProposeOwnJobException(); // 8
 
+    // 9 — job đã tuyển đủ số vị trí (SINGLE: 1, MULTIPLE: positionsRequired).
+    if (job.positionsFilled >= job.positionsRequired) {
+      throw ProposalJobPositionsFilledException();
+    }
+
     const activeProposal = await this.proposalRepository.findActiveProposal(
       job.id,
       userId,
       ignoredProposalId,
     );
-    if (activeProposal) throw ActiveProposalExistsException(); // 9
+    if (activeProposal) throw ActiveProposalExistsException(); // 10
   }
 
   private async getOwnedDraft(userId: number, proposalId: number) {

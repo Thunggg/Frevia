@@ -164,6 +164,17 @@ export class ProposalController {
     return this.proposalService.withdrawProposal(userId, roleName, proposalId);
   }
 
+  // Khách hàng phản hồi và chuyển đề xuất sang trạng thái phỏng vấn/trao đổi.
+  @Patch(':id/interview')
+  @ZodSerializerDto(ProposalResponseDto)
+  interviewProposal(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+  ) {
+    return this.proposalService.interviewProposal(userId, roleName, proposalId);
+  }
+
   @Patch(':id/reject')
   @ZodSerializerDto(ProposalResponseDto)
   rejectProposal(

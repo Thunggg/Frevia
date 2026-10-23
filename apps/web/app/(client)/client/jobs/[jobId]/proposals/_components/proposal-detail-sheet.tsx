@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,14 +40,16 @@ import {
   UserRound,
   X,
 } from "@/components/icons";
-import { CreateContractDialog } from "./create-contract-dialog";
 import {
   extractProposalData,
   proposalApiRequest,
 } from "@/apiRequests/proposal";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import { ApiFail } from "@/lib/http";
-import type { ClientProposalDetailType } from "@shared/types";
+import type {
+  ClientProposalDetailType,
+  SubmittedProposalStatusType,
+} from "@shared/types";
 
 export interface ProposalDetailSheetProps {
   proposalId: number | null;
@@ -60,7 +63,7 @@ export interface ProposalDetailSheetProps {
     coverLetter: string;
     bidAmount: number;
     deliveryDays: number;
-    status: "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
+    status: SubmittedProposalStatusType;
     submittedAt: string | Date;
     freelancer: {
       id: number;
@@ -112,8 +115,8 @@ export function ProposalDetailSheet({
   const [confirmReject, setConfirmReject] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
+  const [isInterviewing, setIsInterviewing] = useState(false);
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
-  const [contractDialogOpen, setContractDialogOpen] = useState(false);
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
@@ -173,7 +176,9 @@ export function ProposalDetailSheet({
     }
   };
 
-  const status = detail?.status || initialProposal?.status || "PENDING";
+  const status = detail?.status || initialProposal?.status || "SUBMITTED";
+  // Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên hai trạng thái này.
+  const isActionable = status === "SUBMITTED" || status === "INTERVIEWING";
   const bidAmount = detail?.bidAmount ?? initialProposal?.bidAmount ?? 0;
   const deliveryDays =
     detail?.deliveryDays ?? initialProposal?.deliveryDays ?? 0;
@@ -226,7 +231,7 @@ export function ProposalDetailSheet({
         await queryClient.invalidateQueries({
           queryKey: ["client-job-proposals", jobId],
         });
-        toastSuccess({ message: t("accepted") });
+        toastSuccess({ message: t("hired") });
       }
     } catch (error) {
       toastError({
@@ -237,6 +242,31 @@ export function ProposalDetailSheet({
       });
     } finally {
       setIsAccepting(false);
+    }
+  };
+
+  // Khách hàng phản hồi và bắt đầu trao đổi/phỏng vấn.
+  const handleInterview = async () => {
+    if (!proposalId) return;
+    setIsInterviewing(true);
+    try {
+      await proposalApiRequest.interview(proposalId);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-proposal-detail", proposalId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-job-proposals", jobId],
+      });
+      toastSuccess({ message: t("interviewing") });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : t("interviewFailed"),
+      });
+    } finally {
+      setIsInterviewing(false);
     }
   };
 
@@ -375,51 +405,72 @@ export function ProposalDetailSheet({
           </div>
 
           {/* Action Footer Bar */}
-          {(status === "PENDING" || status === "ACCEPTED") && (
+          {isActionable ? (
             <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3 flex-wrap">
-              {status === "PENDING" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-4 h-9 text-xs font-semibold cursor-pointer"
-                  onClick={() => setConfirmReject(true)}
-                  disabled={isAccepting || isRejecting}
-                >
-                  <X className="mr-1.5 size-3.5" />
-                  {t("reject")}
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-4 h-9 text-xs font-semibold cursor-pointer"
+                onClick={() => setConfirmReject(true)}
+                disabled={isAccepting || isRejecting || isInterviewing}
+              >
+                <X className="mr-1.5 size-3.5" />
+                {t("reject")}
+              </Button>
 
               <div className="flex items-center gap-2 ml-auto">
-                {status === "PENDING" && (
+                {status === "SUBMITTED" ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-full border-border text-foreground hover:bg-muted px-4 h-9 text-xs font-semibold cursor-pointer"
-                    onClick={() => void handleAccept()}
-                    disabled={isAccepting || isRejecting}
+                    className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-4 h-9 text-xs font-semibold cursor-pointer"
+                    onClick={() => void handleInterview()}
+                    disabled={isAccepting || isRejecting || isInterviewing}
                   >
-                    {isAccepting ? (
+                    {isInterviewing ? (
                       <Loader2 className="mr-1.5 size-3.5 animate-spin" />
                     ) : (
-                      <Check className="mr-1.5 size-3.5" />
+                      <MessageSquare className="mr-1.5 size-3.5" />
                     )}
-                    {t("acceptOnly")}
+                    {t("interview")}
                   </Button>
-                )}
+                ) : null}
 
                 <Button
                   size="sm"
                   className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                  onClick={() => setContractDialogOpen(true)}
-                  disabled={isAccepting || isRejecting}
+                  onClick={() => void handleAccept()}
+                  disabled={isAccepting || isRejecting || isInterviewing}
                 >
-                  <FileText className="mr-1.5 size-3.5" />
-                  {t("hireCreateContract")}
+                  {isAccepting ? (
+                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  ) : (
+                    <Check className="mr-1.5 size-3.5" />
+                  )}
+                  {t("hire")}
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
+
+          {/* Đề xuất đã được tuyển: hợp đồng được tạo tự động khi tuyển. */}
+          {status === "HIRED" ? (
+            <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground">
+                {t("hiredHint")}
+              </p>
+              <Button
+                asChild
+                size="sm"
+                className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+              >
+                <Link href="/client/contracts">
+                  <FileText className="mr-1.5 size-3.5" />
+                  {t("viewContract")}
+                </Link>
+              </Button>
+            </div>
+          ) : null}
         </SheetContent>
       </Sheet>
 
@@ -485,20 +536,6 @@ export function ProposalDetailSheet({
           freelancerId: freelancerUserId,
         }}
       />
-
-      {/* Hire & Create Contract Dialog */}
-      {proposalId && (
-        <CreateContractDialog
-          open={contractDialogOpen}
-          onOpenChange={setContractDialogOpen}
-          proposalId={proposalId}
-          jobId={jobId}
-          jobTitle={jobTitle}
-          freelancerName={displayName}
-          bidAmount={bidAmount}
-          deliveryDays={deliveryDays}
-        />
-      )}
     </>
   );
 }

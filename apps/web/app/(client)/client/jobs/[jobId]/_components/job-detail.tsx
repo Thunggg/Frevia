@@ -73,6 +73,7 @@ export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
   const t = await getTranslations("jobDetailClient");
   const tStatus = await getTranslations("jobStatus");
   const tBudgetType = await getTranslations("jobBudgetType");
+  const tHiringType = await getTranslations("jobHiringType");
   const tCommon = await getTranslations("common");
   const tSidebar = await getTranslations("sidebar");
   const format = await getFormatter();
@@ -160,7 +161,7 @@ export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
         </section>
 
         {/* Minimal Meta Row (No cards, just clean columns with divider) */}
-        <div className="mt-8 grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-4 sm:gap-6">
+        <div className="mt-8 grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-5 sm:gap-6">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               {t("budget")}
@@ -191,6 +192,23 @@ export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
             <div className="mt-1">
               <JobStatusBadge status={job.status} label={statusLabel} />
             </div>
+          </div>
+
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              {t("hiringType")}
+            </p>
+            <p className="mt-1 text-sm sm:text-base font-semibold text-foreground">
+              {tHiringType(job.hiringType)}
+            </p>
+            {job.hiringType === "MULTIPLE" ? (
+              <span className="text-[11px] text-muted-foreground">
+                {t("positionsFilled", {
+                  filled: job.positionsFilled,
+                  required: job.positionsRequired,
+                })}
+              </span>
+            ) : null}
           </div>
 
           <div>

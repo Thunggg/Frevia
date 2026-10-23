@@ -28,10 +28,12 @@ import type {
 
 const PROPOSAL_STATUSES = [
   "DRAFT",
-  "PENDING",
-  "ACCEPTED",
+  "SUBMITTED",
+  "INTERVIEWING",
+  "HIRED",
   "REJECTED",
   "WITHDRAWN",
+  "EXPIRED",
 ] as const satisfies readonly ProposalStatusType[];
 
 export function MyProposalsContent({
@@ -154,14 +156,14 @@ export function MyProposalsContent({
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge
                           variant={
-                            proposal.status === "ACCEPTED"
-                              ? "default"
-                              : "secondary"
+                            proposal.status === "HIRED" ? "default" : "secondary"
                           }
                           className={
-                            proposal.status === "PENDING"
+                            proposal.status === "SUBMITTED"
                               ? "bg-amber-500/15 text-amber-800 dark:text-amber-200"
-                              : ""
+                              : proposal.status === "INTERVIEWING"
+                                ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
+                                : ""
                           }
                         >
                           {tStatus(proposal.status)}

@@ -4,7 +4,7 @@ import type {
   ViewJobDetailResType,
   ViewListJobParsedFilterType,
 } from '@shared/types';
-import { JobStatus, Prisma } from '@prisma/client';
+import { JobCategoryStatus, JobStatus, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../shared/services/prisma.service';
 import { JobNotFoundException } from './browse-job.error';
@@ -26,6 +26,7 @@ export class BrowseJobRepository {
       budgetMax,
       createdAfter,
       skill,
+      category,
       featured,
       clientId,
       sortBy,
@@ -40,6 +41,7 @@ export class BrowseJobRepository {
         deletedAt: null,
       },
 
+      // Tìm theo tiêu đề, mô tả hoặc tên kỹ năng của job.
       ...(search && {
         OR: [
           {
@@ -48,22 +50,26 @@ export class BrowseJobRepository {
               mode: Prisma.QueryMode.insensitive,
             },
           },
-          // {
-          //   description: {
-          //     contains: search,
-          //     mode: Prisma.QueryMode.insensitive,
-          //   },
-          // },
-          // {
-          //   skills: {
-          //     some: {
-          //       skillName: {
-          //         contains: search,
-          //         mode: Prisma.QueryMode.insensitive,
-          //       },
-          //     },
-          //   },
-          // },
+          {
+            description: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          },
+          {
+            skills: {
+              some: {
+                skill: {
+                  is: {
+                    name: {
+                      contains: search,
+                      mode: Prisma.QueryMode.insensitive,
+                    },
+                  },
+                },
+              },
+            },
+          },
         ],
       }),
 
@@ -95,6 +101,22 @@ export class BrowseJobRepository {
         },
       }),
 
+      // Lọc theo danh mục công việc (UC-46.07 A.2): chỉ khớp danh mục đang ACTIVE,
+      // chưa bị xoá — danh mục bị vô hiệu hoá sẽ biến mất khỏi flow tìm kiếm (BR-CAT-15).
+      ...(category && {
+        jobCategories: {
+          some: {
+            category: {
+              is: {
+                slug: category,
+                status: JobCategoryStatus.ACTIVE,
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      }),
+
       ...(featured !== undefined && { featured }),
 
       ...(clientId !== undefined && { clientId }),
@@ -117,8 +139,25 @@ export class BrowseJobRepository {
           status: true,
           featured: true,
           expiryDate: true,
+          hiringType: true,
+          positionsRequired: true,
+          positionsFilled: true,
           createdAt: true,
           updatedAt: true,
+
+          skills: {
+            select: {
+              jobId: true,
+              skillId: true,
+              skill: { select: { name: true } },
+            },
+          },
+
+          jobCategories: {
+            select: {
+              category: { select: { id: true, name: true, slug: true } },
+            },
+          },
         },
 
         skip: (page - 1) * limit,
@@ -165,6 +204,9 @@ export class BrowseJobRepository {
         status: true,
         featured: true,
         expiryDate: true,
+        hiringType: true,
+        positionsRequired: true,
+        positionsFilled: true,
         createdAt: true,
         updatedAt: true,
 
@@ -173,6 +215,12 @@ export class BrowseJobRepository {
             jobId: true,
             skillId: true,
             skill: { select: { name: true } },
+          },
+        },
+
+        jobCategories: {
+          select: {
+            category: { select: { id: true, name: true, slug: true } },
           },
         },
       },
@@ -189,18 +237,37 @@ export class BrowseJobRepository {
     T extends {
       budgetMin: Prisma.Decimal | number | null;
       budgetMax: Prisma.Decimal | number | null;
+      jobCategories?: Array<{
+        category: { id: number; name: string; slug: string };
+      }>;
     },
   >(
     job: T,
-  ): Omit<T, 'budgetMin' | 'budgetMax'> & {
+  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
     budgetMin: number | null;
     budgetMax: number | null;
+    jobCategories?: Array<{ id: number; name: string; slug: string }>;
   } {
-    return {
-      ...job,
-      budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+    const { jobCategories, budgetMin, budgetMax, ...rest } = job;
 
-      budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
+    const normalized = {
+      ...rest,
+      budgetMin: budgetMin === null ? null : Number(budgetMin),
+      budgetMax: budgetMax === null ? null : Number(budgetMax),
+    };
+
+    // Quan hệ N-N: làm phẳng bảng trung gian JobJobCategory về danh mục thực tế.
+    return (
+      jobCategories
+        ? {
+            ...normalized,
+            jobCategories: jobCategories.map(({ category }) => category),
+          }
+        : normalized
+    ) as Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
+      budgetMin: number | null;
+      budgetMax: number | null;
+      jobCategories?: Array<{ id: number; name: string; slug: string }>;
     };
   }
 }

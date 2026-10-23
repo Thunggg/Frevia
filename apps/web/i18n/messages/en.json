@@ -1043,10 +1043,12 @@
   },
   "proposalStatus": {
     "DRAFT": "Draft",
-    "PENDING": "Pending",
-    "ACCEPTED": "Accepted",
+    "SUBMITTED": "Submitted",
+    "INTERVIEWING": "Interviewing",
+    "HIRED": "Hired",
     "REJECTED": "Rejected",
-    "WITHDRAWN": "Withdrawn"
+    "WITHDRAWN": "Withdrawn",
+    "EXPIRED": "Expired"
   },
   "proposals": {
     "title": "My Proposals",
@@ -1356,6 +1358,12 @@
     "rejectFailed": "Unable to reject this proposal. Please try again.",
     "accepted": "Proposal accepted",
     "acceptFailed": "Unable to accept proposal. Please try again.",
+    "hired": "Freelancer hired. A contract has been created.",
+    "hiredHint": "This proposal has been hired and a contract was created automatically.",
+    "viewContract": "View contract",
+    "interview": "Interview",
+    "interviewing": "Proposal moved to interviewing",
+    "interviewFailed": "Unable to start interviewing. Please try again.",
     "breadcrumbJobs": "My Jobs",
     "breadcrumbProposals": "Proposals",
     "allTab": "All ({count})",
@@ -1389,8 +1397,7 @@
     "deliveryTime": "Delivery Time",
     "appliedFor": "Applied For",
     "coverLetterHeading": "Cover Letter",
-    "acceptOnly": "Accept Only",
-    "hireCreateContract": "Hire & Create Contract",
+    "hire": "Hire freelancer",
     "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job."
   },
   "contractDetail": {
@@ -1641,6 +1648,7 @@
     "helpForum": "Help & Forum",
     "roleSwitchFailed": "Unable to switch role. Please try again.",
     "navFindWork": "Find Work",
+    "navJobCategories": "Job Categories",
     "navMyProposals": "My Proposals",
     "navContracts": "Contracts",
     "navSavedJobs": "Saved Jobs",
@@ -1715,6 +1723,8 @@
     "budget": "Budget",
     "deadline": "Deadline",
     "status": "Status",
+    "hiringType": "Hiring",
+    "positionsFilled": "{filled}/{required} hired",
     "proposals": "Proposals",
     "checkProposals": "Check proposals",
     "requiredSkills": "Required Skills"
@@ -1754,6 +1764,17 @@
     "skillsLabel": "Required skills",
     "skillsPlaceholder": "Search or scroll to select skills...",
     "skillsHint": "Search by name or scroll through the available skills to select multiple items.",
+    "categoriesLabel": "Job categories",
+    "categoriesPlaceholder": "Search or scroll to select categories...",
+    "categoriesHint": "Search by name or scroll through the available categories to select multiple items.",
+    "categoriesLoading": "Loading categories...",
+    "categoriesEmpty": "No job category is available yet. An administrator has to create one first.",
+    "categoriesNoMatch": "No matching category. Try a different keyword.",
+    "hiringTypeLabel": "Hiring type",
+    "hiringTypeHint": "One freelancer: the remaining proposals are rejected as soon as you hire. Multiple freelancers: proposals stay open until every position is filled.",
+    "positionsLabel": "Positions needed",
+    "positionsPlaceholder": "e.g. 3",
+    "positionsHint": "The job closes automatically once all positions are filled.",
     "cancel": "Cancel",
     "saving": "Saving...",
     "save": "Save job",
@@ -2556,6 +2577,11 @@
   "jobBudgetType": {
     "FIXED_PRICE": "Fixed price"
   },
+  "jobHiringType": {
+    "label": "Hiring type",
+    "SINGLE": "One freelancer",
+    "MULTIPLE": "Multiple freelancers"
+  },
   "jobDetail": {
     "negotiable": "Negotiable",
     "notSet": "Not set",
@@ -2570,6 +2596,8 @@
     "jobDescription": "Job description",
     "skillsRequired": "Skills required",
     "noSkills": "No skills specified.",
+    "categories": "Job categories",
+    "noCategories": "This job is not linked to any job category.",
     "similarProjects": "Similar projects",
     "relatedTo": "More openings related to {skill}",
     "viewMore": "View more",
@@ -2591,15 +2619,20 @@
       "posted": "Posted",
       "deadline": "Deadline",
       "expires": "Expires",
-      "status": "Status"
+      "status": "Status",
+      "positions": "Positions"
     },
     "proposal": {
       "DRAFT": { "message": "You have a saved draft for this job." },
-      "PENDING": { "message": "You already submitted a proposal for this job." },
-      "ACCEPTED": { "message": "Your proposal for this job has been accepted." },
+      "SUBMITTED": { "message": "You already submitted a proposal for this job." },
+      "INTERVIEWING": { "message": "The client is interviewing you for this job." },
+      "HIRED": { "message": "You have been hired for this job. Sign the contract to start." },
       "REJECTED": { "message": "Your proposal for this job was not selected." },
-      "WITHDRAWN": { "message": "" }
+      "WITHDRAWN": { "message": "" },
+      "EXPIRED": { "message": "Your proposal expired because the client did not respond in time." }
     },
+    "positionsBadge": "{filled}/{required} positions filled",
+    "positionsFilled": "{filled}/{required} hired",
     "removeDialog": {
       "title": "Remove saved job?",
       "description": "This job leaves your Bookmarks. You can save it again anytime.",
@@ -2676,15 +2709,23 @@
     "featured": "Featured",
     "viewDetails": "View details",
     "moreSkills": "+{count} more",
+    "positionsBadge": "{filled}/{required} positions filled",
     "pageOf": "Page {page} of {totalPages}",
     "negotiable": "Negotiable",
     "resultsFor": "Results for \"{keyword}\"",
+    "resultsInCategory": "Open jobs in {category}",
+    "browseCategory": "Browse jobs in {name}",
     "openProjects": "{count, plural, =0 {No open projects} one {# open project} other {# open projects}}",
     "chip": {
       "search": "Search: {value}",
+      "category": "Category: {value}",
       "budget": "Budget: {value}",
       "posted": "Posted: {value}",
       "sort": "Sort: {value}"
+    },
+    "category": {
+      "label": "Category",
+      "any": "All categories"
     },
     "budget": {
       "label": "Budget",
@@ -2710,6 +2751,31 @@
       "budgetLow": "Budget: low to high",
       "budgetHigh": "Budget: high to low"
     }
+  },
+  "jobCategories": {
+    "metaTitle": "Job Categories | Freelancer Dashboard | Frevia",
+    "listTitle": "Job Categories",
+    "listSubtitle": "Browse the categories used for job search, filtering, and job posting.",
+    "listCount": "{count, plural, =0 {No categories} one {# category} other {# categories}}",
+    "searchPlaceholder": "Search categories...",
+    "clearSearch": "Clear search",
+    "emptyTitle": "No categories found",
+    "emptyDescription": "Try another keyword, or come back when new categories are available.",
+    "viewCategory": "View category",
+    "noDescription": "No description provided yet.",
+    "jobsCount": "{count, plural, =0 {No open jobs} one {# open job} other {# open jobs}}",
+    "pageOf": "Page {page} of {totalPages}",
+    "loadFailedTitle": "Couldn't load the categories",
+    "loadFailedDescription": "Please try again later.",
+    "tryAgain": "Try again",
+    "allCategories": "All categories",
+    "categoryBadge": "Job category",
+    "browseJobsInCategory": "Browse jobs in this category",
+    "backToCategories": "Back to categories",
+    "browseAllJobs": "Browse all jobs",
+    "detailJobsTitle": "Open jobs in this category",
+    "detailEmptyTitle": "No open jobs in this category",
+    "detailEmptyDescription": "New projects will show up here as soon as clients post them."
   },
   "home": {
     "partnersTitle": "Trusted by forward-thinking teams",

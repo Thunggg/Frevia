@@ -1,4 +1,5 @@
-// ====== Schema dùng cho trang Admin: quản lý danh mục công việc (Job Category — UC-46) ======
+// ====== Schema dùng cho trang Admin: quản lý danh mục công việc (Job Category — UC-46.01 → UC-46.05) ======
+// Schema cho người dùng xem danh mục (UC-46.06, UC-46.07) nằm ở cuối file.
 import { z } from "zod";
 import { PaginationSchema } from "./forum-post.model";
 import { MessageResSchema } from "./response.model";
@@ -108,4 +109,57 @@ export type AdminUpdateJobCategoryBodyType = z.infer<
 >;
 export type JobCategoryAdminDeleteResponseType = z.infer<
   typeof JobCategoryAdminDeleteResponseSchema
+>;
+
+// ====== Schema dùng cho phía người dùng (Freelancer): xem danh mục công việc (UC-46.06, UC-46.07) ======
+// Danh mục công việc là dữ liệu công khai (BR-CAT-02): không cần đăng nhập để xem.
+
+// Tham chiếu danh mục được nhúng vào mỗi công việc (JobSchema.jobCategories)
+export const JobCategoryRefSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+});
+
+// Một danh mục trong danh sách công khai.
+// Chỉ trả về danh mục đang ACTIVE và chưa bị xoá (BR-CAT-01).
+// jobCount = số công việc đang mở thuộc danh mục.
+export const JobCategoryBrowseItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  jobCount: z.number(),
+});
+
+export const JobCategoryBrowseQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(50).optional().default(20),
+  search: z
+    .string()
+    .trim()
+    .max(100)
+    .optional()
+    .transform((value) => value || undefined),
+});
+
+export const JobCategoryBrowseListResponseSchema = z.object({
+  jobCategories: z.array(JobCategoryBrowseItemSchema),
+  pagination: PaginationSchema,
+});
+
+export type JobCategoryRefType = z.infer<typeof JobCategoryRefSchema>;
+export type JobCategoryBrowseItemType = z.infer<
+  typeof JobCategoryBrowseItemSchema
+>;
+/** Dữ liệu query trước khi Zod ép kiểu (dùng cho URL/tham số HTTP). */
+export type JobCategoryBrowseQueryType = z.input<
+  typeof JobCategoryBrowseQuerySchema
+>;
+/** Dữ liệu query đã validate, dùng ở tầng service/repository. */
+export type JobCategoryBrowseParsedQueryType = z.output<
+  typeof JobCategoryBrowseQuerySchema
+>;
+export type JobCategoryBrowseListResponseType = z.infer<
+  typeof JobCategoryBrowseListResponseSchema
 >;
