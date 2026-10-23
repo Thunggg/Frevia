@@ -32,6 +32,7 @@ export * from "./message/review.message";
 export * from "./message/portfolio.message";
 export * from "./model/portfolio.model";
 export * from "./model/job-skill.model";
+export * from "./constants/proposal.constant";
 export * from "./model/notification.model";
 export * from "./message/notification.message";
 export * from "./model/job-bookmark.model";

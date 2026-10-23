@@ -28,6 +28,15 @@ export const JobNotFoundException = () =>
 export const JobCategoriesNotFoundException = () =>
   new BadRequestException(ManageJobMessage.JOB_CATEGORIES_NOT_FOUND);
 
+// Không thể giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
+export const PositionsRequiredBelowFilledException = () =>
+  new BadRequestException([
+    {
+      message: ManageJobMessage.POSITIONS_REQUIRED_BELOW_FILLED,
+      path: 'positionsRequired',
+    },
+  ]);
+
 export const FailedToLoadBookmarkedJobsException = () =>
   new InternalServerErrorException(
     ManageJobMessage.FAILED_TO_LOAD_BOOKMARKED_JOBS,

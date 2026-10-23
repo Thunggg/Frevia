@@ -1035,10 +1035,12 @@
   },
   "proposalStatus": {
     "DRAFT": "Bản nháp",
-    "PENDING": "Đang chờ",
-    "ACCEPTED": "Đã chấp nhận",
+    "SUBMITTED": "Đã gửi",
+    "INTERVIEWING": "Đang phỏng vấn",
+    "HIRED": "Đã được tuyển",
     "REJECTED": "Bị từ chối",
-    "WITHDRAWN": "Đã rút"
+    "WITHDRAWN": "Đã rút",
+    "EXPIRED": "Quá hạn"
   },
   "proposals": {
     "title": "Đề xuất của tôi",
@@ -1348,6 +1350,12 @@
     "rejectFailed": "Không thể từ chối đề xuất này. Vui lòng thử lại.",
     "accepted": "Đã chấp nhận đề xuất",
     "acceptFailed": "Không thể chấp nhận đề xuất. Vui lòng thử lại.",
+    "hired": "Đã tuyển freelancer. Hợp đồng đã được tạo.",
+    "hiredHint": "Đề xuất này đã được tuyển và hợp đồng được tạo tự động.",
+    "viewContract": "Xem hợp đồng",
+    "interview": "Mời phỏng vấn",
+    "interviewing": "Đã chuyển đề xuất sang trạng thái phỏng vấn",
+    "interviewFailed": "Không thể bắt đầu phỏng vấn. Vui lòng thử lại.",
     "breadcrumbJobs": "Việc của tôi",
     "breadcrumbProposals": "Đề xuất",
     "allTab": "Tất cả ({count})",
@@ -1381,8 +1389,7 @@
     "deliveryTime": "Thời gian thực hiện",
     "appliedFor": "Ứng tuyển cho",
     "coverLetterHeading": "Thư giới thiệu",
-    "acceptOnly": "Chỉ chấp nhận",
-    "hireCreateContract": "Thuê & Tạo hợp đồng",
+    "hire": "Tuyển freelancer",
     "notSelectedHint": "Freelancer sẽ được thông báo rằng đề xuất này không được chọn cho công việc này."
   },
   "contractDetail": {
@@ -1708,6 +1715,8 @@
     "budget": "Ngân sách",
     "deadline": "Hạn chót",
     "status": "Trạng thái",
+    "hiringType": "Hình thức tuyển",
+    "positionsFilled": "Đã tuyển {filled}/{required}",
     "proposals": "Đề xuất",
     "checkProposals": "Xem đề xuất",
     "requiredSkills": "Kỹ năng yêu cầu"
@@ -1751,6 +1760,11 @@
     "categoriesHint": "Chọn một hoặc nhiều danh mục để freelancer tìm thấy công việc này khi duyệt theo danh mục.",
     "categoriesLoading": "Đang tải danh mục...",
     "categoriesEmpty": "Chưa có danh mục công việc nào. Quản trị viên cần tạo danh mục trước.",
+    "hiringTypeLabel": "Hình thức tuyển",
+    "hiringTypeHint": "Một freelancer: các đề xuất còn lại sẽ bị từ chối ngay khi bạn tuyển. Nhiều freelancer: các đề xuất giữ nguyên cho tới khi tuyển đủ số vị trí.",
+    "positionsLabel": "Số lượng cần tuyển",
+    "positionsPlaceholder": "ví dụ: 3",
+    "positionsHint": "Công việc tự động đóng khi tuyển đủ số vị trí.",
     "cancel": "Huỷ",
     "saving": "Đang lưu...",
     "save": "Lưu công việc",
@@ -2553,6 +2567,11 @@
   "jobBudgetType": {
     "FIXED_PRICE": "Giá cố định"
   },
+  "jobHiringType": {
+    "label": "Hình thức tuyển",
+    "SINGLE": "Một freelancer",
+    "MULTIPLE": "Nhiều freelancer"
+  },
   "jobDetail": {
     "negotiable": "Thương lượng",
     "notSet": "Chưa đặt",
@@ -2590,15 +2609,20 @@
       "posted": "Ngày đăng",
       "deadline": "Hạn chót",
       "expires": "Hết hạn",
-      "status": "Trạng thái"
+      "status": "Trạng thái",
+      "positions": "Số lượng tuyển"
     },
     "proposal": {
       "DRAFT": { "message": "Bạn có bản nháp đã lưu cho công việc này." },
-      "PENDING": { "message": "Bạn đã gửi đề xuất cho công việc này." },
-      "ACCEPTED": { "message": "Đề xuất của bạn cho công việc này đã được chấp nhận." },
+      "SUBMITTED": { "message": "Bạn đã gửi đề xuất cho công việc này." },
+      "INTERVIEWING": { "message": "Khách hàng đang phỏng vấn bạn cho công việc này." },
+      "HIRED": { "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu." },
       "REJECTED": { "message": "Đề xuất của bạn cho công việc này không được chọn." },
-      "WITHDRAWN": { "message": "" }
+      "WITHDRAWN": { "message": "" },
+      "EXPIRED": { "message": "Đề xuất đã quá hạn vì khách hàng không phản hồi." }
     },
+    "positionsBadge": "Đã tuyển {filled}/{required} vị trí",
+    "positionsFilled": "Đã tuyển {filled}/{required}",
     "removeDialog": {
       "title": "Bỏ lưu công việc?",
       "description": "Công việc này sẽ bị xoá khỏi mục đã lưu. Bạn có thể lưu lại bất cứ lúc nào.",
@@ -2675,6 +2699,7 @@
     "featured": "Nổi bật",
     "viewDetails": "Xem chi tiết",
     "moreSkills": "+{count} nữa",
+    "positionsBadge": "Đã tuyển {filled}/{required} vị trí",
     "pageOf": "Trang {page} / {totalPages}",
     "negotiable": "Thương lượng",
     "resultsFor": "Kết quả cho \"{keyword}\"",

@@ -45,6 +45,9 @@ const browseJobSelect = {
   status: true,
   featured: true,
   expiryDate: true,
+  hiringType: true,
+  positionsRequired: true,
+  positionsFilled: true,
   createdAt: true,
   updatedAt: true,
   skills: {

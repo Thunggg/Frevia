@@ -26,6 +26,9 @@ export type JobCardJob = Pick<
   | "status"
   | "featured"
   | "createdAt"
+  | "hiringType"
+  | "positionsRequired"
+  | "positionsFilled"
   | "skills"
   | "jobCategories"
 >;
@@ -109,6 +112,15 @@ export function JobCard({
             <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
               {tStatus(job.status)}
             </span>
+            {/* Job tuyển nhiều người: hiển thị tiến độ tuyển để freelancer biết còn chỗ hay không. */}
+            {job.hiringType === "MULTIPLE" ? (
+              <span className="inline-flex items-center rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-0.5 text-xs font-semibold text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]">
+                {t("positionsBadge", {
+                  filled: job.positionsFilled,
+                  required: job.positionsRequired,
+                })}
+              </span>
+            ) : null}
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
               <Clock className="size-3.5" />
               {formatPostedTime(job.createdAt)}

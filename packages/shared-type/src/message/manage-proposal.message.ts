@@ -8,11 +8,15 @@ export const ManageProposalMessage = {
   DRAFT_CONTENT_REQUIRED: "Error.ProposalDraftContentRequired",
   PROPOSAL_NOT_FOUND: "Error.ProposalNotFound",
   PROPOSAL_NOT_DRAFT: "Error.ProposalNotDraft",
-  PROPOSAL_NOT_PENDING: "Error.ProposalNotPending",
+  // Đề xuất không còn ở trạng thái khách hàng có thể xử lý (SUBMITTED/INTERVIEWING).
+  PROPOSAL_NOT_SUBMITTED: "Error.ProposalNotSubmitted",
+  PROPOSAL_EXPIRED: "Error.ProposalExpired",
   PROPOSAL_INCOMPLETE: "Error.ProposalIncomplete",
   JOB_NOT_FOUND: "Error.ProposalJobNotFound",
   JOB_UNAVAILABLE: "Error.ProposalJobUnavailable",
   JOB_EXPIRED: "Error.ProposalJobExpired",
+  // Job đã tuyển đủ số vị trí nên không nhận thêm đề xuất.
+  JOB_POSITIONS_FILLED: "Error.ProposalJobPositionsFilled",
   CANNOT_PROPOSE_OWN_JOB: "Error.CannotProposeOwnJob",
   ACTIVE_PROPOSAL_EXISTS: "Error.ActiveProposalAlreadyExists",
   FREELANCER_ONLY: "Error.ProposalFreelancerOnly",

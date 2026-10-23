@@ -11,6 +11,7 @@ import {
   ChevronRight,
   FileText,
   Loader2,
+  MessageSquare,
   Search,
   SlidersHorizontal,
   X,
@@ -45,13 +46,19 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/shadcn/tabs";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { ClientJobProposalType } from "@shared/types";
+import type {
+  ClientJobProposalType,
+  SubmittedProposalStatusType,
+} from "@shared/types";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
 import { VerifiedBadge } from "@/components/verified-badge";
 
-type ProposalStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
+type ProposalStatus = SubmittedProposalStatusType;
 type StatusFilter = "ALL" | ProposalStatus;
+
+// Các trạng thái khách hàng có thể phỏng vấn / từ chối / tuyển.
+const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED", "INTERVIEWING"];
 
 type ClientProposal = {
   id: number;
@@ -97,17 +104,17 @@ function toClientProposal(
 
 function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
   const tStatus = useTranslations("proposalStatus");
-  const isAccepted = status === "ACCEPTED";
-  const isPending = status === "PENDING";
-  const isRejected = status === "REJECTED";
 
-  const colorClass = isAccepted
-    ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
-    : isPending
-      ? "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300"
-      : isRejected
-        ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
-        : "bg-[#F1F0F5] text-muted-foreground dark:bg-zinc-800";
+  const colorClass =
+    status === "HIRED"
+      ? "bg-[#4fae2e]/15 text-[#3f9225] dark:bg-[#4fae2e]/20 dark:text-[#7ad75d]"
+      : status === "SUBMITTED"
+        ? "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300"
+        : status === "INTERVIEWING"
+          ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
+          : status === "REJECTED"
+            ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
+            : "bg-[#F1F0F5] text-muted-foreground dark:bg-zinc-800";
 
   return (
     <span
@@ -196,6 +203,7 @@ export function ProposalList({
   const [rejecting, setRejecting] = useState<ClientProposal | null>(null);
   const [isRejecting, setIsRejecting] = useState(false);
   const [acceptingId, setAcceptingId] = useState<number | null>(null);
+  const [interviewingId, setInterviewingId] = useState<number | null>(null);
 
   // Freelancer profile sheet
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
@@ -319,6 +327,26 @@ export function ProposalList({
     }
   };
 
+  const interviewProposal = async (proposalId: number) => {
+    setInterviewingId(proposalId);
+    try {
+      await proposalApiRequest.interview(proposalId);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-job-proposals", jobId],
+      });
+      toastSuccess({ message: t("interviewing") });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : t("interviewFailed"),
+      });
+    } finally {
+      setInterviewingId(null);
+    }
+  };
+
   const acceptProposal = async (proposalId: number) => {
     setAcceptingId(proposalId);
     try {
@@ -326,7 +354,7 @@ export function ProposalList({
       await queryClient.invalidateQueries({
         queryKey: ["client-job-proposals", jobId],
       });
-      toastSuccess({ message: t("accepted") });
+      toastSuccess({ message: t("hired") });
     } catch (error) {
       toastError({
         message:
@@ -385,17 +413,24 @@ export function ProposalList({
                 >
                   {t("allTab", { count: totalItems })}
                 </TabsTrigger>
-                {(["PENDING", "ACCEPTED", "REJECTED", "WITHDRAWN"] as const).map(
-                  (item) => (
-                    <TabsTrigger
-                      key={item}
-                      value={item}
-                      className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
-                    >
-                      {tStatus(item)}
-                    </TabsTrigger>
-                  ),
-                )}
+                {(
+                  [
+                    "SUBMITTED",
+                    "INTERVIEWING",
+                    "HIRED",
+                    "REJECTED",
+                    "WITHDRAWN",
+                    "EXPIRED",
+                  ] as const
+                ).map((item) => (
+                  <TabsTrigger
+                    key={item}
+                    value={item}
+                    className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
+                  >
+                    {tStatus(item)}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </Tabs>
 
@@ -561,8 +596,26 @@ export function ProposalList({
                         {t("viewProposal")}
                       </Button>
 
-                      {proposal.status === "PENDING" ? (
+                      {ACTIONABLE_STATUSES.includes(proposal.status) ? (
                         <>
+                          {proposal.status === "SUBMITTED" ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-3.5 h-8 text-xs font-semibold cursor-pointer transition-colors"
+                              onClick={() => void interviewProposal(proposal.id)}
+                              disabled={interviewingId === proposal.id}
+                            >
+                              {interviewingId === proposal.id ? (
+                                <Loader2 className="mr-1 size-3 animate-spin" />
+                              ) : (
+                                <MessageSquare className="mr-1 size-3" />
+                              )}
+                              {t("interview")}
+                            </Button>
+                          ) : null}
+
                           <Button
                             type="button"
                             size="sm"

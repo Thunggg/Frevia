@@ -20,8 +20,7 @@ import {
   FailedToLoadContractException,
   FailedToUpdateContractException,
   ProposalNotFoundException,
-  ProposalNotAcceptedException,
-  ProposalNotPendingException,
+  ProposalNotHiredException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
 
@@ -36,8 +35,8 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      if (proposal.status !== 'PENDING' && proposal.status !== 'ACCEPTED')
-        throw ProposalNotPendingException();
+      // Hợp đồng chỉ lập được cho đề xuất đã được tuyển (HIRED).
+      if (proposal.status !== 'HIRED') throw ProposalNotHiredException();
       if (proposal.job.clientId !== clientId)
         throw ContractForbiddenException();
 
@@ -45,7 +44,6 @@ export class ContractService {
         body.proposalId,
       );
       if (existing) throw ContractAlreadyExistsException();
-      if (proposal.status !== 'ACCEPTED') throw ProposalNotAcceptedException();
 
       return await this.contractRepository.createContract(
         body,

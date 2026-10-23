@@ -6,8 +6,8 @@ export const ManageContractMessage = {
 
     PROPOSAL_NOT_FOUND: 'Error.ContractProposalNotFound',
     PROPOSAL_ALREADY_CONTRACTED: 'Error.ContractProposalAlreadyContracted',
-    PROPOSAL_NOT_PENDING: 'Error.ContractProposalNotPending',
-    PROPOSAL_NOT_ACCEPTED: 'Error.ContractProposalNotAccepted',
+    // Chỉ đề xuất đã được tuyển (HIRED) mới dùng được để lập hợp đồng.
+    PROPOSAL_NOT_HIRED: 'Error.ContractProposalNotHired',
     CONTRACT_NOT_FOUND: 'Error.ContractNotFound',
     CONTRACT_ALREADY_EXISTS_FOR_JOB: 'Error.ContractAlreadyExistsForJob',
     JOB_NOT_FOUND: 'Error.ContractJobNotFound',

@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { resolveProposalExpiryDate } from '@shared/types';
 import 'dotenv/config';
 
 if (!process.env.DIRECT_URL) {
@@ -18,19 +19,19 @@ const proposalData = [
     coverLetter: `Hi! I'm an experienced React developer with 3+ years of building responsive UIs. I've worked on multiple landing pages using React and Tailwind CSS, delivering pixel-perfect designs. I can complete this within 7 days and ensure mobile responsiveness across all devices.`,
     bidAmount: '350',
     deliveryDays: 7,
-    status: 'PENDING' as const,
+    status: 'SUBMITTED' as const,
   },
   {
     coverLetter: `I specialize in NestJS and PostgreSQL backend development. I have built production-grade REST APIs with proper authentication, rate limiting, and Swagger documentation. I'd love to take on this project and deliver clean, well-tested code.`,
     bidAmount: '900',
     deliveryDays: 14,
-    status: 'ACCEPTED' as const,
+    status: 'HIRED' as const,
   },
   {
     coverLetter: `React Native is my primary tech stack. I've published 5+ apps on both App Store and Google Play. I can handle state management, push notifications, and Firebase integration. Happy to share my portfolio upon request.`,
     bidAmount: '2200',
     deliveryDays: 30,
-    status: 'PENDING' as const,
+    status: 'INTERVIEWING' as const,
   },
   {
     coverLetter: `I have extensive e-commerce experience with Next.js and Stripe. I'll set up product catalog, cart, checkout flow, and admin dashboard. SEO optimization is included by default in my workflow.`,
@@ -94,6 +95,7 @@ async function main() {
       continue;
     }
 
+    const submittedAt = new Date();
     const proposal = await prisma.proposal.create({
       data: {
         jobId: job.id,
@@ -102,6 +104,12 @@ async function main() {
         bidAmount: data.bidAmount,
         deliveryDays: data.deliveryDays,
         status: data.status,
+        submittedAt,
+        // Đề xuất đang chờ khách hàng xử lý có hạn 30 ngày.
+        expiresAt:
+          data.status === 'SUBMITTED' || data.status === 'INTERVIEWING'
+            ? resolveProposalExpiryDate(submittedAt)
+            : null,
       },
     });
 
@@ -115,10 +123,12 @@ async function main() {
     `\nDone! Created: ${created}, Skipped (already existed): ${skipped}`,
   );
   console.log('\nProposal summary:');
-  console.log('  - PENDING   : proposals waiting for client review');
-  console.log('  - ACCEPTED  : proposal accepted (ready to create contract)');
-  console.log('  - REJECTED  : proposal rejected by client');
-  console.log('  - WITHDRAWN : proposal withdrawn by freelancer');
+  console.log('  - SUBMITTED   : proposals waiting for client review');
+  console.log('  - INTERVIEWING: client responded, in discussion/interview');
+  console.log('  - HIRED       : client hired the freelancer');
+  console.log('  - REJECTED    : proposal rejected by client');
+  console.log('  - WITHDRAWN   : proposal withdrawn by freelancer');
+  console.log('  - EXPIRED     : client did not respond within 30 days');
 }
 
 main()

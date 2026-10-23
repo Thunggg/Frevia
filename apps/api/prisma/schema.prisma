@@ -428,13 +428,19 @@ model Job {
   updatedAt   DateTime   @updatedAt
   deletedAt   DateTime?
 
+  // Tuyển dụng: SINGLE = 1 freelancer (nhận 1 người là đóng các đề xuất còn lại),
+  // MULTIPLE = tuyển nhiều người theo positionsRequired.
+  hiringType       HiringType @default(SINGLE)
+  positionsRequired Int       @default(1)
+  positionsFilled   Int       @default(0)
+
   client           User                @relation(fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   jobCategories    JobJobCategory[]
   skills           JobSkill[]
   bookmarks        JobBookmark[]
   recentlyViewedBy RecentlyViewedJob[]
   proposals        Proposal[]
-  contract         Contract?
+  contracts        Contract[]
 
   @@index([status, deletedAt, createdAt])
   @@index([clientId, deletedAt, createdAt])
@@ -544,6 +550,8 @@ model Proposal {
   acceptedAt  DateTime?
   rejectedAt  DateTime?
   withdrawnAt DateTime?
+  // Hạn hiệu lực của đề xuất đang chờ khách hàng xử lý (mặc định 30 ngày kể từ khi gửi).
+  expiresAt   DateTime?
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
@@ -579,7 +587,7 @@ model ProposalAttachment {
 // ============================
 model Contract {
   id                 Int            @id @default(autoincrement())
-  jobId              Int            @unique
+  jobId              Int
   proposalId         Int            @unique
   clientId           Int
   freelancerId       Int
@@ -608,6 +616,7 @@ model Contract {
   @@index([clientId])
   @@index([freelancerId])
   @@index([status])
+  @@index([jobId])
 }
 
 // ============================
@@ -1245,12 +1254,20 @@ enum JobCategoryStatus {
   INACTIVE
 }
 
+// Kiểu tuyển dụng của tin: một người (SINGLE) hay nhiều người (MULTIPLE).
+enum HiringType {
+  SINGLE
+  MULTIPLE
+}
+
 enum ProposalStatus {
   DRAFT
-  PENDING
-  ACCEPTED
+  SUBMITTED
+  INTERVIEWING
+  HIRED
   REJECTED
   WITHDRAWN
+  EXPIRED
 }
 
 enum ContractStatus {

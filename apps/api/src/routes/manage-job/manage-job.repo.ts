@@ -15,6 +15,7 @@ import { PrismaService } from '../../shared/services/prisma.service';
 import {
   JobCategoriesNotFoundException,
   JobNotFoundException,
+  PositionsRequiredBelowFilledException,
 } from './manage-job.error';
 
 const jobSelect = {
@@ -30,6 +31,9 @@ const jobSelect = {
   status: true,
   featured: true,
   expiryDate: true,
+  hiringType: true,
+  positionsRequired: true,
+  positionsFilled: true,
   createdAt: true,
   updatedAt: true,
   jobCategories: {
@@ -205,6 +209,8 @@ export class ManageJobRepository {
           budgetType: data.budgetType,
           deadline: data.deadline,
           expiryDate: data.expiryDate,
+          hiringType: data.hiringType,
+          positionsRequired: data.positionsRequired,
         },
 
         select: jobSelect,
@@ -233,6 +239,16 @@ export class ManageJobRepository {
     const updatedJob = await this.prisma.$transaction(async (tx) => {
       await this.assertJobCategoriesUsable(tx, data.jobCategories);
 
+      // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
+      const current = await tx.job.findUniqueOrThrow({
+        where: { id: jobId },
+        select: { positionsFilled: true },
+      });
+
+      if (data.positionsRequired < current.positionsFilled) {
+        throw PositionsRequiredBelowFilledException();
+      }
+
       const job = await tx.job.update({
         where: {
           id: jobId,
@@ -246,6 +262,8 @@ export class ManageJobRepository {
           budgetType: data.budgetType,
           deadline: data.deadline,
           expiryDate: data.expiryDate,
+          hiringType: data.hiringType,
+          positionsRequired: data.positionsRequired,
         },
 
         select: jobSelect,

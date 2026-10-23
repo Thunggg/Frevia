@@ -27,6 +27,10 @@ export const JobStatusSchema = z.enum([
 
 export const JobBudgetTypeSchema = z.enum(["FIXED_PRICE"]);
 
+// SINGLE = chỉ tuyển 1 freelancer (nhận 1 người là các đề xuất còn lại bị từ chối).
+// MULTIPLE = tuyển nhiều người theo positionsRequired, các đề xuất khác giữ nguyên trạng thái.
+export const JobHiringTypeSchema = z.enum(["SINGLE", "MULTIPLE"]);
+
 export const JobSchema = z.object({
   id: z.number(),
 
@@ -51,6 +55,12 @@ export const JobSchema = z.object({
   featured: z.boolean(),
 
   expiryDate: z.date().nullable(),
+
+  hiringType: JobHiringTypeSchema,
+
+  positionsRequired: z.number().int(),
+
+  positionsFilled: z.number().int(),
 
   createdAt: z.date(),
 
@@ -120,10 +130,30 @@ export const CreateJobBodySchema = z
       .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
       .optional()
       .default([]),
+
+    // Kiểu tuyển dụng + số lượng cần tuyển (positionsFilled do hệ thống quản lý).
+    hiringType: JobHiringTypeSchema.optional().default("SINGLE"),
+
+    positionsRequired: z.coerce
+      .number({ error: ManageJobMessage.POSITIONS_REQUIRED_INVALID })
+      .int(ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .min(1, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .max(100, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+      .optional()
+      .default(1),
   })
   .strict()
   .superRefine((data, ctx) => {
     const now = new Date();
+
+    // SINGLE chỉ tuyển đúng 1 người; muốn tuyển nhiều phải chọn MULTIPLE.
+    if (data.hiringType === "SINGLE" && data.positionsRequired !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["positionsRequired"],
+        message: ManageJobMessage.POSITIONS_REQUIRED_MUST_BE_ONE_FOR_SINGLE,
+      });
+    }
 
     if (
       data.budgetMin != null &&
@@ -284,6 +314,8 @@ export const ChangeJobStatusResponseSchema = JobSchema;
 export type JobStatusType = z.infer<typeof JobStatusSchema>;
 
 export type JobBudgetType = z.infer<typeof JobBudgetTypeSchema>;
+
+export type JobHiringType = z.infer<typeof JobHiringTypeSchema>;
 
 export type JobType = z.infer<typeof JobSchema>;
 

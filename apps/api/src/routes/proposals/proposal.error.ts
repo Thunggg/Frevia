@@ -32,6 +32,11 @@ export const ProposalJobExpiredException = () =>
     { message: ManageProposalMessage.JOB_EXPIRED, path: 'jobId' },
   ]);
 
+export const ProposalJobPositionsFilledException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.JOB_POSITIONS_FILLED, path: 'jobId' },
+  ]);
+
 export const CannotProposeOwnJobException = () =>
   new ForbiddenException([
     { message: ManageProposalMessage.CANNOT_PROPOSE_OWN_JOB, path: 'jobId' },
@@ -57,9 +62,14 @@ export const ProposalNotDraftException = () =>
     { message: ManageProposalMessage.PROPOSAL_NOT_DRAFT, path: 'id' },
   ]);
 
-export const ProposalNotPendingException = () =>
+export const ProposalNotSubmittedException = () =>
   new UnprocessableEntityException([
-    { message: ManageProposalMessage.PROPOSAL_NOT_PENDING, path: 'id' },
+    { message: ManageProposalMessage.PROPOSAL_NOT_SUBMITTED, path: 'id' },
+  ]);
+
+export const ProposalExpiredException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.PROPOSAL_EXPIRED, path: 'id' },
   ]);
 
 export const ProposalIncompleteException = () =>

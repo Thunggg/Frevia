@@ -183,7 +183,7 @@ async function seedAccountProfileDemo() {
         coverLetter: 'Demo proposal for review management.',
         bidAmount: 1000,
         deliveryDays: 14,
-        status: ProposalStatus.ACCEPTED,
+        status: ProposalStatus.HIRED,
         submittedAt: new Date(),
         acceptedAt: new Date(),
       },

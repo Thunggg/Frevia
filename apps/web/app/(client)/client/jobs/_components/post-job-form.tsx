@@ -54,6 +54,8 @@ const emptyJobForm: CreateJobBodyType = {
   expiryDate: null,
   skills: [],
   jobCategories: [],
+  hiringType: "SINGLE",
+  positionsRequired: 1,
 };
 
 function getJobFormValues(job?: JobType): CreateJobBodyType {
@@ -69,6 +71,8 @@ function getJobFormValues(job?: JobType): CreateJobBodyType {
     expiryDate: job.expiryDate,
     skills: job.skills?.map((skill) => skill.skillId) ?? [],
     jobCategories: job.jobCategories?.map((jobCategory) => jobCategory.id) ?? [],
+    hiringType: job.hiringType,
+    positionsRequired: job.positionsRequired,
   };
 }
 
@@ -82,6 +86,7 @@ export function PostJobForm({
 }: PostJobFormProps) {
   const t = useTranslations("postJobForm");
   const tCommon = useTranslations("common");
+  const tHiringType = useTranslations("jobHiringType");
   const isDialog = mode === "dialog";
   const isActive = isDialog ? open : true;
   const [skillInput, setSkillInput] = useState("");
@@ -289,6 +294,83 @@ export function PostJobForm({
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
+        />
+      </div>
+      {/* Hình thức tuyển + số lượng cần tuyển */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Controller
+          name="hiringType"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("hiringTypeLabel")}</FieldLabel>
+              <div className="flex flex-wrap gap-2">
+                {(["SINGLE", "MULTIPLE"] as const).map((option) => {
+                  const isSelected = field.value === option;
+
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => {
+                        field.onChange(option);
+                        // Job tuyển một người chỉ có đúng 1 vị trí.
+                        if (option === "SINGLE") {
+                          form.setValue("positionsRequired", 1);
+                        }
+                      }}
+                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer ${
+                        isSelected
+                          ? "bg-[#0069D3] text-white hover:bg-[#0058b3]"
+                          : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                      }`}
+                    >
+                      {tHiringType(option)}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground font-sans">
+                {t("hiringTypeHint")}
+              </p>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="positionsRequired"
+          control={form.control}
+          render={({ field, fieldState }) => {
+            const hiringType = form.watch("hiringType");
+            const isSingle = hiringType === "SINGLE";
+
+            return (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("positionsLabel")}</FieldLabel>
+                <Input
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  disabled={isSingle}
+                  value={field.value ?? 1}
+                  onChange={(event) =>
+                    field.onChange(
+                      event.target.value === "" ? 1 : Number(event.target.value),
+                    )
+                  }
+                  aria-invalid={fieldState.invalid}
+                  placeholder={t("positionsPlaceholder")}
+                  className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none disabled:opacity-60"
+                />
+                <p className="text-xs text-muted-foreground font-sans">
+                  {t("positionsHint")}
+                </p>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            );
+          }}
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

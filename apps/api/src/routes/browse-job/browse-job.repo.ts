@@ -139,6 +139,9 @@ export class BrowseJobRepository {
           status: true,
           featured: true,
           expiryDate: true,
+          hiringType: true,
+          positionsRequired: true,
+          positionsFilled: true,
           createdAt: true,
           updatedAt: true,
 
@@ -201,6 +204,9 @@ export class BrowseJobRepository {
         status: true,
         featured: true,
         expiryDate: true,
+        hiringType: true,
+        positionsRequired: true,
+        positionsFilled: true,
         createdAt: true,
         updatedAt: true,
 

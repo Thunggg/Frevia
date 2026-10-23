@@ -6,8 +6,10 @@ import type {
   MyProposalsQueryType,
   MyProposalsResponseType,
   ProposalDetailType,
+  ProposalStatusType,
   ProposalType,
   SaveProposalDraftBodyType,
+  SubmittedProposalStatusType,
 } from "@shared/types";
 
 import { http } from "@/lib/http";
@@ -18,7 +20,7 @@ export const proposalApiRequest = {
     query: {
       page?: number;
       limit?: number;
-      status?: "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
+      status?: SubmittedProposalStatusType;
     } = {},
   ) {
     const params = new URLSearchParams();
@@ -58,6 +60,14 @@ export const proposalApiRequest = {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/reject`, {});
   },
 
+  // Khách hàng phản hồi và bắt đầu phỏng vấn/trao đổi với freelancer.
+  interview(proposalId: number) {
+    return http.patch<ProposalType>(
+      `/api/proposals/${proposalId}/interview`,
+      {},
+    );
+  },
+
   accept(proposalId: number) {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/accept`, {});
   },
@@ -91,9 +101,17 @@ export const proposalApiRequest = {
   async getMyProposalForJob(jobId: number) {
     const response = await this.getMyProposals({ jobId, page: 1, limit: 50 });
     const result = extractProposalData(response);
+    // Giữ lại đề xuất đang có hiệu lực với job để hiển thị trạng thái trên trang job.
+    const visibleStatuses: ProposalStatusType[] = [
+      "DRAFT",
+      "SUBMITTED",
+      "INTERVIEWING",
+      "HIRED",
+      "REJECTED",
+    ];
     return (
       result.data.find((proposal) =>
-        ["DRAFT", "PENDING", "ACCEPTED", "REJECTED"].includes(proposal.status),
+        visibleStatuses.includes(proposal.status),
       ) ?? null
     );
   },

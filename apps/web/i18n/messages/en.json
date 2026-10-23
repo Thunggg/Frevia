@@ -1043,10 +1043,12 @@
   },
   "proposalStatus": {
     "DRAFT": "Draft",
-    "PENDING": "Pending",
-    "ACCEPTED": "Accepted",
+    "SUBMITTED": "Submitted",
+    "INTERVIEWING": "Interviewing",
+    "HIRED": "Hired",
     "REJECTED": "Rejected",
-    "WITHDRAWN": "Withdrawn"
+    "WITHDRAWN": "Withdrawn",
+    "EXPIRED": "Expired"
   },
   "proposals": {
     "title": "My Proposals",
@@ -1356,6 +1358,12 @@
     "rejectFailed": "Unable to reject this proposal. Please try again.",
     "accepted": "Proposal accepted",
     "acceptFailed": "Unable to accept proposal. Please try again.",
+    "hired": "Freelancer hired. A contract has been created.",
+    "hiredHint": "This proposal has been hired and a contract was created automatically.",
+    "viewContract": "View contract",
+    "interview": "Interview",
+    "interviewing": "Proposal moved to interviewing",
+    "interviewFailed": "Unable to start interviewing. Please try again.",
     "breadcrumbJobs": "My Jobs",
     "breadcrumbProposals": "Proposals",
     "allTab": "All ({count})",
@@ -1389,8 +1397,7 @@
     "deliveryTime": "Delivery Time",
     "appliedFor": "Applied For",
     "coverLetterHeading": "Cover Letter",
-    "acceptOnly": "Accept Only",
-    "hireCreateContract": "Hire & Create Contract",
+    "hire": "Hire freelancer",
     "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job."
   },
   "contractDetail": {
@@ -1716,6 +1723,8 @@
     "budget": "Budget",
     "deadline": "Deadline",
     "status": "Status",
+    "hiringType": "Hiring",
+    "positionsFilled": "{filled}/{required} hired",
     "proposals": "Proposals",
     "checkProposals": "Check proposals",
     "requiredSkills": "Required Skills"
@@ -1759,6 +1768,11 @@
     "categoriesHint": "Pick one or more categories so freelancers can find this job when browsing by category.",
     "categoriesLoading": "Loading categories...",
     "categoriesEmpty": "No job category is available yet. An administrator has to create one first.",
+    "hiringTypeLabel": "Hiring type",
+    "hiringTypeHint": "One freelancer: the remaining proposals are rejected as soon as you hire. Multiple freelancers: proposals stay open until every position is filled.",
+    "positionsLabel": "Positions needed",
+    "positionsPlaceholder": "e.g. 3",
+    "positionsHint": "The job closes automatically once all positions are filled.",
     "cancel": "Cancel",
     "saving": "Saving...",
     "save": "Save job",
@@ -2561,6 +2575,11 @@
   "jobBudgetType": {
     "FIXED_PRICE": "Fixed price"
   },
+  "jobHiringType": {
+    "label": "Hiring type",
+    "SINGLE": "One freelancer",
+    "MULTIPLE": "Multiple freelancers"
+  },
   "jobDetail": {
     "negotiable": "Negotiable",
     "notSet": "Not set",
@@ -2598,15 +2617,20 @@
       "posted": "Posted",
       "deadline": "Deadline",
       "expires": "Expires",
-      "status": "Status"
+      "status": "Status",
+      "positions": "Positions"
     },
     "proposal": {
       "DRAFT": { "message": "You have a saved draft for this job." },
-      "PENDING": { "message": "You already submitted a proposal for this job." },
-      "ACCEPTED": { "message": "Your proposal for this job has been accepted." },
+      "SUBMITTED": { "message": "You already submitted a proposal for this job." },
+      "INTERVIEWING": { "message": "The client is interviewing you for this job." },
+      "HIRED": { "message": "You have been hired for this job. Sign the contract to start." },
       "REJECTED": { "message": "Your proposal for this job was not selected." },
-      "WITHDRAWN": { "message": "" }
+      "WITHDRAWN": { "message": "" },
+      "EXPIRED": { "message": "Your proposal expired because the client did not respond in time." }
     },
+    "positionsBadge": "{filled}/{required} positions filled",
+    "positionsFilled": "{filled}/{required} hired",
     "removeDialog": {
       "title": "Remove saved job?",
       "description": "This job leaves your Bookmarks. You can save it again anytime.",
@@ -2683,6 +2707,7 @@
     "featured": "Featured",
     "viewDetails": "View details",
     "moreSkills": "+{count} more",
+    "positionsBadge": "{filled}/{required} positions filled",
     "pageOf": "Page {page} of {totalPages}",
     "negotiable": "Negotiable",
     "resultsFor": "Results for \"{keyword}\"",

@@ -75,10 +75,13 @@ function isPast(value: string | Date | null) {
 
 const proposalStatusStyles = {
   DRAFT: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
-  PENDING: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  ACCEPTED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+  SUBMITTED: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  INTERVIEWING:
+    "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
+  HIRED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
   REJECTED: "bg-destructive/10 text-destructive",
   WITHDRAWN: "",
+  EXPIRED: "bg-slate-500/10 text-slate-500 dark:text-slate-400",
 } satisfies Record<ProposalType["status"], string>;
 
 function JobDescription({ description }: { description: string | null }) {
@@ -318,6 +321,19 @@ export function JobDetailContent({
     },
     { id: "expires", label: t("summary.expires"), value: formatDate(job.expiryDate) },
     { id: "status", label: t("summary.status"), value: tStatus(job.status) },
+    // Job tuyển nhiều người: hiển thị số vị trí đã tuyển / cần tuyển.
+    ...(job.hiringType === "MULTIPLE"
+      ? [
+          {
+            id: "positions",
+            label: t("summary.positions"),
+            value: t("positionsFilled", {
+              filled: job.positionsFilled,
+              required: job.positionsRequired,
+            }),
+          },
+        ]
+      : []),
   ];
 
   const proposalActionLabel = activeProposal
@@ -406,6 +422,17 @@ export function JobDetailContent({
                   {job.featured ? (
                     <Badge className="bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
                       {t("featured")}
+                    </Badge>
+                  ) : null}
+                  {job.hiringType === "MULTIPLE" ? (
+                    <Badge
+                      variant="outline"
+                      className="border-[#4fae2e]/40 bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]"
+                    >
+                      {t("positionsBadge", {
+                        filled: job.positionsFilled,
+                        required: job.positionsRequired,
+                      })}
                     </Badge>
                   ) : null}
                   {deadlineUrgencyLabel ? (
