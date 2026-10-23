@@ -2,6 +2,7 @@ import adminServerRequest from "@/apiRequests/admin.server";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
+import { formatDateTime } from "@/lib/format";
 import {
   ArrowLeft,
   Calendar,
@@ -15,6 +16,16 @@ import { EditCategoryButton } from "./components/edit-category-button";
 import { DeleteCategoryButton } from "./components/delete-category-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
+
+export async function generateMetadata() {
+  const t = await getTranslations("adminCategories");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function AdminCategoryDetailPage({
   params,
@@ -27,6 +38,9 @@ export default async function AdminCategoryDetailPage({
   if (isNaN(categoryId)) {
     notFound();
   }
+
+  const t = await getTranslations("adminCategories");
+  const locale = await getLocale();
 
   const category = await adminServerRequest.getAdminCategoryById(categoryId);
 
@@ -48,7 +62,7 @@ export default async function AdminCategoryDetailPage({
             >
               <Link href="/admin/categories">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Categories
+                {t("detailBackToCategories")}
               </Link>
             </Button>
           </div>
@@ -77,7 +91,7 @@ export default async function AdminCategoryDetailPage({
           <div className="rounded-xl border border-border bg-card p-6 space-y-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <FolderOpen className="h-5 w-5 text-[#4fae2e]" />
-              Category Details
+              {t("detailHeading")}
             </h2>
 
             <Separator />
@@ -86,7 +100,7 @@ export default async function AdminCategoryDetailPage({
               <div className="space-y-1">
                 <p className="text-xs font-medium uppercase text-muted-foreground flex items-center gap-1.5">
                   <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-                  Category Name
+                  {t("detailFieldName")}
                 </p>
                 <p className="text-sm font-medium text-foreground">
                   {category.name}
@@ -96,7 +110,7 @@ export default async function AdminCategoryDetailPage({
               <div className="space-y-1">
                 <p className="text-xs font-medium uppercase text-muted-foreground flex items-center gap-1.5">
                   <Hash className="h-3.5 w-3.5 text-muted-foreground" />
-                  Slug
+                  {t("detailFieldSlug")}
                 </p>
                 <code className="inline-block rounded bg-muted px-2 py-0.5 text-xs text-foreground font-mono">
                   {category.slug}
@@ -106,26 +120,20 @@ export default async function AdminCategoryDetailPage({
               <div className="space-y-1">
                 <p className="text-xs font-medium uppercase text-muted-foreground flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                  Created At
+                  {t("detailFieldCreatedAt")}
                 </p>
                 <p className="text-sm text-foreground">
-                  {new Date(category.createdAt).toLocaleString("en-US", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
+                  {formatDateTime(category.createdAt, locale)}
                 </p>
               </div>
 
               <div className="space-y-1">
                 <p className="text-xs font-medium uppercase text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                  Updated At
+                  {t("detailFieldUpdatedAt")}
                 </p>
                 <p className="text-sm text-foreground">
-                  {new Date(category.updatedAt).toLocaleString("en-US", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
+                  {formatDateTime(category.updatedAt, locale)}
                 </p>
               </div>
             </div>
@@ -134,7 +142,7 @@ export default async function AdminCategoryDetailPage({
 
             <div className="space-y-1.5">
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Description
+                {t("detailFieldDescription")}
               </p>
               {category.description ? (
                 <p className="rounded-lg bg-muted/50 p-3 text-sm leading-relaxed text-foreground">
@@ -142,7 +150,7 @@ export default async function AdminCategoryDetailPage({
                 </p>
               ) : (
                 <p className="text-sm italic text-muted-foreground">
-                  No description provided for this category.
+                  {t("detailNoDescription")}
                 </p>
               )}
             </div>
@@ -152,7 +160,7 @@ export default async function AdminCategoryDetailPage({
         {/* Sidebar / Stats Card */}
         <div className="space-y-6">
           <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Statistics</h2>
+            <h2 className="text-lg font-semibold">{t("detailStatistics")}</h2>
             <Separator />
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40">
               <div className="flex items-center gap-2.5">
@@ -161,7 +169,7 @@ export default async function AdminCategoryDetailPage({
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">
-                    Total Posts
+                    {t("detailTotalPosts")}
                   </p>
                   <p className="text-xl font-bold text-foreground">
                     {category.postCount}
@@ -170,7 +178,7 @@ export default async function AdminCategoryDetailPage({
               </div>
               <Button variant="ghost" size="sm" asChild>
                 <Link href={`/admin/posts?categoryId=${category.id}`}>
-                  View Posts →
+                  {t("detailViewPosts")}
                 </Link>
               </Button>
             </div>

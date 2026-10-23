@@ -1,5 +1,7 @@
 import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -29,15 +31,18 @@ const materialSymbols = localFont({
   display: "block",
 });
 
-export const metadata: Metadata = {
-  title: "Frevia | Hire talent, find work, grow together",
-  description:
-    "A calm freelance marketplace to hire freelancers, find paid work, and learn in the community forum.",
-  icons: {
-    icon: [{ url: "/frevia-mark.png", type: "image/png" }],
-    apple: [{ url: "/frevia-mark.png" }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+
+  return {
+    title: t("title"),
+    description: t("description"),
+    icons: {
+      icon: [{ url: "/frevia-mark.png", type: "image/png" }],
+      apple: [{ url: "/frevia-mark.png" }],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -47,9 +52,11 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value ?? null;
   const user = await authServerRequest.getMe();
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} ${aquire.variable} ${materialSymbols.variable} font-sans antialiased`}>
         <ThemeProvider
@@ -57,16 +64,18 @@ export default async function RootLayout({
           defaultTheme="light"
           disableTransitionOnChange
         >
-          <QueryProvider>
-            <NotificationProvider
-              socketUrl={envConfig?.NESTJS_API_URL ?? ""}
-              token={token}
-              currentUserId={user?.id ?? null}
-            >
-              {children}
-            </NotificationProvider>
-          </QueryProvider>
-          <Toaster />
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <QueryProvider>
+              <NotificationProvider
+                socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+                token={token}
+                currentUserId={user?.id ?? null}
+              >
+                {children}
+              </NotificationProvider>
+            </QueryProvider>
+            <Toaster />
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

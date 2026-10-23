@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,7 +41,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem = {
   href: string;
-  label: string;
+  labelKey: string;
   icon: React.ElementType;
   matchPrefix?: boolean;
   badge?: number | string;
@@ -48,6 +49,7 @@ type NavItem = {
 
 function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const pathname = usePathname();
+  const t = useTranslations("sidebar");
   const isActive = item.matchPrefix
     ? pathname === item.href || pathname.startsWith(`${item.href}/`)
     : pathname === item.href;
@@ -57,7 +59,7 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   return (
     <Link
       href={item.href}
-      title={collapsed ? item.label : undefined}
+      title={collapsed ? t(item.labelKey) : undefined}
       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-150 ${
         isActive
           ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/20 dark:text-blue-200 font-semibold shadow-xs"
@@ -76,7 +78,7 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
           <span className="absolute -top-1 -right-1 flex size-2 rounded-full bg-[#0069D3] ring-2 ring-[#F6F5F9] dark:ring-zinc-950" />
         ) : null}
       </div>
-      {!collapsed && <span className="truncate">{item.label}</span>}
+      {!collapsed && <span className="truncate">{t(item.labelKey)}</span>}
       {!collapsed && (
         <div className="ml-auto flex items-center gap-1.5">
           {item.badge ? (
@@ -96,6 +98,8 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 export function ClientSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("sidebar");
+  const tRole = useTranslations("roleName");
   const { data: me } = useMe();
   const { data: notifications = [] } = useNotifications();
   const { resolvedTheme, setTheme } = useTheme();
@@ -114,25 +118,25 @@ export function ClientSidebar() {
   const clientNav: NavItem[] = [
     {
       href: "/client/jobs",
-      label: "My Jobs",
+      labelKey: "navMyJobs",
       icon: Briefcase,
       matchPrefix: true,
     },
     {
       href: "/client/contracts",
-      label: "Contracts",
+      labelKey: "navContracts",
       icon: FileText,
       matchPrefix: true,
     },
     {
       href: "/client/conversations",
-      label: "Messages",
+      labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
     },
     {
       href: "/client/notifications",
-      label: "Notifications",
+      labelKey: "navNotifications",
       icon: Bell,
       matchPrefix: true,
       badge:
@@ -144,7 +148,7 @@ export function ClientSidebar() {
     },
   ];
 
-  const displayName = me?.profile?.displayName ?? "Client";
+  const displayName = me?.profile?.displayName ?? tRole("CLIENT");
   const initial = displayName.charAt(0).toUpperCase();
   const canSwitchRole = me?.roles.some(
     (r) => r.name === RoleName.FREELANCER,
@@ -165,7 +169,7 @@ export function ClientSidebar() {
       router.push("/freelancer/find-work");
       router.refresh();
     } catch {
-      toastError({ message: "Unable to switch role. Please try again." });
+      toastError({ message: t("roleSwitchFailed") });
       setIsSwitchingRole(false);
     }
   };
@@ -203,7 +207,7 @@ export function ClientSidebar() {
         {!collapsed ? (
           <button
             onClick={() => setCollapsed(true)}
-            title="Collapse sidebar"
+            title={t("collapse")}
             className="z-10 flex size-6 items-center justify-center text-muted-foreground hover:text-[#0069D3] dark:hover:text-blue-300 cursor-pointer"
           >
             <PanelLeftClose className="size-4" />
@@ -211,7 +215,7 @@ export function ClientSidebar() {
         ) : (
           <button
             onClick={() => setCollapsed(false)}
-            title="Expand sidebar"
+            title={t("expand")}
             className="absolute inset-0 z-20 flex items-center justify-center bg-[#F6F5F9] dark:bg-zinc-950 opacity-0 transition-opacity hover:opacity-100 cursor-pointer"
           >
             <PanelLeftOpen className="size-5 text-foreground" />
@@ -227,7 +231,7 @@ export function ClientSidebar() {
             className={`flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-[#D0E1F8]/30 dark:hover:bg-zinc-800/60 ${
               collapsed ? "justify-center" : ""
             }`}
-            aria-label="Profile menu"
+            aria-label={t("profileMenu")}
           >
             <Avatar className="size-8 shrink-0">
               {me?.profile?.avatarUrl && (
@@ -243,7 +247,9 @@ export function ClientSidebar() {
                   <p className="truncate text-xs font-semibold text-foreground">
                     {displayName}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Client</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {tRole("CLIENT")}
+                  </p>
                 </div>
                 <ChevronDown
                   className={`size-3.5 shrink-0 text-muted-foreground transition-transform ${
@@ -268,7 +274,7 @@ export function ClientSidebar() {
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
                 >
                   <Eye className="size-3.5" />
-                  View public profile
+                  {t("viewPublicProfile")}
                 </Link>
               )}
               <Link
@@ -277,7 +283,7 @@ export function ClientSidebar() {
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
               >
                 <UserRound className="size-3.5" />
-                Profile settings
+                {t("profileSettings")}
               </Link>
               <Link
                 href="/client/profile?tab=favorites"
@@ -285,7 +291,7 @@ export function ClientSidebar() {
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
               >
                 <Heart className="size-3.5" />
-                Favorite freelancers
+                {t("navFavoriteFreelancers")}
               </Link>
               <Link
                 href="/sessions"
@@ -293,7 +299,7 @@ export function ClientSidebar() {
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
               >
                 <MonitorSmartphone className="size-3.5" />
-                Sessions
+                {t("sessions")}
               </Link>
 
               <div className="my-1 h-px bg-border" />
@@ -306,7 +312,7 @@ export function ClientSidebar() {
                   ) : (
                     <Sun className="size-3.5 text-amber-500" />
                   )}
-                  <span>Theme</span>
+                  <span>{t("theme")}</span>
                 </span>
                 <div className="flex items-center gap-0.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 p-0.5 border border-black/5 dark:border-white/10">
                   <button
@@ -317,8 +323,8 @@ export function ClientSidebar() {
                         ? "bg-white text-[#0069D3] shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
-                    title="Light mode"
-                    aria-label="Switch to light mode"
+                    title={t("lightMode")}
+                    aria-label={t("switchToLight")}
                   >
                     <Sun className="size-3.5" />
                   </button>
@@ -330,8 +336,8 @@ export function ClientSidebar() {
                         ? "bg-zinc-700 text-amber-300 shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
-                    title="Dark mode"
-                    aria-label="Switch to dark mode"
+                    title={t("darkMode")}
+                    aria-label={t("switchToDark")}
                   >
                     <Moon className="size-3.5" />
                   </button>
@@ -350,7 +356,7 @@ export function ClientSidebar() {
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <SwitchCamera className="size-3.5" />
-                  {isSwitchingRole ? "Switching..." : "Switch to Freelancer"}
+                  {isSwitchingRole ? t("switching") : t("switchToFreelancer")}
                 </button>
               )}
               <button
@@ -361,7 +367,7 @@ export function ClientSidebar() {
                 className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-destructive hover:bg-destructive/10 cursor-pointer"
               >
                 <LogOut className="size-3.5" />
-                Logout
+                {t("logout")}
               </button>
             </div>
           )}
@@ -372,7 +378,7 @@ export function ClientSidebar() {
       <nav className="flex-1 overflow-y-auto px-2.5 py-4">
         {!collapsed && (
           <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-            Client
+            {tRole("CLIENT")}
           </p>
         )}
         <div className="space-y-0.5">
@@ -390,7 +396,7 @@ export function ClientSidebar() {
             className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground/60 transition-colors hover:text-[#0069D3] dark:hover:text-blue-300"
           >
             <HelpCircle className="size-3.5" />
-            Help & Forum
+            {t("helpForum")}
           </Link>
         )}
       </div>

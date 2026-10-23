@@ -1,5 +1,6 @@
 import type { ProfileRevisionType } from "@shared/types";
 import { AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function ProfileReviewStatus({
   revision,
@@ -8,6 +9,7 @@ export function ProfileReviewStatus({
   revision: ProfileRevisionType | null;
   profileStrength?: number | null;
 }) {
+  const t = useTranslations("profileReviewStatus");
   const isExpert = revision?.profileType === "EXPERT";
   if (
     !revision &&
@@ -21,41 +23,41 @@ export function ProfileReviewStatus({
   const config = !revision
     ? {
         icon: Clock3,
-        title: "Admin review required for profile updates",
-        body: `Your profile strength is ${profileStrength}%. Until it reaches 20%, profile changes must be approved by an administrator.`,
+        title: t("requiredTitle"),
+        body: t("requiredBody", { profileStrength: profileStrength ?? 0 }),
         className:
           "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100",
       }
     : revision.status === "PENDING"
       ? {
           icon: Clock3,
-          title: "Profile changes awaiting review",
+          title: t("pendingTitle"),
           body: isExpert
-            ? "Your approved profile remains unchanged while an administrator reviews this expert profile update."
-            : `Submitted at ${revision.profileStrength}% profile strength. Your approved public profile remains visible while an administrator reviews these changes.`,
+            ? t("pendingExpertBody")
+            : t("pendingBody", { profileStrength: revision.profileStrength }),
           className:
             "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100",
         }
       : revision.status === "APPROVED"
         ? {
             icon: CheckCircle2,
-            title: "Profile changes approved",
+            title: t("approvedTitle"),
             body: isExpert
-              ? "Your reviewed expert profile changes are now active. Future updates will also require administrator approval."
+              ? t("approvedExpertBody")
               : profileStrength !== null &&
                   profileStrength !== undefined &&
                   profileStrength < 20
-                ? `Your changes are visible, but your profile strength is still ${profileStrength}%. Future changes will require administrator approval until it reaches 20%.`
-                : "Your reviewed changes are now visible on your public profile.",
+                ? t("approvedLowStrengthBody", { profileStrength: profileStrength ?? 0 })
+                : t("approvedBody"),
             className:
               "border-emerald-300 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100",
           }
         : {
             icon: AlertCircle,
-            title: "Profile changes need attention",
+            title: t("rejectedTitle"),
             body: revision.reviewNotes
-              ? `Reason: ${revision.reviewNotes}`
-              : "The submitted changes were not approved. Update the information and submit it again.",
+              ? t("rejectedWithReason", { reason: revision.reviewNotes })
+              : t("rejectedBody"),
             className:
               "border-red-300 bg-red-50 text-red-950 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100",
           };

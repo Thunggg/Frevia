@@ -3,9 +3,11 @@
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import type { ProfileRevisionType } from "@shared/types";
 import { adminApiRequest } from "@/apiRequests/admin";
 import { ApiFail } from "@/lib/http";
+import { formatDateTime, formatNumber } from "@/lib/format";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -30,24 +32,31 @@ import {
 import { Check, Eye, Loader2, X } from "lucide-react";
 import { NumberedPagination } from "../components/numbered-pagination";
 
-const fieldLabels: Record<string, string> = {
-  displayName: "Display name",
-  title: "Professional title",
-  bio: "Bio",
-  availabilityStatus: "Availability",
-  education: "Education",
-  certifications: "Certifications",
-  languages: "Languages",
-  companyName: "Company name",
-  companyDescription: "Company description",
-  website: "Website",
-  expertise: "Expertise",
-  yearsOfExperience: "Years of experience",
-};
+const fieldKeys = [
+  "displayName",
+  "title",
+  "bio",
+  "availabilityStatus",
+  "education",
+  "certifications",
+  "languages",
+  "companyName",
+  "companyDescription",
+  "website",
+  "expertise",
+  "yearsOfExperience",
+] as const;
 
-function presentValue(value: unknown) {
-  if (Array.isArray(value)) return value.length ? value.join(", ") : "None";
-  if (value === null || value === undefined || value === "") return "Not set";
+function presentValue(
+  value: unknown,
+  labels: { none: string; notSet: string },
+) {
+  if (Array.isArray(value)) {
+    return value.length ? value.join(", ") : labels.none;
+  }
+  if (value === null || value === undefined || value === "") {
+    return labels.notSet;
+  }
   return String(value);
 }
 
@@ -77,11 +86,28 @@ export function ProfileRevisionsTable({
   currentStatus?: string;
   currentType?: string;
 }) {
+  const locale = useLocale();
+  const t = useTranslations("adminProfileRevisions");
+  const tCommon = useTranslations("adminCommon");
+  const tRoleName = useTranslations("roleName");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selected, setSelected] = useState<ProfileRevisionType | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [action, setAction] = useState<"approve" | "reject" | null>(null);
+
+  const valueLabels = {
+    none: t("valueNone"),
+    notSet: t("valueNotSet"),
+  };
+
+  const fieldLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const key of fieldKeys) {
+      labels[key] = t(`fields.${key}`);
+    }
+    return labels;
+  }, [t]);
 
   const fields = useMemo(() => {
     if (!selected) return [];
@@ -115,7 +141,7 @@ export function ProfileRevisionsTable({
   const review = async (nextAction: "approve" | "reject") => {
     if (!selected) return;
     if (nextAction === "reject" && !reviewNotes.trim()) {
-      toastError({ message: "Enter a reason before rejecting this request." });
+      toastError({ message: t("reviewNotesRequired") });
       return;
     }
     setAction(nextAction);
@@ -133,9 +159,7 @@ export function ProfileRevisionsTable({
       setSelected(response.data);
       toastSuccess({
         message:
-          nextAction === "approve"
-            ? "Profile changes approved."
-            : "Profile changes rejected.",
+          nextAction === "approve" ? t("approvedToast") : t("rejectedToast"),
       });
       router.refresh();
     } catch (error) {
@@ -143,7 +167,7 @@ export function ProfileRevisionsTable({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Unable to review this request.",
+            : t("reviewFailed"),
       });
     } finally {
       setAction(null);
@@ -154,29 +178,29 @@ export function ProfileRevisionsTable({
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3">
         <label className="space-y-1 text-xs font-medium text-muted-foreground">
-          Status
+          {t("filterStatusLabel")}
           <select
             className="block h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
             value={currentStatus || "PENDING"}
             onChange={(event) => setFilter("status", event.target.value)}
           >
-            <option value="ALL">All statuses</option>
-            <option value="PENDING">Pending</option>
-            <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
+            <option value="ALL">{tCommon("all")}</option>
+            <option value="PENDING">{tCommon("pending")}</option>
+            <option value="APPROVED">{tCommon("approved")}</option>
+            <option value="REJECTED">{tCommon("rejected")}</option>
           </select>
         </label>
         <label className="space-y-1 text-xs font-medium text-muted-foreground">
-          Profile type
+          {t("filterProfileTypeLabel")}
           <select
             className="block h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
             value={currentType || "ALL"}
             onChange={(event) => setFilter("profileType", event.target.value)}
           >
-            <option value="ALL">All profiles</option>
-            <option value="CLIENT">Client</option>
-            <option value="FREELANCER">Freelancer</option>
-            <option value="EXPERT">Expert</option>
+            <option value="ALL">{t("filterAllProfiles")}</option>
+            <option value="CLIENT">{tRoleName("CLIENT")}</option>
+            <option value="FREELANCER">{tRoleName("FREELANCER")}</option>
+            <option value="EXPERT">{tRoleName("EXPERT")}</option>
           </select>
         </label>
       </div>
@@ -185,12 +209,12 @@ export function ProfileRevisionsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Strength</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{t("colUser")}</TableHead>
+              <TableHead>{t("colType")}</TableHead>
+              <TableHead>{t("colStrength")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colSubmitted")}</TableHead>
+              <TableHead className="text-right">{t("colAction")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -201,8 +225,8 @@ export function ProfileRevisionsTable({
                   className="py-12 text-center text-muted-foreground"
                 >
                   {currentStatus === "PENDING"
-                    ? "No profile update requests are awaiting review."
-                    : "No profile review history matches these filters."}
+                    ? t("emptyPending")
+                    : t("emptyFiltered")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -218,21 +242,25 @@ export function ProfileRevisionsTable({
                     </p>
                   </TableCell>
                   <TableCell className="capitalize">
-                    {revision.profileType.toLowerCase()}
+                    {tRoleName(revision.profileType)}
                   </TableCell>
                   <TableCell className="font-medium tabular-nums">
-                    {revision.profileStrength}%
+                    {formatNumber(revision.profileStrength, locale)}%
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
                       className={statusClass(revision.status)}
                     >
-                      {revision.status}
+                      {revision.status === "PENDING"
+                        ? tCommon("pending")
+                        : revision.status === "APPROVED"
+                          ? tCommon("approved")
+                          : tCommon("rejected")}
                     </Badge>
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                    {new Date(revision.updatedAt).toLocaleString()}
+                    {formatDateTime(revision.updatedAt, locale)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
@@ -241,7 +269,9 @@ export function ProfileRevisionsTable({
                       onClick={() => openDetail(revision)}
                     >
                       <Eye className="size-4" />
-                      {revision.status === "PENDING" ? "Review" : "View"}
+                      {revision.status === "PENDING"
+                        ? t("actionReview")
+                        : t("actionView")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -267,26 +297,25 @@ export function ProfileRevisionsTable({
           <DialogHeader>
             <DialogTitle>
               {selected?.status === "PENDING"
-                ? "Review profile changes"
-                : "Profile review detail"}
+                ? t("dialogTitlePending")
+                : t("dialogTitleDetail")}
             </DialogTitle>
-            <DialogDescription>
-              Verify the account information. Changed fields are highlighted
-              when the user submitted an update.
-            </DialogDescription>
+            <DialogDescription>{t("dialogDescription")}</DialogDescription>
           </DialogHeader>
 
           {selected ? (
             <div className="space-y-5">
               <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
                 {selected.profileType === "EXPERT"
-                  ? "Expert profile updates require administrator approval before they become public."
-                  : `This request requires manual review because the profile strength was ${selected.profileStrength}% at submission, below the 20% threshold.`}
+                  ? t("expertNotice")
+                  : t("lowStrengthNotice", {
+                      strength: formatNumber(selected.profileStrength, locale),
+                    })}
               </div>
               <div className="hidden grid-cols-[160px_minmax(0,1fr)_minmax(0,1fr)] gap-3 border-b pb-2 text-xs font-semibold text-muted-foreground sm:grid">
-                <span>Field</span>
-                <span>Published</span>
-                <span>Submitted</span>
+                <span>{t("colField")}</span>
+                <span>{t("colPublished")}</span>
+                <span>{t("colSubmittedValue")}</span>
               </div>
               <div className="space-y-2">
                 {fields.map((field) => (
@@ -303,18 +332,18 @@ export function ProfileRevisionsTable({
                     </p>
                     <div>
                       <p className="mb-1 text-[11px] font-medium text-muted-foreground sm:hidden">
-                        Published
+                        {t("colPublished")}
                       </p>
                       <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">
-                        {presentValue(field.before)}
+                        {presentValue(field.before, valueLabels)}
                       </p>
                     </div>
                     <div>
                       <p className="mb-1 text-[11px] font-medium text-muted-foreground sm:hidden">
-                        Submitted
+                        {t("colSubmittedValue")}
                       </p>
                       <p className="whitespace-pre-wrap break-words text-sm">
-                        {presentValue(field.after)}
+                        {presentValue(field.after, valueLabels)}
                       </p>
                     </div>
                   </div>
@@ -324,15 +353,15 @@ export function ProfileRevisionsTable({
               <div className="space-y-2">
                 <Label htmlFor="profile-review-notes">
                   {selected.status === "PENDING"
-                    ? "Review notes"
-                    : "Decision notes"}
+                    ? t("notesLabelPending")
+                    : t("notesLabelDecision")}
                 </Label>
                 <Textarea
                   id="profile-review-notes"
                   value={reviewNotes}
                   onChange={(event) => setReviewNotes(event.target.value)}
                   disabled={selected.status !== "PENDING" || action !== null}
-                  placeholder="Required when rejecting"
+                  placeholder={t("notesPlaceholder")}
                   rows={3}
                 />
               </div>
@@ -343,7 +372,7 @@ export function ProfileRevisionsTable({
             {selected?.profileType === "EXPERT" ? (
               <Button variant="outline" asChild>
                 <Link href={`/admin/users/${selected.userId}`}>
-                  Edit expert profile
+                  {t("editExpertProfile")}
                 </Link>
               </Button>
             ) : null}
@@ -359,7 +388,7 @@ export function ProfileRevisionsTable({
                   ) : (
                     <X className="size-4" />
                   )}
-                  Reject
+                  {t("rejectAction")}
                 </Button>
                 <Button
                   disabled={action !== null}
@@ -370,7 +399,7 @@ export function ProfileRevisionsTable({
                   ) : (
                     <Check className="size-4" />
                   )}
-                  Approve
+                  {t("approveAction")}
                 </Button>
               </>
             ) : null}

@@ -15,6 +15,7 @@ import {
   AdminUserDetailResponseType,
   AdminUserListResponseType,
   AdminUserQueryType,
+  ManageUserMessage,
   MessageResType,
   RoleName,
 } from '@shared/types';
@@ -328,7 +329,7 @@ export class UsersService {
       };
 
       await this.repository.updateFreelancerProfileByAdmin(userId, data);
-      return { message: 'Freelancer profile updated successfully' };
+      return { message: ManageUserMessage.FREELANCER_PROFILE_UPDATED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -359,7 +360,7 @@ export class UsersService {
         body.skills,
       );
 
-      return { message: 'Freelancer skills updated successfully' };
+      return { message: ManageUserMessage.FREELANCER_SKILLS_UPDATED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -391,7 +392,7 @@ export class UsersService {
         projectUrl: body.projectUrl ?? null,
       });
 
-      return { message: 'Portfolio item created successfully' };
+      return { message: ManageUserMessage.PORTFOLIO_ITEM_CREATED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -446,7 +447,7 @@ export class UsersService {
           : {}),
       });
 
-      return { message: 'Portfolio item updated successfully' };
+      return { message: ManageUserMessage.PORTFOLIO_ITEM_UPDATED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -482,7 +483,7 @@ export class UsersService {
 
       await this.repository.softDeletePortfolioItem(itemId);
 
-      return { message: 'Portfolio item deleted successfully' };
+      return { message: ManageUserMessage.PORTFOLIO_ITEM_DELETED };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

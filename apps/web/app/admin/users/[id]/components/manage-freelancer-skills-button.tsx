@@ -30,6 +30,7 @@ import {
 } from "@shared/types";
 import { Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 // ====== Dialog quản lý kỹ năng (tab FREELANCER - User Detail) ======
@@ -49,6 +50,7 @@ export function ManageFreelancerSkillsButton({
   user,
 }: ManageFreelancerSkillsButtonProps) {
   const router = useRouter();
+  const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<SkillRow[]>([]); // Đây là danh sách skills đang được chỉnh sửa trên UI.
   const [nextKey, setNextKey] = useState(0); // Dùng để tạo key riêng cho mỗi row mới.
@@ -179,7 +181,10 @@ export function ManageFreelancerSkillsButton({
       {
         onSuccess: () => {
           toastSuccess({
-            message: `Skills updated (${skills.length}) for "${user.email}"`,
+            message: t("skillsUpdated", {
+              count: skills.length,
+              email: user.email,
+            }),
           });
           setOpen(false);
           router.refresh();
@@ -197,7 +202,7 @@ export function ManageFreelancerSkillsButton({
             }
             return;
           }
-          toastError({ message: "Failed to save skills" });
+          toastError({ message: t("skillsSaveFailed") });
         },
       },
     );
@@ -212,19 +217,22 @@ export function ManageFreelancerSkillsButton({
           className="gap-1.5 hover:bg-purple-500/10 hover:text-purple-500 hover:border-purple-400/40 transition-colors"
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Skills
+          {t("skillsTrigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-500" />
-            Manage skills
+            {t("skillsTitle")}
           </DialogTitle>
           <DialogDescription>
-            Pick skills from the system catalog for{" "}
-            <span className="font-medium text-foreground">{user.email}</span>{" "}
-            and set a proficiency from 1 to 10.
+            {t.rich("skillsDescription", {
+              b: (chunks) => (
+                <span className="font-medium text-foreground">{chunks}</span>
+              ),
+              email: user.email,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -232,8 +240,8 @@ export function ManageFreelancerSkillsButton({
           {rows.length === 0 ? (
             <p className="rounded-lg border border-dashed py-8 text-center text-xs text-muted-foreground">
               {catalogLoading
-                ? "Loading skills catalog..."
-                : 'No skills yet. Click "Add skill" below and choose from the catalog.'}
+                ? t("skillsLoadingCatalog")
+                : t("skillsEmptyHint")}
             </p>
           ) : (
             rows.map((row, index) => (
@@ -253,9 +261,11 @@ export function ManageFreelancerSkillsButton({
                 >
                   <SelectTrigger
                     className="flex-1"
-                    aria-label={`Skill ${index + 1} name`}
+                    aria-label={t("skillsNameAria", { index: index + 1 })}
                   >
-                    <SelectValue placeholder="Select a skill from catalog" />
+                    <SelectValue
+                      placeholder={t("skillsSelectPlaceholder")}
+                    />
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
                     {catalogLoading ? null : (
@@ -271,7 +281,7 @@ export function ManageFreelancerSkillsButton({
                         ))}
                         {optionNames.length === 0 && (
                           <p className="px-2 py-3 text-center text-xs text-muted-foreground">
-                            No skills available in the catalog.
+                            {t("skillsCatalogEmpty")}
                           </p>
                         )}
                       </>
@@ -288,7 +298,7 @@ export function ManageFreelancerSkillsButton({
                     onChange={(e) => updateSkillLevel(row.key, e.target.value)}
                     onBlur={(e) => updateSkillLevel(row.key, e.target.value)}
                     className="w-20"
-                    aria-label={`Skill ${index + 1} proficiency (1-10)`}
+                    aria-label={t("skillsProficiencyAria", { index: index + 1 })}
                   />
                   <Button
                     type="button"
@@ -296,7 +306,9 @@ export function ManageFreelancerSkillsButton({
                     size="icon"
                     className="h-8 w-8 text-muted-foreground hover:text-destructive"
                     onClick={() => removeRow(row.key)}
-                    aria-label={`Remove skill ${row.skillName || index + 1}`}
+                    aria-label={t("skillsRemoveAria", {
+                      name: row.skillName || index + 1,
+                    })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -315,7 +327,7 @@ export function ManageFreelancerSkillsButton({
           disabled={catalogLoading}
         >
           <Plus className="h-4 w-4" />
-          Add skill
+          {t("skillsAddAction")}
         </Button>
 
         <DialogFooter>
@@ -324,7 +336,7 @@ export function ManageFreelancerSkillsButton({
             variant="outline"
             onClick={() => setOpen(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="button"
@@ -334,7 +346,7 @@ export function ManageFreelancerSkillsButton({
             {replaceSkills.isPending && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Save skills
+            {t("skillsSaveAction")}
           </Button>
         </DialogFooter>
       </DialogContent>

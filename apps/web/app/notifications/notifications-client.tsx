@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -21,6 +22,7 @@ import {
 } from "@/components/icons";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { useNotificationText } from "@/hooks/use-notification-text";
 import {
   useDeleteNotification,
   useMarkAllNotificationsRead,
@@ -71,30 +73,6 @@ function getNotificationIcon(type?: string) {
   }
 }
 
-function formatRelativeTime(dateString: string): string {
-  try {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return dateString;
-  }
-}
-
 type TabType = "ALL" | "UNREAD" | "READ";
 
 export type NotificationsClientProps = {
@@ -107,7 +85,35 @@ export function NotificationsClient({
   headerRole = "FREELANCER",
   embedded = false,
 }: NotificationsClientProps) {
+  const t = useTranslations("notifications");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+  const notificationText = useNotificationText();
   const { data: notifications = [], isLoading, isError } = useNotifications();
+
+  const formatRelativeTime = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      const diffMs = Date.now() - date.getTime();
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffMins < 1) return tCommon("justNow");
+      if (diffMins < 60) return tCommon("minutesAgo", { minutes: diffMins });
+      if (diffHours < 24) return tCommon("hoursAgo", { hours: diffHours });
+      if (diffDays < 7) return tCommon("daysAgo", { days: diffDays });
+      return format.dateTime(date, {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
   const deleteNotification = useDeleteNotification();
@@ -129,17 +135,17 @@ export function NotificationsClient({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Notifications
+              {t("title")}
             </h1>
             {unreadCount > 0 && (
               <span className="flex items-center gap-1 rounded-full bg-[#4fae2e]/10 px-2.5 py-0.5 text-xs font-semibold text-[#3f9225] dark:text-[#70cf50]">
                 <span className="size-1.5 rounded-full bg-[#4fae2e] animate-pulse" />
-                {unreadCount} new
+                {t("newCount", { count: unreadCount })}
               </span>
             )}
           </div>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Updates about jobs, proposals, messages and account activities.
+            {t("description")}
           </p>
         </div>
 
@@ -150,9 +156,9 @@ export function NotificationsClient({
             onClick={() =>
               markAllRead.mutate(undefined, {
                 onSuccess: () =>
-                  toastSuccess({ message: "All notifications marked read." }),
+                  toastSuccess({ message: t("markedAllRead") }),
                 onError: () =>
-                  toastError({ message: "Unable to update notifications." }),
+                  toastError({ message: t("updateFailed") }),
               })
             }
             className="self-start sm:self-auto gap-2 rounded-full px-4 py-2 bg-[#F1F0F5] text-xs sm:text-sm font-semibold text-foreground dark:bg-zinc-800 hover:bg-black/5 dark:hover:bg-zinc-700 transition-colors"
@@ -162,7 +168,7 @@ export function NotificationsClient({
             ) : (
               <CheckCheck className="size-4 text-[#4fae2e]" />
             )}
-            Mark all read
+            {t("markAllRead")}
           </Button>
         )}
       </div>
@@ -172,9 +178,9 @@ export function NotificationsClient({
         <div className="inline-flex rounded-full bg-[#F3F3F7] p-1.5 border border-black/5 shadow-xs dark:bg-zinc-900/90 dark:border-white/10">
           {(
             [
-              { id: "ALL", label: "All", count: notifications.length },
-              { id: "UNREAD", label: "Unread", count: unreadCount },
-              { id: "READ", label: "Read", count: readCount },
+              { id: "ALL", label: t("tabAll"), count: notifications.length },
+              { id: "UNREAD", label: t("tabUnread"), count: unreadCount },
+              { id: "READ", label: t("tabRead"), count: readCount },
             ] as const
           ).map((tab) => {
             const isActive = activeTab === tab.id;
@@ -209,16 +215,16 @@ export function NotificationsClient({
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-28 gap-3">
           <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
-          <p className="text-xs text-muted-foreground">Loading notifications...</p>
+          <p className="text-xs text-muted-foreground">{t("loading")}</p>
         </div>
       ) : isError ? (
         <div className="mt-8 rounded-[24px] border border-destructive/20 bg-destructive/5 px-6 py-10 text-center">
           <AlertTriangle className="mx-auto size-8 text-destructive" />
           <p className="mt-3 font-medium text-foreground">
-            Notifications could not be loaded
+            {t("loadFailedTitle")}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Please refresh the page or try again later.
+            {t("loadFailedDescription")}
           </p>
         </div>
       ) : filteredNotifications.length === 0 ? (
@@ -228,15 +234,15 @@ export function NotificationsClient({
           </div>
           <h2 className="mt-4 text-base font-semibold text-foreground">
             {activeTab === "UNREAD"
-              ? "All caught up!"
+              ? t("caughtUp")
               : activeTab === "READ"
-                ? "No read notifications"
-                : "No notifications yet"}
+                ? t("noRead")
+                : t("empty")}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
             {activeTab === "UNREAD"
-              ? "You have read all of your recent notifications."
-              : "New activity regarding jobs, proposals, and messages will appear here."}
+              ? t("caughtUpDescription")
+              : t("emptyDescription")}
           </p>
         </div>
       ) : (
@@ -249,6 +255,10 @@ export function NotificationsClient({
                 notification.type as string | undefined,
               );
               const isUnread = !notification.isRead;
+              const text = notificationText(
+                notification,
+                t("fallbackTitle"),
+              );
 
               return (
                 <motion.div
@@ -284,18 +294,18 @@ export function NotificationsClient({
                             : "font-medium text-foreground/90"
                         }`}
                       >
-                        {notification.title ?? "Notification"}
+                        {text.title}
                       </h3>
                       {isUnread && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-[#4fae2e]/10 px-2 py-0.5 text-[10px] font-semibold text-[#3f9225] dark:text-[#70cf50]">
-                          New
+                          {t("new")}
                         </span>
                       )}
                     </div>
 
-                    {notification.message && (
+                    {text.message && (
                       <p className="mt-1 text-xs sm:text-sm leading-relaxed text-muted-foreground">
-                        {notification.message}
+                        {text.message}
                       </p>
                     )}
 
@@ -306,9 +316,9 @@ export function NotificationsClient({
                           dateTime={new Date(
                             notification.createdAt,
                           ).toISOString()}
-                          title={new Date(
-                            notification.createdAt,
-                          ).toLocaleString()}
+                          title={format.dateTime(
+                            new Date(notification.createdAt),
+                          )}
                         >
                           {formatRelativeTime(
                             new Date(notification.createdAt).toISOString(),
@@ -326,7 +336,7 @@ export function NotificationsClient({
                           }}
                           className="inline-flex items-center gap-1 font-semibold text-[#4fae2e] hover:text-[#3f9225] transition-colors"
                         >
-                          <span>View details</span>
+                          <span>{t("viewDetails")}</span>
                           <ChevronRight className="size-3.5" />
                         </Link>
                       )}
@@ -339,8 +349,8 @@ export function NotificationsClient({
                       <Button
                         variant="ghost"
                         size="icon"
-                        title="Mark as read"
-                        aria-label="Mark notification read"
+                        title={t("markAsRead")}
+                        aria-label={t("markReadAria")}
                         disabled={markRead.isPending}
                         onClick={() => markRead.mutate(notification.id)}
                         className="size-8 rounded-full text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-zinc-800"
@@ -351,16 +361,16 @@ export function NotificationsClient({
                     <Button
                       variant="ghost"
                       size="icon"
-                      title="Delete"
-                      aria-label="Delete notification"
+                      title={t("delete")}
+                      aria-label={t("deleteAria")}
                       disabled={deleteNotification.isPending}
                       onClick={() =>
                         deleteNotification.mutate(notification.id, {
                           onSuccess: () =>
-                            toastSuccess({ message: "Notification deleted." }),
+                            toastSuccess({ message: t("deleted") }),
                           onError: () =>
                             toastError({
-                              message: "Unable to delete notification.",
+                              message: t("deleteFailed"),
                             }),
                         })
                       }

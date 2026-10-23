@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/lib/format";
 import {
   Badge,
 } from "@repo/ui/components/shadcn/badge";
@@ -64,6 +66,9 @@ export function TrashCommentsTable({
   comments,
   pagination,
 }: TrashCommentsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminTrash");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingComment, setViewingComment] =
@@ -73,11 +78,11 @@ export function TrashCommentsTable({
     setRestoringId(commentId);
     try {
       await adminApiRequest.restoreComment(commentId);
-      toastSuccess({ message: "Comment restored successfully" });
+      toastSuccess({ message: t("commentRestoredToast") });
       setViewingComment(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't restore comment. Try again." });
+      toastError({ message: t("restoreCommentFailed") });
     } finally {
       setRestoringId(null);
     }
@@ -89,12 +94,12 @@ export function TrashCommentsTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Comment</TableHead>
-              <TableHead>Post</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Deleted on</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colComment")}</TableHead>
+              <TableHead>{t("colPost")}</TableHead>
+              <TableHead>{t("colAuthor")}</TableHead>
+              <TableHead>{t("colDeletedOn")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,7 +109,7 @@ export function TrashCommentsTable({
                   colSpan={6}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  Trash is empty.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -137,8 +142,8 @@ export function TrashCommentsTable({
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                     {comment.deletedAt
-                      ? new Date(comment.deletedAt).toLocaleDateString()
-                      : "—"}
+                      ? formatDate(comment.deletedAt, locale)
+                      : tCommon("empty")}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -147,6 +152,7 @@ export function TrashCommentsTable({
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewingComment(comment)}
+                        aria-label={t("viewCommentLabel")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -157,28 +163,35 @@ export function TrashCommentsTable({
                             size="icon"
                             className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
                             disabled={restoringId === comment.id}
+                            aria-label={t("restoreCommentLabel", {
+                              title: comment.post.title,
+                            })}
                           >
                             <RotateCcw className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Restore Comment</AlertDialogTitle>
+                            <AlertDialogTitle>
+                              {t("restoreCommentTitle")}
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Restore this comment on post &quot;
-                              {comment.post.title}&quot;? It will be visible
-                              again (as long as its post is not deleted).
+                              {t("restoreCommentConfirm", {
+                                title: comment.post.title,
+                              })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>
+                              {tCommon("cancel")}
+                            </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleRestore(comment.id)}
                               className="bg-emerald-600 text-white hover:bg-emerald-600/90"
                             >
                               {restoringId === comment.id
-                                ? "Restoring..."
-                                : "Restore"}
+                                ? t("restoringAction")
+                                : t("restoreAction")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -208,7 +221,7 @@ export function TrashCommentsTable({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl pr-8">
               <Trash2 className="h-4 w-4 text-destructive" />
-              Deleted Comment
+              {t("deletedCommentTitle")}
             </DialogTitle>
           </DialogHeader>
           {viewingComment && (
@@ -230,12 +243,14 @@ export function TrashCommentsTable({
               <p className="text-sm leading-relaxed">{viewingComment.content}</p>
               <Separator />
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Comment ID: {viewingComment.id}</span>
+                <span>{t("commentIdLabel", { id: viewingComment.id })}</span>
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
                   {viewingComment.deletedAt
-                    ? `Deleted ${new Date(viewingComment.deletedAt).toLocaleDateString()}`
-                    : "—"}
+                    ? t("deletedOn", {
+                        date: formatDate(viewingComment.deletedAt, locale),
+                      })
+                    : tCommon("empty")}
                 </span>
               </div>
             </div>

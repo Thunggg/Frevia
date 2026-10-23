@@ -3,18 +3,28 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
+import { ManageIdentityVerificationMessage } from '@shared/types';
 
 const details = (message: string, path: string) => [{ message, path }];
 
 export const IdentityVerificationNotFoundException = () =>
   new NotFoundException(
-    details('Identity verification request not found.', 'id'),
+    details(
+      ManageIdentityVerificationMessage.IDENTITY_VERIFICATION_NOT_FOUND,
+      'id',
+    ),
   );
 export const IdentityVerificationAlreadyReviewedException = () =>
   new ConflictException(
-    details('This request has already been reviewed.', 'status'),
+    details(
+      ManageIdentityVerificationMessage.IDENTITY_VERIFICATION_ALREADY_REVIEWED,
+      'status',
+    ),
   );
 export const IdentityVerificationFileInvalidException = () =>
   new BadRequestException(
-    details('Identity document file is not available.', 'file'),
+    details(
+      ManageIdentityVerificationMessage.IDENTITY_VERIFICATION_FILE_NOT_AVAILABLE,
+      'file',
+    ),
   );

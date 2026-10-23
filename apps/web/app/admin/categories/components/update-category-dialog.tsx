@@ -18,6 +18,7 @@ import {
 import { ApiFail } from "@/lib/http";
 import { toastSuccess, toastError } from "@repo/ui/components/shadcn/toast";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ForumCategoryType } from "@shared/types";
 
 interface UpdateCategoryDialogProps {
@@ -31,6 +32,8 @@ export function UpdateCategoryDialog({
   open,
   onOpenChange,
 }: UpdateCategoryDialogProps) {
+  const t = useTranslations("adminCategories");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -62,16 +65,16 @@ export function UpdateCategoryDialog({
         description: description.trim() || undefined,
       });
 
-      toastSuccess({ message: "Category updated successfully!" });
+      toastSuccess({ message: t("updatedToast") });
       handleOpenChange(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const detailMessage = err.response?.error?.details?.[0]?.message;
-        const message = detailMessage || err.message || "Failed to update category";
+        const message = detailMessage || err.message || t("updateFailed");
         toastError({ message });
       } else {
-        toastError({ message: "Failed to update category." });
+        toastError({ message: t("updateFailed") });
       }
     } finally {
       setLoading(false);
@@ -83,22 +86,21 @@ export function UpdateCategoryDialog({
       <DialogContent className="sm:max-w-[485px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Update category details such as name and description.
-            </DialogDescription>
+            <DialogTitle>{t("updateTitle")}</DialogTitle>
+            <DialogDescription>{t("updateDescription")}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="edit-name" className="text-sm font-medium">
-                Category Name <span className="text-destructive">*</span>
+                {t("detailFieldName")}{" "}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="edit-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Category name"
+                placeholder={t("updateNamePlaceholder")}
                 required
                 disabled={loading}
               />
@@ -106,13 +108,13 @@ export function UpdateCategoryDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="edit-description" className="text-sm font-medium">
-                Description
+                {tCommon("description")}
               </Label>
               <Textarea
                 id="edit-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief summary of what this category is about..."
+                placeholder={t("descriptionPlaceholder")}
                 rows={3}
                 disabled={loading}
               />
@@ -126,7 +128,7 @@ export function UpdateCategoryDialog({
               onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -134,7 +136,7 @@ export function UpdateCategoryDialog({
               className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

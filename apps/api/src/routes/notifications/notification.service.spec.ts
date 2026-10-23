@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import { NotificationMessage } from '@shared/types';
 import { NotificationRepository } from './notification.repo';
 import { NotificationService } from './notification.service';
 
@@ -29,7 +30,8 @@ describe('NotificationService', () => {
     repository.markAllRead.mockResolvedValue({ count: 3 });
 
     await expect(service.markAllRead(10)).resolves.toEqual({
-      message: '3 notification(s) marked as read.',
+      message: NotificationMessage.MARKED_ALL_READ,
+      count: 3,
     });
   });
 

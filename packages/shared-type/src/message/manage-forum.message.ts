@@ -15,4 +15,7 @@ export const ManageForumMessage = {
   // --- Internal ---
   INTERNAL_ERROR: "Error.Internal",
   FAILED_TO_LOAD_FORUM_CATEGORIES: "Error.FailedToLoadForumCategories",
+
+  // --- Success messages ---
+  FORUM_CATEGORY_DELETED: "Success.ForumCategoryDeleted",
 } as const;

@@ -2,7 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { formatDate } from "@/lib/format";
 import {
   Table,
   TableBody,
@@ -58,6 +60,9 @@ interface CommentsTableProps {
 }
 
 export function CommentsTable({ comments, pagination }: CommentsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminComments");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [viewingComment, setViewingComment] =
@@ -67,11 +72,11 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
     setDeletingId(commentId);
     try {
       await adminApiRequest.deleteComment(postId, commentId);
-      toastSuccess({ message: "Comment deleted successfully" });
+      toastSuccess({ message: t("deletedToast") });
       setViewingComment(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't delete comment. Try again." });
+      toastError({ message: t("deleteFailed") });
     } finally {
       setDeletingId(null);
     }
@@ -83,12 +88,12 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Content</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Post</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colContent")}</TableHead>
+              <TableHead>{t("colAuthor")}</TableHead>
+              <TableHead>{t("colPost")}</TableHead>
+              <TableHead>{tCommon("created")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,7 +103,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                   colSpan={6}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  No comments found.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -132,7 +137,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                     {comment.post.title}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {new Date(comment.createdAt).toLocaleDateString()}
+                    {formatDate(comment.createdAt, locale)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -141,6 +146,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewingComment(comment)}
+                        aria-label={t("viewCommentLabel")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -150,22 +156,20 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
+                            aria-label={t("deleteCommentLabel")}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Delete Comment
-                            </AlertDialogTitle>
+                            <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete this comment? This
-                              action cannot be undone.
+                              {t("deleteConfirm")}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() =>
                                 handleDelete(comment.postId, comment.id)
@@ -173,8 +177,8 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               {deletingId === comment.id
-                                ? "Deleting..."
-                                : "Delete"}
+                                ? t("deletingAction")
+                                : tCommon("delete")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -205,7 +209,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 pr-8">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
-              Comment Detail
+              {t("detailTitle")}
             </DialogTitle>
           </DialogHeader>
           {viewingComment && (
@@ -224,13 +228,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                   </p>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />
-                    {new Date(
-                      viewingComment.createdAt,
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatDate(viewingComment.createdAt, locale)}
                   </div>
                 </div>
               </div>
@@ -242,14 +240,16 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
               </div>
               <div className="flex items-center justify-between">
                 <Badge variant="secondary" className="text-xs">
-                  Comment on: {viewingComment.post.title}
+                  {t("commentOnLabel", { title: viewingComment.post.title })}
                 </Badge>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  Comment ID: {viewingComment.id} · Post ID:{" "}
-                  {viewingComment.postId}
+                  {t("idsLabel", {
+                    commentId: viewingComment.id,
+                    postId: viewingComment.postId,
+                  })}
                 </p>
 
               </div>

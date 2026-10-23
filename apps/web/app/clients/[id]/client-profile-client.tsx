@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
@@ -30,11 +31,26 @@ type Props = {
   headerRole: UserRole;
 };
 
+const SOCIAL_PLATFORM_KEYS = [
+  "GITHUB",
+  "LINKEDIN",
+  "TWITTER",
+  "FACEBOOK",
+  "INSTAGRAM",
+  "YOUTUBE",
+  "WEBSITE",
+  "OTHER",
+] as const;
+
 export function ClientProfileClient({
   userId,
   currentUserId,
   headerRole,
 }: Props) {
+  const t = useTranslations("clientProfilePublic");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("common");
+  const tSocial = useTranslations("socialPlatform");
   const [profile, setProfile] = useState<ClientProfileDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,14 +63,12 @@ export function ClientProfileClient({
       setProfile(response.data);
     } catch (cause) {
       setError(
-        cause instanceof ApiFail
-          ? cause.message
-          : "Couldn't load client profile.",
+        cause instanceof ApiFail ? cause.message : t("loadError"),
       );
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, t]);
 
   useEffect(() => {
     void load();
@@ -63,7 +77,12 @@ export function ClientProfileClient({
   const companyName =
     profile?.clientProfile.companyName ??
     profile?.displayName ??
-    "Client";
+    tRole("CLIENT");
+
+  const platformLabel = (platform: string) =>
+    (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(platform)
+      ? tSocial(platform)
+      : platform;
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -74,10 +93,12 @@ export function ClientProfileClient({
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#0069D3]">
-                Home
+                {tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">Client profile</span>
+              <span className="font-medium text-foreground">
+                {t("breadcrumb")}
+              </span>
             </nav>
             {!loading && profile ? (
               <>
@@ -85,16 +106,18 @@ export function ClientProfileClient({
                   {companyName}
                 </h1>
                 <p className="mt-2 text-base text-foreground/70 dark:text-foreground/75">
-                  Member since {new Date(profile.createdAt).getFullYear()}
+                  {t("memberSince", {
+                    year: new Date(profile.createdAt).getFullYear(),
+                  })}
                 </p>
               </>
             ) : (
               <>
                 <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                  Client profile
+                  {t("breadcrumb")}
                 </h1>
                 <p className="mt-2 text-base text-foreground/70">
-                  Company details on Frevia.
+                  {t("companyDetails")}
                 </p>
               </>
             )}
@@ -112,17 +135,17 @@ export function ClientProfileClient({
                 <Building2 className="size-7" />
               </div>
               <h2 className="text-lg font-medium text-foreground">
-                Client profile unavailable
+                {t("unavailableTitle")}
               </h2>
               <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                {error || "Couldn't load this profile. Try again."}
+                {error || t("loadFailed")}
               </p>
               <Button
                 className="mt-6 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 onClick={() => void load()}
               >
                 <RefreshCw className="mr-2 size-4" />
-                Try again
+                {t("tryAgain")}
               </Button>
             </div>
           ) : (
@@ -147,7 +170,7 @@ export function ClientProfileClient({
                       </Avatar>
                       <div>
                         <Badge className="border-transparent bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/20 dark:text-[#D0E1F8]">
-                          Client
+                          {tRole("CLIENT")}
                         </Badge>
                         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
                           {companyName}
@@ -161,7 +184,7 @@ export function ClientProfileClient({
                       >
                         <Link href="/client/profile">
                           <Pencil className="mr-2 size-4" />
-                          Edit company
+                          {t("editCompany")}
                         </Link>
                       </Button>
                     ) : null}
@@ -172,19 +195,19 @@ export function ClientProfileClient({
               <div className="mt-8 grid gap-10 lg:grid-cols-12">
                 <section className="lg:col-span-8">
                   <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                    About the company
+                    {t("aboutCompany")}
                   </h3>
                   <p className="mt-3 whitespace-pre-wrap text-[15px] leading-7 text-muted-foreground">
                     {profile.clientProfile.companyDescription ||
                       profile.bio ||
-                      "No company description added yet."}
+                      t("noDescription")}
                   </p>
                 </section>
 
                 <aside className="space-y-8 lg:col-span-4">
                   <div className="rounded-2xl border border-border p-5 sm:p-6">
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
-                      Company details
+                      {t("companyDetailsTitle")}
                     </h3>
                     <div className="mt-4">
                       {profile.clientProfile.website ? (
@@ -195,12 +218,12 @@ export function ClientProfileClient({
                           rel="noreferrer"
                         >
                           <Globe2 className="size-4" />
-                          Website
+                          {t("website")}
                           <ExternalLink className="ml-auto size-4" />
                         </a>
                       ) : (
                         <p className="text-sm text-muted-foreground">
-                          Website not provided.
+                          {t("websiteMissing")}
                         </p>
                       )}
                     </div>
@@ -208,7 +231,7 @@ export function ClientProfileClient({
 
                   <div className="rounded-2xl border border-border p-5 sm:p-6">
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
-                      Social links
+                      {t("socialLinks")}
                     </h3>
                     <ul className="mt-4 divide-y divide-border">
                       {profile.socialLinks.length ? (
@@ -221,14 +244,14 @@ export function ClientProfileClient({
                               rel="noreferrer"
                             >
                               <Link2 className="size-4" />
-                              {social.platform}
+                              {platformLabel(social.platform)}
                               <ExternalLink className="ml-auto size-3" />
                             </a>
                           </li>
                         ))
                       ) : (
                         <li className="py-2 text-sm text-muted-foreground">
-                          No social links available.
+                          {t("noSocialLinks")}
                         </li>
                       )}
                     </ul>

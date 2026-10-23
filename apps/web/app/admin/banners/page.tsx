@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Megaphone } from "lucide-react";
@@ -7,6 +8,15 @@ import { BannersFilterBar } from "./components/banners-filter-bar";
 import { BannersTable } from "./components/banners-table";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const t = await getTranslations("adminBanners");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function AdminBannersPage({
   searchParams,
@@ -50,20 +60,18 @@ export default async function AdminBannersPage({
     totalPages: 0,
   };
 
+  const t = await getTranslations("adminBanners");
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Megaphone className="h-8 w-8 text-[#4fae2e]" />
-            Banner Management
+            {t("pageTitle")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage advertisement banners by display position (
-            <span className="font-semibold text-foreground">
-              {pagination.total}
-            </span>{" "}
-            total banners)
+            {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
         <CreateBannerDialog />

@@ -6,6 +6,7 @@ import {
   ForumAdminStatsType,
   ForumCategoryType,
   ForumPostType,
+  ManageForumMessage,
   UpdateForumCategoryBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
@@ -484,7 +485,7 @@ export class ForumAdminRepository {
       }),
     ]);
 
-    return { message: 'Category deleted successfully' };
+    return { message: ManageForumMessage.FORUM_CATEGORY_DELETED };
   }
 
   // Khôi phục category đã soft-delete

@@ -39,6 +39,7 @@ describe('AccountProfileRepository', () => {
         data: {
           href: '/clients/11',
           followerUserId: 11,
+          followerName: 'Northstar Studio',
         },
       },
     });

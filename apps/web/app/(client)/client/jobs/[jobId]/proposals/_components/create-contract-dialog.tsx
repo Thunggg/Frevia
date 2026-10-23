@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -33,19 +34,27 @@ export function CreateContractDialog({
   onOpenChange,
   proposalId,
   jobId,
-  jobTitle = "this job",
+  jobTitle,
   freelancerName,
   bidAmount,
   deliveryDays,
 }: CreateContractDialogProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("createContract");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const resolvedJobTitle = jobTitle ?? t("defaultJobTitle");
 
   const [totalAmount, setTotalAmount] = useState<number>(bidAmount || 0);
-  const [terms, setTerms] = useState<string>(
-    `Contract for "${jobTitle}". Work will be executed according to the submitted proposal${
-      deliveryDays ? ` with expected delivery within ${deliveryDays} days` : ""
-    }. Milestones will outline specific deliverables and payment release criteria.`,
+  const [terms, setTerms] = useState<string>(() =>
+    deliveryDays
+      ? t("termsWithDelivery", {
+          jobTitle: resolvedJobTitle,
+          days: deliveryDays,
+        })
+      : t("termsWithoutDelivery", { jobTitle: resolvedJobTitle }),
   );
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,7 +68,7 @@ export function CreateContractDialog({
     e.preventDefault();
 
     if (!totalAmount || totalAmount <= 0) {
-      toastError({ message: "Contract total amount must be greater than 0" });
+      toastError({ message: t("amountRequired") });
       return;
     }
 
@@ -92,7 +101,7 @@ export function CreateContractDialog({
         queryKey: ["client-contracts"],
       });
 
-      toastSuccess({ message: "Contract created successfully!" });
+      toastSuccess({ message: t("created") });
       onOpenChange(false);
       router.push(`/client/contracts/${contract.id}`);
     } catch (error) {
@@ -100,7 +109,7 @@ export function CreateContractDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to create contract. Please try again.",
+            : t("createFailed"),
       });
     } finally {
       setIsSubmitting(false);
@@ -111,6 +120,7 @@ export function CreateContractDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-lg overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
       >
         <div>
@@ -120,15 +130,18 @@ export function CreateContractDialog({
                 <FileText className="size-5" />
               </div>
               <SheetTitle className="text-lg font-bold text-foreground">
-                Hire & Create Contract
+                {t("title")}
               </SheetTitle>
             </div>
             <SheetDescription className="mt-1 text-xs text-muted-foreground">
-              Set up the formal agreement terms with{" "}
-              <span className="font-semibold text-foreground">
-                {freelancerName}
-              </span>
-              . Once created, both parties can sign and fund milestones.
+              {t.rich("description", {
+                name: freelancerName,
+                strong: (chunks) => (
+                  <span className="font-semibold text-foreground">
+                    {chunks}
+                  </span>
+                ),
+              })}
             </SheetDescription>
           </SheetHeader>
 
@@ -136,7 +149,8 @@ export function CreateContractDialog({
             {/* Contract Amount */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Contract Total Budget (USD) <span className="text-red-500">*</span>
+                {t("totalBudget")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative mt-1.5">
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -147,19 +161,19 @@ export function CreateContractDialog({
                   required
                   value={totalAmount || ""}
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
-                  placeholder="e.g. 500"
+                  placeholder={t("amountPlaceholder")}
                   className="w-full rounded-xl border border-border bg-background py-2.5 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
                 />
               </div>
               <p className="mt-1 text-[11px] text-muted-foreground">
-                Defaulted to freelancer&apos;s proposed bid (${bidAmount.toLocaleString()}).
+                {t("bidDefaultHint", { amount: format.number(bidAmount) })}
               </p>
             </div>
 
             {/* Expiration Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Contract Expiration / Deadline (Optional)
+                {t("expiration")}
               </label>
               <input
                 type="date"
@@ -173,13 +187,13 @@ export function CreateContractDialog({
             {/* Terms & Scope */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Terms of Engagement & Scope
+                {t("termsLabel")}
               </label>
               <textarea
                 rows={6}
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
-                placeholder="Outline specific terms, expectations, and milestones..."
+                placeholder={t("termsPlaceholder")}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] resize-none leading-relaxed"
               />
             </div>
@@ -194,7 +208,7 @@ export function CreateContractDialog({
             onClick={() => onOpenChange(false)}
             className="rounded-full text-xs"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             type="submit"
@@ -207,7 +221,7 @@ export function CreateContractDialog({
             ) : (
               <FileText className="mr-1.5 size-3.5" />
             )}
-            Create & Proceed to Contract
+            {t("submit")}
           </Button>
         </SheetFooter>
       </SheetContent>

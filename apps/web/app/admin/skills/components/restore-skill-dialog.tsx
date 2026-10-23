@@ -16,6 +16,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { SkillAdminItemType } from "@shared/types";
 import { Loader2, RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -28,6 +29,8 @@ export function RestoreSkillDialog({
   skill,
   triggerClassName,
 }: RestoreSkillDialogProps) {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,15 +39,15 @@ export function RestoreSkillDialog({
     setLoading(true);
     try {
       await adminApiRequest.restoreSkill(skill.id);
-      toastSuccess({ message: "Skill restored successfully." });
+      toastSuccess({ message: t("restoredToast") });
       setOpen(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const errorDetail = err.response?.error?.details?.[0]?.message;
-        toastError({ message: errorDetail ?? "Failed to restore skill." });
+        toastError({ message: errorDetail ?? t("restoreFailed") });
       } else {
-        toastError({ message: "An unexpected error occurred." });
+        toastError({ message: tCommon("unexpectedError") });
       }
     } finally {
       setLoading(false);
@@ -61,8 +64,8 @@ export function RestoreSkillDialog({
             triggerClassName ??
             "h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
           }
-          title="Restore skill"
-          aria-label={`Restore skill ${skill.name}`}
+          title={t("restoreTrigger")}
+          aria-label={t("restoreTriggerOf", { name: skill.name })}
         >
           <RotateCcw className="h-4 w-4" />
         </Button>
@@ -70,20 +73,18 @@ export function RestoreSkillDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            Restore Skill
+            {t("restoreTitle")}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <p className="text-sm text-muted-foreground">
-              Are you sure you want to restore skill{" "}
-              <span className="font-semibold text-foreground">
-                &quot;{skill.name}&quot;
-              </span>
-              ? It will become active again in the skills catalog.
+              {t("restoreDescription", { name: skill.name })}
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>
+            {tCommon("cancel")}
+          </AlertDialogCancel>
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -93,7 +94,7 @@ export function RestoreSkillDialog({
             className="bg-[#4fae2e] text-white hover:bg-[#3f9225]"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Restore Skill
+            {t("restoreAction")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

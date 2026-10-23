@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Trash2 } from "lucide-react";
 import { DeleteCategoryDialog } from "../../components/delete-category-dialog";
@@ -12,6 +13,7 @@ export function DeleteCategoryButton({
 }: {
   category: ForumCategoryType;
 }) {
+  const t = useTranslations("adminCategories");
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -24,7 +26,7 @@ export function DeleteCategoryButton({
         className="gap-2"
       >
         <Trash2 className="h-4 w-4" />
-        Delete Category
+        {t("deleteTrigger")}
       </Button>
       <DeleteCategoryDialog
         category={category}

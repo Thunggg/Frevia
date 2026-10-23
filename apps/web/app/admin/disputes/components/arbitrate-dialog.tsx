@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ import {
 } from "lucide-react";
 import { disputeApiRequest } from "@/apiRequests/dispute";
 import { ApiFail } from "@/lib/http";
+import { formatCurrency, formatDateTime } from "@/lib/format";
 import type { DisputeDetailType } from "@shared/types";
 
 interface ArbitrateDialogProps {
@@ -35,33 +37,15 @@ interface ArbitrateDialogProps {
   onSuccess?: () => void;
 }
 
-function money(amount: number | string | null | undefined) {
-  if (amount === null || amount === undefined) return "$0.00";
-  const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(isNaN(num) ? 0 : num);
-}
-
-function formatDate(date: string | Date | null | undefined) {
-  if (!date) return "N/A";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
-}
-
 export function ArbitrateDialog({
   dispute,
   open,
   onOpenChange,
   onSuccess,
 }: ArbitrateDialogProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminDisputes");
+  const tCommon = useTranslations("adminCommon");
   const milestoneAmount = Number(dispute?.milestone?.amount ?? 0);
 
   // Form states for ruling
@@ -87,6 +71,9 @@ export function ArbitrateDialog({
 
   if (!dispute) return null;
 
+  const money = (amount: number | string | null | undefined) =>
+    formatCurrency(amount, locale);
+
   const currentTotal = Number((freelancerAmount + clientAmount).toFixed(2));
   const isSplitValid = currentTotal === Number(milestoneAmount.toFixed(2));
 
@@ -108,14 +95,17 @@ export function ArbitrateDialog({
   const handleMakeDecision = async (isFinal: boolean) => {
     if (!isSplitValid) {
       toastError({
-        message: `Total split must equal milestone amount: ${money(milestoneAmount)} (Current: ${money(currentTotal)})`,
+        message: t("splitMismatchToast", {
+          milestone: money(milestoneAmount),
+          current: money(currentTotal),
+        }),
       });
       return;
     }
 
     if (!decisionReason.trim() || decisionReason.trim().length < 5) {
       toastError({
-        message: "Please provide an explanation for this ruling (minimum 5 characters).",
+        message: t("reasonRequiredToast"),
       });
       return;
     }
@@ -131,12 +121,12 @@ export function ArbitrateDialog({
       if (isFinal) {
         await disputeApiRequest.adminFinalDecision(dispute.id, payload);
         toastSuccess({
-          message: "Final binding decision issued! Dispute is now finalized.",
+          message: t("finalDecisionToast"),
         });
       } else {
         await disputeApiRequest.adminMakeDecision(dispute.id, payload);
         toastSuccess({
-          message: "Proposed decision issued to both parties for review.",
+          message: t("proposedDecisionToast"),
         });
       }
 
@@ -146,7 +136,7 @@ export function ArbitrateDialog({
       if (error instanceof ApiFail) {
         toastError({ message: error.message });
       } else {
-        toastError({ message: "Failed to submit decision." });
+        toastError({ message: t("submitFailed") });
       }
     } finally {
       setIsSubmitting(false);
@@ -162,6 +152,9 @@ export function ArbitrateDialog({
     dispute.status === "DECISION_MADE" ||
     dispute.status === "REVIEW_REQUESTED";
 
+  const paidFees = dispute.fees?.filter((f) => f.status === "PAID").length ?? 0;
+  const totalFees = dispute.fees?.length ?? 2;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto font-sans">
@@ -170,7 +163,7 @@ export function ArbitrateDialog({
             <div className="flex items-center gap-2">
               <Scale className="size-5 text-[#0069D3]" />
               <DialogTitle className="text-lg font-bold text-foreground">
-                Arbitration Case #{dispute.id}
+                {t("dialogTitle", { id: dispute.id })}
               </DialogTitle>
             </div>
             <Badge variant="outline" className="font-semibold">
@@ -178,9 +171,14 @@ export function ArbitrateDialog({
             </Badge>
           </div>
           <DialogDescription className="text-xs text-muted-foreground">
-            Milestone: <strong className="text-foreground">{dispute.milestone?.title}</strong> •{" "}
-            Amount: <strong className="text-foreground">{money(milestoneAmount)}</strong> •{" "}
-            Filed: <strong className="text-foreground">{formatDate(dispute.createdAt)}</strong>
+            {t("milestoneLabel")}{" "}
+            <strong className="text-foreground">{dispute.milestone?.title}</strong> •{" "}
+            {t("amountLabel")}{" "}
+            <strong className="text-foreground">{money(milestoneAmount)}</strong> •{" "}
+            {t("filedLabel")}{" "}
+            <strong className="text-foreground">
+              {formatDateTime(dispute.createdAt, locale)}
+            </strong>
           </DialogDescription>
         </DialogHeader>
 
@@ -188,28 +186,35 @@ export function ArbitrateDialog({
           {/* 1. Parties & Fees Overview */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <div className="rounded-xl border border-border bg-card p-3 space-y-0.5">
-              <span className="text-[11px] text-muted-foreground block">Client</span>
+              <span className="text-[11px] text-muted-foreground block">
+                {t("clientLabel")}
+              </span>
               <span className="font-bold text-foreground truncate block">
-                {dispute.openedBy?.email ?? "N/A"}
+                {dispute.openedBy?.email ?? tCommon("notAvailable")}
               </span>
             </div>
             <div className="rounded-xl border border-border bg-card p-3 space-y-0.5">
-              <span className="text-[11px] text-muted-foreground block">Freelancer</span>
+              <span className="text-[11px] text-muted-foreground block">
+                {t("freelancerLabel")}
+              </span>
               <span className="font-bold text-foreground truncate block">
-                {dispute.respondent?.email ?? "N/A"}
+                {dispute.respondent?.email ?? tCommon("notAvailable")}
               </span>
             </div>
             <div className="rounded-xl border border-border bg-card p-3 space-y-0.5">
-              <span className="text-[11px] text-muted-foreground block">Arbitration Fee</span>
+              <span className="text-[11px] text-muted-foreground block">
+                {t("arbitrationFeeLabel")}
+              </span>
               <span className="font-bold text-foreground block">
-                {money(dispute.arbitrationFee)} each
+                {t("feeEach", { amount: money(dispute.arbitrationFee) })}
               </span>
             </div>
             <div className="rounded-xl border border-border bg-card p-3 space-y-0.5">
-              <span className="text-[11px] text-muted-foreground block">Fee Statuses</span>
+              <span className="text-[11px] text-muted-foreground block">
+                {t("feeStatusesLabel")}
+              </span>
               <span className="font-semibold block text-emerald-600">
-                {dispute.fees?.filter((f) => f.status === "PAID").length ?? 0}/
-                {dispute.fees?.length ?? 2} Paid
+                {t("feesPaidCount", { paid: paidFees, total: totalFees })}
               </span>
             </div>
           </div>
@@ -220,15 +225,19 @@ export function ArbitrateDialog({
           <div className="space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
               <Shield className="size-4 text-[#0069D3]" />
-              <span>Claim by Initiator</span>
+              <span>{t("claimByInitiator")}</span>
             </div>
             <div className="rounded-xl border border-border bg-muted/30 p-3.5 space-y-2 text-xs">
               <div>
-                <span className="text-[11px] text-muted-foreground block">Reason:</span>
+                <span className="text-[11px] text-muted-foreground block">
+                  {t("reasonLabel")}
+                </span>
                 <p className="font-semibold text-foreground">{dispute.reason}</p>
               </div>
               <div>
-                <span className="text-[11px] text-muted-foreground block">Statement:</span>
+                <span className="text-[11px] text-muted-foreground block">
+                  {t("statementLabel")}
+                </span>
                 <p className="text-foreground/90 whitespace-pre-wrap">{dispute.description}</p>
               </div>
 
@@ -236,7 +245,7 @@ export function ArbitrateDialog({
               {dispute.evidences?.filter((e) => e.type === "CLAIM").length ? (
                 <div className="pt-2 space-y-1">
                   <span className="text-[11px] font-semibold text-muted-foreground">
-                    Attached Claim Files:
+                    {t("attachedClaimFiles")}
                   </span>
                   <div className="space-y-1">
                     {dispute.evidences
@@ -248,7 +257,10 @@ export function ArbitrateDialog({
                         >
                           <div className="flex items-center gap-1.5 truncate">
                             <FileText className="size-3.5 text-muted-foreground shrink-0" />
-                            <span className="truncate">{ev.file?.fileName ?? `Evidence #${ev.id}`}</span>
+                            <span className="truncate">
+                              {ev.file?.fileName ??
+                                t("evidenceFallback", { id: ev.id })}
+                            </span>
                           </div>
                           {ev.file?.fileUrl && (
                             <a
@@ -257,7 +269,7 @@ export function ArbitrateDialog({
                               rel="noreferrer"
                               className="text-[#0069D3] hover:underline flex items-center gap-1 text-[11px] shrink-0"
                             >
-                              View <ExternalLink className="size-3" />
+                              {t("viewAction")} <ExternalLink className="size-3" />
                             </a>
                           )}
                         </div>
@@ -272,7 +284,7 @@ export function ArbitrateDialog({
           <div className="space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
               <User className="size-4 text-purple-600" />
-              <span>Respondent Rebuttal</span>
+              <span>{t("respondentRebuttal")}</span>
             </div>
             <div className="rounded-xl border border-border bg-muted/30 p-3.5 space-y-2 text-xs">
               {dispute.evidences?.filter((e) => e.type === "RESPONSE").length ? (
@@ -281,7 +293,7 @@ export function ArbitrateDialog({
                   .map((ev) => (
                     <div key={ev.id} className="space-y-2">
                       <p className="text-foreground/90 whitespace-pre-wrap">
-                        {ev.description || "No written explanation provided."}
+                        {ev.description || t("noWrittenExplanation")}
                       </p>
                       {ev.file?.fileUrl && (
                         <a
@@ -291,7 +303,9 @@ export function ArbitrateDialog({
                           className="text-[#0069D3] hover:underline flex items-center gap-1 text-[11px]"
                         >
                           <FileText className="size-3.5" />
-                          View File: {ev.file.fileName}
+                          {t("viewFileAction", {
+                            fileName: ev.file.fileName ?? "",
+                          })}
                           <ExternalLink className="size-3" />
                         </a>
                       )}
@@ -299,7 +313,7 @@ export function ArbitrateDialog({
                   ))
               ) : (
                 <p className="text-xs text-muted-foreground italic">
-                  Respondent has not submitted a rebuttal yet.
+                  {t("noRebuttalYet")}
                 </p>
               )}
             </div>
@@ -310,14 +324,14 @@ export function ArbitrateDialog({
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <CheckCircle2 className="size-4 text-amber-600" />
-                <span>Parties Feedback on Proposed Ruling</span>
+                <span>{t("partiesFeedbackHeading")}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {dispute.decisionReviews.map((rev) => (
                   <div key={rev.id} className="rounded-xl border border-border p-3 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-muted-foreground">
-                        User #{rev.userId}
+                        {t("userLabel", { id: rev.userId })}
                       </span>
                       <Badge
                         variant={rev.response === "ACCEPTED" ? "default" : "destructive"}
@@ -344,15 +358,17 @@ export function ArbitrateDialog({
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs space-y-2">
               <div className="flex items-center gap-2 text-emerald-700 font-bold">
                 <CheckCircle2 className="size-4" />
-                <span>Case Finalized & Settled</span>
+                <span>{t("caseFinalizedHeading")}</span>
               </div>
               <p className="text-foreground/90">
-                Client Refund: <strong>{money(dispute.clientAmount)}</strong> • Freelancer Payout:{" "}
+                {t("clientRefundLabel")}{" "}
+                <strong>{money(dispute.clientAmount)}</strong> •{" "}
+                {t("freelancerPayoutLabel")}{" "}
                 <strong>{money(dispute.freelancerAmount)}</strong>
               </p>
               {dispute.decisionReason && (
                 <p className="text-muted-foreground text-[11px]">
-                  Reason: {dispute.decisionReason}
+                  {t("finalizedReasonLabel", { reason: dispute.decisionReason })}
                 </p>
               )}
             </div>
@@ -363,8 +379,8 @@ export function ArbitrateDialog({
                   <Gavel className="size-4 text-[#0069D3]" />
                   <h4 className="text-sm font-bold text-foreground">
                     {canMakeProposedDecision
-                      ? "Issue Proposed Ruling"
-                      : "Issue Final Binding Ruling"}
+                      ? t("issueProposedRuling")
+                      : t("issueFinalRuling")}
                   </h4>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -373,21 +389,21 @@ export function ArbitrateDialog({
                     onClick={() => handleSetSplit("CLIENT_100")}
                     className="text-[11px] px-2 py-1 rounded-md border border-border hover:bg-muted font-medium"
                   >
-                    100% Client
+                    {t("splitClient100")}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSetSplit("HALF")}
                     className="text-[11px] px-2 py-1 rounded-md border border-border hover:bg-muted font-medium"
                   >
-                    50 / 50
+                    {t("splitHalf")}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSetSplit("FREELANCER_100")}
                     className="text-[11px] px-2 py-1 rounded-md border border-border hover:bg-muted font-medium"
                   >
-                    100% Freelancer
+                    {t("splitFreelancer100")}
                   </button>
                 </div>
               </div>
@@ -396,7 +412,7 @@ export function ArbitrateDialog({
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="space-y-1">
                   <label className="font-semibold text-foreground">
-                    Client Refund Amount ($)
+                    {t("clientRefundInputLabel")}
                   </label>
                   <input
                     type="number"
@@ -410,7 +426,7 @@ export function ArbitrateDialog({
                 </div>
                 <div className="space-y-1">
                   <label className="font-semibold text-foreground">
-                    Freelancer Payout Amount ($)
+                    {t("freelancerPayoutInputLabel")}
                   </label>
                   <input
                     type="number"
@@ -427,11 +443,15 @@ export function ArbitrateDialog({
               {/* Split Validation Notice */}
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-muted-foreground">
-                  Total Split: <strong>{money(currentTotal)}</strong> / {money(milestoneAmount)}
+                  {t("totalSplitLabel", {
+                    total: money(currentTotal),
+                    milestone: money(milestoneAmount),
+                  })}
                 </span>
                 {!isSplitValid && (
                   <span className="text-red-500 font-semibold flex items-center gap-1">
-                    <XCircle className="size-3" /> Sum must equal {money(milestoneAmount)}
+                    <XCircle className="size-3" />
+                    {t("sumMustEqual", { amount: money(milestoneAmount) })}
                   </span>
                 )}
               </div>
@@ -439,13 +459,13 @@ export function ArbitrateDialog({
               {/* Decision Reason */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">
-                  Arbitration Findings & Reason <span className="text-red-500">*</span>
+                  {t("findingsReasonLabel")} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={decisionReason}
                   onChange={(e) => setDecisionReason(e.target.value)}
                   rows={3}
-                  placeholder="State the rationale for this split decision for both client and freelancer..."
+                  placeholder={t("findingsPlaceholder")}
                   className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#0069D3]/30 resize-none"
                 />
               </div>
@@ -464,7 +484,7 @@ export function ArbitrateDialog({
                     ) : (
                       <Gavel className="mr-1.5 size-3.5" />
                     )}
-                    Issue Proposed Decision
+                    {t("issueProposedDecision")}
                   </Button>
                 )}
 
@@ -480,7 +500,7 @@ export function ArbitrateDialog({
                     ) : (
                       <CheckCircle2 className="mr-1.5 size-3.5" />
                     )}
-                    Issue Final Ruling & Finalize
+                    {t("issueFinalRulingAction")}
                   </Button>
                 )}
               </div>
@@ -496,7 +516,7 @@ export function ArbitrateDialog({
             onClick={() => onOpenChange(false)}
             className="rounded-full text-xs"
           >
-            Close
+            {t("closeAction")}
           </Button>
         </DialogFooter>
       </DialogContent>

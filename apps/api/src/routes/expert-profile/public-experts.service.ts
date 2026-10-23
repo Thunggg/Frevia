@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { PublicExpertQueryType } from '@shared/types';
+import { PublicExpertNotFoundException } from './expert-profile.error';
 import { ExpertProfileRepository } from './expert-profile.repo';
 
 @Injectable()
@@ -45,7 +46,7 @@ export class PublicExpertsService {
 
   async detail(id: number) {
     const expert = await this.repository.findPublicById(id);
-    if (!expert) throw new NotFoundException('Expert not found.');
+    if (!expert) throw PublicExpertNotFoundException();
     return this.toPublicExpert(expert);
   }
 }

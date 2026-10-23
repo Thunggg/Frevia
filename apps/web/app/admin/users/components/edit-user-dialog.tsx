@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useUpdateUser } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
@@ -30,9 +30,11 @@ import {
   type AdminUserItemType,
 } from "@shared/types";
 import { Loader2, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useBackendMessage } from "@/hooks/use-backend-message";
 
 const EditUserFormSchema = z.object({
   email: z
@@ -57,10 +59,13 @@ interface EditUserDialogProps {
 // - Khi submit chỉ gửi những trường THAY ĐỔI so với dữ liệu gốc.
 export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
   const router = useRouter();
+  const t = useTranslations("adminUsers");
+  const tCommon = useTranslations("adminCommon");
+  const translateMessage = useBackendMessage();
   const updateUser = useUpdateUser();
 
   const form = useForm<EditUserFormValues>({
-    resolver: zodResolver(EditUserFormSchema) as Resolver<EditUserFormValues>,
+    resolver: useTranslatedResolver<EditUserFormValues>(EditUserFormSchema),
     defaultValues: {
       email: "",
       fullName: "",
@@ -118,9 +123,9 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
       {
         onSuccess: (updated) => {
           toastSuccess({
-            message: `User "${updated.email}" updated${
-              updated.isBanned ? " · account banned" : ""
-            }`,
+            message: updated.isBanned
+              ? t("updatedBannedToast", { email: updated.email })
+              : t("updatedToast", { email: updated.email }),
           });
           onClose();
           router.refresh();
@@ -129,15 +134,15 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
           if (error instanceof ApiFail) {
             const details = error.response.error.details ?? [];
 
-            // Checkbox "Banned" không có chỗ hiển thị FieldError → toast thẳng message code
-            // (code dạng "Error.Xxx" để sau này dùng làm key cho i18n)
+            // Checkbox "Banned" không có chỗ hiển thị FieldError → toast thẳng message
+            // (backend trả về key i18n nên phải dịch trước khi hiển thị)
             const banSelfDetail = details.find(
               (detail) =>
                 detail.path === "isBanned" &&
                 detail.message === ManageUserMessage.CANNOT_BAN_SELF,
             );
             if (banSelfDetail) {
-              toastError({ message: banSelfDetail.message });
+              toastError({ message: translateMessage(banSelfDetail.message) });
               return;
             }
 
@@ -152,7 +157,7 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
               toastError({ message: error.message });
             }
           } else {
-            toastError({ message: "Failed to update user" });
+            toastError({ message: t("updateFailed") });
           }
         },
       },
@@ -165,14 +170,16 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Pencil className="h-5 w-5 text-[#4fae2e]" />
-            Edit user
+            {t("editTitle")}
           </DialogTitle>
           <DialogDescription>
-            Update general account information for{" "}
-            <span className="font-medium text-foreground">
-              {user?.displayName || user?.email || "this user"}
-            </span>
-            .
+            {t.rich("editDescription", {
+              b: (chunks) => (
+                <span className="font-medium text-foreground">{chunks}</span>
+              ),
+              userName:
+                user?.displayName || user?.email || t("thisUser"),
+            })}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -183,12 +190,12 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="edit-user-fullName">
-                    Full name
+                    {t("fieldFullName")}
                   </FieldLabel>
                   <Input
                     {...field}
                     id="edit-user-fullName"
-                    placeholder="Jane Doe"
+                    placeholder={t("fullNamePlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -202,12 +209,14 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="edit-user-email">Email</FieldLabel>
+                  <FieldLabel htmlFor="edit-user-email">
+                    {tCommon("email")}
+                  </FieldLabel>
                   <Input
                     {...field}
                     id="edit-user-email"
                     type="email"
-                    placeholder="jane@example.com"
+                    placeholder={t("emailPlaceholder")}
                     autoComplete="off"
                     aria-invalid={fieldState.invalid}
                   />
@@ -230,20 +239,18 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
                     }
                   />
                   <FieldLabel htmlFor="edit-user-isBanned">
-                    Banned account
+                    {t("fieldBanned")}
                   </FieldLabel>
                 </Field>
               )}
             />
             <p className="text-xs text-muted-foreground -mt-4 pl-6">
-              {watched.isBanned
-                ? "Banned users cannot sign in or refresh their session."
-                : "Leave unchecked to keep the account active."}
+              {watched.isBanned ? t("bannedHint") : t("activeHint")}
             </p>
           </FieldGroup>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -252,7 +259,7 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
               {updateUser.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              Save changes
+              {t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

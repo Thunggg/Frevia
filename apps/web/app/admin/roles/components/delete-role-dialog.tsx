@@ -17,6 +17,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { RoleName, type RoleListItemType } from "@shared/types";
 import { Loader2, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { type MouseEvent, type ReactNode } from "react";
 
 const SYSTEM_ROLE_NAMES = new Set(
@@ -25,14 +26,6 @@ const SYSTEM_ROLE_NAMES = new Set(
 
 function isSystemRole(name: string) {
   return SYSTEM_ROLE_NAMES.has(name.trim().toLowerCase());
-}
-
-function getDeleteRoleErrorMessage(error: unknown): string {
-  if (!(error instanceof ApiFail)) {
-    return "Couldn't delete role. Try again.";
-  }
-
-  return error.response.error.details?.[0]?.message || error.message;
 }
 
 type DeleteRoleDialogProps = {
@@ -46,14 +39,24 @@ export function DeleteRoleDialog({
   trigger,
   onDeleted,
 }: DeleteRoleDialogProps) {
+  const t = useTranslations("adminRoles");
+  const tCommon = useTranslations("adminCommon");
   const deleteRole = useDeleteRole();
+
+  function getDeleteRoleErrorMessage(error: unknown): string {
+    if (!(error instanceof ApiFail)) {
+      return tCommon("deleteFailed");
+    }
+
+    return error.response.error.details?.[0]?.message || error.message;
+  }
 
   function handleDelete(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
 
     deleteRole.mutate(role.id, {
       onSuccess: () => {
-        toastSuccess({ message: `Role "${role.name}" deleted` });
+        toastSuccess({ message: t("deletedToast", { name: role.name }) });
         onDeleted?.();
       },
       onError: (error) => {
@@ -81,15 +84,14 @@ export function DeleteRoleDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete role?</AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Delete &quot;{role.name}&quot; permanently. If anyone still has this
-            role, reassign them first.
+            {t("deleteDescription", { name: role.name })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={deleteRole.isPending}>
-            Cancel
+            {tCommon("cancel")}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
@@ -99,7 +101,7 @@ export function DeleteRoleDialog({
             {deleteRole.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : null}
-            Delete role
+            {t("deleteAction")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

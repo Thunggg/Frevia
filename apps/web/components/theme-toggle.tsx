@@ -1,10 +1,12 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { Moon, Sun } from "@/components/icons";
 import * as React from "react";
 
 export function ThemeToggle() {
+  const t = useTranslations("common");
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -19,7 +21,9 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="rounded-full p-2 text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={
+        isDark ? t("switchToLightMode") : t("switchToDarkMode")
+      }
     >
       {isDark ? <Sun className="size-5" /> : <Moon className="size-5" />}
     </button>

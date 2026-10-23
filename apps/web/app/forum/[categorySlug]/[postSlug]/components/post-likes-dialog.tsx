@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,8 @@ type PostLikesDialogProps = {
 };
 
 export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
+  const t = useTranslations("forum");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
 
   // Chỉ fetch danh sách người like khi dialog mở
@@ -32,7 +35,8 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
     likes?.map((like) => ({
       id: like.userId,
       displayName:
-        like.user?.profile?.displayName ?? `User #${like.userId}`,
+        like.user?.profile?.displayName ??
+        t("userFallback", { id: like.userId }),
       avatarUrl: like.user?.profile?.avatarUrl ?? null,
     })) ?? [];
 
@@ -45,14 +49,14 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Heart className="h-3.5 w-3.5" />
-          {count} {count === 1 ? "Like" : "Likes"}
+          {count} {tCommon("likes", { count })}
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Likes</DialogTitle>
+          <DialogTitle>{t("likesTitle")}</DialogTitle>
           <DialogDescription>
-            People who liked this post.
+            {t("likesDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -63,7 +67,7 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
             </div>
           ) : likers.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              No likes yet.
+              {t("noLikes")}
             </p>
           ) : (
             <ul className="space-y-1">

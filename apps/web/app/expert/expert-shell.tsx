@@ -1,11 +1,14 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { LogOut, UserRound } from "lucide-react";
 
 export function ExpertShell({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("expertShell");
+  const tRole = useTranslations("roleName");
   const pathname = usePathname();
   const router = useRouter();
   const logout = async () => {
@@ -23,7 +26,7 @@ export function ExpertShell({ children }: { children: React.ReactNode }) {
               href="/expert/profile"
               className="text-2xl font-semibold tracking-tight"
             >
-              Frevia <span className="text-[#4fae2e]">Expert</span>
+              Frevia <span className="text-[#4fae2e]">{tRole("EXPERT")}</span>
             </Link>
             <Link
               href="/expert/profile"
@@ -34,12 +37,12 @@ export function ExpertShell({ children }: { children: React.ReactNode }) {
               }`}
             >
               <UserRound className="size-4" />
-              Profile
+              {t("profile")}
             </Link>
           </div>
           <Button variant="ghost" size="sm" onClick={() => void logout()}>
             <LogOut className="size-4" />
-            Log out
+            {t("logout")}
           </Button>
         </div>
       </header>

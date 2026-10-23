@@ -68,6 +68,7 @@ describe('ProposalRepository', () => {
           proposalId: 18,
           jobId: 10,
           contractId: 22,
+          jobTitle: 'AI Dev App',
         },
       },
     });

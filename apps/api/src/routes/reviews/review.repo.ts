@@ -120,6 +120,7 @@ export class ReviewRepository {
             contractId,
             reviewId: review.id,
             reviewerId,
+            reviewerName,
           },
         },
       });
@@ -206,6 +207,7 @@ export class ReviewRepository {
             reviewId,
             responseId: response.id,
             responderId: userId,
+            responderName,
           },
         },
       });

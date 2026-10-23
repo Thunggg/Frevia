@@ -6,4 +6,6 @@ export const ManageIdentityVerificationMessage = {
     "Error.IdentityVerificationListNotFound",
   IDENTITY_VERIFICATION_ALREADY_REVIEWED:
     "Error.IdentityVerificationAlreadyReviewed",
+  IDENTITY_VERIFICATION_FILE_NOT_AVAILABLE:
+    "Error.IdentityVerificationFileNotAvailable",
 } as const;

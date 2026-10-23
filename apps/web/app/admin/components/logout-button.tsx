@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { LogOut } from "lucide-react";
 
 export function LogoutButton() {
   const router = useRouter();
+  const t = useTranslations("adminNav");
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -29,7 +31,7 @@ export function LogoutButton() {
       className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive"
     >
       <LogOut className="h-4 w-4" />
-      {loading ? "Logging out..." : "Log out"}
+      {loading ? t("loggingOut") : t("logOut")}
     </Button>
   );
 }

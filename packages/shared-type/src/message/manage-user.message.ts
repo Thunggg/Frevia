@@ -35,4 +35,10 @@ export const ManageUserMessage = {
   FAILED_TO_CREATE_PORTFOLIO_ITEM: "Error.FailedToCreatePortfolioItem",
   FAILED_TO_UPDATE_PORTFOLIO_ITEM: "Error.FailedToUpdatePortfolioItem",
   FAILED_TO_DELETE_PORTFOLIO_ITEM: "Error.FailedToDeletePortfolioItem",
+  // --- Success messages ---
+  FREELANCER_PROFILE_UPDATED: "Success.FreelancerProfileUpdated",
+  FREELANCER_SKILLS_UPDATED: "Success.FreelancerSkillsUpdated",
+  PORTFOLIO_ITEM_CREATED: "Success.PortfolioItemCreated",
+  PORTFOLIO_ITEM_UPDATED: "Success.PortfolioItemUpdated",
+  PORTFOLIO_ITEM_DELETED: "Success.PortfolioItemDeleted",
 } as const;

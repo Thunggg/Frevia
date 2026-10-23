@@ -1,3 +1,4 @@
+import { getFormatter, getTranslations } from "next-intl/server";
 import {
   FileText,
   MessageSquare,
@@ -14,7 +15,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
 const statCards: {
-  title: string;
+  labelKey: string;
   key:
     | "totalPosts"
     | "totalComments"
@@ -25,45 +26,62 @@ const statCards: {
   icon: LucideIcon;
   emphasize?: boolean;
 }[] = [
-  { title: "Total Posts", key: "totalPosts", icon: FileText },
-  { title: "Total Comments", key: "totalComments", icon: MessageSquare },
-  { title: "Total Reports", key: "totalReports", icon: Flag },
+  { labelKey: "statTotalPosts", key: "totalPosts", icon: FileText },
+  { labelKey: "statTotalComments", key: "totalComments", icon: MessageSquare },
+  { labelKey: "statTotalReports", key: "totalReports", icon: Flag },
   {
-    title: "Pending Reports",
+    labelKey: "statPendingReports",
     key: "pendingReports",
     icon: AlertTriangle,
     emphasize: true,
   },
-  { title: "Total Users", key: "totalUsers", icon: Users },
-  { title: "Total Categories", key: "totalCategories", icon: FolderOpen },
+  { labelKey: "statTotalUsers", key: "totalUsers", icon: Users },
+  {
+    labelKey: "statTotalCategories",
+    key: "totalCategories",
+    icon: FolderOpen,
+  },
 ];
 
 export default async function AdminDashboardPage() {
   const stats = await adminServerRequest.getStats();
+  const t = await getTranslations("adminDashboard");
+  const format = await getFormatter();
 
   if (!stats) {
     return (
       <div className="py-12 text-center text-sm text-muted-foreground">
-        Couldn&apos;t load stats. Try again.
+        {t("loadFailed")}
       </div>
     );
   }
+
+  const average = (total: number, divisor: number) =>
+    divisor > 0
+      ? format.number(total / divisor, { maximumFractionDigits: 1 })
+      : format.number(0);
+
+  const pendingRate =
+    stats.totalReports > 0
+      ? format.number(stats.pendingReports / stats.totalReports, {
+          style: "percent",
+          maximumFractionDigits: 0,
+        })
+      : format.number(0, { style: "percent" });
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Dashboard
+          {t("title")}
         </h1>
-        <p className="mt-1 text-muted-foreground">
-          Forum administration overview
-        </p>
+        <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card) => (
           <div
-            key={card.title}
+            key={card.labelKey}
             className={`rounded-xl border border-border bg-card p-6 transition-colors hover:border-[#4fae2e]/35 ${
               card.emphasize ? "border-[#4fae2e]/25 bg-[#eaf8df]/40 dark:bg-[#4fae2e]/10" : ""
             }`}
@@ -71,10 +89,10 @@ export default async function AdminDashboardPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  {card.title}
+                  {t(card.labelKey)}
                 </p>
                 <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
-                  {stats[card.key]}
+                  {format.number(stats[card.key])}
                 </p>
               </div>
               <div className="flex size-12 items-center justify-center rounded-xl bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
@@ -92,21 +110,21 @@ export default async function AdminDashboardPage() {
               <div className="flex items-center gap-2">
                 <Clock className="size-4 text-[#4fae2e]" />
                 <h2 className="text-sm font-semibold text-foreground">
-                  Recent Posts
+                  {t("recentPosts")}
                 </h2>
               </div>
               <Link
                 href="/admin/posts"
                 className="text-xs font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
               >
-                View all →
+                {t("viewAll")}
               </Link>
             </div>
           </div>
           <div className="p-2">
             {stats.recentPosts.length === 0 ? (
               <p className="p-4 text-center text-sm text-muted-foreground">
-                No posts yet.
+                {t("noPosts")}
               </p>
             ) : (
               <div className="divide-y divide-border">
@@ -121,14 +139,18 @@ export default async function AdminDashboardPage() {
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {post.user.profile?.displayName ??
-                          `User #${post.user.id}`}
+                          t("userFallback", { id: post.user.id })}
                       </p>
                     </div>
                     <Badge
                       variant="secondary"
                       className="shrink-0 border border-[#4fae2e]/20 bg-[#eaf8df] text-xs text-[#4fae2e] dark:bg-[#4fae2e]/15"
                     >
-                      {new Date(post.createdAt).toLocaleDateString()}
+                      {format.dateTime(new Date(post.createdAt), {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </Badge>
                   </div>
                 ))}
@@ -142,69 +164,58 @@ export default async function AdminDashboardPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="size-4 text-[#4fae2e]" />
               <h2 className="text-sm font-semibold text-foreground">
-                Quick Stats
+                {t("quickStats")}
               </h2>
             </div>
           </div>
           <div className="space-y-4 p-6">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Posts per Category
+                {t("postsPerCategory")}
               </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalCategories > 0
-                  ? (stats.totalPosts / stats.totalCategories).toFixed(1)
-                  : "0"}
+                {average(stats.totalPosts, stats.totalCategories)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Comments per Post
+                {t("commentsPerPost")}
               </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalPosts > 0
-                  ? (stats.totalComments / stats.totalPosts).toFixed(1)
-                  : "0"}
+                {average(stats.totalComments, stats.totalPosts)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Reports per Post
+                {t("reportsPerPost")}
               </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalPosts > 0
-                  ? (stats.totalReports / stats.totalPosts).toFixed(1)
-                  : "0"}
+                {average(stats.totalReports, stats.totalPosts)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Pending Report Rate
+                {t("pendingReportRate")}
               </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalReports > 0
-                  ? (
-                      (stats.pendingReports / stats.totalReports) *
-                      100
-                    ).toFixed(0) + "%"
-                  : "0%"}
+                {pendingRate}
               </span>
             </div>
             <div className="h-px bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Active Users</span>
+              <span className="text-sm text-muted-foreground">
+                {t("activeUsers")}
+              </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalUsers}
+                {format.number(stats.totalUsers)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Posts per User
+                {t("postsPerUser")}
               </span>
               <span className="text-sm font-medium text-foreground">
-                {stats.totalUsers > 0
-                  ? (stats.totalPosts / stats.totalUsers).toFixed(1)
-                  : "0"}
+                {average(stats.totalPosts, stats.totalUsers)}
               </span>
             </div>
           </div>

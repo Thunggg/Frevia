@@ -1,13 +1,16 @@
+import { getTranslations } from "next-intl/server";
 import { AuthShell } from "../components/auth-shell";
 import { RegisterForm } from "./register-form";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const t = await getTranslations("auth.register");
+
   return (
     <AuthShell
-      title="Create your account"
-      description="Join as a freelancer or employer and get started."
+      title={t("title")}
+      description={t("description")}
       imageSrc="/auth/register.jpg"
-      panelTitle="Find work or hire talent."
+      panelTitle={t("panelTitle")}
     >
       <RegisterForm />
     </AuthShell>

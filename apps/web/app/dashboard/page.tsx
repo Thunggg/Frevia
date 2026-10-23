@@ -1,11 +1,16 @@
+import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { RoleName } from "@shared/types";
 import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Redirecting to Dashboard | Frevia",
-  description: "Redirecting you to your role dashboard.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("pageMeta");
+
+  return {
+    title: t("dashboardTitle"),
+    description: t("dashboardDescription"),
+  };
+}
 
 export default async function DashboardRedirectPage() {
   const user = await authServerRequest.getMe();

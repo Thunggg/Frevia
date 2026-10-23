@@ -6,6 +6,7 @@ import {
   BannerAdminListResponseType,
   BannerAdminQueryType,
   BannerCreateBodyType,
+  BannerMessage,
   BannerUpdateBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -163,6 +164,6 @@ export class BannersAdminRepository {
       throw BannerAdminNotFoundException();
     }
 
-    return { message: 'Banner deleted successfully' };
+    return { message: BannerMessage.BANNER_DELETED };
   }
 }

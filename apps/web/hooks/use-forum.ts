@@ -1,22 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
+import { useApiDataExtractor } from "@/hooks/use-api-data-extractor";
 import type {
   ForumCommentListResponseType,
   ForumPostFilterType,
   ForumLikeDetailResponseType,
 } from "@shared/types";
-import type { ApiResponse } from "@shared/types";
-
-function extractData<T>(response: ApiResponse<T>): T {
-  if (response.success && "data" in response) {
-    return response.data;
-  }
-  // REVIEW (HTTP 202) từ proxy moderation: { success:false, message, need_review }
-  const err = response as { message?: string; error?: { message?: string } };
-  throw new Error(
-    err.error?.message ?? err.message ?? "Unexpected API error response",
-  );
-}
 
 export const forumKeys = {
   // Key gốc cho toàn bộ forum module - dùng để invalidate tất cả
@@ -48,6 +37,8 @@ export const forumKeys = {
 // Lấy danh sách posts theo filter.
 // staleTime: 2 phút - dữ liệu posts list fresh trong 2 phút
 export function useForumPosts(filter: ForumPostFilterType) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.posts(filter),
     queryFn: () => forumApiRequest.getPosts(filter).then(extractData),
@@ -60,6 +51,8 @@ export function useForumPosts(filter: ForumPostFilterType) {
  * staleTime: 1 phút
  */
 export function useForumPost(postId: number) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.post(postId),
     queryFn: () => forumApiRequest.getPostDetail(postId).then(extractData),
@@ -77,6 +70,8 @@ export function useForumComments(
   page: number = 1,
   limit: number = 5,
 ) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.comments(postId),
     queryFn: () =>
@@ -90,6 +85,8 @@ export function useForumComments(
  * Lấy danh sách likes của 1 post.
  */
 export function useForumPostLikes(postId: number) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.likes(postId),
     queryFn: () => forumApiRequest.getPostLikes(postId).then(extractData),
@@ -103,6 +100,8 @@ export function useForumPostLikes(postId: number) {
  * staleTime: 30 phút - categories ít thay đổi
  */
 export function useForumCategories() {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.categories(),
     queryFn: () => forumApiRequest.getCategories().then(extractData),
@@ -114,6 +113,8 @@ export function useForumCategories() {
  * Lấy chi tiết 1 category.
  */
 export function useForumCategoryDetail(categoryId: number) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.category(categoryId),
     queryFn: () =>
@@ -127,6 +128,8 @@ export function useForumCategoryDetail(categoryId: number) {
  * Truyền categoryId để giới hạn trong 1 category.
  */
 export function useForumTopPosts(limit: number = 3, categoryId?: number) {
+  const extractData = useApiDataExtractor("forum");
+
   return useQuery({
     queryKey: forumKeys.topPosts(limit, categoryId),
     queryFn: () =>
@@ -140,6 +143,7 @@ export function useForumTopPosts(limit: number = 3, categoryId?: number) {
  * Sau khi tạo thành công → invalidate posts list để refetch.
  */
 export function useCreatePost() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -167,6 +171,7 @@ export function useCreatePost() {
  * Sau khi update → invalidate post detail + posts list.
  */
 export function useUpdatePost() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -195,6 +200,7 @@ export function useUpdatePost() {
  * Sau khi xóa → invalidate posts list.
  */
 export function useDeletePost() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -212,6 +218,7 @@ export function useDeletePost() {
  * Sau khi tạo → invalidate comments list để refetch.
  */
 export function useCreateComment() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -231,6 +238,7 @@ export function useCreateComment() {
  * Sau khi update → invalidate comments list.
  */
 export function useUpdateComment() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -258,6 +266,7 @@ export function useUpdateComment() {
  * Sau khi xóa → invalidate comments list.
  */
 export function useDeleteComment() {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -289,6 +298,7 @@ export function useTogglePostLike(
   postId: number,
   currentUserId: number | null,
 ) {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -355,6 +365,7 @@ export function useTogglePostLike(
  * - onSettled: Fetch lại danh sách bình luận để đồng bộ với server.
  */
 export function useToggleCommentLike(postId: number) {
+  const extractData = useApiDataExtractor("forum");
   const queryClient = useQueryClient();
 
   return useMutation({

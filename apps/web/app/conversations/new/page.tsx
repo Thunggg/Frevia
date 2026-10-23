@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import { RoleName } from "@shared/types";
@@ -10,11 +11,12 @@ type NewConversationPageProps = {
 const NewConversationPage = async ({ searchParams }: NewConversationPageProps) => {
   const { participantId } = await searchParams;
   const participantIdNum = Number(participantId);
+  const t = await getTranslations("chat");
 
   if (!participantId || isNaN(participantIdNum) || participantIdNum <= 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground">Invalid participant</p>
+        <p className="text-muted-foreground">{t("invalidParticipant")}</p>
       </div>
     );
   }

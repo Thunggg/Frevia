@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { AuthShell } from "../components/auth-shell";
 import { LoginForm } from "./login-form";
 
@@ -7,13 +8,14 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { error } = await searchParams;
+  const t = await getTranslations("auth.login");
 
   return (
     <AuthShell
-      title="Welcome back"
-      description="Log in to continue to your Frevia workspace."
+      title={t("title")}
+      description={t("description")}
       imageSrc="/auth/login.jpg"
-      panelTitle="Your projects, in one place."
+      panelTitle={t("panelTitle")}
     >
       <LoginForm oauthError={error} />
     </AuthShell>

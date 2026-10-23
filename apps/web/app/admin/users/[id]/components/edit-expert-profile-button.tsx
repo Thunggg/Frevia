@@ -3,7 +3,7 @@
 import { useUpdateExpertProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -44,8 +44,9 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 // ====== Dialog "Edit expert profile" (tab EXPERT - User Detail) ======
@@ -62,50 +63,76 @@ const MAX_CREDENTIAL_ITEM_LENGTH = 500;
 // Mảng string[]: ô trống chỉ là trạng thái trung gian khi bấm "Add entry",
 // nên validate bỏ qua nó (giống cleanList() phía server) thay vì báo lỗi.
 // Giữ nguyên kiểu input/output để react-hook-form watch() không lệch kiểu.
-const StringList = (maxItems: number, maxItemLength: number, unit: string) =>
+const StringList = (
+  maxItems: number,
+  maxItemLength: number,
+  itemTooLongMessage: string,
+  maxItemsMessage: string,
+) =>
   z
-    .array(z.string().max(maxItemLength, `Keep each ${unit.replace(/s$/, "")} under ${maxItemLength} characters`))
-    .max(maxItems, `Add at most ${maxItems} ${unit}`);
+    .array(z.string().max(maxItemLength, itemTooLongMessage))
+    .max(maxItems, maxItemsMessage);
 
-const EditExpertProfileFormSchema = z.object({
-  displayName: z
-    .string()
-    .trim()
-    .min(1, "Display name is required")
-    .max(255, "Display name must be 255 characters or fewer"),
-  title: z.string().trim().max(255, "Keep the title under 255 characters"),
-  yearsOfExperience: z
-    .string()
-    .trim()
-    .refine((value) => {
-      if (value === "") return true;
-      const years = Number(value);
-      return (
-        Number.isInteger(years) &&
-        years >= 0 &&
-        years <= MAX_YEARS_OF_EXPERIENCE
-      );
-    }, `Enter a whole number between 0 and ${MAX_YEARS_OF_EXPERIENCE}`),
-  website: z
-    .string()
-    .trim()
-    .refine(
-      (value) => value === "" || z.url().safeParse(value).success,
-      "Enter a valid URL, e.g. https://example.com",
-    )
-    .refine((value) => value.length <= 500, "Keep the website under 500 characters"),
-  bio: z.string().trim().max(5000, "Keep the bio under 5000 characters"),
-  expertise: StringList(MAX_EXPERTISE_ITEMS, MAX_EXPERTISE_ITEM_LENGTH, "tags"),
-  education: StringList(MAX_CREDENTIAL_ITEMS, MAX_CREDENTIAL_ITEM_LENGTH, "entries"),
-  certifications: StringList(
-    MAX_CREDENTIAL_ITEMS,
-    MAX_CREDENTIAL_ITEM_LENGTH,
-    "entries",
-  ),
-  isActive: z.boolean(),
-});
+// Message đã bản địa hoá sẵn khi gọi schema: useTranslatedResolver chỉ tra
+// từ điển backend và giữ nguyên chuỗi gốc khi không tìm thấy bản dịch.
+type ProfileTranslator = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
 
-type EditExpertProfileFormValues = z.infer<typeof EditExpertProfileFormSchema>;
+const createEditExpertProfileFormSchema = (t: ProfileTranslator) =>
+  z.object({
+    displayName: z
+      .string()
+      .trim()
+      .min(1, t("expertErrDisplayNameRequired"))
+      .max(255, t("expertErrDisplayNameTooLong")),
+    title: z.string().trim().max(255, t("expertErrTitleTooLong")),
+    yearsOfExperience: z
+      .string()
+      .trim()
+      .refine((value) => {
+        if (value === "") return true;
+        const years = Number(value);
+        return (
+          Number.isInteger(years) &&
+          years >= 0 &&
+          years <= MAX_YEARS_OF_EXPERIENCE
+        );
+      }, t("expertErrYearsOfExperience", { max: MAX_YEARS_OF_EXPERIENCE })),
+    website: z
+      .string()
+      .trim()
+      .refine(
+        (value) => value === "" || z.url().safeParse(value).success,
+        t("expertErrWebsiteInvalid"),
+      )
+      .refine((value) => value.length <= 500, t("expertErrWebsiteTooLong")),
+    bio: z.string().trim().max(5000, t("expertErrBioTooLong")),
+    expertise: StringList(
+      MAX_EXPERTISE_ITEMS,
+      MAX_EXPERTISE_ITEM_LENGTH,
+      t("expertErrExpertiseItemTooLong", { max: MAX_EXPERTISE_ITEM_LENGTH }),
+      t("expertErrExpertiseMaxItems", { max: MAX_EXPERTISE_ITEMS }),
+    ),
+    education: StringList(
+      MAX_CREDENTIAL_ITEMS,
+      MAX_CREDENTIAL_ITEM_LENGTH,
+      t("expertErrCredentialItemTooLong", { max: MAX_CREDENTIAL_ITEM_LENGTH }),
+      t("expertErrCredentialMaxItems", { max: MAX_CREDENTIAL_ITEMS }),
+    ),
+    certifications: StringList(
+      MAX_CREDENTIAL_ITEMS,
+      MAX_CREDENTIAL_ITEM_LENGTH,
+      t("expertErrCredentialItemTooLong", { max: MAX_CREDENTIAL_ITEM_LENGTH }),
+      t("expertErrCredentialMaxItems", { max: MAX_CREDENTIAL_ITEMS }),
+    ),
+    isActive: z.boolean(),
+  });
+
+type EditExpertProfileFormValues = z.infer<
+  ReturnType<typeof createEditExpertProfileFormSchema>
+>;
 
 interface EditExpertProfileButtonProps {
   user: AdminUserDetailResponseType;
@@ -127,10 +154,17 @@ export function EditExpertProfileButton({
   user,
 }: EditExpertProfileButtonProps) {
   const router = useRouter();
+  const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
   const updateExpertProfile = useUpdateExpertProfile();
 
   const expertProfile = user.expertProfile;
+
+  // Message đã dịch sẵn -> schema dựng lại theo locale, memo để resolver ổn định
+  const formSchema = useMemo(
+    () => createEditExpertProfileFormSchema(t),
+    [t],
+  );
 
   // Giá trị đang lưu trên server, dùng để reset form và so sánh thay đổi
   const savedValues = useMemo<EditExpertProfileFormValues>(
@@ -152,7 +186,7 @@ export function EditExpertProfileButton({
   );
 
   const form = useForm<EditExpertProfileFormValues>({
-    resolver: zodResolver(EditExpertProfileFormSchema) as Resolver<EditExpertProfileFormValues>,
+    resolver: useTranslatedResolver<EditExpertProfileFormValues>(formSchema),
     defaultValues: savedValues,
   });
 
@@ -205,7 +239,7 @@ export function EditExpertProfileButton({
       {
         onSuccess: () => {
           toastSuccess({
-            message: `Expert profile for "${user.email}" updated`,
+            message: t("expertUpdated", { email: user.email }),
           });
           setOpen(false);
           router.refresh();
@@ -232,7 +266,7 @@ export function EditExpertProfileButton({
             }
             return;
           }
-          toastError({ message: "Failed to update expert profile" });
+          toastError({ message: t("expertUpdateFailed") });
         },
       },
     );
@@ -251,7 +285,7 @@ export function EditExpertProfileButton({
           ) : (
             <BrainCircuit className="size-3.5" />
           )}
-          {expertProfile ? "Edit profile" : "Complete profile"}
+          {expertProfile ? t("triggerEdit") : t("triggerComplete")}
         </Button>
       </DialogTrigger>
 
@@ -260,15 +294,16 @@ export function EditExpertProfileButton({
           <DialogTitle className="flex items-center gap-2">
             <BrainCircuit className="size-5 text-[#4fae2e]" />
             {expertProfile
-              ? "Edit expert profile"
-              : "Complete expert profile"}
+              ? t("expertTitleEdit")
+              : t("expertTitleComplete")}
           </DialogTitle>
           <DialogDescription>
-            Update the public expert profile for{" "}
-            <span className="font-medium text-foreground">
-              {user.displayName || user.email}
-            </span>
-            . Admin changes are applied immediately and skip review.
+            {t.rich("expertDescription", {
+              b: (chunks) => (
+                <span className="font-medium text-foreground">{chunks}</span>
+              ),
+              email: user.displayName || user.email,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -281,7 +316,7 @@ export function EditExpertProfileButton({
             {/* ---------- Identity ---------- */}
             <FieldSet>
               <FieldLegend variant="label" className="text-muted-foreground">
-                Identity
+                {t("expertSectionIdentity")}
               </FieldLegend>
               <FieldGroup>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -291,12 +326,12 @@ export function EditExpertProfileButton({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="edit-expert-displayName">
-                          Display name
+                          {t("expertFieldDisplayName")}
                         </FieldLabel>
                         <Input
                           {...field}
                           id="edit-expert-displayName"
-                          placeholder="Jane Doe"
+                          placeholder={t("expertDisplayNamePlaceholder")}
                           aria-invalid={fieldState.invalid}
                         />
                         {fieldState.invalid && (
@@ -311,12 +346,12 @@ export function EditExpertProfileButton({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="edit-expert-title">
-                          Professional title
+                          {t("expertFieldProfessionalTitle")}
                         </FieldLabel>
                         <Input
                           {...field}
                           id="edit-expert-title"
-                          placeholder="Senior Product Strategy Expert"
+                          placeholder={t("expertTitlePlaceholder")}
                           aria-invalid={fieldState.invalid}
                         />
                         {fieldState.invalid && (
@@ -331,7 +366,7 @@ export function EditExpertProfileButton({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="edit-expert-years">
-                          Years of experience
+                          {t("expertFieldYearsOfExperience")}
                         </FieldLabel>
                         <Input
                           {...field}
@@ -347,8 +382,9 @@ export function EditExpertProfileButton({
                           <FieldError errors={[fieldState.error]} />
                         ) : (
                           <FieldDescription>
-                            Whole number, 0&ndash;{MAX_YEARS_OF_EXPERIENCE}.
-                            Leave empty to clear.
+                            {t("expertYearsHint", {
+                              max: MAX_YEARS_OF_EXPERIENCE,
+                            })}
                           </FieldDescription>
                         )}
                       </Field>
@@ -360,13 +396,13 @@ export function EditExpertProfileButton({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="edit-expert-website">
-                          Website
+                          {t("expertFieldWebsite")}
                         </FieldLabel>
                         <Input
                           {...field}
                           id="edit-expert-website"
                           type="url"
-                          placeholder="https://example.com"
+                          placeholder={t("expertWebsitePlaceholder")}
                           aria-invalid={fieldState.invalid}
                         />
                         {fieldState.invalid && (
@@ -383,20 +419,22 @@ export function EditExpertProfileButton({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor="edit-expert-bio">
-                        Professional bio
+                        {t("expertFieldBio")}
                       </FieldLabel>
                       <Textarea
                         {...field}
                         id="edit-expert-bio"
                         rows={5}
-                        placeholder="Short introduction shown on the public expert profile..."
+                        placeholder={t("expertBioPlaceholder")}
                         aria-invalid={fieldState.invalid}
                       />
                       {fieldState.invalid ? (
                         <FieldError errors={[fieldState.error]} />
                       ) : (
                         <FieldDescription>
-                          {field.value.trim().length} / 5000 characters
+                          {t("expertBioCounter", {
+                            count: field.value.trim().length,
+                          })}
                         </FieldDescription>
                       )}
                     </Field>
@@ -408,7 +446,7 @@ export function EditExpertProfileButton({
             {/* ---------- Expertise ---------- */}
             <FieldSet>
               <FieldLegend variant="label" className="text-muted-foreground">
-                Expertise
+                {t("expertSectionExpertise")}
               </FieldLegend>
               <Controller
                 name="expertise"
@@ -417,7 +455,7 @@ export function EditExpertProfileButton({
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="edit-expert-expertise">
                       <TagsIcon className="size-3.5" />
-                      Areas of expertise
+                      {t("expertFieldAreasOfExpertise")}
                     </FieldLabel>
                     <TagListEditor
                       values={field.value}
@@ -425,15 +463,16 @@ export function EditExpertProfileButton({
                       maxItems={MAX_EXPERTISE_ITEMS}
                       maxItemLength={MAX_EXPERTISE_ITEM_LENGTH}
                       inputId="edit-expert-expertise"
-                      placeholder="e.g. Product strategy"
+                      placeholder={t("expertExpertisePlaceholder")}
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
                     ) : (
                       <FieldDescription>
-                        Up to {MAX_EXPERTISE_ITEMS} tags, each{" "}
-                        {MAX_EXPERTISE_ITEM_LENGTH} characters. Press Enter or
-                        comma to add. Duplicates are ignored.
+                        {t("expertExpertiseHint", {
+                          max: MAX_EXPERTISE_ITEMS,
+                          maxLength: MAX_EXPERTISE_ITEM_LENGTH,
+                        })}
                       </FieldDescription>
                     )}
                   </Field>
@@ -444,7 +483,7 @@ export function EditExpertProfileButton({
             {/* ---------- Credentials ---------- */}
             <FieldSet>
               <FieldLegend variant="label" className="text-muted-foreground">
-                Credentials
+                {t("expertSectionCredentials")}
               </FieldLegend>
               <div className="grid gap-4 md:grid-cols-2">
                 <Controller
@@ -454,16 +493,16 @@ export function EditExpertProfileButton({
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor="edit-expert-education">
                         <GraduationCap className="size-3.5" />
-                        Education
+                        {t("expertFieldEducation")}
                       </FieldLabel>
                       <ListEntryEditor
                         id="edit-expert-education"
-                        label="Education"
+                        label={t("expertEducationLabel")}
                         values={field.value}
                         onChange={field.onChange}
                         maxItems={MAX_CREDENTIAL_ITEMS}
                         maxItemLength={MAX_CREDENTIAL_ITEM_LENGTH}
-                        placeholder="BSc Computer Science - University of Science"
+                        placeholder={t("expertEducationPlaceholder")}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -477,16 +516,16 @@ export function EditExpertProfileButton({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor="edit-expert-certifications">
-                        Certifications
+                        {t("expertFieldCertifications")}
                       </FieldLabel>
                       <ListEntryEditor
                         id="edit-expert-certifications"
-                        label="Certification"
+                        label={t("expertCertificationsLabel")}
                         values={field.value}
                         onChange={field.onChange}
                         maxItems={MAX_CREDENTIAL_ITEMS}
                         maxItemLength={MAX_CREDENTIAL_ITEM_LENGTH}
-                        placeholder="AWS Certified Developer - Associate"
+                        placeholder={t("expertCertificationsPlaceholder")}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -500,7 +539,7 @@ export function EditExpertProfileButton({
             {/* ---------- Directory visibility ---------- */}
             <FieldSet>
               <FieldLegend variant="label" className="text-muted-foreground">
-                Directory visibility
+                {t("expertSectionVisibility")}
               </FieldLegend>
               <Controller
                 name="isActive"
@@ -522,19 +561,21 @@ export function EditExpertProfileButton({
                         ) : (
                           <EyeOff className="size-3.5 text-muted-foreground" />
                         )}
-                        Listed in the public directory
+                        {t("expertFieldListed")}
                       </FieldLabel>
                       <FieldDescription>
                         {field.value
-                          ? "This expert is discoverable at /experts and can receive consultations."
-                          : "This expert is hidden from the public directory but keeps all profile data."}
+                          ? t("expertListedActiveHint")
+                          : t("expertListedInactiveHint")}
                       </FieldDescription>
                     </div>
                     <Badge
                       variant={field.value ? "default" : "secondary"}
                       className="mt-0.5 shrink-0"
                     >
-                      {field.value ? "Active" : "Inactive"}
+                      {field.value
+                        ? t("expertStatusActive")
+                        : t("expertStatusInactive")}
                     </Badge>
                   </Field>
                 )}
@@ -545,14 +586,14 @@ export function EditExpertProfileButton({
           {/* ---------- Actions ---------- */}
           <DialogFooter className="border-t bg-muted/30 px-6 py-4">
             <p className="mr-auto text-xs text-muted-foreground">
-              {hasChanges ? "Unsaved changes" : "No changes yet"}
+              {hasChanges ? t("expertUnsavedChanges") : t("expertNoChanges")}
             </p>
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               type="submit"
@@ -563,7 +604,7 @@ export function EditExpertProfileButton({
               ) : (
                 <Pencil className="size-4" />
               )}
-              Save changes
+              {t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>
@@ -588,6 +629,7 @@ function TagListEditor({
   inputId: string;
   placeholder: string;
 }) {
+  const t = useTranslations("adminUserProfileEdit");
   const [draft, setDraft] = useState("");
   const isFull = values.length >= maxItems;
 
@@ -607,7 +649,11 @@ function TagListEditor({
           id={inputId}
           value={draft}
           disabled={isFull}
-          placeholder={isFull ? `Limit of ${maxItems} tags reached` : placeholder}
+          placeholder={
+            isFull
+              ? t("expertExpertiseLimitReached", { max: maxItems })
+              : placeholder
+          }
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === ",") {
@@ -628,7 +674,7 @@ function TagListEditor({
           onClick={add}
         >
           <Plus className="size-4" />
-          <span className="sr-only">Add tag</span>
+          <span className="sr-only">{t("expertExpertiseAddTag")}</span>
         </Button>
       </div>
 
@@ -645,7 +691,7 @@ function TagListEditor({
                 type="button"
                 className="rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
                 onClick={() => onChange(values.filter((item) => item !== value))}
-                aria-label={`Remove ${value}`}
+                aria-label={t("expertExpertiseRemoveTag", { value })}
               >
                 <X className="size-3" />
               </button>
@@ -654,7 +700,7 @@ function TagListEditor({
         </div>
       ) : (
         <p className="rounded-md border border-dashed px-3 py-4 text-center text-xs text-muted-foreground">
-          No expertise added yet.
+          {t("expertExpertiseEmpty")}
         </p>
       )}
     </div>
@@ -679,6 +725,7 @@ function ListEntryEditor({
   maxItemLength: number;
   placeholder: string;
 }) {
+  const t = useTranslations("adminUserProfileEdit");
   const isFull = values.length >= maxItems;
 
   function update(index: number, value: string) {
@@ -699,7 +746,7 @@ function ListEntryEditor({
             value={value}
             placeholder={placeholder}
             maxLength={maxItemLength}
-            aria-label={`${label} entry ${index + 1}`}
+            aria-label={t("expertEntryAria", { label, index: index + 1 })}
             onChange={(event) => update(index, event.target.value)}
           />
           <Button
@@ -711,7 +758,7 @@ function ListEntryEditor({
           >
             <X className="size-4" />
             <span className="sr-only">
-              Remove {label} entry {index + 1}
+              {t("expertRemoveEntryAria", { label, index: index + 1 })}
             </span>
           </Button>
         </div>
@@ -726,7 +773,9 @@ function ListEntryEditor({
         onClick={() => onChange([...values, ""])}
       >
         <Plus className="size-3.5" />
-        {isFull ? `Limit of ${maxItems} entries reached` : "Add entry"}
+        {isFull
+          ? t("expertEntryLimitReached", { max: maxItems })
+          : t("expertEntryAdd")}
       </Button>
     </div>
   );

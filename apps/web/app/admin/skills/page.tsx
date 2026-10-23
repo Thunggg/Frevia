@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Tags } from "lucide-react";
@@ -7,6 +8,15 @@ import { SkillsFilterBar } from "./components/skills-filter-bar";
 import { SkillsTable } from "./components/skills-table";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const t = await getTranslations("adminSkills");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function AdminSkillsPage({
   searchParams,
@@ -50,20 +60,18 @@ export default async function AdminSkillsPage({
     totalPages: 0,
   };
 
+  const t = await getTranslations("adminSkills");
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Tags className="h-8 w-8 text-[#4fae2e]" />
-            Skill Management
+            {t("pageTitle")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            View, search, and filter the skills catalog (
-            <span className="font-semibold text-foreground">
-              {pagination.total}
-            </span>{" "}
-            total skills)
+            {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
         <CreateSkillDialog />

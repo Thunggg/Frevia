@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { Input } from "@repo/ui/components/shadcn/input";
@@ -15,6 +16,8 @@ import {
 export function UsersFilterBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("adminUsers");
+  const tRole = useTranslations("roleName");
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const currentRole = searchParams.get("role") || "all";
@@ -55,7 +58,7 @@ export function UsersFilterBar() {
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Search by name or email..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9 pr-8"
@@ -73,22 +76,22 @@ export function UsersFilterBar() {
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-          Filter Role:
+          {t("filterRole")}
         </span>
         <Select
           value={currentRole}
           onValueChange={(value) => updateQueryParams({ role: value })}
         >
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="All Roles" />
+            <SelectValue placeholder={t("allRoles")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="ADMIN">Admin</SelectItem>
-            <SelectItem value="CLIENT">Client</SelectItem>
-            <SelectItem value="FREELANCER">Freelancer</SelectItem>
-            <SelectItem value="EXPERT">Expert</SelectItem>
-            <SelectItem value="CUSTOM">Custom Roles (Other)</SelectItem>
+            <SelectItem value="all">{t("allRoles")}</SelectItem>
+            <SelectItem value="ADMIN">{tRole("ADMIN")}</SelectItem>
+            <SelectItem value="CLIENT">{tRole("CLIENT")}</SelectItem>
+            <SelectItem value="FREELANCER">{tRole("FREELANCER")}</SelectItem>
+            <SelectItem value="EXPERT">{tRole("EXPERT")}</SelectItem>
+            <SelectItem value="CUSTOM">{t("customRolesFilter")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

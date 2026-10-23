@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -38,26 +39,6 @@ interface SharedFilesSectionProps {
   clientName: string;
   freelancerName: string;
   isFreelancer: boolean;
-}
-
-function formatDate(date: string | Date | null) {
-  if (!date) return "N/A";
-  const d = new Date(date);
-  const now = new Date();
-  const isToday = d.toDateString() === now.toDateString();
-  const timeStr = d.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-  if (isToday) return `Today, ${timeStr}`;
-  const monthDay = d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  if (d.getFullYear() === now.getFullYear()) {
-    return `${monthDay}, ${timeStr}`;
-  }
-  return `${monthDay} ${d.getFullYear()}, ${timeStr}`;
 }
 
 function getFileIcon(fileName?: string | null) {
@@ -108,7 +89,32 @@ export function SharedFilesSection({
   isFreelancer,
 }: SharedFilesSectionProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("sharedFiles");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const formatDate = (date: string | Date | null): string => {
+    if (!date) return t("notAvailable");
+    const d = new Date(date);
+    const now = new Date();
+    const time = format.dateTime(d, { hour: "numeric", minute: "2-digit" });
+
+    if (d.toDateString() === now.toDateString()) {
+      return t("today", { time });
+    }
+
+    const monthDay = format.dateTime(d, { month: "short", day: "numeric" });
+    if (d.getFullYear() === now.getFullYear()) {
+      return t("dateWithTime", { date: monthDay, time });
+    }
+
+    return t("dateWithYearTime", {
+      date: monthDay,
+      year: d.getFullYear(),
+      time,
+    });
+  };
 
   const [isUploading, setIsUploading] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<SharedFileType | null>(null);
@@ -130,7 +136,7 @@ export function SharedFilesSection({
     if (!file) return;
 
     if (file.size > 25 * 1024 * 1024) {
-      toastError({ message: "File size exceeds 25MB limit" });
+      toastError({ message: t("uploadTooLarge") });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -141,13 +147,13 @@ export function SharedFilesSection({
       await queryClient.invalidateQueries({
         queryKey: ["contract-shared-files", contractId],
       });
-      toastSuccess({ message: `Uploaded "${file.name}" to shared files` });
+      toastSuccess({ message: t("uploaded", { name: file.name }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to upload file. Please try again.",
+            : t("uploadFailed"),
       });
     } finally {
       setIsUploading(false);
@@ -163,14 +169,14 @@ export function SharedFilesSection({
       await queryClient.invalidateQueries({
         queryKey: ["contract-shared-files", contractId],
       });
-      toastSuccess({ message: "Shared file removed successfully" });
+      toastSuccess({ message: t("removed") });
       setFileToDelete(null);
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete file. Files can only be deleted within 1 hour of upload.",
+            : t("deleteFailed"),
       });
     } finally {
       setIsDeleting(false);
@@ -201,7 +207,7 @@ export function SharedFilesSection({
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-foreground">
-              Shared Files
+              {t("title")}
             </h3>
             {files.length > 0 && (
               <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
@@ -210,7 +216,7 @@ export function SharedFilesSection({
             )}
           </div>
           <p className="text-[11px] text-muted-foreground">
-            Shared with {isFreelancer ? "the client" : "the freelancer"}
+            {isFreelancer ? t("sharedWithClient") : t("sharedWithFreelancer")}
           </p>
         </div>
 
@@ -234,7 +240,7 @@ export function SharedFilesSection({
             ) : (
               <Upload className="size-3.5" />
             )}
-            <span>Upload</span>
+            <span>{t("upload")}</span>
           </Button>
         </div>
       </div>
@@ -246,10 +252,10 @@ export function SharedFilesSection({
             <Paperclip className="size-4" />
           </div>
           <p className="text-xs font-semibold text-foreground">
-            No shared files yet
+            {t("emptyTitle")}
           </p>
           <p className="mt-0.5 text-[11px] text-muted-foreground">
-            Upload documents, assets or deliverables
+            {t("emptyHint")}
           </p>
         </div>
       ) : (
@@ -258,13 +264,13 @@ export function SharedFilesSection({
             const { canDelete, isUploader, remainingMins } =
               checkDeleteEligibility(file);
 
-            let uploaderLabel = "Participant";
+            let uploaderLabel = t("uploaderParticipant");
             if (isUploader) {
-              uploaderLabel = "You";
+              uploaderLabel = t("uploaderYou");
             } else if (file.uploaderId === clientId) {
-              uploaderLabel = `Client (${clientName})`;
+              uploaderLabel = t("uploaderClient", { name: clientName });
             } else if (file.uploaderId === freelancerId) {
-              uploaderLabel = `Freelancer (${freelancerName})`;
+              uploaderLabel = t("uploaderFreelancer", { name: freelancerName });
             }
 
             return (
@@ -281,9 +287,9 @@ export function SharedFilesSection({
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <p
                       className="text-xs font-semibold text-foreground truncate"
-                      title={file.fileName || `File #${file.id}`}
+                      title={file.fileName || t("fileFallback", { id: file.id })}
                     >
-                      {file.fileName || `File #${file.id}`}
+                      {file.fileName || t("fileFallback", { id: file.id })}
                     </p>
                     <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground truncate">
                       <span className="font-medium text-foreground/80 shrink-0">
@@ -305,7 +311,7 @@ export function SharedFilesSection({
                     rel="noreferrer"
                     download
                     className="flex size-7 items-center justify-center rounded-lg border border-border hover:bg-[#D0E1F8]/50 hover:text-[#0069D3] text-muted-foreground transition-colors cursor-pointer"
-                    title="Download file"
+                    title={t("download")}
                   >
                     <Download className="size-3.5" />
                   </a>
@@ -317,8 +323,8 @@ export function SharedFilesSection({
                       onClick={() => setFileToDelete(file)}
                       title={
                         canDelete
-                          ? `Delete file (${remainingMins}m remaining)`
-                          : "Files can only be removed within 1 hour of upload"
+                          ? t("deleteRemaining", { minutes: remainingMins })
+                          : t("deleteExpired")
                       }
                       className={`flex size-7 items-center justify-center rounded-lg border transition-colors ${
                         canDelete
@@ -344,12 +350,10 @@ export function SharedFilesSection({
         <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
-              Delete Shared File
+              {t("deleteTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Are you sure you want to delete &ldquo;{fileToDelete?.fileName}&rdquo;?
-              This action cannot be undone. Files can only be removed within 1 hour
-              of being uploaded.
+              {t("deleteHint", { name: fileToDelete?.fileName ?? "" })}
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -362,7 +366,7 @@ export function SharedFilesSection({
                 ) : (
                   <Trash2 className="mr-1.5 size-3.5" />
                 )}
-                Confirm Delete
+                {t("confirmDelete")}
               </Button>
               <AlertDialogCancel asChild>
                 <Button
@@ -370,7 +374,7 @@ export function SharedFilesSection({
                   disabled={isDeleting}
                   className="w-full rounded-full text-xs"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
               </AlertDialogCancel>
             </div>

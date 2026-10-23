@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -66,34 +67,36 @@ function ToolbarDivider() {
 }
 
 function EditorToolbar({ editor }: { editor: Editor }) {
+  const t = useTranslations("richText");
+
   return (
     <div className="flex flex-wrap items-center gap-0.5 rounded-t-lg border border-b-0 bg-background px-2 py-1.5 shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
       {/* Text formatting */}
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive("bold")}
-        title="Bold (Ctrl+B)"
+        title={t("bold")}
       >
         <Bold className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleItalic().run()}
         isActive={editor.isActive("italic")}
-        title="Italic (Ctrl+I)"
+        title={t("italic")}
       >
         <Italic className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         isActive={editor.isActive("underline")}
-        title="Underline (Ctrl+U)"
+        title={t("underline")}
       >
         <UnderlineIcon className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleStrike().run()}
         isActive={editor.isActive("strike")}
-        title="Strikethrough"
+        title={t("strikethrough")}
       >
         <Strikethrough className="h-4 w-4" />
       </ToolbarButton>
@@ -104,21 +107,21 @@ function EditorToolbar({ editor }: { editor: Editor }) {
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         isActive={editor.isActive("heading", { level: 1 })}
-        title="Heading 1"
+        title={t("heading1")}
       >
         <Heading1 className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         isActive={editor.isActive("heading", { level: 2 })}
-        title="Heading 2"
+        title={t("heading2")}
       >
         <Heading2 className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         isActive={editor.isActive("heading", { level: 3 })}
-        title="Heading 3"
+        title={t("heading3")}
       >
         <Heading3 className="h-4 w-4" />
       </ToolbarButton>
@@ -129,14 +132,14 @@ function EditorToolbar({ editor }: { editor: Editor }) {
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         isActive={editor.isActive("bulletList")}
-        title="Bullet List"
+        title={t("bulletList")}
       >
         <List className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         isActive={editor.isActive("orderedList")}
-        title="Ordered List"
+        title={t("orderedList")}
       >
         <ListOrdered className="h-4 w-4" />
       </ToolbarButton>
@@ -147,21 +150,21 @@ function EditorToolbar({ editor }: { editor: Editor }) {
       <ToolbarButton
         onClick={() => editor.chain().focus().setTextAlign("left").run()}
         isActive={editor.isActive({ textAlign: "left" })}
-        title="Align Left"
+        title={t("alignLeft")}
       >
         <AlignLeft className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
         isActive={editor.isActive({ textAlign: "center" })}
-        title="Align Center"
+        title={t("alignCenter")}
       >
         <AlignCenter className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
         isActive={editor.isActive({ textAlign: "right" })}
-        title="Align Right"
+        title={t("alignRight")}
       >
         <AlignRight className="h-4 w-4" />
       </ToolbarButton>
@@ -172,20 +175,20 @@ function EditorToolbar({ editor }: { editor: Editor }) {
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         isActive={editor.isActive("blockquote")}
-        title="Blockquote"
+        title={t("blockquote")}
       >
         <Quote className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         isActive={editor.isActive("codeBlock")}
-        title="Code Block"
+        title={t("codeBlock")}
       >
         <Code className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        title="Horizontal Rule"
+        title={t("horizontalRule")}
       >
         <Minus className="h-4 w-4" />
       </ToolbarButton>
@@ -196,14 +199,14 @@ function EditorToolbar({ editor }: { editor: Editor }) {
       <ToolbarButton
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().undo()}
-        title="Undo (Ctrl+Z)"
+        title={t("undo")}
       >
         <Undo className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().redo()}
-        title="Redo (Ctrl+Shift+Z)"
+        title={t("redo")}
       >
         <Redo className="h-4 w-4" />
       </ToolbarButton>
@@ -223,11 +226,13 @@ type RichTextEditorProps = {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = "Write something...",
+  placeholder,
   disabled = false,
   className,
   minHeight = "min-h-[200px]",
 }: RichTextEditorProps) {
+  const t = useTranslations("richText");
+  const resolvedPlaceholder = placeholder ?? t("placeholder");
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -238,7 +243,7 @@ export function RichTextEditor({
         types: ["heading", "paragraph"],
       }),
       Placeholder.configure({
-        placeholder,
+        placeholder: resolvedPlaceholder,
       }),
       TextStyle,
       Color,

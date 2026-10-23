@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
+import { NotificationMessage } from '@shared/types';
 
 export const NotificationNotFoundException = () =>
   new NotFoundException([
-    { message: 'Notification not found.', path: 'notificationId' },
+    { message: NotificationMessage.NOT_FOUND, path: 'notificationId' },
   ]);

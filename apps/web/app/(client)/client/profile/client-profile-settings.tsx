@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -51,14 +52,33 @@ import {
   type ProfileRevisionType,
 } from "@shared/types";
 
-function errorMessage(error: unknown) {
+/**
+ * Lỗi từ ApiFail đi qua proxy BFF đã được dịch sẵn (error.details[].message
+ * chứa key i18n), nên GIỮ NGUYÊN.
+ *
+ * Mọi lỗi khác (ví dụ TypeError "Failed to fetch" khi mất mạng) là text tiếng
+ * Anh do runtime sinh ra, không phải key dịch — trả về fallback đã dịch thay
+ * vì để lộ tiếng Anh cho người dùng.
+ */
+function errorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiFail) {
     return error.response.error.details?.[0]?.message ?? error.message;
   }
-  return error instanceof Error ? error.message : "Something went wrong.";
+  return fallback;
 }
 
 type TabKey = "company" | "social" | "favorites" | "following";
+
+const SOCIAL_PLATFORM_KEYS = [
+  "GITHUB",
+  "LINKEDIN",
+  "TWITTER",
+  "FACEBOOK",
+  "INSTAGRAM",
+  "YOUTUBE",
+  "WEBSITE",
+  "OTHER",
+] as const;
 
 type ClientProfileSettingsProps = {
   userId: number;
@@ -67,6 +87,15 @@ type ClientProfileSettingsProps = {
 export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("clientProfileSettings");
+  const tPlatform = useTranslations("socialPlatform");
+  const tRole = useTranslations("roleName");
+  const tSidebar = useTranslations("sidebar");
+
+  const platformLabel = (value: string) =>
+    (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(value)
+      ? tPlatform(value)
+      : value;
 
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     const tabParam = searchParams.get("tab");
@@ -160,7 +189,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
           setSocialLinks(profile.socialLinks);
         }
       } else {
-        toastError({ message: errorMessage(profileResult.reason) });
+        toastError({
+          message: errorMessage(profileResult.reason, t("somethingWentWrong")),
+        });
       }
 
       if (linksResult.status === "fulfilled") {
@@ -172,7 +203,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       if (freelancersResult.status === "fulfilled") {
         setFreelancers(freelancersResult.value.data);
       } else {
-        setFreelancersError(errorMessage(freelancersResult.reason));
+        setFreelancersError(
+          errorMessage(freelancersResult.reason, t("somethingWentWrong")),
+        );
       }
       if (revisionResult.status === "fulfilled") {
         setProfileRevision(revisionResult.value.data.revision);
@@ -180,7 +213,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, t]);
 
   useEffect(() => {
     void load();
@@ -214,7 +247,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       }
       toastSuccess({ message: response.data.message });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -225,7 +258,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     const existing = socialLinks.find((item) => item.platform === platform);
     if (existing) {
       toastError({
-        message: `You already added a link for ${platform}. Please delete it first if you want to replace it.`,
+        message: t("platformAlreadyAdded", {
+          platform: platformLabel(platform),
+        }),
       });
       return;
     }
@@ -253,9 +288,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       if (remaining.length > 0 && remaining[0]) {
         setPlatform(remaining[0]);
       }
-      toastSuccess({ message: "Social link added." });
+      toastSuccess({ message: t("socialLinkAdded") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -266,9 +301,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     try {
       await accountProfileApi.deleteSocialLink(linkId);
       setSocialLinks((current) => current.filter((item) => item.id !== linkId));
-      toastSuccess({ message: "Social link removed." });
+      toastSuccess({ message: t("socialLinkRemoved") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -281,9 +316,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       setFavorites((current) =>
         current.filter((item) => item.freelancerId !== freelancerId),
       );
-      toastSuccess({ message: "Freelancer removed from favorites." });
+      toastSuccess({ message: t("favoriteRemoved") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -300,9 +335,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
             : item,
         ),
       );
-      toastSuccess({ message: "Freelancer unfollowed." });
+      toastSuccess({ message: t("unfollowed") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -319,9 +354,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
             : item,
         ),
       );
-      toastSuccess({ message: "You are now following this freelancer." });
+      toastSuccess({ message: t("followed") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {
       setPending(null);
     }
@@ -349,22 +384,22 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     : visibleFreelancers;
 
   const tabs = [
-    { id: "company" as const, label: "Company Profile", icon: Building2 },
+    { id: "company" as const, label: t("tabCompany"), icon: Building2 },
     {
       id: "social" as const,
-      label: "Social Links",
+      label: t("tabSocial"),
       icon: Link2,
       count: socialLinks.length,
     },
     {
       id: "favorites" as const,
-      label: "Favorite Freelancers",
+      label: t("tabFavorites"),
       icon: Heart,
       count: favorites.length,
     },
     {
       id: "following" as const,
-      label: "Following",
+      label: t("tabFollowing"),
       icon: UserCheck,
       count: following.length,
     },
@@ -377,7 +412,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
         <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl font-sans">
-              Profile Settings
+              {t("pageTitle")}
             </h1>
           </div>
 
@@ -388,7 +423,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
           >
             <Link href={`/clients/${userId}`} target="_blank">
               <Globe2 className="size-3.5 text-[#0069D3]" />
-              <span>View public profile</span>
+              <span>{tSidebar("viewPublicProfile")}</span>
               <ExternalLink className="size-3 opacity-60 ml-0.5" />
             </Link>
           </Button>
@@ -444,7 +479,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
             <div className="flex flex-col items-center justify-center py-24 gap-3">
               <Loader2 className="size-8 animate-spin text-[#0069D3]" />
               <p className="text-xs text-muted-foreground">
-                Loading profile settings...
+                {t("loadingSettings")}
               </p>
             </div>
           ) : (
@@ -465,11 +500,10 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                     </div>
                     <div>
                       <h2 className="text-base font-bold text-foreground font-sans">
-                        Company Details
+                        {t("companyDetails")}
                       </h2>
                       <p className="text-xs text-muted-foreground">
-                        This information will be displayed on your public
-                        profile and job postings.
+                        {t("companyDetailsHint")}
                       </p>
                     </div>
                   </div>
@@ -480,7 +514,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         htmlFor="company-name"
                         className="text-xs font-semibold"
                       >
-                        Company Name <span className="text-destructive">*</span>
+                        {t("companyName")} <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="company-name"
@@ -488,7 +522,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         onChange={(e) => setCompanyName(e.target.value)}
                         required
                         maxLength={255}
-                        placeholder="e.g. Acme Studio Inc."
+                        placeholder={t("companyNamePlaceholder")}
                         className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
                       />
                     </div>
@@ -498,14 +532,14 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         htmlFor="company-desc"
                         className="text-xs font-semibold"
                       >
-                        Company Description
+                        {t("companyDescription")}
                       </Label>
                       <Textarea
                         id="company-desc"
                         rows={5}
                         value={companyDescription}
                         onChange={(e) => setCompanyDescription(e.target.value)}
-                        placeholder="Describe your company, industry, and the kind of work you do..."
+                        placeholder={t("companyDescriptionPlaceholder")}
                         className="rounded-2xl p-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30 leading-relaxed resize-none"
                       />
                     </div>
@@ -515,12 +549,12 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         htmlFor="company-website"
                         className="text-xs font-semibold"
                       >
-                        Website URL
+                        {t("websiteUrl")}
                       </Label>
                       <Input
                         id="company-website"
                         type="url"
-                        placeholder="https://yourcompany.com"
+                        placeholder={t("websitePlaceholder")}
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
@@ -536,7 +570,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         {pending === "company" ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : null}
-                        Save changes
+                        {t("saveChanges")}
                       </Button>
                     </div>
                   </form>
@@ -560,7 +594,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         <Plus className="size-4" />
                       </div>
                       <h3 className="text-sm font-bold text-foreground font-sans">
-                        Add Social Link
+                        {t("addSocialLink")}
                       </h3>
                     </div>
 
@@ -570,7 +604,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                     >
                       <div className="space-y-1.5">
                         <Label className="text-xs font-semibold">
-                          Platform
+                          {t("platform")}
                         </Label>
                         <Select
                           value={platform}
@@ -592,8 +626,12 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                   value={val}
                                   disabled={alreadyAdded}
                                 >
-                                  {val.replaceAll("_", " ")}{" "}
-                                  {alreadyAdded ? "(Already added)" : ""}
+                                  <span>{platformLabel(val)}</span>
+                                  {alreadyAdded ? (
+                                    <span className="ml-1 text-muted-foreground">
+                                      {t("alreadyAdded")}
+                                    </span>
+                                  ) : null}
                                 </SelectItem>
                               );
                             })}
@@ -603,7 +641,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
 
                       <div className="space-y-1.5">
                         <Label className="text-xs font-semibold">
-                          Profile URL
+                          {t("profileUrl")}
                         </Label>
                         <Input
                           type="url"
@@ -625,7 +663,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         ) : (
                           <Plus className="size-3.5 mr-1" />
                         )}
-                        Add link
+                        {t("addLink")}
                       </Button>
                     </form>
                   </div>
@@ -634,7 +672,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                   <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
                     <div className="flex items-center justify-between border-b border-border pb-4">
                       <h3 className="text-sm font-bold text-foreground font-sans">
-                        Connected Links ({socialLinks.length})
+                        {t("connectedLinks", { count: socialLinks.length })}
                       </h3>
                     </div>
 
@@ -644,7 +682,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                           <Link2 className="size-5" />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          No social links connected yet.
+                          {t("noSocialLinks")}
                         </p>
                       </div>
                     ) : (
@@ -660,7 +698,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               </span>
                               <div className="min-w-0">
                                 <p className="text-xs font-bold text-foreground">
-                                  {link.platform}
+                                  {platformLabel(link.platform)}
                                 </p>
                                 <a
                                   href={link.url}
@@ -679,7 +717,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               disabled={pending === `social-${link.id}`}
                               onClick={() => handleDeleteSocialLink(link.id)}
                               className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                              title="Delete link"
+                              title={t("deleteLink")}
                             >
                               <Trash2 className="size-4" />
                             </Button>
@@ -707,11 +745,10 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         <Heart className="size-6" />
                       </div>
                       <h4 className="text-sm font-bold text-foreground">
-                        No favorite freelancers yet
+                        {t("noFavoritesTitle")}
                       </h4>
                       <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
-                        Explore freelancer profiles and tap the heart icon to
-                        save them here for quick access.
+                        {t("noFavoritesHint")}
                       </p>
                     </div>
                   ) : (
@@ -740,12 +777,13 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                     src={favorite.profile.avatarUrl}
                                     alt={
                                       favorite.profile.displayName ??
-                                      "Freelancer"
+                                      tRole("FREELANCER")
                                     }
                                   />
                                 ) : null}
                                 <AvatarFallback className="bg-[#D0E1F8] text-xs font-bold text-[#0069D3]">
-                                  {(favorite.profile.displayName ?? "F")
+                                  {(favorite.profile.displayName ??
+                                    tRole("FREELANCER"))
                                     .charAt(0)
                                     .toUpperCase()}
                                 </AvatarFallback>
@@ -754,7 +792,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 <div className="flex items-center gap-1.5">
                                   <p className="truncate text-xs sm:text-sm font-bold text-foreground group-hover:text-[#0069D3] transition-colors">
                                     {favorite.profile.displayName ??
-                                      "Freelancer"}
+                                      tRole("FREELANCER")}
                                   </p>
                                   {favorite.profile.freelancerProfile
                                     .idVerified ? (
@@ -763,7 +801,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 </div>
                                 <p className="truncate text-xs text-muted-foreground">
                                   {favorite.profile.freelancerProfile.title ??
-                                    "Freelancer"}
+                                    tRole("FREELANCER")}
                                 </p>
                               </div>
                             </div>
@@ -778,7 +816,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 handleRemoveFavorite(favorite.freelancerId)
                               }
                               className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                              title="Remove from favorites"
+                              title={t("removeFromFavorites")}
                             >
                               <Trash2 className="size-3.5" />
                             </Button>
@@ -821,26 +859,29 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                           id="following-heading"
                           className="text-lg font-bold tracking-tight text-foreground"
                         >
-                          Freelancer network
+                          {t("networkTitle")}
                         </h2>
                         <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                          Discover new freelancers or manage the people you
-                          already follow.
+                          {t("networkHint")}
                         </p>
                       </div>
 
                       <div className="text-xs font-medium text-muted-foreground">
-                        <span className="font-bold text-foreground">
-                          {following.length}
-                        </span>{" "}
-                        following
+                        {t.rich("followingLabel", {
+                          count: following.length,
+                          strong: (chunks) => (
+                            <strong className="font-bold text-foreground">
+                              {chunks}
+                            </strong>
+                          ),
+                        })}
                       </div>
                     </div>
 
                     <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div
                         className="inline-flex w-fit rounded-full bg-[#F3F3F7] p-1 dark:bg-zinc-900/90"
-                        aria-label="Filter freelancer relationships"
+                        aria-label={t("filterRelationships")}
                       >
                         <button
                           type="button"
@@ -852,12 +893,11 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          Discover (
-                          {
-                            freelancers.filter((item) => !item.isFollowing)
-                              .length
-                          }
-                          )
+                          {t("discoverCount", {
+                            count: freelancers.filter(
+                              (item) => !item.isFollowing,
+                            ).length,
+                          })}
                         </button>
                         <button
                           type="button"
@@ -869,13 +909,15 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          Following ({following.length})
+                          {t("followingTabCount", {
+                            count: following.length,
+                          })}
                         </button>
                       </div>
 
                       <div className="relative w-full sm:max-w-xs">
                         <label htmlFor="following-search" className="sr-only">
-                          Search freelancers
+                          {t("searchFreelancers")}
                         </label>
                         <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -884,7 +926,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                           onChange={(event) =>
                             setFreelancerQuery(event.target.value)
                           }
-                          placeholder="Search name, title, or skill"
+                          placeholder={t("searchPlaceholder")}
                           className="h-9 rounded-full pl-9 text-xs sm:text-sm"
                         />
                       </div>
@@ -897,7 +939,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                       role="alert"
                     >
                       <p className="text-sm font-bold text-foreground">
-                        We could not load freelancers
+                        {t("freelancersLoadFailed")}
                       </p>
                       <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
                         {freelancersError}
@@ -910,7 +952,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         onClick={() => void load()}
                       >
                         <RefreshCw className="size-3.5" />
-                        Try again
+                        {t("tryAgain")}
                       </Button>
                     </div>
                   ) : filteredFreelancers.length === 0 ? (
@@ -926,17 +968,17 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                       </div>
                       <h3 className="text-sm font-bold text-foreground">
                         {normalizedFreelancerQuery
-                          ? "No matching freelancers"
+                          ? t("noMatchingFreelancers")
                           : freelancerView === "following"
-                            ? "Not following anyone yet"
-                            : "No new freelancers to discover"}
+                            ? t("notFollowingAnyone")
+                            : t("noNewFreelancers")}
                       </h3>
                       <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
                         {normalizedFreelancerQuery
-                          ? "Try another name, title, or skill."
+                          ? t("noMatchHint")
                           : freelancerView === "following"
-                            ? "Browse Discover to find freelancers worth keeping in view."
-                            : "You are already following every available freelancer."}
+                            ? t("notFollowingHint")
+                            : t("allFollowedHint")}
                       </p>
                       {normalizedFreelancerQuery ? (
                         <Button
@@ -945,7 +987,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                           className="mt-2 text-[#0069D3] dark:text-blue-200"
                           onClick={() => setFreelancerQuery("")}
                         >
-                          Clear search
+                          {t("clearSearch")}
                         </Button>
                       ) : freelancerView === "following" ? (
                         <Button
@@ -954,7 +996,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                           className="mt-2 text-[#0069D3] dark:text-blue-200"
                           onClick={() => setFreelancerView("discover")}
                         >
-                          Browse freelancers
+                          {t("browseFreelancers")}
                         </Button>
                       ) : null}
                     </div>
@@ -962,10 +1004,10 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
                       {filteredFreelancers.map((freelancer) => {
                         const displayName =
-                          freelancer.profile.displayName ?? "Freelancer";
+                          freelancer.profile.displayName ?? tRole("FREELANCER");
                         const title =
                           freelancer.profile.freelancerProfile.title ??
-                          "Freelancer";
+                          tRole("FREELANCER");
                         const skills =
                           freelancer.profile.freelancerProfile.skills;
                         const isPending =
@@ -1027,7 +1069,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 ))
                               ) : (
                                 <span className="text-[10px] text-muted-foreground">
-                                  No skills listed yet
+                                  {t("noSkills")}
                                 </span>
                               )}
                             </div>
@@ -1047,7 +1089,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                   })
                                 }
                               >
-                                View profile
+                                {t("viewProfile")}
                               </Button>
                               <Button
                                 type="button"
@@ -1078,7 +1120,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 ) : (
                                   <UserPlus className="size-3.5" />
                                 )}
-                                {freelancer.isFollowing ? "Unfollow" : "Follow"}
+                                {freelancer.isFollowing
+                                  ? t("unfollow")
+                                  : t("follow")}
                               </Button>
                             </div>
                           </article>

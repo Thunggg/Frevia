@@ -3,7 +3,7 @@
 import { useForgotPassword, useSendOtp } from "@/hooks/use-auth";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Field,
@@ -24,6 +24,7 @@ import {
   TypeOfVerificationCode,
 } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,6 +33,9 @@ import type * as z from "zod";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
+  const t = useTranslations("auth.forgotPassword");
+  const tField = useTranslations("auth.fields");
+  const tAction = useTranslations("auth.actions");
   const [countdown, setCountdown] = useState(0);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -52,7 +56,9 @@ export function ForgotPasswordForm() {
   }, [countdown]);
 
   const form = useForm<z.infer<typeof ForgotPasswordBodySchema>>({
-    resolver: zodResolver(ForgotPasswordBodySchema),
+    resolver: useTranslatedResolver<z.infer<typeof ForgotPasswordBodySchema>>(
+      ForgotPasswordBodySchema,
+    ),
     defaultValues: {
       email: "",
       code: "",
@@ -74,7 +80,7 @@ export function ForgotPasswordForm() {
         if (error instanceof ApiFail) {
           handleErrorApi({ error: error.response, setError: form.setError });
         } else {
-          toastError({ message: "Reset password failed", duration: 3000 });
+          toastError({ message: t("failed"), duration: 3000 });
         }
       },
     });
@@ -97,7 +103,7 @@ export function ForgotPasswordForm() {
           if (error instanceof ApiFail) {
             handleErrorApi({ error: error.response, setError: form.setError });
           } else {
-            toastError({ message: "Send OTP failed", duration: 3000 });
+            toastError({ message: t("sendOtpFailed"), duration: 3000 });
           }
         },
       },
@@ -114,14 +120,14 @@ export function ForgotPasswordForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="forgot-password-email">
-                  Email address
+                  {tField("email")}
                 </FieldLabel>
                 <Input
                   {...field}
                   id="forgot-password-email"
                   type="email"
                   aria-invalid={fieldState.invalid}
-                  placeholder="you@company.com"
+                  placeholder={tField("emailPlaceholder")}
                   autoComplete="email"
                   className="h-11"
                 />
@@ -138,7 +144,7 @@ export function ForgotPasswordForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="forgot-password-new-password">
-                  New password
+                  {tField("newPassword")}
                 </FieldLabel>
                 <div className="relative">
                   <Input
@@ -146,7 +152,7 @@ export function ForgotPasswordForm() {
                     id="forgot-password-new-password"
                     type={showNewPassword ? "text" : "password"}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Enter new password"
+                    placeholder={t("newPasswordPlaceholder")}
                     autoComplete="new-password"
                     className="h-11 pr-10"
                   />
@@ -155,7 +161,9 @@ export function ForgotPasswordForm() {
                     onClick={() => setShowNewPassword(!showNewPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                     aria-label={
-                      showNewPassword ? "Hide new password" : "Show new password"
+                      showNewPassword
+                        ? tAction("hideNewPassword")
+                        : tAction("showNewPassword")
                     }
                   >
                     {showNewPassword ? (
@@ -178,7 +186,7 @@ export function ForgotPasswordForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="forgot-password-confirm-password">
-                  Confirm password
+                  {tField("confirmPassword")}
                 </FieldLabel>
                 <div className="relative">
                   <Input
@@ -186,7 +194,7 @@ export function ForgotPasswordForm() {
                     id="forgot-password-confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Confirm new password"
+                    placeholder={t("confirmPasswordPlaceholder")}
                     autoComplete="new-password"
                     className="h-11 pr-10"
                   />
@@ -198,8 +206,8 @@ export function ForgotPasswordForm() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                     aria-label={
                       showConfirmPassword
-                        ? "Hide confirm password"
-                        : "Show confirm password"
+                        ? tAction("hideConfirmPassword")
+                        : tAction("showConfirmPassword")
                     }
                   >
                     {showConfirmPassword ? (
@@ -221,12 +229,12 @@ export function ForgotPasswordForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="forgot-password-otp">OTP code</FieldLabel>
+                <FieldLabel htmlFor="forgot-password-otp">{tField("otpCode")}</FieldLabel>
                 <InputGroup>
                   <InputGroupInput
                     {...field}
                     id="forgot-password-otp"
-                    placeholder="6-digit code"
+                    placeholder={tField("otpPlaceholder")}
                     maxLength={6}
                     aria-invalid={fieldState.invalid}
                     onChange={(e) => {
@@ -244,12 +252,12 @@ export function ForgotPasswordForm() {
                       {sendOtpMutation.isPending ? (
                         <>
                           <Loader2 className="size-4 animate-spin" />
-                          <span>Sending...</span>
+                          <span>{tAction("sending")}</span>
                         </>
                       ) : countdown > 0 ? (
-                        `Resend in ${countdown}s`
+                        tAction("resendIn", { seconds: countdown })
                       ) : (
-                        "Send OTP"
+                        tAction("sendOtp")
                       )}
                     </InputGroupButton>
                   </InputGroupAddon>
@@ -270,7 +278,7 @@ export function ForgotPasswordForm() {
           className="h-11 flex-1 active:scale-[0.99]"
           onClick={() => form.reset()}
         >
-          Reset
+          {tAction("reset")}
         </Button>
         <Button
           type="submit"
@@ -281,21 +289,21 @@ export function ForgotPasswordForm() {
           {forgotPasswordMutation.isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              <span>Updating...</span>
+              <span>{t("submitting")}</span>
             </>
           ) : (
-            "Update password"
+            t("submit")
           )}
         </Button>
       </div>
 
       <p className="mt-8 text-center text-sm text-muted-foreground">
-        Remember your password?{" "}
+        {t("rememberPassword")}{" "}
         <Link
           href="/login"
           className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
         >
-          Log in
+          {t("logIn")}
         </Link>
       </p>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useCallback } from "react";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -13,12 +14,13 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-  placeholder = "Search...",
+  placeholder,
   searchKey = "search",
   initialSearch = "",
 }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("adminNav");
   const [value, setValue] = useState(initialSearch);
 
   const handleSubmit = useCallback(
@@ -52,7 +54,7 @@ export function SearchBar({
         <Input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t("searchPlaceholder")}
           className="pl-9"
         />
         {value && (
@@ -66,7 +68,7 @@ export function SearchBar({
         )}
       </div>
       <Button type="submit" variant="secondary" size="sm">
-        Search
+        {t("search")}
       </Button>
     </form>
   );

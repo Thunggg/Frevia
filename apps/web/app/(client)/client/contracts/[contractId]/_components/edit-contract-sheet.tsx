@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -33,6 +34,9 @@ export function EditContractSheet({
   onSuccess,
 }: EditContractSheetProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("editContract");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [totalAmount, setTotalAmount] = useState<number>(
     Number(contract.totalAmount) || 0,
   );
@@ -56,13 +60,15 @@ export function EditContractSheet({
     e.preventDefault();
 
     if (!totalAmount || totalAmount <= 0) {
-      toastError({ message: "Contract total budget must be greater than 0" });
+      toastError({ message: t("amountRequired") });
       return;
     }
 
     if (minAllowedAmount > 0 && totalAmount < minAllowedAmount) {
       toastError({
-        message: `Contract budget cannot be less than the sum of created milestones ($${minAllowedAmount.toLocaleString()})`,
+        message: t("belowMilestones", {
+          amount: format.number(minAllowedAmount),
+        }),
       });
       return;
     }
@@ -89,7 +95,7 @@ export function EditContractSheet({
 
       await contractApiRequest.update(contract.id, payload);
 
-      toastSuccess({ message: "Contract updated successfully!" });
+      toastSuccess({ message: t("updated") });
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contract.id],
       });
@@ -100,7 +106,7 @@ export function EditContractSheet({
       onSuccess?.();
       onOpenChange(false);
     } catch (error) {
-      let errorMessage = "Failed to update contract. Please try again.";
+      let errorMessage = t("updateFailed");
       if (error instanceof ApiFail) {
         const errResp = error.response as unknown as Record<string, unknown>;
         if (Array.isArray(errResp?.message)) {
@@ -135,6 +141,7 @@ export function EditContractSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-lg md:max-w-xl overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
       >
         <div>
@@ -144,11 +151,11 @@ export function EditContractSheet({
                 <FileText className="size-5" />
               </div>
               <SheetTitle className="text-lg font-bold text-foreground">
-                Edit Contract Agreement
+                {t("title")}
               </SheetTitle>
             </div>
             <SheetDescription className="mt-1 text-xs text-muted-foreground">
-              Modify the contract terms or budget before formal signing.
+              {t("description")}
             </SheetDescription>
           </SheetHeader>
 
@@ -157,11 +164,14 @@ export function EditContractSheet({
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-foreground">
-                  Contract Total Budget (USD) <span className="text-red-500">*</span>
+                  {t("totalBudget")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 {minAllowedAmount > 0 && (
                   <span className="text-[11px] text-muted-foreground">
-                    Min required: ${minAllowedAmount.toLocaleString()}
+                    {t("minRequired", {
+                      amount: format.number(minAllowedAmount),
+                    })}
                   </span>
                 )}
               </div>
@@ -174,7 +184,7 @@ export function EditContractSheet({
                   required
                   value={totalAmount || ""}
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
-                  placeholder="e.g. 500"
+                  placeholder={t("amountPlaceholder")}
                   className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
                 />
               </div>
@@ -183,7 +193,7 @@ export function EditContractSheet({
             {/* Expiration Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Contract Expiration / Deadline (Optional)
+                {t("expiration")}
               </label>
               <input
                 type="date"
@@ -197,13 +207,13 @@ export function EditContractSheet({
             {/* Terms of Engagement */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Terms of Service & Delivery Scope
+                {t("termsLabel")}
               </label>
               <textarea
                 rows={6}
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
-                placeholder="Detail the scope of work and agreed delivery terms..."
+                placeholder={t("termsPlaceholder")}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] resize-none leading-relaxed"
               />
             </div>
@@ -218,7 +228,7 @@ export function EditContractSheet({
             onClick={() => onOpenChange(false)}
             className="rounded-full text-xs"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             type="submit"
@@ -229,7 +239,7 @@ export function EditContractSheet({
             {isSubmitting ? (
               <Loader2 className="mr-1.5 size-3.5 animate-spin" />
             ) : null}
-            Save Changes
+            {t("save")}
           </Button>
         </SheetFooter>
       </SheetContent>

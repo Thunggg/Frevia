@@ -1,10 +1,15 @@
+import { getTranslations } from "next-intl/server";
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import { SavedSearchesContent } from "../../saved-searches/saved-searches-content";
 
-export const metadata = {
-  title: "Saved Searches | Freelancer Dashboard | Frevia",
-  description: "View and manage all your saved search queries.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("pageMeta");
+
+  return {
+    title: t("savedSearchesTitle"),
+    description: t("savedSearchesDescription"),
+  };
+}
 
 export default async function FreelancerSavedSearchesPage() {
   const savedSearches = await savedSearchServerRequest.getSavedSearches();
