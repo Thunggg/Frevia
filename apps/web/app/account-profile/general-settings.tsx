@@ -265,8 +265,8 @@ export function GeneralSettings() {
       if (cvInputRef.current) cvInputRef.current.value = "";
       toastSuccess({ message: "CV uploaded successfully." });
     } catch (error) {
-      setCvError(messageFrom(error));
-      toastError({ message: messageFrom(error) });
+      setCvError(toMessage(error));
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -281,7 +281,7 @@ export function GeneralSettings() {
       setCvError(null);
       toastSuccess({ message: "CV deleted successfully." });
     } catch (error) {
-      toastError({ message: messageFrom(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
