@@ -391,6 +391,7 @@ model ProfileVisitLog {
 // Danh mục công việc (Job Category) — Admin quản lý (UC-46).
 // - `deletedAt`: soft delete, xóa được khôi phục (restore).
 // - `status`: ACTIVE / INACTIVE — vô hiệu hóa danh mục mà không xóa dữ liệu.
+// - Quan hệ với Job là N-N qua bảng trung gian JobJobCategory.
 model JobCategory {
   id          Int               @id @default(autoincrement())
   name        String            @db.VarChar(100)
@@ -401,7 +402,7 @@ model JobCategory {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
-  jobs Job[]
+  jobs JobJobCategory[]
 
   // NOTE: cần tạo bằng raw SQL migration (Prisma không hỗ trợ partial unique index):
   // CREATE UNIQUE INDEX idx_job_categories_name_active ON "JobCategory" (LOWER("name")) WHERE "deletedAt" IS NULL;
@@ -413,7 +414,6 @@ model JobCategory {
 model Job {
   id          Int        @id @default(autoincrement())
   clientId    Int
-  categoryId  Int?
   title       String     @db.VarChar(255)
   slug        String     @unique @db.VarChar(300)
   description String?
@@ -429,7 +429,7 @@ model Job {
   deletedAt   DateTime?
 
   client           User                @relation(fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  category         JobCategory?        @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  jobCategories    JobJobCategory[]
   skills           JobSkill[]
   bookmarks        JobBookmark[]
   recentlyViewedBy RecentlyViewedJob[]
@@ -439,6 +439,17 @@ model Job {
   @@index([status, deletedAt, createdAt])
   @@index([clientId, deletedAt, createdAt])
   @@index([budgetType])
+}
+
+// Bảng trung gian N-N: Job <-> JobCategory (theo pattern JobSkill).
+model JobJobCategory {
+  jobId      Int
+  categoryId Int
+
+  job      Job         @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  category JobCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([jobId, categoryId])
   @@index([categoryId])
 }
 

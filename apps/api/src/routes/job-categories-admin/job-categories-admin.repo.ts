@@ -21,7 +21,8 @@ import {
 const RELATED_JOBS_LIMIT = 10;
 
 // "Đang hoạt động" = job chưa bị soft-delete. Job đã xoá không chặn thao tác xoá danh mục.
-const ACTIVE_JOB_WHERE = { deletedAt: null } as const;
+// Quan hệ N-N qua JobJobCategory nên điều kiện phải lọc theo quan hệ `job`.
+const ACTIVE_JOB_LINK_WHERE = { job: { deletedAt: null } } as const;
 
 const jobCategorySelect = {
   id: true,
@@ -32,7 +33,7 @@ const jobCategorySelect = {
   deletedAt: true,
   createdAt: true,
   updatedAt: true,
-  _count: { select: { jobs: { where: ACTIVE_JOB_WHERE } } },
+  _count: { select: { jobs: { where: ACTIVE_JOB_LINK_WHERE } } },
 } as const;
 
 const relatedJobSelect = {
@@ -222,7 +223,7 @@ export class JobCategoriesAdminRepository {
       where: { id, deletedAt: null },
       select: {
         id: true,
-        _count: { select: { jobs: { where: ACTIVE_JOB_WHERE } } },
+        _count: { select: { jobs: { where: ACTIVE_JOB_LINK_WHERE } } },
       },
     });
 
@@ -306,18 +307,19 @@ export class JobCategoriesAdminRepository {
   private async toDetail(
     row: JobCategoryRow,
   ): Promise<JobCategoryAdminDetailResponseType> {
-    // Danh sách công việc liên quan (UC-46.02) — job đã xoá không hiển thị
-    const jobs = await this.prisma.job.findMany({
-      where: { categoryId: row.id, ...ACTIVE_JOB_WHERE },
-      select: relatedJobSelect,
-      orderBy: { createdAt: 'desc' },
+    // Danh sách công việc liên quan (UC-46.02) — job đã xoá không hiển thị.
+    // Quan hệ N-N: đọc qua bảng trung gian JobJobCategory.
+    const links = await this.prisma.jobJobCategory.findMany({
+      where: { categoryId: row.id, job: { deletedAt: null } },
+      select: { job: { select: relatedJobSelect } },
+      orderBy: { job: { createdAt: 'desc' } },
       take: RELATED_JOBS_LIMIT,
     });
 
     return {
       ...this.toItem(row),
       jobCount: row._count.jobs,
-      jobs: jobs.map((job) => ({
+      jobs: links.map(({ job }) => ({
         id: job.id,
         title: job.title,
         slug: job.slug,
