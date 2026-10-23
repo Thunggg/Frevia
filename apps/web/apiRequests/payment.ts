@@ -1,14 +1,19 @@
 import { http } from "@/lib/http";
 import type {
+  ChargeSavedCardResponseType,
+  CreateCheckoutSessionResponseType,
+  CreateCustomerPortalSessionResponseType,
   CreatePaymentIntentResponseType,
   DisputeSettlementBodyType,
   DisputeSettlementResponseType,
+  GetSavedPaymentMethodsResponseType,
   GetTransactionListQueryType,
   GetTransactionListResponseType,
   RefundMilestoneResponseType,
   ReleaseMilestoneResponseType,
   StripeConnectStatusResponseType,
   StripeOnboardingLinkResponseType,
+  SyncCheckoutSessionResponseType,
 } from "@shared/types";
 
 export const paymentApiRequest = {
@@ -108,12 +113,95 @@ export const paymentApiRequest = {
   },
 
   /**
+   * Tạo Stripe Checkout Session thanh toán phí nền tảng ($10)
+   */
+  createPlatformFeeCheckoutSession(contractId: number) {
+    return http.post<CreateCheckoutSessionResponseType>(
+      `/payments/contracts/${contractId}/platform-fee/checkout-session`,
+      {},
+    );
+  },
+
+  /**
+   * Tạo Stripe Checkout Session nạp tiền ký quỹ (Escrow deposit) cho Milestone
+   */
+  createMilestoneFundCheckoutSession(contractId: number, milestoneId: number) {
+    return http.post<CreateCheckoutSessionResponseType>(
+      `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/checkout-session`,
+      {},
+    );
+  },
+
+  /**
+   * Tạo Stripe Checkout Session thanh toán phí trọng tài tranh chấp
+   */
+  createDisputeFeeCheckoutSession(disputeId: number) {
+    return http.post<CreateCheckoutSessionResponseType>(
+      `/payments/disputes/${disputeId}/fee/checkout-session`,
+      {},
+    );
+  },
+
+  /**
    * Đồng bộ ngay trạng thái PaymentIntent với cơ sở dữ liệu
    */
   syncPaymentIntent(paymentIntentId: string) {
     return http.post<{ success: boolean; status: string }>(
       `/payments/intents/${paymentIntentId}/sync`,
       {},
+    );
+  },
+
+  /**
+   * Đồng bộ ngay trạng thái Checkout Session với cơ sở dữ liệu
+   */
+  syncCheckoutSession(sessionId: string) {
+    return http.post<SyncCheckoutSessionResponseType>(
+      `/payments/checkout-sessions/${sessionId}/sync`,
+      {},
+    );
+  },
+
+  /**
+   * Lấy danh sách các thẻ đã lưu của người dùng
+   */
+  getSavedPaymentMethods() {
+    return http.get<GetSavedPaymentMethodsResponseType>(
+      "/payments/payment-methods",
+    );
+  },
+
+  /**
+   * Tạo session chuyển hướng sang Stripe Customer Portal (đổi thẻ, quản lý thẻ)
+   */
+  getCustomerPortalLink(returnUrl?: string) {
+    return http.post<CreateCustomerPortalSessionResponseType>(
+      "/payments/customer-portal",
+      { returnUrl },
+    );
+  },
+
+  /**
+   * Thanh toán nạp tiền ký quỹ (Escrow) 1-Click bằng thẻ đã lưu
+   */
+  fundMilestoneWithSavedCard(
+    contractId: number,
+    milestoneId: number,
+    paymentMethodId?: string,
+  ) {
+    return http.post<ChargeSavedCardResponseType>(
+      `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/saved-card`,
+      { paymentMethodId },
+    );
+  },
+
+  /**
+   * Thanh toán phí nền tảng 1-Click bằng thẻ đã lưu
+   */
+  payPlatformFeeWithSavedCard(contractId: number, paymentMethodId?: string) {
+    return http.post<ChargeSavedCardResponseType>(
+      `/payments/contracts/${contractId}/platform-fee/saved-card`,
+      { paymentMethodId },
     );
   },
 };

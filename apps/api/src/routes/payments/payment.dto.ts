@@ -1,8 +1,13 @@
 import {
+  ChargeSavedCardBodySchema,
+  ChargeSavedCardResponseSchema,
+  CreateCheckoutSessionResponseSchema,
+  CreateCustomerPortalSessionResponseSchema,
   CreateOnboardingLinkBodySchema,
   CreatePaymentIntentResponseSchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
+  GetSavedPaymentMethodsResponseSchema,
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
   RefundMilestoneBodySchema,
@@ -10,9 +15,26 @@ import {
   ReleaseMilestoneResponseSchema,
   StripeConnectStatusResponseSchema,
   StripeOnboardingLinkResponseSchema,
+  SyncCheckoutSessionResponseSchema,
   TransactionSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
+
+export class GetSavedPaymentMethodsResponseDTO extends createZodDto(
+  GetSavedPaymentMethodsResponseSchema,
+) {}
+
+export class CreateCustomerPortalSessionResponseDTO extends createZodDto(
+  CreateCustomerPortalSessionResponseSchema,
+) {}
+
+export class ChargeSavedCardBodyDTO extends createZodDto(
+  ChargeSavedCardBodySchema,
+) {}
+
+export class ChargeSavedCardResponseDTO extends createZodDto(
+  ChargeSavedCardResponseSchema,
+) {}
 
 export class TransactionDTO extends createZodDto(TransactionSchema) {}
 
@@ -26,6 +48,14 @@ export class GetTransactionListResponseDTO extends createZodDto(
 
 export class CreatePaymentIntentResponseDTO extends createZodDto(
   CreatePaymentIntentResponseSchema,
+) {}
+
+export class CreateCheckoutSessionResponseDTO extends createZodDto(
+  CreateCheckoutSessionResponseSchema,
+) {}
+
+export class SyncCheckoutSessionResponseDTO extends createZodDto(
+  SyncCheckoutSessionResponseSchema,
 ) {}
 
 export class CreateOnboardingLinkBodyDTO extends createZodDto(

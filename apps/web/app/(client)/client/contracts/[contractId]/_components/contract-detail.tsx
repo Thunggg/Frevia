@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CalendarDays,
@@ -36,6 +36,13 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/shadcn/dialog";
 import {
   Sheet,
   SheetContent,
@@ -142,6 +149,66 @@ export function ContractDetail({
     description: string;
   } | null>(null);
   const [isInitiatingPayment, setIsInitiatingPayment] = useState(false);
+
+  // 1-Click Saved Card Modal State
+  const [oneClickModal, setOneClickModal] = useState<{
+    open: boolean;
+    type: "PLATFORM_FEE" | "MILESTONE_FUND";
+    milestone?: MilestoneType;
+    amount: number;
+    title: string;
+  } | null>(null);
+  const [isProcessingOneClick, setIsProcessingOneClick] = useState(false);
+  const [selectedPmId, setSelectedPmId] = useState<string>("");
+
+  // Query Saved Payment Methods
+  const { data: savedCardsData, refetch: refetchSavedCards } = useQuery({
+    queryKey: ["client-saved-cards"],
+    queryFn: async () => {
+      const res = await paymentApiRequest.getSavedPaymentMethods();
+      return res.data;
+    },
+  });
+
+  // Search params to handle redirect back from Stripe Checkout
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const sessionId = searchParams.get("session_id");
+
+    if (paymentStatus === "success" && sessionId) {
+      const syncSession = async () => {
+        try {
+          await paymentApiRequest.syncCheckoutSession(sessionId);
+          toastSuccess({
+            message: "Payment completed successfully! Escrow deposit has been updated.",
+          });
+        } catch {
+          // If already processed via webhook
+        } finally {
+          await queryClient.invalidateQueries({
+            queryKey: ["client-contract-detail", initialContract.id],
+          });
+          await queryClient.invalidateQueries({
+            queryKey: ["client-contract-milestones", initialContract.id],
+          });
+          await queryClient.invalidateQueries({
+            queryKey: ["client-contract-transactions", initialContract.id],
+          });
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, "", newUrl);
+        }
+      };
+      void syncSession();
+    } else if (paymentStatus === "cancelled") {
+      toastError({
+        message: "Payment was cancelled. You can retry at any time.",
+      });
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [searchParams, initialContract.id, queryClient]);
 
   // Escrow Release / Refund dialog states
   const [milestoneToRelease, setMilestoneToRelease] =
@@ -360,19 +427,29 @@ export function ContractDetail({
     }
   };
 
-  // Payment Handlers
+  // Payment Handlers (1-Click with Saved Card or Stripe Checkout)
   const handlePayPlatformFee = async () => {
+    const savedCards = savedCardsData?.paymentMethods || [];
+    if (savedCards.length > 0) {
+      const defaultCard = savedCards.find((p) => p.isDefault) || savedCards[0];
+      setSelectedPmId(defaultCard?.id || "");
+      setOneClickModal({
+        open: true,
+        type: "PLATFORM_FEE",
+        amount: Number(contract.platformFee) || 10.0,
+        title: "Platform Activation Fee",
+      });
+      return;
+    }
+
     setIsInitiatingPayment(true);
     try {
-      const res = await paymentApiRequest.createPlatformFeeIntent(contract.id);
-      setPaymentModalConfig({
-        clientSecret: res.data.clientSecret,
-        amount: res.data.amount,
-        title: "Contract Platform Activation Fee",
-        description:
-          "A one-time $10.00 platform fee required to activate Escrow and milestone protections.",
-      });
-      setPaymentModalOpen(true);
+      const res = await paymentApiRequest.createPlatformFeeCheckoutSession(
+        contract.id,
+      );
+      if (res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
     } catch (error) {
       toastError({
         message:
@@ -380,25 +457,34 @@ export function ContractDetail({
             ? error.response.error.message
             : "Failed to initiate platform fee payment.",
       });
-    } finally {
       setIsInitiatingPayment(false);
     }
   };
 
   const handleFundMilestone = async (milestone: MilestoneType) => {
+    const savedCards = savedCardsData?.paymentMethods || [];
+    if (savedCards.length > 0) {
+      const defaultCard = savedCards.find((p) => p.isDefault) || savedCards[0];
+      setSelectedPmId(defaultCard?.id || "");
+      setOneClickModal({
+        open: true,
+        type: "MILESTONE_FUND",
+        milestone,
+        amount: Number(milestone.amount),
+        title: `Fund Milestone: ${milestone.title}`,
+      });
+      return;
+    }
+
     setIsInitiatingPayment(true);
     try {
-      const res = await paymentApiRequest.createMilestoneFundIntent(
+      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
         contract.id,
         milestone.id,
       );
-      setPaymentModalConfig({
-        clientSecret: res.data.clientSecret,
-        amount: res.data.amount,
-        title: `Fund Milestone: ${milestone.title}`,
-        description: `Deposit ${money(Number(milestone.amount))} into Frevia Escrow. Funds are safely held until you approve the completed deliverables.`,
-      });
-      setPaymentModalOpen(true);
+      if (res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
     } catch (error) {
       toastError({
         message:
@@ -406,8 +492,111 @@ export function ContractDetail({
             ? error.response.error.message
             : "Failed to initiate milestone deposit.",
       });
-    } finally {
       setIsInitiatingPayment(false);
+    }
+  };
+
+  const handleConfirmOneClickPay = async () => {
+    if (!oneClickModal) return;
+    setIsProcessingOneClick(true);
+    try {
+      if (oneClickModal.type === "PLATFORM_FEE") {
+        await paymentApiRequest.payPlatformFeeWithSavedCard(
+          contract.id,
+          selectedPmId || undefined,
+        );
+        toastSuccess({ message: "Platform fee paid successfully!" });
+      } else if (
+        oneClickModal.type === "MILESTONE_FUND" &&
+        oneClickModal.milestone
+      ) {
+        await paymentApiRequest.fundMilestoneWithSavedCard(
+          contract.id,
+          oneClickModal.milestone.id,
+          selectedPmId || undefined,
+        );
+        toastSuccess({
+          message: "Milestone funds deposited successfully via saved card!",
+        });
+      }
+      setOneClickModal(null);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-transactions", contract.id],
+      });
+      void refetchSavedCards();
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Payment with saved card failed. Redirecting to Stripe Checkout...",
+      });
+      if (oneClickModal.type === "PLATFORM_FEE") {
+        const res =
+          await paymentApiRequest.createPlatformFeeCheckoutSession(contract.id);
+        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
+      } else if (
+        oneClickModal.type === "MILESTONE_FUND" &&
+        oneClickModal.milestone
+      ) {
+        const res =
+          await paymentApiRequest.createMilestoneFundCheckoutSession(
+            contract.id,
+            oneClickModal.milestone.id,
+          );
+        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
+      }
+    } finally {
+      setIsProcessingOneClick(false);
+    }
+  };
+
+  const handlePayViaStripeCheckoutFromModal = async () => {
+    if (!oneClickModal) return;
+    setIsInitiatingPayment(true);
+    try {
+      if (oneClickModal.type === "PLATFORM_FEE") {
+        const res =
+          await paymentApiRequest.createPlatformFeeCheckoutSession(contract.id);
+        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
+      } else if (
+        oneClickModal.type === "MILESTONE_FUND" &&
+        oneClickModal.milestone
+      ) {
+        const res =
+          await paymentApiRequest.createMilestoneFundCheckoutSession(
+            contract.id,
+            oneClickModal.milestone.id,
+          );
+        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
+      }
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to open Stripe Checkout.",
+      });
+      setIsInitiatingPayment(false);
+    }
+  };
+
+  const handleOpenStripeCustomerPortal = async () => {
+    try {
+      const res = await paymentApiRequest.getCustomerPortalLink(
+        window.location.href,
+      );
+      if (res.data?.portalUrl) {
+        window.location.href = res.data.portalUrl;
+      }
+    } catch {
+      toastError({ message: "Could not open Stripe Billing Portal." });
     }
   };
 
@@ -1652,6 +1841,131 @@ export function ContractDetail({
           </div>
         </AlertDialogContent>
       </AlertDialog>
+      {/* Dialog: 1-Click Saved Card Payment Modal */}
+      {oneClickModal && (
+        <Dialog
+          open={oneClickModal.open}
+          onOpenChange={(open) => !open && setOneClickModal(null)}
+        >
+          <DialogContent className="max-w-md rounded-[24px] border border-border bg-background p-6 shadow-2xl font-sans space-y-4">
+            <DialogHeader className="space-y-1 text-left border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600">
+                  <ShieldCheck className="size-4" />
+                </div>
+                <DialogTitle className="text-base font-bold text-foreground">
+                  Confirm Escrow Deposit
+                </DialogTitle>
+              </div>
+              <DialogDescription className="text-xs text-muted-foreground">
+                {oneClickModal.title}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="rounded-2xl border border-border/80 bg-zinc-50 dark:bg-zinc-900/50 p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Total Amount</span>
+                <span className="text-lg font-extrabold text-foreground">
+                  {money(oneClickModal.amount)}
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Funds are held safely in Escrow until you approve the final submission.
+              </p>
+            </div>
+
+            {/* Saved Cards Selection */}
+            {savedCardsData?.paymentMethods &&
+              savedCardsData.paymentMethods.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-foreground block">
+                    Pay with Saved Card (1-Click)
+                  </label>
+                  <div className="space-y-2">
+                    {savedCardsData.paymentMethods.map((card) => {
+                      const isSelected =
+                        selectedPmId === card.id ||
+                        (!selectedPmId && card.isDefault);
+                      return (
+                        <button
+                          key={card.id}
+                          type="button"
+                          onClick={() => setSelectedPmId(card.id)}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+                            isSelected
+                              ? "border-[#0069D3] bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-[#0069D3]"
+                              : "border-border/80 hover:border-border bg-white dark:bg-zinc-950"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <CreditCard className="size-4 text-foreground/80 shrink-0" />
+                            <div>
+                              <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                                {card.brand} •••• {card.last4}
+                              </span>
+                              <span className="block text-[11px] text-muted-foreground">
+                                Exp: {String(card.expMonth).padStart(2, "0")}/
+                                {card.expYear}
+                              </span>
+                            </div>
+                          </div>
+                          {card.isDefault && (
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              Default
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+            {/* Actions */}
+            <div className="space-y-2 pt-2">
+              <Button
+                type="button"
+                onClick={() => void handleConfirmOneClickPay()}
+                disabled={isProcessingOneClick || isInitiatingPayment}
+                className="w-full rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-10 shadow-sm"
+              >
+                {isProcessingOneClick ? (
+                  <Loader2 className="mr-1.5 size-4 animate-spin" />
+                ) : (
+                  <CreditCard className="mr-1.5 size-4" />
+                )}
+                Pay {money(oneClickModal.amount)} with Saved Card
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void handlePayViaStripeCheckoutFromModal()}
+                disabled={isProcessingOneClick || isInitiatingPayment}
+                className="w-full rounded-full text-xs font-medium h-9 text-muted-foreground hover:text-foreground"
+              >
+                {isInitiatingPayment ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <ExternalLink className="mr-1.5 size-3.5" />
+                )}
+                Pay with Other Method (Stripe Checkout)
+              </Button>
+
+              <div className="text-center pt-1">
+                <button
+                  type="button"
+                  onClick={() => void handleOpenStripeCustomerPortal()}
+                  className="text-[11px] text-muted-foreground hover:text-[#0069D3] underline underline-offset-2 transition-colors inline-flex items-center gap-1"
+                >
+                  Manage or change cards in Stripe Customer Portal
+                  <ExternalLink className="size-2.5" />
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

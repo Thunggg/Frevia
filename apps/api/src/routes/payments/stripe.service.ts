@@ -24,14 +24,18 @@ export class StripeService {
     email: string,
     country: string = envConfig.STRIPE_ACCOUNT_COUNTRY,
   ): Promise<Stripe.Account> {
-    return this.stripe.accounts.create({
-      type: 'express',
+    const type = envConfig.STRIPE_ACCOUNT_TYPE;
+    const accountParams: Stripe.AccountCreateParams = {
+      type,
       country,
       email,
-      capabilities: {
+    };
+    if (type === 'express') {
+      accountParams.capabilities = {
         transfers: { requested: true },
-      },
-    });
+      };
+    }
+    return this.stripe.accounts.create(accountParams);
   }
 
   async createAccountLink(
@@ -115,6 +119,112 @@ export class StripeService {
     paymentIntentId: string,
   ): Promise<Stripe.PaymentIntent> {
     return this.stripe.paymentIntents.retrieve(paymentIntentId);
+  }
+
+  async createCheckoutSession({
+    amountInCents,
+    currency = 'usd',
+    customerId,
+    customerEmail,
+    title,
+    description,
+    successUrl,
+    cancelUrl,
+    metadata,
+  }: {
+    amountInCents: number;
+    currency?: string;
+    customerId?: string;
+    customerEmail?: string;
+    title: string;
+    description?: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, string>;
+  }): Promise<Stripe.Checkout.Session> {
+    return this.stripe.checkout.sessions.create({
+      mode: 'payment',
+      ...(customerId
+        ? { customer: customerId }
+        : customerEmail
+          ? { customer_email: customerEmail }
+          : {}),
+      line_items: [
+        {
+          price_data: {
+            currency: currency.toLowerCase(),
+            product_data: {
+              name: title,
+              ...(description ? { description } : {}),
+            },
+            unit_amount: Math.round(amountInCents),
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata,
+      payment_intent_data: {
+        metadata,
+        setup_future_usage: 'off_session',
+      },
+    });
+  }
+
+  async retrieveCheckoutSession(
+    sessionId: string,
+  ): Promise<Stripe.Checkout.Session> {
+    return this.stripe.checkout.sessions.retrieve(sessionId);
+  }
+
+  async createBillingPortalSession(
+    customerId: string,
+    returnUrl: string,
+  ): Promise<Stripe.BillingPortal.Session> {
+    return this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: returnUrl,
+    });
+  }
+
+  async listPaymentMethods(
+    customerId: string,
+  ): Promise<Stripe.ApiList<Stripe.PaymentMethod>> {
+    return this.stripe.paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+    });
+  }
+
+  async getCustomer(
+    customerId: string,
+  ): Promise<Stripe.Customer | Stripe.DeletedCustomer> {
+    return this.stripe.customers.retrieve(customerId);
+  }
+
+  async chargeOffSession({
+    amountInCents,
+    currency = 'usd',
+    customerId,
+    paymentMethodId,
+    metadata,
+  }: {
+    amountInCents: number;
+    currency?: string;
+    customerId: string;
+    paymentMethodId: string;
+    metadata?: Record<string, string>;
+  }): Promise<Stripe.PaymentIntent> {
+    return this.stripe.paymentIntents.create({
+      amount: Math.round(amountInCents),
+      currency: currency.toLowerCase(),
+      customer: customerId,
+      payment_method: paymentMethodId,
+      off_session: true,
+      confirm: true,
+      metadata,
+    });
   }
 
   constructWebhookEvent(

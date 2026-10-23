@@ -68,6 +68,60 @@ export type CreatePaymentIntentResponseType = z.infer<
   typeof CreatePaymentIntentResponseSchema
 >;
 
+export const CreateCheckoutSessionResponseSchema = z.object({
+  checkoutUrl: z.string().url(),
+  sessionId: z.string(),
+});
+export type CreateCheckoutSessionResponseType = z.infer<
+  typeof CreateCheckoutSessionResponseSchema
+>;
+
+export const SyncCheckoutSessionResponseSchema = z.object({
+  success: z.boolean(),
+  status: z.string(),
+});
+export type SyncCheckoutSessionResponseType = z.infer<
+  typeof SyncCheckoutSessionResponseSchema
+>;
+
+export const SavedPaymentMethodSchema = z.object({
+  id: z.string(),
+  brand: z.string(),
+  last4: z.string(),
+  expMonth: z.number(),
+  expYear: z.number(),
+  isDefault: z.boolean(),
+});
+export type SavedPaymentMethodType = z.infer<typeof SavedPaymentMethodSchema>;
+
+export const GetSavedPaymentMethodsResponseSchema = z.object({
+  paymentMethods: z.array(SavedPaymentMethodSchema),
+});
+export type GetSavedPaymentMethodsResponseType = z.infer<
+  typeof GetSavedPaymentMethodsResponseSchema
+>;
+
+export const CreateCustomerPortalSessionResponseSchema = z.object({
+  portalUrl: z.string().url(),
+});
+export type CreateCustomerPortalSessionResponseType = z.infer<
+  typeof CreateCustomerPortalSessionResponseSchema
+>;
+
+export const ChargeSavedCardBodySchema = z.object({
+  paymentMethodId: z.string().optional(),
+});
+export type ChargeSavedCardBodyType = z.infer<typeof ChargeSavedCardBodySchema>;
+
+export const ChargeSavedCardResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  transactionId: z.number().optional(),
+});
+export type ChargeSavedCardResponseType = z.infer<
+  typeof ChargeSavedCardResponseSchema
+>;
+
 export const StripeOnboardingLinkResponseSchema = z.object({
   onboardingUrl: z.string().url(),
 });

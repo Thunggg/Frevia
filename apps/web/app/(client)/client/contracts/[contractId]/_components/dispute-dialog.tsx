@@ -262,12 +262,13 @@ export function DisputeDialog({
     if (!dispute) return;
     setIsPayingFee(true);
     try {
-      const res = await paymentApiRequest.createDisputeFeeIntent(dispute.id);
-      setFeeModalConfig({
-        clientSecret: res.data.clientSecret,
-        amount: res.data.amount,
-      });
-      setFeeModalOpen(true);
+      const res = await paymentApiRequest.createDisputeFeeCheckoutSession(
+        dispute.id,
+      );
+      if (res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+        return;
+      }
     } catch (error) {
       // Fallback to direct pay endpoint if Stripe intent is already paid or failed
       try {

@@ -49,11 +49,41 @@ interface PaymentSettingsProps {
 
 export function PaymentSettings({ userRole }: PaymentSettingsProps) {
   const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("ALL");
 
   const isFreelancerOrExpert =
     userRole === "FREELANCER" || userRole === "EXPERT";
+
+  // Query Saved Payment Methods (Cards) for Client
+  const {
+    data: paymentMethodsData,
+    isLoading: paymentMethodsLoading,
+    refetch: refetchPaymentMethods,
+  } = useQuery({
+    queryKey: ["saved-payment-methods"],
+    queryFn: async () => {
+      const res = await paymentApiRequest.getSavedPaymentMethods();
+      return res.data;
+    },
+    enabled: !isFreelancerOrExpert,
+  });
+
+  const handleOpenCustomerPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const res = await paymentApiRequest.getCustomerPortalLink();
+      if (res.data?.portalUrl) {
+        toastSuccess({ message: "Opening Stripe Customer Portal..." });
+        window.location.href = res.data.portalUrl;
+      }
+    } catch {
+      toastError({ message: "Failed to open Stripe Customer Portal." });
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   // Query Connect Status (only relevant for recipients)
   const {
@@ -297,7 +327,97 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
         </div>
       )}
 
-      {/* 2. Client Escrow Info Card */}
+      {/* 2. Client Saved Payment Methods Card */}
+      {!isFreelancerOrExpert && (
+        <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-[#0069D3]">
+                <CreditCard className="size-4" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-foreground">
+                  Saved Payment Methods
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  1-Click checkout and card management powered by Stripe
+                </p>
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleOpenCustomerPortal}
+              disabled={portalLoading}
+              className="rounded-full text-xs font-semibold h-9 px-4 shrink-0 border-border/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+            >
+              {portalLoading ? (
+                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+              ) : (
+                <ExternalLink className="mr-1.5 size-3.5 text-muted-foreground" />
+              )}
+              Manage in Stripe Portal
+            </Button>
+          </div>
+
+          {paymentMethodsLoading ? (
+            <div className="flex items-center justify-center py-6 text-muted-foreground">
+              <Loader2 className="size-5 animate-spin mr-2" />
+              <span className="text-xs">Loading saved cards...</span>
+            </div>
+          ) : paymentMethodsData?.paymentMethods &&
+            paymentMethodsData.paymentMethods.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {paymentMethodsData.paymentMethods.map((pm) => (
+                <div
+                  key={pm.id}
+                  className="rounded-xl border border-border/80 bg-zinc-50 dark:bg-zinc-900/50 p-4 space-y-2 relative"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      {pm.brand}
+                    </span>
+                    {pm.isDefault && (
+                      <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5">
+                        Default
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="text-sm font-mono tracking-widest text-foreground font-semibold">
+                    •••• •••• •••• {pm.last4}
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/50">
+                    <span>Expires</span>
+                    <span>
+                      {String(pm.expMonth).padStart(2, "0")}/{pm.expYear}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border/80 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 text-center space-y-2">
+              <CreditCard className="size-6 text-muted-foreground mx-auto stroke-1" />
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                No cards saved yet. When you fund a milestone or pay a platform fee via Stripe Checkout, your card will be securely remembered for 1-click payments.
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleOpenCustomerPortal}
+                disabled={portalLoading}
+                className="text-xs text-[#0069D3] hover:text-[#005bb8] h-8"
+              >
+                Add Card via Stripe Portal
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. Client Escrow Info Card */}
       {!isFreelancerOrExpert && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm">
           <div className="flex items-center gap-3 border-b border-border/60 pb-4">

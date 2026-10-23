@@ -261,6 +261,22 @@ export class PaymentRepository {
     };
   }
 
+  async findTransactionBySessionId(sessionId: string) {
+    const tx = await this.prisma.transaction.findFirst({
+      where: {
+        metadata: {
+          path: ['sessionId'],
+          equals: sessionId,
+        },
+      },
+    });
+    if (!tx) return null;
+    return {
+      ...tx,
+      amount: Number(tx.amount),
+    };
+  }
+
   async findEscrowDepositTransaction(milestoneId: number) {
     const tx = await this.prisma.transaction.findFirst({
       where: {
