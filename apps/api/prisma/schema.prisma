@@ -388,9 +388,32 @@ model ProfileVisitLog {
 // 4. Jobs
 // ============================
 
+// Danh mục công việc (Job Category) — Admin quản lý (UC-46).
+// - `deletedAt`: soft delete, xóa được khôi phục (restore).
+// - `status`: ACTIVE / INACTIVE — vô hiệu hóa danh mục mà không xóa dữ liệu.
+model JobCategory {
+  id          Int               @id @default(autoincrement())
+  name        String            @db.VarChar(100)
+  slug        String            @db.VarChar(120)
+  description String?
+  status      JobCategoryStatus @default(ACTIVE)
+  deletedAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  jobs Job[]
+
+  // NOTE: cần tạo bằng raw SQL migration (Prisma không hỗ trợ partial unique index):
+  // CREATE UNIQUE INDEX idx_job_categories_name_active ON "JobCategory" (LOWER("name")) WHERE "deletedAt" IS NULL;
+  // CREATE UNIQUE INDEX idx_job_categories_slug_active ON "JobCategory" ("slug") WHERE "deletedAt" IS NULL;
+  @@index([deletedAt])
+  @@index([status, deletedAt])
+}
+
 model Job {
   id          Int        @id @default(autoincrement())
   clientId    Int
+  categoryId  Int?
   title       String     @db.VarChar(255)
   slug        String     @unique @db.VarChar(300)
   description String?
@@ -406,6 +429,7 @@ model Job {
   deletedAt   DateTime?
 
   client           User                @relation(fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  category         JobCategory?        @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   skills           JobSkill[]
   bookmarks        JobBookmark[]
   recentlyViewedBy RecentlyViewedJob[]
@@ -415,6 +439,7 @@ model Job {
   @@index([status, deletedAt, createdAt])
   @@index([clientId, deletedAt, createdAt])
   @@index([budgetType])
+  @@index([categoryId])
 }
 
 model Skill {
@@ -1202,6 +1227,11 @@ enum JobStatus {
   COMPLETED
   CLOSED
   CANCELLED
+}
+
+enum JobCategoryStatus {
+  ACTIVE
+  INACTIVE
 }
 
 enum ProposalStatus {
