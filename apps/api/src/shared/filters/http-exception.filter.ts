@@ -57,16 +57,37 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       response.status(500).json(apiRes);
     } else if (exception instanceof HttpException) {
-      const body: HttpExceptionBody = {
-        ...(exception.getResponse() as object),
-      } as HttpExceptionBody;
+      const res = exception.getResponse();
+      let errorMsg = exception.message;
+      let errorCode = String(exception.getStatus());
+      let details: ValidationIssue[] | undefined = undefined;
+
+      if (typeof res === 'string') {
+        errorMsg = res;
+      } else if (typeof res === 'object' && res !== null) {
+        const resObj = res as Record<string, unknown>;
+        if (typeof resObj.message === 'string') {
+          errorMsg = resObj.message;
+        } else if (Array.isArray(resObj.message)) {
+          details = resObj.message as unknown as ValidationIssue[];
+          errorMsg =
+            typeof resObj.error === 'string'
+              ? resObj.error
+              : 'Validation failed';
+        } else if (typeof resObj.error === 'string') {
+          errorMsg = resObj.error;
+        }
+        if (resObj.statusCode) {
+          errorCode = String(resObj.statusCode);
+        }
+      }
 
       const apiRes: ApiError = {
         success: false,
         error: {
-          code: String(body.statusCode),
-          message: body.error!,
-          details: body.message as unknown as ValidationIssue[],
+          code: errorCode,
+          message: errorMsg,
+          details,
         },
         timestamp: new Date().toISOString(),
       };

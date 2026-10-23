@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ManageContractMessage } from "../message/manage-contract.message";
 import { ContractStatusEnum } from "../constants/contract.constand";
+import { PlatformFeeStatusEnum } from "../constants/payment.constant";
 
 export const ContractSchema = z.object({
   id: z.number(),
@@ -11,6 +12,9 @@ export const ContractSchema = z.object({
   terms: z.string().nullable(),
   totalAmount: z.coerce.number(),
   status: ContractStatusEnum,
+  platformFee: z.coerce.number().optional().default(10),
+  platformFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
+  platformFeePaidAt: z.coerce.date().nullable().optional(),
   signedByClient: z.boolean(),
   signedByFreelancer: z.boolean(),
   createdAt: z.coerce.date(),

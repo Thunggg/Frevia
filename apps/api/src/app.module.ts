@@ -42,6 +42,7 @@ import { BannersAdminModule } from './routes/banners-admin/banners-admin.module'
 import { DisputeModule } from './routes/disputes/dispute.module';
 import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
 import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
+import { PaymentModule } from './routes/payments/payment.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { ExpertProfileModule } from './routes/expert-profile/expert-profile.modu
     DisputeModule,
     ProfileRevisionModule,
     ExpertProfileModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [
