@@ -3,15 +3,33 @@ import Link from "next/link";
 import { FileQuestion } from "@/components/icons";
 
 import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import { Header, type UserRole } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
+import authServerRequest from "@/apiRequests/auth.server";
+import { RoleName } from "@shared/types";
+
+export default async function NotFound() {
+  const user = await authServerRequest.getMe();
+  const primaryRole =
+    user?.roles?.find((r) => r.isPrimary)?.name ?? user?.roles?.[0]?.name;
+
+  let role: UserRole = "GUEST";
+  if (primaryRole === RoleName.CLIENT) role = "CLIENT";
+  else if (primaryRole === RoleName.FREELANCER) role = "FREELANCER";
+
+  const homeHref =
+    role === "CLIENT"
+      ? "/client/jobs"
+      : role === "FREELANCER"
+        ? "/freelancer/find-work"
+        : "/";
 
 export default async function NotFound() {
   const t = await getTranslations("notFound");
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role="GUEST" />
+      <Header role={role} />
       <main className="flex flex-1 items-center justify-center px-4 py-16">
         <section className="max-w-md text-center">
           <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
@@ -27,6 +45,7 @@ export default async function NotFound() {
               className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
               asChild
             >
+              <Link href={homeHref}>Go home</Link>
               <Link href="/">{t("goHome")}</Link>
             </Button>
             <Button variant="outline" asChild>

@@ -79,6 +79,11 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  // --- Stripe Payments ---
+  stripeCustomerId          String?   @db.VarChar(255)
+  stripeAccountId           String?   @db.VarChar(255)
+  stripeOnboardingCompleted Boolean   @default(false)
+
   // --- Auth / core ---
   userRoles     UserRole[]
   sessions      Session[]
@@ -154,6 +159,9 @@ model User {
   conversationsAsParticipant1 Conversation[]  @relation("ConversationParticipant1")
   conversationsAsParticipant2 Conversation[]  @relation("ConversationParticipant2")
   directMessages              DirectMessage[]
+
+  // --- Transactions ---
+  transactions                Transaction[]
 
   @@index([deletedAt])
 }
@@ -244,11 +252,16 @@ model FreelancerProfile {
   id             Int      @id @default(autoincrement())
   profileId      Int      @unique
   title          String?  @db.VarChar(255)
-  // ĐÃ XÓA hourly_rate
-  // Các mục sau lưu dạng danh sách chuỗi (mỗi phần tử = 1 dòng/mục) thay vì JSON tự do
   education      String[] @default([])
   certifications String[] @default([])
   languages      String[] @default([])
+  idVerified     Boolean  @default(false)
+  cvUrl          String?  @db.VarChar(500)
+  cvFileName     String?  @db.VarChar(255)
+  cvPublicId     String?  @db.VarChar(255)
+  experience     String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   experience     String[] @default([])
 
   // CV
@@ -357,19 +370,32 @@ model SocialLink {
 }
 
 model IdVerificationDocument {
-  id           Int                @id @default(autoincrement())
-  userId       Int
-  documentType DocumentType
-  fileUrl      String             @db.VarChar(500)
-  status       VerificationStatus @default(PENDING)
-  adminId      Int?
-  reviewNotes  String?
-  createdAt    DateTime           @default(now())
-  reviewedAt   DateTime?
-  deletedAt    DateTime?
+  id                           Int                      @id @default(autoincrement())
+  userId                       Int
+  documentType                 DocumentType
+  fileUrl                      String                   @db.VarChar(500)
+  status                       VerificationStatus       @default(PENDING)
+  adminId                      Int?
+  reviewNotes                  String?
+  createdAt                    DateTime                 @default(now())
+  reviewedAt                   DateTime?
+  deletedAt                    DateTime?
+  aiStatus                     String?                  @db.VarChar(20)
+  aiScore                      Float?
+  aiSummary                    Json?
+  aiSelfieSummary              Json?
+  aiError                      String?
+  aiScannedAt                  DateTime?
+  backFileUrl                  String?                  @db.VarChar(500)
+  identityNumber               String?                  @db.VarChar(50)
+  duplicateOfId                Int?
 
-  user  User  @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  admin User? @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  user                         User                     @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  admin                        User?                    @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  duplicateOf                  IdVerificationDocument?  @relation("IdVerificationDuplicate", fields: [duplicateOfId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  duplicates                   IdVerificationDocument[] @relation("IdVerificationDuplicate")
+
+  @@index([identityNumber])
 }
 
 model ProfileVisitLog {
@@ -588,6 +614,9 @@ model Contract {
   status             ContractStatus @default(PENDING_SIGN)
   signedByClient     Boolean        @default(false)
   signedByFreelancer Boolean        @default(false)
+  platformFee        Decimal        @default(10.00) @db.Decimal(10, 2)
+  platformFeeStatus  PlatformFeeStatus @default(UNPAID)
+  platformFeePaidAt  DateTime?
   createdAt          DateTime       @default(now())
   signedAt           DateTime?
   completedAt        DateTime?
@@ -604,6 +633,7 @@ model Contract {
   reviews                Review[]
   projectProgressUpdates ProjectProgressUpdate[]
   sharedFiles            SharedFile[]
+  transactions           Transaction[]
 
   @@index([clientId])
   @@index([freelancerId])
@@ -870,6 +900,37 @@ model DisputeDecisionReview {
   @@unique([disputeId, userId])
   @@index([disputeId])
   @@index([userId])
+}
+
+// ============================
+// 15. Transactions & Payments (Ledger)
+// ============================
+model Transaction {
+  id                    Int               @id @default(autoincrement())
+  userId                Int
+  contractId            Int?
+  milestoneId           Int?
+  disputeId             Int?
+  amount                Decimal           @db.Decimal(10, 2)
+  currency              String            @default("usd") @db.VarChar(10)
+  type                  TransactionType
+  status                TransactionStatus @default(PENDING)
+  stripePaymentIntentId String?           @unique
+  stripeTransferId      String?           @unique
+  stripeRefundId        String?
+  metadata              Json?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  contract              Contract?         @relation(fields: [contractId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([contractId])
+  @@index([milestoneId])
+  @@index([disputeId])
+  @@index([type])
+  @@index([status])
 }
 
 // ============================
@@ -1429,4 +1490,26 @@ enum ForumPostStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum PlatformFeeStatus {
+  UNPAID
+  PAID
+  WAIVED
+}
+
+enum TransactionType {
+  PLATFORM_FEE
+  ESCROW_DEPOSIT
+  MILESTONE_PAYOUT
+  DISPUTE_FEE
+  ARBITRATOR_PAYOUT
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
 }

@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
+  CreditCard,
   Eye,
   FileText,
   LogOut,
@@ -93,10 +94,11 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
         labelKey: "myJobs",
         excludePaths: ["/client/jobs/new"],
       },
-      { href: "/client/contracts", labelKey: "contracts" },
-      { href: "/client/disputes", labelKey: "disputes" },
-      { href: "/experts", labelKey: "findExperts" },
-      { href: "/forum", labelKey: "forum" },
+      { href: "/client/contracts", label: "Contracts" },
+      { href: "/client/payments", label: "Payments" },
+      { href: "/client/disputes", label: "Disputes" },
+      { href: "/experts", label: "Find Experts" },
+      { href: "/forum", label: "Forum" },
     ],
   },
   FREELANCER: {
@@ -434,6 +436,15 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 {t("savedSearches")}
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/account-profile?tab=payments"
+                className="cursor-pointer"
+              >
+                <CreditCard className="size-4 text-muted-foreground" />
+                Billing & Payouts
+              </Link>
+            </DropdownMenuItem>
           </>
         )}
         {role === "CLIENT" && (
@@ -460,6 +471,12 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               >
                 <UserCheck className="size-4 text-muted-foreground" />
                 {t("following")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/client/payments" className="cursor-pointer">
+                <CreditCard className="size-4 text-muted-foreground" />
+                Billing & Payments
               </Link>
             </DropdownMenuItem>
           </>
