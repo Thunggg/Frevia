@@ -1,11 +1,11 @@
+import { FileQuestion } from "@/components/icons";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { FileQuestion } from "@/components/icons";
 
+import authServerRequest from "@/apiRequests/auth.server";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Button } from "@repo/ui/components/shadcn/button";
-import authServerRequest from "@/apiRequests/auth.server";
 import { RoleName } from "@shared/types";
 
 export default async function NotFound() {
@@ -24,7 +24,6 @@ export default async function NotFound() {
         ? "/freelancer/find-work"
         : "/";
 
-export default async function NotFound() {
   const t = await getTranslations("notFound");
 
   return (
