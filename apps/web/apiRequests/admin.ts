@@ -1,7 +1,9 @@
 import {
   AdminClientProfileResponseType,
+  AdminCreateJobCategoryBodyType,
   AdminCreatePortfolioItemBodyType,
   AdminCreateSkillBodyType,
+  AdminUpdateJobCategoryBodyType,
   AdminUpdateSkillBodyType,
   AdminCreateUserBodyType,
   AdminCreateUserResponseType,
@@ -29,6 +31,7 @@ import {
   ForumReportType,
   IdentityVerificationAdminDetailType,
   IdentityVerificationAdminListResponseType,
+  JobCategoryAdminDetailResponseType,
   MessageResType,
   PendingForumPostListResponseType,
   ReviewForumPostResponseType,
@@ -90,6 +93,31 @@ export const adminApiRequest = {
   // Xóa mềm skill
   deleteSkill: (id: number) =>
     http.delete<MessageResType>(`/api/admin/skills/${id}`),
+
+  // Tạo danh mục công việc mới — trang Admin Job Categories
+  createJobCategory: (body: AdminCreateJobCategoryBodyType) =>
+    http.post<JobCategoryAdminDetailResponseType>(
+      "/api/admin/job-categories",
+      body,
+    ),
+
+  // Sửa danh mục công việc — trang Admin Job Categories
+  updateJobCategory: (id: number, body: AdminUpdateJobCategoryBodyType) =>
+    http.patch<JobCategoryAdminDetailResponseType>(
+      `/api/admin/job-categories/${id}`,
+      body,
+    ),
+
+  // Khôi phục danh mục công việc đã soft-delete
+  restoreJobCategory: (id: number) =>
+    http.patch<JobCategoryAdminDetailResponseType>(
+      `/api/admin/job-categories/${id}/restore`,
+      {},
+    ),
+
+  // Xóa mềm danh mục công việc (chỉ xoá được khi không còn công việc hoạt động)
+  deleteJobCategory: (id: number) =>
+    http.delete<MessageResType>(`/api/admin/job-categories/${id}`),
 
   getUserById: (id: number) =>
     http.get<AdminUserDetailResponseType>(`/api/users/${id}`),

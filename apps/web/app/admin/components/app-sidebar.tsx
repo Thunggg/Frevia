@@ -9,6 +9,7 @@ import {
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
+  FolderTree,
   LayoutDashboard,
   Megaphone,
   MessageSquare,
@@ -42,6 +43,11 @@ const navItems: NavItem[] = [
     titleKey: "skills",
     href: "/admin/skills",
     icon: Tags,
+  },
+  {
+    titleKey: "jobCategories",
+    href: "/admin/job-categories",
+    icon: FolderTree,
   },
   {
     titleKey: "banners",
