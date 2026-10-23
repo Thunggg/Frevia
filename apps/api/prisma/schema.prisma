@@ -255,14 +255,6 @@ model FreelancerProfile {
   education      String[] @default([])
   certifications String[] @default([])
   languages      String[] @default([])
-  idVerified     Boolean  @default(false)
-  cvUrl          String?  @db.VarChar(500)
-  cvFileName     String?  @db.VarChar(255)
-  cvPublicId     String?  @db.VarChar(255)
-  experience     String[] @default([])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  experience     String[] @default([])
 
   // CV
   cvUrl        String?   @db.VarChar(500)
@@ -270,6 +262,7 @@ model FreelancerProfile {
   cvPublicId   String?   @db.VarChar(255)
   cvUploadedAt DateTime?
 
+  experience String[] @default([])
   idVerified Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

@@ -98,10 +98,16 @@ export function PostJobForm({
   >([]);
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const skillPickerRef = useRef<HTMLDivElement>(null);
+  const [categoryInput, setCategoryInput] = useState("");
   const [categoryOptions, setCategoryOptions] = useState<
     Array<{ id: number; name: string }>
   >([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const categoryPickerRef = useRef<HTMLDivElement>(null);
   const form = useForm<CreateJobBodyType>({
     resolver: useTranslatedResolver<CreateJobBodyType>(CreateJobBodySchema),
     defaultValues: emptyJobForm,
@@ -116,47 +122,27 @@ export function PostJobForm({
         name: skill.skill.name,
       })) ?? [],
     );
+    setSelectedCategories(
+      job?.jobCategories?.map((jobCategory) => ({
+        id: jobCategory.id,
+        name: jobCategory.name,
+      })) ?? [],
+    );
     setSkillInput("");
     setSkillOptions([]);
     setIsSkillMenuOpen(false);
+    setCategoryInput("");
+    setCategoryOptions([]);
+    setIsCategoryMenuOpen(false);
   }, [form, job, isActive]);
-
-  // UC-46.06: danh mục công việc đang hoạt động để gắn vào tin tuyển dụng.
-  useEffect(() => {
-    if (!isActive) return;
-
-    let active = true;
-    setCategoriesLoading(true);
-
-    void (async () => {
-      try {
-        const response = await jobCategoryApiRequest.getJobCategories({
-          limit: 50,
-        });
-        if (!active) return;
-        setCategoryOptions(
-          response.data.jobCategories.map((jobCategory) => ({
-            id: jobCategory.id,
-            name: jobCategory.name,
-          })),
-        );
-      } catch {
-        if (!active) return;
-        setCategoryOptions([]);
-      } finally {
-        if (active) setCategoriesLoading(false);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [isActive]);
 
   useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
       if (!skillPickerRef.current?.contains(event.target as Node)) {
         setIsSkillMenuOpen(false);
+      }
+      if (!categoryPickerRef.current?.contains(event.target as Node)) {
+        setIsCategoryMenuOpen(false);
       }
     };
 
@@ -179,6 +165,40 @@ export function PostJobForm({
 
     return () => window.clearTimeout(timeoutId);
   }, [isActive, skillInput, isSkillMenuOpen]);
+
+  // UC-46.06: tìm danh mục công việc đang hoạt động (giống bộ chọn kỹ năng —
+  // gõ để tìm, cuộn danh sách để chọn nhiều danh mục).
+  useEffect(() => {
+    if (!isActive || !isCategoryMenuOpen) return;
+
+    const search = categoryInput.trim();
+    let cancelled = false;
+    const timeoutId = window.setTimeout(async () => {
+      setCategoriesLoading(true);
+      try {
+        const response = await jobCategoryApiRequest.getJobCategories({
+          search: search || undefined,
+          limit: 50,
+        });
+        if (cancelled) return;
+        setCategoryOptions(
+          response.data.jobCategories.map((jobCategory) => ({
+            id: jobCategory.id,
+            name: jobCategory.name,
+          })),
+        );
+      } catch {
+        if (!cancelled) setCategoryOptions([]);
+      } finally {
+        if (!cancelled) setCategoriesLoading(false);
+      }
+    }, search ? 250 : 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [isActive, categoryInput, isCategoryMenuOpen]);
 
   const close = () => {
     if (isDialog) onOpenChange?.(false);
@@ -499,48 +519,97 @@ export function PostJobForm({
       <Controller
         name="jobCategories"
         control={form.control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("categoriesLabel")}</FieldLabel>
-            {categoryOptions.length === 0 ? (
-              <p className="text-xs text-muted-foreground font-sans">
-                {categoriesLoading ? t("categoriesLoading") : t("categoriesEmpty")}
-              </p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {categoryOptions.map((jobCategory) => {
-                  const isSelected = field.value.includes(jobCategory.id);
+        render={({ field, fieldState }) => {
+          const availableCategories = categoryOptions.filter(
+            (jobCategory) => !field.value.includes(jobCategory.id),
+          );
 
-                  return (
-                    <button
-                      key={jobCategory.id}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() =>
-                        field.onChange(
-                          isSelected
-                            ? field.value.filter((id) => id !== jobCategory.id)
-                            : [...field.value, jobCategory.id],
-                        )
-                      }
-                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer ${
-                        isSelected
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
-                      }`}
-                    >
-                      {jobCategory.name}
-                    </button>
-                  );
-                })}
+          return (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("categoriesLabel")}</FieldLabel>
+              <div ref={categoryPickerRef} className="relative">
+                <Input
+                  value={categoryInput}
+                  onFocus={() => setIsCategoryMenuOpen(true)}
+                  onChange={(event) => {
+                    setCategoryInput(event.target.value);
+                    setIsCategoryMenuOpen(true);
+                  }}
+                  placeholder={t("categoriesPlaceholder")}
+                  aria-invalid={fieldState.invalid}
+                  className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
+                />
+                {isCategoryMenuOpen &&
+                (categoriesLoading || availableCategories.length > 0) ? (
+                  <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-2xl border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-xl">
+                    {categoriesLoading ? (
+                      <p className="px-3.5 py-2 text-xs font-normal font-sans text-muted-foreground">
+                        {t("categoriesLoading")}
+                      </p>
+                    ) : (
+                      availableCategories.map((jobCategory) => (
+                        <button
+                          key={jobCategory.id}
+                          type="button"
+                          className="block w-full rounded-full px-3.5 py-2 text-left text-xs font-medium font-sans hover:bg-[#F1F0F5] dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                          onClick={() => {
+                            field.onChange([...field.value, jobCategory.id]);
+                            setSelectedCategories((current) => [
+                              ...current,
+                              jobCategory,
+                            ]);
+                            setCategoryInput("");
+                            setIsCategoryMenuOpen(false);
+                          }}
+                        >
+                          {jobCategory.name}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                ) : null}
               </div>
-            )}
-            <p className="text-xs text-muted-foreground font-sans">
-              {t("categoriesHint")}
-            </p>
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
+              <p className="text-xs text-muted-foreground font-sans">
+                {t("categoriesHint")}
+              </p>
+              {/* Chỉ báo khi người dùng đang mở bộ chọn mà không có danh mục nào để chọn. */}
+              {isCategoryMenuOpen &&
+              !categoriesLoading &&
+              categoryOptions.length === 0 ? (
+                <p className="text-xs text-muted-foreground font-sans">
+                  {categoryInput.trim()
+                    ? t("categoriesNoMatch")
+                    : t("categoriesEmpty")}
+                </p>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                {selectedCategories.map((jobCategory) => (
+                  <Badge
+                    key={jobCategory.id}
+                    className="rounded-full border-0 bg-[#eaf8df] dark:bg-[#4fae2e]/15 px-3 py-1 text-xs font-medium font-sans text-[#3f9225] dark:text-[#7ad75d] hover:bg-[#ddf2cd] dark:hover:bg-[#4fae2e]/25"
+                  >
+                    {jobCategory.name}
+                    <button
+                      type="button"
+                      className="cursor-pointer ml-1"
+                      onClick={() => {
+                        field.onChange(
+                          field.value.filter((id) => id !== jobCategory.id),
+                        );
+                        setSelectedCategories((current) =>
+                          current.filter((item) => item.id !== jobCategory.id),
+                        );
+                      }}
+                    >
+                      <X className="size-3 text-[#3f9225] hover:text-[#2f7319] dark:text-[#7ad75d]" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          );
+        }}
       />
     </FieldGroup>
   );

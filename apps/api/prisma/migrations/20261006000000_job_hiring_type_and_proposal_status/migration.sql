@@ -23,12 +23,14 @@ ALTER TYPE "ProposalStatus" ADD VALUE 'EXPIRED';
 -- AlterTable: Proposal
 ALTER TABLE "Proposal" ADD COLUMN "expiresAt" TIMESTAMP(3);
 
--- Backfill: đề xuất đang chờ/đang phỏng vấn có hạn 30 ngày kể từ lúc gửi.
+-- Backfill: đề xuất đang chờ có hạn 30 ngày kể từ lúc gửi.
+-- (Chỉ 'SUBMITTED': giá trị 'INTERVIEWING' mới thêm ở trên, chưa row nào dùng —
+--  tham chiếu nó trong cùng transaction sẽ lỗi "unsafe use of new value".)
 UPDATE "Proposal"
 SET "expiresAt" = "submittedAt" + INTERVAL '30 days'
 WHERE "submittedAt" IS NOT NULL
   AND "deletedAt" IS NULL
-  AND "status" IN ('SUBMITTED', 'INTERVIEWING');
+  AND "status" = 'SUBMITTED';
 
 -- Backfill: số vị trí đã tuyển phải khớp số đề xuất đã HIRED của job.
 UPDATE "Job" j
