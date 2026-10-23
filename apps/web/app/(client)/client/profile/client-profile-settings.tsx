@@ -40,6 +40,7 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ApiFail } from "@/lib/http";
+import { getProfileUpdateText } from "@/lib/profile-update-status";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
 import { VerifiedBadge } from "@/components/verified-badge";
@@ -245,7 +246,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       if (!response.data.reviewRequired) {
         setProfileStrength(response.data.profileStrength);
       }
-      toastSuccess({ message: response.data.message });
+      toastSuccess({ message: getProfileUpdateText(response.data.status) });
     } catch (error) {
       toastError({ message: errorMessage(error, t("somethingWentWrong")) });
     } finally {

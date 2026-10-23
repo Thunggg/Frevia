@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ConsultationRequestButton } from "./consultation-request-button";
 
 function resolveHeaderRole(
   user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
@@ -42,6 +43,10 @@ export default async function ExpertDetailPage({
     expertProfileServerRequest.getExpert(expertId),
   ]);
   if (!expert) notFound();
+  const primaryRole = user?.roles.find((item) => item.isPrimary)?.name;
+  const canRequestConsultation =
+    (primaryRole === RoleName.CLIENT || primaryRole === RoleName.FREELANCER) &&
+    user?.id !== expert.userId;
 
   const fallback = (expert.displayName ?? "Expert")
     .split(" ")
@@ -143,6 +148,12 @@ export default async function ExpertDetailPage({
                 </a>
               </Button>
             )}
+            {canRequestConsultation ? (
+              <ConsultationRequestButton
+                expertId={expert.id}
+                expertName={expert.displayName ?? t("fallbackName")}
+              />
+            ) : null}
           </aside>
         </div>
       </main>

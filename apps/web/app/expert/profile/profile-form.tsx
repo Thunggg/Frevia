@@ -5,6 +5,7 @@ import { expertProfileApi } from "@/apiRequests/expert-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { ApiFail } from "@/lib/http";
+import { getProfileUpdateText } from "@/lib/profile-update-status";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Input } from "@repo/ui/components/shadcn/input";
@@ -77,7 +78,7 @@ export function ExpertProfileForm() {
         website: String(data.get("website") || "") || null,
       });
       setRevision(response.data.revision);
-      toastSuccess({ message: t("submitted") });
+      toastSuccess({ message: getProfileUpdateText(response.data.status) });
     } catch (error) {
       toastError({
         message: error instanceof ApiFail ? error.message : t("submitFailed"),

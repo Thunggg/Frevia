@@ -1646,6 +1646,7 @@
     "navSavedJobs": "Saved Jobs",
     "navSavedSearches": "Saved Searches",
     "navMessages": "Messages",
+    "navExpertConsultations": "Expert consultations",
     "navNotifications": "Notifications",
     "navMyJobs": "My Jobs",
     "navFavoriteFreelancers": "Favorite freelancers"
@@ -1787,6 +1788,7 @@
     "noSkills": "No skills listed yet.",
     "level": "· Lv.{level}",
     "languages": "Languages",
+    "socialLinks": "Social links",
     "noPortfolioTitle": "No portfolio items",
     "noPortfolioHint": "This freelancer has not published any portfolio projects yet.",
     "link": "Link",
@@ -2012,11 +2014,96 @@
     "changePasswordAction": "Change password",
     "strengthLow": "Your profile strength is {percent}%. Profile changes require administrator approval until it reaches 20%.",
     "strengthOk": "Your profile meets the 20% threshold, so changes are saved immediately.",
+    "cvTitle": "Curriculum vitae",
+    "cvFormatHint": "PDF only, up to 10 MB.",
+    "cvEmpty": "Upload a CV so it is ready when you need it.",
+    "cvUpload": "Upload CV",
+    "cvReplace": "Replace CV",
+    "cvDelete": "Delete CV",
+    "cvDeleteTitle": "Delete your CV?",
+    "cvDeleteDescription": "Your CV will be removed from your profile and will no longer be downloadable. This action cannot be undone.",
+    "cvDeleteCancel": "Cancel",
+    "cvVisibilityHint": "Available to clients when you apply to a job.",
+    "cvTypeError": "Choose a PDF file no larger than 10 MB.",
+    "cvUploaded": "CV uploaded successfully.",
+    "cvDeleted": "CV deleted successfully.",
+    "cvUploadFailed": "Could not upload the CV. Please try again.",
+    "cvDeleteFailed": "Could not delete the CV. Please try again.",
     "errInvalidValue": "This value is not valid."
   },
   "expertShell": {
+    "consultations": "Consultations",
     "profile": "Profile",
+    "notifications": "Notifications",
     "logout": "Log out"
+  },
+  "expertConsultations": {
+    "requestAction": "Request consultation",
+    "requestTitle": "Consult {name}",
+    "requestDescription": "Describe the outcome you need. The expert can accept or decline before work begins.",
+    "typeLabel": "Consultation type",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "What would you like help with?",
+    "detailsLabel": "Details",
+    "detailsPlaceholder": "Provide enough context for the expert to understand your situation and expected outcome.",
+    "detailsHint": "Include relevant context, constraints, and the specific questions you want answered.",
+    "close": "Close",
+    "sendRequest": "Send request",
+    "requestCreated": "Consultation request sent.",
+    "actionFailed": "The action could not be completed. Please try again.",
+    "expertPageTitle": "Consultation requests",
+    "expertPageDescription": "Review requests from clients and freelancers, manage the consultation, and record your professional conclusion.",
+    "myPageTitle": "Expert consultations",
+    "myPageDescription": "Track consultation requests and view conclusions shared by experts.",
+    "statusFilter": "Filter by status",
+    "allStatuses": "All statuses",
+    "refresh": "Refresh",
+    "loadFailed": "Consultation requests could not be loaded.",
+    "tryAgain": "Try again",
+    "emptyTitle": "No consultation requests",
+    "emptyExpert": "New requests assigned to you will appear here.",
+    "emptyRequester": "Open an expert profile to submit your first consultation request.",
+    "unknownUser": "Frevia user",
+    "started": "Consultation started",
+    "expertResponse": "Expert conclusion",
+    "rejectionReason": "Reason for declining",
+    "accept": "Accept",
+    "reject": "Decline",
+    "startConsultation": "Start consultation",
+    "complete": "Complete",
+    "cancelRequest": "Cancel request",
+    "rejectTitle": "Decline consultation request",
+    "rejectDescription": "Explain why you cannot take this request so the requester knows what to do next.",
+    "rejectPlaceholder": "Reason for declining",
+    "completeTitle": "Complete consultation",
+    "completeDescription": "Record a clear professional conclusion for the client or freelancer.",
+    "completePlaceholder": "Conclusion, recommendations, and suggested next actions",
+    "page": "Page {page} of {totalPages}",
+    "previous": "Previous",
+    "next": "Next",
+    "types": {
+      "PROFILE_REVIEW": "Profile review",
+      "CV_REVIEW": "CV review",
+      "JOB_REVIEW": "Job description review",
+      "CAREER_GUIDANCE": "Career guidance",
+      "DISPUTE_ADVICE": "Dispute advice",
+      "OTHER": "Other"
+    },
+    "statuses": {
+      "PENDING": "Pending",
+      "ACCEPTED": "Accepted",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "REJECTED": "Declined",
+      "CANCELLED": "Cancelled"
+    },
+    "actionSuccess": {
+      "ACCEPT": "Consultation request accepted.",
+      "START": "Consultation started.",
+      "CANCEL": "Consultation request cancelled.",
+      "REJECT": "Consultation request declined.",
+      "COMPLETE": "Consultation completed."
+    }
   },
   "clientProfilePublic": {
     "breadcrumb": "Client profile",
@@ -2256,6 +2343,30 @@
       "title": "Profile update rejected",
       "message": "Your profile changes were not approved.",
       "messageWithReason": "Your profile changes were not approved. Reason: {notes}"
+    },
+    "EXPERT_CONSULTATION_NEW": {
+      "title": "New consultation request",
+      "message": "You received a consultation request: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_ACCEPTED": {
+      "title": "Consultation accepted",
+      "message": "Your consultation request, {requestTitle}, was accepted."
+    },
+    "EXPERT_CONSULTATION_IN_PROGRESS": {
+      "title": "Consultation started",
+      "message": "The expert started working on your request: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_COMPLETED": {
+      "title": "Consultation completed",
+      "message": "The expert completed your request: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_REJECTED": {
+      "title": "Consultation declined",
+      "message": "The expert declined your request: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_CANCELLED": {
+      "title": "Consultation cancelled",
+      "message": "The consultation request was cancelled: {requestTitle}"
     }
   },
   "freelancerProfile": {
@@ -2285,6 +2396,8 @@
     "education": "Education",
     "certifications": "Certifications",
     "languages": "Languages",
+    "socialLinks": "Social links",
+    "noSocialLinks": "No social links available.",
     "noEducation": "No education added yet.",
     "noCertifications": "No certifications added yet.",
     "noLanguages": "No languages added yet.",
@@ -2595,8 +2708,12 @@
     },
     "proposal": {
       "DRAFT": { "message": "You have a saved draft for this job." },
-      "PENDING": { "message": "You already submitted a proposal for this job." },
-      "ACCEPTED": { "message": "Your proposal for this job has been accepted." },
+      "PENDING": {
+        "message": "You already submitted a proposal for this job."
+      },
+      "ACCEPTED": {
+        "message": "Your proposal for this job has been accepted."
+      },
       "REJECTED": { "message": "Your proposal for this job was not selected." },
       "WITHDRAWN": { "message": "" }
     },

@@ -50,6 +50,7 @@ const freelancerModules = [
   'REVIEWS',
   'DISPUTES',
   'PROFILE-REVISIONS',
+  'EXPERT-CONSULTATIONS',
 ];
 
 const clientModules = [
@@ -71,6 +72,7 @@ const clientModules = [
   'ACCOUNT-PROFILE',
   'REVIEWS',
   'PROFILE-REVISIONS',
+  'EXPERT-CONSULTATIONS',
 ];
 
 const expertModules = [
@@ -79,7 +81,24 @@ const expertModules = [
   'EXPERT-PROFILE',
   'PROFILE-REVISIONS',
   'NOTIFICATIONS',
+  'EXPERT-CONSULTATIONS',
 ];
+
+const requesterConsultationPaths = new Set([
+  '/api/expert-consultations',
+  '/api/expert-consultations/mine',
+  '/api/expert-consultations/:id',
+  '/api/expert-consultations/:id/cancel',
+]);
+
+const expertConsultationPaths = new Set([
+  '/api/expert-consultations/assigned',
+  '/api/expert-consultations/:id',
+  '/api/expert-consultations/:id/accept',
+  '/api/expert-consultations/:id/reject',
+  '/api/expert-consultations/:id/start',
+  '/api/expert-consultations/:id/complete',
+]);
 
 type AvailableRoute = {
   path: string;
@@ -87,6 +106,16 @@ type AvailableRoute = {
   name: string;
   module: string;
 };
+
+function isConsultationPathAllowed(
+  permission: { module: string | null; path: string },
+  allowedPaths: ReadonlySet<string>,
+) {
+  return (
+    permission.module !== 'EXPERT-CONSULTATIONS' ||
+    allowedPaths.has(permission.path)
+  );
+}
 
 async function updateRolePermissions(
   permissionIds: number[],
@@ -269,7 +298,8 @@ async function bootstrap() {
     .filter(
       (item) =>
         freelancerModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        isConsultationPathAllowed(item, requesterConsultationPaths),
     )
     .map((item) => item.id);
 
@@ -277,7 +307,8 @@ async function bootstrap() {
     .filter(
       (item) =>
         clientModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        isConsultationPathAllowed(item, requesterConsultationPaths),
     )
     .map((item) => item.id);
 
@@ -287,7 +318,8 @@ async function bootstrap() {
         expertModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !item.path.startsWith('/api/users/') &&
-        !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path),
+        !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path) &&
+        isConsultationPathAllowed(item, expertConsultationPaths),
     )
     .map((item) => item.id);
 

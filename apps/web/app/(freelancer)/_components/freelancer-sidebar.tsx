@@ -16,6 +16,7 @@ import {
   FileCheck,
   FileText,
   HelpCircle,
+  Lightbulb,
   LogOut,
   MessageSquare,
   MonitorSmartphone,
@@ -151,6 +152,12 @@ export function FreelancerSidebar() {
       href: "/freelancer/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
+      matchPrefix: true,
+    },
+    {
+      href: "/freelancer/expert-consultations",
+      labelKey: "navExpertConsultations",
+      icon: Lightbulb,
       matchPrefix: true,
     },
     {

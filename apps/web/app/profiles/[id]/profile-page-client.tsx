@@ -19,6 +19,7 @@ import {
   GraduationCap,
   Heart,
   Languages,
+  Link2,
   Loader2,
   Pencil,
   Plus,
@@ -38,6 +39,7 @@ import { Header, type UserRole } from "@/components/header";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { ApiFail } from "@/lib/http";
+import { getProfileUpdateText } from "@/lib/profile-update-status";
 import {
   AvailabilityStatus,
   type AvailabilityStatusType,
@@ -132,6 +134,17 @@ const EMPTY_PORTFOLIO_FORM: PortfolioForm = {
   projectUrl: "",
 };
 
+const SOCIAL_PLATFORM_KEYS = [
+  "GITHUB",
+  "LINKEDIN",
+  "TWITTER",
+  "FACEBOOK",
+  "INSTAGRAM",
+  "YOUTUBE",
+  "WEBSITE",
+  "OTHER",
+] as const;
+
 function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiFail) {
     return (
@@ -188,6 +201,7 @@ export function ProfilePageClient({
 }: ProfilePageClientProps) {
   const t = useTranslations("freelancerProfile");
   const tCommon = useTranslations("common");
+  const tSocial = useTranslations("socialPlatform");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -466,7 +480,7 @@ export function ProfilePageClient({
         );
       }
       setProfileEditorOpen(false);
-      toastSuccess({ message: response.data.message });
+      toastSuccess({ message: getProfileUpdateText(response.data.status) });
     } catch (error) {
       toastError({
         message: getErrorMessage(
@@ -705,6 +719,10 @@ export function ProfilePageClient({
   }
 
   const freelancer = profile.freelancerProfile;
+  const platformLabel = (platform: string) =>
+    (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(platform)
+      ? tSocial(platform)
+      : platform;
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -1130,6 +1148,35 @@ export function ProfilePageClient({
                     </span>
                     <span className="font-medium">{portfolios.length}</span>
                   </li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-border p-5 sm:p-6">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  {t("socialLinks")}
+                </h3>
+                <ul className="mt-4 divide-y divide-border">
+                  {profile.socialLinks.length > 0 ? (
+                    profile.socialLinks.map((social) => (
+                      <li key={social.id}>
+                        <a
+                          className="flex items-center gap-2 py-2.5 text-sm font-medium text-[#438f2b] transition-colors hover:text-[#367824] dark:text-[#78d65b] dark:hover:text-[#90e676]"
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Link2 className="size-4 shrink-0" />
+                          <span className="min-w-0 flex-1 truncate">
+                            {platformLabel(social.platform)}
+                          </span>
+                          <ExternalLink className="size-3.5 shrink-0" />
+                        </a>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="py-2 text-sm text-muted-foreground">
+                      {t("noSocialLinks")}
+                    </li>
+                  )}
                 </ul>
               </div>
             </aside>

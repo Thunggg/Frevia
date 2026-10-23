@@ -12,8 +12,14 @@ export const ProfileRevisionStatus = {
   REJECTED: "REJECTED",
 } as const;
 
+export const ProfileUpdateStatus = {
+  APPLIED: "APPLIED",
+  PENDING_REVIEW: "PENDING_REVIEW",
+} as const;
+
 export const ProfileRevisionTypeSchema = z.nativeEnum(ProfileRevisionType);
 export const ProfileRevisionStatusSchema = z.nativeEnum(ProfileRevisionStatus);
+export const ProfileUpdateStatusSchema = z.nativeEnum(ProfileUpdateStatus);
 const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
 const SnapshotSchema = z.record(z.string(), z.unknown());
 
@@ -46,7 +52,7 @@ export const ProfileRevisionSchema = z.object({
 });
 
 export const ProfileRevisionSubmissionSchema = z.object({
-  message: z.string(),
+  status: ProfileUpdateStatusSchema,
   reviewRequired: z.boolean(),
   profileStrength: z.number().int().min(0).max(100),
   revision: ProfileRevisionSchema.nullable(),
@@ -91,6 +97,9 @@ export const RejectProfileRevisionSchema = z
 export type ProfileRevisionTypeType = z.infer<typeof ProfileRevisionTypeSchema>;
 export type ProfileRevisionStatusType = z.infer<
   typeof ProfileRevisionStatusSchema
+>;
+export type ProfileUpdateStatusType = z.infer<
+  typeof ProfileUpdateStatusSchema
 >;
 export type ProfileRevisionType = z.infer<typeof ProfileRevisionSchema>;
 export type ProfileRevisionSubmissionType = z.infer<

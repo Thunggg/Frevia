@@ -1,3 +1,4 @@
+import { ProfileUpdateStatus } from '@shared/types';
 import { ProfileRevisionType, RevisionStatus } from '@prisma/client';
 import { ProfileRevisionService } from './profile-revision.service';
 import { ProfileRevisionRepository } from './profile-revision.repo';
@@ -63,6 +64,7 @@ describe('ProfileRevisionService', () => {
       14,
     );
     expect(result.reviewRequired).toBe(true);
+    expect(result.status).toBe(ProfileUpdateStatus.PENDING_REVIEW);
     expect(result.profileStrength).toBe(14);
     expect(result.revision).toEqual({ id: 12, status: 'PENDING' });
   });
@@ -117,6 +119,16 @@ describe('ProfileRevisionService', () => {
       75,
     );
     expect(result.reviewRequired).toBe(true);
+    expect(result.status).toBe(ProfileUpdateStatus.PENDING_REVIEW);
+  });
+
+  it('returns a language-neutral status when changes are applied directly', () => {
+    expect(service.directUpdateResult(64)).toEqual({
+      status: ProfileUpdateStatus.APPLIED,
+      reviewRequired: false,
+      profileStrength: 64,
+      revision: null,
+    });
   });
 
   it('applies a pending client revision when an admin approves it', async () => {

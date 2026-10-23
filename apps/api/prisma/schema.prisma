@@ -154,6 +154,7 @@ model User {
   conversationsAsParticipant1 Conversation[]  @relation("ConversationParticipant1")
   conversationsAsParticipant2 Conversation[]  @relation("ConversationParticipant2")
   directMessages              DirectMessage[]
+  expertConsultationsRequested ExpertConsultation[] @relation("ExpertConsultationRequester")
 
   @@index([deletedAt])
 }
@@ -305,7 +306,32 @@ model Expert {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  consultations ExpertConsultation[]
   @@index([isActive])
+}
+
+model ExpertConsultation {
+  id              Int                      @id @default(autoincrement())
+  requesterId     Int
+  expertId        Int
+  requesterRole   String                   @db.VarChar(50)
+  type            ExpertConsultationType
+  status          ExpertConsultationStatus @default(PENDING)
+  title           String                   @db.VarChar(255)
+  description     String
+  expertResponse  String?
+  rejectionReason String?
+  acceptedAt      DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  requester User   @relation("ExpertConsultationRequester", fields: [requesterId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  expert    Expert @relation(fields: [expertId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([requesterId, status, createdAt])
+  @@index([expertId, status, createdAt])
 }
 
 model ProfileRevision {
@@ -1314,6 +1340,24 @@ enum NotificationType {
   MESSAGE_NEW
   MILESTONE_COMPLETED
   TASK_OVERDUE
+}
+
+enum ExpertConsultationType {
+  PROFILE_REVIEW
+  CV_REVIEW
+  JOB_REVIEW
+  CAREER_GUIDANCE
+  DISPUTE_ADVICE
+  OTHER
+}
+
+enum ExpertConsultationStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+  CANCELLED
 }
 
 enum ReportStatus {

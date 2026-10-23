@@ -16,6 +16,7 @@ import {
   FileText,
   HelpCircle,
   Heart,
+  Lightbulb,
   LogOut,
   MessageSquare,
   MonitorSmartphone,
@@ -132,6 +133,12 @@ export function ClientSidebar() {
       href: "/client/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
+      matchPrefix: true,
+    },
+    {
+      href: "/client/expert-consultations",
+      labelKey: "navExpertConsultations",
+      icon: Lightbulb,
       matchPrefix: true,
     },
     {

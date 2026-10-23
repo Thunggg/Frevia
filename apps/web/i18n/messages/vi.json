@@ -146,6 +146,8 @@
     "notAvailable": "Không có"
   },
   "adminRoles": {
+    "metaTitle": "Vai trò | Bảng điều khiển Admin | Frevia",
+    "metaDescription": "Quản lý vai trò và các nhóm quyền tương ứng.",
     "title": "Quản lý vai trò",
     "subtitle": "Xem tất cả vai trò trong hệ thống",
     "loadFailed": "Không thể tải danh sách vai trò. Vui lòng thử lại.",
@@ -172,6 +174,8 @@
     "backToRoles": "Quay lại danh sách vai trò"
   },
   "adminPermissions": {
+    "metaTitle": "Quyền truy cập | Bảng điều khiển Admin | Frevia",
+    "metaDescription": "Xem các quyền API hiện có trong hệ thống.",
     "title": "Quản lý quyền",
     "subtitle": "Xem tất cả quyền API trong hệ thống",
     "loadFailed": "Không thể tải danh sách quyền. Vui lòng thử lại.",
@@ -680,6 +684,8 @@
     "EXPERT": "Chuyên gia"
   },
   "adminUsers": {
+    "metaTitle": "Người dùng | Bảng điều khiển Admin | Frevia",
+    "metaDescription": "Xem, tìm kiếm và quản lý toàn bộ người dùng trong hệ thống.",
     "title": "Quản lý người dùng",
     "subtitle": "Xem, tìm kiếm, lọc và quản lý toàn bộ người dùng trong hệ thống",
     "subtitleTotal": "(tổng {count} người dùng)",
@@ -731,6 +737,8 @@
     "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá"
   },
   "adminUserDetail": {
+    "metaTitle": "Chi tiết người dùng | Bảng điều khiển Admin | Frevia",
+    "metaDescription": "Xem tài khoản, vai trò và dữ liệu hồ sơ của người dùng.",
     "invalidIdTitle": "ID người dùng không hợp lệ",
     "invalidIdDescription": "ID người dùng \"{id}\" không hợp lệ.",
     "notFoundTitle": "Không tìm thấy người dùng",
@@ -1638,6 +1646,7 @@
     "navSavedJobs": "Việc đã lưu",
     "navSavedSearches": "Tìm kiếm đã lưu",
     "navMessages": "Tin nhắn",
+    "navExpertConsultations": "Tư vấn chuyên gia",
     "navNotifications": "Thông báo",
     "navMyJobs": "Việc của tôi",
     "navFavoriteFreelancers": "Freelancer yêu thích"
@@ -1779,6 +1788,7 @@
     "noSkills": "Chưa có kỹ năng nào.",
     "level": "· Cấp {level}",
     "languages": "Ngôn ngữ",
+    "socialLinks": "Liên kết mạng xã hội",
     "noPortfolioTitle": "Chưa có portfolio",
     "noPortfolioHint": "Freelancer này chưa công bố dự án portfolio nào.",
     "link": "Liên kết",
@@ -2004,11 +2014,96 @@
     "changePasswordAction": "Đổi mật khẩu",
     "strengthLow": "Độ hoàn thiện hồ sơ của bạn là {percent}%. Thay đổi hồ sơ cần quản trị viên duyệt cho đến khi đạt 20%.",
     "strengthOk": "Hồ sơ của bạn đã đạt ngưỡng 20%, nên thay đổi được lưu ngay.",
+    "cvTitle": "Hồ sơ năng lực",
+    "cvFormatHint": "Chỉ hỗ trợ PDF, tối đa 10 MB.",
+    "cvEmpty": "Tải CV lên để sẵn sàng sử dụng khi cần.",
+    "cvUpload": "Tải CV lên",
+    "cvReplace": "Thay CV",
+    "cvDelete": "Xóa CV",
+    "cvDeleteTitle": "Xóa CV của bạn?",
+    "cvDeleteDescription": "CV sẽ bị xóa khỏi hồ sơ và không thể tải xuống nữa. Thao tác này không thể hoàn tác.",
+    "cvDeleteCancel": "Hủy",
+    "cvVisibilityHint": "Client có thể xem CV khi bạn ứng tuyển công việc.",
+    "cvTypeError": "Chọn file PDF không lớn hơn 10 MB.",
+    "cvUploaded": "Đã tải CV lên thành công.",
+    "cvDeleted": "Đã xóa CV thành công.",
+    "cvUploadFailed": "Không thể tải CV lên. Vui lòng thử lại.",
+    "cvDeleteFailed": "Không thể xóa CV. Vui lòng thử lại.",
     "errInvalidValue": "Giá trị này không hợp lệ."
   },
   "expertShell": {
+    "consultations": "Yêu cầu tư vấn",
     "profile": "Hồ sơ",
+    "notifications": "Thông báo",
     "logout": "Đăng xuất"
+  },
+  "expertConsultations": {
+    "requestAction": "Yêu cầu tư vấn",
+    "requestTitle": "Tư vấn với {name}",
+    "requestDescription": "Mô tả kết quả bạn cần. Chuyên gia có thể nhận hoặc từ chối trước khi bắt đầu.",
+    "typeLabel": "Loại tư vấn",
+    "subjectLabel": "Tiêu đề",
+    "subjectPlaceholder": "Bạn cần hỗ trợ vấn đề gì?",
+    "detailsLabel": "Nội dung chi tiết",
+    "detailsPlaceholder": "Cung cấp đủ thông tin để chuyên gia hiểu tình huống và kết quả bạn mong muốn.",
+    "detailsHint": "Nêu bối cảnh, giới hạn và các câu hỏi cụ thể bạn muốn được giải đáp.",
+    "close": "Đóng",
+    "sendRequest": "Gửi yêu cầu",
+    "requestCreated": "Đã gửi yêu cầu tư vấn.",
+    "actionFailed": "Không thể thực hiện thao tác. Vui lòng thử lại.",
+    "expertPageTitle": "Yêu cầu tư vấn",
+    "expertPageDescription": "Xem yêu cầu từ Client và Freelancer, quản lý quá trình tư vấn và ghi nhận kết luận chuyên môn.",
+    "myPageTitle": "Tư vấn chuyên gia",
+    "myPageDescription": "Theo dõi yêu cầu tư vấn và xem kết luận do chuyên gia cung cấp.",
+    "statusFilter": "Lọc theo trạng thái",
+    "allStatuses": "Tất cả trạng thái",
+    "refresh": "Tải lại",
+    "loadFailed": "Không thể tải danh sách yêu cầu tư vấn.",
+    "tryAgain": "Thử lại",
+    "emptyTitle": "Chưa có yêu cầu tư vấn",
+    "emptyExpert": "Các yêu cầu mới được gửi cho bạn sẽ xuất hiện tại đây.",
+    "emptyRequester": "Mở hồ sơ chuyên gia để gửi yêu cầu tư vấn đầu tiên.",
+    "unknownUser": "Người dùng Frevia",
+    "started": "Đã bắt đầu tư vấn",
+    "expertResponse": "Kết luận của chuyên gia",
+    "rejectionReason": "Lý do từ chối",
+    "accept": "Nhận yêu cầu",
+    "reject": "Từ chối",
+    "startConsultation": "Bắt đầu tư vấn",
+    "complete": "Hoàn thành",
+    "cancelRequest": "Hủy yêu cầu",
+    "rejectTitle": "Từ chối yêu cầu tư vấn",
+    "rejectDescription": "Giải thích lý do không thể nhận yêu cầu để người gửi biết bước tiếp theo.",
+    "rejectPlaceholder": "Nhập lý do từ chối",
+    "completeTitle": "Hoàn thành tư vấn",
+    "completeDescription": "Ghi nhận kết luận chuyên môn rõ ràng cho Client hoặc Freelancer.",
+    "completePlaceholder": "Kết luận, khuyến nghị và các bước nên thực hiện tiếp theo",
+    "page": "Trang {page}/{totalPages}",
+    "previous": "Trước",
+    "next": "Tiếp",
+    "types": {
+      "PROFILE_REVIEW": "Đánh giá hồ sơ",
+      "CV_REVIEW": "Đánh giá CV",
+      "JOB_REVIEW": "Đánh giá mô tả công việc",
+      "CAREER_GUIDANCE": "Tư vấn nghề nghiệp",
+      "DISPUTE_ADVICE": "Ý kiến về tranh chấp",
+      "OTHER": "Khác"
+    },
+    "statuses": {
+      "PENDING": "Chờ phản hồi",
+      "ACCEPTED": "Đã nhận",
+      "IN_PROGRESS": "Đang tư vấn",
+      "COMPLETED": "Hoàn thành",
+      "REJECTED": "Đã từ chối",
+      "CANCELLED": "Đã hủy"
+    },
+    "actionSuccess": {
+      "ACCEPT": "Đã nhận yêu cầu tư vấn.",
+      "START": "Đã bắt đầu tư vấn.",
+      "CANCEL": "Đã hủy yêu cầu tư vấn.",
+      "REJECT": "Đã từ chối yêu cầu tư vấn.",
+      "COMPLETE": "Đã hoàn thành tư vấn."
+    }
   },
   "clientProfilePublic": {
     "breadcrumb": "Hồ sơ khách hàng",
@@ -2248,6 +2343,30 @@
       "title": "Cập nhật hồ sơ bị từ chối",
       "message": "Các thay đổi hồ sơ của bạn chưa được duyệt.",
       "messageWithReason": "Các thay đổi hồ sơ của bạn chưa được duyệt. Lý do: {notes}"
+    },
+    "EXPERT_CONSULTATION_NEW": {
+      "title": "Yêu cầu tư vấn mới",
+      "message": "Bạn nhận được yêu cầu tư vấn: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_ACCEPTED": {
+      "title": "Yêu cầu tư vấn đã được nhận",
+      "message": "Yêu cầu tư vấn {requestTitle} đã được chuyên gia tiếp nhận."
+    },
+    "EXPERT_CONSULTATION_IN_PROGRESS": {
+      "title": "Tư vấn đã bắt đầu",
+      "message": "Chuyên gia đã bắt đầu xử lý yêu cầu: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_COMPLETED": {
+      "title": "Tư vấn đã hoàn thành",
+      "message": "Chuyên gia đã hoàn thành yêu cầu: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_REJECTED": {
+      "title": "Yêu cầu tư vấn bị từ chối",
+      "message": "Chuyên gia đã từ chối yêu cầu: {requestTitle}"
+    },
+    "EXPERT_CONSULTATION_CANCELLED": {
+      "title": "Yêu cầu tư vấn đã hủy",
+      "message": "Yêu cầu tư vấn đã được hủy: {requestTitle}"
     }
   },
   "freelancerProfile": {
@@ -2277,6 +2396,8 @@
     "education": "Học vấn",
     "certifications": "Chứng chỉ",
     "languages": "Ngôn ngữ",
+    "socialLinks": "Liên kết mạng xã hội",
+    "noSocialLinks": "Chưa có liên kết mạng xã hội nào.",
     "noEducation": "Chưa thêm thông tin học vấn.",
     "noCertifications": "Chưa thêm chứng chỉ nào.",
     "noLanguages": "Chưa thêm ngôn ngữ nào.",
@@ -2588,8 +2709,12 @@
     "proposal": {
       "DRAFT": { "message": "Bạn có bản nháp đã lưu cho công việc này." },
       "PENDING": { "message": "Bạn đã gửi đề xuất cho công việc này." },
-      "ACCEPTED": { "message": "Đề xuất của bạn cho công việc này đã được chấp nhận." },
-      "REJECTED": { "message": "Đề xuất của bạn cho công việc này không được chọn." },
+      "ACCEPTED": {
+        "message": "Đề xuất của bạn cho công việc này đã được chấp nhận."
+      },
+      "REJECTED": {
+        "message": "Đề xuất của bạn cho công việc này không được chọn."
+      },
       "WITHDRAWN": { "message": "" }
     },
     "removeDialog": {

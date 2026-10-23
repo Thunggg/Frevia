@@ -25,6 +25,7 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { getProfileUpdateText } from "@/lib/profile-update-status";
 import {
   ChangePasswordSchema,
   RoleName,
@@ -249,7 +250,7 @@ export function GeneralSettings() {
       return;
     }
     if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
-      setCvError("Choose a PDF file no larger than 10 MB.");
+      setCvError(t("cvTypeError"));
       if (cvInputRef.current) cvInputRef.current.value = "";
       return;
     }
@@ -263,10 +264,11 @@ export function GeneralSettings() {
       const response = await profileApiRequest.uploadCv(profile.id, file);
       setCvFileName(response.data.cvFileName);
       if (cvInputRef.current) cvInputRef.current.value = "";
-      toastSuccess({ message: "CV uploaded successfully." });
+      toastSuccess({ message: t("cvUploaded") });
     } catch (error) {
-      setCvError(messageFrom(error));
-      toastError({ message: messageFrom(error) });
+      const message = messageFrom(error, t("cvUploadFailed"));
+      setCvError(message);
+      toastError({ message });
     } finally {
       setPending(null);
     }
@@ -279,9 +281,9 @@ export function GeneralSettings() {
       await profileApiRequest.deleteCv(profile.id);
       setCvFileName(null);
       setCvError(null);
-      toastSuccess({ message: "CV deleted successfully." });
+      toastSuccess({ message: t("cvDeleted") });
     } catch (error) {
-      toastError({ message: messageFrom(error) });
+      toastError({ message: messageFrom(error, t("cvDeleteFailed")) });
     } finally {
       setPending(null);
     }
@@ -315,7 +317,7 @@ export function GeneralSettings() {
             : current,
         );
       }
-      toastSuccess({ message: response.data.message });
+      toastSuccess({ message: getProfileUpdateText(response.data.status) });
     } catch (error) {
       setProfileErrors({ form: toMessage(error) });
       toastError({ message: toMessage(error) });
@@ -408,9 +410,7 @@ export function GeneralSettings() {
     return (
       <div className="rounded-xl border border-destructive/40 bg-destructive/5 px-6 py-12 text-center">
         <AlertCircle className="mx-auto size-7 text-destructive" />
-        <h2 className="mt-3 text-lg font-semibold">
-          {t("loadFailedTitle")}
-        </h2>
+        <h2 className="mt-3 text-lg font-semibold">{t("loadFailedTitle")}</h2>
         <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
           {loadError ?? t("profileUnavailable")}
         </p>
@@ -595,11 +595,11 @@ export function GeneralSettings() {
             <div className="flex items-center gap-2">
               <FileText className="size-5 text-[#4fae2e]" />
               <h2 className="text-lg font-semibold text-foreground">
-                Curriculum vitae
+                {t("cvTitle")}
               </h2>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              PDF only, up to 10 MB.
+              {t("cvFormatHint")}
             </p>
             {cvFileName ? (
               <a
@@ -611,7 +611,7 @@ export function GeneralSettings() {
               </a>
             ) : (
               <p className="mt-4 text-sm text-muted-foreground">
-                Upload a CV so it is ready when you need it.
+                {t("cvEmpty")}
               </p>
             )}
             <input
@@ -636,7 +636,7 @@ export function GeneralSettings() {
               ) : (
                 <Upload />
               )}
-              {cvFileName ? "Replace CV" : "Upload CV"}
+              {cvFileName ? t("cvReplace") : t("cvUpload")}
             </Button>
             {cvFileName ? (
               <AlertDialog>
@@ -652,20 +652,19 @@ export function GeneralSettings() {
                     ) : (
                       <Trash2 />
                     )}
-                    Delete CV
+                    {t("cvDelete")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete your CV?</AlertDialogTitle>
+                    <AlertDialogTitle>{t("cvDeleteTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Your CV will be removed from your profile and will no
-                      longer be downloadable. This action cannot be undone.
+                      {t("cvDeleteDescription")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel disabled={pending === "cv-delete"}>
-                      Cancel
+                      {t("cvDeleteCancel")}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       disabled={pending === "cv-delete"}
@@ -679,7 +678,7 @@ export function GeneralSettings() {
                       ) : (
                         <Trash2 />
                       )}
-                      Delete CV
+                      {t("cvDelete")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -689,7 +688,7 @@ export function GeneralSettings() {
               id="profile-cv-help"
               className={`mt-2 text-xs ${cvError ? "text-destructive" : "text-muted-foreground"}`}
             >
-              {cvError ?? "Available to clients when you apply to a job."}
+              {cvError ?? t("cvVisibilityHint")}
             </p>
           </section>
         ) : null}
@@ -783,9 +782,7 @@ export function GeneralSettings() {
         ) : (
           <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
             <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
-            <p className="text-muted-foreground">
-              {t("strengthOk")}
-            </p>
+            <p className="text-muted-foreground">{t("strengthOk")}</p>
           </div>
         )}
       </div>

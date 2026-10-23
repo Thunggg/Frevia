@@ -17,6 +17,7 @@ export class ProfileRepository {
       },
       include: {
         freelancerProfile: true,
+        socialLinks: { orderBy: { platform: 'asc' } },
         user: {
           include: {
             userRoles: {
@@ -36,6 +37,7 @@ export class ProfileRepository {
       },
       include: {
         freelancerProfile: true,
+        socialLinks: { orderBy: { platform: 'asc' } },
         user: {
           include: {
             userRoles: {

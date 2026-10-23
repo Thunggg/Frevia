@@ -27,6 +27,7 @@ import {
   ExternalLink,
   GraduationCap,
   Languages,
+  Link2,
   Loader2,
   MessageSquare,
   Sparkles,
@@ -54,6 +55,17 @@ interface FreelancerProfileSheetProps {
 
 type TabType = "overview" | "portfolio" | "qualifications";
 
+const SOCIAL_PLATFORM_KEYS = [
+  "GITHUB",
+  "LINKEDIN",
+  "TWITTER",
+  "FACEBOOK",
+  "INSTAGRAM",
+  "YOUTUBE",
+  "WEBSITE",
+  "OTHER",
+] as const;
+
 export function FreelancerProfileSheet({
   profileId,
   open,
@@ -64,6 +76,7 @@ export function FreelancerProfileSheet({
   const t = useTranslations("freelancerSheet");
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
+  const tSocial = useTranslations("socialPlatform");
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
@@ -130,6 +143,10 @@ export function FreelancerProfileSheet({
   const isOnline = profile?.onlineStatus ?? false;
   const isVerified = profile?.freelancerProfile?.idVerified ?? false;
   const userId = profile?.userId || initialData?.freelancerId;
+  const platformLabel = (platform: string) =>
+    (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(platform)
+      ? tSocial(platform)
+      : platform;
 
   const handleMessage = async () => {
     if (!userId) return;
@@ -395,6 +412,29 @@ export function FreelancerProfileSheet({
                           </div>
                         </div>
                       )}
+
+                    {profile?.socialLinks && profile.socialLinks.length > 0 && (
+                      <div className="border-t border-border/60 pt-2">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          {t("socialLinks")}
+                        </h3>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {profile.socialLinks.map((social) => (
+                            <a
+                              key={social.id}
+                              href={social.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-background px-2.5 py-1 text-xs font-medium text-[#438f2b] transition-colors hover:border-[#4fae2e]/40 hover:bg-[#eaf8df] dark:text-[#78d65b] dark:hover:bg-[#4fae2e]/10"
+                            >
+                              <Link2 className="size-3" />
+                              <span>{platformLabel(social.platform)}</span>
+                              <ExternalLink className="size-3" />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

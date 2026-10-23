@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AvailabilityStatus } from "../constants/profile.constant";
 import { ProfileMessage } from "../message/profile.message";
+import { SocialLinkSchema } from "./account-profile.model";
 
 export const AvailabilityStatusEnum = z.nativeEnum(AvailabilityStatus);
 const DateTimeSchema = z.union([z.date(), z.iso.datetime()]);
@@ -21,6 +22,7 @@ export const FreelancerProfileDetailSchema = z.object({
   walletAddress: z.string().nullable(),
   createdAt: DateTimeSchema,
   updatedAt: DateTimeSchema,
+  socialLinks: z.array(SocialLinkSchema),
   freelancerProfile: z
     .object({
       id: z.number(),

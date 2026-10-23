@@ -28,6 +28,12 @@ export const TRANSLATABLE_NOTIFICATION_KINDS = [
   "PROFILE_SUPERSEDED",
   "PROFILE_APPROVED",
   "PROFILE_REJECTED",
+  "EXPERT_CONSULTATION_NEW",
+  "EXPERT_CONSULTATION_ACCEPTED",
+  "EXPERT_CONSULTATION_IN_PROGRESS",
+  "EXPERT_CONSULTATION_COMPLETED",
+  "EXPERT_CONSULTATION_REJECTED",
+  "EXPERT_CONSULTATION_CANCELLED",
 ] as const;
 
 type NotificationSource = Pick<
@@ -64,10 +70,7 @@ function readText(payload: Record<string, unknown>, key: string): string {
   return "";
 }
 
-function includesKey(
-  keys: readonly string[],
-  value: string,
-): boolean {
+function includesKey(keys: readonly string[], value: string): boolean {
   return keys.includes(value);
 }
 
@@ -123,6 +126,7 @@ export function useNotificationText() {
         jobTitle: readText(payload, "jobTitle"),
         contractId: readText(payload, "contractId"),
         notes: readText(payload, "reviewNotes"),
+        requestTitle: readText(payload, "requestTitle"),
       };
 
       const conditional = CONDITIONAL_MESSAGE_KEYS[key];

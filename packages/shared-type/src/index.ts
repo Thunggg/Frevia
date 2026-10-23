@@ -75,3 +75,5 @@ export * from "./message/manage-skill-admin.message";
 export * from "./model/job-category.model";
 export * from "./message/manage-job-category.message";
 export * from "./message/manage-profile-revision.message";
+export * from "./model/expert-consultation.model";
+export * from "./message/expert-consultation.message";

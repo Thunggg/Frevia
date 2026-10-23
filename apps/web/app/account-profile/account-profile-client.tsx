@@ -50,6 +50,7 @@ import {
   TabsTrigger,
 } from "@repo/ui/components/shadcn/tabs";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { getProfileUpdateText } from "@/lib/profile-update-status";
 import {
   DocumentType,
   SocialPlatform,
@@ -398,7 +399,7 @@ export function AccountProfileClient({
         companyDescription,
         website,
       });
-      toastSuccess({ message: response.data.message });
+      toastSuccess({ message: getProfileUpdateText(response.data.status) });
     } catch (error) {
       toastError({ message: toMessage(error) });
     } finally {
