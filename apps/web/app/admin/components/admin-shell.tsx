@@ -8,6 +8,7 @@ import {
 } from "@repo/ui/components/shadcn/sidebar";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { AppSidebar } from "./app-sidebar";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <Separator orientation="vertical" className="h-4" />
           <div className="ml-auto flex items-center gap-1">
             <LanguageSwitcher />
+            <ThemeToggle />
           </div>
         </header>
         <div className="p-8 max-w-7xl">{children}</div>
