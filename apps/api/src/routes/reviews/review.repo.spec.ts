@@ -36,6 +36,7 @@ describe('ReviewRepository', () => {
           contractId: 12,
           reviewId: 41,
           reviewerId: 3,
+          reviewerName: 'Jordan Tran',
         },
       },
     });
@@ -80,6 +81,7 @@ describe('ReviewRepository', () => {
           reviewId: 41,
           responseId: 52,
           responderId: 8,
+          responderName: 'Alex Nguyen',
         },
       },
     });

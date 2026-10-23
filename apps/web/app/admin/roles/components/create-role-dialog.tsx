@@ -3,7 +3,7 @@
 import { useCreateRole } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -28,15 +28,18 @@ import {
   type CreateRoleBodyType,
 } from "@shared/types";
 import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export function CreateRoleDialog() {
+  const t = useTranslations("adminRoles");
+  const tCommon = useTranslations("adminCommon");
   const [open, setOpen] = useState(false);
   const createRole = useCreateRole();
 
   const form = useForm<CreateRoleBodyType>({
-    resolver: zodResolver(CreateRoleBodySchema) as Resolver<CreateRoleBodyType>,
+    resolver: useTranslatedResolver<CreateRoleBodyType>(CreateRoleBodySchema),
     defaultValues: {
       name: "",
       description: "",
@@ -58,7 +61,7 @@ export function CreateRoleDialog() {
       },
       {
         onSuccess: (role) => {
-          toastSuccess({ message: `Role "${role.name}" created` });
+          toastSuccess({ message: t("createdToast", { name: role.name }) });
           handleOpenChange(false);
         },
         onError: (error) => {
@@ -74,7 +77,7 @@ export function CreateRoleDialog() {
               toastError({ message: error.message });
             }
           } else {
-            toastError({ message: "Failed to create role" });
+            toastError({ message: t("createFailed") });
           }
         },
       },
@@ -86,14 +89,14 @@ export function CreateRoleDialog() {
       <DialogTrigger asChild>
         <Button size="sm" className="gap-1.5">
           <Plus className="h-4 w-4" />
-          Create role
+          {t("createRole")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create new role</DialogTitle>
+          <DialogTitle>{t("createTitle")}</DialogTitle>
           <DialogDescription>
-            Add a custom role with a name and optional description.
+            {t("createDescription")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -103,11 +106,11 @@ export function CreateRoleDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="role-name">Name</FieldLabel>
+                  <FieldLabel htmlFor="role-name">{t("fieldName")}</FieldLabel>
                   <Input
                     {...field}
                     id="role-name"
-                    placeholder="Moderator"
+                    placeholder={t("namePlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -121,12 +124,14 @@ export function CreateRoleDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="role-description">Description</FieldLabel>
+                  <FieldLabel htmlFor="role-description">
+                    {t("fieldDescription")}
+                  </FieldLabel>
                   <Textarea
                     {...field}
                     id="role-description"
                     value={field.value ?? ""}
-                    placeholder="What this role can do"
+                    placeholder={t("descriptionPlaceholder")}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (
@@ -142,13 +147,13 @@ export function CreateRoleDialog() {
               variant="outline"
               onClick={() => handleOpenChange(false)}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={createRole.isPending}>
               {createRole.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              Create
+              {tCommon("create")}
             </Button>
           </DialogFooter>
         </form>

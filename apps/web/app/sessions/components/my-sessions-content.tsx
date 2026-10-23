@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
@@ -81,16 +82,6 @@ function getPageNumbers(
   return pages;
 }
 
-function formatDate(value: Date | string) {
-  return new Date(value).toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 function isExpired(expiresAt: Date | string) {
   return new Date(expiresAt).getTime() < Date.now();
 }
@@ -103,6 +94,18 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("sessions");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const formatDate = (value: Date | string) =>
+    format.dateTime(new Date(value), {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const searchParam = searchParams.get("search") ?? "";
@@ -219,16 +222,18 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
+                {tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">Sessions</span>
+              <span className="font-medium text-foreground">
+                {t("title")}
+              </span>
             </nav>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              My Sessions
+              {t("title")}
             </h1>
             <p className="mt-2 max-w-[42ch] text-base text-foreground/70 dark:text-foreground/75">
-              Devices and browsers currently signed in to your account.
+              {t("description")}
             </p>
           </div>
         </section>
@@ -246,7 +251,7 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
               <Input
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="Search device or IP..."
+                placeholder={t("searchPlaceholder")}
                 className="h-11 pl-9"
               />
             </div>
@@ -260,7 +265,7 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                   setSearchInput("");
                   updateParams({ search: null, page: "1" });
                 }}
-                aria-label="Clear search"
+                aria-label={t("clearSearch")}
               >
                 <X className="size-4" />
               </Button>
@@ -269,25 +274,27 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
               type="submit"
               className="h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
             >
-              Search
+              {t("search")}
             </Button>
           </form>
 
           {isError ? (
             <p className="py-12 text-center text-sm text-muted-foreground">
-              Couldn&apos;t load sessions. Try again.
+              {t("loadFailed")}
             </p>
           ) : isLoading ? (
             <div className="overflow-hidden rounded-xl border border-border">
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead>Device</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Expires</TableHead>
-                    <TableHead className="w-28 text-right">Actions</TableHead>
+                    <TableHead>{t("colDevice")}</TableHead>
+                    <TableHead>{t("colIp")}</TableHead>
+                    <TableHead>{t("colStatus")}</TableHead>
+                    <TableHead>{t("colCreated")}</TableHead>
+                    <TableHead>{t("colExpires")}</TableHead>
+                    <TableHead className="w-28 text-right">
+                      {t("colActions")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -328,21 +335,19 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                     <MonitorSmartphone className="size-7" />
                   </div>
                   <p className="text-lg font-medium text-foreground">
-                    {searchParam
-                      ? "No sessions match your search"
-                      : "No sessions yet"}
+                    {searchParam ? t("noMatchTitle") : t("emptyTitle")}
                   </p>
                   <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
                     {searchParam
-                      ? "Try a different device name or clear your search."
-                      : "Devices you sign in on will appear here."}
+                      ? t("noMatchDescription")
+                      : t("emptyDescription")}
                   </p>
                   {searchParam ? (
                     <Button
                       className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
                       onClick={() => updateParams({ search: null, page: "1" })}
                     >
-                      Clear search
+                      {t("clearSearch")}
                     </Button>
                   ) : null}
                 </div>
@@ -351,13 +356,19 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-[#eaf8df]/40 hover:bg-[#eaf8df]/40 dark:bg-muted/40 dark:hover:bg-muted/40">
-                        <SortableHead column="id">Device</SortableHead>
-                        <TableHead>IP address</TableHead>
-                        <TableHead>Status</TableHead>
-                        <SortableHead column="createdAt">Created</SortableHead>
-                        <SortableHead column="expiresAt">Expires</SortableHead>
+                        <SortableHead column="id">
+                          {t("colDevice")}
+                        </SortableHead>
+                        <TableHead>{t("colIpAddress")}</TableHead>
+                        <TableHead>{t("colStatus")}</TableHead>
+                        <SortableHead column="createdAt">
+                          {t("colCreated")}
+                        </SortableHead>
+                        <SortableHead column="expiresAt">
+                          {t("colExpires")}
+                        </SortableHead>
                         <TableHead className="w-28 text-right">
-                          Actions
+                          {t("colActions")}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -372,11 +383,11 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                             <TableCell className="min-w-48">
                               <div className="flex flex-col gap-1.5">
                                 <span className="font-medium text-foreground">
-                                  {session.deviceInfo || "Unknown device"}
+                                  {session.deviceInfo || t("unknownDevice")}
                                 </span>
                                 {session.isCurrent ? (
                                   <Badge className="w-fit border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
-                                    Current
+                                    {t("current")}
                                   </Badge>
                                 ) : null}
                               </div>
@@ -395,7 +406,7 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                                     : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
                                 }
                               >
-                                {expired ? "Expired" : "Active"}
+                                {expired ? t("expired") : t("active")}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
@@ -442,14 +453,19 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
               {pagination.totalPages > 1 ? (
                 <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
                   <p className="text-sm text-muted-foreground">
-                    Page {pagination.page} of {pagination.totalPages} (
-                    {pagination.total} total)
+                    {tCommon("pageOfTotal", {
+                      page: pagination.page,
+                      totalPages: pagination.totalPages,
+                      total: pagination.total,
+                    })}
                   </p>
                   <Pagination>
                     <PaginationContent>
                       <PaginationItem>
                         <PaginationPrevious
                           href="#"
+                          label={tCommon("previous")}
+                          ariaLabel={tCommon("previous")}
                           onClick={(event) => {
                             event.preventDefault();
                             if (page > 1) {
@@ -468,7 +484,9 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                         (item, index) =>
                           item === "..." ? (
                             <PaginationItem key={`ellipsis-${index}`}>
-                              <PaginationEllipsis />
+                              <PaginationEllipsis
+                                label={tCommon("morePages")}
+                              />
                             </PaginationItem>
                           ) : (
                             <PaginationItem key={item}>
@@ -488,6 +506,8 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
                       <PaginationItem>
                         <PaginationNext
                           href="#"
+                          label={tCommon("next")}
+                          ariaLabel={tCommon("next")}
                           onClick={(event) => {
                             event.preventDefault();
                             if (page < pagination.totalPages) {

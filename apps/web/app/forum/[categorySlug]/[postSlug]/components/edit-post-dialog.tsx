@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ export function EditPostDialog({
   initialContent,
   onUpdated,
 }: EditPostDialogProps) {
+  const t = useTranslations("forum");
   const updatePost = useUpdatePost();
 
   const [open, setOpen] = useState(false);
@@ -77,19 +79,19 @@ export function EditPostDialog({
           className="gap-1 text-muted-foreground hover:text-foreground"
         >
           <Pencil className="h-3.5 w-3.5" />
-          Edit
+          {t("edit")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Post</DialogTitle>
+          <DialogTitle>{t("editTitle")}</DialogTitle>
           <DialogDescription>
-            Update your post title and content.
+            {t("editDescription")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="edit-post-title">Title</Label>
+            <Label htmlFor="edit-post-title">{t("fieldTitle")}</Label>
             <Input
               id="edit-post-title"
               value={title}
@@ -98,7 +100,7 @@ export function EditPostDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label>Content</Label>
+            <Label>{t("fieldContent")}</Label>
             <RichTextEditor
               value={content}
               onChange={setContent}
@@ -112,7 +114,7 @@ export function EditPostDialog({
             onClick={() => setOpen(false)}
             disabled={isSubmitting}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
@@ -124,7 +126,7 @@ export function EditPostDialog({
             ) : (
               <Pencil className="h-4 w-4" />
             )}
-            Save Changes
+            {t("saveChanges")}
           </Button>
         </DialogFooter>
       </DialogContent>

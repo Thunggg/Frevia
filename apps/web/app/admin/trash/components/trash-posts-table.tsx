@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/lib/format";
 import {
   Badge,
 } from "@repo/ui/components/shadcn/badge";
@@ -59,32 +61,35 @@ interface TrashPostsTableProps {
   };
 }
 
-function statusBadge(status: ForumTrashPostType["moderationStatus"]) {
-  if (status === "REJECTED") {
-    return <Badge variant="destructive">REJECTED</Badge>;
-  }
-  if (status === "PENDING") {
-    return <Badge className="bg-amber-500 text-white">PENDING</Badge>;
-  }
-  return <Badge variant="secondary">APPROVED</Badge>;
-}
-
 export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminTrash");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<ForumTrashPostType | null>(
     null,
   );
 
+  const statusBadge = (status: ForumTrashPostType["moderationStatus"]) => {
+    if (status === "REJECTED") {
+      return <Badge variant="destructive">{tCommon("rejected")}</Badge>;
+    }
+    if (status === "PENDING") {
+      return <Badge className="bg-amber-500 text-white">{tCommon("pending")}</Badge>;
+    }
+    return <Badge variant="secondary">{tCommon("approved")}</Badge>;
+  };
+
   const handleRestore = async (postId: number) => {
     setRestoringId(postId);
     try {
       await adminApiRequest.restorePost(postId);
-      toastSuccess({ message: "Post restored successfully" });
+      toastSuccess({ message: t("postRestoredToast") });
       setViewingPost(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't restore post. Try again." });
+      toastError({ message: t("restorePostFailed") });
     } finally {
       setRestoringId(null);
     }
@@ -96,12 +101,12 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Deleted on</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colTitle")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colAuthor")}</TableHead>
+              <TableHead>{t("colDeletedOn")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,7 +116,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                   colSpan={6}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  Trash is empty.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -141,8 +146,8 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                     {post.deletedAt
-                      ? new Date(post.deletedAt).toLocaleDateString()
-                      : "—"}
+                      ? formatDate(post.deletedAt, locale)
+                      : tCommon("empty")}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
@@ -151,6 +156,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewingPost(post)}
+                        aria-label={t("viewPostLabel", { title: post.title })}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -161,30 +167,34 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                             size="icon"
                             className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
                             disabled={restoringId === post.id}
+                            aria-label={t("restorePostLabel", { title: post.title })}
                           >
                             <RotateCcw className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Restore Post</AlertDialogTitle>
+                            <AlertDialogTitle>
+                              {t("restorePostTitle")}
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Restore &quot;{post.title}&quot; back to the
-                              forum?{" "}
+                              {t("restorePostConfirm", { title: post.title })}
                               {post.moderationStatus === "REJECTED"
-                                ? "It will return to the moderation queue for review."
-                                : "It will be visible publicly again immediately."}
+                                ? ` ${t("restorePostRequeued")}`
+                                : ` ${t("restorePostPublic")}`}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>
+                              {tCommon("cancel")}
+                            </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleRestore(post.id)}
                               className="bg-emerald-600 text-white hover:bg-emerald-600/90"
                             >
                               {restoringId === post.id
-                                ? "Restoring..."
-                                : "Restore"}
+                                ? t("restoringAction")
+                                : t("restoreAction")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -240,18 +250,28 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>
-                    Created {new Date(viewingPost.createdAt).toLocaleDateString()}
+                    {t("createdOn", {
+                      date: formatDate(viewingPost.createdAt, locale),
+                    })}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>
                     {viewingPost.deletedAt
-                      ? `Deleted ${new Date(viewingPost.deletedAt).toLocaleDateString()}`
-                      : "In trash (rejected)"}
+                      ? t("deletedOn", {
+                          date: formatDate(viewingPost.deletedAt, locale),
+                        })
+                      : t("inTrashRejected")}
                   </span>
                 </div>
-                <div>Score: {viewingPost.moderationScore?.toFixed(2) ?? "N/A"}</div>
+                <div>
+                  {t("scoreLabel", {
+                    score:
+                      viewingPost.moderationScore?.toFixed(2) ??
+                      tCommon("notAvailable"),
+                  })}
+                </div>
               </div>
               <Separator />
               <div
@@ -260,7 +280,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
               />
               <Separator />
               <div className="text-xs text-muted-foreground">
-                Post ID: {viewingPost.id}
+                {t("postIdLabel", { id: viewingPost.id })}
               </div>
             </div>
           )}

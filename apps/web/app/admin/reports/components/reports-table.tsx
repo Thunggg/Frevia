@@ -2,7 +2,9 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { formatDate } from "@/lib/format";
 import {
   Table,
   TableBody,
@@ -56,27 +58,23 @@ interface ReportsTableProps {
 
 const statusConfig: Record<
   string,
-  { label: string; color: string; icon: React.ElementType }
+  { color: string; icon: React.ElementType }
 > = {
   PENDING: {
-    label: "Pending",
     color:
       "border-[#4fae2e]/30 bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#5bc03a]",
     icon: Clock,
   },
   REVIEWED: {
-    label: "Reviewed",
     color: "border-border bg-muted text-muted-foreground",
     icon: Eye,
   },
   RESOLVED: {
-    label: "Resolved",
     color:
       "border-[#4fae2e]/30 bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15",
     icon: CheckCircle,
   },
   DISMISSED: {
-    label: "Dismissed",
     color: "border-border bg-background text-muted-foreground",
     icon: XCircle,
   },
@@ -87,19 +85,29 @@ export function ReportsTable({
   pagination,
   currentStatus,
 }: ReportsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminReports");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewingReport, setViewingReport] = useState<ReportItem | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
+  const statusLabel = (status: string) => {
+    if (status === ReportStatus.PENDING) return t("statusPending");
+    if (status === ReportStatus.REVIEWED) return t("statusReviewed");
+    if (status === ReportStatus.RESOLVED) return t("statusResolved");
+    return t("statusDismissed");
+  };
+
   const handleStatusChange = async (reportId: number, newStatus: string) => {
     setUpdatingId(reportId);
     try {
       await adminApiRequest.updateReportStatus(reportId, newStatus);
-      toastSuccess({ message: "Report status updated" });
+      toastSuccess({ message: t("statusUpdatedToast") });
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't update status. Try again." });
+      toastError({ message: t("statusUpdateFailed") });
     } finally {
       setUpdatingId(null);
     }
@@ -122,12 +130,19 @@ export function ReportsTable({
     <div className="space-y-4">
       <Tabs value={displayStatus} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          {Object.entries(statusConfig).map(([key, config]) => (
-            <TabsTrigger key={key} value={key}>
-              {config.label}
-            </TabsTrigger>
-          ))}
+          <TabsTrigger value="all">{tCommon("all")}</TabsTrigger>
+          <TabsTrigger value={ReportStatus.PENDING}>
+            {t("statusPending")}
+          </TabsTrigger>
+          <TabsTrigger value={ReportStatus.REVIEWED}>
+            {t("statusReviewed")}
+          </TabsTrigger>
+          <TabsTrigger value={ReportStatus.RESOLVED}>
+            {t("statusResolved")}
+          </TabsTrigger>
+          <TabsTrigger value={ReportStatus.DISMISSED}>
+            {t("statusDismissed")}
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -135,13 +150,13 @@ export function ReportsTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>Reporter</TableHead>
-              <TableHead>Reason</TableHead>
-              <TableHead>Target</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Reported</TableHead>
-              <TableHead className="w-[200px] text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{t("colReporter")}</TableHead>
+              <TableHead>{t("colReason")}</TableHead>
+              <TableHead>{t("colTarget")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colReported")}</TableHead>
+              <TableHead className="w-[200px] text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -151,7 +166,7 @@ export function ReportsTable({
                   colSpan={7}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  No reports found.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -177,7 +192,8 @@ export function ReportsTable({
                         : report.reason}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {report.post?.title ?? `Comment #${report.commentId}`}
+                      {report.post?.title ??
+                        t("commentTargetLabel", { id: report.commentId ?? "" })}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -185,11 +201,11 @@ export function ReportsTable({
                         className={`${config?.color} border`}
                       >
                         <StatusIcon className="h-3 w-3 mr-1" />
-                        {config?.label}
+                        {statusLabel(report.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                      {new Date(report.createdAt).toLocaleDateString()}
+                      {formatDate(report.createdAt, locale)}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-2">
@@ -198,6 +214,7 @@ export function ReportsTable({
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => setViewingReport(report)}
+                          aria-label={t("viewReportLabel", { id: report.id })}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -213,16 +230,16 @@ export function ReportsTable({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value={ReportStatus.PENDING}>
-                              Pending
+                              {t("statusPending")}
                             </SelectItem>
                             <SelectItem value={ReportStatus.REVIEWED}>
-                              Reviewed
+                              {t("statusReviewed")}
                             </SelectItem>
                             <SelectItem value={ReportStatus.RESOLVED}>
-                              Resolved
+                              {t("statusResolved")}
                             </SelectItem>
                             <SelectItem value={ReportStatus.DISMISSED}>
-                              Dismissed
+                              {t("statusDismissed")}
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -252,7 +269,7 @@ export function ReportsTable({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 pr-8">
               <AlertTriangle className="h-4 w-4 text-destructive" />
-              Report Detail
+              {t("detailTitle")}
             </DialogTitle>
           </DialogHeader>
           {viewingReport && (
@@ -260,33 +277,29 @@ export function ReportsTable({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span>
-                    Reported by{" "}
-                    {viewingReport.reporter.profile?.displayName ??
-                      `User #${viewingReport.reporterId}`}
+                    {t("reportedBy", {
+                      name:
+                        viewingReport.reporter.profile?.displayName ??
+                        `User #${viewingReport.reporterId}`,
+                    })}
                   </span>
                   <span>·</span>
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(
-                      viewingReport.createdAt,
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatDate(viewingReport.createdAt, locale)}
                   </div>
                 </div>
                 <Badge
                   variant="outline"
                   className={`${statusConfig[viewingReport.status]?.color} border`}
                 >
-                  {statusConfig[viewingReport.status]?.label}
+                  {statusLabel(viewingReport.status)}
                 </Badge>
               </div>
               <Separator />
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  Reason
+                  {t("reasonHeading")}
                 </p>
                 <div className="rounded-lg bg-muted/50 p-4">
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -296,21 +309,23 @@ export function ReportsTable({
               </div>
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  Reported Content
+                  {t("contentHeading")}
                 </p>
                 <div className="rounded-lg bg-muted/50 p-4">
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
                     {viewingReport.post?.title ??
                       viewingReport.comment?.content ??
-                      "Content unavailable"}
+                      t("contentUnavailable")}
                   </p>
                 </div>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  Report ID: {viewingReport.id} · Post ID:{" "}
-                  {viewingReport.postId ?? "N/A"}
+                  {t("idsLabel", {
+                    reportId: viewingReport.id,
+                    postId: viewingReport.postId ?? tCommon("notAvailable"),
+                  })}
                 </p>
 
               </div>

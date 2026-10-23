@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -54,6 +55,17 @@ type JobListProps = {
 
 type StatusFilterType = "ALL" | "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CLOSED";
 
+const JOB_STATUS_KEYS = [
+  "DRAFT",
+  "OPEN",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CLOSED",
+  "CANCELLED",
+] as const;
+
+const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
+
 interface StatusCapsuleBarProps {
   currentFilter: StatusFilterType;
   onSelectFilter: (filter: StatusFilterType) => void;
@@ -71,10 +83,12 @@ function StatusCapsuleBar({
   onSelectFilter,
   counts,
 }: StatusCapsuleBarProps) {
+  const t = useTranslations("jobsList");
+  const tStatus = useTranslations("jobStatus");
   const items = [
     {
       id: "ALL" as const,
-      label: "All Jobs",
+      label: t("allJobs"),
       count: counts.all,
       icon: Briefcase,
       circleClass:
@@ -82,28 +96,28 @@ function StatusCapsuleBar({
     },
     {
       id: "OPEN" as const,
-      label: "Open",
+      label: tStatus("OPEN"),
       count: counts.open,
       icon: TrendingUp,
       circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
     },
     {
       id: "IN_PROGRESS" as const,
-      label: "In Progress",
+      label: tStatus("IN_PROGRESS"),
       count: counts.inProgress,
       icon: Clock,
       circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
     },
     {
       id: "COMPLETED" as const,
-      label: "Completed",
+      label: tStatus("COMPLETED"),
       count: counts.completed,
       icon: CheckCircle2,
       circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
     },
     {
       id: "CLOSED" as const,
-      label: "Closed",
+      label: tStatus("CLOSED"),
       count: counts.closed,
       icon: XCircle,
       circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
@@ -169,43 +183,43 @@ function StatusCapsuleBar({
 
 const STATUS_OPTIONS: {
   value: JobStatusType;
-  label: string;
+  labelKey: string;
   icon: typeof TrendingUp;
   circleBg: string;
 }[] = [
     {
       value: "OPEN",
-      label: "Open",
+      labelKey: "OPEN",
       icon: TrendingUp,
       circleBg: "bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400",
     },
     {
       value: "IN_PROGRESS",
-      label: "In Progress",
+      labelKey: "IN_PROGRESS",
       icon: Clock,
       circleBg: "bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400",
     },
     {
       value: "COMPLETED",
-      label: "Completed",
+      labelKey: "COMPLETED",
       icon: CheckCircle2,
       circleBg: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400",
     },
     {
       value: "DRAFT",
-      label: "Draft",
+      labelKey: "DRAFT",
       icon: FileText,
       circleBg: "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
     },
     {
       value: "CLOSED",
-      label: "Closed",
+      labelKey: "CLOSED",
       icon: XCircle,
       circleBg: "bg-stone-200 text-stone-600 dark:bg-stone-800 dark:text-stone-300",
     },
     {
       value: "CANCELLED",
-      label: "Cancelled",
+      labelKey: "CANCELLED",
       icon: XCircle,
       circleBg: "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400",
     },
@@ -224,20 +238,37 @@ function JobRowCard({
   onDelete: (id: number) => void;
   onChangeStatus: (id: number, status: JobStatusType) => void;
 }) {
+  const t = useTranslations("jobsList");
+  const tStatus = useTranslations("jobStatus");
+  const tBudgetType = useTranslations("jobBudgetType");
+  const format = useFormatter();
+
   const formattedDate = job.createdAt
-    ? new Intl.DateTimeFormat("en-US", {
+    ? format.dateTime(new Date(job.createdAt), {
       day: "numeric",
       month: "short",
       year: "numeric",
-    }).format(new Date(job.createdAt))
+    })
     : null;
 
-  const currentStatusObj = STATUS_OPTIONS.find((s) => s.value === job.status) ?? {
-    value: job.status,
-    label: job.status[0] + job.status.slice(1).toLowerCase().replace("_", " "),
-    icon: TrendingUp,
-    circleBg: "bg-zinc-200 text-zinc-600",
-  };
+  const currentStatusLabel = (JOB_STATUS_KEYS as readonly string[]).includes(
+    job.status,
+  )
+    ? tStatus(job.status)
+    : job.status;
+
+  const budgetTypeLabel = (
+    JOB_BUDGET_TYPE_KEYS as readonly string[]
+  ).includes(job.budgetType)
+    ? tBudgetType(job.budgetType)
+    : job.budgetType;
+
+  const money = (value: number) =>
+    format.number(value, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
 
   return (
     <motion.div
@@ -258,7 +289,11 @@ function JobRowCard({
           {job.title}
         </Link>
         <span className="shrink-0 text-xs font-normal text-muted-foreground">
-          ${job.budgetMin ?? 0} – ${job.budgetMax ?? 0} ({job.budgetType})
+          {t("budgetLine", {
+            min: money(job.budgetMin ?? 0),
+            max: money(job.budgetMax ?? 0),
+            type: budgetTypeLabel,
+          })}
         </span>
         {formattedDate && (
           <span className="shrink-0 text-xs font-normal text-muted-foreground">
@@ -276,7 +311,7 @@ function JobRowCard({
               type="button"
               className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-[#D0E1F8] dark:bg-zinc-800/90 px-4 py-4 text-sm font-semibold text-[#0069D3] dark:text-green-300 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700/80 transition-colors cursor-pointer outline-none"
             >
-              <span>{currentStatusObj.label}</span>
+              <span>{currentStatusLabel}</span>
               <ChevronDown className="size-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
             </button>
           </DropdownMenuTrigger>
@@ -301,7 +336,7 @@ function JobRowCard({
                     <st.icon className="size-3.5" />
                   </div>
                   <span className="text-xs font-medium text-foreground truncate">
-                    {st.label}
+                    {tStatus(st.labelKey)}
                   </span>
                 </div>
                 <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
@@ -316,7 +351,7 @@ function JobRowCard({
             <button
               type="button"
               className="flex size-8 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none"
-              title="More options"
+              title={t("moreOptions")}
             >
               <Ellipsis className="size-4" />
             </button>
@@ -335,7 +370,9 @@ function JobRowCard({
                 <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
                   <Edit2 className="size-3.5" />
                 </div>
-                <span className="text-xs font-medium text-foreground">Edit</span>
+                <span className="text-xs font-medium text-foreground">
+                  {t("edit")}
+                </span>
               </div>
               <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
             </DropdownMenuItem>
@@ -349,7 +386,9 @@ function JobRowCard({
                 <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
                   <Trash2 className="size-3.5" />
                 </div>
-                <span className="text-xs font-medium text-red-600 dark:text-red-400">Delete</span>
+                <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                  {t("delete")}
+                </span>
               </div>
               <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
             </DropdownMenuItem>
@@ -365,6 +404,10 @@ export function JobList({
   pagination,
 }: JobListProps) {
   const router = useRouter();
+  const t = useTranslations("jobsList");
+  const tStatus = useTranslations("jobStatus");
+  const tSidebar = useTranslations("sidebar");
+  const tCommon = useTranslations("common");
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("ALL");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -388,6 +431,13 @@ export function JobList({
     return job.status === statusFilter;
   });
 
+  const filterLabel =
+    statusFilter === "ALL"
+      ? t("allJobs")
+      : (JOB_STATUS_KEYS as readonly string[]).includes(statusFilter)
+        ? tStatus(statusFilter)
+        : statusFilter;
+
   const saveJob = (saved: JobType) => {
     setJobs((prev) => {
       const idx = prev.findIndex((j) => j.id === saved.id);
@@ -408,10 +458,10 @@ export function JobList({
     );
     try {
       await jobApiRequest.changeJobStatus(id, { status });
-      toastSuccess({ message: "Status updated" });
+      toastSuccess({ message: t("statusUpdated") });
     } catch {
       setJobs(prev);
-      toastError({ message: "Failed to update status" });
+      toastError({ message: t("statusUpdateFailed") });
     }
   };
 
@@ -422,9 +472,9 @@ export function JobList({
     try {
       await jobApiRequest.deleteJob(id);
       setJobs((prev) => prev.filter((j) => j.id !== id));
-      toastSuccess({ message: "Job deleted successfully" });
+      toastSuccess({ message: t("deleted") });
     } catch {
-      toastError({ message: "Failed to delete job" });
+      toastError({ message: t("deleteFailed") });
     }
   };
 
@@ -441,7 +491,7 @@ export function JobList({
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
               >
-                My Jobs
+                {tSidebar("navMyJobs")}
               </motion.h1>
             </div>
 
@@ -456,7 +506,7 @@ export function JobList({
               >
                 <Link href="/client/jobs/new">
                   <Plus className="size-4" />
-                  Post a job
+                  {t("postJob")}
                 </Link>
               </Button>
             </motion.div>
@@ -505,7 +555,10 @@ export function JobList({
                 className="mt-8 flex items-center justify-between border-t border-border pt-4"
               >
                 <p className="font-mono text-xs text-muted-foreground">
-                  Page {pagination.page} of {pagination.totalPages}
+                  {tCommon("pageOf", {
+                    page: pagination.page,
+                    totalPages: pagination.totalPages,
+                  })}
                 </p>
                 <div className="flex gap-1.5">
                   <Button
@@ -545,10 +598,10 @@ export function JobList({
               <Briefcase className="size-5" />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              No {statusFilter.toLowerCase().replace("_", " ")} jobs found
+              {t("noJobsForStatus", { status: filterLabel })}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              There are currently no postings matching this status.
+              {t("noJobsForStatusHint")}
             </p>
             <Button
               variant="outline"
@@ -556,7 +609,7 @@ export function JobList({
               className="mt-4 rounded-xl text-xs cursor-pointer"
               onClick={() => setStatusFilter("ALL")}
             >
-              Show all jobs ({jobs.length})
+              {t("showAllJobs", { count: jobs.length })}
             </Button>
           </motion.div>
         ) : (
@@ -570,11 +623,10 @@ export function JobList({
               <Briefcase className="size-6" />
             </div>
             <p className="text-base font-semibold text-foreground">
-              No jobs posted yet
+              {t("noJobsTitle")}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              Post your first job to start receiving proposals from
-              freelancers.
+              {t("noJobsHint")}
             </p>
             <Button
               asChild
@@ -582,7 +634,7 @@ export function JobList({
             >
               <Link href="/client/jobs/new">
                 <Plus className="size-4" />
-                Post a job
+                {t("postJob")}
               </Link>
             </Button>
           </motion.div>
@@ -605,10 +657,10 @@ export function JobList({
             {/* Header info */}
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground">
-                Delete job
+                {t("deleteTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal">
-                Are you sure you want to delete this job? This action cannot be undone.
+                {t("deleteHint")}
               </AlertDialogDescription>
             </div>
 
@@ -623,7 +675,9 @@ export function JobList({
                   <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
                     <Trash2 className="size-3.5" />
                   </div>
-                  <span className="text-xs font-semibold">Delete job</span>
+                  <span className="text-xs font-semibold">
+                    {t("deleteJob")}
+                  </span>
                 </div>
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
@@ -637,7 +691,7 @@ export function JobList({
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
-                    <span className="text-xs font-medium">Cancel</span>
+                    <span className="text-xs font-medium">{t("cancel")}</span>
                   </div>
                   <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
                 </button>

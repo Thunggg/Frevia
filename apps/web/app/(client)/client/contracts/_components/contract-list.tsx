@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -22,63 +23,28 @@ import type {
 
 type ContractStatus = ContractDetailType["status"];
 
-const STATUS_TABS: { label: string; value: ContractStatus | "ALL" }[] = [
-  { label: "All Contracts", value: "ALL" },
-  { label: "Active", value: "ACTIVE" },
-  { label: "Pending Sign", value: "PENDING_SIGN" },
-  { label: "Completed", value: "COMPLETED" },
-  { label: "Cancelled", value: "CANCELLED" },
-];
+const CONTRACT_STATUSES = [
+  "ACTIVE",
+  "PENDING_SIGN",
+  "COMPLETED",
+  "CANCELLED",
+  "DISPUTED",
+] as const satisfies readonly ContractStatus[];
 
-function money(amount: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatDate(date: string | Date | null) {
-  if (!date) return "N/A";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
-function getStatusBadge(status: ContractStatus) {
+function getStatusBadgeClass(status: ContractStatus): string {
   switch (status) {
     case "ACTIVE":
-      return {
-        label: "Active",
-        className: "text-[#0069D3] font-semibold",
-      };
+      return "text-[#0069D3] font-semibold";
     case "PENDING_SIGN":
-      return {
-        label: "Pending Signature",
-        className: "text-foreground/80 font-medium",
-      };
+      return "text-foreground/80 font-medium";
     case "COMPLETED":
-      return {
-        label: "Completed",
-        className: "text-muted-foreground font-medium",
-      };
+      return "text-muted-foreground font-medium";
     case "CANCELLED":
-      return {
-        label: "Cancelled",
-        className: "text-muted-foreground",
-      };
+      return "text-muted-foreground";
     case "DISPUTED":
-      return {
-        label: "In Dispute",
-        className: "text-red-600 font-medium",
-      };
+      return "text-red-600 font-medium";
     default:
-      return {
-        label: status,
-        className: "",
-      };
+      return "";
   }
 }
 
@@ -89,8 +55,35 @@ export function ContractList({
   initialData?: GetContractListResponseType | null;
   basePath?: string;
 }) {
+  const t = useTranslations("contracts");
+  const tStatus = useTranslations("contractStatus");
+  const format = useFormatter();
   const [selectedTab, setSelectedTab] = useState<ContractStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const statusTabs: { label: string; value: ContractStatus | "ALL" }[] = [
+    { label: t("tabAll"), value: "ALL" },
+    { label: tStatus("ACTIVE"), value: "ACTIVE" },
+    { label: t("tabPendingSign"), value: "PENDING_SIGN" },
+    { label: tStatus("COMPLETED"), value: "COMPLETED" },
+    { label: tStatus("CANCELLED"), value: "CANCELLED" },
+  ];
+
+  const money = (amount: number) =>
+    format.number(amount, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const formatDate = (date: string | Date | null) =>
+    date
+      ? format.dateTime(new Date(date), {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : t("notAvailable");
 
   const { data: contractListRes } = useQuery<GetContractListResponseType>({
     queryKey: ["contracts-list", basePath, selectedTab],
@@ -122,7 +115,7 @@ export function ContractList({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Status Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs">
-          {STATUS_TABS.map((tab) => {
+          {statusTabs.map((tab) => {
             const isActive = selectedTab === tab.value;
             return (
               <button
@@ -145,7 +138,7 @@ export function ContractList({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search contracts or jobs..."
+            placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-full border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
@@ -160,21 +153,21 @@ export function ContractList({
             <FileText className="size-6" />
           </div>
           <p className="text-base font-semibold text-foreground">
-            No contracts found
+            {t("emptyTitle")}
           </p>
           <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
             {selectedTab !== "ALL"
-              ? `You don't have any contracts with status "${selectedTab}".`
+              ? t("emptyFiltered", { status: tStatus(selectedTab) })
               : basePath === "/freelancer"
-                ? "Contracts appear here once a client hires you for a project."
-                : "Contracts appear here once you hire a freelancer from your job proposals."}
+                ? t("emptyFreelancer")
+                : t("emptyClient")}
           </p>
           <div className="mt-5">
             <Button asChild size="sm" className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs">
               {basePath === "/freelancer" ? (
-                <Link href="/freelancer/find-work">Find Work</Link>
+                <Link href="/freelancer/find-work">{t("findWork")}</Link>
               ) : (
-                <Link href="/client/jobs">View Job Proposals</Link>
+                <Link href="/client/jobs">{t("viewJobProposals")}</Link>
               )}
             </Button>
           </div>
@@ -182,11 +175,18 @@ export function ContractList({
       ) : (
         <div className="grid gap-4">
           {contracts.map((contract: ContractDetailType) => {
-            const badge = getStatusBadge(contract.status);
+            const badgeClass = getStatusBadgeClass(contract.status);
+            const statusLabel = (
+              CONTRACT_STATUSES as readonly string[]
+            ).includes(contract.status)
+              ? tStatus(contract.status)
+              : contract.status;
             const isFreelancerView = basePath === "/freelancer";
             const counterpartyName = isFreelancerView
-              ? contract.client?.profile?.displayName || "Client"
-              : contract.freelancer?.profile?.displayName || "Freelancer";
+              ? contract.client?.profile?.displayName ??
+                t("counterpartyClient")
+              : contract.freelancer?.profile?.displayName ??
+                t("counterpartyFreelancer");
             const counterpartyAvatar = isFreelancerView
               ? contract.client?.profile?.avatarUrl
               : contract.freelancer?.profile?.avatarUrl;
@@ -200,13 +200,15 @@ export function ContractList({
                 <div className="space-y-2.5 min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] ${badge.className}`}
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] ${badgeClass}`}
                     >
-                      {badge.label}
+                      {statusLabel}
                     </span>
                     <span className="text-xs text-muted-foreground/60">•</span>
                     <span className="text-xs text-muted-foreground">
-                      Created {formatDate(contract.createdAt)}
+                      {t("createdAt", {
+                        date: formatDate(contract.createdAt),
+                      })}
                     </span>
                   </div>
 
@@ -216,7 +218,7 @@ export function ContractList({
                       href={`${basePath}/contracts/${contract.id}`}
                       className="hover:text-[#0069D3] transition-colors"
                     >
-                      {contract.job?.title || "Contract Agreement"}
+                      {contract.job?.title || t("agreementFallback")}
                     </Link>
                   </h3>
 
@@ -244,7 +246,10 @@ export function ContractList({
                                 : "text-amber-600 dark:text-amber-400"
                             }
                           >
-                            You: {contract.signedByFreelancer ? "Signed ✓" : "Unsigned"}
+                            {t("youLabel")}:{" "}
+                            {contract.signedByFreelancer
+                              ? t("signed")
+                              : t("unsigned")}
                           </span>
                           <span>•</span>
                           <span
@@ -254,7 +259,10 @@ export function ContractList({
                                 : "text-muted-foreground"
                             }
                           >
-                            Client: {contract.signedByClient ? "Signed ✓" : "Waiting"}
+                            {t("counterpartyClient")}:{" "}
+                            {contract.signedByClient
+                              ? t("signed")
+                              : t("waiting")}
                           </span>
                         </>
                       ) : (
@@ -266,7 +274,10 @@ export function ContractList({
                                 : "text-amber-600 dark:text-amber-400"
                             }
                           >
-                            Client: {contract.signedByClient ? "Signed ✓" : "Unsigned"}
+                            {t("counterpartyClient")}:{" "}
+                            {contract.signedByClient
+                              ? t("signed")
+                              : t("unsigned")}
                           </span>
                           <span>•</span>
                           <span
@@ -276,7 +287,10 @@ export function ContractList({
                                 : "text-amber-600 dark:text-amber-400"
                             }
                           >
-                            Freelancer: {contract.signedByFreelancer ? "Signed ✓" : "Waiting"}
+                            {t("counterpartyFreelancer")}:{" "}
+                            {contract.signedByFreelancer
+                              ? t("signed")
+                              : t("waiting")}
                           </span>
                         </>
                       )}
@@ -288,7 +302,7 @@ export function ContractList({
                 <div className="flex items-center justify-between gap-4 border-t border-border/60 pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0 shrink-0">
                   <div className="text-left sm:text-right">
                     <span className="text-[11px] text-muted-foreground block">
-                      Total Budget
+                      {t("totalBudget")}
                     </span>
                     <span className="text-lg font-bold text-foreground">
                       {money(contract.totalAmount)}
@@ -301,7 +315,7 @@ export function ContractList({
                     className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium px-4 h-8"
                   >
                     <Link href={`${basePath}/contracts/${contract.id}`}>
-                      View Details
+                      {t("viewDetails")}
                       <ChevronRight className="ml-1 size-3.5" />
                     </Link>
                   </Button>

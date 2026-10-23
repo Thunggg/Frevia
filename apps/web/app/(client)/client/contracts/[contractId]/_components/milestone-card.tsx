@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   CalendarDays,
@@ -31,27 +32,25 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import type { GetSubmissionResponseType, MilestoneType } from "@shared/types";
 
-function money(amount: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+const PAYMENT_STATUS_KEYS = [
+  "PENDING",
+  "FUNDED",
+  "RELEASED",
+  "REFUNDED",
+  "DISPUTED",
+] as const;
 
-function formatDate(date: string | Date | null) {
-  if (!date) return "Not specified";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
+const MILESTONE_STATUS_KEYS = [
+  "COMPLETED",
+  "SUBMITTED",
+  "IN_PROGRESS",
+  "CHANGES_REQUESTED",
+] as const;
 
-function getMilestoneStatusBadge(
+function getMilestoneStatusBadgeClass(
   status: MilestoneType["status"],
   paymentStatus?: MilestoneType["paymentStatus"],
-) {
+): string {
   if (paymentStatus === "DISPUTED") {
     return {
       label: "Disputed",
@@ -74,6 +73,20 @@ function getMilestoneStatusBadge(
       className:
         "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold",
     };
+    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
+  }
+
+  switch (status) {
+    case "COMPLETED":
+      return "bg-[#F1F0F5] text-foreground border border-border/80";
+    case "SUBMITTED":
+      return "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold";
+    case "IN_PROGRESS":
+      return "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium";
+    case "CHANGES_REQUESTED":
+      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium";
+    default:
+      return "bg-[#F1F0F5] text-muted-foreground border border-border/60";
   }
 
   if (paymentStatus === "FUNDED") {
@@ -152,6 +165,11 @@ export function MilestoneCard({
   onRelease,
   onRefund,
 }: MilestoneCardProps) {
+  const t = useTranslations("milestoneCard");
+  const tMilestoneStatus = useTranslations("milestoneStatus");
+  const tPaymentStatus = useTranslations("paymentStatus");
+  const tSubmissionStatus = useTranslations("submissionStatus");
+  const format = useFormatter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [submissions, setSubmissions] = useState<GetSubmissionResponseType[] | null>(null);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
@@ -188,7 +206,44 @@ export function MilestoneCard({
   }, [isExpanded, submissions, loadingSubmissions, contractId, milestone.id]);
 
   const latestSubmission = submissions && submissions.length > 0 ? submissions[0] : null;
-  const badge = getMilestoneStatusBadge(milestone.status, milestone.paymentStatus);
+  const badgeClass = getMilestoneStatusBadgeClass(
+    milestone.status,
+    milestone.paymentStatus,
+  );
+  const statusKey =
+    milestone.paymentStatus === "DISPUTED"
+      ? "DISPUTED"
+      : (MILESTONE_STATUS_KEYS as readonly string[]).includes(milestone.status)
+        ? milestone.status
+        : "UPCOMING";
+  const paymentText = (PAYMENT_STATUS_KEYS as readonly string[]).includes(
+    milestone.paymentStatus,
+  )
+    ? tPaymentStatus(milestone.paymentStatus)
+    : milestone.paymentStatus;
+
+  const money = (amount: number) =>
+    format.number(amount, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const formatDate = (date: string | Date | null) =>
+    date
+      ? format.dateTime(new Date(date), {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : t("notSpecified");
+
+  const submissionStatusText = (status: string) =>
+    (["PENDING_REVIEW", "CHANGES_REQUESTED", "APPROVED"] as readonly string[]).includes(
+      status,
+    )
+      ? tSubmissionStatus(status)
+      : status;
 
   const handleToggleExpand = () => {
     setIsExpanded((prev) => !prev);
@@ -218,11 +273,11 @@ export function MilestoneCard({
             <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <CalendarDays className="size-3.5 text-muted-foreground/70" />
-                Due {formatDate(milestone.dueDate)}
+                {t("due", { date: formatDate(milestone.dueDate) })}
               </span>
               <span>•</span>
-              <span className="capitalize">
-                Payment: {milestone.paymentStatus.toLowerCase()}
+              <span>
+                {t("paymentLabel", { status: paymentText })}
               </span>
             </div>
           </div>
@@ -269,6 +324,8 @@ export function MilestoneCard({
 
           <span className={`rounded-full px-3 py-1 text-xs ${badge.className}`}>
             {badge.label}
+          <span className={`rounded-full px-3 py-1 text-xs ${badgeClass}`}>
+            {tMilestoneStatus(statusKey)}
           </span>
 
           {/* 3-dots action menu for both Client and Freelancer */}
@@ -278,7 +335,7 @@ export function MilestoneCard({
                 <button
                   type="button"
                   className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-colors outline-none"
-                  title="Milestone options"
+                  title={t("options")}
                 >
                   <Ellipsis className="size-4" />
                 </button>
@@ -295,7 +352,9 @@ export function MilestoneCard({
                   >
                     <div className="flex items-center gap-2">
                       <Edit2 className="size-3.5 text-foreground" />
-                      <span className="text-xs font-medium text-foreground">Edit</span>
+                      <span className="text-xs font-medium text-foreground">
+                        {t("edit")}
+                      </span>
                     </div>
                     <ChevronRight className="size-3 text-muted-foreground/50 group-hover:text-[#0069D3] transition-all" />
                   </DropdownMenuItem>
@@ -308,7 +367,9 @@ export function MilestoneCard({
                   >
                     <div className="flex items-center gap-2">
                       <Trash2 className="size-3.5 text-red-600" />
-                      <span className="text-xs font-medium text-red-600">Delete</span>
+                      <span className="text-xs font-medium text-red-600">
+                        {t("delete")}
+                      </span>
                     </div>
                     <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
                   </DropdownMenuItem>
@@ -339,7 +400,9 @@ export function MilestoneCard({
                   >
                     <div className="flex items-center gap-2">
                       <Gavel className="size-3.5 text-red-600" />
-                      <span className="text-xs font-bold text-red-600">View Dispute</span>
+                      <span className="text-xs font-bold text-red-600">
+                        {t("viewDispute")}
+                      </span>
                     </div>
                     <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
                   </DropdownMenuItem>
@@ -357,7 +420,9 @@ export function MilestoneCard({
                     >
                       <div className="flex items-center gap-2">
                         <ShieldAlert className="size-3.5 text-red-600" />
-                        <span className="text-xs font-medium text-red-600">Dispute Milestone</span>
+                        <span className="text-xs font-medium text-red-600">
+                          {t("openDispute")}
+                        </span>
                       </div>
                       <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
                     </DropdownMenuItem>
@@ -371,7 +436,7 @@ export function MilestoneCard({
             type="button"
             onClick={handleToggleExpand}
             className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-all outline-none"
-            title={isExpanded ? "Collapse" : "Expand"}
+            title={isExpanded ? t("collapse") : t("expand")}
           >
             <ChevronDown
               className={`size-4 transition-transform duration-200 ${
@@ -391,9 +456,11 @@ export function MilestoneCard({
               <div className="flex items-center gap-2.5">
                 <ShieldAlert className="size-4 shrink-0 text-red-600" />
                 <div>
-                  <span className="font-bold block">Arbitration Case Active</span>
+                  <span className="font-bold block">
+                    {t("arbitrationActive")}
+                  </span>
                   <span className="text-[11px] text-red-600/90 dark:text-red-400">
-                    Funds for this milestone are locked pending arbitration resolution.
+                    {t("arbitrationHint")}
                   </span>
                 </div>
               </div>
@@ -408,7 +475,7 @@ export function MilestoneCard({
                   className="rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold h-8 px-3.5 shrink-0"
                 >
                   <Gavel className="mr-1.5 size-3.5" />
-                  View Dispute
+                  {t("viewDispute")}
                 </Button>
               )}
             </div>
@@ -418,7 +485,12 @@ export function MilestoneCard({
           {milestone.description && (
             <div>
               <span className="text-[11px] block mb-1">
-                Deliverable Requirements: <span className="text-foreground/90">{milestone.description}</span>
+                {t.rich("deliverableRequirements", {
+                  description: milestone.description,
+                  strong: (chunks) => (
+                    <span className="text-foreground/90">{chunks}</span>
+                  ),
+                })}
               </span>
             </div>
           )}
@@ -427,7 +499,7 @@ export function MilestoneCard({
           {milestone.status === "CHANGES_REQUESTED" && latestSubmission?.changeRequestMessage && (
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1.5">
               <span className="font-semibold text-amber-600 dark:text-amber-400 block">
-                Feedback / Changes Requested by Client:
+                {t("feedbackLabel")}
               </span>
               <p className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
                 {latestSubmission.changeRequestMessage}
@@ -436,7 +508,9 @@ export function MilestoneCard({
                 <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-medium pt-1 border-t border-amber-500/20 text-[11px]">
                   <CalendarDays className="size-3.5 shrink-0" />
                   <span>
-                    Revision Due: {formatDate(latestSubmission.changeRequestDueDate)}
+                    {t("revisionDue", {
+                      date: formatDate(latestSubmission.changeRequestDueDate),
+                    })}
                   </span>
                 </div>
               )}
@@ -448,7 +522,7 @@ export function MilestoneCard({
             <div className="flex items-center justify-between mb-1.5">
               {milestone.status === "SUBMITTED" && latestSubmission && (
                 <span className="text-[11px] font-semibold text-[#0069D3]">
-                  Deliverables submitted for review
+                  {t("submittedForReview")}
                 </span>
               )}
             </div>
@@ -456,7 +530,7 @@ export function MilestoneCard({
             {loadingSubmissions ? (
               <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground">
                 <Loader2 className="size-4 animate-spin text-primary" />
-                <span>Loading submitted deliverables...</span>
+                <span>{t("loadingDeliverables")}</span>
               </div>
             ) : latestSubmission ? (
               <div className="space-y-3 rounded-2xl border border-border/70 bg-card p-4">
@@ -464,10 +538,12 @@ export function MilestoneCard({
                 <div className="flex items-center justify-between text-xs pb-2 border-b border-border/40 text-muted-foreground">
                   <span className="flex items-center gap-1.5">
                     <CalendarDays className="size-3.5" />
-                    Submitted {formatDate(latestSubmission.submittedAt)}
+                    {t("submittedAt", {
+                      date: formatDate(latestSubmission.submittedAt),
+                    })}
                   </span>
                   <span className="rounded-full bg-[#D0E1F8] text-[#0069D3] px-2.5 py-0.5 text-[11px] font-semibold">
-                    {latestSubmission.status}
+                    {submissionStatusText(latestSubmission.status)}
                   </span>
                 </div>
 
@@ -475,7 +551,14 @@ export function MilestoneCard({
                 {latestSubmission.message && (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                      Deliverable Notes: <span className="font-medium text-foreground">{latestSubmission.message}</span>
+                      {t.rich("deliverableNotes", {
+                        notes: latestSubmission.message,
+                        strong: (chunks) => (
+                          <span className="font-medium text-foreground">
+                            {chunks}
+                          </span>
+                        ),
+                      })}
                     </span>
                   </div>
                 )}
@@ -484,7 +567,7 @@ export function MilestoneCard({
                 {latestSubmission.links && latestSubmission.links.length > 0 && (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                      Project / Preview Links:
+                      {t("previewLinks")}
                     </span>
                     <div className="space-y-1.5">
                       {latestSubmission.links.map((link, idx) => (
@@ -507,7 +590,7 @@ export function MilestoneCard({
                 {latestSubmission.files && latestSubmission.files.length > 0 && (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                      Attached Files:
+                      {t("attachedFiles")}
                     </span>
                     <div className="space-y-1.5">
                       {latestSubmission.files.map((item, idx) => (
@@ -518,7 +601,8 @@ export function MilestoneCard({
                           <div className="flex items-center gap-2 truncate">
                             <FileText className="size-4 text-muted-foreground" />
                             <span className="truncate font-medium text-foreground">
-                              {item.file?.fileName || `File #${item.fileId}`}
+                              {item.file?.fileName ||
+                                t("fileFallback", { id: item.fileId })}
                             </span>
                           </div>
                           {item.file?.fileUrl && (
@@ -529,7 +613,7 @@ export function MilestoneCard({
                               className="flex items-center gap-1 text-primary hover:underline p-1 text-xs shrink-0"
                             >
                               <Download className="size-3.5" />
-                              Download
+                              {t("download")}
                             </a>
                           )}
                         </div>
@@ -549,7 +633,7 @@ export function MilestoneCard({
                       className="w-full sm:w-auto rounded-full text-xs border-border bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 text-foreground"
                     >
                       <RotateCcw className="mr-1.5 size-3.5" />
-                      Request Changes / Revisions
+                      {t("requestChanges")}
                     </Button>
 
                     <Button
@@ -559,7 +643,9 @@ export function MilestoneCard({
                       className="w-full sm:w-auto rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold"
                     >
                       <CheckCircle2 className="mr-1.5 size-3.5" />
-                      Approve & Release {money(Number(milestone.amount))}
+                      {t("approveRelease", {
+                        amount: money(Number(milestone.amount)),
+                      })}
                     </Button>
                   </div>
                 )}
@@ -569,7 +655,7 @@ export function MilestoneCard({
                   <div className="pt-2 border-t border-border/60 flex items-center justify-end text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full font-medium">
                       <Clock className="size-3.5 text-primary" />
-                      <span>Deliverables submitted • Awaiting client review</span>
+                      <span>{t("awaitingReview")}</span>
                     </div>
                   </div>
                 )}
@@ -578,8 +664,10 @@ export function MilestoneCard({
                   <div className="flex items-center gap-2 text-xs text-foreground bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
                     <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                     <span>
-                      Milestone approved and payment of{" "}
-                      <strong>{money(Number(milestone.amount))}</strong> released.
+                      {t.rich("approvedReleased", {
+                        amount: money(Number(milestone.amount)),
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
                     </span>
                   </div>
                 )}
@@ -588,10 +676,10 @@ export function MilestoneCard({
               <div className="rounded-xl border border-dashed border-border/70 p-4 text-center text-xs text-muted-foreground bg-card">
                 {milestone.status === "COMPLETED" ? (
                   <span className="text-foreground font-medium">
-                    Milestone has been approved and completed.
+                    {t("completedNotice")}
                   </span>
                 ) : (
-                  <span>No work deliverables submitted yet.</span>
+                  <span>{t("noDeliverables")}</span>
                 )}
               </div>
             )}
@@ -600,7 +688,9 @@ export function MilestoneCard({
               <div className="pt-2">
                 <details className="text-xs group/history">
                   <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 select-none">
-                    <span>View previous submission history ({submissions.length - 1})</span>
+                    <span>
+                      {t("historyToggle", { count: submissions.length - 1 })}
+                    </span>
                   </summary>
                   <div className="mt-2 space-y-2 pl-2 border-l-2 border-border/80">
                     {submissions.slice(1).map((sub, sIdx) => (
@@ -610,11 +700,13 @@ export function MilestoneCard({
                       >
                         <div className="flex items-center justify-between text-muted-foreground text-[11px]">
                           <span>
-                            Submission #{submissions.length - 1 - sIdx} •{" "}
-                            {formatDate(sub.submittedAt)}
+                            {t("submissionNumber", {
+                              number: submissions.length - 1 - sIdx,
+                            })}{" "}
+                            • {formatDate(sub.submittedAt)}
                           </span>
                           <span className="font-semibold text-amber-600 dark:text-amber-400">
-                            {sub.status}
+                            {submissionStatusText(sub.status)}
                           </span>
                         </div>
                         {sub.message && (
@@ -624,7 +716,9 @@ export function MilestoneCard({
                         )}
                         {sub.changeRequestMessage && (
                           <p className="text-amber-700 dark:text-amber-300 text-[11px] italic bg-amber-500/10 p-1.5 rounded-lg">
-                            Feedback: {sub.changeRequestMessage}
+                            {t("feedbackInline", {
+                              message: sub.changeRequestMessage,
+                            })}
                           </p>
                         )}
                       </div>
@@ -643,7 +737,7 @@ export function MilestoneCard({
                 <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
                   {hasOtherInProgressMilestone && (
                     <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-                      Another milestone is currently in progress
+                      {t("otherInProgress")}
                     </span>
                   )}
                   <Button
@@ -653,13 +747,13 @@ export function MilestoneCard({
                     onClick={() => onStartWork(milestone)}
                     title={
                       hasOtherInProgressMilestone
-                        ? "Only one milestone can be in progress at a time"
-                        : "Start working on this milestone"
+                        ? t("startDisabledTitle")
+                        : t("startTitle")
                     }
                     className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Play className="mr-1.5 size-3.5" />
-                    Start Working on Milestone
+                    {t("startWork")}
                   </Button>
                 </div>
               )}
@@ -668,7 +762,7 @@ export function MilestoneCard({
               {milestone.status === "PENDING" && milestone.paymentStatus === "PENDING" && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full font-medium">
                   <Clock className="size-3.5 text-amber-500 shrink-0" />
-                  <span>Awaiting client escrow funding before work can begin</span>
+                  <span>{t("awaitingEscrow")}</span>
                 </div>
               )}
 
@@ -681,7 +775,7 @@ export function MilestoneCard({
                   className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
                 >
                   <Upload className="mr-1.5 size-3.5" />
-                  Submit Work / Deliverables
+                  {t("submitWork")}
                 </Button>
               )}
 
@@ -694,7 +788,7 @@ export function MilestoneCard({
                   className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
                 >
                   <RotateCcw className="mr-1.5 size-3.5" />
-                  Resubmit Deliverables
+                  {t("resubmit")}
                 </Button>
               )}
             </div>

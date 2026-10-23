@@ -78,7 +78,7 @@ export class ExpertProfileRepository {
             title: 'Profile request superseded',
             message:
               'An administrator updated your expert profile directly. Your pending request was closed.',
-            data: { href: '/expert/profile' },
+            data: { href: '/expert/profile', kind: 'PROFILE_SUPERSEDED' },
           },
         });
       }

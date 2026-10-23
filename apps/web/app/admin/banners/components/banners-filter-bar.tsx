@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Input } from "@repo/ui/components/shadcn/input";
 import {
   Select,
@@ -15,6 +16,7 @@ import { BANNER_POSITIONS } from "../constants";
 
 // Thanh lọc danh sách banner: tìm kiếm (title) + lọc vị trí
 export function BannersFilterBar() {
+  const t = useTranslations("adminBanners");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -53,7 +55,7 @@ export function BannersFilterBar() {
         <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Search by title..."
+          placeholder={t("filterSearchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9 pr-8"
@@ -71,20 +73,20 @@ export function BannersFilterBar() {
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-          Position:
+          {t("filterPositionLabel")}
         </span>
         <Select
           value={currentPosition}
           onValueChange={(value) => updateQueryParams({ position: value })}
         >
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="All positions" />
+            <SelectValue placeholder={t("filterAllPositions")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All positions</SelectItem>
+            <SelectItem value="all">{t("filterAllPositions")}</SelectItem>
             {BANNER_POSITIONS.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                {item.label}
+                {t(`positions.${item.labelKey}`)}
               </SelectItem>
             ))}
           </SelectContent>

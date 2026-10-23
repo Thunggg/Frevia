@@ -17,4 +17,6 @@ export const BannerMessage = {
   BANNER_IMAGE_TOO_LARGE: "Error.BannerImageTooLarge",
   FAILED_TO_UPLOAD_BANNER_IMAGE: "Error.FailedToUploadBannerImage",
   BANNER_IMAGE_NOT_FOUND: "Error.BannerImageNotFound",
+  // --- Success messages ---
+  BANNER_DELETED: "Success.BannerDeleted",
 } as const;

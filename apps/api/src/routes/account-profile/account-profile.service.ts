@@ -142,12 +142,9 @@ export class AccountProfileService {
     await this.repository.updateGeneralProfile(userId, input);
     const updated = await this.repository.findGeneralProfile(userId);
     if (!updated?.profile) throw ProfileNotFoundException();
-    return {
-      message: 'Profile updated successfully.',
-      reviewRequired: false,
-      profileStrength: updated.profile.profileCompletionPercent,
-      revision: null,
-    };
+    return this.profileRevisionService.directUpdateResult(
+      updated.profile.profileCompletionPercent,
+    );
   }
 
   async changePassword(userId: number, input: ChangePasswordType) {

@@ -9,6 +9,7 @@ import {
   SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
+  FolderTree,
   LayoutDashboard,
   Megaphone,
   MessageSquare,
@@ -18,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { LogoutButton } from "./logout-button";
 import { NavMain, type NavItem } from "./nav-main";
 
@@ -25,60 +27,71 @@ import { NavMain, type NavItem } from "./nav-main";
 // - Dashboard: trang riêng
 // - Users / Roles & Permissions / Forum: các nhóm (collapsible) chứa trang con,
 //   tự động mở rộng khi đang ở trang con bên trong nhóm.
+// Nhãn hiển thị lấy từ namespace "adminNav" theo titleKey.
 const navItems: NavItem[] = [
   {
-    title: "Dashboard",
+    titleKey: "dashboard",
     href: "/admin",
     icon: LayoutDashboard,
   },
   {
-    title: "Disputes",
+    titleKey: "disputes",
     href: "/admin/disputes",
     icon: Scale,
   },
   {
-    title: "Skills",
+    titleKey: "skills",
     href: "/admin/skills",
     icon: Tags,
   },
   {
-    title: "Banners",
+    titleKey: "jobCategories",
+    href: "/admin/job-categories",
+    icon: FolderTree,
+  },
+  {
+    titleKey: "banners",
     href: "/admin/banners",
     icon: Megaphone,
   },
   {
-    title: "Users",
+    titleKey: "users",
     icon: Users,
     children: [
-      { title: "User Management", href: "/admin/users" },
-      { title: "Identity Verification", href: "/admin/identity-verifications" },
-      { title: "Profile Reviews", href: "/admin/profile-revisions" },
+      { titleKey: "userManagement", href: "/admin/users" },
+      {
+        titleKey: "identityVerification",
+        href: "/admin/identity-verifications",
+      },
+      { titleKey: "profileReviews", href: "/admin/profile-revisions" },
     ],
   },
   {
-    title: "Roles & Permissions",
+    titleKey: "rolesPermissions",
     icon: ShieldCheck,
     children: [
-      { title: "Roles", href: "/admin/roles" },
-      { title: "Permissions", href: "/admin/permissions" },
-      { title: "Assign Role", href: "/admin/assign-role" },
+      { titleKey: "roles", href: "/admin/roles" },
+      { titleKey: "permissions", href: "/admin/permissions" },
+      { titleKey: "assignRole", href: "/admin/assign-role" },
     ],
   },
   {
-    title: "Forum",
+    titleKey: "forum",
     icon: MessageSquare,
     children: [
-      { title: "Categories", href: "/admin/categories" },
-      { title: "Comments", href: "/admin/comments" },
-      { title: "Moderation", href: "/admin/moderation" },
-      { title: "Reports", href: "/admin/reports" },
-      { title: "Posts", href: "/admin/posts" },
-      { title: "Trash", href: "/admin/trash" },
+      { titleKey: "categories", href: "/admin/categories" },
+      { titleKey: "comments", href: "/admin/comments" },
+      { titleKey: "moderation", href: "/admin/moderation" },
+      { titleKey: "reports", href: "/admin/reports" },
+      { titleKey: "posts", href: "/admin/posts" },
+      { titleKey: "trash", href: "/admin/trash" },
     ],
   },
 ];
 
 export function AppSidebar() {
+  const t = useTranslations("adminNav");
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -92,17 +105,17 @@ export function AppSidebar() {
           />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold tracking-tight text-[#4fae2e]">
-              Frevia Admin
+              {t("brand")}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              Admin tools
+              {t("brandSubtitle")}
             </p>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain label="Menu" items={navItems} />
+        <NavMain label={t("menu")} items={navItems} />
       </SidebarContent>
 
       <SidebarFooter>

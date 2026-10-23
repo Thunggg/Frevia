@@ -1,16 +1,27 @@
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search, SlidersHorizontal } from "@/components/icons";
 
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
+import {
+  BUDGET_KEYS,
+  SORT_KEYS,
+  TIME_KEYS,
+  translateFilterOption,
+} from "@/lib/search-filter-labels";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import type { SavedSearchType } from "@shared/types";
 
-export const metadata = {
-  title: "Saved Search Details | Freelancer Dashboard | Frevia",
-  description: "View details of your saved search query.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("savedSearches");
+
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
   const params = new URLSearchParams();
@@ -27,25 +38,6 @@ function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
   return query ? `/freelancer/find-work?${query}` : "/freelancer/find-work";
 }
 
-function formatFilterValue(value: unknown) {
-  if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean"
-  ) {
-    return String(value).replaceAll("-", " ");
-  }
-  if (Array.isArray(value)) return value.map(String).join(", ");
-  return JSON.stringify(value);
-}
-
-function formatFilterName(name: string) {
-  return name
-    .replace(/([A-Z])/g, " $1")
-    .replaceAll("-", " ")
-    .replace(/^./, (value) => value.toUpperCase());
-}
-
 export default async function FreelancerSavedSearchDetailPage({
   params,
 }: {
@@ -58,6 +50,38 @@ export default async function FreelancerSavedSearchDetailPage({
   const savedSearch =
     await savedSearchServerRequest.getSavedSearchDetail(savedSearchId);
   if (!savedSearch) notFound();
+
+  const t = await getTranslations("savedSearches");
+  const tFindWork = await getTranslations("findWork");
+
+  const filterName = (name: string) => {
+    if (name === "keyword") return t("filterSearch");
+    if (name === "budget") return t("filterBudget");
+    if (name === "time") return t("filterPosted");
+    if (name === "sort") return t("filterSort");
+
+    // Filter lạ (chưa có trong bảng dịch) vẫn hiển thị dạng đọc được.
+    return name
+      .replace(/([A-Z])/g, " $1")
+      .replaceAll("-", " ")
+      .replace(/^./, (value) => value.toUpperCase());
+  };
+
+  const filterValue = (name: string, value: unknown) => {
+    if (typeof value === "string") {
+      if (name === "budget")
+        return translateFilterOption(tFindWork, BUDGET_KEYS, value);
+      if (name === "time")
+        return translateFilterOption(tFindWork, TIME_KEYS, value);
+      if (name === "sort")
+        return translateFilterOption(tFindWork, SORT_KEYS, value);
+      return value;
+    }
+    if (typeof value === "number" || typeof value === "boolean")
+      return String(value);
+    if (Array.isArray(value)) return value.map(String).join(", ");
+    return JSON.stringify(value);
+  };
 
   const filters = Object.entries(savedSearch.searchParams);
 
@@ -73,7 +97,7 @@ export default async function FreelancerSavedSearchDetailPage({
             >
               <Link href="/freelancer/saved-searches">
                 <ArrowLeft className="size-4" />
-                Saved searches
+                {t("breadcrumb")}
               </Link>
             </Button>
             <div className="mt-4 flex items-start gap-4">
@@ -82,7 +106,7 @@ export default async function FreelancerSavedSearchDetailPage({
               </div>
               <div>
                 <p className="text-xs font-medium text-[#3f9225]">
-                  Saved search
+                  {t("detailBadge")}
                 </p>
                 <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                   {savedSearch.name}
@@ -95,29 +119,29 @@ export default async function FreelancerSavedSearchDetailPage({
         <section className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
             <h2 className="text-base font-semibold text-foreground">
-              Search filters
+              {t("filtersTitle")}
             </h2>
             {filters.length ? (
               <dl className="mt-5 grid gap-3 sm:grid-cols-2">
                 {filters.map(([key, value]) => (
                   <div key={key} className="rounded-lg bg-muted/60 px-4 py-3">
                     <dt className="text-xs font-medium text-muted-foreground">
-                      {formatFilterName(key)}
+                      {filterName(key)}
                     </dt>
                     <dd className="mt-1 break-words text-sm font-medium text-foreground">
-                      {formatFilterValue(value)}
+                      {filterValue(key, value)}
                     </dd>
                   </div>
                 ))}
               </dl>
             ) : (
               <div className="mt-5 rounded-lg bg-muted/60 px-4 py-5 text-sm text-muted-foreground">
-                This search shows all open projects with the default sort order.
+                {t("allProjectsDefault")}
               </div>
             )}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <Badge variant="secondary" className="w-fit font-normal">
-                Saved search #{savedSearch.id}
+                {t("detailIdBadge", { id: savedSearch.id })}
               </Badge>
               <Button
                 asChild
@@ -125,7 +149,7 @@ export default async function FreelancerSavedSearchDetailPage({
               >
                 <Link href={toFindWorkHref(savedSearch.searchParams)}>
                   <Search className="mr-2 size-4" />
-                  View matching jobs
+                  {t("viewMatchingJobs")}
                 </Link>
               </Button>
             </div>

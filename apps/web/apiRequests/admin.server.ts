@@ -19,6 +19,8 @@ import type {
   ForumTrashCommentListResponseType,
   ForumTrashPostListResponseType,
   IdentityVerificationAdminListResponseType,
+  JobCategoryAdminDetailResponseType,
+  JobCategoryAdminListResponseType,
   PendingForumPostListResponseType,
   SkillAdminDetailResponseType,
   SkillAdminListResponseType,
@@ -97,6 +99,29 @@ const adminServerRequest = {
   getSkillById(id: number) {
     return adminServerFetch<SkillAdminDetailResponseType>(
       `/api/admin/skills/${id}`,
+    );
+  },
+
+  // Danh sách danh mục công việc (phân trang + search + lọc status/deleted + sort)
+  getJobCategories(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    deleted?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }) {
+    const query = buildQueryString(params || {});
+    return adminServerFetch<JobCategoryAdminListResponseType>(
+      `/api/admin/job-categories${query}`,
+    );
+  },
+
+  // Chi tiết 1 danh mục công việc — trang /admin/job-categories/[id]
+  getJobCategoryById(id: number) {
+    return adminServerFetch<JobCategoryAdminDetailResponseType>(
+      `/api/admin/job-categories/${id}`,
     );
   },
 

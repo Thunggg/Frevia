@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
+  ManageSessionMessage,
   RevokeSessionResponseType,
   SessionDetailResponseType,
   SessionFilterType,
@@ -88,7 +89,7 @@ export class SessionsService {
       );
 
       return {
-        message: 'Session revoked successfully',
+        message: ManageSessionMessage.SESSION_REVOKED,
         loggedOut,
       };
     } catch (error) {

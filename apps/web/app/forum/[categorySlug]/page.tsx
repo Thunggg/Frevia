@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -40,6 +41,7 @@ export default async function ForumCategoryDetailPage({
 }: ForumCategoryDetailPageProps) {
   const { categorySlug } = await params;
   const { page, limit, search, myPosts } = await searchParams;
+  const tCommon = await getTranslations("common");
   const categoryId = extractIdFromSlug(categorySlug);
 
   if (!categoryId) {
@@ -74,14 +76,14 @@ export default async function ForumCategoryDetailPage({
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-[13px] text-muted-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                Home
+                {tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/25">/</span>
               <Link
                 href="/forum"
                 className="transition-colors hover:text-[#4fae2e]"
               >
-                Forum
+                {tCommon("forum")}
               </Link>
               <span className="mx-2 text-foreground/25">/</span>
               <span className="max-w-[220px] truncate font-medium text-foreground/80">
@@ -101,7 +103,7 @@ export default async function ForumCategoryDetailPage({
               <span className="font-semibold text-foreground/70">
                 {category.postCount}
               </span>{" "}
-              {category.postCount === 1 ? "post" : "posts"}
+              {tCommon("posts", { count: category.postCount })}
             </p>
           </div>
         </section>

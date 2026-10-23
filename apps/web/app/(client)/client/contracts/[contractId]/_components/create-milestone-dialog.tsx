@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -35,6 +36,9 @@ export function CreateMilestoneDialog({
   onSuccess,
 }: CreateMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("createMilestone");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState<number>(0);
@@ -63,12 +67,12 @@ export function CreateMilestoneDialog({
     e.preventDefault();
 
     if (!title.trim()) {
-      toastError({ message: "Please provide a milestone title" });
+      toastError({ message: t("titleRequired") });
       return;
     }
 
     if (!amount || amount <= 0) {
-      toastError({ message: "Milestone amount must be greater than 0" });
+      toastError({ message: t("amountRequired") });
       return;
     }
 
@@ -79,7 +83,7 @@ export function CreateMilestoneDialog({
 
     if (amount > currentMax) {
       toastError({
-        message: `Milestone amount cannot exceed available budget ($${currentMax.toLocaleString()})`,
+        message: t("exceedsBudget", { amount: format.number(currentMax) }),
       });
       return;
     }
@@ -92,7 +96,7 @@ export function CreateMilestoneDialog({
         d.setHours(23, 59, 59, 999);
         if (d <= new Date()) {
           toastError({
-            message: "Target completion date must be in the future",
+            message: t("dueDateFuture"),
           });
           setIsSubmitting(false);
           return;
@@ -123,10 +127,10 @@ export function CreateMilestoneDialog({
           milestoneToEdit.id,
           payload,
         );
-        toastSuccess({ message: "Milestone updated successfully" });
+        toastSuccess({ message: t("updated") });
       } else {
         await contractApiRequest.createMilestone(contractId, payload);
-        toastSuccess({ message: "Milestone created successfully" });
+        toastSuccess({ message: t("created") });
       }
 
       await queryClient.invalidateQueries({
@@ -139,7 +143,7 @@ export function CreateMilestoneDialog({
       onSuccess?.();
       onOpenChange(false);
     } catch (error) {
-      let errorMessage = "Failed to save milestone. Please try again.";
+      let errorMessage = t("saveFailed");
       if (error instanceof ApiFail) {
         const errResp = error.response as unknown as Record<string, unknown>;
         if (Array.isArray(errResp?.message)) {
@@ -174,6 +178,7 @@ export function CreateMilestoneDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-lg md:max-w-xl overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
       >
         <div>
@@ -183,11 +188,11 @@ export function CreateMilestoneDialog({
                 <Flag className="size-5" />
               </div>
               <SheetTitle className="text-lg font-bold text-foreground">
-                {milestoneToEdit ? "Edit Milestone" : "Add New Milestone"}
+                {milestoneToEdit ? t("titleEdit") : t("titleNew")}
               </SheetTitle>
             </div>
             <SheetDescription className="mt-1 text-xs text-muted-foreground">
-              Break your contract into deliverable stages. Payments are released as each milestone is approved.
+              {t("description")}
             </SheetDescription>
           </SheetHeader>
 
@@ -195,14 +200,14 @@ export function CreateMilestoneDialog({
             {/* Milestone Title */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Milestone Title <span className="text-red-500">*</span>
+                {t("fieldTitle")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Design Prototype & Wireframes"
+                placeholder={t("titlePlaceholder")}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
               />
             </div>
@@ -211,10 +216,12 @@ export function CreateMilestoneDialog({
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-foreground">
-                  Amount (USD) <span className="text-red-500">*</span>
+                  {t("fieldAmount")} <span className="text-red-500">*</span>
                 </label>
                 <span className="text-[11px] text-muted-foreground">
-                  Available: ${maxAllowedAmount.toLocaleString()}
+                  {t("available", {
+                    amount: format.number(maxAllowedAmount),
+                  })}
                 </span>
               </div>
               <div className="relative mt-1.5">
@@ -226,7 +233,7 @@ export function CreateMilestoneDialog({
                   required
                   value={amount || ""}
                   onChange={(e) => setAmount(Number(e.target.value))}
-                  placeholder="e.g. 250"
+                  placeholder={t("amountPlaceholder")}
                   className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
                 />
               </div>
@@ -235,7 +242,7 @@ export function CreateMilestoneDialog({
             {/* Due Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Target Completion Date (Optional)
+                {t("fieldDueDate")}
               </label>
               <input
                 type="date"
@@ -251,13 +258,13 @@ export function CreateMilestoneDialog({
             {/* Description */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Deliverable Description / Criteria (Optional)
+                {t("fieldDescription")}
               </label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Detail what is expected for this milestone to be completed..."
+                placeholder={t("descriptionPlaceholder")}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] resize-none leading-relaxed"
               />
             </div>
@@ -272,7 +279,7 @@ export function CreateMilestoneDialog({
             onClick={() => onOpenChange(false)}
             className="rounded-full text-xs"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             type="submit"
@@ -283,7 +290,7 @@ export function CreateMilestoneDialog({
             {isSubmitting ? (
               <Loader2 className="mr-1.5 size-3.5 animate-spin" />
             ) : null}
-            {milestoneToEdit ? "Update Milestone" : "Save Milestone"}
+            {milestoneToEdit ? t("update") : t("save")}
           </Button>
         </SheetFooter>
       </SheetContent>

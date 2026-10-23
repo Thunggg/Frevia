@@ -4,7 +4,7 @@ import { useGoogleLink, useLogin } from "@/hooks/use-auth";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { authApiRequest } from "@/apiRequests/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
@@ -19,6 +19,7 @@ import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { LoginBodySchema, RoleName } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,6 +28,9 @@ import type * as z from "zod";
 
 export function LoginForm({ oauthError }: { oauthError?: string }) {
   const router = useRouter();
+  const t = useTranslations("auth.login");
+  const tField = useTranslations("auth.fields");
+  const tAction = useTranslations("auth.actions");
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMutation = useLogin();
@@ -35,14 +39,16 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
   useEffect(() => {
     if (oauthError === "google") {
       toastError({
-        message: "Google login failed. Please try again.",
+        message: t("googleFailed"),
         duration: 4000,
       });
     }
-  }, [oauthError]);
+  }, [oauthError, t]);
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
-    resolver: zodResolver(LoginBodySchema),
+    resolver: useTranslatedResolver<z.infer<typeof LoginBodySchema>>(
+      LoginBodySchema,
+    ),
     defaultValues: {
       email: "",
       password: "",
@@ -53,7 +59,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
     loginMutation.mutate(payload, {
       onSuccess: async (response) => {
         if (response.success) {
-          toastSuccess({ message: "Login successful" });
+          toastSuccess({ message: t("success") });
           try {
             const meRes = await authApiRequest.me();
             const primaryRole = meRes.success
@@ -84,7 +90,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             duration: 3000,
           });
         } else {
-          toastError({ message: "Login failed", duration: 3000 });
+          toastError({ message: t("failed"), duration: 3000 });
         }
       },
     });
@@ -98,7 +104,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
         }
       },
       onError: () => {
-        toastError({ message: "Failed to get Google link", duration: 3000 });
+        toastError({ message: t("googleLinkFailed"), duration: 3000 });
       },
     });
   }
@@ -113,13 +119,13 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel className="text-[13px] font-medium text-foreground/70">
-                  Email address
+                  {tField("email")}
                 </FieldLabel>
                 <Input
                   {...field}
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder={tField("emailPlaceholder")}
                   autoComplete="email"
                   className="h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
                   aria-invalid={fieldState.invalid}
@@ -137,14 +143,14 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel className="text-[13px] font-medium text-foreground/70">
-                  Password
+                  {tField("password")}
                 </FieldLabel>
                 <div className="relative">
                   <Input
                     {...field}
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder={t("passwordPlaceholder")}
                     autoComplete="current-password"
                     className="h-11 border-border/60 bg-white/60 pr-10 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
                     aria-invalid={fieldState.invalid}
@@ -154,7 +160,9 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-foreground"
                     aria-label={
-                      showPassword ? "Hide password" : "Show password"
+                      showPassword
+                        ? tAction("hidePassword")
+                        : tAction("showPassword")
                     }
                   >
                     {showPassword ? (
@@ -178,14 +186,14 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
                 htmlFor="remember"
                 className="cursor-pointer text-[13px] text-muted-foreground/70"
               >
-                Remember me
+                {t("rememberMe")}
               </Label>
             </div>
             <Link
               href="/forgot-password"
               className="text-[13px] font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
             >
-              Forgot password?
+              {t("forgotPassword")}
             </Link>
           </div>
 
@@ -198,10 +206,10 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             {loginMutation.isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                <span>Signing in...</span>
+                <span>{t("submitting")}</span>
               </>
             ) : (
-              "Log in"
+              t("submit")
             )}
           </Button>
         </FieldGroup>
@@ -213,7 +221,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-3 text-[11px] tracking-wider text-muted-foreground/50">
-            Or continue with
+            {t("orContinueWith")}
           </span>
         </div>
       </div>
@@ -243,16 +251,16 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             fill="#EA4335"
           />
         </svg>
-        Google
+        {tAction("google")}
       </Button>
 
       <p className="mt-8 text-center text-[13px] text-muted-foreground/60">
-        Don&apos;t have an account?{" "}
+        {t("noAccount")}{" "}
         <Link
           href="/register"
           className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
         >
-          Sign up
+          {t("signUp")}
         </Link>
       </p>
     </div>

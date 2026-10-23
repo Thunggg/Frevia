@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Pagination,
   PaginationContent,
@@ -25,6 +26,7 @@ export function NumberedPagination({
 }: NumberedPaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("common");
 
   if (totalPages <= 1) return null;
 
@@ -70,13 +72,15 @@ export function NumberedPagination({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-muted-foreground">
-        Page {page} of {totalPages} ({total} total)
+        {t("pageOfTotal", { page, totalPages, total })}
       </p>
       <Pagination className="mx-0 w-auto justify-end">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
               href="#"
+              label={t("previous")}
+              ariaLabel={t("previous")}
               onClick={(e) => {
                 e.preventDefault();
                 if (page > 1) goToPage(page - 1);
@@ -91,7 +95,7 @@ export function NumberedPagination({
           {getPageNumbers().map((pageNum, index) =>
             pageNum === "..." ? (
               <PaginationItem key={`ellipsis-${index}`}>
-                <PaginationEllipsis />
+                <PaginationEllipsis label={t("morePages")} />
               </PaginationItem>
             ) : (
               <PaginationItem key={pageNum}>
@@ -112,6 +116,8 @@ export function NumberedPagination({
           <PaginationItem>
             <PaginationNext
               href="#"
+              label={t("next")}
+              ariaLabel={t("next")}
               onClick={(e) => {
                 e.preventDefault();
                 if (page < totalPages) goToPage(page + 1);

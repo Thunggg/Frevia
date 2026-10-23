@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, ProfileRevisionType, RevisionStatus } from '@prisma/client';
 import {
+  ProfileMessage,
   ProfileRevisionAdminFilterType,
   RoleName,
   UpdateClientProfileSchema,
@@ -32,7 +33,7 @@ export class ProfileRevisionService {
 
   directUpdateResult(profileStrength: number) {
     return {
-      message: 'Profile updated successfully.',
+      message: ProfileMessage.PROFILE_UPDATED,
       reviewRequired: false,
       profileStrength,
       revision: null,
@@ -162,7 +163,7 @@ export class ProfileRevisionService {
       profileStrength,
     );
     return {
-      message: 'Your changes were submitted for administrator review.',
+      message: ProfileMessage.PROFILE_REVISION_SUBMITTED,
       reviewRequired: true,
       profileStrength,
       revision,

@@ -286,6 +286,7 @@ export class AccountProfileRepository {
           data: {
             href: `/clients/${clientId}`,
             followerUserId: clientId,
+            followerName,
           },
         },
       });

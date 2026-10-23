@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@repo/ui/lib/utils";
 
 export interface VerifiedBadgeProps {
@@ -11,9 +14,11 @@ export interface VerifiedBadgeProps {
 export function VerifiedBadge({
   className,
   size = "sm",
-  text = "Verified",
+  text,
   showText = true,
 }: VerifiedBadgeProps) {
+  const t = useTranslations("common");
+  const label = text ?? t("verified");
   const sizeClasses = {
     xs: "px-1.5 py-0.5 text-[10px] gap-1",
     sm: "px-2 py-0.5 text-[11px] gap-1.5",
@@ -44,7 +49,7 @@ export function VerifiedBadge({
         sizeClasses[size],
         className
       )}
-      title="Verified Freelancer"
+      title={t("verifiedFreelancer")}
     >
       <span
         className={cn(
@@ -69,7 +74,7 @@ export function VerifiedBadge({
           />
         </svg>
       </span>
-      {showText && <span className="leading-none select-none">{text}</span>}
+      {showText && <span className="leading-none select-none">{label}</span>}
     </span>
   );
 }

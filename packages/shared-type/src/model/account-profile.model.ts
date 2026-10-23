@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccountProfileMessage } from "../message/account-profile.message";
 
 export const DocumentType = {
   PASSPORT: "PASSPORT",
@@ -60,7 +61,7 @@ export const SocialLinkSchema = z.object({
 export const AddSocialLinkSchema = z
   .object({
     platform: SocialPlatformSchema,
-    url: z.url("Please enter a valid social URL."),
+    url: z.url(AccountProfileMessage.INVALID_SOCIAL_URL),
   })
   .strict();
 
@@ -87,10 +88,19 @@ export const ClientProfileDetailSchema = z.object({
 
 export const UpdateClientProfileSchema = z
   .object({
-    companyName: z.string().trim().min(1).max(255),
-    companyDescription: z.string().trim().max(5000).nullable().optional(),
+    companyName: z
+      .string()
+      .trim()
+      .min(1, AccountProfileMessage.COMPANY_NAME_REQUIRED)
+      .max(255, AccountProfileMessage.COMPANY_NAME_TOO_LONG),
+    companyDescription: z
+      .string()
+      .trim()
+      .max(5000, AccountProfileMessage.COMPANY_DESCRIPTION_TOO_LONG)
+      .nullable()
+      .optional(),
     website: z
-      .url("Please enter a valid company website.")
+      .url(AccountProfileMessage.INVALID_COMPANY_WEBSITE)
       .nullable()
       .optional(),
   })
@@ -156,21 +166,32 @@ export const GeneralProfileSchema = z.object({
 
 export const UpdateGeneralProfileSchema = z
   .object({
-    displayName: z.string().trim().min(1).max(255),
-    bio: z.string().trim().max(5000).nullable().optional(),
+    displayName: z
+      .string()
+      .trim()
+      .min(1, AccountProfileMessage.DISPLAY_NAME_REQUIRED)
+      .max(255, AccountProfileMessage.DISPLAY_NAME_TOO_LONG),
+    bio: z
+      .string()
+      .trim()
+      .max(5000, AccountProfileMessage.BIO_TOO_LONG)
+      .nullable()
+      .optional(),
   })
   .strict();
 
 const PasswordSchema = z
   .string()
-  .min(8, "Password must contain at least 8 characters.")
-  .max(32, "Password must contain at most 32 characters.")
-  .regex(/[A-Z]/, "Password must contain an uppercase letter.")
-  .regex(/[0-9]/, "Password must contain a number.");
+  .min(8, AccountProfileMessage.PASSWORD_TOO_SHORT)
+  .max(32, AccountProfileMessage.PASSWORD_TOO_LONG)
+  .regex(/[A-Z]/, AccountProfileMessage.PASSWORD_NEED_UPPERCASE)
+  .regex(/[0-9]/, AccountProfileMessage.PASSWORD_NEED_NUMBER);
 
 export const ChangePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required."),
+    currentPassword: z
+      .string()
+      .min(1, AccountProfileMessage.PASSWORD_REQUIRED),
     newPassword: PasswordSchema,
     confirmPassword: z.string(),
   })
@@ -179,14 +200,14 @@ export const ChangePasswordSchema = z
     if (newPassword !== confirmPassword) {
       context.addIssue({
         code: "custom",
-        message: "Password confirmation does not match.",
+        message: AccountProfileMessage.PASSWORD_NOT_MATCH,
         path: ["confirmPassword"],
       });
     }
     if (currentPassword === newPassword) {
       context.addIssue({
         code: "custom",
-        message: "New password must be different from the current password.",
+        message: AccountProfileMessage.PASSWORD_SAME_AS_CURRENT,
         path: ["newPassword"],
       });
     }

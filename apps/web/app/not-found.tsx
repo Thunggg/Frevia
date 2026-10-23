@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { FileQuestion } from "@/components/icons";
 
@@ -23,6 +24,9 @@ export default async function NotFound() {
         ? "/freelancer/find-work"
         : "/";
 
+export default async function NotFound() {
+  const t = await getTranslations("notFound");
+
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
@@ -33,20 +37,19 @@ export default async function NotFound() {
           </div>
           <p className="mt-6 text-sm font-medium text-[#4fae2e]">404</p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            Page not found
+            {t("title")}
           </h1>
-          <p className="mt-3 text-muted-foreground">
-            The page you are looking for does not exist or may have been moved.
-          </p>
+          <p className="mt-3 text-muted-foreground">{t("description")}</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button
               className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
               asChild
             >
               <Link href={homeHref}>Go home</Link>
+              <Link href="/">{t("goHome")}</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/find-work">Find work</Link>
+              <Link href="/find-work">{t("findWork")}</Link>
             </Button>
           </div>
         </section>

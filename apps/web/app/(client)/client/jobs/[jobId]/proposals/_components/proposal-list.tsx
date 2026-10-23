@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { motion } from "motion/react";
@@ -71,12 +72,15 @@ type ClientProposal = {
 
 const PAGE_SIZE = 10;
 
-function toClientProposal(proposal: ClientJobProposalType): ClientProposal {
+function toClientProposal(
+  proposal: ClientJobProposalType,
+  noCoverLetter: string,
+): ClientProposal {
   const profile = proposal.freelancer.profile;
   return {
     id: proposal.id,
     status: proposal.status as ProposalStatus,
-    coverLetter: proposal.coverLetter ?? "No cover letter provided.",
+    coverLetter: proposal.coverLetter ?? noCoverLetter,
     bidAmount: proposal.bidAmount ?? 0,
     deliveryDays: proposal.deliveryDays ?? 0,
     submittedAt: String(proposal.submittedAt),
@@ -91,24 +95,8 @@ function toClientProposal(proposal: ClientJobProposalType): ClientProposal {
   };
 }
 
-function money(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function submittedDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
-  const label = status[0] + status.slice(1).toLowerCase();
+  const tStatus = useTranslations("proposalStatus");
   const isAccepted = status === "ACCEPTED";
   const isPending = status === "PENDING";
   const isRejected = status === "REJECTED";
@@ -125,7 +113,7 @@ function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
     <span
       className={`inline-flex items-center rounded-full px-3.5 py-1 text-xs font-semibold font-sans ${colorClass}`}
     >
-      {label}
+      {tStatus(status)}
     </span>
   );
 }
@@ -157,18 +145,18 @@ function ProposalListSkeleton() {
 }
 
 function ProposalEmptyState({ filtered }: { filtered: boolean }) {
+  const t = useTranslations("clientProposals");
+
   return (
     <div className="flex flex-col items-center justify-center rounded-[28px] border border-border bg-card/40 px-6 py-16 text-center font-sans">
       <div className="flex size-10 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
         <FileText className="size-5" />
       </div>
       <h2 className="mt-3 text-sm font-semibold text-foreground">
-        {filtered ? "No matching proposals" : "No submitted proposals yet"}
+        {filtered ? t("emptyFilteredTitle") : t("emptyTitle")}
       </h2>
       <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-        {filtered
-          ? "Try another status filter to see submitted proposals for this job."
-          : "Proposals submitted by freelancers will show up here."}
+        {filtered ? t("emptyFilteredHint") : t("emptyHint")}
       </p>
     </div>
   );
@@ -182,6 +170,25 @@ export function ProposalList({
   jobTitle: string;
 }) {
   const queryClient = useQueryClient();
+  const t = useTranslations("clientProposals");
+  const tStatus = useTranslations("proposalStatus");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const money = (value: number) =>
+    format.number(value, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const submittedDate = (value: string) =>
+    format.dateTime(new Date(value), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -238,8 +245,11 @@ export function ProposalList({
   });
 
   const rawProposals = useMemo(
-    () => (proposalsQuery.data?.data ?? []).map(toClientProposal),
-    [proposalsQuery.data],
+    () =>
+      (proposalsQuery.data?.data ?? []).map((proposal) =>
+        toClientProposal(proposal, t("noCoverLetter")),
+      ),
+    [proposalsQuery.data, t],
   );
 
   const proposals = useMemo(() => {
@@ -296,13 +306,13 @@ export function ProposalList({
       await queryClient.invalidateQueries({
         queryKey: ["client-job-proposals", jobId],
       });
-      toastSuccess({ message: "Proposal rejected" });
+      toastSuccess({ message: t("rejected") });
       setRejecting(null);
     } catch (error) {
       const message =
         error instanceof ApiFail
           ? error.response.error.message
-          : "Unable to reject this proposal. Please try again.";
+          : t("rejectFailed");
       toastError({ message });
     } finally {
       setIsRejecting(false);
@@ -316,13 +326,13 @@ export function ProposalList({
       await queryClient.invalidateQueries({
         queryKey: ["client-job-proposals", jobId],
       });
-      toastSuccess({ message: "Proposal accepted" });
+      toastSuccess({ message: t("accepted") });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Unable to accept proposal. Please try again.",
+            : t("acceptFailed"),
       });
     } finally {
       setAcceptingId(null);
@@ -340,7 +350,7 @@ export function ProposalList({
                 href="/client/jobs"
                 className="transition-colors hover:text-foreground font-medium"
               >
-                My Jobs
+                {t("breadcrumbJobs")}
               </Link>
               <span className="text-muted-foreground/30">/</span>
               <Link
@@ -350,7 +360,9 @@ export function ProposalList({
                 {jobTitle}
               </Link>
               <span className="text-muted-foreground/30">/</span>
-              <span className="text-foreground font-medium">Proposals</span>
+              <span className="text-foreground font-medium">
+                {t("breadcrumbProposals")}
+              </span>
             </nav>
 
             <div className="mt-4">
@@ -371,7 +383,7 @@ export function ProposalList({
                   value="ALL"
                   className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
                 >
-                  All ({totalItems})
+                  {t("allTab", { count: totalItems })}
                 </TabsTrigger>
                 {(["PENDING", "ACCEPTED", "REJECTED", "WITHDRAWN"] as const).map(
                   (item) => (
@@ -380,7 +392,7 @@ export function ProposalList({
                       value={item}
                       className="rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-900 transition-all cursor-pointer"
                     >
-                      {item[0] + item.slice(1).toLowerCase()}
+                      {tStatus(item)}
                     </TabsTrigger>
                   ),
                 )}
@@ -393,7 +405,7 @@ export function ProposalList({
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground pointer-events-none" />
                 <Input
                   type="text"
-                  placeholder="Search freelancer..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="h-9 w-40 sm:w-48 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 pl-8 pr-3 text-xs border border-black/5 dark:border-white/10 shadow-xs focus-visible:ring-[#0069D3]"
@@ -403,14 +415,16 @@ export function ProposalList({
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="h-9 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/90 text-xs font-medium gap-1.5 px-3.5 shadow-xs cursor-pointer">
                   <SlidersHorizontal className="size-3 text-muted-foreground shrink-0" />
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={t("sortPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl text-xs font-sans">
-                  <SelectItem value="newest">Newest first</SelectItem>
-                  <SelectItem value="oldest">Oldest first</SelectItem>
-                  <SelectItem value="bid_asc">Lowest bid</SelectItem>
-                  <SelectItem value="bid_desc">Highest bid</SelectItem>
-                  <SelectItem value="delivery_asc">Shortest delivery</SelectItem>
+                  <SelectItem value="newest">{t("sortNewest")}</SelectItem>
+                  <SelectItem value="oldest">{t("sortOldest")}</SelectItem>
+                  <SelectItem value="bid_asc">{t("sortBidAsc")}</SelectItem>
+                  <SelectItem value="bid_desc">{t("sortBidDesc")}</SelectItem>
+                  <SelectItem value="delivery_asc">
+                    {t("sortDeliveryAsc")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -423,10 +437,10 @@ export function ProposalList({
             ) : proposalsQuery.isError ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center">
                 <h2 className="text-sm font-semibold text-foreground">
-                  Could not load proposals
+                  {t("loadFailedTitle")}
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Please check your connection and try again.
+                  {t("loadFailedHint")}
                 </p>
                 <Button
                   className="mt-4 rounded-xl text-xs"
@@ -434,7 +448,7 @@ export function ProposalList({
                   size="sm"
                   onClick={() => void proposalsQuery.refetch()}
                 >
-                  Retry
+                  {t("retry")}
                 </Button>
               </div>
             ) : proposals.length === 0 ? (
@@ -488,7 +502,7 @@ export function ProposalList({
                           ) : null}
                         </div>
                         <p className="text-xs font-normal text-muted-foreground">
-                          {proposal.freelancer.title ?? "Freelancer"}
+                          {proposal.freelancer.title ?? t("freelancerFallback")}
                         </p>
                       </div>
                     </div>
@@ -508,14 +522,32 @@ export function ProposalList({
                     {/* Metadata Row */}
                     <div className="flex flex-wrap items-center gap-3 text-xs font-normal text-muted-foreground font-sans">
                       <span>
-                        Bid: <span className="font-semibold text-foreground">{money(proposal.bidAmount)}</span>
+                        {t.rich("bidLabel", {
+                          amount: money(proposal.bidAmount),
+                          strong: (chunks) => (
+                            <span className="font-semibold text-foreground">
+                              {chunks}
+                            </span>
+                          ),
+                        })}
                       </span>
                       <span>•</span>
                       <span>
-                        Delivery: <span className="font-semibold text-foreground">{proposal.deliveryDays} days</span>
+                        {t.rich("deliveryLabel", {
+                          days: proposal.deliveryDays,
+                          strong: (chunks) => (
+                            <span className="font-semibold text-foreground">
+                              {chunks}
+                            </span>
+                          ),
+                        })}
                       </span>
                       <span>•</span>
-                      <span>Submitted {submittedDate(proposal.submittedAt)}</span>
+                      <span>
+                        {t("submittedAt", {
+                          date: submittedDate(proposal.submittedAt),
+                        })}
+                      </span>
                     </div>
 
                     {/* Action buttons */}
@@ -526,7 +558,7 @@ export function ProposalList({
                         className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
                         onClick={() => handleOpenProposalDetail(proposal)}
                       >
-                        View Proposal
+                        {t("viewProposal")}
                       </Button>
 
                       {proposal.status === "PENDING" ? (
@@ -543,7 +575,7 @@ export function ProposalList({
                             ) : (
                               <Check className="mr-1 size-3" />
                             )}
-                            Accept
+                            {t("accept")}
                           </Button>
 
                           <Button
@@ -554,7 +586,7 @@ export function ProposalList({
                             onClick={() => setRejecting(proposal)}
                           >
                             <X className="mr-1 size-3" />
-                            Reject
+                            {t("reject")}
                           </Button>
                         </>
                       ) : null}
@@ -569,7 +601,7 @@ export function ProposalList({
           {totalItems > 0 && totalPages > 1 ? (
             <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
               <p className="font-sans text-xs text-muted-foreground">
-                Page {page} of {totalPages}
+                {tCommon("pageOf", { page, totalPages })}
               </p>
               <div className="flex gap-1.5">
                 <Button
@@ -605,10 +637,12 @@ export function ProposalList({
           <div className="flex flex-col gap-3">
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
-                Reject proposal
+                {t("rejectTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
-                Are you sure you want to reject {rejecting?.freelancer.displayName}&apos;s proposal? This action cannot be undone.
+                {t("rejectHint", {
+                  name: rejecting?.freelancer.displayName ?? "",
+                })}
               </AlertDialogDescription>
             </div>
 
@@ -630,7 +664,9 @@ export function ProposalList({
                       <X className="size-3.5" />
                     )}
                   </div>
-                  <span className="text-xs font-semibold">Reject proposal</span>
+                  <span className="text-xs font-semibold">
+                    {t("rejectTitle")}
+                  </span>
                 </div>
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
@@ -645,7 +681,9 @@ export function ProposalList({
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
-                    <span className="text-xs font-medium">Cancel</span>
+                    <span className="text-xs font-medium">
+                      {tCommon("cancel")}
+                    </span>
                   </div>
                   <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
                 </button>

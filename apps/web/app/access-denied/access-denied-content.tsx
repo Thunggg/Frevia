@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,6 +35,8 @@ export function AccessDeniedContent({
   from,
 }: AccessDeniedContentProps) {
   const router = useRouter();
+  const t = useTranslations("accessDenied");
+  const tRole = useTranslations("roleName");
   const queryClient = useQueryClient();
   const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -68,9 +71,12 @@ export function AccessDeniedContent({
       await authApiRequest.switchRole({ role: targetRole });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toastSuccess({
-        message: `Switched to ${
-          targetRole === RoleName.CLIENT ? "Client" : "Freelancer"
-        } role successfully.`,
+        message: t("switchedRole", {
+          role:
+            targetRole === RoleName.CLIENT
+              ? tRole("CLIENT")
+              : tRole("FREELANCER"),
+        }),
       });
       if (from && from.startsWith("/") && !from.startsWith("//")) {
         router.push(from);
@@ -81,7 +87,7 @@ export function AccessDeniedContent({
       }
       router.refresh();
     } catch {
-      toastError({ message: "Unable to switch role. Please try again." });
+      toastError({ message: t("roleSwitchFailed") });
       setIsSwitchingRole(false);
     }
   };
@@ -108,23 +114,23 @@ export function AccessDeniedContent({
           ? "/admin"
           : "/";
 
-  const currentRoleLabel =
+  const primaryRoleLabel =
     primaryRole === RoleName.CLIENT
-      ? "Client"
+      ? tRole("CLIENT")
       : primaryRole === RoleName.FREELANCER
-        ? "Freelancer"
+        ? tRole("FREELANCER")
         : primaryRole === RoleName.ADMIN
-          ? "Administrator"
-          : "User";
+          ? tRole("ADMIN")
+          : t("userFallback");
 
   const requiredRoleLabel =
     targetRequiredRole === RoleName.CLIENT
-      ? "Client"
+      ? tRole("CLIENT")
       : targetRequiredRole === RoleName.FREELANCER
-        ? "Freelancer"
+        ? tRole("FREELANCER")
         : requiredRole?.toLowerCase() === "admin"
-          ? "Administrator"
-          : "required role";
+          ? tRole("ADMIN")
+          : t("requiredRoleFallback");
 
   const headerRole: UserRole =
     primaryRole === RoleName.CLIENT
@@ -149,18 +155,18 @@ export function AccessDeniedContent({
           </div>
 
           <Badge variant="outline" className="mb-3 px-3 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 border-amber-500/30">
-            403 • Restricted Access
+            {t("badge")}
           </Badge>
 
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Access Denied
+            {t("title")}
           </h1>
 
           {/* Unauthenticated State */}
           {!user ? (
             <div className="mt-4 space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                You must be signed in to access this page. Please sign in with an account that has the required permissions.
+                {t("unauthenticatedMessage")}
               </p>
               <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
@@ -168,11 +174,11 @@ export function AccessDeniedContent({
                   asChild
                 >
                   <Link href={from ? `/login?redirect=${encodeURIComponent(from)}` : "/login"}>
-                    Sign In Now
+                    {t("signInNow")}
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/">Back to Home</Link>
+                  <Link href="/">{t("backHome")}</Link>
                 </Button>
               </div>
             </div>
@@ -197,15 +203,19 @@ export function AccessDeniedContent({
                   <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 </div>
                 <Badge variant="secondary" className="text-xs shrink-0 font-medium">
-                  {currentRoleLabel}
+                  {primaryRoleLabel}
                 </Badge>
               </div>
 
               {/* Message */}
               <p className="text-sm text-muted-foreground leading-relaxed text-left">
-                This area is restricted and requires a{" "}
-                <strong className="text-foreground">{requiredRoleLabel}</strong> account. You are currently operating under the{" "}
-                <strong className="text-foreground">{primaryRole}</strong> role.
+                {t.rich("requiredAccount", {
+                  role: requiredRoleLabel,
+                  current: primaryRoleLabel,
+                  strong: (chunks) => (
+                    <strong className="text-foreground">{chunks}</strong>
+                  ),
+                })}
               </p>
 
               {/* Action Buttons */}
@@ -217,7 +227,7 @@ export function AccessDeniedContent({
                 >
                   <Link href={currentRoleDashboardUrl}>
                     <LayoutDashboard className="mr-2 size-4" />
-                    Go to Your {primaryRole === RoleName.CLIENT ? "Client" : primaryRole === RoleName.FREELANCER ? "Freelancer" : "Admin"} Dashboard
+                    {t("goToDashboard", { role: primaryRoleLabel })}
                     <ArrowRight className="ml-2 size-4" />
                   </Link>
                 </Button>
@@ -235,7 +245,7 @@ export function AccessDeniedContent({
                     ) : (
                       <RefreshCw className="mr-2 size-4" />
                     )}
-                    Switch to {requiredRoleLabel} Role
+                    {t("switchToRole", { role: requiredRoleLabel })}
                   </Button>
                 )}
 
@@ -246,7 +256,7 @@ export function AccessDeniedContent({
                     className="flex-1 text-xs text-muted-foreground hover:text-foreground"
                     asChild
                   >
-                    <Link href="/">Back to Home</Link>
+                    <Link href="/">{t("backHome")}</Link>
                   </Button>
 
                   <Button
@@ -260,7 +270,7 @@ export function AccessDeniedContent({
                     ) : (
                       <LogOut className="mr-1.5 size-3.5" />
                     )}
-                    Switch Account
+                    {t("switchAccount")}
                   </Button>
                 </div>
               </div>

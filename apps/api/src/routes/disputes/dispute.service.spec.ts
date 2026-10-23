@@ -337,11 +337,11 @@ describe('DisputeService', () => {
         decisionReason: 'Work 60% complete based on evidence.',
       } as any);
 
-      const result = await service.adminMakeDecision(99, 'Admin', 5, {
+      const result = (await service.adminMakeDecision(99, 'Admin', 5, {
         freelancerAmount: 300.0,
         clientAmount: 200.0,
         decisionReason: 'Work 60% complete based on evidence.',
-      });
+      }))!;
 
       expect(repo.makeDecisionTransaction).toHaveBeenCalledWith(
         5,
@@ -403,10 +403,10 @@ describe('DisputeService', () => {
         status: DisputeStatus.REVIEW_REQUESTED,
       } as any);
 
-      const result = await service.submitDecisionReview(1, 5, {
+      const result = (await service.submitDecisionReview(1, 5, {
         response: 'REJECTED',
         reason: 'The split does not cover the completed milestone deliverable.',
-      });
+      }))!;
 
       expect(repo.upsertDecisionReview).toHaveBeenCalledWith(
         5,
@@ -477,9 +477,9 @@ describe('DisputeService', () => {
         status: DisputeStatus.FINALIZED,
       } as any);
 
-      const result = await service.submitDecisionReview(1, 5, {
+      const result = (await service.submitDecisionReview(1, 5, {
         response: 'ACCEPTED',
-      });
+      }))!;
 
       expect(repo.finalizeDisputeTransaction).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -509,11 +509,11 @@ describe('DisputeService', () => {
         decisionReason: 'Final 50/50 split resolution',
       } as any);
 
-      const result = await service.adminFinalDecision(99, 'Admin', 5, {
+      const result = (await service.adminFinalDecision(99, 'Admin', 5, {
         freelancerAmount: 250.0,
         clientAmount: 250.0,
         decisionReason: 'Final 50/50 split resolution',
-      });
+      }))!;
 
       expect(repo.finalizeDisputeTransaction).toHaveBeenCalledWith(
         expect.objectContaining({

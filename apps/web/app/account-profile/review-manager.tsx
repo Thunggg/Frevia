@@ -39,51 +39,52 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 const initialBreakdown = { quality: "5", communication: "5", deadlines: "5" };
-const breakdownLabels: Record<keyof typeof initialBreakdown, string> = {
-  quality: "Work quality",
-  communication: "Communication",
-  deadlines: "Deadline reliability",
+const BREAKDOWN_KEYS: Record<keyof typeof initialBreakdown, string> = {
+  quality: "breakdownQuality",
+  communication: "breakdownCommunication",
+  deadlines: "breakdownDeadlines",
 };
 
-function errorMessage(error: unknown) {
+/**
+ * Lỗi từ ApiFail đi qua proxy BFF đã được dịch sẵn (error.details[].message
+ * chứa key i18n), nên GIỮ NGUYÊN. Mọi lỗi khác (TypeError khi mất mạng...) là
+ * text tiếng Anh do runtime sinh ra nên trả về fallback đã dịch.
+ */
+function errorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiFail) {
     return error.response.error.details?.[0]?.message ?? error.message;
   }
-  return error instanceof Error ? error.message : "Something went wrong.";
+  return fallback;
 }
 
-function reviewUserName(review: ReviewType, key: "reviewer" | "reviewee") {
-  return review[key].profile?.displayName?.trim() || "Frevia member";
+function reviewUserName(
+  review: ReviewType,
+  key: "reviewer" | "reviewee",
+  fallback: string,
+) {
+  return review[key].profile?.displayName?.trim() || fallback;
 }
 
-function responseUserName(review: ReviewType) {
-  return review.response?.user.profile?.displayName?.trim() || "Frevia member";
+function responseUserName(review: ReviewType, fallback: string) {
+  return review.response?.user.profile?.displayName?.trim() || fallback;
 }
 
 function contractUserName(
   contract: ContractDetailType,
   key: "client" | "freelancer",
+  fallback: string,
 ) {
-  return contract[key].profile?.displayName?.trim() || "Frevia member";
+  return contract[key].profile?.displayName?.trim() || fallback;
 }
 
-function formatDate(value: string | Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
-function ReviewSkeleton() {
+function ReviewSkeleton({ label }: { label: string }) {
   return (
-    <div className="space-y-4" aria-label="Loading reviews">
+    <div className="space-y-4" aria-label={label}>
       {[0, 1].map((item) => (
         <div key={item} className="rounded-xl border border-border p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
@@ -103,6 +104,31 @@ function ReviewSkeleton() {
 
 export function ReviewManager({ userId }: { userId: number }) {
   const searchParams = useSearchParams();
+  const t = useTranslations("reviewManager");
+  const tSettings = useTranslations("clientProfileSettings");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  // Bọc trong useCallback để effect bên dưới có thể phụ thuộc mà không lặp vô hạn.
+  const toMessage = useCallback(
+    (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
+    [tSettings],
+  );
+
+  const memberFallback = t("memberFallback");
+  const breakdownLabel = (key: string) =>
+    key in BREAKDOWN_KEYS
+      ? t(BREAKDOWN_KEYS[key as keyof typeof BREAKDOWN_KEYS])
+      : key;
+  const formatDate = (value: string | Date) =>
+    format.dateTime(new Date(value), {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   const requestedContractId = Number(searchParams.get("contractId"));
   const [contracts, setContracts] = useState<ContractDetailType[]>([]);
   const [contractsLoading, setContractsLoading] = useState(true);
@@ -132,8 +158,8 @@ export function ReviewManager({ userId }: { userId: number }) {
     reviews.find((review) => review.reviewerId === userId) ?? null;
   const counterpart = selectedContract
     ? selectedContract.clientId === userId
-      ? contractUserName(selectedContract, "freelancer")
-      : contractUserName(selectedContract, "client")
+      ? contractUserName(selectedContract, "freelancer", memberFallback)
+      : contractUserName(selectedContract, "client", memberFallback)
     : null;
 
   const replaceReview = (review: ReviewType) =>
@@ -172,11 +198,11 @@ export function ReviewManager({ userId }: { userId: number }) {
             if (cancelled) return;
             setReviews(reviewResponse.data);
           } catch (error) {
-            if (!cancelled) setReviewsError(errorMessage(error));
+            if (!cancelled) setReviewsError(toMessage(error));
           }
         }
       } catch (error) {
-        if (!cancelled) setContractsError(errorMessage(error));
+        if (!cancelled) setContractsError(toMessage(error));
       } finally {
         if (!cancelled) {
           setContractsLoading(false);
@@ -189,7 +215,7 @@ export function ReviewManager({ userId }: { userId: number }) {
     return () => {
       cancelled = true;
     };
-  }, [requestedContractId]);
+  }, [requestedContractId, toMessage]);
 
   const loadReviews = async (nextContractId: number) => {
     setContractId(nextContractId);
@@ -203,7 +229,7 @@ export function ReviewManager({ userId }: { userId: number }) {
       const response = await reviewApi.list(nextContractId);
       setReviews(response.data);
     } catch (error) {
-      const message = errorMessage(error);
+      const message = toMessage(error);
       setReviewsError(message);
       toastError({ message });
     } finally {
@@ -229,17 +255,17 @@ export function ReviewManager({ userId }: { userId: number }) {
       if (editingId) {
         const response = await reviewApi.update(editingId, body);
         replaceReview(response.data);
-        toastSuccess({ message: "Review updated." });
+        toastSuccess({ message: t("reviewUpdated") });
       } else {
         const response = await reviewApi.create(contractId, body);
         setReviews((current) => [response.data, ...current]);
         toastSuccess({
-          message: "Review submitted. The recipient was notified.",
+          message: t("reviewSubmitted"),
         });
       }
       resetReviewForm();
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -270,10 +296,10 @@ export function ReviewManager({ userId }: { userId: number }) {
         current.filter((item) => item.id !== deleteReviewId),
       );
       if (editingId === deleteReviewId) resetReviewForm();
-      toastSuccess({ message: "Review deleted." });
+      toastSuccess({ message: t("reviewDeleted") });
       setDeleteReviewId(null);
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -290,7 +316,7 @@ export function ReviewManager({ userId }: { userId: number }) {
       replaceReview(response.data);
       setExpandedId(reviewId);
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -310,10 +336,10 @@ export function ReviewManager({ userId }: { userId: number }) {
       setEditingResponseId(null);
       setResponseText("");
       toastSuccess({
-        message: responseId ? "Response updated." : "Response posted.",
+        message: responseId ? t("responseUpdated") : t("responsePosted"),
       });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -326,9 +352,9 @@ export function ReviewManager({ userId }: { userId: number }) {
       await reviewApi.removeResponse(review.response.id);
       replaceReview({ ...review, response: null });
       setDeleteResponseReviewId(null);
-      toastSuccess({ message: "Response deleted." });
+      toastSuccess({ message: t("responseDeleted") });
     } catch (error) {
-      toastError({ message: errorMessage(error) });
+      toastError({ message: toMessage(error) });
     } finally {
       setPending(null);
     }
@@ -343,23 +369,24 @@ export function ReviewManager({ userId }: { userId: number }) {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-foreground">
-              Completed contract reviews
+              {t("completedTitle")}
             </h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Select a completed contract to review the other participant or
-              manage feedback already submitted.
+              {t("completedHint")}
             </p>
           </div>
         </div>
 
         <div className="mt-5 space-y-2">
-          <Label htmlFor="review-contract">Completed contract</Label>
+          <Label htmlFor="review-contract">
+            {t("completedContractLabel")}
+          </Label>
           {contractsLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : contractsError ? (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
               <p className="text-sm font-medium text-destructive">
-                Could not load completed contracts
+                {t("couldNotLoadContracts")}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {contractsError}
@@ -371,12 +398,15 @@ export function ReviewManager({ userId }: { userId: number }) {
               onValueChange={(value) => void loadReviews(Number(value))}
             >
               <SelectTrigger id="review-contract" className="h-10">
-                <SelectValue placeholder="Choose a completed contract" />
+                <SelectValue placeholder={t("chooseContractPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {contracts.map((contract) => (
                   <SelectItem key={contract.id} value={String(contract.id)}>
-                    #{contract.id} - {contract.job.title}
+                    {t("contractOption", {
+                      id: contract.id,
+                      title: contract.job.title,
+                    })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -384,10 +414,10 @@ export function ReviewManager({ userId }: { userId: number }) {
           ) : (
             <div className="rounded-lg border border-dashed border-border px-5 py-8 text-center">
               <p className="text-sm font-medium text-foreground">
-                No completed contracts yet
+                {t("noCompletedContracts")}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Reviews become available after a contract is completed.
+                {t("noCompletedContractsHint")}
               </p>
             </div>
           )}
@@ -398,11 +428,15 @@ export function ReviewManager({ userId }: { userId: number }) {
             <span className="font-medium text-foreground">
               {selectedContract.job.title}
             </span>
-            <span>Reviewing: {counterpart}</span>
+            <span>
+              {t("reviewing", { name: counterpart ?? memberFallback })}
+            </span>
             {selectedContract.completedAt ? (
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="size-4" aria-hidden="true" />
-                Completed {formatDate(selectedContract.completedAt)}
+                {t("completedAt", {
+                  date: formatDate(selectedContract.completedAt),
+                })}
               </span>
             ) : null}
           </div>
@@ -411,11 +445,11 @@ export function ReviewManager({ userId }: { userId: number }) {
 
       {contractId ? (
         pending === "load" ? (
-          <ReviewSkeleton />
+          <ReviewSkeleton label={t("loadingReviewsAria")} />
         ) : reviewsError ? (
           <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
             <p className="font-medium text-destructive">
-              Could not load reviews
+              {t("couldNotLoadReviews")}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">{reviewsError}</p>
             <Button
@@ -424,7 +458,7 @@ export function ReviewManager({ userId }: { userId: number }) {
               className="mt-4"
               onClick={() => void loadReviews(contractId)}
             >
-              Try again
+              {tSettings("tryAgain")}
             </Button>
           </div>
         ) : (
@@ -437,11 +471,10 @@ export function ReviewManager({ userId }: { userId: number }) {
                 <div>
                   <div className="flex items-center gap-2 text-[#3f9225] dark:text-[#7ad75d]">
                     <CheckCircle2 className="size-5" aria-hidden="true" />
-                    <h2 className="font-semibold">Your review was submitted</h2>
+                    <h2 className="font-semibold">{t("ownReviewTitle")}</h2>
                   </div>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Each participant can submit one review per contract. You can
-                    still edit or delete your review from the list.
+                    {t("ownReviewHint")}
                   </p>
                   <Button
                     type="button"
@@ -449,21 +482,25 @@ export function ReviewManager({ userId }: { userId: number }) {
                     className="mt-4"
                     onClick={() => startEdit(ownReview)}
                   >
-                    <Pencil aria-hidden="true" /> Edit your review
+                    <Pencil aria-hidden="true" /> {t("editYourReview")}
                   </Button>
                 </div>
               ) : (
                 <>
                   <h2 className="text-lg font-semibold text-foreground">
-                    {editingId ? "Edit your review" : `Review ${counterpart}`}
+                    {editingId
+                      ? t("editYourReview")
+                      : t("reviewCounterpart", {
+                          name: counterpart ?? memberFallback,
+                        })}
                   </h2>
                   <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                    Share specific, respectful feedback based on this contract.
+                    {t("feedbackHint")}
                   </p>
                   <form className="mt-5 space-y-5" onSubmit={submitReview}>
                     <fieldset className="space-y-2">
                       <legend className="text-sm font-medium">
-                        Overall rating
+                        {t("overallRating")}
                       </legend>
                       <div className="flex gap-1" role="radiogroup">
                         {[1, 2, 3, 4, 5].map((value) => {
@@ -474,7 +511,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                               type="button"
                               role="radio"
                               aria-checked={Number(rating) === value}
-                              aria-label={`${value} star${value === 1 ? "" : "s"}`}
+                              aria-label={t("starAria", { count: value })}
                               className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[#4fae2e]/10 hover:text-[#3f9225] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/40 active:scale-95 dark:hover:text-[#7ad75d]"
                               onClick={() => setRating(String(value))}
                             >
@@ -491,11 +528,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                     {Object.entries(breakdown).map(([key, value]) => (
                       <div className="space-y-2" key={key}>
                         <Label htmlFor={`rating-${key}`}>
-                          {
-                            breakdownLabels[
-                              key as keyof typeof initialBreakdown
-                            ]
-                          }
+                          {breakdownLabel(key)}
                         </Label>
                         <Input
                           id={`rating-${key}`}
@@ -516,17 +549,17 @@ export function ReviewManager({ userId }: { userId: number }) {
                     ))}
 
                     <div className="space-y-2">
-                      <Label htmlFor="review-comment">Comment</Label>
+                      <Label htmlFor="review-comment">{t("commentLabel")}</Label>
                       <Textarea
                         id="review-comment"
                         maxLength={3000}
                         rows={5}
-                        placeholder="Describe what went well and what could improve."
+                        placeholder={t("commentPlaceholder")}
                         value={comment}
                         onChange={(event) => setComment(event.target.value)}
                       />
                       <p className="text-xs text-muted-foreground">
-                        {comment.length}/3000 characters
+                        {t("characters", { count: comment.length })}
                       </p>
                     </div>
 
@@ -549,7 +582,9 @@ export function ReviewManager({ userId }: { userId: number }) {
                         ) : (
                           <Plus aria-hidden="true" />
                         )}
-                        {editingId ? "Save changes" : "Submit review"}
+                        {editingId
+                          ? tSettings("saveChanges")
+                          : t("submitReview")}
                       </Button>
                       {editingId ? (
                         <Button
@@ -557,7 +592,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                           variant="ghost"
                           onClick={resetReviewForm}
                         >
-                          Cancel
+                          {tCommon("cancel")}
                         </Button>
                       ) : null}
                     </div>
@@ -572,10 +607,10 @@ export function ReviewManager({ userId }: { userId: number }) {
                   id="contract-review-list-heading"
                   className="text-lg font-semibold text-foreground"
                 >
-                  Contract feedback
+                  {t("contractFeedback")}
                 </h2>
                 <Badge variant="secondary">
-                  {reviews.length} review{reviews.length === 1 ? "" : "s"}
+                  {t("reviewCount", { count: reviews.length })}
                 </Badge>
               </div>
 
@@ -589,14 +624,24 @@ export function ReviewManager({ userId }: { userId: number }) {
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                           <p className="font-semibold text-foreground">
-                            {reviewUserName(review, "reviewer")} reviewed{" "}
-                            {reviewUserName(review, "reviewee")}
+                            {t("reviewedBy", {
+                              reviewer: reviewUserName(
+                                review,
+                                "reviewer",
+                                memberFallback,
+                              ),
+                              reviewee: reviewUserName(
+                                review,
+                                "reviewee",
+                                memberFallback,
+                              ),
+                            })}
                           </p>
                           <p className="mt-1 text-xs text-muted-foreground">
                             {formatDate(review.createdAt)}
                             {new Date(review.updatedAt).getTime() !==
                             new Date(review.createdAt).getTime()
-                              ? " - Edited"
+                              ? t("editedSuffix")
                               : ""}
                           </p>
                         </div>
@@ -608,7 +653,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                           <span className="font-semibold">
                             {review.overallRating.toFixed(1)}
                           </span>
-                          <span className="sr-only">out of 5</span>
+                          <span className="sr-only">{t("outOf5")}</span>
                         </div>
                       </div>
 
@@ -618,7 +663,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                         </p>
                       ) : (
                         <p className="mt-4 text-sm italic text-muted-foreground">
-                          No written comment.
+                          {t("noWrittenComment")}
                         </p>
                       )}
 
@@ -627,7 +672,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                           <dl className="grid gap-3 sm:grid-cols-2">
                             <div>
                               <dt className="text-xs text-muted-foreground">
-                                Created
+                                {t("createdLabel")}
                               </dt>
                               <dd className="mt-1 font-medium">
                                 {formatDate(review.createdAt)}
@@ -635,7 +680,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                             </div>
                             <div>
                               <dt className="text-xs text-muted-foreground">
-                                Last updated
+                                {t("lastUpdated")}
                               </dt>
                               <dd className="mt-1 font-medium">
                                 {formatDate(review.updatedAt)}
@@ -650,9 +695,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                                   className="rounded-lg border border-border bg-background px-3 py-2"
                                 >
                                   <p className="text-xs text-muted-foreground">
-                                    {breakdownLabels[
-                                      key as keyof typeof initialBreakdown
-                                    ] ?? key}
+                                    {breakdownLabel(key)}
                                   </p>
                                   <p className="mt-1 font-semibold text-foreground">
                                     {value}/5
@@ -667,7 +710,9 @@ export function ReviewManager({ userId }: { userId: number }) {
                       {review.response ? (
                         <div className="mt-5 border-l-2 border-[#4fae2e] pl-4">
                           <p className="text-xs font-medium text-muted-foreground">
-                            Response from {responseUserName(review)}
+                            {t("responseFrom", {
+                              name: responseUserName(review, memberFallback),
+                            })}
                           </p>
                           <p className="mt-1 whitespace-pre-wrap text-sm text-foreground/80">
                             {review.response.responseText}
@@ -675,7 +720,9 @@ export function ReviewManager({ userId }: { userId: number }) {
                           {new Date(review.response.updatedAt).getTime() >
                           new Date(review.response.createdAt).getTime() ? (
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Edited {formatDate(review.response.updatedAt)}
+                              {t("editedAt", {
+                                date: formatDate(review.response.updatedAt),
+                              })}
                             </p>
                           ) : null}
                           {review.response.userId === userId ? (
@@ -693,7 +740,8 @@ export function ReviewManager({ userId }: { userId: number }) {
                                   );
                                 }}
                               >
-                                <Pencil aria-hidden="true" /> Edit response
+                                <Pencil aria-hidden="true" />{" "}
+                                {t("editResponse")}
                               </Button>
                               <Button
                                 size="sm"
@@ -706,7 +754,8 @@ export function ReviewManager({ userId }: { userId: number }) {
                                   pending === `response-delete-${review.id}`
                                 }
                               >
-                                <Trash2 aria-hidden="true" /> Delete response
+                                <Trash2 aria-hidden="true" />{" "}
+                                {t("deleteResponse")}
                               </Button>
                             </div>
                           ) : null}
@@ -722,8 +771,8 @@ export function ReviewManager({ userId }: { userId: number }) {
                         >
                           <Label htmlFor={`response-${review.id}`}>
                             {editingResponseId
-                              ? "Edit response"
-                              : "Respond to review"}
+                              ? t("editResponse")
+                              : t("respondToReview")}
                           </Label>
                           <Textarea
                             id={`response-${review.id}`}
@@ -741,7 +790,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                               className="bg-[#4fae2e] text-white hover:bg-[#459928]"
                               disabled={pending === `response-${review.id}`}
                             >
-                              Save response
+                              {t("saveResponse")}
                             </Button>
                             <Button
                               type="button"
@@ -753,7 +802,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                                 setResponseText("");
                               }}
                             >
-                              Cancel
+                              {tCommon("cancel")}
                             </Button>
                           </div>
                         </form>
@@ -775,8 +824,8 @@ export function ReviewManager({ userId }: { userId: number }) {
                             <Eye aria-hidden="true" />
                           )}
                           {expandedId === review.id
-                            ? "Hide detail"
-                            : "View detail"}
+                            ? t("hideDetail")
+                            : t("viewDetail")}
                         </Button>
                         {review.reviewerId === userId ? (
                           <>
@@ -785,7 +834,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                               variant="outline"
                               onClick={() => startEdit(review)}
                             >
-                              <Pencil aria-hidden="true" /> Edit
+                              <Pencil aria-hidden="true" /> {t("edit")}
                             </Button>
                             <Button
                               size="sm"
@@ -793,7 +842,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                               className="text-destructive hover:text-destructive"
                               onClick={() => setDeleteReviewId(review.id)}
                             >
-                              <Trash2 aria-hidden="true" /> Delete
+                              <Trash2 aria-hidden="true" /> {t("delete")}
                             </Button>
                           </>
                         ) : null}
@@ -807,7 +856,8 @@ export function ReviewManager({ userId }: { userId: number }) {
                               setResponseText("");
                             }}
                           >
-                            <MessageSquareReply aria-hidden="true" /> Respond
+                            <MessageSquareReply aria-hidden="true" />{" "}
+                            {t("respond")}
                           </Button>
                         ) : null}
                       </div>
@@ -821,10 +871,12 @@ export function ReviewManager({ userId }: { userId: number }) {
                     aria-hidden="true"
                   />
                   <p className="mt-3 font-medium text-foreground">
-                    No reviews for this contract yet
+                    {t("noReviewsYet")}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Submit constructive feedback for {counterpart}.
+                    {t("noReviewsHint", {
+                      name: counterpart ?? memberFallback,
+                    })}
                   </p>
                 </div>
               )}
@@ -838,10 +890,10 @@ export function ReviewManager({ userId }: { userId: number }) {
             aria-hidden="true"
           />
           <p className="mt-3 font-medium text-foreground">
-            Choose a completed contract
+            {t("choosePrompt")}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Both participants can submit one review and respond to feedback.
+            {t("choosePromptHint")}
           </p>
         </div>
       ) : null}
@@ -854,15 +906,14 @@ export function ReviewManager({ userId }: { userId: number }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this review?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteReviewTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              The review will no longer be visible. It may still be retained for
-              moderation and audit purposes.
+              {t("deleteReviewHint")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={pending?.startsWith("delete-")}>
-              Cancel
+              {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
@@ -877,7 +928,7 @@ export function ReviewManager({ userId }: { userId: number }) {
               ) : (
                 <Trash2 aria-hidden="true" />
               )}
-              Delete review
+              {t("deleteReviewAction")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -893,17 +944,16 @@ export function ReviewManager({ userId }: { userId: number }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this response?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteResponseTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Your response will no longer be visible. You can post a new
-              response to this review later.
+              {t("deleteResponseHint")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={pending?.startsWith("response-delete-")}
             >
-              Cancel
+              {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
@@ -921,7 +971,7 @@ export function ReviewManager({ userId }: { userId: number }) {
               ) : (
                 <Trash2 aria-hidden="true" />
               )}
-              Delete response
+              {t("deleteResponseAction")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

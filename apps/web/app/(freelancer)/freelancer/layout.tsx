@@ -23,11 +23,14 @@ export default async function FreelancerDashboardLayout({
   }
 
   return (
-    <div className="flex h-dvh bg-background font-sans overflow-hidden">
-      <FreelancerSidebar />
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        <main className="flex-1 overflow-y-auto min-h-0 flex flex-col">{children}</main>
+    <>
+      <style>{`html, body { overflow: hidden; }`}</style>
+      <div className="flex h-dvh bg-background font-sans overflow-hidden">
+        <FreelancerSidebar />
+        <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+          <main className="flex-1 overflow-y-auto min-h-0 flex flex-col">{children}</main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

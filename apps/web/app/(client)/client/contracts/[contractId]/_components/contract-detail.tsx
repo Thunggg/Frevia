@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -108,6 +110,27 @@ export function ContractDetail({
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("contractDetail");
+  const tStatus = useTranslations("contractStatus");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+
+  const money = (amount: number) =>
+    format.number(amount, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const formatDate = (date: string | Date | null) =>
+    date
+      ? format.dateTime(new Date(date), {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : t("notSpecified");
 
   const isFreelancer = basePath === "/freelancer";
   const [milestoneToSubmit, setMilestoneToSubmit] =
@@ -293,16 +316,28 @@ export function ContractDetail({
   );
 
   const freelancer = contract.freelancer;
-  const freelancerName = freelancer?.profile?.displayName || "Freelancer";
+  const freelancerName = freelancer?.profile?.displayName || tRole("FREELANCER");
   const avatarUrl = freelancer?.profile?.avatarUrl;
 
   const client = contract.client;
-  const clientName = client?.profile?.displayName || "Client";
+  const clientName = client?.profile?.displayName || tRole("CLIENT");
   const clientAvatarUrl = client?.profile?.avatarUrl;
 
   const isSignedByMe = isFreelancer
     ? contract.signedByFreelancer
     : contract.signedByClient;
+
+  const contractStatusText = (
+    [
+      "ACTIVE",
+      "PENDING_SIGN",
+      "COMPLETED",
+      "CANCELLED",
+      "DISPUTED",
+    ] as readonly string[]
+  ).includes(contract.status)
+    ? tStatus(contract.status)
+    : contract.status;
 
   const handleStartMilestone = async (milestone: MilestoneType) => {
     try {
@@ -314,14 +349,14 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       toastSuccess({
-        message: `Started work on milestone "${milestone.title}"!`,
+        message: t("startedWork", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to start milestone.",
+            : t("startFailed"),
       });
     }
   };
@@ -338,7 +373,7 @@ export function ContractDetail({
         queryKey: ["client-contracts"],
       });
       toastSuccess({
-        message: "You have signed the contract agreement!",
+        message: t("signed"),
       });
       setConfirmSign(false);
     } catch (error) {
@@ -346,7 +381,7 @@ export function ContractDetail({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to sign contract. Please try again.",
+            : t("signFailed"),
       });
     } finally {
       setIsSigning(false);
@@ -363,14 +398,14 @@ export function ContractDetail({
       await queryClient.invalidateQueries({
         queryKey: ["client-contracts"],
       });
-      toastSuccess({ message: "Contract marked as completed!" });
+      toastSuccess({ message: t("completed") });
       setConfirmComplete(false);
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to complete contract. Please try again.",
+            : t("completeFailed"),
       });
     } finally {
       setIsCompleting(false);
@@ -387,7 +422,7 @@ export function ContractDetail({
       await queryClient.invalidateQueries({
         queryKey: ["client-contracts"],
       });
-      toastSuccess({ message: "Contract has been cancelled." });
+      toastSuccess({ message: t("cancelled") });
       setConfirmCancel(false);
       router.push(`${basePath}/contracts`);
     } catch (error) {
@@ -395,7 +430,7 @@ export function ContractDetail({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to cancel contract. Please try again.",
+            : t("cancelFailed"),
       });
     } finally {
       setIsCancelling(false);
@@ -413,14 +448,14 @@ export function ContractDetail({
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: "Milestone removed successfully." });
+      toastSuccess({ message: t("milestoneRemoved") });
       setMilestoneToDelete(null);
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete milestone.",
+            : t("milestoneDeleteFailed"),
       });
     } finally {
       setIsDeletingMilestone(false);
@@ -672,25 +707,25 @@ export function ContractDetail({
       case "ACTIVE":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20">
-            Active
+            {tStatus("ACTIVE")}
           </span>
         );
       case "PENDING_SIGN":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold bg-[#F1F0F5] text-foreground border border-border">
-            Pending Sign
+            {tStatus("PENDING_SIGN")}
           </span>
         );
       case "COMPLETED":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold bg-[#F1F0F5] text-[#0069D3] border border-border">
-            Completed
+            {tStatus("COMPLETED")}
           </span>
         );
       case "CANCELLED":
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold bg-zinc-100 text-zinc-600 border border-zinc-200">
-            Cancelled
+            {tStatus("CANCELLED")}
           </span>
         );
       default:
@@ -724,7 +759,9 @@ export function ContractDetail({
         message:
           error instanceof Error
             ? error.message
-            : `Failed to open conversation with ${isFreelancer ? "client" : "freelancer"}.`,
+            : t("chatFailed", {
+                role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
+              }),
       });
       router.push(`${basePath}/conversations`);
     } finally {
@@ -739,7 +776,7 @@ export function ContractDetail({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
             <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              {contract.job?.title || "Contract Agreement"}
+              {contract.job?.title || t("agreementFallback")}
             </h1>
           </div>
 
@@ -766,7 +803,7 @@ export function ContractDetail({
                     className="cursor-pointer text-xs font-medium"
                   >
                     <Plus className="mr-2 size-3.5" />
-                    Add Milestone
+                    {t("addMilestone")}
                   </DropdownMenuItem>
                 )}
                 {!isFreelancer &&
@@ -777,7 +814,7 @@ export function ContractDetail({
                       className="cursor-pointer text-xs font-medium"
                     >
                       <FileText className="mr-2 size-3.5 text-[#0069D3]" />
-                      Edit Contract Terms
+                      {t("editContractTerms")}
                     </DropdownMenuItem>
                   )}
                 <DropdownMenuItem
@@ -785,7 +822,7 @@ export function ContractDetail({
                   className="cursor-pointer text-xs font-medium"
                 >
                   <FileText className="mr-2 size-3.5" />
-                  View Full Agreement
+                  {t("viewFullAgreement")}
                 </DropdownMenuItem>
                 {!isFreelancer && contract.status === "ACTIVE" && (
                   <DropdownMenuItem
@@ -793,7 +830,7 @@ export function ContractDetail({
                     className="cursor-pointer text-xs font-medium text-emerald-600"
                   >
                     <CheckCircle2 className="mr-2 size-3.5" />
-                    Complete Contract
+                    {t("completeContract")}
                   </DropdownMenuItem>
                 )}
                 {contract.status !== "COMPLETED" &&
@@ -803,7 +840,7 @@ export function ContractDetail({
                       className="cursor-pointer text-xs font-medium text-red-600"
                     >
                       <XCircle className="mr-2 size-3.5" />
-                      Cancel Contract
+                      {t("cancelContract")}
                     </DropdownMenuItem>
                   )}
               </DropdownMenuContent>
@@ -823,7 +860,9 @@ export function ContractDetail({
                 <div className="flex size-8 items-center justify-center text-foreground">
                   <FileText className="size-5" />
                 </div>
-                <h2 className="text-base font-semibold">Contract Details</h2>
+                <h2 className="text-base font-semibold">
+                  {t("detailsTitle")}
+                </h2>
               </div>
               {!isFreelancer &&
                 contract.status === "PENDING_SIGN" &&
@@ -835,7 +874,7 @@ export function ContractDetail({
                     className="rounded-full text-xs gap-1.5 h-8 border-border hover:bg-accent"
                   >
                     <FileText className="size-3.5 text-[#0069D3]" />
-                    Edit Contract
+                    {t("editContract")}
                   </Button>
                 )}
             </div>
@@ -845,7 +884,7 @@ export function ContractDetail({
               <div className="space-y-4">
                 <div>
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    Job
+                    {t("jobLabel")}
                   </span>
                   <Link
                     href={
@@ -855,14 +894,14 @@ export function ContractDetail({
                     }
                     className="text-sm font-semibold text-[#0069D3] hover:underline mt-0.5 inline-block"
                   >
-                    {contract.job?.title || "View Job Posting"}
+                    {contract.job?.title || t("viewJobPosting")}
                   </Link>
                 </div>
 
                 {isFreelancer ? (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                      Client
+                      {tRole("CLIENT")}
                     </span>
                     <Link
                       href={`/clients/${contract.clientId}`}
@@ -879,7 +918,7 @@ export function ContractDetail({
                           {clientName}
                         </span>
                         <span className="text-[11px] text-muted-foreground block">
-                          View Client Profile &rarr;
+                          {t("viewClientProfile")}
                         </span>
                       </div>
                     </Link>
@@ -887,7 +926,7 @@ export function ContractDetail({
                 ) : (
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                      Freelancer
+                      {tRole("FREELANCER")}
                     </span>
                     <div
                       onClick={() => setProfileSheetOpen(true)}
@@ -910,7 +949,7 @@ export function ContractDetail({
 
                 <div>
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    Total Amount
+                    {t("totalAmount")}
                   </span>
                   <span className="text-sm font-bold text-foreground mt-0.5 block">
                     {money(totalContractAmount)}
@@ -919,10 +958,10 @@ export function ContractDetail({
 
                 <div>
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    Payment Method
+                    {t("paymentMethod")}
                   </span>
                   <span className="text-xs font-medium text-foreground mt-0.5 block">
-                    Escrow / Milestone Release
+                    {t("escrowMethod")}
                   </span>
                 </div>
 
@@ -967,11 +1006,10 @@ export function ContractDetail({
               <div className="flex flex-col justify-between space-y-4">
                 <div>
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    Description & Scope
+                    {t("descriptionScope")}
                   </span>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-1 line-clamp-5 whitespace-pre-wrap">
-                    {contract.terms ||
-                      "A modern and responsive delivery plan for this project, including milestones, deliverables, and quality criteria agreed upon between client and freelancer."}
+                    {contract.terms || t("defaultTerms")}
                   </p>
                 </div>
                 {/* Top Dates Row */}
@@ -982,7 +1020,7 @@ export function ContractDetail({
                     </div>
                     <div>
                       <span className="text-[11px] text-muted-foreground block">
-                        Created
+                        {t("created")}
                       </span>
                       <span className="text-foreground">
                         {formatDate(contract.createdAt)}
@@ -996,7 +1034,7 @@ export function ContractDetail({
                     </div>
                     <div>
                       <span className="text-[11px] text-muted-foreground block">
-                        Start Date
+                        {t("startDate")}
                       </span>
                       <span className="text-foreground">
                         {formatDate(contract.signedAt || contract.createdAt)}
@@ -1010,7 +1048,7 @@ export function ContractDetail({
                     </div>
                     <div>
                       <span className="text-[11px] text-muted-foreground block">
-                        Due Date
+                        {t("dueDate")}
                       </span>
                       <span className="text-foreground">
                         {formatDate(contract.expiresAt)}
@@ -1031,13 +1069,13 @@ export function ContractDetail({
                   <Flag className="size-4" />
                 </div>
                 <h2 className="text-base font-bold text-foreground">
-                  Milestones
+                  {t("milestonesTitle")}
                 </h2>
               </div>
 
               <div className="flex items-center gap-3">
                 <span className="text-xs text-muted-foreground font-medium">
-                  {milestones.length} milestone{milestones.length !== 1 ? "s" : ""}
+                  {t("milestoneCount", { count: milestones.length })}
                 </span>
                 {!isFreelancer && (
                   <Button
@@ -1049,7 +1087,7 @@ export function ContractDetail({
                     className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-3.5 shadow-xs"
                   >
                     <Plus className="mr-1 size-3.5" />
-                    Add Milestone
+                    {t("addMilestone")}
                   </Button>
                 )}
               </div>
@@ -1062,12 +1100,12 @@ export function ContractDetail({
                   <Flag className="size-5" />
                 </div>
                 <p className="text-xs font-semibold text-foreground">
-                  No milestones defined yet
+                  {t("noMilestones")}
                 </p>
                 <p className="mt-1 text-[11px] text-muted-foreground max-w-xs">
                   {isFreelancer
-                    ? "The client has not created any milestones for this contract yet."
-                    : "Add phases to break down work and safely release payments."}
+                    ? t("noMilestonesFreelancer")
+                    : t("noMilestonesClient")}
                 </p>
                 {!isFreelancer && (
                   <Button
@@ -1079,7 +1117,7 @@ export function ContractDetail({
                     className="mt-3 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium"
                   >
                     <Plus className="mr-1 size-3" />
-                    Add First Milestone
+                    {t("addFirstMilestone")}
                   </Button>
                 )}
               </div>
@@ -1276,7 +1314,7 @@ export function ContractDetail({
           {/* Card 1: Contract Summary */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
             <h3 className="text-base font-bold text-foreground">
-              Contract Summary
+              {t("summaryTitle")}
             </h3>
 
             <div className="mt-4">
@@ -1284,7 +1322,7 @@ export function ContractDetail({
                 {money(totalContractAmount)}
               </span>
               <span className="text-xs text-muted-foreground block mt-0.5">
-                Total Amount
+                {t("totalAmount")}
               </span>
             </div>
 
@@ -1299,9 +1337,16 @@ export function ContractDetail({
 
               <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
                 <span>
-                  {money(paidAmount)} paid ({percentPaid}%)
+                  {t("paidAmount", {
+                    amount: money(paidAmount),
+                    percent: percentPaid,
+                  })}
                 </span>
-                <span>{money(remainingPaidAmount)} remaining</span>
+                <span>
+                  {t("remainingAmount", {
+                    amount: money(remainingPaidAmount),
+                  })}
+                </span>
               </div>
             </div>
 
@@ -1341,7 +1386,7 @@ export function ContractDetail({
                     className="w-full rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold py-2.5 shadow-xs"
                   >
                     <ShieldCheck className="mr-1.5 size-4" />
-                    Sign Contract Agreement
+                    {t("signAction")}
                   </Button>
                 ) : (
                   <Button
@@ -1350,8 +1395,8 @@ export function ContractDetail({
                   >
                     <Clock className="mr-1.5 size-4" />
                     {isFreelancer
-                      ? "Awaiting Client Signature"
-                      : "Awaiting Freelancer Signature"}
+                      ? t("awaitingClient")
+                      : t("awaitingFreelancer")}
                   </Button>
                 )
               ) : !isFreelancer ? (
@@ -1362,7 +1407,7 @@ export function ContractDetail({
                   }}
                   className="w-full rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold py-2.5 shadow-xs"
                 >
-                  Make a Payment / Add Milestone
+                  {t("addPayment")}
                 </Button>
               ) : null}
 
@@ -1378,7 +1423,11 @@ export function ContractDetail({
                 ) : (
                   <MessageSquare className="size-3.5 text-muted-foreground" />
                 )}
-                <span>Message {isFreelancer ? "Client" : "Freelancer"}</span>
+                <span>
+                  {t("messageRole", {
+                    role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
+                  })}
+                </span>
               </Button>
             </div>
           </div>
@@ -1404,14 +1453,12 @@ export function ContractDetail({
                 <Lightbulb className="size-4" />
               </div>
               <h4 className="text-sm font-bold text-foreground">
-                How milestones work?
+                {t("howTitle")}
               </h4>
             </div>
 
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {isFreelancer
-                ? "Funds are securely deposited in escrow for each active milestone and released automatically once the client reviews and approves your submission."
-                : "Funds are kept secure and released only when you approve each milestone. This ensures both you and the freelancer are protected throughout the project."}
+              {isFreelancer ? t("howFreelancer") : t("howClient")}
             </p>
 
             <div className="pt-1">
@@ -1419,7 +1466,7 @@ export function ContractDetail({
                 type="button"
                 className="text-xs font-semibold text-[#0069D3] hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
-                Learn more &gt;
+                {t("learnMore")}
               </button>
             </div>
           </div>
@@ -1479,6 +1526,7 @@ export function ContractDetail({
       <Sheet open={fullContractOpen} onOpenChange={setFullContractOpen}>
         <SheetContent
           side="right"
+          closeLabel={tCommon("close")}
           className="w-full sm:max-w-lg md:max-w-xl overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
         >
           <div>
@@ -1486,7 +1534,7 @@ export function ContractDetail({
               <div className="flex items-center gap-2 text-foreground">
                 <FileText className="size-5 text-[#0069D3]" />
                 <SheetTitle className="text-lg font-bold">
-                  Contract Agreement #{contract.id}
+                  {t("agreementTitle", { id: contract.id })}
                 </SheetTitle>
               </div>
               <SheetDescription className="mt-1 text-xs text-muted-foreground">
@@ -1498,7 +1546,7 @@ export function ContractDetail({
               <div className="grid grid-cols-2 gap-3 rounded-xl bg-muted/40 p-3">
                 <div>
                   <span className="text-[11px] text-muted-foreground block">
-                    Total Amount
+                    {t("totalAmount")}
                   </span>
                   <span className="font-bold text-foreground">
                     {money(totalContractAmount)}
@@ -1506,21 +1554,20 @@ export function ContractDetail({
                 </div>
                 <div>
                   <span className="text-[11px] text-muted-foreground block">
-                    Status
+                    {t("statusLabel")}
                   </span>
                   <span className="font-semibold text-foreground">
-                    {contract.status}
+                    {contractStatusText}
                   </span>
                 </div>
               </div>
 
               <div>
                 <span className="font-bold text-foreground block mb-1">
-                  Terms of Service & Delivery
+                  {t("termsTitle")}
                 </span>
                 <div className="rounded-xl border border-border bg-card p-4 text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
-                  {contract.terms ||
-                    "Standard Frevia Freelance Contract. Deliverables are submitted per milestone, reviewed by the client, and payments are released accordingly upon satisfaction."}
+                  {contract.terms || t("defaultFullTerms")}
                 </div>
               </div>
             </div>
@@ -1533,14 +1580,18 @@ export function ContractDetail({
         <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
-              Sign Contract Agreement
+              {t("signAction")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              By signing, you formally confirm the scope and budget of{" "}
-              <span className="font-semibold text-foreground">
-                {money(totalContractAmount)}
-              </span>{" "}
-              for this project with {isFreelancer ? clientName : freelancerName}.
+              {t.rich("signHint", {
+                amount: money(totalContractAmount),
+                name: isFreelancer ? clientName : freelancerName,
+                strong: (chunks) => (
+                  <span className="font-semibold text-foreground">
+                    {chunks}
+                  </span>
+                ),
+              })}
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -1553,7 +1604,7 @@ export function ContractDetail({
                 ) : (
                   <ShieldCheck className="mr-1.5 size-3.5" />
                 )}
-                Confirm & Sign Agreement
+                {t("confirmSign")}
               </Button>
               <AlertDialogCancel asChild>
                 <Button
@@ -1561,7 +1612,7 @@ export function ContractDetail({
                   disabled={isSigning}
                   className="w-full rounded-full text-xs"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
               </AlertDialogCancel>
             </div>
@@ -1574,11 +1625,10 @@ export function ContractDetail({
         <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
-              Complete Contract
+              {t("completeContract")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Are you sure you want to mark this contract as completed? All agreed
-              milestones should be reviewed and approved prior to completion.
+              {t("completeHint")}
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -1591,7 +1641,7 @@ export function ContractDetail({
                 ) : (
                   <CheckCircle2 className="mr-1.5 size-3.5" />
                 )}
-                Mark as Completed
+                {t("markCompleted")}
               </Button>
               <AlertDialogCancel asChild>
                 <Button
@@ -1599,7 +1649,7 @@ export function ContractDetail({
                   disabled={isCompleting}
                   className="w-full rounded-full text-xs"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
               </AlertDialogCancel>
             </div>
@@ -1612,11 +1662,10 @@ export function ContractDetail({
         <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
-              Cancel Contract
+              {t("cancelContract")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Are you sure you want to cancel this contract? This action cannot be
-              undone.
+              {t("cancelHint")}
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -1629,7 +1678,7 @@ export function ContractDetail({
                 ) : (
                   <XCircle className="mr-1.5 size-3.5" />
                 )}
-                Confirm Cancellation
+                {t("confirmCancel")}
               </Button>
               <AlertDialogCancel asChild>
                 <Button
@@ -1637,7 +1686,7 @@ export function ContractDetail({
                   disabled={isCancelling}
                   className="w-full rounded-full text-xs"
                 >
-                  Go Back
+                  {t("goBack")}
                 </Button>
               </AlertDialogCancel>
             </div>
@@ -1653,11 +1702,12 @@ export function ContractDetail({
         <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
-              Delete Milestone
+              {t("deleteMilestone")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Remove &ldquo;{milestoneToDelete?.title}&rdquo;? The allocated amount
-              will return to your unallocated budget.
+              {t("deleteMilestoneHint", {
+                title: milestoneToDelete?.title ?? "",
+              })}
             </AlertDialogDescription>
             <div className="mt-2 flex flex-col gap-2">
               <Button
@@ -1670,7 +1720,7 @@ export function ContractDetail({
                 ) : (
                   <Trash2 className="mr-1.5 size-3.5" />
                 )}
-                Delete Milestone
+                {t("deleteMilestone")}
               </Button>
               <AlertDialogCancel asChild>
                 <Button
@@ -1678,7 +1728,7 @@ export function ContractDetail({
                   disabled={isDeletingMilestone}
                   className="w-full rounded-full text-xs"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
               </AlertDialogCancel>
             </div>

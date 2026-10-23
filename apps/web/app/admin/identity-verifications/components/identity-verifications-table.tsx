@@ -2,7 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { formatDate, formatDateTime } from "@/lib/format";
 import {
   Table,
   TableBody,
@@ -58,35 +60,34 @@ interface IdentityVerificationsTableProps {
   currentStatus?: string;
 }
 
+const documentTypeKeys = [
+  "ID_CARD",
+  "PASSPORT",
+  "DRIVER_LICENSE",
+  "RESIDENCE_PERMIT",
+  "OTHER",
+] as const;
+
+type DocumentTypeKey = (typeof documentTypeKeys)[number];
+
 const statusConfig: Record<
   string,
-  { label: string; color: string; icon: React.ElementType }
+  { color: string; icon: React.ElementType }
 > = {
   PENDING: {
-    label: "Pending",
     color:
       "border-amber-500/30 bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
     icon: Clock,
   },
   APPROVED: {
-    label: "Approved",
     color:
       "border-[#4fae2e]/30 bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15",
     icon: CheckCircle,
   },
   REJECTED: {
-    label: "Rejected",
     color: "border-destructive/30 bg-destructive/10 text-destructive",
     icon: XCircle,
   },
-};
-
-const documentTypeLabels: Record<string, string> = {
-  PASSPORT: "Passport",
-  ID_CARD: "ID Card",
-  DRIVER_LICENSE: "Driver License",
-  RESIDENCE_PERMIT: "Residence Permit",
-  OTHER: "Other",
 };
 
 export function IdentityVerificationsTable({
@@ -94,10 +95,25 @@ export function IdentityVerificationsTable({
   pagination,
   currentStatus,
 }: IdentityVerificationsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminIdentityVerifications");
+  const tCommon = useTranslations("adminCommon");
+  const tDocumentType = useTranslations("documentType");
   const router = useRouter();
   const [viewing, setViewing] = useState<DocumentItem | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [acting, setActing] = useState<"approve" | "reject" | null>(null);
+
+  const statusLabel = (status: string) => {
+    if (status === "PENDING") return tCommon("pending");
+    if (status === "APPROVED") return tCommon("approved");
+    return tCommon("rejected");
+  };
+
+  const documentTypeLabel = (value: string) =>
+    documentTypeKeys.includes(value as DocumentTypeKey)
+      ? tDocumentType(value as DocumentTypeKey)
+      : value;
 
   const handleTabChange = useCallback(
     (value: string) => {
@@ -122,18 +138,18 @@ export function IdentityVerificationsTable({
           document.id,
           reviewNotes.trim() || null,
         );
-        toastSuccess({ message: "Identity verification approved" });
+        toastSuccess({ message: t("approvedToast") });
       } else {
         await adminApiRequest.rejectIdentityVerification(
           document.id,
           reviewNotes.trim() || null,
         );
-        toastSuccess({ message: "Identity verification rejected" });
+        toastSuccess({ message: t("rejectedToast") });
       }
       setViewing(null);
       router.refresh();
     } catch {
-      toastError({ message: "Couldn't update the request. Try again." });
+      toastError({ message: t("actionFailed") });
     } finally {
       setActing(null);
     }
@@ -145,12 +161,10 @@ export function IdentityVerificationsTable({
     <div className="space-y-4">
       <Tabs value={displayStatus} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          {Object.entries(statusConfig).map(([key, config]) => (
-            <TabsTrigger key={key} value={key}>
-              {config.label}
-            </TabsTrigger>
-          ))}
+          <TabsTrigger value="all">{tCommon("all")}</TabsTrigger>
+          <TabsTrigger value="PENDING">{tCommon("pending")}</TabsTrigger>
+          <TabsTrigger value="APPROVED">{tCommon("approved")}</TabsTrigger>
+          <TabsTrigger value="REJECTED">{tCommon("rejected")}</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -158,12 +172,12 @@ export function IdentityVerificationsTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">ID</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Document Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{tCommon("name")}</TableHead>
+              <TableHead>{t("colDocumentType")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colSubmitted")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -173,7 +187,7 @@ export function IdentityVerificationsTable({
                   colSpan={6}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  No verification requests found.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -211,8 +225,7 @@ export function IdentityVerificationsTable({
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {documentTypeLabels[document.documentType] ??
-                        document.documentType}
+                      {documentTypeLabel(document.documentType)}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -220,11 +233,11 @@ export function IdentityVerificationsTable({
                         className={`${config?.color} border`}
                       >
                         <StatusIcon className="h-3 w-3 mr-1" />
-                        {config?.label}
+                        {statusLabel(document.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                      {new Date(document.createdAt).toLocaleDateString()}
+                      {formatDate(document.createdAt, locale)}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end">
@@ -233,6 +246,7 @@ export function IdentityVerificationsTable({
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => openDetail(document)}
+                          aria-label={t("viewRequestLabel", { id: document.id })}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -262,7 +276,7 @@ export function IdentityVerificationsTable({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 pr-8">
               <ShieldCheck className="h-4 w-4 text-[#4fae2e]" />
-              ID Verification Request #{viewing?.id}
+              {t("dialogTitle", { id: viewing?.id ?? "" })}
             </DialogTitle>
           </DialogHeader>
           {viewing && (
@@ -290,39 +304,33 @@ export function IdentityVerificationsTable({
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="border-border bg-muted">
-                    {documentTypeLabels[viewing.documentType] ??
-                      viewing.documentType}
+                    {documentTypeLabel(viewing.documentType)}
                   </Badge>
                   <Badge
                     variant="outline"
                     className={`${statusConfig[viewing.status]?.color} border`}
                   >
-                    {statusConfig[viewing.status]?.label}
+                    {statusLabel(viewing.status)}
                   </Badge>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                Submitted{" "}
-                {new Date(viewing.createdAt).toLocaleString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
+                {t("submittedAt", {
+                  date: formatDateTime(viewing.createdAt, locale),
                 })}
               </div>
 
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  Document
+                  {t("documentHeading")}
                 </p>
                 <div className="overflow-hidden rounded-lg border bg-muted/40">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={viewing.fileUrl}
-                    alt="Identity document"
+                    alt={t("documentAlt")}
                     className="max-h-[320px] w-full object-contain"
                   />
                 </div>
@@ -331,7 +339,7 @@ export function IdentityVerificationsTable({
               {viewing.reviewNotes && (
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                    Review Notes
+                    {t("reviewNotesHeading")}
                   </p>
                   <div className="rounded-lg bg-muted/50 p-4">
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -346,12 +354,14 @@ export function IdentityVerificationsTable({
               {viewing.status === "PENDING" && (
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="review-notes">Review Notes</Label>
+                    <Label htmlFor="review-notes">
+                      {t("reviewNotesLabel")}
+                    </Label>
                     <Textarea
                       id="review-notes"
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
-                      placeholder="Optional..."
+                      placeholder={t("reviewNotesPlaceholder")}
                       rows={3}
                     />
                   </div>
@@ -362,14 +372,18 @@ export function IdentityVerificationsTable({
                       onClick={() => handleAction(viewing, "reject")}
                     >
                       <FileX className="h-4 w-4 mr-1.5" />
-                      {acting === "reject" ? "Rejecting..." : "Reject"}
+                      {acting === "reject"
+                        ? t("rejectingAction")
+                        : t("rejectAction")}
                     </Button>
                     <Button
                       disabled={acting === "approve"}
                       onClick={() => handleAction(viewing, "approve")}
                     >
                       <FileCheck className="h-4 w-4 mr-1.5" />
-                      {acting === "approve" ? "Approving..." : "Approve"}
+                      {acting === "approve"
+                        ? t("approvingAction")
+                        : t("approveAction")}
                     </Button>
                   </DialogFooter>
                 </div>

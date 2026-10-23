@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { UpdateCategoryDialog } from "../../components/update-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
 
@@ -11,6 +12,7 @@ export function EditCategoryButton({
 }: {
   category: ForumCategoryType;
 }) {
+  const t = useTranslations("adminCategories");
   const [open, setOpen] = useState(false);
 
   return (
@@ -22,7 +24,7 @@ export function EditCategoryButton({
         className="gap-2"
       >
         <Pencil className="h-4 w-4" />
-        Edit Category
+        {t("editTrigger")}
       </Button>
       <UpdateCategoryDialog
         category={category}

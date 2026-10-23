@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -42,6 +43,9 @@ export function SubmitMilestoneDialog({
   onOpenChange,
 }: SubmitMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("submitMilestone");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [message, setMessage] = useState("");
@@ -66,7 +70,7 @@ export function SubmitMilestoneDialog({
         setLinkInput("");
       }
     } catch {
-      toastError({ message: "Please enter a valid URL (including https://)" });
+      toastError({ message: t("invalidUrl") });
     }
   };
 
@@ -83,7 +87,7 @@ export function SubmitMilestoneDialog({
 
     // Max 25MB check
     if (file.size > 25 * 1024 * 1024) {
-      toastError({ message: "File size exceeds 25MB limit" });
+      toastError({ message: t("uploadTooLarge") });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -97,13 +101,13 @@ export function SubmitMilestoneDialog({
       );
       const uploaded = extractContractData(response);
       setUploadedFiles((prev) => [...prev, uploaded]);
-      toastSuccess({ message: `Uploaded "${file.name}"` });
+      toastSuccess({ message: t("uploaded", { name: file.name }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to upload file. Please try again.",
+            : t("uploadFailed"),
       });
     } finally {
       setIsUploadingFile(false);
@@ -129,8 +133,7 @@ export function SubmitMilestoneDialog({
     e.preventDefault();
     if (!message.trim() && links.length === 0 && uploadedFiles.length === 0) {
       toastError({
-        message:
-          "Please provide deliverable notes, preview links, or attach files.",
+        message: t("missingContent"),
       });
       return;
     }
@@ -151,9 +154,7 @@ export function SubmitMilestoneDialog({
       });
 
       toastSuccess({
-        message: isResubmission
-          ? "Deliverables resubmitted for client review!"
-          : "Deliverables submitted for client review!",
+        message: isResubmission ? t("resubmitted") : t("submitted"),
       });
 
       // Reset form
@@ -167,7 +168,7 @@ export function SubmitMilestoneDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to submit deliverables. Please try again.",
+            : t("submitFailed"),
       });
     } finally {
       setIsSubmitting(false);
@@ -179,11 +180,16 @@ export function SubmitMilestoneDialog({
       <DialogContent className="sm:max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold">
-            {isResubmission ? "Resubmit Deliverables" : "Submit Deliverables"}
+            {isResubmission ? t("titleResubmit") : t("titleSubmit")}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
-            Milestone: <strong className="text-foreground">{milestone.title}</strong> (
-            ${Number(milestone.amount).toLocaleString()})
+            {t.rich("milestoneLabel", {
+              title: milestone.title,
+              amount: format.number(Number(milestone.amount)),
+              strong: (chunks) => (
+                <strong className="text-foreground">{chunks}</strong>
+              ),
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -191,10 +197,10 @@ export function SubmitMilestoneDialog({
           {/* Notes / Message */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-foreground">
-              Work Notes & Deliverable Summary
+              {t("notesLabel")}
             </label>
             <Textarea
-              placeholder="Describe what you completed, results achieved, or instructions for the client..."
+              placeholder={t("notesPlaceholder")}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
@@ -205,14 +211,14 @@ export function SubmitMilestoneDialog({
           {/* Links (e.g. Figma, GitHub, Live Demo, Google Drive) */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground">
-              Project & Preview Links (Optional)
+              {t("linksLabel")}
             </label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                 <Input
                   type="url"
-                  placeholder="https://github.com/..., https://figma.com/..."
+                  placeholder={t("linksPlaceholder")}
                   value={linkInput}
                   onChange={(e) => setLinkInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -232,7 +238,7 @@ export function SubmitMilestoneDialog({
                 className="rounded-xl text-xs shrink-0"
               >
                 <Plus className="mr-1 size-3.5" />
-                Add
+                {t("addLink")}
               </Button>
             </div>
 
@@ -251,7 +257,7 @@ export function SubmitMilestoneDialog({
                       type="button"
                       onClick={() => handleRemoveLink(idx)}
                       className="text-muted-foreground hover:text-destructive cursor-pointer p-1"
-                      title="Remove link"
+                      title={t("removeLink")}
                     >
                       <X className="size-3.5" />
                     </button>
@@ -264,7 +270,7 @@ export function SubmitMilestoneDialog({
           {/* File Attachments */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground">
-              Attach Deliverable Files (Optional)
+              {t("filesLabel")}
             </label>
 
             <input
@@ -289,10 +295,10 @@ export function SubmitMilestoneDialog({
                 ) : (
                   <Upload className="size-3.5" />
                 )}
-                <span>Upload Deliverable File</span>
+                <span>{t("uploadFile")}</span>
               </Button>
               <span className="text-[11px] text-muted-foreground">
-                ZIP, PDF, images, etc. (max 25MB)
+                {t("fileHint")}
               </span>
             </div>
 
@@ -312,7 +318,7 @@ export function SubmitMilestoneDialog({
                       type="button"
                       onClick={() => void handleRemoveFile(f)}
                       className="text-muted-foreground hover:text-destructive cursor-pointer p-1"
-                      title="Remove file"
+                      title={t("removeFile")}
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -331,7 +337,7 @@ export function SubmitMilestoneDialog({
               disabled={isSubmitting || isUploadingFile}
               className="rounded-xl text-xs"
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -344,7 +350,7 @@ export function SubmitMilestoneDialog({
               ) : (
                 <Send className="mr-1.5 size-3.5" />
               )}
-              {isResubmission ? "Resubmit Work" : "Submit Work"}
+              {isResubmission ? t("resubmitAction") : t("submitAction")}
             </Button>
           </DialogFooter>
         </form>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Send } from "@/components/icons";
 
@@ -19,6 +20,7 @@ export function ContactDialog({
 }: {
   triggerClassName?: string;
 } = {}) {
+  const t = useTranslations("contactDialog");
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -65,15 +67,13 @@ export function ContactDialog({
             "rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
           }
         >
-          Contact
+          {t("trigger")}
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-foreground">Get in touch</DialogTitle>
-          <DialogDescription>
-            Send us a message and we&apos;ll get back to you shortly.
-          </DialogDescription>
+          <DialogTitle className="text-foreground">{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         {sent ? (
@@ -81,9 +81,11 @@ export function ContactDialog({
             <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#4fae2e]/10">
               <Send className="size-5 text-[#4fae2e]" />
             </div>
-            <p className="text-sm font-medium text-foreground">Message sent</p>
+            <p className="text-sm font-medium text-foreground">
+              {t("sentTitle")}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Thank you! We&apos;ll be in touch soon.
+              {t("sentHint")}
             </p>
           </div>
         ) : (
@@ -94,14 +96,14 @@ export function ContactDialog({
                   htmlFor="contact-name"
                   className="text-xs font-medium text-muted-foreground"
                 >
-                  Name
+                  {t("name")}
                 </label>
                 <input
                   id="contact-name"
                   name="name"
                   required
                   className="h-9 w-full rounded-lg border border-border/60 bg-white/60 px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:focus:border-[#4fae2e]/40 dark:focus:ring-[#4fae2e]/15"
-                  placeholder="Your name"
+                  placeholder={t("namePlaceholder")}
                 />
               </div>
               <div className="space-y-1.5">
@@ -109,7 +111,7 @@ export function ContactDialog({
                   htmlFor="contact-email"
                   className="text-xs font-medium text-muted-foreground"
                 >
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   id="contact-email"
@@ -117,7 +119,7 @@ export function ContactDialog({
                   type="email"
                   required
                   className="h-9 w-full rounded-lg border border-border/60 bg-white/60 px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:focus:border-[#4fae2e]/40 dark:focus:ring-[#4fae2e]/15"
-                  placeholder="you@email.com"
+                  placeholder={t("emailPlaceholder")}
                 />
               </div>
             </div>
@@ -126,14 +128,14 @@ export function ContactDialog({
                 htmlFor="contact-subject"
                 className="text-xs font-medium text-muted-foreground"
               >
-                Subject
+                {t("subject")}
               </label>
               <input
                 id="contact-subject"
                 name="subject"
                 required
                 className="h-9 w-full rounded-lg border border-border/60 bg-white/60 px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:focus:border-[#4fae2e]/40 dark:focus:ring-[#4fae2e]/15"
-                placeholder="How can we help?"
+                placeholder={t("subjectPlaceholder")}
               />
             </div>
             <div className="space-y-1.5">
@@ -141,7 +143,7 @@ export function ContactDialog({
                 htmlFor="contact-message"
                 className="text-xs font-medium text-muted-foreground"
               >
-                Message
+                {t("message")}
               </label>
               <textarea
                 id="contact-message"
@@ -149,7 +151,7 @@ export function ContactDialog({
                 required
                 rows={4}
                 className="w-full resize-none rounded-lg border border-border/60 bg-white/60 px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:border-white/8 dark:bg-white/[0.03] dark:focus:border-[#4fae2e]/40 dark:focus:ring-[#4fae2e]/15"
-                placeholder="Tell us more..."
+                placeholder={t("messagePlaceholder")}
               />
             </div>
             <DialogFooter>
@@ -158,7 +160,7 @@ export function ContactDialog({
                 disabled={sending}
                 className="h-9 rounded-lg bg-[#4fae2e] px-5 text-[13px] font-semibold text-white shadow-sm shadow-[#4fae2e]/20 hover:bg-[#459928] disabled:opacity-50 dark:hover:bg-[#5bc03a]"
               >
-                {sending ? "Sending..." : "Send message"}
+                {sending ? t("sending") : t("send")}
               </Button>
             </DialogFooter>
           </form>

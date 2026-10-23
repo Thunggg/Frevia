@@ -2,6 +2,8 @@ import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import type { SavedSearchType } from "@shared/types";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { FindWorkContent } from "../../find-work/find-work-content";
@@ -18,10 +20,14 @@ type FindWorkPageProps = {
   searchParams: FindWorkSearchParams;
 };
 
-export const metadata = {
-  title: "Find Work | Freelancer Dashboard | Frevia",
-  description: "Browse open projects and apply to work that fits your skills.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("findWork");
+
+  return {
+    title: t("metaTitle"),
+    description: t("subtitle"),
+  };
+}
 
 export default async function FreelancerFindWorkPage({
   searchParams,

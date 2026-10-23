@@ -1,16 +1,17 @@
+import { Injectable } from '@nestjs/common';
 import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import {
+  ExpertProfileMessage,
   RoleName,
   type AdminUpdateExpertProfileType,
   type UpdateExpertProfileType,
 } from '@shared/types';
 import { calculateExpertProfileStrength } from '../../shared/utils/profile-strength';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
+import {
+  ExpertProfileNotFoundException,
+  ExpertProfilePendingRevisionException,
+  NotAnExpertAccountException,
+} from './expert-profile.error';
 import { ExpertProfileRepository } from './expert-profile.repo';
 
 @Injectable()
@@ -42,10 +43,9 @@ export class ExpertProfileService {
 
   private async context(userId: number) {
     const user = await this.repository.findByUserId(userId);
-    if (!user?.profile)
-      throw new NotFoundException('Expert profile not found.');
+    if (!user?.profile) throw ExpertProfileNotFoundException();
     if (!user.userRoles.some((item) => item.role.name === RoleName.EXPERT)) {
-      throw new ForbiddenException('This account is not an Expert account.');
+      throw NotAnExpertAccountException();
     }
     return user;
   }
@@ -73,9 +73,7 @@ export class ExpertProfileService {
   async submitUpdate(userId: number, input: UpdateExpertProfileType) {
     const user = await this.context(userId);
     if (await this.repository.hasPendingRevision(userId)) {
-      throw new ConflictException(
-        'Your expert profile already has an update awaiting administrator review.',
-      );
+      throw ExpertProfilePendingRevisionException();
     }
     const sanitized = this.sanitize(input);
     const profileStrength = calculateExpertProfileStrength(sanitized);
@@ -100,6 +98,6 @@ export class ExpertProfileService {
       sanitized,
       calculateExpertProfileStrength(sanitized),
     );
-    return { message: 'Expert profile updated successfully.' };
+    return { message: ExpertProfileMessage.UPDATED };
   }
 }

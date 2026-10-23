@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { Smile } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -24,6 +25,7 @@ export function EmojiPicker({
   onSelect,
 }: EmojiPickerProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("chat");
 
   useEffect(() => {
     if (!open) return;
@@ -42,7 +44,7 @@ export function EmojiPicker({
         type="button"
         size="icon"
         variant="ghost"
-        aria-label="Pick emoji"
+        aria-label={t("pickEmoji")}
         onClick={() => onOpenChange(!open)}
         className="text-muted-foreground hover:text-foreground"
       >

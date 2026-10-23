@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,6 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MessageBell } from "@/components/notification-bell";
 import { NotificationsBell } from "@/components/notifications-bell";
@@ -54,28 +56,42 @@ export type HeaderProps = {
   role: UserRole;
 };
 
+type NavRoleKey = "guest" | "client" | "freelancer";
+
+type NavLinkKey =
+  | "findWork"
+  | "hireTalent"
+  | "findExperts"
+  | "forum"
+  | "myJobs"
+  | "contracts"
+  | "disputes"
+  | "bookmarks"
+  | "myProposals"
+  | "savedSearches";
+
 type NavLink = {
   href: string;
-  label: string;
+  labelKey: NavLinkKey;
   exact?: boolean;
   excludePaths?: string[];
 };
 
-const roleConfig: Record<UserRole, { name: string; links: NavLink[] }> = {
+const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = {
   GUEST: {
-    name: "Guest",
+    nameKey: "guest",
     links: [
-      { href: "/find-work", label: "Find Work" },
-      { href: "/experts", label: "Hire Talent" },
-      { href: "/forum", label: "Forum" },
+      { href: "/find-work", labelKey: "findWork" },
+      { href: "/experts", labelKey: "hireTalent" },
+      { href: "/forum", labelKey: "forum" },
     ],
   },
   CLIENT: {
-    name: "Client",
+    nameKey: "client",
     links: [
       {
         href: "/client/jobs",
-        label: "My Jobs",
+        labelKey: "myJobs",
         excludePaths: ["/client/jobs/new"],
       },
       { href: "/client/contracts", label: "Contracts" },
@@ -86,15 +102,15 @@ const roleConfig: Record<UserRole, { name: string; links: NavLink[] }> = {
     ],
   },
   FREELANCER: {
-    name: "Freelancer",
+    nameKey: "freelancer",
     links: [
-      { href: "/freelancer/find-work", label: "Find Work" },
-      { href: "/freelancer/bookmarks", label: "Bookmarks" },
-      { href: "/freelancer/proposals", label: "My Proposals" },
-      { href: "/freelancer/contracts", label: "Contracts" },
-      { href: "/freelancer/disputes", label: "Disputes" },
-      { href: "/freelancer/saved-searches", label: "Saved searches" },
-      { href: "/forum", label: "Forum" },
+      { href: "/freelancer/find-work", labelKey: "findWork" },
+      { href: "/freelancer/bookmarks", labelKey: "bookmarks" },
+      { href: "/freelancer/proposals", labelKey: "myProposals" },
+      { href: "/freelancer/contracts", labelKey: "contracts" },
+      { href: "/freelancer/disputes", labelKey: "disputes" },
+      { href: "/freelancer/saved-searches", labelKey: "savedSearches" },
+      { href: "/forum", labelKey: "forum" },
     ],
   },
 };
@@ -129,6 +145,7 @@ function HeaderNavigation({
   onNavigate,
 }: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   const links = roleConfig[role]?.links ?? [];
 
   return (
@@ -137,7 +154,7 @@ function HeaderNavigation({
         const isActive = isNavLinkActive(link, pathname);
         return (
           <Link
-            key={link.label}
+            key={link.href}
             href={link.href}
             onClick={onNavigate}
             className={`rounded-full text-sm font-medium transition-all duration-150 ${
@@ -148,7 +165,7 @@ function HeaderNavigation({
                 : "text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
             }`}
           >
-            {link.label}
+            {t(`links.${link.labelKey}`)}
           </Link>
         );
       })}
@@ -172,6 +189,7 @@ function HeaderSearch({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("nav");
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -215,7 +233,7 @@ function HeaderSearch({
           ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search products..."
+          placeholder={t("searchPlaceholder")}
           className="h-9 w-full rounded-full border border-slate-200/80 dark:border-zinc-700/60 dark:bg-zinc-800/60 dark:text-foreground dark:placeholder:text-zinc-400 dark:focus:bg-zinc-900 focus:ring-blue-500/15 dark:focus:bg-zinc-900 bg-slate-100/70 pl-9.5 pr-14 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-2"
         />
         <kbd className="pointer-events-none font-semibold bg-slate-100/70 absolute right-2.5 hidden items-center gap-1 rounded-full border border-slate-300/80  px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground dark:border-zinc-700 dark:bg-zinc-900 sm:flex">
@@ -229,6 +247,7 @@ function HeaderSearch({
 function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("nav");
   const { data: me, isLoading: isMeLoading } = useMe();
   const [isRoleActionPending, setIsRoleActionPending] = useState(false);
   const targetRole =
@@ -236,7 +255,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
   const hasTargetRole =
     me?.roles.some((item) => item.name === targetRole) === true;
   const targetRoleLabel =
-    targetRole === RoleName.CLIENT ? "Client" : "Freelancer";
+    targetRole === RoleName.CLIENT ? t("roles.client") : t("roles.freelancer");
 
   const updateRoleContext = async () => {
     if (isMeLoading || !me || isRoleActionPending) return false;
@@ -252,8 +271,8 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toastSuccess({
         message: hasTargetRole
-          ? `Switched to ${targetRoleLabel}`
-          : `${targetRoleLabel} role added`,
+          ? t("switchedToRole", { role: targetRoleLabel })
+          : t("roleAdded", { role: targetRoleLabel }),
       });
       router.push(
         targetRole === RoleName.CLIENT
@@ -264,9 +283,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
       return true;
     } catch {
       toastError({
-        message: hasTargetRole
-          ? "Unable to switch role. Please try again."
-          : "Unable to add role. Please try again.",
+        message: hasTargetRole ? t("switchRoleFailed") : t("addRoleFailed"),
       });
       return false;
     } finally {
@@ -275,14 +292,14 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
   };
 
   const roleActionLabel = isMeLoading
-    ? "Loading roles..."
+    ? t("loadingRoles")
     : isRoleActionPending
       ? hasTargetRole
-        ? "Switching role..."
-        : "Adding role..."
+        ? t("switchingRole")
+        : t("addingRole")
       : hasTargetRole
-        ? `Switch to ${targetRoleLabel}`
-        : `Add ${targetRoleLabel} role`;
+        ? t("switchToRole", { role: targetRoleLabel })
+        : t("addRole", { role: targetRoleLabel });
 
   return {
     hasTargetRole,
@@ -296,6 +313,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
 
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
+  const t = useTranslations("nav");
   const profile = roleConfig[role];
   const {
     hasTargetRole,
@@ -305,7 +323,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
     roleActionLabel,
     updateRoleContext,
   } = useRoleContextAction(role);
-  const displayName = me?.profile?.displayName || profile.name;
+  const displayName =
+    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
@@ -324,7 +343,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
       <DropdownMenuTrigger asChild>
         <button
           className="hidden items-center gap-2 rounded-full px-1.5 py-1 outline-none transition-colors hover:bg-black/[0.04] focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 dark:hover:bg-white/[0.06] sm:flex"
-          aria-label="Open profile menu"
+          aria-label={t("openProfileMenu")}
         >
           <Avatar className="size-8">
             {me?.profile?.avatarUrl && (
@@ -358,7 +377,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               {displayName}
             </p>
             <p className="text-xs text-muted-foreground">
-              {role === "FREELANCER" ? "Freelancer" : "Client"}
+              {t(`roles.${profile.nameKey}`)}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -367,7 +386,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           <DropdownMenuItem asChild>
             <Link href={publicProfileHref} className="cursor-pointer">
               <Eye className="size-4 text-muted-foreground" />
-              View public profile
+              {t("viewPublicProfile")}
             </Link>
           </DropdownMenuItem>
         ) : null}
@@ -379,7 +398,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             className="cursor-pointer"
           >
             <UserRound className="size-4 text-muted-foreground" />
-            Profile settings
+            {t("profileSettings")}
           </Link>
         </DropdownMenuItem>
         {role === "FREELANCER" && (
@@ -387,25 +406,25 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             <DropdownMenuItem asChild>
               <Link href="/freelancer/profile" className="cursor-pointer">
                 <ShieldCheck className="size-4 text-muted-foreground" />
-                Identity verification
+                {t("identityVerification")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/freelancer/bookmarks" className="cursor-pointer">
                 <Bookmark className="size-4 text-muted-foreground" />
-                My Bookmarks
+                {t("myBookmarks")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/freelancer/proposals" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />
-                My Proposals
+                {t("myProposals")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/freelancer/contracts" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />
-                Contracts
+                {t("contracts")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -414,7 +433,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 className="cursor-pointer"
               >
                 <Search className="size-4 text-muted-foreground" />
-                Saved searches
+                {t("savedSearches")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -433,7 +452,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             <DropdownMenuItem asChild>
               <Link href="/client/jobs" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />
-                My Jobs
+                {t("myJobs")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -442,7 +461,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 className="cursor-pointer"
               >
                 <Heart className="size-4 text-muted-foreground" />
-                Favorite freelancers
+                {t("favoriteFreelancers")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -451,7 +470,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 className="cursor-pointer"
               >
                 <UserCheck className="size-4 text-muted-foreground" />
-                Following
+                {t("following")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -465,7 +484,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link href="/account-profile" className="cursor-pointer">
             <Link2 className="size-4 text-muted-foreground" />
-            Social links
+            {t("socialLinks")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -487,7 +506,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link href="/sessions" className="cursor-pointer">
             <MonitorSmartphone className="size-4 text-muted-foreground" />
-            Sessions
+            {t("sessions")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -497,7 +516,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           className="cursor-pointer"
         >
           <LogOut className="size-4" />
-          Logout
+          {t("logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -505,6 +524,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 }
 
 function HeaderActions({ role }: HeaderProps) {
+  const t = useTranslations("nav");
+
   if (role === "GUEST") {
     return (
       <div className="flex items-center gap-1.5 sm:gap-2">
@@ -512,16 +533,17 @@ function HeaderActions({ role }: HeaderProps) {
           asChild
           className="hidden h-8.5 rounded-full bg-green-300 px-4 text-xs sm:text-sm font-semibold text-green-800 shadow-xs hover:bg-green-400 sm:inline-flex dark:bg-green-500 dark:hover:bg-green-700"
         >
-          <Link href="/register">Register</Link>
+          <Link href="/register">{t("register")}</Link>
         </Button>
         <Button
           variant="ghost"
           asChild
           className="hidden h-8.5 rounded-full px-3 text-xs sm:text-sm font-medium text-foreground/80 hover:bg-black/[0.04] hover:text-foreground sm:inline-flex dark:hover:bg-white/[0.06]"
         >
-          <Link href="/login">Login</Link>
+          <Link href="/login">{t("login")}</Link>
         </Button>
         <div className="hidden h-4 w-px bg-border/70 sm:block" />
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
     );
@@ -532,6 +554,7 @@ function HeaderActions({ role }: HeaderProps) {
       <ContactDialog />
       <MessageBell />
       <NotificationsBell />
+      <LanguageSwitcher />
       <ThemeToggle />
       <ProfileDropdown role={role} />
     </div>
@@ -545,6 +568,7 @@ function MobileProfileNavigation({
   role: Exclude<UserRole, "GUEST">;
   onNavigate: () => void;
 }) {
+  const t = useTranslations("nav");
   const {
     hasTargetRole,
     isMeLoading,
@@ -568,7 +592,7 @@ function MobileProfileNavigation({
           className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
         >
           <Eye className="size-4 text-muted-foreground" />
-          View public profile
+          {t("viewPublicProfile")}
         </Link>
       ) : null}
       <Link
@@ -579,7 +603,7 @@ function MobileProfileNavigation({
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
       >
         <UserRound className="size-4 text-muted-foreground" />
-        Profile settings
+        {t("profileSettings")}
       </Link>
       <button
         type="button"
@@ -603,6 +627,8 @@ function MobileProfileNavigation({
 }
 
 export function Header({ role }: HeaderProps) {
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -625,7 +651,7 @@ export function Header({ role }: HeaderProps) {
           <button
             onClick={() => setIsMenuOpen((open) => !open)}
             className="rounded-full p-2 text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground md:hidden dark:hover:bg-white/[0.06]"
-            aria-label="Toggle menu"
+            aria-label={t("toggleMenu")}
             aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? (
@@ -646,9 +672,12 @@ export function Header({ role }: HeaderProps) {
             <div className="flex flex-col gap-2 border-t border-border/50 pt-3 dark:border-white/[0.08]">
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs font-medium text-muted-foreground">
-                  Theme
+                  {tCommon("theme")}
                 </span>
-                <ThemeToggle />
+                <div className="flex items-center gap-1">
+                  <LanguageSwitcher />
+                  <ThemeToggle />
+                </div>
               </div>
               <Button
                 variant="outline"
@@ -656,7 +685,7 @@ export function Header({ role }: HeaderProps) {
                 className="h-9 w-full rounded-full border-border/60 bg-transparent text-sm font-medium dark:border-white/10"
               >
                 <Link href="/login" onClick={closeMenu}>
-                  Login
+                  {t("login")}
                 </Link>
               </Button>
               <Button
@@ -664,7 +693,7 @@ export function Header({ role }: HeaderProps) {
                 className="h-9 w-full rounded-full bg-blue-600 text-sm font-semibold text-white shadow-xs hover:bg-blue-700"
               >
                 <Link href="/register" onClick={closeMenu}>
-                  Register
+                  {t("register")}
                 </Link>
               </Button>
             </div>
@@ -682,11 +711,11 @@ export function Header({ role }: HeaderProps) {
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
               >
                 <MessageSquare className="size-4 text-muted-foreground" />
-                Conversations
+                {t("conversations")}
               </Link>
               <MobileProfileNavigation role={role} onNavigate={closeMenu} />
               <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                {roleConfig[role].name}
+                {t(`roles.${roleConfig[role].nameKey}`)}
               </div>
             </div>
           )}

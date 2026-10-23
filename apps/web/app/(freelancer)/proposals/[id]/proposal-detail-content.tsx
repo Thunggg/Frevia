@@ -1,11 +1,13 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormatter, useTranslations } from "next-intl";
+import { useBackendMessage } from "@/hooks/use-backend-message";
+import { useTranslatedResolver } from "@/lib/form-resolver";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Loader2 } from "@/components/icons";
-import { Controller, useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { proposalApiRequest } from "@/apiRequests/proposal";
 import { Footer } from "@/components/footer";
@@ -42,10 +44,6 @@ import {
   type ProposalDetailType,
   type SaveProposalDraftBodyType,
 } from "@shared/types";
-function statusLabel(status: ProposalDetailType["status"]) {
-  return status[0] + status.slice(1).toLowerCase();
-}
-
 function isPast(value: string | Date | null) {
   return value !== null && new Date(value).getTime() <= Date.now();
 }
@@ -60,6 +58,12 @@ export function ProposalDetailContent({
   basePath?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("proposalDetail");
+  const tStatus = useTranslations("proposalStatus");
+  const tList = useTranslations("proposals");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
+  const translateMessage = useBackendMessage();
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/proposals" : "/proposals");
   const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
@@ -76,9 +80,9 @@ export function ProposalDetailContent({
     !isPast(proposal.job.expiryDate) &&
     !isPast(proposal.job.deadline);
   const form = useForm<CreateProposalBodyType>({
-    resolver: zodResolver(
+    resolver: useTranslatedResolver<CreateProposalBodyType>(
       CreateProposalBodySchema,
-    ) as Resolver<CreateProposalBodyType>,
+    ),
     defaultValues: {
       coverLetter: proposal.coverLetter ?? "",
       bidAmount: proposal.bidAmount ?? undefined,
@@ -113,7 +117,9 @@ export function ProposalDetailContent({
         : "coverLetter",
       {
         type: "manual",
-        message: issue?.message ?? ManageProposalMessage.DRAFT_CONTENT_REQUIRED,
+        message: translateMessage(
+          issue?.message ?? ManageProposalMessage.DRAFT_CONTENT_REQUIRED,
+        ),
       },
     );
     return null;
@@ -133,10 +139,10 @@ export function ProposalDetailContent({
     setAction("save");
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
-      toastSuccess({ message: "Draft saved" });
+      toastSuccess({ message: t("draftSaved") });
       router.refresh();
     } catch (error) {
-      handleApiError(error, "Unable to save draft. Please try again.");
+      handleApiError(error, t("saveDraftFailed"));
     } finally {
       setAction(null);
     }
@@ -146,10 +152,10 @@ export function ProposalDetailContent({
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
       await proposalApiRequest.submitDraft(proposal.id);
-      toastSuccess({ message: "Proposal submitted" });
+      toastSuccess({ message: t("submitted") });
       router.refresh();
     } catch (error) {
-      handleApiError(error, "Unable to submit proposal. Please try again.");
+      handleApiError(error, t("submitFailed"));
     } finally {
       setAction(null);
     }
@@ -158,11 +164,11 @@ export function ProposalDetailContent({
     setAction("withdraw");
     try {
       await proposalApiRequest.withdraw(proposal.id);
-      toastSuccess({ message: "Proposal withdrawn" });
+      toastSuccess({ message: t("withdrawn") });
       setWithdrawOpen(false);
       router.refresh();
     } catch (error) {
-      handleApiError(error, "Unable to withdraw proposal. Please try again.");
+      handleApiError(error, t("withdrawFailed"));
     } finally {
       setAction(null);
     }
@@ -189,27 +195,29 @@ export function ProposalDetailContent({
               className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-[#0069D3] transition-colors"
             >
               <ArrowLeft className="size-4" />
-              My proposals
+              {t("backToList")}
             </Link>
             <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <Badge variant="secondary">
-                  {statusLabel(proposal.status)}
+                  {tStatus(proposal.status)}
                 </Badge>
                 <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                   {proposal.job.title}
                 </h1>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Client:{" "}
-                  {proposal.client.profile?.displayName ??
-                    proposal.client.email}
+                  {t("clientLabel", {
+                    name:
+                      proposal.client.profile?.displayName ??
+                      proposal.client.email,
+                  })}
                 </p>
               </div>
               <Link
                 href={`${jobBaseUrl}/${proposal.job.slug}`}
                 className="text-xs font-semibold text-[#0069D3] hover:underline"
               >
-                View job
+                {t("viewJob")}
               </Link>
             </div>
           </div>
@@ -224,7 +232,7 @@ export function ProposalDetailContent({
             </div>
           ) : null}
           <section>
-            <h2 className="text-xl font-semibold">Your proposal</h2>
+            <h2 className="text-xl font-semibold">{t("yourProposal")}</h2>
             <form onSubmit={submit} className="mt-5">
               <FieldGroup className="gap-5">
                 <Controller
@@ -232,7 +240,7 @@ export function ProposalDetailContent({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Cover letter</FieldLabel>
+                      <FieldLabel>{t("coverLetter")}</FieldLabel>
                       <Textarea
                         {...field}
                         disabled={!canEditDraft || action !== null}
@@ -252,7 +260,7 @@ export function ProposalDetailContent({
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel>Your bid</FieldLabel>
+                        <FieldLabel>{t("yourBid")}</FieldLabel>
                         <Input
                           type="number"
                           min="0"
@@ -279,7 +287,7 @@ export function ProposalDetailContent({
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel>Delivery days</FieldLabel>
+                        <FieldLabel>{t("deliveryDaysInput")}</FieldLabel>
                         <Input
                           type="number"
                           min="1"
@@ -314,7 +322,7 @@ export function ProposalDetailContent({
                     {action === "save" ? (
                       <Loader2 className="size-4 animate-spin" />
                     ) : null}
-                    Save draft
+                    {t("saveDraft")}
                   </Button>
                   <Button
                     type="submit"
@@ -324,43 +332,50 @@ export function ProposalDetailContent({
                     {action === "submit" ? (
                       <Loader2 className="size-4 animate-spin" />
                     ) : null}
-                    Submit proposal
+                    {t("submitProposal")}
                   </Button>
                 </div>
               ) : null}
               {isDraft && !canEditDraft ? (
                 <p className="text-sm text-muted-foreground">
-                  This job is no longer accepting proposals, so this draft can
-                  no longer be edited or submitted.
+                  {t("draftLocked")}
                 </p>
               ) : null}
             </form>
           </section>
           <aside className="h-fit rounded-xl border border-border p-5">
-            <h2 className="font-semibold">Proposal summary</h2>
+            <h2 className="font-semibold">{t("summaryTitle")}</h2>
             <dl className="mt-4 space-y-4 text-sm">
               <div>
-                <dt className="text-muted-foreground">Bid</dt>
+                <dt className="text-muted-foreground">{tList("bidLabel")}</dt>
                 <dd className="mt-1 font-medium">
                   {proposal.bidAmount === null
-                    ? "Not set"
-                    : `$${proposal.bidAmount.toLocaleString()}`}
+                    ? tCommon("notSet")
+                    : `$${format.number(proposal.bidAmount)}`}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Delivery</dt>
+                <dt className="text-muted-foreground">
+                  {tList("deliveryLabel")}
+                </dt>
                 <dd className="mt-1 font-medium">
                   {proposal.deliveryDays
-                    ? `${proposal.deliveryDays} days`
-                    : "Not set"}
+                    ? tList("deliveryDays", { count: proposal.deliveryDays })
+                    : tCommon("notSet")}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Submitted</dt>
+                <dt className="text-muted-foreground">
+                  {t("submittedLabel")}
+                </dt>
                 <dd className="mt-1 font-medium">
                   {proposal.submittedAt
-                    ? new Date(proposal.submittedAt).toLocaleDateString()
-                    : "Not submitted"}
+                    ? format.dateTime(new Date(proposal.submittedAt), {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : tList("notSubmitted")}
                 </dd>
               </div>
             </dl>
@@ -370,7 +385,7 @@ export function ProposalDetailContent({
                 className="mt-6 w-full text-destructive hover:text-destructive"
                 onClick={() => setWithdrawOpen(true)}
               >
-                Withdraw proposal
+                {t("withdrawAction")}
               </Button>
             ) : null}
           </aside>
@@ -379,14 +394,14 @@ export function ProposalDetailContent({
       <AlertDialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Withdraw this proposal?</AlertDialogTitle>
+            <AlertDialogTitle>{t("withdrawTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              The client will no longer be able to accept this proposal.
+              {t("withdrawHint")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={action === "withdraw"}>
-              Cancel
+              {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               disabled={action === "withdraw"}
@@ -396,7 +411,7 @@ export function ProposalDetailContent({
                 void withdraw();
               }}
             >
-              {action === "withdraw" ? "Withdrawing..." : "Withdraw"}
+              {action === "withdraw" ? t("withdrawing") : t("withdraw")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -34,6 +34,7 @@ import { IdentityVerificationsAdminModule } from './routes/identity-verification
 import { ProposalModule } from './routes/proposals/proposal.module';
 import { UsersModule } from './routes/users/users.module';
 import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
+import { JobCategoriesAdminModule } from './routes/job-categories-admin/job-categories-admin.module';
 import { ReviewModule } from './routes/reviews/review.module';
 import { BannersModule } from './routes/banners/banners.module';
 import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
@@ -71,6 +72,7 @@ import { PaymentModule } from './routes/payments/payment.module';
     ProposalModule,
     UsersModule,
     SkillsAdminModule,
+    JobCategoriesAdminModule,
     ReviewModule,
     BannersModule,
     BannersAdminModule,

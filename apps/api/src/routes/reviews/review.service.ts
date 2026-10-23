@@ -1,6 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { ContractStatus, Prisma } from '@prisma/client';
-import type { CreateReviewType, UpdateReviewType } from '@shared/types';
+import {
+  ReviewMessage,
+  type CreateReviewType,
+  type UpdateReviewType,
+} from '@shared/types';
 import {
   ReviewAlreadyExistsException,
   ReviewContractNotCompletedException,
@@ -65,7 +69,7 @@ export class ReviewService {
       (contract.clientId === userId
         ? contract.client.profile?.displayName
         : contract.freelancer.profile?.displayName
-      )?.trim() || 'A contract participant';
+      )?.trim() || ReviewMessage.CONTRACT_PARTICIPANT;
     try {
       return this.present(
         await this.repository.create(
@@ -99,7 +103,7 @@ export class ReviewService {
     if (!review) throw ReviewNotFoundException();
     if (review.reviewerId !== userId) throw ReviewForbiddenException();
     await this.repository.softDelete(reviewId);
-    return { message: 'Review deleted successfully.' };
+    return { message: ReviewMessage.DELETED };
   }
 
   async respond(userId: number, reviewId: number, responseText: string) {
@@ -112,7 +116,8 @@ export class ReviewService {
       throw ReviewResponseAlreadyExistsException();
     }
     const responderName =
-      review.reviewee.profile?.displayName?.trim() || 'A contract participant';
+      review.reviewee.profile?.displayName?.trim() ||
+      ReviewMessage.CONTRACT_PARTICIPANT;
     try {
       return await this.repository.createResponse(
         reviewId,
@@ -151,6 +156,6 @@ export class ReviewService {
     if (!response) throw ReviewResponseNotFoundException();
     if (response.userId !== userId) throw ReviewForbiddenException();
     await this.repository.softDeleteResponse(responseId);
-    return { message: 'Review response deleted successfully.' };
+    return { message: ReviewMessage.RESPONSE_DELETED };
   }
 }

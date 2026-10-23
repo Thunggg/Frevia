@@ -15,6 +15,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { SkillAdminItemType } from "@shared/types";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -29,6 +30,8 @@ export function DeleteSkillDialog({
   open,
   onOpenChange,
 }: DeleteSkillDialogProps) {
+  const t = useTranslations("adminSkills");
+  const tCommon = useTranslations("adminCommon");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -40,15 +43,15 @@ export function DeleteSkillDialog({
     setLoading(true);
     try {
       await adminApiRequest.deleteSkill(skill.id);
-      toastSuccess({ message: "Skill deleted successfully." });
+      toastSuccess({ message: t("deletedToast") });
       onOpenChange(false);
       router.refresh();
     } catch (err) {
       if (err instanceof ApiFail) {
         const errorDetail = err.response?.error?.details?.[0]?.message;
-        toastError({ message: errorDetail ?? "Failed to delete skill." });
+        toastError({ message: errorDetail ?? t("deleteFailed") });
       } else {
-        toastError({ message: "An unexpected error occurred." });
+        toastError({ message: tCommon("unexpectedError") });
       }
     } finally {
       setLoading(false);
@@ -61,36 +64,27 @@ export function DeleteSkillDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             {hasJobs && <AlertTriangle className="h-5 w-5 text-amber-500" />}
-            Delete Skill: {skill.name}
+            {t("deleteTitle", { name: skill.name })}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-2 pt-1 text-sm text-muted-foreground">
               {hasJobs && (
                 <div className="rounded-md bg-amber-50 dark:bg-amber-950/40 p-3 border border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-300 text-xs">
-                  <p className="font-semibold mb-1">Skill in use</p>
-                  This skill is currently used by{" "}
-                  <span className="font-bold">{skill.jobCount}</span> active
-                  job(s). Those jobs will keep showing this skill as legacy
-                  until they are updated.
+                  <p className="font-semibold mb-1">
+                    {t("deleteInUseHeading")}
+                  </p>
+                  {t("deleteInUseWarning", { count: skill.jobCount ?? 0 })}
                 </div>
               )}
-              <p>
-                Are you sure you want to delete skill{" "}
-                <span className="font-semibold text-foreground">
-                  &quot;{skill.name}&quot;
-                </span>
-                ?
-              </p>
-              <p className="text-xs">
-                The skill will be soft-deleted (restorable) and removed from
-                freelancer profiles. It will no longer be offered for new jobs.
-                Existing jobs keep their skill reference until updated.
-              </p>
+              <p>{t("deleteConfirm", { name: skill.name })}</p>
+              <p className="text-xs">{t("deleteSoftDeleteNote")}</p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>
+            {tCommon("cancel")}
+          </AlertDialogCancel>
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -100,7 +94,7 @@ export function DeleteSkillDialog({
             variant="destructive"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Delete Skill
+            {t("deleteAction")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
