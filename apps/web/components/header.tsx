@@ -65,6 +65,7 @@ type NavLinkKey =
   | "forum"
   | "myJobs"
   | "contracts"
+  | "payments"
   | "disputes"
   | "bookmarks"
   | "myProposals"
@@ -94,11 +95,11 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
         labelKey: "myJobs",
         excludePaths: ["/client/jobs/new"],
       },
-      { href: "/client/contracts", label: "Contracts" },
-      { href: "/client/payments", label: "Payments" },
-      { href: "/client/disputes", label: "Disputes" },
-      { href: "/experts", label: "Find Experts" },
-      { href: "/forum", label: "Forum" },
+      { href: "/client/contracts", labelKey: "contracts" },
+      { href: "/client/payments", labelKey: "payments" },
+      { href: "/client/disputes", labelKey: "disputes" },
+      { href: "/experts", labelKey: "findExperts" },
+      { href: "/forum", labelKey: "forum" },
     ],
   },
   FREELANCER: {

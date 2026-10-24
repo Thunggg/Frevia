@@ -131,7 +131,7 @@ export function ClientSidebar() {
     },
     {
       href: "/client/payments",
-      label: "Billing & Payments",
+      labelKey: "navBillingPayments",
       icon: CreditCard,
       matchPrefix: true,
     },

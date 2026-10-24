@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -79,22 +78,6 @@ import { useCreateConversation } from "@/hooks/use-conversation";
 import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
 import { paymentApiRequest } from "@/apiRequests/payment";
 
-function money(amount: number | string, currency: string = "USD") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency.toUpperCase(),
-  }).format(Number(amount));
-}
-
-function formatDate(date: string | Date | null) {
-  if (!date) return "Not specified";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
 interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialMilestones?: GetMilestoneListResponseType | null;
@@ -116,10 +99,11 @@ export function ContractDetail({
   const tCommon = useTranslations("common");
   const format = useFormatter();
 
-  const money = (amount: number) =>
+  // Số tiền dùng chung cho cả trang; `currency` để bảng giao dịch hiển thị đúng loại tiền.
+  const money = (amount: number, currency: string = "USD") =>
     format.number(amount, {
       style: "currency",
-      currency: "USD",
+      currency,
       maximumFractionDigits: 0,
     });
 
