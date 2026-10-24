@@ -1298,7 +1298,10 @@
     "SUBMITTED": "Ready for Review",
     "IN_PROGRESS": "In Progress",
     "CHANGES_REQUESTED": "Revisions Requested",
-    "UPCOMING": "Upcoming"
+    "UPCOMING": "Upcoming",
+    "FUNDED_IN_PROGRESS": "In Progress (Funded)",
+    "FUNDED_IN_ESCROW": "Funded in Escrow",
+    "AWAITING_ESCROW": "Awaiting Escrow Deposit"
   },
   "paymentStatus": {
     "PENDING": "Pending",

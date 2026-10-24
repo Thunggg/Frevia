@@ -40,20 +40,14 @@ const PAYMENT_STATUS_KEYS = [
   "DISPUTED",
 ] as const;
 
-const MILESTONE_STATUS_KEYS = [
-  "COMPLETED",
-  "SUBMITTED",
-  "IN_PROGRESS",
-  "CHANGES_REQUESTED",
-] as const;
-
-function getMilestoneStatusBadgeClass(
+function getMilestoneStatusBadge(
   status: MilestoneType["status"],
   paymentStatus?: MilestoneType["paymentStatus"],
-): string {
+): { labelKey: string; className: string } {
+  // Trạng thái thanh toán mang thông tin riêng thì ưu tiên hiển thị nó.
   if (paymentStatus === "DISPUTED") {
     return {
-      label: "Disputed",
+      labelKey: "paymentStatus.DISPUTED",
       className:
         "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold",
     };
@@ -61,7 +55,7 @@ function getMilestoneStatusBadgeClass(
 
   if (paymentStatus === "RELEASED") {
     return {
-      label: "Released / Paid",
+      labelKey: "paymentStatus.RELEASED",
       className:
         "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold",
     };
@@ -69,54 +63,42 @@ function getMilestoneStatusBadgeClass(
 
   if (paymentStatus === "REFUNDED") {
     return {
-      label: "Refunded",
+      labelKey: "paymentStatus.REFUNDED",
       className:
         "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold",
     };
-    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
   }
 
-  switch (status) {
-    case "COMPLETED":
-      return "bg-[#F1F0F5] text-foreground border border-border/80";
-    case "SUBMITTED":
-      return "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold";
-    case "IN_PROGRESS":
-      return "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium";
-    case "CHANGES_REQUESTED":
-      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium";
-    default:
-      return "bg-[#F1F0F5] text-muted-foreground border border-border/60";
-  }
-
+  // Đã nạp quỹ: nhãn theo trạng thái milestone.
   if (paymentStatus === "FUNDED") {
     switch (status) {
       case "COMPLETED":
         return {
-          label: "Completed",
-          className: "bg-[#F1F0F5] text-foreground border border-border/80 font-medium",
+          labelKey: "milestoneStatus.COMPLETED",
+          className:
+            "bg-[#F1F0F5] text-foreground border border-border/80 font-medium",
         };
       case "SUBMITTED":
         return {
-          label: "Ready for Review",
+          labelKey: "milestoneStatus.SUBMITTED",
           className:
             "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold",
         };
       case "IN_PROGRESS":
         return {
-          label: "In Progress (Funded)",
+          labelKey: "milestoneStatus.FUNDED_IN_PROGRESS",
           className:
             "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-300 font-medium",
         };
       case "CHANGES_REQUESTED":
         return {
-          label: "Revisions Requested",
+          labelKey: "milestoneStatus.CHANGES_REQUESTED",
           className:
             "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium",
         };
       default:
         return {
-          label: "Funded in Escrow",
+          labelKey: "milestoneStatus.FUNDED_IN_ESCROW",
           className:
             "bg-blue-50 text-[#0069D3] border border-blue-200 font-medium",
         };
@@ -124,7 +106,7 @@ function getMilestoneStatusBadgeClass(
   }
 
   return {
-    label: "Awaiting Escrow Deposit",
+    labelKey: "milestoneStatus.AWAITING_ESCROW",
     className:
       "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-medium",
   };
@@ -166,7 +148,8 @@ export function MilestoneCard({
   onRefund,
 }: MilestoneCardProps) {
   const t = useTranslations("milestoneCard");
-  const tMilestoneStatus = useTranslations("milestoneStatus");
+  // Badge trạng thái dùng key đầy đủ (milestoneStatus.* / paymentStatus.*).
+  const tBadgeStatus = useTranslations();
   const tPaymentStatus = useTranslations("paymentStatus");
   const tSubmissionStatus = useTranslations("submissionStatus");
   const format = useFormatter();
@@ -206,16 +189,11 @@ export function MilestoneCard({
   }, [isExpanded, submissions, loadingSubmissions, contractId, milestone.id]);
 
   const latestSubmission = submissions && submissions.length > 0 ? submissions[0] : null;
-  const badgeClass = getMilestoneStatusBadgeClass(
+  // Nhãn + màu badge trạng thái (nhãn lấy từ i18n theo key trả về).
+  const badge = getMilestoneStatusBadge(
     milestone.status,
     milestone.paymentStatus,
   );
-  const statusKey =
-    milestone.paymentStatus === "DISPUTED"
-      ? "DISPUTED"
-      : (MILESTONE_STATUS_KEYS as readonly string[]).includes(milestone.status)
-        ? milestone.status
-        : "UPCOMING";
   const paymentText = (PAYMENT_STATUS_KEYS as readonly string[]).includes(
     milestone.paymentStatus,
   )
@@ -323,9 +301,7 @@ export function MilestoneCard({
             )}
 
           <span className={`rounded-full px-3 py-1 text-xs ${badge.className}`}>
-            {badge.label}
-          <span className={`rounded-full px-3 py-1 text-xs ${badgeClass}`}>
-            {tMilestoneStatus(statusKey)}
+            {tBadgeStatus(badge.labelKey)}
           </span>
 
           {/* 3-dots action menu for both Client and Freelancer */}

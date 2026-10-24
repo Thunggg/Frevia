@@ -1290,7 +1290,10 @@
     "SUBMITTED": "Chờ duyệt",
     "IN_PROGRESS": "Đang thực hiện",
     "CHANGES_REQUESTED": "Yêu cầu chỉnh sửa",
-    "UPCOMING": "Sắp tới"
+    "UPCOMING": "Sắp tới",
+    "FUNDED_IN_PROGRESS": "Đang thực hiện (đã nạp quỹ)",
+    "FUNDED_IN_ESCROW": "Đã nạp quỹ",
+    "AWAITING_ESCROW": "Chờ nạp quỹ"
   },
   "paymentStatus": {
     "PENDING": "Chờ nạp",
