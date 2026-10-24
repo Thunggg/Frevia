@@ -270,6 +270,9 @@ model FreelancerProfile {
   profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skills         FreelancerSkill[]
   portfolioItems PortfolioItem[]
+  cvAnalyses     CvAnalysis[]
+  experiences    FreelancerExperience[]
+  educations     FreelancerEducation[]
 }
 
 model FreelancerSkill {
@@ -345,12 +348,99 @@ model PortfolioItem {
   description         String?
   technologies        String[]  @default([])
   projectUrl          String?   @db.VarChar(500)
+  // Người dùng tự nhập hay nhập từ kết quả phân tích CV đã xác nhận.
+  source              ProfileContentSource @default(MANUAL)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   likes             PortfolioLike[]
+}
+
+// ============================
+// 3b. CV analysis (service AI `frevia-ai`)
+// ============================
+
+// Bản nháp kết quả phân tích CV do service AI trả về, lưu lại để người dùng
+// xem → sửa → xác nhận mà không phải gọi lại LLM. Bảng này KHÔNG phải hồ sơ:
+// chỉ khi người dùng xác nhận thì dữ liệu mới được ghi vào FreelancerSkill /
+// FreelancerExperience / FreelancerEducation / PortfolioItem.
+model CvAnalysis {
+  id                  Int              @id @default(autoincrement())
+  freelancerProfileId Int
+  status              CvAnalysisStatus @default(PENDING)
+
+  // Bản CV đã phân tích, để biết kết quả còn khớp với CV hiện tại hay không.
+  cvUrl        String?   @db.VarChar(500)
+  cvFileName   String?   @db.VarChar(255)
+  cvUploadedAt DateTime?
+
+  // meta do service AI trả về.
+  source     CvSourceType
+  pages      Int       @default(0)
+  chars      Int       @default(0)
+  truncated  Boolean   @default(false)
+  ocrUsed    Boolean   @default(false)
+  model      String?   @db.VarChar(100)
+  durationMs Int?
+  warnings   String[]  @default([])
+
+  // Kết quả đã chuẩn hóa: skills / experience / education / projects / summary
+  // kèm confidence + evidence của từng mục.
+  payload Json
+
+  confirmedAt DateTime?
+  discardedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([freelancerProfileId, status, createdAt])
+  @@index([status])
+}
+
+// Kinh nghiệm làm việc có cấu trúc.
+// `FreelancerProfile.experience` (String[]) là dữ liệu text tự do cũ, giữ lại để
+// tương thích ngược cho tới khi API/UI chuyển hẳn sang bảng này.
+model FreelancerExperience {
+  id                  Int                  @id @default(autoincrement())
+  freelancerProfileId Int
+  title               String?              @db.VarChar(150)
+  company             String?              @db.VarChar(150)
+  // "YYYY-MM" hoặc "YYYY" (CV thường chỉ ghi tới tháng).
+  startDate           String?              @db.VarChar(10)
+  endDate             String?              @db.VarChar(10)
+  isCurrent           Boolean              @default(false)
+  description         String?
+  source              ProfileContentSource @default(MANUAL)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+
+  freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([freelancerProfileId, deletedAt])
+}
+
+// Học vấn có cấu trúc (`FreelancerProfile.education` String[] là dữ liệu cũ).
+model FreelancerEducation {
+  id                  Int                  @id @default(autoincrement())
+  freelancerProfileId Int
+  degree              String?              @db.VarChar(150)
+  school              String?              @db.VarChar(150)
+  startYear           Int?
+  endYear             Int?
+  description         String?
+  source              ProfileContentSource @default(MANUAL)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+
+  freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([freelancerProfileId, deletedAt])
 }
 
 model SocialLink {
@@ -1522,4 +1612,25 @@ enum TransactionStatus {
   SUCCEEDED
   FAILED
   REFUNDED
+}
+
+// Trạng thái bản nháp kết quả phân tích CV.
+enum CvAnalysisStatus {
+  PENDING
+  CONFIRMED
+  DISCARDED
+}
+
+// Nguồn văn bản mà service AI đã dùng để phân tích (khớp `meta.source`).
+enum CvSourceType {
+  PDF_TEXT
+  PDF_OCR
+  DOCX
+  DOC
+}
+
+// Nguồn của một mục trong hồ sơ: người dùng tự nhập hay nhập từ CV đã xác nhận.
+enum ProfileContentSource {
+  MANUAL
+  CV_IMPORT
 }

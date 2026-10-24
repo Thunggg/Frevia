@@ -16,7 +16,7 @@ trả về cho NestJS. Service **không xác thực người dùng, không truy 
 
 Kết quả cuối cùng được hiển thị cho freelancer **xem → sửa → xác nhận** trước khi NestJS lưu vào hồ sơ.
 
-### Quyết định mặc định (có thể đổi, cần chốt ở mục 12)
+### Quyết định mặc định (có thể đổi, cần chốt ở mục 13)
 
 | Hạng mục | Mặc định đề xuất |
 |---|---|
@@ -55,7 +55,7 @@ Nhờ vậy service AI có thể test độc lập, và không giữ PII lâu h�
 ## 2. Luồng xử lý
 
 > **Hiện trạng tích hợp**: NestJS đã có endpoint `POST /api/profiles/:id/cv/analyze` và đã gọi service AI;
-> **Web chưa có UI gọi endpoint này** (xem 8.3 và mục 11). Phần "xem → sửa → xác nhận" dưới đây là luồng đích.
+> **Web chưa có UI gọi endpoint này** (xem 8.3 và mục 12). Phần "xem → sửa → xác nhận" dưới đây là luồng đích.
 
 ```
 Freelancer            Web (Next.js)              NestJS (apps/api)                frevia-ai (service này)
@@ -79,7 +79,7 @@ Freelancer            Web (Next.js)              NestJS (apps/api)              
     │                     │                            │     người dùng đã tick)          │
 ```
 
-Phạm vi tài liệu này là bước 4–8. Bước 1–3 và 9 đã có ở NestJS; bước 10–11 chưa làm (xem mục 11).
+Phạm vi tài liệu này là bước 4–8. Bước 1–3 và 9 đã có ở NestJS; bước 10–11 chưa làm (xem mục 12).
 
 ---
 
@@ -323,7 +323,7 @@ Service AI cần **tương thích ngược** với client hiện tại:
 
 - `payload.skills[].name` phải giữ đúng tên field cũ (NestJS đang đọc `name` + `proficiency_level`).
 - NestJS bỏ qua các field mới (experience/education/projects/summary) — **không lỗi**.
-- Khi repo này mở rộng contract (việc ở mục 11), thêm `CvAnalyzeResponseSchema.suggestions` → profile draft gồm cả 4 nhóm còn lại.
+- Khi repo này mở rộng contract (việc ở mục 12), thêm `CvAnalyzeResponseSchema.suggestions` → profile draft gồm cả 4 nhóm còn lại.
 
 ### 8.3 Phía Web
 
@@ -389,7 +389,44 @@ Theo spec, cần bổ sung:
 
 ---
 
-## 11. Khoảng trống hiện tại trong repo này
+## 11. Database (đã bổ sung)
+
+Trước khi bổ sung, schema **thiếu** những thứ sau cho luồng này:
+
+| Thiếu gì | Hệ quả |
+|---|---|
+| Chỗ lưu kết quả phân tích | Mở lại phải gọi LLM lần nữa; không giữ được `confidence`/`warnings`/`meta`; không có trạng thái "chờ xác nhận" |
+| Kinh nghiệm có cấu trúc | `FreelancerProfile.experience` chỉ là `String[]` — không chứa được company / thời gian / mô tả |
+| Học vấn có cấu trúc | `FreelancerProfile.education` chỉ là `String[]` — không tách được degree / school / năm |
+| Nguồn dữ liệu | Không biết mục nào do AI nhập để hiển thị badge hoặc undo |
+
+Đã thêm bằng migration `20261007000000_add_cv_analysis_and_structured_profile_sections`:
+
+| Object | Vai trò |
+|---|---|
+| `enum CvAnalysisStatus` | `PENDING / CONFIRMED / DISCARDED` — trạng thái bản nháp |
+| `enum CvSourceType` | `PDF_TEXT / PDF_OCR / DOCX / DOC` — khớp `meta.source` |
+| `enum ProfileContentSource` | `MANUAL / CV_IMPORT` — nguồn của một mục trong hồ sơ |
+| `CvAnalysis` | 1 dòng cho 1 lần phân tích: `status`; CV đã phân tích (`cvUrl`, `cvFileName`, `cvUploadedAt`); meta (`source`, `pages`, `chars`, `truncated`, `ocrUsed`, `model`, `durationMs`, `warnings`); `payload Json` (kết quả đã chuẩn hóa kèm confidence/evidence); `confirmedAt`, `discardedAt` |
+| `FreelancerExperience` | `title`, `company`, `startDate`, `endDate`, `isCurrent`, `description`, `source`, soft delete |
+| `FreelancerEducation` | `degree`, `school`, `startYear`, `endYear`, `description`, `source`, soft delete |
+| `PortfolioItem.source` | đánh dấu project được nhập từ CV |
+
+Quy ước & lưu ý:
+
+- `CvAnalysis` **không phải hồ sơ**: chỉ khi người dùng xác nhận thì dữ liệu mới được ghi vào
+  `FreelancerSkill` / `FreelancerExperience` / `FreelancerEducation` / `PortfolioItem`, rồi set `status = CONFIRMED` + `confirmedAt`.
+- `payload` giữ nguyên `confidence`/`evidence` để UI hiển thị "cần kiểm tra" và cho sửa mà không phải gọi lại AI.
+- `CvAnalysis.cvUploadedAt` dùng để so với CV hiện tại: kết quả cũ hơn CV đang lưu ⇒ coi là lỗi thời, UI nên cảnh báo.
+- **Không** backfill từ `experience`/`education` (`String[]`) để tránh hai nguồn dữ liệu trùng nhau; hai cột cũ giữ nguyên
+  cho tới khi API/UI chuyển hẳn sang bảng mới, sau đó xoá bằng migration riêng.
+- `startDate`/`endDate` lưu dạng chuỗi `YYYY-MM` hoặc `YYYY` (CV thường chỉ ghi tới tháng) — cố ý **không** dùng `DateTime`
+  để tránh tự bịa ngày.
+- Tầng API/UI cho các bảng này **chưa làm** (repository/service + DTO cho bản nháp, endpoint xác nhận, màn hình review) — xem mục 12.
+
+---
+
+## 12. Khoảng trống hiện tại trong repo này
 
 | # | Việc | File / khu vực | Ưu tiên |
 |---|---|---|---|
@@ -400,10 +437,11 @@ Theo spec, cần bổ sung:
 | 5 | Chưa có service AI trong repo/compose | `docker-compose.yml` (chỉ có `backend`, `frontend`) | — (thuộc service riêng) |
 | 6 | **Web chưa gọi endpoint analyze**: không có nút "Phân tích CV", không có màn hình review/sửa/xác nhận | [`apiRequests/profile.ts`](../apps/web/apiRequests/profile.ts), `general-settings.tsx` | Cao (nút bấm cho cả luồng) |
 | 7 | Chưa map lỗi chi tiết (`CV_ENCRYPTED`, `LLM_TIMEOUT`…) sang thông báo i18n | `profile.error.ts`, i18n `Error.*` | Thấp |
+| 8 | Bảng `CvAnalysis` / `FreelancerExperience` / `FreelancerEducation` đã có nhưng **chưa có repository/service/DTO** dùng chúng | `apps/api/src/routes/profiles/`, `packages/shared-type` | Cao (nối DB với API) |
 
 ---
 
-## 12. Câu hỏi cần chốt
+## 13. Câu hỏi cần chốt
 
 1. **Service AI có tách repo riêng** không, hay đặt trong monorepo này (ví dụ `apps/ai/`)? Spec này giả định tách riêng, deploy bằng compose.
 2. **Model Ollama** chính thức: `qwen2.5:7b-instruct` hay model khác? Máy chạy có GPU không (ảnh hưởng timeout và khả năng OCR)?
