@@ -10,7 +10,7 @@ export default async function AdminLayout({
 }) {
   const user = await authServerRequest.getMe();
 
-  if (!user) {
+  if (!user || user.isBanned) {
     redirect("/login?redirect=/admin");
   }
 

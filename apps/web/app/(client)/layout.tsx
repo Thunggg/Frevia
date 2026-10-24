@@ -10,7 +10,7 @@ export default async function ClientDashboardLayout({
 }) {
   const user = await authServerRequest.getMe();
 
-  if (!user) {
+  if (!user || user.isBanned) {
     redirect("/login?redirect=/client/jobs");
   }
 

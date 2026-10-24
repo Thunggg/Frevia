@@ -120,18 +120,28 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
   const responseContentType =
     nestRes.headers.get("content-type") ?? "application/json";
 
+  const localized = localizeBody(responseBody, responseContentType, locale);
+
+  if (
+    nestRes.status === 403 &&
+    typeof localized === "string" &&
+    (localized.includes("Error.UserBanned") ||
+      localized.includes("Tài khoản của bạn đã bị khoá") ||
+      localized.includes("Your account has been banned"))
+  ) {
+    const { clearAuthCookies } = await import("@/lib/auth-session");
+    clearAuthCookies(cookieStore);
+  }
+
   // Chỉ forward Content-Type, KHÔNG forward nguyên res.headers
   // (content-encoding/content-length của NestJS có thể làm browser
   // decode lỗi vì fetch() đã tự giải nén sẵn).
-  return new Response(
-    localizeBody(responseBody, responseContentType, locale),
-    {
-      status: nestRes.status,
-      headers: {
-        "Content-Type": responseContentType,
-      },
+  return new Response(localized, {
+    status: nestRes.status,
+    headers: {
+      "Content-Type": responseContentType,
     },
-  );
+  });
 };
 
 export async function GET(request: Request, ctx: RouteContext) {

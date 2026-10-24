@@ -351,6 +351,16 @@ export class AuthService {
         userId,
       });
 
+      if (
+        refreshTokenIsInDB.user.isBanned ||
+        refreshTokenIsInDB.user.deletedAt
+      ) {
+        this.logger.warn(
+          `Banned user attempted to refresh token: userId=${userId}`,
+        );
+        throw UserBannedException();
+      }
+
       const tokens = await this.generateAccessAndRefreshTokens({
         userId,
         roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
@@ -489,6 +499,10 @@ export class AuthService {
       throw new NotFoundException([
         { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
       ]);
+    }
+
+    if (user.isBanned || user.deletedAt) {
+      throw UserBannedException();
     }
 
     return {
