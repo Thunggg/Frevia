@@ -57,6 +57,29 @@ export const request = async <T>(
   }
 
   if (!res.ok) {
+    if (typeof window !== "undefined") {
+      const isAuthPage =
+        window.location.pathname.startsWith("/login") ||
+        window.location.pathname.startsWith("/register") ||
+        window.location.pathname.startsWith("/forgot-password");
+
+      const errData = data as ApiError | undefined;
+      const isBannedError =
+        errData?.error?.message === "Error.UserBanned" ||
+        (typeof errData?.error?.message === "string" &&
+          (errData.error.message.toLowerCase().includes("khoá") ||
+            errData.error.message.toLowerCase().includes("banned")));
+
+      if (
+        (res.status === 401 || (res.status === 403 && isBannedError)) &&
+        !isAuthPage
+      ) {
+        window.location.href = `/login?redirect=${encodeURIComponent(
+          window.location.pathname + window.location.search,
+        )}`;
+      }
+    }
+
     throw new ApiFail(data as ApiError, res.status);
   }
 

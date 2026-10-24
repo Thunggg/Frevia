@@ -20,7 +20,9 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   STRIPE_SECRET_KEY: z.string().default('sk_test_dummy_key_frevia'),
-  STRIPE_WEBHOOK_SECRET: z.string().default('whsec_dummy_webhook_secret_frevia'),
+  STRIPE_WEBHOOK_SECRET: z
+    .string()
+    .default('whsec_dummy_webhook_secret_frevia'),
   STRIPE_ACCOUNT_COUNTRY: z.string().default('US'),
   STRIPE_ACCOUNT_TYPE: z.enum(['standard', 'express']).default('standard'),
 });
