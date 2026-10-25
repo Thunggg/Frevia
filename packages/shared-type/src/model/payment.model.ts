@@ -58,16 +58,6 @@ export type GetTransactionListResponseType = z.infer<
   typeof GetTransactionListResponseSchema
 >;
 
-export const CreatePaymentIntentResponseSchema = z.object({
-  clientSecret: z.string(),
-  paymentIntentId: z.string(),
-  amount: z.number(),
-  currency: z.string(),
-});
-export type CreatePaymentIntentResponseType = z.infer<
-  typeof CreatePaymentIntentResponseSchema
->;
-
 export const CreateCheckoutSessionResponseSchema = z.object({
   checkoutUrl: z.string().url(),
   sessionId: z.string(),
@@ -149,29 +139,11 @@ export type DisputeSettlementBodyType = z.infer<
   typeof DisputeSettlementBodySchema
 >;
 
-export const DisputeSettlementResponseSchema = z.object({
-  disputeId: z.number(),
-  status: z.string(),
-  clientRefundAmount: z.number(),
-  freelancerPayoutAmount: z.number(),
-  arbitratorPayoutAmount: z.number(),
-});
-export type DisputeSettlementResponseType = z.infer<
-  typeof DisputeSettlementResponseSchema
->;
-
 export const CreateOnboardingLinkBodySchema = z.object({
   returnUrl: z.string().url().optional(),
 });
 export type CreateOnboardingLinkBodyType = z.infer<
   typeof CreateOnboardingLinkBodySchema
->;
-
-export const RefundMilestoneBodySchema = z.object({
-  reason: z.string().optional(),
-});
-export type RefundMilestoneBodyType = z.infer<
-  typeof RefundMilestoneBodySchema
 >;
 
 export const ReleaseMilestoneResponseSchema = z.object({

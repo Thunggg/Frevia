@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   DisputeFeeStatus,
@@ -22,13 +17,16 @@ import {
 import { envConfig } from '../../shared/config/validate-env';
 import {
   ContractNotSignedException,
+  DisputeAlreadySettledException,
   DisputeFeeAlreadyPaidException,
   DisputeSettlementInvalidAmountException,
   MilestoneAlreadyReleasedException,
+  MilestoneCannotBeRefundedException,
   MilestoneNotEligibleForFundingException,
   MilestoneNotFundedException,
   PaymentForbiddenException,
   PlatformFeeAlreadyPaidException,
+  PlatformFeeNotPaidException,
   StripeAccountNotConnectedException,
   StripeOnboardingIncompleteException,
   WebhookSignatureInvalidException,
@@ -54,7 +52,9 @@ export class PaymentService {
     let stripeAccountId = user.stripeAccountId;
     try {
       if (!stripeAccountId) {
-        const account = await this.stripeService.createExpressAccount(user.email);
+        const account = await this.stripeService.createExpressAccount(
+          user.email,
+        );
         stripeAccountId = account.id;
         await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
       } else {
@@ -63,27 +63,37 @@ export class PaymentService {
           const existingAccount =
             await this.stripeService.getAccount(stripeAccountId);
           if (
-            existingAccount.country &&
+            existingAccount?.country &&
             existingAccount.country !== envConfig.STRIPE_ACCOUNT_COUNTRY &&
             !existingAccount.details_submitted
           ) {
             this.logger.warn(
               `Stripe account ${stripeAccountId} country (${existingAccount.country}) does not match configured (${envConfig.STRIPE_ACCOUNT_COUNTRY}). Re-creating account...`,
             );
-            const account =
-              await this.stripeService.createExpressAccount(user.email);
+            const account = await this.stripeService.createExpressAccount(
+              user.email,
+            );
             stripeAccountId = account.id;
-            await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
+            await this.paymentRepo.updateUserStripe(userId, {
+              stripeAccountId,
+            });
           }
         } catch (accountErr: unknown) {
           const errObj = accountErr as { code?: string; statusCode?: number };
-          if (errObj?.code === 'resource_missing' || errObj?.statusCode === 404) {
+          if (
+            errObj?.code === 'resource_missing' ||
+            errObj?.statusCode === 404
+          ) {
             this.logger.warn(
               `Stripe account ${stripeAccountId} not found. Re-creating Express account...`,
             );
-            const account = await this.stripeService.createExpressAccount(user.email);
+            const account = await this.stripeService.createExpressAccount(
+              user.email,
+            );
             stripeAccountId = account.id;
-            await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
+            await this.paymentRepo.updateUserStripe(userId, {
+              stripeAccountId,
+            });
           } else {
             throw accountErr;
           }
@@ -221,7 +231,10 @@ export class PaymentService {
 
       return { paymentMethods };
     } catch (err) {
-      this.logger.error(`Failed to list payment methods for user ${userId}`, err);
+      this.logger.error(
+        `Failed to list payment methods for user ${userId}`,
+        err,
+      );
       return { paymentMethods: [] };
     }
   }
@@ -337,6 +350,10 @@ export class PaymentService {
       throw MilestoneNotEligibleForFundingException();
     }
 
+    if (milestone.contract.platformFeeStatus !== PlatformFeeStatus.PAID) {
+      throw PlatformFeeNotPaidException();
+    }
+
     const customerId = milestone.contract.client.stripeCustomerId;
     if (!customerId) {
       throw new HttpException(
@@ -413,64 +430,6 @@ export class PaymentService {
     }
   }
 
-  async createPlatformFeeIntent(userId: number, contractId: number) {
-    const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
-      throw PaymentForbiddenException();
-    }
-
-    if (!contract.signedByClient || !contract.signedByFreelancer) {
-      throw ContractNotSignedException();
-    }
-
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
-      throw PlatformFeeAlreadyPaidException();
-    }
-
-    let customerId = contract.client.stripeCustomerId;
-    if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        contract.client.email,
-      );
-      customerId = customer.id;
-      await this.paymentRepo.updateUserStripe(userId, {
-        stripeCustomerId: customerId,
-      });
-    }
-
-    const feeAmount = Number(contract.platformFee) || 10.0;
-    const amountInCents = Math.round(feeAmount * 100);
-
-    const paymentIntent = await this.stripeService.createPaymentIntent({
-      amountInCents,
-      currency: 'usd',
-      customerId,
-      metadata: {
-        type: TransactionType.PLATFORM_FEE,
-        contractId: String(contractId),
-        userId: String(userId),
-      },
-    });
-
-    await this.paymentRepo.createTransaction({
-      userId,
-      contractId,
-      amount: feeAmount,
-      currency: 'usd',
-      type: TransactionType.PLATFORM_FEE,
-      status: TransactionStatus.PENDING,
-      stripePaymentIntentId: paymentIntent.id,
-      metadata: { clientSecret: paymentIntent.client_secret },
-    });
-
-    return {
-      clientSecret: paymentIntent.client_secret ?? '',
-      paymentIntentId: paymentIntent.id,
-      amount: feeAmount,
-      currency: 'usd',
-    };
-  }
-
   async createPlatformFeeCheckoutSession(userId: number, contractId: number) {
     const contract = await this.paymentRepo.findContractById(contractId);
     if (!contract || contract.clientId !== userId) {
@@ -530,70 +489,6 @@ export class PaymentService {
     };
   }
 
-  async createMilestoneFundIntent(
-    userId: number,
-    contractId: number,
-    milestoneId: number,
-  ) {
-    const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
-    if (
-      !milestone ||
-      milestone.contractId !== contractId ||
-      milestone.contract.clientId !== userId
-    ) {
-      throw PaymentForbiddenException();
-    }
-
-    if (milestone.paymentStatus !== MilestonePaymentStatus.PENDING) {
-      throw MilestoneNotEligibleForFundingException();
-    }
-
-    let customerId = milestone.contract.client.stripeCustomerId;
-    if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        milestone.contract.client.email,
-      );
-      customerId = customer.id;
-      await this.paymentRepo.updateUserStripe(userId, {
-        stripeCustomerId: customerId,
-      });
-    }
-
-    const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
-
-    const paymentIntent = await this.stripeService.createPaymentIntent({
-      amountInCents,
-      currency: 'usd',
-      customerId,
-      metadata: {
-        type: TransactionType.ESCROW_DEPOSIT,
-        contractId: String(contractId),
-        milestoneId: String(milestoneId),
-        userId: String(userId),
-      },
-    });
-
-    await this.paymentRepo.createTransaction({
-      userId,
-      contractId,
-      milestoneId,
-      amount: milestoneAmount,
-      currency: 'usd',
-      type: TransactionType.ESCROW_DEPOSIT,
-      status: TransactionStatus.PENDING,
-      stripePaymentIntentId: paymentIntent.id,
-      metadata: { clientSecret: paymentIntent.client_secret },
-    });
-
-    return {
-      clientSecret: paymentIntent.client_secret ?? '',
-      paymentIntentId: paymentIntent.id,
-      amount: milestoneAmount,
-      currency: 'usd',
-    };
-  }
-
   async createMilestoneFundCheckoutSession(
     userId: number,
     contractId: number,
@@ -610,6 +505,10 @@ export class PaymentService {
 
     if (milestone.paymentStatus !== MilestonePaymentStatus.PENDING) {
       throw MilestoneNotEligibleForFundingException();
+    }
+
+    if (milestone.contract.platformFeeStatus !== PlatformFeeStatus.PAID) {
+      throw PlatformFeeNotPaidException();
     }
 
     let customerId = milestone.contract.client.stripeCustomerId;
@@ -656,78 +555,6 @@ export class PaymentService {
     return {
       checkoutUrl: session.url ?? '',
       sessionId: session.id,
-    };
-  }
-
-  async createDisputeFeeIntent(userId: number, disputeId: number) {
-    const dispute = await this.paymentRepo.findDisputeById(disputeId);
-    if (!dispute) {
-      throw PaymentForbiddenException();
-    }
-
-    const isParticipant =
-      dispute.openedById === userId || dispute.respondentId === userId;
-    if (!isParticipant) {
-      throw PaymentForbiddenException();
-    }
-
-    const fee = await this.paymentRepo.findDisputeFee(disputeId, userId);
-    if (!fee) {
-      throw PaymentForbiddenException();
-    }
-
-    if (fee.status === DisputeFeeStatus.PAID) {
-      throw DisputeFeeAlreadyPaidException();
-    }
-
-    const user = await this.paymentRepo.findUserById(userId);
-    let customerId = user?.stripeCustomerId ?? undefined;
-    if (!customerId && user?.email) {
-      const customer = await this.stripeService.createCustomer(user.email);
-      customerId = customer.id;
-      await this.paymentRepo.updateUserStripe(userId, {
-        stripeCustomerId: customerId,
-      });
-    }
-
-    const feeAmount = Number(fee.amount);
-    const amountInCents = Math.round(feeAmount * 100);
-
-    const paymentIntent = await this.stripeService.createPaymentIntent({
-      amountInCents,
-      currency: 'usd',
-      customerId,
-      metadata: {
-        type: TransactionType.DISPUTE_FEE,
-        disputeId: String(disputeId),
-        userId: String(userId),
-        feeId: String(fee.id),
-      },
-    });
-
-    await this.paymentRepo.updateDisputeFeeStatus(
-      fee.id,
-      DisputeFeeStatus.PENDING,
-      paymentIntent.id,
-    );
-
-    await this.paymentRepo.createTransaction({
-      userId,
-      contractId: dispute.milestone.contractId,
-      milestoneId: dispute.milestoneId,
-      disputeId,
-      amount: feeAmount,
-      currency: 'usd',
-      type: TransactionType.DISPUTE_FEE,
-      status: TransactionStatus.PENDING,
-      stripePaymentIntentId: paymentIntent.id,
-    });
-
-    return {
-      clientSecret: paymentIntent.client_secret ?? '',
-      paymentIntentId: paymentIntent.id,
-      amount: feeAmount,
-      currency: 'usd',
     };
   }
 
@@ -893,6 +720,10 @@ export class PaymentService {
       throw MilestoneNotFundedException();
     }
 
+    if (milestone.status !== MilestoneStatus.PENDING) {
+      throw MilestoneCannotBeRefundedException();
+    }
+
     const escrowTx =
       await this.paymentRepo.findEscrowDepositTransaction(milestoneId);
     if (!escrowTx || !escrowTx.stripePaymentIntentId) {
@@ -940,6 +771,10 @@ export class PaymentService {
     const dispute = await this.paymentRepo.findDisputeById(disputeId);
     if (!dispute) {
       throw PaymentForbiddenException('Dispute not found');
+    }
+
+    if (dispute.status === DisputeStatus.FINALIZED) {
+      throw DisputeAlreadySettledException();
     }
 
     const isAdmin = callerRoleName === RoleName.ADMIN;
@@ -1008,53 +843,68 @@ export class PaymentService {
       });
     }
 
-    // 3. Arbitration fee handling for winner / loser
+    // 3. Arbitration fee handling:
+    // If an external expert arbitrator is assigned, the collected arbitration fee ($400) is paid to the Expert.
+    // If Admin resolved it without an expert, the winning party gets their arbitration fee refunded.
     const clientFee = dispute.fees.find((f) => f.userId === contract.clientId);
     const freelancerFee = dispute.fees.find(
       (f) => f.userId === contract.freelancerId,
     );
 
-    if (body.winningParty === 'CLIENT' && clientFee?.paymentIntentId) {
-      // Refund dispute fee to Client
-      await this.stripeService.createRefund({
-        paymentIntentId: clientFee.paymentIntentId,
-      });
-    } else if (
-      body.winningParty === 'FREELANCER' &&
-      freelancerFee?.paymentIntentId
-    ) {
-      // Refund dispute fee to Freelancer
-      await this.stripeService.createRefund({
-        paymentIntentId: freelancerFee.paymentIntentId,
-      });
+    const hasArbitratorPayout = Boolean(
+      dispute.decisionBy?.stripeAccountId &&
+      dispute.decisionBy.stripeOnboardingCompleted,
+    );
+
+    if (!hasArbitratorPayout) {
+      if (body.winningParty === 'CLIENT' && clientFee?.paymentIntentId) {
+        // Refund dispute fee to Client
+        await this.stripeService.createRefund({
+          paymentIntentId: clientFee.paymentIntentId,
+        });
+      } else if (
+        body.winningParty === 'FREELANCER' &&
+        freelancerFee?.paymentIntentId
+      ) {
+        // Refund dispute fee to Freelancer
+        await this.stripeService.createRefund({
+          paymentIntentId: freelancerFee.paymentIntentId,
+        });
+      }
     }
 
-    // 4. Arbitrator payout
+    // 4. Arbitrator payout: 100% of paid arbitration fees (e.g. $200/party = $400) to Expert
     let arbitratorPayoutAmount = 0;
+    const paidFees = dispute.fees.filter(
+      (f) => f.status === DisputeFeeStatus.PAID,
+    );
+    const totalFeesCollected = paidFees.reduce(
+      (sum, f) => sum + Number(f.amount),
+      0,
+    );
+
     if (
+      totalFeesCollected > 0 &&
       dispute.decisionBy?.stripeAccountId &&
       dispute.decisionBy.stripeOnboardingCompleted
     ) {
-      const arbitrationFee = Number(dispute.arbitrationFee) || 50;
-      arbitratorPayoutAmount = Math.round(arbitrationFee * 0.7); // 70% to expert
-      if (arbitratorPayoutAmount > 0) {
-        const transfer = await this.stripeService.createTransfer({
-          amountInCents: Math.round(arbitratorPayoutAmount * 100),
-          destination: dispute.decisionBy.stripeAccountId,
-          metadata: { disputeId: String(disputeId), type: 'ARBITRATOR_PAYOUT' },
-        });
+      arbitratorPayoutAmount = totalFeesCollected;
+      const transfer = await this.stripeService.createTransfer({
+        amountInCents: Math.round(arbitratorPayoutAmount * 100),
+        destination: dispute.decisionBy.stripeAccountId,
+        metadata: { disputeId: String(disputeId), type: 'ARBITRATOR_PAYOUT' },
+      });
 
-        await this.paymentRepo.createTransaction({
-          userId: dispute.decisionBy.id,
-          contractId: contract.id,
-          disputeId,
-          amount: arbitratorPayoutAmount,
-          currency: 'usd',
-          type: TransactionType.ARBITRATOR_PAYOUT,
-          status: TransactionStatus.SUCCEEDED,
-          stripeTransferId: transfer.id,
-        });
-      }
+      await this.paymentRepo.createTransaction({
+        userId: dispute.decisionBy.id,
+        contractId: contract.id,
+        disputeId,
+        amount: arbitratorPayoutAmount,
+        currency: 'usd',
+        type: TransactionType.ARBITRATOR_PAYOUT,
+        status: TransactionStatus.SUCCEEDED,
+        stripeTransferId: transfer.id,
+      });
     }
 
     await this.paymentRepo.updateDisputeStatus(
@@ -1063,9 +913,14 @@ export class PaymentService {
       new Date(),
     );
 
+    const milestonePaymentStatus =
+      body.clientAmount === totalMilestoneAmount
+        ? MilestonePaymentStatus.REFUNDED
+        : MilestonePaymentStatus.RELEASED;
+
     await this.paymentRepo.updateMilestonePaymentStatus(
       dispute.milestoneId,
-      MilestonePaymentStatus.RELEASED,
+      milestonePaymentStatus,
       MilestoneStatus.COMPLETED,
     );
 
@@ -1181,15 +1036,6 @@ export class PaymentService {
     }
   }
 
-  async syncPaymentIntent(userId: number, paymentIntentId: string) {
-    const pi = await this.stripeService.retrievePaymentIntent(paymentIntentId);
-    if (pi.status === 'succeeded') {
-      await this.processPaymentIntentSucceeded(pi);
-      return { success: true, status: 'succeeded' };
-    }
-    return { success: false, status: pi.status };
-  }
-
   async processCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
     const metadata = session.metadata || {};
     const type = metadata.type;
@@ -1209,7 +1055,9 @@ export class PaymentService {
       );
     } else if (paymentIntentId) {
       const txByPi =
-        await this.paymentRepo.findTransactionByPaymentIntentId(paymentIntentId);
+        await this.paymentRepo.findTransactionByPaymentIntentId(
+          paymentIntentId,
+        );
       if (txByPi) {
         await this.paymentRepo.updateTransactionStatus(
           txByPi.id,

@@ -19,6 +19,8 @@ export const CreateDisputeBodySchema = z.object({
   milestoneId: z.number().int().positive(),
   reason: z.string().min(3).max(255),
   description: z.string().min(10).max(5000),
+  freelancerAmount: z.coerce.number().min(0).optional(),
+  clientAmount: z.coerce.number().min(0).optional(),
   evidenceFiles: z
     .array(DisputeEvidenceFileItemSchema)
     .max(MAX_DISPUTE_EVIDENCE_FILES)
@@ -32,7 +34,7 @@ export const PayDisputeFeeBodySchema = z.object({
 export type PayDisputeFeeBodyType = z.infer<typeof PayDisputeFeeBodySchema>;
 
 export const SubmitDisputeResponseBodySchema = z.object({
-  description: z.string().min(10).max(5000),
+  description: z.string().min(10).max(5000).optional(),
   evidenceFiles: z
     .array(DisputeEvidenceFileItemSchema)
     .max(MAX_DISPUTE_EVIDENCE_FILES)
@@ -40,6 +42,36 @@ export const SubmitDisputeResponseBodySchema = z.object({
 });
 export type SubmitDisputeResponseBodyType = z.infer<
   typeof SubmitDisputeResponseBodySchema
+>;
+
+export const CounterOfferBodySchema = z.object({
+  freelancerAmount: z.coerce.number().min(0),
+  clientAmount: z.coerce.number().min(0),
+  reason: z.string().max(2000).optional(),
+});
+export type CounterOfferBodyType = z.infer<typeof CounterOfferBodySchema>;
+
+export const AssignExpertBodySchema = z.object({
+  expertId: z.number().int().positive(),
+});
+export type AssignExpertBodyType = z.infer<typeof AssignExpertBodySchema>;
+
+export const MatchingExpertItemSchema = z.object({
+  userId: z.number(),
+  name: z.string().optional(),
+  email: z.string(),
+  title: z.string().nullable().optional(),
+  expertise: z.array(z.string()),
+  yearsOfExperience: z.number(),
+  stripeReady: z.boolean(),
+});
+export type MatchingExpertItemType = z.infer<typeof MatchingExpertItemSchema>;
+
+export const MatchingExpertsResponseSchema = z.object({
+  data: z.array(MatchingExpertItemSchema),
+});
+export type MatchingExpertsResponseType = z.infer<
+  typeof MatchingExpertsResponseSchema
 >;
 
 export const ReviewDisputeDecisionBodySchema = z.object({
@@ -50,14 +82,6 @@ export type ReviewDisputeDecisionBodyType = z.infer<
   typeof ReviewDisputeDecisionBodySchema
 >;
 
-export const AdminDisputeDecisionBodySchema = z.object({
-  freelancerAmount: z.coerce.number().min(0),
-  clientAmount: z.coerce.number().min(0),
-  decisionReason: z.string().min(5).max(3000),
-});
-export type AdminDisputeDecisionBodyType = z.infer<
-  typeof AdminDisputeDecisionBodySchema
->;
 
 export const AdminDisputeFinalDecisionBodySchema = z.object({
   freelancerAmount: z.coerce.number().min(0),
@@ -151,6 +175,41 @@ export const DisputeDetailSchema = z.object({
       amount: z.coerce.number(),
       status: z.string(),
       paymentStatus: z.string(),
+      contract: z
+        .object({
+          id: z.number(),
+          clientId: z.number().optional(),
+          freelancerId: z.number().optional(),
+          job: z
+            .object({
+              id: z.number(),
+              title: z.string().optional(),
+              jobCategories: z
+                .array(
+                  z.object({
+                    category: z.object({
+                      id: z.number(),
+                      name: z.string(),
+                      slug: z.string(),
+                    }),
+                  }),
+                )
+                .optional(),
+              skills: z
+                .array(
+                  z.object({
+                    skill: z.object({
+                      id: z.number(),
+                      name: z.string(),
+                      slug: z.string(),
+                    }),
+                  }),
+                )
+                .optional(),
+            })
+            .optional(),
+        })
+        .optional(),
     })
     .optional(),
   openedBy: z
@@ -188,3 +247,13 @@ export const DisputeListResponseSchema = z.object({
   }),
 });
 export type DisputeListResponseType = z.infer<typeof DisputeListResponseSchema>;
+
+export const ClaimDisputeResponseSchema = z.object({
+  success: z.boolean(),
+  disputeId: z.number(),
+  expertId: z.number(),
+  message: z.string(),
+});
+export type ClaimDisputeResponseType = z.infer<
+  typeof ClaimDisputeResponseSchema
+>;

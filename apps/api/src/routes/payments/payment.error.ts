@@ -30,6 +30,14 @@ export const PlatformFeeAlreadyPaidException = () =>
     },
   ]);
 
+export const PlatformFeeNotPaidException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.PLATFORM_FEE_NOT_PAID,
+      path: 'platformFeeStatus',
+    },
+  ]);
+
 export const ContractNotSignedException = () =>
   new UnprocessableEntityException([
     {
@@ -62,6 +70,14 @@ export const MilestoneAlreadyReleasedException = () =>
     },
   ]);
 
+export const MilestoneCannotBeRefundedException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.MILESTONE_CANNOT_BE_REFUNDED,
+      path: 'status',
+    },
+  ]);
+
 export const DisputeFeeAlreadyPaidException = () =>
   new UnprocessableEntityException([
     {
@@ -75,6 +91,14 @@ export const DisputeSettlementInvalidAmountException = () =>
     {
       message: ManagePaymentMessage.DISPUTE_SETTLEMENT_INVALID_AMOUNT,
       path: 'amounts',
+    },
+  ]);
+
+export const DisputeAlreadySettledException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.DISPUTE_ALREADY_SETTLED,
+      path: 'status',
     },
   ]);
 

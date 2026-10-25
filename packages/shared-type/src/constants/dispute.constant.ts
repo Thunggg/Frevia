@@ -26,7 +26,7 @@ export type DisputeDecisionResponseType = z.infer<
   typeof DisputeDecisionResponseEnum
 >;
 
-export const DEFAULT_ARBITRATION_FEE = 50.0;
+export const DEFAULT_ARBITRATION_FEE = 200.0;
 export const FEE_DEADLINE_HOURS = 24;
 export const RESPONSE_DEADLINE_HOURS = 48;
 export const MAX_DISPUTE_EVIDENCE_FILES = 5;

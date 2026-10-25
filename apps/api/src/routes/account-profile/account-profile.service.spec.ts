@@ -44,7 +44,6 @@ describe('AccountProfileService', () => {
   };
   const profileRevisionService = {
     submitRevision: jest.fn(),
-  };
     requiresManualReview: jest.fn(),
     submitGeneral: jest.fn(),
     submitClient: jest.fn(),

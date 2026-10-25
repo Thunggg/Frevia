@@ -17,6 +17,8 @@ export const ManageContractMessage = {
     CONTRACT_NOT_ACTIVE: 'Error.ContractNotActive',
     CONTRACT_ALREADY_CANCELLED: 'Error.ContractAlreadyCancelled',
     CONTRACT_ALREADY_COMPLETED: 'Error.ContractAlreadyCompleted',
+    CONTRACT_CANNOT_BE_CANCELLED: 'Error.ContractCannotBeCancelledWithActiveMilestones',
+    CONTRACT_CANNOT_BE_COMPLETED: 'Error.ContractCannotBeCompletedWithIncompleteMilestones',
     CONTRACT_DISPUTED: 'Error.ContractDisputed',
     ALREADY_SIGNED: 'Error.ContractAlreadySigned',
 

@@ -42,7 +42,8 @@ import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem = {
   href: string;
-  labelKey: string;
+  labelKey?: string;
+  label?: string;
   icon: React.ElementType;
   matchPrefix?: boolean;
   badge?: number | string;
@@ -60,7 +61,13 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   return (
     <Link
       href={item.href}
-      title={collapsed ? t(item.labelKey) : undefined}
+      title={
+        collapsed
+          ? item.labelKey
+            ? t(item.labelKey)
+            : item.label
+          : undefined
+      }
       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-150 ${
         isActive
           ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/20 dark:text-blue-200 font-semibold shadow-xs"
@@ -79,7 +86,11 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
           <span className="absolute -top-1 -right-1 flex size-2 rounded-full bg-[#0069D3] ring-2 ring-[#F6F5F9] dark:ring-zinc-950" />
         ) : null}
       </div>
-      {!collapsed && <span className="truncate">{t(item.labelKey)}</span>}
+      {!collapsed && (
+        <span className="truncate">
+          {item.labelKey ? t(item.labelKey) : item.label}
+        </span>
+      )}
       {!collapsed && (
         <div className="ml-auto flex items-center gap-1.5">
           {item.badge ? (

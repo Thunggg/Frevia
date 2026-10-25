@@ -143,7 +143,10 @@ export class MilestoneService {
       if (milestone.contractId !== contractId)
         throw MilestoneForbiddenException();
 
-      if (milestone.status !== MilestoneStatus.PENDING) {
+      if (
+        milestone.status !== MilestoneStatus.PENDING ||
+        milestone.paymentStatus !== MilestonePaymentStatus.PENDING
+      ) {
         throw MilestoneCannotBeEditedException();
       }
 
@@ -183,7 +186,10 @@ export class MilestoneService {
       if (milestone.contractId !== contractId)
         throw MilestoneForbiddenException();
 
-      if (milestone.status !== MilestoneStatus.PENDING) {
+      if (
+        milestone.status !== MilestoneStatus.PENDING ||
+        milestone.paymentStatus !== MilestonePaymentStatus.PENDING
+      ) {
         throw MilestoneCannotBeDeletedException();
       }
 

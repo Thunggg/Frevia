@@ -19,9 +19,6 @@ import {
   CreateCheckoutSessionResponseDTO,
   CreateCustomerPortalSessionResponseDTO,
   CreateOnboardingLinkBodyDTO,
-  CreatePaymentIntentResponseDTO,
-  DisputeSettlementBodyDTO,
-  DisputeSettlementResponseDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,
@@ -32,10 +29,7 @@ import {
   SyncCheckoutSessionResponseDTO,
 } from './payment.dto';
 import { PaymentService } from './payment.service';
-import type {
-  DisputeSettlementBodyType,
-  GetTransactionListQueryType,
-} from '@shared/types';
+import type { GetTransactionListQueryType } from '@shared/types';
 
 @Controller('payments')
 export class PaymentController {
@@ -71,15 +65,6 @@ export class PaymentController {
     return this.paymentService.getCustomerPortalLink(userId, returnUrl);
   }
 
-  @Post('contracts/:contractId/platform-fee/intent')
-  @ZodSerializerDto(CreatePaymentIntentResponseDTO)
-  createPlatformFeeIntent(
-    @UserActive('userId') userId: number,
-    @Param('contractId', ParseIntPipe) contractId: number,
-  ) {
-    return this.paymentService.createPlatformFeeIntent(userId, contractId);
-  }
-
   @Post('contracts/:contractId/platform-fee/checkout-session')
   @ZodSerializerDto(CreateCheckoutSessionResponseDTO)
   createPlatformFeeCheckoutSession(
@@ -103,20 +88,6 @@ export class PaymentController {
       userId,
       contractId,
       body?.paymentMethodId,
-    );
-  }
-
-  @Post('contracts/:contractId/milestones/:milestoneId/fund/intent')
-  @ZodSerializerDto(CreatePaymentIntentResponseDTO)
-  createMilestoneFundIntent(
-    @UserActive('userId') userId: number,
-    @Param('contractId', ParseIntPipe) contractId: number,
-    @Param('milestoneId', ParseIntPipe) milestoneId: number,
-  ) {
-    return this.paymentService.createMilestoneFundIntent(
-      userId,
-      contractId,
-      milestoneId,
     );
   }
 
@@ -174,15 +145,6 @@ export class PaymentController {
     return this.paymentService.refundMilestone(userId, contractId, milestoneId);
   }
 
-  @Post('disputes/:disputeId/fee/intent')
-  @ZodSerializerDto(CreatePaymentIntentResponseDTO)
-  createDisputeFeeIntent(
-    @UserActive('userId') userId: number,
-    @Param('disputeId', ParseIntPipe) disputeId: number,
-  ) {
-    return this.paymentService.createDisputeFeeIntent(userId, disputeId);
-  }
-
   @Post('disputes/:disputeId/fee/checkout-session')
   @ZodSerializerDto(CreateCheckoutSessionResponseDTO)
   createDisputeFeeCheckoutSession(
@@ -192,22 +154,6 @@ export class PaymentController {
     return this.paymentService.createDisputeFeeCheckoutSession(
       userId,
       disputeId,
-    );
-  }
-
-  @Post('disputes/:disputeId/settle')
-  @ZodSerializerDto(DisputeSettlementResponseDTO)
-  settleDispute(
-    @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
-    @Param('disputeId', ParseIntPipe) disputeId: number,
-    @Body() body: DisputeSettlementBodyDTO,
-  ) {
-    return this.paymentService.settleDispute(
-      userId,
-      roleName,
-      disputeId,
-      body as DisputeSettlementBodyType,
     );
   }
 
@@ -223,14 +169,6 @@ export class PaymentController {
       roleName,
       query as GetTransactionListQueryType,
     );
-  }
-
-  @Post('intents/:paymentIntentId/sync')
-  syncPaymentIntent(
-    @UserActive('userId') userId: number,
-    @Param('paymentIntentId') paymentIntentId: string,
-  ) {
-    return this.paymentService.syncPaymentIntent(userId, paymentIntentId);
   }
 
   @Post('checkout-sessions/:sessionId/sync')

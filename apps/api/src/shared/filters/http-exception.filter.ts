@@ -3,7 +3,6 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpExceptionBody,
   Logger,
 } from '@nestjs/common';
 import { ApiError, ManageConversationMessage } from '@shared/types';
@@ -77,7 +76,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         } else if (typeof resObj.error === 'string') {
           errorMsg = resObj.error;
         }
-        if (resObj.statusCode) {
+        if (
+          typeof resObj.statusCode === 'number' ||
+          typeof resObj.statusCode === 'string'
+        ) {
           errorCode = String(resObj.statusCode);
         }
       }

@@ -249,30 +249,23 @@ model Profile {
 }
 
 model FreelancerProfile {
-  id             Int      @id @default(autoincrement())
-  profileId      Int      @unique
-  title          String?  @db.VarChar(255)
-  education      String[] @default([])
-  certifications String[] @default([])
-  languages      String[] @default([])
-  idVerified     Boolean  @default(false)
-  cvUrl          String?  @db.VarChar(500)
-  cvFileName     String?  @db.VarChar(255)
-  cvPublicId     String?  @db.VarChar(255)
-  experience     String[] @default([])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  experience     String[] @default([])
+  id             Int       @id @default(autoincrement())
+  profileId      Int       @unique
+  title          String?   @db.VarChar(255)
+  education      String[]  @default([])
+  certifications String[]  @default([])
+  languages      String[]  @default([])
+  idVerified     Boolean   @default(false)
+  experience     String[]  @default([])
 
   // CV
-  cvUrl        String?   @db.VarChar(500)
-  cvFileName   String?   @db.VarChar(255)
-  cvPublicId   String?   @db.VarChar(255)
-  cvUploadedAt DateTime?
+  cvUrl          String?   @db.VarChar(500)
+  cvFileName     String?   @db.VarChar(255)
+  cvPublicId     String?   @db.VarChar(255)
+  cvUploadedAt   DateTime?
 
-  idVerified Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skills         FreelancerSkill[]

@@ -4,13 +4,9 @@ import {
   CreateCheckoutSessionResponseSchema,
   CreateCustomerPortalSessionResponseSchema,
   CreateOnboardingLinkBodySchema,
-  CreatePaymentIntentResponseSchema,
-  DisputeSettlementBodySchema,
-  DisputeSettlementResponseSchema,
   GetSavedPaymentMethodsResponseSchema,
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
-  RefundMilestoneBodySchema,
   RefundMilestoneResponseSchema,
   ReleaseMilestoneResponseSchema,
   StripeConnectStatusResponseSchema,
@@ -46,10 +42,6 @@ export class GetTransactionListResponseDTO extends createZodDto(
   GetTransactionListResponseSchema,
 ) {}
 
-export class CreatePaymentIntentResponseDTO extends createZodDto(
-  CreatePaymentIntentResponseSchema,
-) {}
-
 export class CreateCheckoutSessionResponseDTO extends createZodDto(
   CreateCheckoutSessionResponseSchema,
 ) {}
@@ -68,18 +60,6 @@ export class StripeOnboardingLinkResponseDTO extends createZodDto(
 
 export class StripeConnectStatusResponseDTO extends createZodDto(
   StripeConnectStatusResponseSchema,
-) {}
-
-export class DisputeSettlementBodyDTO extends createZodDto(
-  DisputeSettlementBodySchema,
-) {}
-
-export class DisputeSettlementResponseDTO extends createZodDto(
-  DisputeSettlementResponseSchema,
-) {}
-
-export class RefundMilestoneBodyDTO extends createZodDto(
-  RefundMilestoneBodySchema,
 ) {}
 
 export class ReleaseMilestoneResponseDTO extends createZodDto(

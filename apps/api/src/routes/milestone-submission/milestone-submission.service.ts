@@ -10,6 +10,7 @@ import {
   SubmitMilestoneBodyType,
 } from '@shared/types';
 import { MilestoneSubmissionRepository } from './milestone-submission.repo';
+import { PaymentService } from '../payments/payment.service';
 import {
   FailedToApproveException,
   FailedToLoadSubmissionException,
@@ -28,6 +29,7 @@ import {
 export class MilestoneSubmissionService {
   constructor(
     private readonly submissionRepository: MilestoneSubmissionRepository,
+    private readonly paymentService: PaymentService,
   ) {}
 
   private async resolveAndGuardContext(
@@ -212,6 +214,19 @@ export class MilestoneSubmissionService {
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
         throw SubmissionNotPendingReviewException();
+      }
+
+      const milestone =
+        await this.submissionRepository.findMilestoneById(milestoneId);
+      if (
+        milestone &&
+        milestone.paymentStatus === MilestonePaymentStatus.FUNDED
+      ) {
+        await this.paymentService.releaseMilestone(
+          userId,
+          contractId,
+          milestoneId,
+        );
       }
 
       return await this.submissionRepository.approveSubmission(

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -76,25 +75,7 @@ import { SharedFilesSection } from "./shared-files-section";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { DisputeDialog } from "./dispute-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
-import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
 import { paymentApiRequest } from "@/apiRequests/payment";
-
-function money(amount: number | string, currency: string = "USD") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency.toUpperCase(),
-  }).format(Number(amount));
-}
-
-function formatDate(date: string | Date | null) {
-  if (!date) return "Not specified";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
 interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialMilestones?: GetMilestoneListResponseType | null;
@@ -116,20 +97,20 @@ export function ContractDetail({
   const tCommon = useTranslations("common");
   const format = useFormatter();
 
-  const money = (amount: number) =>
-    format.number(amount, {
+  const money = (amount: number | string, currency: string = "USD") =>
+    format.number(Number(amount), {
       style: "currency",
-      currency: "USD",
+      currency: (currency || "USD").toUpperCase(),
       maximumFractionDigits: 0,
     });
 
   const formatDate = (date: string | Date | null) =>
     date
       ? format.dateTime(new Date(date), {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
       : t("notSpecified");
 
   const isFreelancer = basePath === "/freelancer";
@@ -163,14 +144,6 @@ export function ContractDetail({
   const [milestoneToDelete, setMilestoneToDelete] =
     useState<MilestoneType | null>(null);
 
-  // Stripe Payment dialog state
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [paymentModalConfig, setPaymentModalConfig] = useState<{
-    clientSecret: string;
-    amount: number;
-    title: string;
-    description: string;
-  } | null>(null);
   const [isInitiatingPayment, setIsInitiatingPayment] = useState(false);
 
   // 1-Click Saved Card Modal State
@@ -760,8 +733,8 @@ export function ContractDetail({
           error instanceof Error
             ? error.message
             : t("chatFailed", {
-                role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
-              }),
+              role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
+            }),
       });
       router.push(`${basePath}/conversations`);
     } finally {
@@ -1137,60 +1110,60 @@ export function ContractDetail({
                     onEdit={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToEdit(m);
-                            setCreateMilestoneOpen(true);
-                          }
+                          setMilestoneToEdit(m);
+                          setCreateMilestoneOpen(true);
+                        }
                         : undefined
                     }
                     onDelete={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToDelete(m);
-                          }
+                          setMilestoneToDelete(m);
+                        }
                         : undefined
                     }
                     onReview={
                       !isFreelancer
                         ? (m, sub) => {
-                            setActiveReviewMilestone(m);
-                            setActiveSubmission(sub);
-                            setReviewOpen(true);
-                          }
+                          setActiveReviewMilestone(m);
+                          setActiveSubmission(sub);
+                          setReviewOpen(true);
+                        }
                         : undefined
                     }
                     onSubmitWork={
                       isFreelancer
                         ? (m) => {
-                            setMilestoneToSubmit(m);
-                          }
+                          setMilestoneToSubmit(m);
+                        }
                         : undefined
                     }
                     onStartWork={
                       isFreelancer
                         ? (m) => {
-                            void handleStartMilestone(m);
-                          }
+                          void handleStartMilestone(m);
+                        }
                         : undefined
                     }
                     onFund={
                       !isFreelancer
                         ? (m) => {
-                            void handleFundMilestone(m);
-                          }
+                          void handleFundMilestone(m);
+                        }
                         : undefined
                     }
                     onRelease={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToRelease(m);
-                          }
+                          setMilestoneToRelease(m);
+                        }
                         : undefined
                     }
                     onRefund={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToRefund(m);
-                          }
+                          setMilestoneToRefund(m);
+                        }
                         : undefined
                     }
                     onOpenDispute={(m) => {
@@ -1285,13 +1258,12 @@ export function ContractDetail({
                           </td>
                           <td className="px-3.5 py-2.5 whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                                tx.status === "SUCCEEDED"
-                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-                                  : tx.status === "PENDING"
-                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                                    : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-                              }`}
+                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${tx.status === "SUCCEEDED"
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                                : tx.status === "PENDING"
+                                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+                                  : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
+                                }`}
                             >
                               {tx.status}
                             </span>
@@ -1771,32 +1743,6 @@ export function ContractDetail({
         }}
       />
 
-      {/* Stripe Payment Dialog for Platform Fee and Escrow Milestone Funding */}
-      {paymentModalConfig && (
-        <StripePaymentDialog
-          open={paymentModalOpen}
-          onOpenChange={(open) => {
-            setPaymentModalOpen(open);
-            if (!open) setPaymentModalConfig(null);
-          }}
-          title={paymentModalConfig.title}
-          description={paymentModalConfig.description}
-          amount={paymentModalConfig.amount}
-          clientSecret={paymentModalConfig.clientSecret}
-          onSuccess={async () => {
-            await queryClient.invalidateQueries({
-              queryKey: ["client-contract-detail", contract.id],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ["client-contract-milestones", contract.id],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ["client-contracts"],
-            });
-          }}
-        />
-      )}
-
       {/* Dialog: Confirm Release Milestone Payment */}
       <AlertDialog
         open={!!milestoneToRelease}
@@ -1941,11 +1887,10 @@ export function ContractDetail({
                           key={card.id}
                           type="button"
                           onClick={() => setSelectedPmId(card.id)}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
-                            isSelected
-                              ? "border-[#0069D3] bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-[#0069D3]"
-                              : "border-border/80 hover:border-border bg-white dark:bg-zinc-950"
-                          }`}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${isSelected
+                            ? "border-[#0069D3] bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-[#0069D3]"
+                            : "border-border/80 hover:border-border bg-white dark:bg-zinc-950"
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <CreditCard className="size-4 text-foreground/80 shrink-0" />

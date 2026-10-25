@@ -72,7 +72,8 @@ type NavLinkKey =
 
 type NavLink = {
   href: string;
-  labelKey: NavLinkKey;
+  labelKey?: NavLinkKey;
+  label?: string;
   exact?: boolean;
   excludePaths?: string[];
 };
@@ -165,7 +166,7 @@ function HeaderNavigation({
                 : "text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
             }`}
           >
-            {t(`links.${link.labelKey}`)}
+            {link.labelKey ? t(`links.${link.labelKey}`) : link.label}
           </Link>
         );
       })}

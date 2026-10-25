@@ -11,6 +11,8 @@ import {
   ContractAlreadyCancelledException,
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
+  ContractCannotBeCancelledException,
+  ContractCannotBeCompletedException,
   ContractDisputedException,
   ContractForbiddenException,
   ContractNotActiveException,
@@ -21,9 +23,13 @@ import {
   FailedToUpdateContractException,
   ProposalNotFoundException,
   ProposalNotAcceptedException,
-  ProposalNotPendingException,
 } from './contract.error';
-import { ContractStatus, Prisma } from '@prisma/client';
+import {
+  ContractStatus,
+  MilestonePaymentStatus,
+  MilestoneStatus,
+  Prisma,
+} from '@prisma/client';
 
 @Injectable()
 export class ContractService {
@@ -36,8 +42,6 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      if (proposal.status !== 'PENDING' && proposal.status !== 'ACCEPTED')
-        throw ProposalNotPendingException();
       if (proposal.job.clientId !== clientId)
         throw ContractForbiddenException();
 
@@ -114,13 +118,33 @@ export class ContractService {
   async completeContract(clientId: number, contractId: number) {
     try {
       const contract =
-        await this.contractRepository.findContractById(contractId);
+        await this.contractRepository.findContractWithMilestonesById(
+          contractId,
+        );
 
       if (!contract) throw ContractNotFoundException();
 
       if (contract.clientId !== clientId) throw ContractForbiddenException();
 
       if (contract.status !== 'ACTIVE') throw ContractNotActiveException();
+
+      const hasIncompleteMilestones = contract.milestones.some((m) => {
+        const isCompletedAndReleased =
+          m.status === MilestoneStatus.COMPLETED &&
+          m.paymentStatus === MilestonePaymentStatus.RELEASED;
+        const isRefunded = m.paymentStatus === MilestonePaymentStatus.REFUNDED;
+        return !isCompletedAndReleased && !isRefunded;
+      });
+
+      const hasDisputedMilestones = contract.milestones.some(
+        (m) =>
+          m.status === MilestoneStatus.DISPUTED ||
+          m.paymentStatus === MilestonePaymentStatus.DISPUTED,
+      );
+
+      if (hasIncompleteMilestones || hasDisputedMilestones) {
+        throw ContractCannotBeCompletedException();
+      }
 
       return await this.contractRepository.completeContract(
         contractId,
@@ -135,7 +159,9 @@ export class ContractService {
   async cancelContract(userId: number, contractId: number) {
     try {
       const contract =
-        await this.contractRepository.findContractById(contractId);
+        await this.contractRepository.findContractWithMilestonesById(
+          contractId,
+        );
 
       if (!contract) throw ContractNotFoundException();
 
@@ -147,6 +173,21 @@ export class ContractService {
         throw ContractAlreadyCompletedException();
       if (contract.status === ContractStatus.DISPUTED) {
         throw ContractDisputedException();
+      }
+
+      const hasActiveFundedMilestones = contract.milestones.some((m) => {
+        return (
+          m.paymentStatus === MilestonePaymentStatus.FUNDED ||
+          m.status === MilestoneStatus.IN_PROGRESS ||
+          m.status === MilestoneStatus.SUBMITTED ||
+          m.status === MilestoneStatus.CHANGES_REQUESTED ||
+          m.status === MilestoneStatus.DISPUTED ||
+          m.paymentStatus === MilestonePaymentStatus.DISPUTED
+        );
+      });
+
+      if (hasActiveFundedMilestones) {
+        throw ContractCannotBeCancelledException();
       }
 
       return await this.contractRepository.cancelContract(contractId);

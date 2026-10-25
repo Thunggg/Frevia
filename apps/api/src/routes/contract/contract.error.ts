@@ -69,6 +69,20 @@ export const ContractAlreadyCompletedException = () =>
   new UnprocessableEntityException([
     { message: ManageContractMessage.CONTRACT_ALREADY_COMPLETED, path: 'id' },
   ]);
+export const ContractCannotBeCancelledException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageContractMessage.CONTRACT_CANNOT_BE_CANCELLED,
+      path: 'id',
+    },
+  ]);
+export const ContractCannotBeCompletedException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageContractMessage.CONTRACT_CANNOT_BE_COMPLETED,
+      path: 'id',
+    },
+  ]);
 export const ContractNotActiveException = () =>
   new UnprocessableEntityException([
     { message: ManageContractMessage.CONTRACT_NOT_ACTIVE, path: 'id' },

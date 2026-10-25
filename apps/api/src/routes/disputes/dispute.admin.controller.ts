@@ -10,16 +10,15 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
-  AdminDisputeDecisionBodyDTO,
-  AdminDisputeFinalDecisionBodyDTO,
+  AssignExpertBodyDTO,
   DisputeDetailResponseDTO,
   DisputeListResponseDTO,
   GetDisputeListQueryDTO,
+  MatchingExpertsResponseDTO,
 } from './dispute.dto';
 import { DisputeService } from './dispute.service';
 import type {
-  AdminDisputeDecisionBodyType,
-  AdminDisputeFinalDecisionBodyType,
+  AssignExpertBodyType,
   GetDisputeListQueryType,
 } from '@shared/types';
 
@@ -49,35 +48,45 @@ export class DisputeAdminController {
     return this.disputeService.getDisputeDetail(userId, roleName, disputeId);
   }
 
-  @Post(':id/decision')
-  @ZodSerializerDto(DisputeDetailResponseDTO)
-  adminMakeDecision(
-    @UserActive('userId') adminId: number,
+  /**
+   * Lấy danh sách các Expert phù hợp với Category / Skills của Job trong vụ kiện.
+   */
+  @Get(':id/matching-experts')
+  @ZodSerializerDto(MatchingExpertsResponseDTO)
+  getMatchingExperts(
     @UserActive('roleName') roleName: string,
     @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: AdminDisputeDecisionBodyDTO,
   ) {
-    return this.disputeService.adminMakeDecision(
-      adminId,
+    return this.disputeService.adminGetMatchingExperts(roleName, disputeId);
+  }
+
+  /**
+   * Admin phân công Expert vào xử lý vụ tranh chấp (khi 2 bên đã nộp đủ phí).
+   */
+  @Post(':id/assign-expert')
+  @ZodSerializerDto(DisputeDetailResponseDTO)
+  assignExpert(
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) disputeId: number,
+    @Body() body: AssignExpertBodyDTO,
+  ) {
+    return this.disputeService.adminAssignExpert(
       roleName,
       disputeId,
-      body as AdminDisputeDecisionBodyType,
+      (body as AssignExpertBodyType).expertId,
     );
   }
 
+  /**
+   * Admin không tự ra phán quyết - Phán quyết thuộc về Expert được cử.
+   */
+  @Post(':id/decision')
+  adminMakeDecision() {
+    return this.disputeService.adminMakeDecision();
+  }
+
   @Post(':id/final-decision')
-  @ZodSerializerDto(DisputeDetailResponseDTO)
-  adminFinalDecision(
-    @UserActive('userId') adminId: number,
-    @UserActive('roleName') roleName: string,
-    @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: AdminDisputeFinalDecisionBodyDTO,
-  ) {
-    return this.disputeService.adminFinalDecision(
-      adminId,
-      roleName,
-      disputeId,
-      body as AdminDisputeFinalDecisionBodyType,
-    );
+  adminFinalDecision() {
+    return this.disputeService.adminFinalDecision();
   }
 }

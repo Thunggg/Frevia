@@ -356,7 +356,7 @@ describe('ProfileService CV', () => {
       );
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+        arrayBuffer: () => Promise.resolve(Buffer.from('%PDF-fake')),
       }) as unknown as typeof fetch;
       cvAnalyzer.extractSkills.mockResolvedValue([
         { name: 'js', proficiencyLevel: 8 },
@@ -404,7 +404,7 @@ describe('ProfileService CV', () => {
       );
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+        arrayBuffer: () => Promise.resolve(Buffer.from('%PDF-fake')),
       }) as unknown as typeof fetch;
       cvAnalyzer.extractSkills.mockRejectedValue(
         new Error('AI CV analysis service is unreachable.'),

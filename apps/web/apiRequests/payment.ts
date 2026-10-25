@@ -3,9 +3,6 @@ import type {
   ChargeSavedCardResponseType,
   CreateCheckoutSessionResponseType,
   CreateCustomerPortalSessionResponseType,
-  CreatePaymentIntentResponseType,
-  DisputeSettlementBodyType,
-  DisputeSettlementResponseType,
   GetSavedPaymentMethodsResponseType,
   GetTransactionListQueryType,
   GetTransactionListResponseType,
@@ -37,26 +34,6 @@ export const paymentApiRequest = {
   },
 
   /**
-   * Tạo PaymentIntent thanh toán phí nền tảng hợp đồng ($10)
-   */
-  createPlatformFeeIntent(contractId: number) {
-    return http.post<CreatePaymentIntentResponseType>(
-      `/payments/contracts/${contractId}/platform-fee/intent`,
-      {},
-    );
-  },
-
-  /**
-   * Tạo PaymentIntent nạp tiền ký quỹ (Escrow deposit) cho Milestone
-   */
-  createMilestoneFundIntent(contractId: number, milestoneId: number) {
-    return http.post<CreatePaymentIntentResponseType>(
-      `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/intent`,
-      {},
-    );
-  },
-
-  /**
    * Giải ngân tiền Milestone cho Freelancer (Payout via Stripe Transfer)
    */
   releaseMilestone(contractId: number, milestoneId: number) {
@@ -73,26 +50,6 @@ export const paymentApiRequest = {
     return http.post<RefundMilestoneResponseType>(
       `/payments/contracts/${contractId}/milestones/${milestoneId}/refund`,
       {},
-    );
-  },
-
-  /**
-   * Tạo PaymentIntent thanh toán phí giải quyết tranh chấp (Dispute fee)
-   */
-  createDisputeFeeIntent(disputeId: number) {
-    return http.post<CreatePaymentIntentResponseType>(
-      `/payments/disputes/${disputeId}/fee/intent`,
-      {},
-    );
-  },
-
-  /**
-   * Phân chia tiền và hoàn tất tranh chấp (Admin hoặc Expert trọng tài)
-   */
-  settleDispute(disputeId: number, body: DisputeSettlementBodyType) {
-    return http.post<DisputeSettlementResponseType>(
-      `/payments/disputes/${disputeId}/settle`,
-      body,
     );
   },
 
@@ -138,16 +95,6 @@ export const paymentApiRequest = {
   createDisputeFeeCheckoutSession(disputeId: number) {
     return http.post<CreateCheckoutSessionResponseType>(
       `/payments/disputes/${disputeId}/fee/checkout-session`,
-      {},
-    );
-  },
-
-  /**
-   * Đồng bộ ngay trạng thái PaymentIntent với cơ sở dữ liệu
-   */
-  syncPaymentIntent(paymentIntentId: string) {
-    return http.post<{ success: boolean; status: string }>(
-      `/payments/intents/${paymentIntentId}/sync`,
       {},
     );
   },
@@ -205,4 +152,3 @@ export const paymentApiRequest = {
     );
   },
 };
-

@@ -50,7 +50,7 @@ const MILESTONE_STATUS_KEYS = [
 function getMilestoneStatusBadgeClass(
   status: MilestoneType["status"],
   paymentStatus?: MilestoneType["paymentStatus"],
-): string {
+): { label: string; className: string } {
   if (paymentStatus === "DISPUTED") {
     return {
       label: "Disputed",
@@ -73,20 +73,6 @@ function getMilestoneStatusBadgeClass(
       className:
         "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold",
     };
-    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
-  }
-
-  switch (status) {
-    case "COMPLETED":
-      return "bg-[#F1F0F5] text-foreground border border-border/80";
-    case "SUBMITTED":
-      return "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold";
-    case "IN_PROGRESS":
-      return "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium";
-    case "CHANGES_REQUESTED":
-      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium";
-    default:
-      return "bg-[#F1F0F5] text-muted-foreground border border-border/60";
   }
 
   if (paymentStatus === "FUNDED") {
@@ -206,7 +192,7 @@ export function MilestoneCard({
   }, [isExpanded, submissions, loadingSubmissions, contractId, milestone.id]);
 
   const latestSubmission = submissions && submissions.length > 0 ? submissions[0] : null;
-  const badgeClass = getMilestoneStatusBadgeClass(
+  const badge = getMilestoneStatusBadgeClass(
     milestone.status,
     milestone.paymentStatus,
   );
@@ -232,10 +218,10 @@ export function MilestoneCard({
   const formatDate = (date: string | Date | null) =>
     date
       ? format.dateTime(new Date(date), {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
       : t("notSpecified");
 
   const submissionStatusText = (status: string) =>
@@ -324,8 +310,6 @@ export function MilestoneCard({
 
           <span className={`rounded-full px-3 py-1 text-xs ${badge.className}`}>
             {badge.label}
-          <span className={`rounded-full px-3 py-1 text-xs ${badgeClass}`}>
-            {tMilestoneStatus(statusKey)}
           </span>
 
           {/* 3-dots action menu for both Client and Freelancer */}
@@ -439,9 +423,8 @@ export function MilestoneCard({
             title={isExpanded ? t("collapse") : t("expand")}
           >
             <ChevronDown
-              className={`size-4 transition-transform duration-200 ${
-                isExpanded ? "rotate-180" : ""
-              }`}
+              className={`size-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+                }`}
             />
           </button>
         </div>
@@ -683,6 +666,7 @@ export function MilestoneCard({
                 )}
               </div>
             )}
+
             {/* Previous Submission Revisions History */}
             {submissions && submissions.length > 1 && (
               <div className="pt-2">

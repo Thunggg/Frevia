@@ -6,15 +6,18 @@ export const ManagePaymentMessage = {
   REFUND_FAILED: 'Error.RefundFailed',
 
   PLATFORM_FEE_ALREADY_PAID: 'Error.PlatformFeeAlreadyPaid',
+  PLATFORM_FEE_NOT_PAID: 'Error.PlatformFeeNotPaid',
   CONTRACT_NOT_SIGNED: 'Error.ContractNotSigned',
 
   MILESTONE_NOT_ELIGIBLE_FOR_FUNDING: 'Error.MilestoneNotEligibleForFunding',
   MILESTONE_NOT_FUNDED: 'Error.MilestoneNotFunded',
   MILESTONE_ALREADY_RELEASED: 'Error.MilestoneAlreadyReleased',
+  MILESTONE_CANNOT_BE_REFUNDED: 'Error.MilestoneCannotBeRefunded',
 
   DISPUTE_FEE_ALREADY_PAID: 'Error.DisputeFeeAlreadyPaid',
   DISPUTE_NOT_FOUND: 'Error.DisputeNotFound',
   DISPUTE_SETTLEMENT_INVALID_AMOUNT: 'Error.DisputeSettlementInvalidAmount',
+  DISPUTE_ALREADY_SETTLED: 'Error.DisputeAlreadySettled',
 
   TRANSACTION_NOT_FOUND: 'Error.TransactionNotFound',
   WEBHOOK_SIGNATURE_INVALID: 'Error.WebhookSignatureInvalid',

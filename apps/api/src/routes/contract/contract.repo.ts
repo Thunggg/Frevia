@@ -89,6 +89,30 @@ export class ContractRepository {
     });
   }
 
+  async findContractWithMilestonesById(contractId: number) {
+    return this.prisma.contract.findUnique({
+      where: { id: contractId, deletedAt: null },
+      select: {
+        id: true,
+        jobId: true,
+        clientId: true,
+        freelancerId: true,
+        status: true,
+        signedByClient: true,
+        signedByFreelancer: true,
+        platformFeeStatus: true,
+        milestones: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            status: true,
+            paymentStatus: true,
+          },
+        },
+      },
+    });
+  }
+
   async createContract(
     data: CreateContractBodyType,
     clientId: number,

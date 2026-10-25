@@ -10,19 +10,19 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
+  CounterOfferBodyDTO,
   CreateDisputeBodyDTO,
   DisputeDetailResponseDTO,
   DisputeListResponseDTO,
   GetDisputeListQueryDTO,
-  PayDisputeFeeBodyDTO,
   ReviewDisputeDecisionBodyDTO,
   SubmitDisputeResponseBodyDTO,
 } from './dispute.dto';
 import { DisputeService } from './dispute.service';
 import type {
+  CounterOfferBodyType,
   CreateDisputeBodyType,
   GetDisputeListQueryType,
-  PayDisputeFeeBodyType,
   ReviewDisputeDecisionBodyType,
   SubmitDisputeResponseBodyType,
 } from '@shared/types';
@@ -59,12 +59,21 @@ export class DisputeController {
   payFee(
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: PayDisputeFeeBodyDTO,
   ) {
-    return this.disputeService.payFee(
+    return this.disputeService.payFee(userId, disputeId);
+  }
+
+  @Post(':id/evidence')
+  @ZodSerializerDto(DisputeDetailResponseDTO)
+  addEvidence(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) disputeId: number,
+    @Body() body: SubmitDisputeResponseBodyDTO,
+  ) {
+    return this.disputeService.addEvidence(
       userId,
       disputeId,
-      body as PayDisputeFeeBodyType,
+      body as SubmitDisputeResponseBodyType,
     );
   }
 
@@ -80,6 +89,29 @@ export class DisputeController {
       disputeId,
       body as SubmitDisputeResponseBodyType,
     );
+  }
+
+  @Post(':id/counter-offer')
+  @ZodSerializerDto(DisputeDetailResponseDTO)
+  submitCounterOffer(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) disputeId: number,
+    @Body() body: CounterOfferBodyDTO,
+  ) {
+    return this.disputeService.submitCounterOffer(
+      userId,
+      disputeId,
+      body as CounterOfferBodyType,
+    );
+  }
+
+  @Post(':id/accept-offer')
+  @ZodSerializerDto(DisputeDetailResponseDTO)
+  acceptOffer(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) disputeId: number,
+  ) {
+    return this.disputeService.acceptOffer(userId, disputeId);
   }
 
   @Get('milestone/:milestoneId')

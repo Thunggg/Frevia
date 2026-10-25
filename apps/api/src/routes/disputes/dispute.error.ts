@@ -43,24 +43,6 @@ export const MilestoneCannotBeDisputedException = () =>
     },
   ]);
 
-export const DisputeFeeNotFoundException = () =>
-  new NotFoundException([
-    { message: ManageDisputeMessage.FEE_NOT_FOUND, path: 'disputeId' },
-  ]);
-
-export const DisputeFeeAlreadyPaidException = () =>
-  new UnprocessableEntityException([
-    { message: ManageDisputeMessage.FEE_ALREADY_PAID, path: 'disputeId' },
-  ]);
-
-export const DisputeResponseAlreadySubmittedException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManageDisputeMessage.RESPONSE_ALREADY_SUBMITTED,
-      path: 'disputeId',
-    },
-  ]);
-
 export const DisputeResponseNotAllowedException = () =>
   new UnprocessableEntityException([
     { message: ManageDisputeMessage.RESPONSE_NOT_ALLOWED, path: 'status' },
@@ -95,11 +77,6 @@ export const DisputeReviewAlreadySubmittedException = () =>
     },
   ]);
 
-export const DisputeReviewReasonRequiredException = () =>
-  new BadRequestException([
-    { message: ManageDisputeMessage.REVIEW_REASON_REQUIRED, path: 'reason' },
-  ]);
-
 export const DisputeAlreadyFinalizedException = () =>
   new UnprocessableEntityException([
     { message: ManageDisputeMessage.ALREADY_FINALIZED, path: 'status' },
@@ -108,11 +85,6 @@ export const DisputeAlreadyFinalizedException = () =>
 export const FailedToCreateDisputeException = () =>
   new InternalServerErrorException([
     { message: ManageDisputeMessage.FAILED_TO_CREATE_DISPUTE, path: '' },
-  ]);
-
-export const FailedToPayDisputeFeeException = () =>
-  new InternalServerErrorException([
-    { message: ManageDisputeMessage.FAILED_TO_PAY_FEE, path: '' },
   ]);
 
 export const FailedToSubmitDisputeResponseException = () =>
@@ -138,4 +110,71 @@ export const FailedToSubmitDisputeReviewException = () =>
 export const FailedToFinalizeDisputeException = () =>
   new InternalServerErrorException([
     { message: ManageDisputeMessage.FAILED_TO_FINALIZE_DISPUTE, path: '' },
+  ]);
+
+export const ExpertNotActiveException = () =>
+  new ForbiddenException([
+    { message: ManageDisputeMessage.EXPERT_NOT_ACTIVE, path: 'userId' },
+  ]);
+
+export const ExpertStripeNotReadyException = () =>
+  new BadRequestException([
+    {
+      message: ManageDisputeMessage.EXPERT_STRIPE_NOT_READY,
+      path: 'stripeAccountId',
+    },
+  ]);
+
+export const DisputeFeesNotPaidException = () =>
+  new UnprocessableEntityException([
+    { message: ManageDisputeMessage.DISPUTE_FEES_NOT_PAID, path: 'fees' },
+  ]);
+
+export const DisputeAlreadyClaimedException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageDisputeMessage.DISPUTE_ALREADY_CLAIMED,
+      path: 'decisionById',
+    },
+  ]);
+
+export const NotAssignedExpertException = () =>
+  new ForbiddenException([
+    { message: ManageDisputeMessage.NOT_ASSIGNED_EXPERT, path: 'userId' },
+  ]);
+
+export const CannotArbitrateOwnContractException = () =>
+  new ForbiddenException([
+    {
+      message: ManageDisputeMessage.CANNOT_ARBITRATE_OWN_CONTRACT,
+      path: 'userId',
+    },
+  ]);
+
+export const ExpertNotFoundException = () =>
+  new NotFoundException([
+    { message: ManageDisputeMessage.EXPERT_NOT_FOUND, path: 'expertId' },
+  ]);
+
+export const NegotiationPeriodExpiredException = () =>
+  new BadRequestException([
+    {
+      message: ManageDisputeMessage.NEGOTIATION_PERIOD_EXPIRED,
+      path: 'responseDeadline',
+    },
+  ]);
+
+export const AdminCannotDecideException = () =>
+  new ForbiddenException([
+    { message: ManageDisputeMessage.ADMIN_CANNOT_DECIDE, path: 'roleName' },
+  ]);
+
+export const FailedToAssignExpertException = () =>
+  new InternalServerErrorException([
+    { message: ManageDisputeMessage.FAILED_TO_ASSIGN_EXPERT, path: '' },
+  ]);
+
+export const OfferNotAllowedException = () =>
+  new BadRequestException([
+    { message: ManageDisputeMessage.OFFER_NOT_ALLOWED, path: 'status' },
   ]);
