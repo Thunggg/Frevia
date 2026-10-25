@@ -67,20 +67,22 @@ describe('AiCvAnalyzerService', () => {
   });
 
   it('throws when the upstream service is unreachable', async () => {
-    global.fetch = jest.fn().mockRejectedValue(
-      new TypeError('fetch failed'),
-    ) as unknown as typeof fetch;
+    global.fetch = jest
+      .fn()
+      .mockRejectedValue(
+        new TypeError('fetch failed'),
+      ) as unknown as typeof fetch;
 
-    await expect(
-      service.extractSkills(pdfBuffer, 'cv.pdf'),
-    ).rejects.toThrow('AI CV analysis service is unreachable.');
+    await expect(service.extractSkills(pdfBuffer, 'cv.pdf')).rejects.toThrow(
+      'AI CV analysis service is unreachable.',
+    );
   });
 
   it('throws when the upstream responds with an error status', async () => {
     mockFetchOnce({ detail: 'boom' }, false);
 
-    await expect(
-      service.extractSkills(pdfBuffer, 'cv.pdf'),
-    ).rejects.toThrow('AI CV analysis service failed (500).');
+    await expect(service.extractSkills(pdfBuffer, 'cv.pdf')).rejects.toThrow(
+      'AI CV analysis service failed (500).',
+    );
   });
 });

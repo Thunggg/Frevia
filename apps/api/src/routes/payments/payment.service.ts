@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   DisputeFeeStatus,
@@ -54,7 +49,9 @@ export class PaymentService {
     let stripeAccountId = user.stripeAccountId;
     try {
       if (!stripeAccountId) {
-        const account = await this.stripeService.createExpressAccount(user.email);
+        const account = await this.stripeService.createExpressAccount(
+          user.email,
+        );
         stripeAccountId = account.id;
         await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
       } else {
@@ -63,27 +60,37 @@ export class PaymentService {
           const existingAccount =
             await this.stripeService.getAccount(stripeAccountId);
           if (
-            existingAccount.country &&
+            existingAccount?.country &&
             existingAccount.country !== envConfig.STRIPE_ACCOUNT_COUNTRY &&
             !existingAccount.details_submitted
           ) {
             this.logger.warn(
               `Stripe account ${stripeAccountId} country (${existingAccount.country}) does not match configured (${envConfig.STRIPE_ACCOUNT_COUNTRY}). Re-creating account...`,
             );
-            const account =
-              await this.stripeService.createExpressAccount(user.email);
+            const account = await this.stripeService.createExpressAccount(
+              user.email,
+            );
             stripeAccountId = account.id;
-            await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
+            await this.paymentRepo.updateUserStripe(userId, {
+              stripeAccountId,
+            });
           }
         } catch (accountErr: unknown) {
           const errObj = accountErr as { code?: string; statusCode?: number };
-          if (errObj?.code === 'resource_missing' || errObj?.statusCode === 404) {
+          if (
+            errObj?.code === 'resource_missing' ||
+            errObj?.statusCode === 404
+          ) {
             this.logger.warn(
               `Stripe account ${stripeAccountId} not found. Re-creating Express account...`,
             );
-            const account = await this.stripeService.createExpressAccount(user.email);
+            const account = await this.stripeService.createExpressAccount(
+              user.email,
+            );
             stripeAccountId = account.id;
-            await this.paymentRepo.updateUserStripe(userId, { stripeAccountId });
+            await this.paymentRepo.updateUserStripe(userId, {
+              stripeAccountId,
+            });
           } else {
             throw accountErr;
           }
@@ -221,7 +228,10 @@ export class PaymentService {
 
       return { paymentMethods };
     } catch (err) {
-      this.logger.error(`Failed to list payment methods for user ${userId}`, err);
+      this.logger.error(
+        `Failed to list payment methods for user ${userId}`,
+        err,
+      );
       return { paymentMethods: [] };
     }
   }
@@ -1209,7 +1219,9 @@ export class PaymentService {
       );
     } else if (paymentIntentId) {
       const txByPi =
-        await this.paymentRepo.findTransactionByPaymentIntentId(paymentIntentId);
+        await this.paymentRepo.findTransactionByPaymentIntentId(
+          paymentIntentId,
+        );
       if (txByPi) {
         await this.paymentRepo.updateTransactionStatus(
           txByPi.id,

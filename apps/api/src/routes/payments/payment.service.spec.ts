@@ -134,6 +134,11 @@ describe('PaymentService', () => {
       repo.findUserById.mockResolvedValue({
         ...mockFreelancer,
       } as any);
+      stripeService.getAccount.mockResolvedValue({
+        id: 'acct_freelancer_123',
+        country: 'US',
+        details_submitted: true,
+      } as any);
       stripeService.createAccountLink.mockResolvedValue({
         url: 'https://connect.stripe.com/setup/s/existing',
       } as any);

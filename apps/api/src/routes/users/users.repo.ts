@@ -255,40 +255,48 @@ export class UsersRepository {
       return null;
     }
 
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        ...(data.email !== undefined ? { email: data.email } : {}),
-        ...(data.isBanned !== undefined ? { isBanned: data.isBanned } : {}),
-        ...(data.fullName !== undefined
-          ? {
-              profile: {
-                upsert: {
-                  create: { displayName: data.fullName },
-                  update: { displayName: data.fullName },
+    return this.prisma.$transaction(async (tx) => {
+      if (data.isBanned === true) {
+        await tx.session.deleteMany({
+          where: { userId: id },
+        });
+      }
+
+      return tx.user.update({
+        where: { id },
+        data: {
+          ...(data.email !== undefined ? { email: data.email } : {}),
+          ...(data.isBanned !== undefined ? { isBanned: data.isBanned } : {}),
+          ...(data.fullName !== undefined
+            ? {
+                profile: {
+                  upsert: {
+                    create: { displayName: data.fullName },
+                    update: { displayName: data.fullName },
+                  },
                 },
-              },
-            }
-          : {}),
-      },
-      include: {
-        profile: {
-          select: {
-            displayName: true,
-          },
+              }
+            : {}),
         },
-        userRoles: {
-          select: {
-            isPrimary: true,
-            role: {
-              select: {
-                id: true,
-                name: true,
+        include: {
+          profile: {
+            select: {
+              displayName: true,
+            },
+          },
+          userRoles: {
+            select: {
+              isPrimary: true,
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
+      });
     });
   }
 

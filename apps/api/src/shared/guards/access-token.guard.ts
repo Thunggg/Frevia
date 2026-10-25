@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -44,21 +45,40 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
 
-      // BR-06: session đã revoke/xóa thì access token cũng không dùng được nữa
-      const session = await this.prisma.session.findFirst({
+      // Kiểm tra session còn hiệu lực (session đã revoke/xóa → 401)
+      const sessionWithUser = await this.prisma.session.findFirst({
         where: {
           id: payload.sessionId,
           userId: payload.userId,
         },
-        select: { id: true },
+        select: {
+          id: true,
+          user: {
+            select: {
+              isBanned: true,
+              deletedAt: true,
+            },
+          },
+        },
       });
 
-      if (!session) {
+      if (!sessionWithUser) {
         throw new UnauthorizedException();
       }
 
+      // BR-06: user bị ban hoặc đã xóa → 403 Forbidden (phân biệt với 401 Unauthorized)
+      if (sessionWithUser.user.isBanned || sessionWithUser.user.deletedAt) {
+        throw new ForbiddenException();
+      }
+
       request[REQUEST_USER_KEY] = payload;
-    } catch {
+    } catch (error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
       throw new UnauthorizedException();
     }
     return true;

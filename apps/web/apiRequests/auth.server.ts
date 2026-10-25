@@ -49,6 +49,10 @@ const authServerRequest = {
       return null;
     }
 
+    if (data.data.isBanned) {
+      return null;
+    }
+
     return data.data;
   },
 };
