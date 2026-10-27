@@ -18,15 +18,19 @@ export class IdentityVerificationsAdminService {
     private readonly repository: IdentityVerificationsAdminRepository,
   ) {}
 
-  private presentFileUrl<T extends { id: number; fileUrl: string }>(
-    document: T,
-  ) {
-    return document.fileUrl.startsWith('local://')
-      ? {
-          ...document,
-          fileUrl: `/api/backend/admin/identity-verifications/${document.id}/file`,
-        }
-      : document;
+  private presentFileUrl<
+    T extends { id: number; fileUrl: string; backFileUrl?: string | null },
+  >(document: T) {
+    if (!document.fileUrl.startsWith('local://')) return document;
+    return {
+      ...document,
+      fileUrl: `/api/backend/admin/identity-verifications/${document.id}/file`,
+      backFileUrl:
+        typeof document.backFileUrl === 'string' &&
+        document.backFileUrl.startsWith('local://')
+          ? `/api/backend/admin/identity-verifications/${document.id}/file?side=back`
+          : (document.backFileUrl ?? null),
+    };
   }
 
   private presentList<T extends { id: number; fileUrl: string }>(
@@ -88,14 +92,15 @@ export class IdentityVerificationsAdminService {
     return this.presentFileUrl(reviewed);
   }
 
-  async getLocalFile(id: number) {
+  async getLocalFile(id: number, side: 'front' | 'back' = 'front') {
     const document = await this.repository.findDocumentRaw(id);
     if (!document) throw IdentityVerificationNotFoundException();
-    if (!document.fileUrl.startsWith('local://')) {
+    const source = side === 'back' ? document.backFileUrl : document.fileUrl;
+    if (!source?.startsWith('local://')) {
       throw IdentityVerificationFileInvalidException();
     }
 
-    const relativePath = document.fileUrl.slice('local://'.length);
+    const relativePath = source.slice('local://'.length);
     const uploadsRoot = resolve(process.cwd(), 'uploads');
     const absolutePath = resolve(uploadsRoot, relativePath);
     const pathFromUploadsRoot = relative(uploadsRoot, absolutePath);

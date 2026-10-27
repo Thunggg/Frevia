@@ -11,6 +11,7 @@ import { EmailService } from './services/email.service';
 import { HashingService } from './services/hashing.service';
 import { PrismaService } from './services/prisma.service';
 import { AiCvAnalyzerService } from './services/ai-cv-analyzer.service';
+import { IdentityAiService } from './services/identity-ai.service';
 import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
 
@@ -33,6 +34,7 @@ import { TokenService } from './services/token.service';
     },
     PrismaService,
     AiCvAnalyzerService,
+    IdentityAiService,
     SkillResolverService,
     HashingService,
     EmailService,
@@ -44,6 +46,7 @@ import { TokenService } from './services/token.service';
   exports: [
     PrismaService,
     AiCvAnalyzerService,
+    IdentityAiService,
     SkillResolverService,
     HashingService,
     EmailService,

@@ -7,12 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
   StreamableFile,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 import type {
   AddSocialLinkType,
   UpdateClientProfileType,
@@ -122,6 +124,45 @@ export class IdentityVerificationController {
     return this.service.uploadIdentityDocument(userId, documentType, file);
   }
 
+  /**
+   * Xác minh CCCD bằng AI (IDVerification pipeline).
+   * Multipart: documentType, front, back?, selfie, liveness[] (nhiều frame).
+   */
+  @Post('ai-check')
+  @UseInterceptors(
+    AnyFilesInterceptor({
+      limits: { fileSize: 10 * 1024 * 1024, files: 45 },
+    }),
+  )
+  @ZodSerializerDto(IdentityVerificationDocumentDto)
+  aiCheck(
+    @UserActive('userId') userId: number,
+    @Body() body: UploadIdentityDocumentDto,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    const { documentType } = body as UploadIdentityDocumentType;
+    const pick = (fieldname: string) =>
+      files?.find((file) => file.fieldname === fieldname);
+    return this.service.submitIdentityAiCheck(userId, documentType, {
+      front: pick('front'),
+      back: pick('back'),
+      selfie: pick('selfie'),
+      liveness: (files ?? []).filter((file) => file.fieldname === 'liveness'),
+    });
+  }
+
+  /** Proxy 1 khung webcam → AI /liveness/pose (poll thử thách người thật). */
+  @Post('liveness-pose')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
+  )
+  livenessPose(
+    @UserActive('userId') userId: number,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.service.livenessPose(userId, file);
+  }
+
   @Get('status')
   @ZodSerializerDto(IdentityVerificationStatusDto)
   getStatus(@UserActive('userId') userId: number) {
@@ -132,9 +173,14 @@ export class IdentityVerificationController {
   async getFile(
     @UserActive('userId') userId: number,
     @Param('id', ParseIntPipe) id: number,
+    @Query('side') side: string | undefined,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const file = await this.service.getIdentityDocumentFile(userId, id);
+    const file = await this.service.getIdentityDocumentFile(
+      userId,
+      id,
+      side === 'back' ? 'back' : 'front',
+    );
     response.setHeader(
       'Content-Disposition',
       `inline; filename="${file.fileName.replace(/"/g, '')}"`,

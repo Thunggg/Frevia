@@ -11,6 +11,8 @@ export const IdentityVerificationAdminListItemSchema = z.object({
   userId: z.number(),
   documentType: DocumentTypeSchema,
   fileUrl: z.string().min(1),
+  // Mặt sau CCCD — nullable (upload cũ hoặc AI không nhận diện được mặt sau)
+  backFileUrl: z.string().nullable().optional(),
   status: VerificationStatusSchema,
   reviewNotes: z.string().nullable(),
   createdAt: DateTimeSchema,

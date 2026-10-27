@@ -27,6 +27,8 @@ export default async function ForumPage() {
     forumServerRequest.getTopUsers(5),
   ]);
 
+  console.log(categories);
+
   return (
     <ForumCategoryView
       role={resolveHeaderRole(user)}

@@ -48,9 +48,13 @@ export class IdentityVerificationsAdminController {
   @Get(':id/file')
   async file(
     @Param('id', ParseIntPipe) id: number,
+    @Query('side') side: string | undefined,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const file = await this.service.getLocalFile(id);
+    const file = await this.service.getLocalFile(
+      id,
+      side === 'back' ? 'back' : 'front',
+    );
     response.setHeader(
       'Content-Disposition',
       `inline; filename="${file.fileName.replace(/"/g, '')}"`,

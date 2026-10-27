@@ -71,3 +71,39 @@ export const CurrentPasswordIncorrectException = () =>
   new BadRequestException(
     details('Current password is incorrect.', 'currentPassword'),
   );
+export const IdentityAiFrontRequiredException = () =>
+  new BadRequestException(
+    details('Please provide the front image of your ID card.', 'front'),
+  );
+export const IdentityAiSelfieRequiredException = () =>
+  new BadRequestException(
+    details(
+      'Please complete the liveness check to capture a selfie.',
+      'selfie',
+    ),
+  );
+export const IdentityAiLivenessRequiredException = () =>
+  new BadRequestException(
+    details(
+      'Please complete the liveness check before submitting.',
+      'liveness',
+    ),
+  );
+export const IdentityAiImageInvalidException = (path: string) =>
+  new BadRequestException(
+    details(
+      'Only JPG, PNG, or WEBP images up to 10 MB are accepted for AI verification.',
+      path,
+    ),
+  );
+export const IdentityAiFramesInvalidException = () =>
+  new BadRequestException(
+    details(
+      'Liveness frames must be JPG, PNG, or WEBP images up to 2 MB (max 40 frames).',
+      'liveness',
+    ),
+  );
+export const IdentityAlreadyVerifiedException = () =>
+  new ConflictException(
+    details('Your identity has already been verified.', 'documentType'),
+  );
