@@ -1,0 +1,970 @@
+\paragraph{Manage Permission}
+% =================================================================
+% UC-14.1 View Permission List
+% =================================================================
+\subparagraph{UC-14.1 View Permission List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-14.1 View Permission List} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Permission Management section from the admin dashboard.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve all active permissions (id, name, path, method, module) so they know what permissions are available to assign to roles. The list supports pagination, search, filtering by HTTP method and module, and sorting.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to \texttt{GET /api/permissions}. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of active permissions is displayed with \texttt{id}, \texttt{name}, \texttt{path}, \texttt{method}, \texttt{module}, and \texttt{createdAt}. \newline
+\textbf{POST-2} The distinct module list is displayed as a filter option. \newline
+\textbf{POST-3} The admin can select a permission to view its detail (UC-14.2).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Permission List} \newline
+1. The Admin navigates to the Permission Management page (\texttt{/admin/permissions}). \newline
+2. The system sends \texttt{GET /api/permissions} with \texttt{page}, \texttt{limit} (default 10), \texttt{sortBy} (default \texttt{id}), and \texttt{order} (default \texttt{asc}). \newline
+3. The system queries the Permission table where \texttt{deletedAt = NULL}. \newline
+4. The system returns the permission list, the pagination metadata \texttt{\{ page, limit, total, totalPages \}}, and the distinct module list. \newline
+5. The system displays each permission row: id badge, method badge, path, module badge, created date, and a view action. \newline
+6. The Admin can search by keyword, filter by method or module, sort by \texttt{id} or \texttt{createdAt}, or paginate.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Search Permissions} \newline
+1. The Admin enters a keyword in the search box. \newline
+2. The system re-queries permissions where \texttt{name}, \texttt{path}, or \texttt{module} contains the keyword (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 5. \newline
+\textbf{A.2 Filter by HTTP Method} \newline
+1. The Admin selects a method (GET, POST, PUT, PATCH, DELETE) in the Method dropdown. \newline
+2. The system re-queries permissions with the selected method. \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 5. \newline
+\textbf{A.3 Filter by Module} \newline
+1. The Admin selects a module in the Module dropdown. \newline
+2. The system re-queries permissions whose module equals the selected value (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 5. \newline
+\textbf{A.4 No Permissions Found} \newline
+1. The system determines that no active permissions match the current search or filters. \newline
+2. The system displays the message ``No permissions match your filters.'' (or ``No permissions found.'' when no filter is applied). \newline
+3. Return to step 5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the permissions from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadPermissions''. \newline
+4. The frontend displays the message ``Couldn't load permissions. Try again.'' \newline
+5. The permission list is not displayed. \newline
+6. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the permission data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without any permission information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PERM-01: Only permissions with \texttt{deletedAt = NULL} shall be returned. \newline
+BR-PERM-02: Search shall match \texttt{name}, \texttt{path}, or \texttt{module} in a case-insensitive manner. \newline
+BR-PERM-03: The module filter shall match the module value with case-insensitive comparison. \newline
+BR-PERM-04: The distinct module list shall include only active permissions with a non-null module, ordered ascending. \newline
+BR-PERM-05: Pagination shall support \texttt{page >= 1} and \texttt{limit} between 1 and 100. \newline
+BR-PERM-06: The endpoint is protected by the permission guard; the caller's role must be allowed to access \texttt{GET /api/permissions}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The distinct module list is fetched together with the first page and used to populate the Module filter dropdown.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permissions are predefined and maintained in the system database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-14.2 View Permission Detail
+% =================================================================
+
+\subparagraph{UC-14.2 View Permission Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-14.2 View Permission Detail} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a specific permission from the permission list, or navigates directly to a permission detail URL.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view detailed information of a single active permission, including its id, name, path, HTTP method, module, and creation date.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to \texttt{GET /api/permissions/:id}. \newline
+\textbf{PRE-2} The selected permission exists and has not been deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The detailed information of the selected permission is displayed. \newline
+\textbf{POST-2} The admin can return to the permission list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Permission Detail} \newline
+1. The Admin clicks the view action on a permission row (UC-14.1) or navigates directly to \texttt{/admin/permissions/:id}. \newline
+2. The system validates that the permission id is a positive integer. \newline
+3. The system sends \texttt{GET /api/permissions/:id}. \newline
+4. The system queries the permission with the matching id and \texttt{deletedAt = NULL}. \newline
+5. The system displays the permission name, HTTP method badge, path, module badge, id, and created date.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Permission Not Found} \newline
+1. The Admin opens a permission detail page. \newline
+2. The system determines that no active permission exists with the given id. \newline
+3. The system returns the message ``Error.PermissionNotFound'' and the frontend displays ``Failed to load permission detail. The permission may not exist.'' \newline
+4. The Admin returns to the permission list. \newline
+5. Return to step 1. \newline
+\textbf{A.2 Invalid Permission ID} \newline
+1. The Admin navigates to a permission detail URL with a non-positive or non-integer id. \newline
+2. The system displays the Not Found page. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the permission detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadPermissionDetail''. \newline
+4. The permission details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the permission detail data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without permission information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PERM-07: Only permissions with \texttt{deletedAt = NULL} shall be accessible. \newline
+BR-PERM-08: The detail shall include \texttt{id}, \texttt{name}, \texttt{path}, \texttt{method}, \texttt{module}, and \texttt{createdAt}. \newline
+BR-PERM-09: The caller's role must be allowed to access \texttt{GET /api/permissions/:id}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+If the admin navigates directly to a permission detail URL, the system shall validate the id format before rendering the page.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permissions and their metadata are maintained in the system database.} \\ \hline
+
+\end{longtable}
+
+\paragraph{Manage Session}
+% =================================================================
+% UC-15.1 View List Sessions
+% =================================================================
+\subparagraph{UC-15.1 View List Sessions}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-15.1 View List Sessions} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user accesses the Sessions section from the navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view a paginated list of the active login sessions of their own account, showing the device, IP address, creation time, expiration time, and marking the session of the device currently in use.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The session id stored in the access token exists (otherwise the access token is rejected by the guard).
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of the user's sessions is displayed with \texttt{id}, \texttt{userId}, \texttt{deviceInfo}, \texttt{ipAddress}, \texttt{expiresAt}, \texttt{createdAt}, and \texttt{isCurrent}. \newline
+\textbf{POST-2} The user can view a session detail (UC-15.2) or revoke a session (UC-15.3).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View List Sessions} \newline
+1. The User accesses the Sessions page (\texttt{/sessions}). \newline
+2. The system sends \texttt{GET /api/sessions} with \texttt{page}, \texttt{limit} (default 10), \texttt{sortBy} (default \texttt{createdAt}), and \texttt{order} (default \texttt{desc}). \newline
+3. The system queries the Session table filtered by the current user's \texttt{userId}. \newline
+4. The system marks each returned session with \texttt{isCurrent = true} when its id equals the current session id from the access token. \newline
+5. The system displays each session: device (or ``Unknown device''), IP address, status (Active/Expired based on \texttt{expiresAt}), created and expires dates, a ``Current'' badge where applicable, and view/revoke actions. \newline
+6. The User can search by device or IP, sort by \texttt{id}/\texttt{createdAt}/\texttt{expiresAt}, or paginate.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Search Sessions} \newline
+1. The User enters a keyword in the search box. \newline
+2. The system re-queries sessions where \texttt{ipAddress} or \texttt{deviceInfo} contains the keyword (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 5. \newline
+\textbf{A.2 No Sessions Found} \newline
+1. The User accesses the Sessions page. \newline
+2. The system determines that no sessions exist for the User (or none match the search). \newline
+3. The system displays the message ``No sessions yet.'' (or ``No sessions match your search'' when searching). \newline
+4. The User remains on the Sessions page. \newline
+5. Return to step 1. \newline
+\textbf{A.3 Navigate Between Pages or Sort} \newline
+1. The User clicks a page number, ``Next,'' or ``Previous,'' or toggles a sortable column. \newline
+2. The system retrieves the requested page of sessions with the requested order. \newline
+3. The system displays the requested page of sessions. \newline
+4. Return to step 5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the sessions from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadSessions''. \newline
+4. The session list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the session data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without any session information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SES-01: Only sessions belonging to the current user shall be returned (filtered by \texttt{userId}). \newline
+BR-SES-02: \texttt{isCurrent} shall be \texttt{true} only for the session whose id equals the \texttt{sessionId} stored in the access token. \newline
+BR-SES-03: Search shall match \texttt{ipAddress} or \texttt{deviceInfo} in a case-insensitive manner. \newline
+BR-SES-04: Session status shall be derived from \texttt{expiresAt} (expired when \texttt{expiresAt} is before the current time). \newline
+BR-SES-05: Pagination shall support \texttt{page >= 1} and \texttt{limit} between 1 and 100.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The \texttt{isCurrent} flag is attached to the session whose id matches the current login so the UI can show a ``Current'' badge.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each session record is associated with a valid user.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-15.2 View Session Details
+% =================================================================
+
+\subparagraph{UC-15.2 View Session Details}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-15.2 View Session Details} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the view action on a session row in the session list (UC-15.1).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view detailed information of one of their login sessions (device, IP address, login time, expiration time, and whether it is the current session).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected session belongs to the current user.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The detailed session information is displayed. \newline
+\textbf{POST-2} The user can revoke the displayed session (UC-15.3).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Session Details} \newline
+1. The User clicks the view action on a session row (UC-15.1). \newline
+2. The system sends \texttt{GET /api/sessions/:id}. \newline
+3. The system queries the session with the matching id and the current user's \texttt{userId}. \newline
+4. The system returns the session detail together with the \texttt{isCurrent} flag. \newline
+5. The system displays the status (``Current'' badge, Active/Expired), \texttt{id}, \texttt{userId}, device, IP address, created and expires dates.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Session Not Found or Not Owned} \newline
+1. The User clicks the view action on a session row. \newline
+2. The system determines that no session with the given id exists for the current user. \newline
+3. The system returns the message ``Error.SessionNotFound'' and the frontend displays ``Couldn't load session. It may no longer exist.'' \newline
+4. The User returns to the session list. \newline
+5. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to load the session detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToLoadSessionDetail''. \newline
+4. The session details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the session data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The User remains on the current page without session information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SES-06: A session detail shall be accessible only when its \texttt{userId} matches the current user. \newline
+BR-SES-07: The detail shall include \texttt{id}, \texttt{userId}, \texttt{deviceInfo}, \texttt{ipAddress}, \texttt{expiresAt}, \texttt{createdAt}, and \texttt{isCurrent}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The detail is presented in a dialog; expired status is computed client-side by comparing \texttt{expiresAt} with the current time.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated while viewing the session detail.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-15.3 Revoke Session
+% =================================================================
+
+\subparagraph{UC-15.3 Revoke Session}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-15.3 Revoke Session} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the revoke action on an active session row in the session list (UC-15.1).} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to log out of a specific device remotely by deleting the corresponding session record. The refresh token of that session is immediately invalidated.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated. \newline
+\textbf{PRE-2} The selected session belongs to the current user. \newline
+\textbf{PRE-3} The selected session has not expired.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The session record is deleted from the Session table. \newline
+\textbf{POST-2} The signed-out device can no longer refresh its access token with that session. \newline
+\textbf{POST-3} The session list is refreshed; the revoked session no longer appears.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Revoke Session} \newline
+1. The User clicks the revoke action on an active session row (UC-15.1). \newline
+2. The system displays a confirmation dialog informing that the device will be signed out and must log in again. \newline
+3. The User confirms the revocation. \newline
+4. The system sends \texttt{DELETE /api/sessions/:id}. \newline
+5. The system verifies that the session belongs to the current user. \newline
+6. The system verifies that the session has not expired. \newline
+7. The system deletes the session record. \newline
+8. The system returns the message ``Session revoked successfully'' together with a \texttt{loggedOut} flag. \newline
+9. The system refreshes the session list and removes the cached session detail.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Session Not Found} \newline
+1. The User confirms the revocation. \newline
+2. The system determines that the session does not exist or does not belong to the current user. \newline
+3. The system returns the message ``Error.SessionNotFound''. \newline
+4. The session list is refreshed. \newline
+5. The use case ends. \newline
+\textbf{A.2 Session Already Expired} \newline
+1. The system determines that the session has already expired (\texttt{expiresAt} is before the current time). \newline
+2. The system returns the message ``Error.SessionAlreadyExpired''. \newline
+3. The revoke button is disabled in the UI for expired sessions (``Expired sessions can't be revoked''). \newline
+4. The use case ends. \newline
+\textbf{A.3 User Cancels Revocation} \newline
+1. The User clicks ``Cancel'' in the confirmation dialog. \newline
+2. The system closes the dialog. \newline
+3. The session remains unchanged. \newline
+4. The use case ends. \newline
+\textbf{A.4 Revoke the Current Session} \newline
+1. The revoked session id equals the current session id stored in the access token. \newline
+2. The system returns \texttt{loggedOut = true}. \newline
+3. The frontend calls \texttt{POST /api/auth/logout} and redirects the User to the Login page. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Database Error} \newline
+1. The system attempts to delete the session record from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToRevokeSession''. \newline
+4. The session is not revoked. \newline
+5. The use case ends. \newline
+\textbf{EX-02: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the revocation request. \newline
+2. The system cannot complete the revocation. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The session remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SES-08: A user can only revoke sessions belonging to their own account. \newline
+BR-SES-09: Only sessions that have not expired shall be revocable. \newline
+BR-SES-10: Revocation shall delete the session record, immediately invalidating its refresh token. \newline
+BR-SES-11: The access token guard validates that the session still exists on every request, so a revoked session also invalidates its access token. \newline
+BR-SES-12: The response shall include a \texttt{loggedOut} flag indicating whether the revoked session is the current one.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+If the revoked session is the one currently in use, the frontend performs logout and redirects to the Login page.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during the revocation process.} \\ \hline
+
+\end{longtable}
+
+\paragraph{Manage Forum Category}
+% =================================================================
+% UC-16.1 Create Forum Category
+% =================================================================
+\subparagraph{UC-16.1 Create Forum Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-16.1 Create Forum Category} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Category'' button on the Forum Category Management page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to create a new forum category by providing a name (required) and an optional description. A unique slug is generated automatically from the name.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new record is created in the ForumCategory table with \texttt{name}, \texttt{slug}, and \texttt{description}. \newline
+\textbf{POST-2} The new category appears in the forum category list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Forum Category} \newline
+1. The Admin clicks the ``Create Category'' button on the Forum Category Management page (\texttt{/admin/categories}). \newline
+2. The system displays the Create New Category dialog with ``Category Name'' (required) and ``Description'' (optional) fields. \newline
+3. The Admin enters the category name and an optional description. \newline
+4. The Admin clicks the ``Create Category'' button. \newline
+5. The system validates the input data (name required and at most 100 characters; description at most 500 characters). \newline
+6. The system verifies that the caller has the Admin role. \newline
+7. The system sends \texttt{POST /api/forums/admin/categories}. \newline
+8. The system checks that no active category with the same name exists (case-insensitive). \newline
+9. The system generates the slug from the name, appending a numeric suffix (e.g. \texttt{-2}, \texttt{-3}) if the base slug already exists. \newline
+10. The system creates the category record. \newline
+11. The system displays the message ``Category created successfully!'' and refreshes the category list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Name Required Missing} \newline
+1. The Admin clicks the ``Create Category'' button. \newline
+2. The system determines that the name field is empty. \newline
+3. The frontend disables submission until a name is provided; the backend also returns ``Error.ForumCategoryNameRequired'' if submitted empty. \newline
+4. Return to step 3. \newline
+\textbf{A.2 Duplicate Category Name} \newline
+1. The Admin submits the form. \newline
+2. The system determines that an active category with the same name already exists. \newline
+3. The system displays the message ``Error.ForumCategoryAlreadyExists''. \newline
+4. Return to step 3. \newline
+\textbf{A.3 Name or Description Too Long} \newline
+1. The Admin submits the form. \newline
+2. The system determines that the name exceeds 100 characters or the description exceeds 500 characters. \newline
+3. The system displays the corresponding validation message. \newline
+4. Return to step 3. \newline
+\textbf{A.4 Admin Cancels Creation} \newline
+1. The Admin clicks the ``Cancel'' button on the Create Category dialog. \newline
+2. The system discards all unsaved data. \newline
+3. The system closes the dialog. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Not Admin Access} \newline
+1. A user without the Admin role attempts to create a category. \newline
+2. The system returns the message ``Error.ForumReportForbidden''. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to save the new category to the ForumCategory table. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to create category.'' \newline
+4. The category is not created. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while creating the category. \newline
+2. The system cannot save the category data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the category being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FCAT-01: Only users with the Admin role can create forum categories. \newline
+BR-FCAT-02: The category name is required and must be unique among active categories (case-insensitive). \newline
+BR-FCAT-03: The category name shall not exceed 100 characters; the description shall not exceed 500 characters. \newline
+BR-FCAT-04: The slug is generated automatically from the name and must be unique; a numeric suffix is appended when the slug is already taken. \newline
+BR-FCAT-05: A new category is created with \texttt{postCount} equal to 0.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The description is optional and is stored as \texttt{NULL} when left empty. The list is refreshed after creation.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the creation process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-16.2 Edit Forum Category
+% =================================================================
+
+\subparagraph{UC-16.2 Edit Forum Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-16.2 Edit Forum Category} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a category row or the ``Edit'' button on the category detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update an existing active forum category's name and description. When the name changes, the slug is regenerated automatically.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The selected category exists and has not been deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The category's \texttt{name} and/or \texttt{description} are updated in the ForumCategory table. \newline
+\textbf{POST-2} The category's slug is regenerated when the name changes. \newline
+\textbf{POST-3} The updated category is displayed in the forum category list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Forum Category} \newline
+1. The Admin clicks the edit action on a category row, or the ``Edit'' button on the category detail page (UC-16.5). \newline
+2. The system displays the Edit Category dialog pre-filled with the current category name and description. \newline
+3. The Admin modifies the name and/or description. \newline
+4. The Admin clicks the ``Save Changes'' button. \newline
+5. The system validates the updated input data. \newline
+6. The system verifies that the caller has the Admin role. \newline
+7. The system sends \texttt{PATCH /api/forums/admin/categories/:id}. \newline
+8. The system verifies that the category exists and has not been deleted. \newline
+9. If the name changed, the system checks uniqueness against other active categories and regenerates a unique slug. \newline
+10. The system updates the category record. \newline
+11. The system displays the message ``Category updated successfully!'' and refreshes the page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Category Not Found} \newline
+1. The Admin attempts to edit a category. \newline
+2. The system determines that the category does not exist or has been deleted. \newline
+3. The system returns the message ``Error.ForumCategoryNotFound''. \newline
+4. Return to step 1. \newline
+\textbf{A.2 Duplicate Category Name} \newline
+1. The Admin submits the updated name. \newline
+2. The system determines that another active category has the same name. \newline
+3. The system displays the message ``Error.ForumCategoryAlreadyExists''. \newline
+4. Return to step 3. \newline
+\textbf{A.3 Admin Cancels Editing} \newline
+1. The Admin clicks the ``Cancel'' button on the Edit Category dialog. \newline
+2. The system discards the unsaved changes. \newline
+3. The system closes the dialog. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Not Admin Access} \newline
+1. A user without the Admin role attempts to update a category. \newline
+2. The system returns the message ``Error.ForumReportForbidden''. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the category record in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to update category.'' \newline
+4. The category is not updated. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while saving the changes. \newline
+2. The system cannot save the updated category data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the dialog without the changes being saved. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FCAT-06: Only users with the Admin role can update forum categories. \newline
+BR-FCAT-07: The name and description are optional in the update request (partial update). \newline
+BR-FCAT-08: When the name changes, the new name must be unique among other active categories (case-insensitive). \newline
+BR-FCAT-09: The slug is regenerated from the new name and must remain unique; a numeric suffix is appended when needed. \newline
+BR-FCAT-10: The original category id remains unchanged after the update. \newline
+BR-FCAT-11: Only active (\texttt{deletedAt = NULL}) categories shall be editable.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The updated category keeps its existing posts; the post count is recomputed after the update.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throughout the editing process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-16.3 Delete Forum Category
+% =================================================================
+
+\subparagraph{UC-16.3 Delete Forum Category}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-16.3 Delete Forum Category} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on a category row or the ``Delete'' button on the category detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to soft-delete an existing forum category by setting its \texttt{deletedAt} field. A category that still contains posts cannot be deleted.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The selected category exists and has not already been soft-deleted. \newline
+\textbf{PRE-3} The selected category does not contain any active posts.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The category is soft-deleted by setting the \texttt{deletedAt} field to the current timestamp. \newline
+\textbf{POST-2} The deleted category no longer appears in the forum category list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Forum Category} \newline
+1. The Admin clicks the delete action on a category row, or the ``Delete'' button on the category detail page (UC-16.5). \newline
+2. The system displays a confirmation dialog: ``Are you sure you want to delete category "X"? This action cannot be undone.'' \newline
+3. The Admin confirms the deletion request. \newline
+4. The system verifies that the caller has the Admin role. \newline
+5. The system sends \texttt{DELETE /api/forums/admin/categories/:id}. \newline
+6. The system verifies that the category exists and has not been deleted. \newline
+7. The system counts posts belonging to the category with \texttt{deletedAt = NULL}. \newline
+8. The system sets the \texttt{deletedAt} field of the selected category to the current timestamp. \newline
+9. The system returns the message ``Category deleted successfully.'' and refreshes the category list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Category Has Posts} \newline
+1. The Admin clicks the delete action on a category. \newline
+2. The system determines that the category contains one or more active posts. \newline
+3. The system blocks the deletion and displays the message ``Error.ForumCategoryHasPosts'' with a warning: ``Cannot Delete Category. Please move or delete all posts in this category before deleting it.'' \newline
+4. The use case ends. \newline
+\textbf{A.2 Category Not Found} \newline
+1. The Admin confirms the deletion request. \newline
+2. The system determines that the category does not exist or has already been deleted. \newline
+3. The system returns the message ``Error.ForumCategoryNotFound''. \newline
+4. Return to step 1. \newline
+\textbf{A.3 Admin Cancels Deletion} \newline
+1. The Admin clicks the ``Cancel'' button in the confirmation dialog. \newline
+2. The system closes the dialog. \newline
+3. The category remains unchanged. \newline
+4. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Not Admin Access} \newline
+1. A user without the Admin role attempts to delete a category. \newline
+2. The system returns the message ``Error.ForumReportForbidden''. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to update the \texttt{deletedAt} field of the category in the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system returns the message ``Error.FailedToDeleteForumCategory''. \newline
+4. The category is not deleted. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the deletion request. \newline
+2. The system cannot complete the deletion of the category. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The category remains unchanged. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FCAT-12: Only users with the Admin role can delete forum categories. \newline
+BR-FCAT-13: Category deletion shall be implemented as a soft delete using the \texttt{deletedAt} field. \newline
+BR-FCAT-14: A category that still contains active posts (\texttt{deletedAt = NULL}) shall not be deleted. \newline
+BR-FCAT-15: Soft-deleted categories shall not appear in the active category list. \newline
+BR-FCAT-16: Only active (\texttt{deletedAt = NULL}) categories shall be deletable.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Deleted categories remain stored in the database for auditing and recovery purposes.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the deletion process.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-16.4 View Forum Category List
+% =================================================================
+
+\subparagraph{UC-16.4 View Forum Category List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-16.4 View Forum Category List} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Forum Category Management section from the admin dashboard.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the list of forum categories with their id, name, slug, description, creation/update dates, and post count, with support for search, sorting, and pagination.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of active forum categories is displayed with \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}. \newline
+\textbf{POST-2} The admin can create (UC-16.1), edit (UC-16.2), delete (UC-16.3), or open a category detail (UC-16.5).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Forum Category List} \newline
+1. The Admin navigates to the Forum Category Management page (\texttt{/admin/categories}). \newline
+2. The system sends \texttt{GET /api/forums/admin/categories} with \texttt{page}, \texttt{limit} (default 10), optional \texttt{search}, \texttt{sortBy} (default \texttt{id}), and \texttt{sortOrder} (default \texttt{desc}). \newline
+3. The system queries categories where \texttt{deletedAt = NULL}; an optional search matches the category name case-insensitively. \newline
+4. The system returns the category list together with \texttt{postCount} (posts with \texttt{deletedAt = NULL}) and pagination metadata. \newline
+5. The system displays the total count, a search bar, the category table, and a ``Create Category'' button. \newline
+6. The Admin can search by name, sort by id/name/createdAt, or paginate.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Search Categories by Name} \newline
+1. The Admin enters a keyword in the search box. \newline
+2. The system re-queries categories whose name contains the keyword (case-insensitive). \newline
+3. The system refreshes the displayed list. \newline
+4. Return to step 5. \newline
+\textbf{A.2 No Categories Found} \newline
+1. The Admin navigates to the Forum Category Management page. \newline
+2. The system determines that no active categories exist (or none match the search). \newline
+3. The system displays an empty table row. \newline
+4. The Admin remains on the page. \newline
+5. Return to step 1. \newline
+\textbf{A.3 Navigate Between Pages or Sort} \newline
+1. The Admin selects a different sort column or page. \newline
+2. The system retrieves the requested page of categories with the requested order. \newline
+3. The system displays the requested page of categories. \newline
+4. Return to step 5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Not Admin Access} \newline
+1. A user without the Admin role attempts to view the category list. \newline
+2. The system returns the message ``Error.ForumReportForbidden''. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to load the categories from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to load forum categories.'' \newline
+4. The category list is not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the category data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without category information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FCAT-17: Only categories with \texttt{deletedAt = NULL} shall be displayed. \newline
+BR-FCAT-18: Search shall match the category name in a case-insensitive manner. \newline
+BR-FCAT-19: Sorting is restricted to the fields \texttt{id}, \texttt{name}, and \texttt{createdAt}. \newline
+BR-FCAT-20: \texttt{postCount} shall count only posts with \texttt{deletedAt = NULL}. \newline
+BR-FCAT-21: Pagination shall support \texttt{page >= 1}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The list page also provides the ``Create Category'' button to start UC-16.1.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are stored in the system database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-16.5 View Forum Category Detail
+% =================================================================
+
+\subparagraph{UC-16.5 View Forum Category Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-16.5 View Forum Category Detail} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a category from the forum category list, or navigates directly to a category detail URL.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the detailed information of a specific forum category including its id, name, slug, description, creation/update dates, and post count.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and has the Admin role. \newline
+\textbf{PRE-2} The selected category exists and has not been deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The detailed information of the selected category is displayed. \newline
+\textbf{POST-2} The admin can edit (UC-16.2), delete (UC-16.3), or view the posts of the category.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Forum Category Detail} \newline
+1. The Admin selects a category row in the category list (UC-16.4) or navigates directly to \texttt{/admin/categories/:id}. \newline
+2. The system validates that the category id is a valid number. \newline
+3. The system sends \texttt{GET /api/forums/admin/categories/:id}. \newline
+4. The system queries the category with the matching id and \texttt{deletedAt = NULL}. \newline
+5. The system displays the id, name, slug, created date, updated date, description, and post count, together with Edit/Delete actions and a ``View Posts'' link.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{A.1 Category Not Found} \newline
+1. The Admin opens a category detail page. \newline
+2. The system determines that no active category exists with the given id. \newline
+3. The system returns the message ``Error.ForumCategoryNotFound'' and the frontend displays the Not Found page. \newline
+4. The use case ends. \newline
+\textbf{A.2 Invalid Category ID} \newline
+1. The Admin navigates to a category detail URL with a non-numeric id. \newline
+2. The system displays the Not Found page. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+
+\textbf{EX-01: Not Admin Access} \newline
+1. A user without the Admin role attempts to view the category detail. \newline
+2. The system returns the message ``Error.ForumReportForbidden''. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. The system attempts to load the category detail from the database. \newline
+2. The database operation fails due to an internal database error. \newline
+3. The system displays the message ``Failed to load category details.'' \newline
+4. The category details are not displayed. \newline
+5. The use case ends. \newline
+\textbf{EX-03: Network or Server Connection Failure} \newline
+1. The connection between the application and the server is interrupted while processing the request. \newline
+2. The system cannot retrieve the category data. \newline
+3. The system displays the message ``Cannot connect to the server. Please try again later.'' \newline
+4. The Admin remains on the current page without category information being displayed. \newline
+5. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FCAT-22: Only categories with \texttt{deletedAt = NULL} shall be accessible. \newline
+BR-FCAT-23: The detail shall include \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}. \newline
+BR-FCAT-24: Only users with the Admin role can view admin category details.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+From the detail page the admin can navigate to the post list filtered by this category via ``View Posts''.
+} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each forum category contains valid metadata stored in the system database.} \\ \hline
+
+\end{longtable}
