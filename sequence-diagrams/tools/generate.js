@@ -49,24 +49,43 @@ function branch(p, label, show) {
 }
 
 /* ------------------------- layout ------------------------- */
-const LIFE_Y = 240, LIFE_H = 1560, FIRST_Y = 330, Y_MAX_SPAN = 1410;
-const LIFELINES = {
-  view:       { x: 200,  w: 150 },
-  route:      { x: 420,  w: 100 },
-  controller: { x: 620,  w: 140 },
-  service:    { x: 830,  w: 130 },
-  repo:       { x: 1040, w: 130 },
-  model:      { x: 1240, w: 100 },
-};
-const LF_KEYS = ['view', 'route', 'controller', 'service', 'repo', 'model'];
-const ACT_CX = { actor: 135, view: 275, route: 470, controller: 690, service: 895, repo: 1105, model: 1290, db: 1450 };
-const FRAME_L = 90, FRAME_R = 1530;
+const LIFE_Y = 240, FIRST_Y = 330;
+const LIFE_H_STD = 1560; // chiều cao tối thiểu của lifeline
+
+const KEY_LABEL = { view: 'View', route: 'Route', controller: 'Controller', service: 'Service', jwt: 'JwtService', repo: 'Repo', model: 'Model' };
+
+// Bố cục lifeline: có cột :JwtService (diagram auth) hoặc không
+function layoutFor(spec) {
+  if (spec.jwt) {
+    return {
+      keys: ['view', 'route', 'controller', 'service', 'jwt', 'repo', 'model'],
+      columns: {
+        view: { x: 200, w: 150 }, route: { x: 420, w: 100 }, controller: { x: 620, w: 140 },
+        service: { x: 830, w: 130 }, jwt: { x: 975, w: 110 }, repo: { x: 1140, w: 130 }, model: { x: 1350, w: 100 },
+      },
+      cx: { actor: 135, view: 275, route: 470, controller: 690, service: 895, jwt: 1030, repo: 1205, model: 1400, db: 1545 },
+      dbX: 1515, actDbX: 1540, frameR: 1640,
+    };
+  }
+  return {
+    keys: ['view', 'route', 'controller', 'service', 'repo', 'model'],
+    columns: {
+      view: { x: 200, w: 150 }, route: { x: 420, w: 100 }, controller: { x: 620, w: 140 },
+      service: { x: 830, w: 130 }, repo: { x: 1040, w: 130 }, model: { x: 1240, w: 100 },
+    },
+    cx: { actor: 135, view: 275, route: 470, controller: 690, service: 895, repo: 1105, model: 1290, db: 1450 },
+    dbX: 1420, actDbX: 1445, frameR: 1530,
+  };
+}
+const FRAME_L = 90;
 
 const ST = {
   lifeline: 'shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={"curved":0,"rounded":0};',
   activation: 'html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={"curved":0,"rounded":0};',
   actor: 'shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;',
   frame: 'shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=80;height=30;',
+  ref: 'shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=110;height=30;fontSize=12;',
+  refText: 'text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;',
   text: 'text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;',
   db: 'strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;',
   call: 'html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;',
@@ -96,10 +115,12 @@ function build(spec) {
   const nid = () => 'c' + (++idc);
 
   // 1. Tính tọa độ y cho từng message
+  const lay = layoutFor(spec);
   const rows = spec.msgs.filter(m => !m.frame);
   const n = rows.length;
-  const step = n <= 16 ? 60 : Math.max(40, Math.floor(Y_MAX_SPAN / (n - 1)));
+  const step = n <= 16 ? 60 : Math.max(38, Math.floor(1800 / (n - 1)));
   rows.forEach((r, i) => { r.y = FIRST_Y + i * step; });
+  const lifeH = Math.max(LIFE_H_STD, rows[n - 1].y + 90 - LIFE_Y);
 
   // 2. Ghép frame (top/bottom/divider)
   const frames = {};
@@ -123,7 +144,7 @@ function build(spec) {
   // 3. Frames (vẽ trước để nằm dưới cùng)
   for (const f of Object.values(frames)) {
     const fx = FRAME_L + f.inset * 28;
-    const fw = (FRAME_R - FRAME_L) - f.inset * 56;
+    const fw = (lay.frameR - FRAME_L) - f.inset * 56;
     cells.push(vertex(nid(), f.type, ST.frame, '1', fx, f.top, fw, f.bottom - f.top));
     cells.push(vertex(nid(), f.guard, ST.text, '1', fx + 150, f.top, 260, 30));
     if (f.dividerY != null) {
@@ -132,14 +153,33 @@ function build(spec) {
     }
   }
 
+  // 3b. Ref frames (như mẫu: umlFrame 'ref' chứa step number của flow verify JWT)
+  // trả và được chèn tự động sau mỗi bước GET/POST/PUT/DELETE (chức năng cần đăng nhập)
+  const refs = [];
+  if (!spec.noRef) {
+    const httpRe = /^\d+\.\s+(GET|POST|PUT|DELETE|PATCH)\b/;
+    rows.forEach((r, i) => {
+      if (httpRe.test(r.label)) {
+        const next = rows[i + 1];
+        const num = r.label.split('.')[0].trim();
+        refs.push({ label: `${num}.1. Verify jwt`, y: (r.y + (next ? next.y : r.y + step)) / 2 });
+      }
+    });
+  }
+  for (const rf of refs) {
+    cells.push(vertex(nid(), 'ref', ST.ref, '1', 420, rf.y - 25, 300, 50));
+    cells.push(vertex(nid(), rf.label, ST.refText, '1', 435, rf.y - 9, 270, 18));
+  }
+
   // 4. Lifelines + Actor + Database
   cells.push(vertex('lf_actor', spec.actor, ST.actor, '1', 120, 200, 30, 60));
-  for (const k of LF_KEYS) {
-    const L = LIFELINES[k];
-    cells.push(vertex(`lf_${k}`, `:${spec.domain}${k === 'view' ? 'View' : k === 'route' ? 'Route' : k === 'controller' ? 'Controller' : k === 'service' ? 'Service' : k === 'repo' ? 'Repo' : 'Model'}`, ST.lifeline, '1', L.x, LIFE_Y, L.w, LIFE_H));
+  for (const k of lay.keys) {
+    const col = lay.columns[k];
+    const label = k === 'jwt' ? `:${KEY_LABEL.jwt}` : `:${spec.domain}${KEY_LABEL[k]}`;
+    cells.push(vertex(`lf_${k}`, label, ST.lifeline, '1', col.x, LIFE_Y, col.w, lifeH));
   }
-  cells.push(vertex('node_db', 'Database', ST.db, '1', 1420, 220, 60, 70));
-  cells.push(vertex('node_db_label2', 'Database', ST.text, '1', 1420, 292, 60, 30));
+  cells.push(vertex('node_db', 'Database', ST.db, '1', lay.dbX, 220, 60, 70));
+  cells.push(vertex('node_db_label2', 'Database', ST.text, '1', lay.dbX, 292, 60, 30));
 
   // 5. Activations — tính span trước, vẽ nét đứt dưới, rồi vẽ bar
   let actorTop = Infinity, actorBot = -Infinity, dbTop = Infinity, dbBot = -Infinity;
@@ -151,22 +191,22 @@ function build(spec) {
   }
   // Nét đứt vẽ TRƯỚC activation để nằm dưới bar như mẫu
   cells.push(edge('dash_actor', '', ST.dashedLine, '', '', [135, 260], [135, actorTop]));
-  cells.push(edge('dash_db', '', ST.dashedLine, '', '', [1450, 322], [1450, 1768]));
+  cells.push(edge('dash_db', '', ST.dashedLine, '', '', [lay.cx.db, 322], [lay.cx.db, LIFE_Y + lifeH - 30]));
   cells.push(vertex('act_actor', '', ST.activation, '1', 130, actorTop, 10, actorBot - actorTop + 40));
-  for (const k of LF_KEYS) {
+  for (const k of lay.keys) {
     const ys = rows.filter(r => r.from === k || r.to === k).map(r => r.y);
     if (!ys.length) continue;
     const top = Math.min(...ys) - 15, bot = Math.max(...ys) + 45;
-    const L = LIFELINES[k];
-    cells.push(vertex(`act_${k}`, '', ST.activation, `lf_${k}`, L.w / 2 - 5, top - LIFE_Y, 10, bot - top));
+    const col = lay.columns[k];
+    cells.push(vertex(`act_${k}`, '', ST.activation, `lf_${k}`, col.w / 2 - 5, top - LIFE_Y, 10, bot - top));
   }
-  cells.push(vertex('act_db', '', ST.activation, '1', 1445, dbTop - 15, 10, dbBot - dbTop + 60));
+  cells.push(vertex('act_db', '', ST.activation, '1', lay.actDbX, dbTop - 15, 10, dbBot - dbTop + 60));
 
   // 6. Messages — KHÔNG dùng source/target refs (draw.io sẽ snap đầu mũi tên về
   //    perimeter của lifeline gây sai vị trí). Dùng điểm cố định như trong file mẫu.
   rows.forEach((m, i) => {
     const mid = `msg_${i + 1}`;
-    const cx1 = ACT_CX[m.from], cx2 = ACT_CX[m.to];
+    const cx1 = lay.cx[m.from], cx2 = lay.cx[m.to];
     const style = m.type === 'ret' ? ST.ret : ST.call;
     if (m.from === m.to) { // self message
       cells.push(edge(mid, m.label, style, '', '', [cx1, m.y - 18], [cx1, m.y + 18], [[cx1 + 70, m.y - 18], [cx1 + 70, m.y + 18]]));
@@ -180,6 +220,59 @@ function build(spec) {
 
 /* ------------------------- specs ------------------------- */
 const SPECS = [
+  /* ===== Auth - JWT (Login + Verify token) ===== */
+  {
+    folder: '00-auth-jwt', file: 'jwt-flow.xml',
+    actor: 'User (Client/Expert/Freelancer/Admin)', domain: 'Auth', jwt: true, noRef: true,
+    msgs: [
+      M('1. Click "Login"', 'actor', 'view'),
+      M('2. Display login form', 'view', 'actor', 'ret'),
+      M('3. Fill in email, password', 'view', 'view', 'self'),
+      vcheck(4, 'login data'),
+      Fs('f1', 'opt', '[invalid data]'),
+      M(`4.1. ${INVALID_MSG}`, 'view', 'actor', 'ret'),
+      Fe('f1'),
+      M('5. POST /auth/login', 'view', 'route'),
+      M('6. login(req, res)', 'route', 'controller'),
+      M('7. login(dto)', 'controller', 'service'),
+      M('8. findOne({email})', 'service', 'repo'),
+      M('9. User.findOne(query)', 'repo', 'model'),
+      M('10. Execute query to find account', 'model', 'db'),
+      ...back([11, 12, 13]),
+      check(14),
+      Fs('f2', 'alt', '[account is null]'),
+      ...branch('14.1', 'Return error', 'Show message "Invalid email or password"'),
+      Fd('f2', '[account is not null]'),
+      M('15. bcrypt.compare(password, hash)', 'service', 'service', 'self'),
+      Fs('f3', 'alt', '[password is invalid]', 1),
+      ...branch('15.1', 'Return error', 'Show message "Invalid email or password"'),
+      Fd('f3', '[password is valid]'),
+      M('16. sign(payload)', 'service', 'jwt'),
+      M('17. Generate access & refresh token', 'jwt', 'jwt', 'self'),
+      M('18. Return access / refresh token', 'jwt', 'service', 'ret'),
+      M('19. create({userId, refreshToken, device, ip})', 'service', 'repo'),
+      M('20. Session.create(data)', 'repo', 'model'),
+      M('21. Execute insert query', 'model', 'db'),
+      ...back([22, 23, 24]),
+      M('25. Return success with tokens', 'service', 'controller', 'ret'),
+      M('26. Return success with tokens', 'controller', 'route', 'ret'),
+      M('27. Return success with tokens', 'route', 'view', 'ret'),
+      M('28. Display "Login success" and store tokens', 'view', 'actor', 'ret'),
+      Fe('f3'),
+      Fe('f2'),
+      M('29. Access protected feature', 'actor', 'view'),
+      M('30. Send request with Bearer token', 'view', 'route'),
+      M('31. handler(req, res)', 'route', 'controller'),
+      M('32. verifyAccessToken(bearer token)', 'controller', 'jwt'),
+      M('33. Decode and check signature / expiry', 'jwt', 'jwt', 'self'),
+      M('34. Return payload {userId, roleId}', 'jwt', 'controller', 'ret'),
+      Fs('f4', 'alt', '[token is missing, invalid or expired]'),
+      ...branch('35', 'Return error', 'Show message "Unauthorized: Invalid or expired token"'),
+      Fd('f4', '[token is valid]'),
+      M('36. Attach user to req and continue', 'controller', 'controller', 'self'),
+      Fe('f4'),
+    ],
+  },
   /* ===== UC-06: Role Management ===== */
   {
     folder: '06-role-management', file: 'UC-06.01-view-role-list.xml',

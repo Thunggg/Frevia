@@ -10,6 +10,7 @@ Thư mục chứa các sequence diagram dưới dạng XML `mxGraphModel`, impor
 
 | Thư mục | Nghiệp vụ | Các UC |
 |---|---|---|
+| `00-auth-jwt/` | Auth – JWT (Login + Verify token) | Nguồn cho các khung `ref "N.1. Verify jwt"` |
 | `06-role-management/` | [Frevia - Admin] Role Management | UC-06.01 → UC-06.06 |
 | `15-permission/` | [Frevia - Admin] Manage Permission | UC-15.01, UC-15.02 |
 | `16-session-management/` | [Frevia - User] Session Management | UC-16.01 → UC-16.03 |
@@ -18,6 +19,10 @@ Thư mục chứa các sequence diagram dưới dạng XML `mxGraphModel`, impor
 Danh sách file chi tiết:
 
 ```
+00-auth-jwt/
+└── jwt-flow.xml                            (Auth-JWT: Login phát access/refresh token, lưu
+                                             session; verify Bearer token cho API protected —
+                                             các diagram khác ref vào flow verify này)
 06-role-management/
 ├── UC-06.01-view-role-list.xml             (Admin) Xem danh sách role + permissions
 ├── UC-06.02-view-role-detail.xml           (Admin) Xem chi tiết một role
@@ -40,6 +45,18 @@ Danh sách file chi tiết:
 ├── UC-17.03-delete-forum-category.xml      (Admin) Xoá mềm danh mục (deletedAt)
 └── UC-17.06-restore-forum-category.xml     (Admin) Khôi phục danh mục (deletedAt = null)
 ```
+
+## Khung `ref "N.1. Verify jwt"` (đã đăng nhập mới dùng được)
+
+Mỗi chức năng yêu cầu đăng nhập đều có khung `ref` (giống mẫu `ref 3.3.1 Verify jwt") đặt
+**ngay sau bước HTTP request** (GET/POST/PUT/DELETE), trỏ tới flow verify token trong
+`00-auth-jwt/jwt-flow.xml` (bước 30–35):
+- 30. Send request with Bearer token
+- 31. handler(req, res)
+- 32. verifyAccessToken(bearer token)
+- 33. Decode and check signature / expiry
+- alt [token is missing, invalid or expired] → Return error + "Unauthorized"
+- [token is valid] → Return payload {userId, roleId} → attach user & continue
 
 ## Quy ước chung theo mẫu sequence gốc
 
