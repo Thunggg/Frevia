@@ -1,0 +1,10 @@
+const fs = require('fs');
+const f = process.argv[2];
+const raw = fs.readFileSync(f, 'utf8');
+const labels = [...raw.matchAll(/<mxCell id="msg_\d+" value="([^"]*)"/g)].map(m => m[1].replace(/&quot;/g, '"'));
+const frames = [...raw.matchAll(/<mxCell id="c\d+" value="(alt|opt)"/g)].map(m => m[1]);
+const guards = [...raw.matchAll(/<mxCell id="c\d+" value="(\[[^"]*\])"/g)].map(m => m[1]);
+console.log('=== ' + f);
+console.log('frames: ' + frames.join(', '));
+console.log('guards: ' + guards.join(' | '));
+console.log(labels.join('\n'));
