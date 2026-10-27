@@ -15,6 +15,9 @@ Thư mục chứa các sequence diagram dưới dạng XML `mxGraphModel`, impor
 | `15-permission/` | [Frevia - Admin] Manage Permission | UC-15.01, UC-15.02 |
 | `16-session-management/` | [Frevia - User] Session Management | UC-16.01 → UC-16.03 |
 | `17-forum-category/` | Forum Category Management | UC-14.01, UC-14.02, UC-17.01, UC-17.02, UC-17.03, UC-17.06 |
+| `28-user-management/` | [Frevia - Admin] User Management | UC-28.01 → UC-28.08 |
+| `37-banner-management/` | [Frevia - Admin] Banners Management | UC-37.01 → UC-37.05 |
+| `38-skill-management/` | [Frevia - Admin] Skill Management | UC-38.01 → UC-38.06 |
 
 Danh sách file chi tiết:
 
@@ -44,11 +47,33 @@ Danh sách file chi tiết:
 ├── UC-17.02-update-forum-category.xml      (Admin) Cập nhật danh mục
 ├── UC-17.03-delete-forum-category.xml      (Admin) Xoá mềm danh mục (deletedAt)
 └── UC-17.06-restore-forum-category.xml     (Admin) Khôi phục danh mục (deletedAt = null)
+28-user-management/
+├── UC-28.01-view-user-list.xml            (Admin) Xem danh sách user, search/filter/sort theo role
+├── UC-28.02-view-user-detail.xml          (Admin) Xem info account + tab hồ sơ theo role
+├── UC-28.03-create-user.xml               (Admin) Tạo user, chọn role khởi tạo (check trùng email)
+├── UC-28.04-update-user.xml               (Admin) Sửa thông tin chung account (email, status...)
+├── UC-28.05-update-client-profile.xml     (Admin) Sửa tab hồ sơ Client (:ClientProfileModel)
+├── UC-28.06-update-freelancer-basic-info.xml (Admin) Sửa title, bio, languages/edu/certs (:FreelancerModel)
+├── UC-28.07-update-freelancer-skills.xml  (Admin) Chọn skill từ catalog + level 1-10, thay toàn bộ list
+└── UC-28.08-update-freelancer-portfolio.xml (Admin) Thêm/sửa/xoá mềm portfolio items (:PortfolioModel)
+37-banner-management/
+├── UC-37.01-view-banner-list.xml          (Admin) Xem danh sách banner quảng cáo
+├── UC-37.02-view-banner-detail.xml        (Admin) Xem chi tiết banner theo ID
+├── UC-37.03-create-banner.xml             (Admin) Tạo banner (title, image_url, link_url, dates)
+├── UC-37.04-update-banner.xml             (Admin) Chỉnh sửa banner
+└── UC-37.05-delete-banner.xml             (Admin) Xoá CỨNG banner (deleteOne)
+38-skill-management/
+├── UC-38.01-view-skill-list.xml           (Admin) Xem danh sách skill (search, filter active, phân trang)
+├── UC-38.02-view-skill-detail.xml         (Admin) Xem chi tiết skill theo ID
+├── UC-38.03-create-skill.xml              (Admin) Tạo skill (check trùng slug)
+├── UC-38.04-update-skill.xml              (Admin) Sửa tên, slug, mô tả
+├── UC-38.05-delete-skill.xml              (Admin) Xoá mềm skill (deletedAt)
+└── UC-38.06-restore-skill.xml             (Admin) Khôi phục skill (deletedAt = null)
 ```
 
 ## Khung `ref "N.1. Verify jwt"` (đã đăng nhập mới dùng được)
 
-Mỗi chức năng yêu cầu đăng nhập đều có khung `ref` (giống mẫu `ref 3.3.1 Verify jwt") đặt
+Mỗi chức năng yêu cầu đăng nhập đều có khung `ref` (giống mẫu `ref 3.3.1 Verify jwt`) đặt
 **ngay sau bước HTTP request** (GET/POST/PUT/DELETE), trỏ tới flow verify token trong
 `00-auth-jwt/jwt-flow.xml` (bước 30–35):
 - 30. Send request with Bearer token
