@@ -52,28 +52,15 @@ function getMilestoneStatusBadgeClass(
   paymentStatus?: MilestoneType["paymentStatus"],
 ): string {
   if (paymentStatus === "DISPUTED") {
-    return {
-      label: "Disputed",
-      className:
-        "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold",
-    };
+    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
   }
 
   if (paymentStatus === "RELEASED") {
-    return {
-      label: "Released / Paid",
-      className:
-        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold",
-    };
+    return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold";
   }
 
   if (paymentStatus === "REFUNDED") {
-    return {
-      label: "Refunded",
-      className:
-        "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold",
-    };
-    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
+    return "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold";
   }
 
   switch (status) {
@@ -88,46 +75,6 @@ function getMilestoneStatusBadgeClass(
     default:
       return "bg-[#F1F0F5] text-muted-foreground border border-border/60";
   }
-
-  if (paymentStatus === "FUNDED") {
-    switch (status) {
-      case "COMPLETED":
-        return {
-          label: "Completed",
-          className: "bg-[#F1F0F5] text-foreground border border-border/80 font-medium",
-        };
-      case "SUBMITTED":
-        return {
-          label: "Ready for Review",
-          className:
-            "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold",
-        };
-      case "IN_PROGRESS":
-        return {
-          label: "In Progress (Funded)",
-          className:
-            "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-300 font-medium",
-        };
-      case "CHANGES_REQUESTED":
-        return {
-          label: "Revisions Requested",
-          className:
-            "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium",
-        };
-      default:
-        return {
-          label: "Funded in Escrow",
-          className:
-            "bg-blue-50 text-[#0069D3] border border-blue-200 font-medium",
-        };
-    }
-  }
-
-  return {
-    label: "Awaiting Escrow Deposit",
-    className:
-      "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-medium",
-  };
 }
 
 interface MilestoneCardProps {
@@ -322,8 +269,6 @@ export function MilestoneCard({
               </Button>
             )}
 
-          <span className={`rounded-full px-3 py-1 text-xs ${badge.className}`}>
-            {badge.label}
           <span className={`rounded-full px-3 py-1 text-xs ${badgeClass}`}>
             {tMilestoneStatus(statusKey)}
           </span>

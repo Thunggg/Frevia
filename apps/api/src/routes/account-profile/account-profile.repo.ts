@@ -6,7 +6,7 @@ import {
   UpdateClientProfileType,
   UpdateGeneralProfileType,
 } from '@shared/types';
-import { NotificationType } from '@prisma/client';
+import { NotificationType, Prisma, VerificationStatus } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
   calculateClientProfileStrength,
@@ -163,6 +163,63 @@ export class AccountProfileRepository {
     return this.prisma.idVerificationDocument.create({
       data: { userId, documentType, fileUrl },
     });
+  }
+
+  createIdentityAiDocument(data: {
+    userId: number;
+    documentType: DocumentTypeType;
+    fileUrl: string;
+    backFileUrl: string | null;
+    status: VerificationStatus;
+    reviewNotes: string | null;
+    duplicateOfId: number | null;
+    aiStatus: string;
+    aiScore: number | null;
+    aiError: string | null;
+    aiSummary: Prisma.InputJsonValue;
+    aiSelfieSummary: Prisma.InputJsonValue;
+    aiScannedAt: Date;
+  }) {
+    return this.prisma.idVerificationDocument.create({ data });
+  }
+
+  /**
+   * Check trùng CCCD đã được APPROVED bởi user khác.
+   *
+   * 2 bước:
+   * 1. Exact match trên cột có index (nhanh, đúng với bản ghi đã chuẩn hóa).
+   * 2. Fallback so SỚM normalized (bỏ ký tự phân tách) để không bỏ lọt
+   *    bản ghi cũ lưu dạng "0012 345 678 90". Bảng này ít row nên quét
+   *    full vẫn chấp nhận được.
+   */
+  async findApprovedIdentityDocumentByIdentityNumber(
+    userId: number,
+    identityNumber: string,
+  ) {
+    const baseWhere = Prisma.sql`
+      "deletedAt" IS NULL
+      AND "status" = 'APPROVED'
+      AND "userId" <> ${userId}
+    `;
+
+    const exact = await this.prisma.idVerificationDocument.findFirst({
+      where: {
+        identityNumber,
+        status: VerificationStatus.APPROVED,
+        deletedAt: null,
+        userId: { not: userId },
+      },
+      select: { id: true },
+    });
+    if (exact) return exact;
+
+    const [row] = await this.prisma.$queryRaw<{ id: number }[]>`
+      SELECT "id" FROM "IdVerificationDocument"
+      WHERE ${baseWhere}
+        AND regexp_replace("identityNumber", '[^A-Za-z0-9]', '', 'g') = ${identityNumber}
+      LIMIT 1
+    `;
+    return row ?? null;
   }
 
   findIdentityDocuments(userId: number) {

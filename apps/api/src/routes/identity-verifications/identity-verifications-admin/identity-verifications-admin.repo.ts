@@ -14,6 +14,7 @@ const listSelect = {
   userId: true,
   documentType: true,
   fileUrl: true,
+  backFileUrl: true,
   status: true,
   reviewNotes: true,
   createdAt: true,
@@ -37,6 +38,7 @@ const detailSelect = {
   userId: true,
   documentType: true,
   fileUrl: true,
+  backFileUrl: true,
   status: true,
   reviewNotes: true,
   createdAt: true,
@@ -135,7 +137,13 @@ export class IdentityVerificationsAdminRepository {
   findDocumentRaw(id: number) {
     return this.prisma.idVerificationDocument.findFirst({
       where: { id, deletedAt: null },
-      select: { id: true, userId: true, fileUrl: true, status: true },
+      select: {
+        id: true,
+        userId: true,
+        fileUrl: true,
+        backFileUrl: true,
+        status: true,
+      },
     });
   }
 

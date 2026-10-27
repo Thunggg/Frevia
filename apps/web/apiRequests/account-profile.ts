@@ -54,6 +54,60 @@ export const accountProfileApi = {
     };
   },
 
+  /** Chấm 1 khung webcam qua AI (poll trong lúc làm thử thách liveness). */
+  async livenessPose(file: File) {
+    const formData = new FormData();
+    formData.set("file", file);
+    const response = await fetch(
+      "/api/backend/identity-verifications/liveness-pose",
+      { method: "POST", body: formData },
+    );
+    const payload = await response.json();
+    if (!response.ok) throw new ApiFail(payload as ApiError, response.status);
+    return payload as {
+      success: true;
+      data: {
+        face_found: boolean;
+        yaw: number | null;
+        pitch: number | null;
+        roll: number | null;
+        blink?: boolean;
+      };
+    };
+  },
+
+  /**
+   * Gửi CCCD (trước/sau) + selfie + frames liveness để AI xác minh
+   * (IDVerification pipeline). Document mới tạo: PENDING (AI pass, chờ admin
+   * duyệt) hoặc REJECTED (kèm lý do trong reviewNotes).
+   */
+  async verifyIdentityAi(input: {
+    documentType: UploadIdentityDocumentType["documentType"];
+    front: File;
+    back?: File | null;
+    selfie: File;
+    liveness: File[];
+  }) {
+    const formData = new FormData();
+    formData.set("documentType", input.documentType);
+    formData.set("front", input.front);
+    if (input.back) formData.set("back", input.back);
+    formData.set("selfie", input.selfie);
+    for (const frame of input.liveness) {
+      formData.append("liveness", frame);
+    }
+    const response = await fetch(
+      "/api/backend/identity-verifications/ai-check",
+      { method: "POST", body: formData },
+    );
+    const payload = await response.json();
+    if (!response.ok) throw new ApiFail(payload as ApiError, response.status);
+    return payload as {
+      success: true;
+      data: IdentityVerificationDocumentType;
+    };
+  },
+
   getClientProfile: (userId: number) =>
     http.get<ClientProfileDetailType>(`/clients/${userId}`),
   updateClientProfile: (body: UpdateClientProfileType) =>

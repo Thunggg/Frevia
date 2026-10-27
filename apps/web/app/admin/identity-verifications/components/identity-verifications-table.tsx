@@ -103,6 +103,7 @@ export function IdentityVerificationsTable({
   const [viewing, setViewing] = useState<DocumentItem | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [acting, setActing] = useState<"approve" | "reject" | null>(null);
+  const [zoomSide, setZoomSide] = useState<"front" | "back" | null>(null);
 
   const statusLabel = (status: string) => {
     if (status === "PENDING") return tCommon("pending");
@@ -128,6 +129,7 @@ export function IdentityVerificationsTable({
     setViewing(document);
     setReviewNotes(document.reviewNotes ?? "");
     setActing(null);
+    setZoomSide(null);
   };
 
   const handleAction = async (document: DocumentItem, action: "approve" | "reject") => {
@@ -272,7 +274,7 @@ export function IdentityVerificationsTable({
         open={!!viewing}
         onOpenChange={(open) => !open && setViewing(null)}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 pr-8">
               <ShieldCheck className="h-4 w-4 text-[#4fae2e]" />
@@ -326,14 +328,58 @@ export function IdentityVerificationsTable({
                 <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
                   {t("documentHeading")}
                 </p>
-                <div className="overflow-hidden rounded-lg border bg-muted/40">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={viewing.fileUrl}
-                    alt={t("documentAlt")}
-                    className="max-h-[320px] w-full object-contain"
-                  />
+                <div
+                  className={`grid gap-3 ${viewing.backFileUrl ? "grid-cols-2" : "grid-cols-1"}`}
+                >
+                  <figure className="space-y-1.5">
+                    <figcaption className="text-xs font-medium text-muted-foreground">
+                      {t("frontLabel")}
+                    </figcaption>
+                    <button
+                      type="button"
+                      className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                      onClick={() => setZoomSide("front")}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={viewing.fileUrl}
+                        alt={t("frontAlt")}
+                        className="max-h-[260px] w-full object-contain"
+                      />
+                    </button>
+                  </figure>
+                  {viewing.backFileUrl ? (
+                    <figure className="space-y-1.5">
+                      <figcaption className="text-xs font-medium text-muted-foreground">
+                        {t("backLabel")}
+                      </figcaption>
+                      <button
+                        type="button"
+                        className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                        onClick={() => setZoomSide("back")}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={viewing.backFileUrl}
+                          alt={t("backAlt")}
+                          className="max-h-[260px] w-full object-contain"
+                        />
+                      </button>
+                    </figure>
+                  ) : (
+                    <figure className="space-y-1.5">
+                      <figcaption className="text-xs font-medium text-muted-foreground">
+                        {t("backLabel")}
+                      </figcaption>
+                      <div className="flex h-full min-h-[120px] items-center justify-center rounded-lg border border-dashed bg-muted/20 p-4 text-center text-xs text-muted-foreground">
+                        {t("backMissing")}
+                      </div>
+                    </figure>
+                  )}
                 </div>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  {t("zoomHint")}
+                </p>
               </div>
 
               {viewing.reviewNotes && (
@@ -390,6 +436,28 @@ export function IdentityVerificationsTable({
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!zoomSide} onOpenChange={(open) => !open && setZoomSide(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="pr-8">
+              {zoomSide === "back" ? t("backLabel") : t("frontLabel")}
+            </DialogTitle>
+          </DialogHeader>
+          {viewing && zoomSide ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={zoomSide === "back" ? viewing.backFileUrl! : viewing.fileUrl}
+              alt={
+                zoomSide === "back"
+                  ? t("backAlt")
+                  : t("frontAlt")
+              }
+              className="max-h-[70vh] w-full rounded-md object-contain"
+            />
+          ) : null}
         </DialogContent>
       </Dialog>
     </div>

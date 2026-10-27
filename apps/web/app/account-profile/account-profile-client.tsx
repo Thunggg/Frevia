@@ -5,7 +5,6 @@ import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import {
   CreditCard,
-  ExternalLink,
   Eye,
   Link2,
   Loader2,
@@ -13,7 +12,6 @@ import {
   RefreshCw,
   Search,
   Trash2,
-  Upload,
 } from "@/components/icons";
 import { PaymentSettings } from "./payment-settings";
 import { ApiFail } from "@/lib/http";
@@ -53,11 +51,9 @@ import {
 } from "@repo/ui/components/shadcn/tabs";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
-  DocumentType,
   SocialPlatform,
   VerificationStatus,
   type DiscoverFreelancerType,
-  type DocumentTypeType,
   type FavoriteFreelancerType,
   type IdentityVerificationStatusType,
   type SocialLinkType,
@@ -78,6 +74,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { GeneralSettings } from "./general-settings";
+import { IdentityVerificationForm } from "./identity-verification-form";
 import { ReviewManager } from "./review-manager";
 
 type Props = {
@@ -220,10 +217,6 @@ export function AccountProfileClient({
   const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
-  const [documentType, setDocumentType] = useState<DocumentTypeType>(
-    DocumentType.ID_CARD,
-  );
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [platform, setPlatform] = useState<SocialPlatformType>(
     SocialPlatform.LINKEDIN,
   );
@@ -282,28 +275,6 @@ export function AccountProfileClient({
       void loadFreelancers();
     }
   }, [headerRole, loadFreelancers, userId]);
-
-  const uploadDocument = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!documentFile) {
-      toastError({ message: t("selectFileFirst") });
-      return;
-    }
-    setPending("identity");
-    try {
-      await accountProfileApi.uploadIdentityDocument(
-        { documentType },
-        documentFile,
-      );
-      toastSuccess({ message: t("documentUploaded") });
-      setDocumentFile(null);
-      await load();
-    } catch (error) {
-      toastError({ message: toMessage(error) });
-    } finally {
-      setPending(null);
-    }
-  };
 
   const addSocialLink = async (event: FormEvent) => {
     event.preventDefault();
@@ -629,55 +600,12 @@ export function AccountProfileClient({
                 <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
                   <div className="rounded-xl border border-border p-5 sm:p-6">
                     <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("submitDocumentTitle")}
+                      {t("aiCheckTitle")}
                     </h2>
-                    <form className="mt-5 space-y-4" onSubmit={uploadDocument}>
-                      <div className="space-y-2">
-                        <Label>{t("documentTypeLabel")}</Label>
-                        <Select
-                          value={documentType}
-                          onValueChange={(value) =>
-                            setDocumentType(value as DocumentTypeType)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(DocumentType).map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {documentTypeLabel(value)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t("documentFileLabel")}</Label>
-                        <Input
-                          type="file"
-                          accept=".pdf,.png,.jpg,.jpeg"
-                          onChange={(event) =>
-                            setDocumentFile(event.target.files?.[0] ?? null)
-                          }
-                          required
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {t("uploadHint")}
-                        </p>
-                      </div>
-                      <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        disabled={pending === "identity"}
-                      >
-                        {pending === "identity" ? (
-                          <Loader2 className="animate-spin" />
-                        ) : (
-                          <Upload />
-                        )}
-                        {t("uploadDocument")}
-                      </Button>
-                    </form>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {t("aiCheckHint")}
+                    </p>
+                    <IdentityVerificationForm onSubmitted={() => void load()} />
                   </div>
 
                   <div className="rounded-xl border border-border p-5 sm:p-6">
@@ -699,6 +627,11 @@ export function AccountProfileClient({
                       >
                         {verificationStatusLabel(identity?.status)}
                       </Badge>
+                      {identity?.status !== VerificationStatus.APPROVED ? (
+                        <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                          {t("dashboardLockedHint")}
+                        </p>
+                      ) : null}
                       {identity?.documents.length ? (
                         <ul className="divide-y divide-border border-y border-border">
                           {identity.documents.map((document) => (
@@ -725,15 +658,22 @@ export function AccountProfileClient({
                                   </p>
                                 ) : null}
                               </div>
-                              <Button variant="ghost" size="icon" asChild>
-                                <a
-                                  href={document.fileUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  <ExternalLink />
-                                </a>
-                              </Button>
+                              <div className="flex shrink-0 items-start gap-2">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={document.fileUrl}
+                                  alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
+                                  className="h-16 w-24 rounded-md border border-border object-cover"
+                                />
+                                {document.backFileUrl ? (
+                                  /* eslint-disable-next-line @next/next/no-img-element */
+                                  <img
+                                    src={document.backFileUrl}
+                                    alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
+                                    className="h-16 w-24 rounded-md border border-border object-cover"
+                                  />
+                                ) : null}
+                              </div>
                             </li>
                           ))}
                         </ul>
