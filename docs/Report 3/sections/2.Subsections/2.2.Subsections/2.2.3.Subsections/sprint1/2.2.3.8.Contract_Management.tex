@@ -1,52 +1,60 @@
 \paragraph{Manage Contract}
 % =================================================================
-% UC-09.1 Get Contract List
+% UC-13.01 Create Contract
 % =================================================================
-\subparagraph{UC-09.1 Get Contract List}
+\subparagraph{UC-13.01 Create Contract}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.1 Get Contract List} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.01 Create Contract} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the Contracts section from the dashboard or navigation menu.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client initiates contract creation from an accepted job proposal or direct hire action.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client, Freelancer, or Admin, I want to retrieve a paginated list of contracts with status filters and sorting so that I can easily find and manage my contracts.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to create and initiate a new contract with a selected Freelancer, specifying contract title, description, milestones, budget amount, and project timeline.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is successfully logged into the system. \newline
-\textbf{PRE-2} The system is connected to the database.
+\textbf{PRE-1} The user is logged into the system as a Client. \newline
+\textbf{PRE-2} The target Freelancer profile is active and verified in the system. \newline
+\textbf{PRE-3} Total contract budget complies with platform minimum and maximum limits.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The system displays a paginated list of contracts relevant to the user's role.
+\textbf{POST-1} A new contract record is created in the database with status \texttt{PENDING}. \newline
+\textbf{POST-2} Associated milestone records are persisted and linked to the contract. \newline
+\textbf{POST-3} The Freelancer receives a real-time notification to review and sign the contract.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Contract List} \newline
-1. User navigates to the Contract List page. \newline
-2. The system retrieves the contracts associated with the user's account (Admin retrieves all). \newline
-3. The system applies default pagination and sorting (e.g., newest first). \newline
-4. The system displays the list of contracts.
+\textbf{A. Create Contract} \newline
+1. The Client accesses the contract creation form from a proposal or direct hire button. \newline
+2. The Client enters contract details: Title, Description, Contract Type, Total Budget, and Due Date. \newline
+3. The Client configures the project milestones (title, description, amount, due date). \newline
+4. The Client clicks ``Create Contract''. \newline
+5. The system validates all required fields, budget allocations, and future milestone deadlines. \newline
+6. The system persists the contract and milestone records in the database. \newline
+7. The system redirects the Client to the Contract Detail page, displays a success notification, and notifies the Freelancer.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Filter and Sort Contracts} \newline
-1. User selects a specific status filter (e.g., Pending, Active, Completed) or sorting option. \newline
-2. The system retrieves the updated list of contracts based on the selected criteria. \newline
-3. The system displays the filtered and sorted list.
+\textbf{A.1 Save as Draft} \newline
+1. At step 4, the Client clicks ``Save Draft''. \newline
+2. The system saves the entered information with status \texttt{DRAFT} without sending notifications to the Freelancer. \newline
+3. The Client can resume editing the draft contract at a later time.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: No Contracts Found} \newline
-1. If the user has no associated contracts, the system displays the message: ``No contracts found.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: Database Error} \newline
-1. If the system fails to fetch data, it displays: ``Unable to load contracts. Please try again.'' \newline
-2. The use case ends.
+\textbf{EX-01: Validation Error} \newline
+1. Required fields are empty, or total milestone amounts do not match the total contract budget. \newline
+2. The system highlights the invalid input fields with error messages. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Server Error} \newline
+1. The database transaction fails while persisting contract and milestones. \newline
+2. The system rolls back changes and displays ``Unable to create contract. Please try again later.'' \newline
+3. The use case ends.
 } \\ \hline
 
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
@@ -54,129 +62,68 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-01: Clients and Freelancers can only view contracts they are a party to. \newline
-BR-CONTRACT-02: Admins can view all contracts in the system. \newline
-BR-CONTRACT-03: The list must be paginated to optimize performance.
+BR-CONTRACT-01: Only users with the Client role can create new contracts. \newline
+BR-CONTRACT-02: Total contract budget must be greater than zero and must equal the sum of all defined milestone amounts.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Users have a basic understanding of using filters and sorting tools.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Client and Freelancer have agreed upon the scope and terms prior to formal contract creation.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.2 Get Contract Detail
+% UC-13.02 Update Contract
 % =================================================================
-\subparagraph{UC-09.2 Get Contract Detail}
+\subparagraph{UC-13.02 Update Contract}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.2 Get Contract Detail} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.02 Update Contract} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user clicks on a specific contract from the Contract List.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks the ``Edit Terms'' button on a pending Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client, Freelancer, or Admin, I want to view full contract details including terms, parties, status, and milestones so that I can track the agreement and its progress.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to update contract terms, scope, milestones, or timeline before the agreement is finalized and signed.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in. \newline
-\textbf{PRE-2} The specific contract exists in the database.
+\textbf{PRE-1} The user is logged in as a Client. \newline
+\textbf{PRE-2} The contract is currently in \texttt{PENDING} status (not yet active or completed).
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The system displays all detailed information of the selected contract.
+\textbf{POST-1} The contract terms are updated in the database. \newline
+\textbf{POST-2} If the Freelancer had previously signed, the signature is reset, requiring re-signing. \newline
+\textbf{POST-3} The Freelancer is notified of the updated contract terms.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Contract Details} \newline
-1. User clicks on a contract item from the Contract List. \newline
-2. The system verifies the user's permission to view the contract. \newline
-3. The system retrieves contract details by contract ID (including terms, parties, status, and milestones). \newline
-4. The system navigates to the Contract Detail page and displays the information.
+\textbf{A. Update Contract Terms} \newline
+1. The Client navigates to the Contract Detail page of a pending contract. \newline
+2. The Client clicks ``Edit Terms''. \newline
+3. The system displays a form pre-filled with current contract terms and milestones. \newline
+4. The Client modifies necessary fields (description, milestones, amounts, or deadlines) and clicks ``Save Updates''. \newline
+5. The system validates the input data and budget constraints. \newline
+6. The system updates the contract and milestone records in the database. \newline
+7. The system logs the change, displays a success notification, and notifies the Freelancer to review the revised terms.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-N/A
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Unauthorized Access} \newline
-1. If the user is not a party to the contract (and not an Admin), the system displays: ``Access Denied: You do not have permission to view this contract.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: Contract Not Found} \newline
-1. If the contract ID is invalid or deleted, the system displays: ``Contract not found or has been removed.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-04: Full terms, current status, and milestone progress must be clearly visible. \newline
-BR-CONTRACT-05: Confidentiality of contract terms must be maintained via strict access control.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Contracts contain at least one milestone or term.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-09.3 Sign Contract
-% =================================================================
-\subparagraph{UC-09.3 Sign Contract}
-
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.3 Sign Contract} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the "Sign" or "Accept" button on the Contract Detail page.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to digitally sign and accept a contract so that the agreement is formalized and the project work can officially begin.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system. \newline
-\textbf{PRE-2} The contract is currently in a "Pending Signature" status.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The contract status is updated to reflect the signature (e.g., "Active" if both parties signed). \newline
-\textbf{POST-2} The system records the timestamp and identity of the signer.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Sign Contract} \newline
-1. User navigates to the Contract Detail page of a pending contract. \newline
-2. User clicks the "Sign Contract" button. \newline
-3. The system displays a confirmation popup for the digital signature. \newline
-4. User confirms and submits the signature. \newline
-5. The system validates the input and updates the contract status in the database. \newline
-6. The system displays a success message and notifies the other party.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Cancel Signature} \newline
-1. At the confirmation popup, the user clicks "Cancel". \newline
-2. The system closes the popup without making any changes. \newline
+\textbf{A.1 Cancel Update} \newline
+1. While on the edit form, the Client clicks ``Cancel''. \newline
+2. The system discards all unsaved modifications. \newline
 3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Database Update Failure} \newline
-1. If the system cannot save the signature due to a database error, it displays: ``An error occurred while signing the contract. Please try again.'' \newline
+\textbf{EX-01: Contract Status Invalid} \newline
+1. If the contract is already \texttt{ACTIVE} or \texttt{COMPLETED}, the system disables editing and displays: ``Active contracts cannot be edited directly.'' \newline
 2. The use case ends. \newline
-\textbf{EX-02: Contract Already Signed/Expired} \newline
-1. If the contract is no longer pending, the system displays: ``This contract cannot be signed as it is already active or expired.'' \newline
+\textbf{EX-02: Validation Error} \newline
+1. If the Client leaves mandatory fields empty or enters invalid dates, the system highlights the errors. \newline
 2. The use case ends.
 } \\ \hline
 
@@ -185,67 +132,67 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-06: A contract becomes "Active" only after all required parties have successfully signed it. \newline
-BR-CONTRACT-07: The system must store an unalterable log of the signature for legal and audit purposes.
+BR-CONTRACT-03: Only the Client who created the contract can update its terms. \newline
+BR-CONTRACT-04: Any update to contract terms resets previous signatures, requiring all parties to review and sign again.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Digital signature implies standard user authentication and consent, not necessarily a cryptographic certificate.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Freelancer will review the updated terms via the standard Sign Contract process (UC-13.06).} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.4 Complete Contract
+% UC-13.03 Complete Contract
 % =================================================================
-\subparagraph{UC-09.4 Complete Contract}
+\subparagraph{UC-13.03 Complete Contract}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.4 Complete Contract} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.03 Complete Contract} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
 Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the "Mark as Completed" button on the Contract Detail page.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Complete Contract'' button on an active Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to mark a contract as completed successfully so that the engagement is officially closed and final steps (like reviews) can proceed.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to mark an active contract as completed after all milestones are approved and settled, officially concluding the project engagement.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system. \newline
-\textbf{PRE-2} The contract is in an "Active" status. \newline
-\textbf{PRE-3} All milestones or deliverables associated with the contract have been approved.
+\textbf{PRE-1} The user is logged into the system as a contract participant. \newline
+\textbf{PRE-2} The contract is currently in \texttt{ACTIVE} status. \newline
+\textbf{PRE-3} All milestones associated with the contract have been approved and their escrow funds released.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The contract status is updated to "Completed". \newline
-\textbf{POST-2} The other party is notified of the contract completion.
+\textbf{POST-1} Contract status is updated to \texttt{COMPLETED}. \newline
+\textbf{POST-2} Both parties receive completion notifications and prompts to submit reciprocal reviews and ratings.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Complete Contract} \newline
-1. User navigates to the Contract Detail page of an active contract. \newline
-2. User clicks the "Complete Contract" button. \newline
-3. The system displays a confirmation dialog asking the user to confirm completion. \newline
-4. User clicks "Confirm". \newline
-5. The system updates the contract status to "Completed" in the database. \newline
-6. The system displays a success message and sends a notification to the other party.
+1. The user navigates to the Contract Detail page of an active contract. \newline
+2. The user clicks the ``Complete Contract'' button. \newline
+3. The system displays a confirmation dialog summarizing that all milestones are completed and escrow funds released. \newline
+4. The user clicks ``Confirm Completion''. \newline
+5. The system updates the contract status to \texttt{COMPLETED} in the database. \newline
+6. The system displays a success toast and redirects both parties to leave ratings and feedback.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Cancel Completion} \newline
-1. At the confirmation popup, the user clicks "Cancel". \newline
-2. The system closes the popup and no changes are made. \newline
+\textbf{A.1 Cancel Completion} \newline
+1. At the confirmation dialog, the user clicks ``Cancel''. \newline
+2. The system closes the dialog without changing contract status. \newline
 3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Unmet Milestones} \newline
-1. If there are still pending milestones or unresolved disputes, the system displays: ``Cannot complete contract. Please ensure all milestones are approved.'' \newline
+\textbf{EX-01: Pending Milestones} \newline
+1. If there are still pending or in-progress milestones, the system displays: ``Cannot complete contract. All milestones must be approved first.'' \newline
 2. The use case ends. \newline
 \textbf{EX-02: System Error} \newline
-1. If the system encounters an error while updating the status, it displays: ``Failed to mark contract as completed. Please try again.'' \newline
+1. If the database update fails, the system displays: ``Failed to complete contract. Please try again.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -254,66 +201,275 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-08: A contract can only transition to "Completed" if its current status is "Active". \newline
-BR-CONTRACT-09: Completion actions must be logged in the Contract Activities history.
+BR-CONTRACT-05: A contract can only transition to \texttt{COMPLETED} if its current status is \texttt{ACTIVE} and all milestone payments are released. \newline
+BR-CONTRACT-06: Completed contracts are permanently locked from further deliverable submissions or edits.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Both parties agree on the completion parameters off-system or through the milestone approvals before triggering this action.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Both parties agree on the final completion status based on approved deliverables.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.5 Cancel Contract
+% UC-13.04 View Contract List
 % =================================================================
-\subparagraph{UC-09.5 Cancel Contract}
+\subparagraph{UC-13.04 View Contract List}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.5 Cancel Contract} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.04 View Contract List} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the Contracts section from the navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, or Admin to retrieve a paginated list of contracts with status filters (Pending, Active, Completed, Canceled) and search capabilities.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is logged into the system. \newline
+\textbf{PRE-2} The system is connected to the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The system renders a paginated list of contracts relevant to the user's role.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Contract List} \newline
+1. The user navigates to the Contracts page. \newline
+2. The system retrieves contracts associated with the user account (Client or Freelancer; Admin retrieves all). \newline
+3. The system applies default pagination and sorts by newest created date. \newline
+4. The system displays contract cards showing title, counterpart name, budget, progress bar, and status badge.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Filter and Sort Contracts} \newline
+1. The user selects a status filter tab (e.g., Pending, Active, Completed, Canceled) or sorting option. \newline
+2. The system updates the displayed list according to the selected criteria. \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: No Contracts Found} \newline
+1. If the user has no associated contracts matching criteria, the system displays: ``No contracts found.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Database Error} \newline
+1. If the system fails to fetch records, it displays: ``Unable to load contracts. Please try again.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONTRACT-07: Clients and Freelancers can only view contracts where they are listed as a participant. \newline
+BR-CONTRACT-08: Administrators can view and monitor all contracts platform-wide.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Users understand pagination and status filter conventions.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-13.05 View Contract Detail
+% =================================================================
+\subparagraph{UC-13.05 View Contract Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.05 View Contract Detail} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user clicks on a contract item from the Contract List page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, or Admin to view full contract details including project scope, participant profiles, escrow financial status, milestones, attached files, and activity logs.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The contract exists in the database. \newline
+\textbf{PRE-3} The user is an authorized participant or an Administrator.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The system renders the comprehensive details of the selected contract.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Contract Details} \newline
+1. The user clicks on a contract row or card from the Contract List. \newline
+2. The system verifies that the user is authorized to access the contract. \newline
+3. The system loads contract metadata, parties, escrow balances, and milestone items. \newline
+4. The system navigates to the Contract Detail page and displays:
+   - Header: Title, Contract ID, Status badge, and Counterpart profile.
+   - Financial Summary: Total budget, Escrow funded balance, and Remaining amount.
+   - Milestones list with progress indicators.
+   - Tab navigation for Milestones, Files, and Activity history.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Switch Detail Tabs} \newline
+1. The user clicks on the ``Files'' or ``Activities'' tab. \newline
+2. The system loads and displays the selected section without page reload. \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Access} \newline
+1. If an unauthorized user attempts direct URL access, the system displays: ``Access Denied: You do not have permission to view this contract.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Contract Not Found} \newline
+1. If the contract ID is invalid or deleted, the system displays: ``Contract not found.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONTRACT-09: Contract financial balances (total budget, escrow balance, released funds) must remain mathematically synchronized with milestone states. \newline
+BR-CONTRACT-10: Strict data isolation ensures only authorized parties can access contract details.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Contracts contain defined deliverables and milestone structures.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-13.06 Sign Contract
+% =================================================================
+\subparagraph{UC-13.06 Sign Contract}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.06 Sign Contract} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer, Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Sign Contract'' button on a pending Contract Detail page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer (or Client) to digitally accept and sign a contract, activating the agreement so that project work and escrow deposits can officially commence.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is logged into the system. \newline
+\textbf{PRE-2} The contract is currently in \texttt{PENDING} status. \newline
+\textbf{PRE-3} The user has reviewed all contract clauses and milestone deliverables.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The contract status transitions to \texttt{ACTIVE}. \newline
+\textbf{POST-2} A digital signature audit record with timestamp and user ID is recorded. \newline
+\textbf{POST-3} Both parties receive confirmation notifications that the contract is active.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Sign Contract} \newline
+1. The user navigates to the Contract Detail page of a pending contract. \newline
+2. The user reviews the terms, deliverables, and milestones. \newline
+3. The user clicks ``Sign Contract''. \newline
+4. The system displays a confirmation dialog for digital agreement acceptance. \newline
+5. The user checks the agreement checkbox and clicks ``Confirm \& Sign''. \newline
+6. The system records the signature timestamp and updates contract status to \texttt{ACTIVE}. \newline
+7. The system renders a success toast, refreshes the contract view, and notifies the other party.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Signature} \newline
+1. At the confirmation dialog, the user clicks ``Cancel''. \newline
+2. The system closes the dialog without updating contract status. \newline
+3. Return to step A.1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Contract Already Active or Expired} \newline
+1. If the contract is no longer in pending status, the system displays: ``This contract cannot be signed as it is already active or expired.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Database Transaction Error} \newline
+1. If saving the signature record fails, the system displays: ``An error occurred while signing the contract. Please try again.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-CONTRACT-11: A contract transitions to \texttt{ACTIVE} only when all required counterpart signatures are recorded. \newline
+BR-CONTRACT-12: An immutable signature log must be kept for legal transparency and audit compliance.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Digital signature denotes authenticated consent to the platform contract terms.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-13.07 Cancel Contract
+% =================================================================
+\subparagraph{UC-13.07 Cancel Contract}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.07 Cancel Contract} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
 Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the "Cancel Contract" button on the Contract Detail page.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Cancel Contract'' from the contract action menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to cancel a contract before completion so that I can terminate the agreement if issues arise or requirements change.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to cancel or terminate a contract prior to completion, specifying a cancellation reason and handling pending escrow resolutions.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system. \newline
-\textbf{PRE-2} The contract is in an "Active" or "Pending" status (not already completed or canceled).
+\textbf{PRE-1} The user is logged into the system as a contract participant. \newline
+\textbf{PRE-2} The contract is in \texttt{PENDING} or \texttt{ACTIVE} status (not completed or already canceled).
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The contract status is updated to "Canceled". \newline
-\textbf{POST-2} The system records the cancellation reason and notifies the other party.
+\textbf{POST-1} Contract status is updated to \texttt{CANCELED}. \newline
+\textbf{POST-2} Cancellation reason is recorded in the contract history. \newline
+\textbf{POST-3} Unreleased escrow balances are handled according to platform cancellation policies. \newline
+\textbf{POST-4} The other party is notified immediately.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Cancel Contract} \newline
-1. User navigates to the Contract Detail page. \newline
-2. User clicks the "Cancel Contract" button. \newline
-3. The system displays a confirmation dialog asking for a cancellation reason. \newline
-4. User enters the reason and clicks "Confirm Cancellation". \newline
-5. The system updates the contract status to "Canceled" in the database. \newline
-6. The system displays a success message and sends a notification to the other party.
+1. The user navigates to the Contract Detail page. \newline
+2. The user clicks ``Cancel Contract''. \newline
+3. The system presents a cancellation confirmation modal requiring a cancellation reason. \newline
+4. The user selects a reason category and enters detailed explanation. \newline
+5. The user clicks ``Confirm Cancellation''. \newline
+6. The system updates the contract status to \texttt{CANCELED} in the database. \newline
+7. The system records the cancellation event, sends an alert to the counterpart, and displays a confirmation toast.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Abort Cancellation} \newline
-1. At the confirmation dialog, the user clicks "Close" or "Back". \newline
-2. The system closes the dialog without making any changes. \newline
+\textbf{A.1 Abort Cancellation} \newline
+1. At the confirmation modal, the user clicks ``Keep Contract''. \newline
+2. The system dismisses the modal without modifying contract state. \newline
 3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Invalid Contract Status} \newline
-1. If the contract is already completed, the system displays: ``This contract has already been completed and cannot be canceled.'' \newline
+\textbf{EX-01: Invalid Status for Cancellation} \newline
+1. If the contract is already completed, the system displays: ``Completed contracts cannot be canceled.'' \newline
 2. The use case ends. \newline
 \textbf{EX-02: Missing Reason} \newline
-1. If the user submits without entering a mandatory cancellation reason, the system displays: ``Please provide a reason for cancellation.'' \newline
+1. If the user submits without providing a cancellation reason, the system prompts: ``Please provide a cancellation reason.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -322,122 +478,60 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-10: A canceled contract cannot be reactivated; a new contract must be created instead. \newline
-BR-CONTRACT-11: Any escrowed funds or pending payments must be handled according to the platform's cancellation policy.
+BR-CONTRACT-13: Canceled contracts cannot be reopened or reactivated; a new contract must be created. \newline
+BR-CONTRACT-14: If work has been submitted on active milestones, cancellation requires dispute resolution or escrow mutual release.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Financial settlements for canceled contracts are handled by a separate billing or dispute module.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Financial escrow refunds adhere to standard platform dispute rules.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.6 Contract Activities
+% UC-13.08 View Contract Files
 % =================================================================
-\subparagraph{UC-09.6 Contract Activities}
+\subparagraph{UC-13.08 View Contract Files}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.6 Contract Activities} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.08 View Contract Files} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
 Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the "Activities" or "History" section within a specific Contract Detail page.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Files'' tab within the Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client, Freelancer, or Admin, I want to track all activities and updates related to a contract so that I have a transparent history of changes, milestones, and status transitions.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows contract participants to view and access all files, project briefs, and documents attached to the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system. \newline
-\textbf{PRE-2} The user has appropriate permissions to view the contract.
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The user is a participant of the contract or an Administrator.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The system displays a chronological list of all events associated with the contract.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Contract Activities} \newline
-1. User navigates to the Contract Detail page. \newline
-2. User clicks on the "Activities" or "History" tab. \newline
-3. The system queries the database for all logged events related to the specific contract ID. \newline
-4. The system displays the activities sorted chronologically (newest first), showing the event type, user responsible, and timestamp.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-N/A
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Failed to Load Activities} \newline
-1. If the system cannot retrieve the activity logs due to a database error, it displays: ``Unable to load contract activities. Please refresh the page.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-12: The activity log is strictly append-only; users cannot edit or delete historical records. \newline
-BR-CONTRACT-13: Logged events must include status changes, file uploads, milestone updates, and contract signatures.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{The system automatically records a background audit log for every critical action performed on a contract.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-09.7 Contract Files
-% =================================================================
-\subparagraph{UC-09.7 Contract Files}
-
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.7 Contract Files} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the "Files" or "Attachments" section within a specific Contract Detail page.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to manage files and attachments associated with a contract so that I can easily access deliverables, requirements, and reference documents.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system. \newline
-\textbf{PRE-2} The user is a participating party in the specific contract.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The system displays a list of all files attached to the contract.
+\textbf{POST-1} The system renders the list of active contract files with download links.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. View Contract Files} \newline
-1. User navigates to the Contract Detail page. \newline
-2. User clicks on the "Files" tab. \newline
-3. The system queries the database for all active files related to the specific contract ID. \newline
-4. The system displays the list of files, including file name, uploader, size, and upload date.
+1. The user navigates to the Contract Detail page. \newline
+2. The user clicks on the ``Files'' tab. \newline
+3. The system queries the database for all active files associated with the contract ID. \newline
+4. The system renders the files list displaying file name, extension icon, uploader name, file size, and upload date. \newline
+5. The user can click ``Download'' next to any file to download it from cloud storage.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Download File} \newline
-1. User clicks the "Download" icon next to a specific file. \newline
-2. The system retrieves the file from the storage server. \newline
-3. The system initiates the download to the user's local device.
+\textbf{A.1 Empty Files List} \newline
+1. If no files have been uploaded yet, the system displays an empty state banner with an ``Upload File'' button. \newline
+2. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Failed to Load Files} \newline
-1. If the system cannot retrieve the file list due to a server error, it displays: ``Unable to load contract files. Please try again.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: File Not Found} \newline
-1. If the user attempts to download a file that has been moved or deleted from the server, the system displays: ``This file is no longer available.'' \newline
+\textbf{EX-01: Storage Retrieval Error} \newline
+1. If the system fails to load file records from storage, it displays: ``Unable to load contract files. Please try again.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -446,65 +540,68 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-14: Only parties directly involved in the contract (or Admins) can view and download associated files.
+BR-CONTRACT-15: Only authorized contract parties (and Admins) can access or download attached files. \newline
+BR-CONTRACT-16: Soft-deleted files are hidden from regular participants.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Files are stored securely in a cloud storage environment (e.g., AWS S3).} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Files are stored securely in cloud storage with secure download URLs.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.8 Upload Contract File
+% UC-13.09 Upload Contract File
 % =================================================================
-\subparagraph{UC-09.8 Upload Contract File}
+\subparagraph{UC-13.09 Upload Contract File}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.8 Upload Contract File} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.09 Upload Contract File} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & Cloud Storage \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the "Upload File" button within the Contract Files section.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Upload File'' in the Contract Files section.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to upload files to a contract (e.g., deliverables, documents) so that I can share necessary project resources with the other party.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to upload documentation, technical specifications, or deliverable files to the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system and is on the Contract Files page. \newline
-\textbf{PRE-2} The contract is in a status that permits file uploads (e.g., "Active" or "Pending").
+\textbf{PRE-1} The user is logged in as an authorized contract participant. \newline
+\textbf{PRE-2} The contract status is \texttt{PENDING} or \texttt{ACTIVE}. \newline
+\textbf{PRE-3} The selected file is within the maximum size limit ($\le$ 25MB) and has a valid file format.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The uploaded file is securely saved and linked to the contract. \newline
-\textbf{POST-2} A system activity log is created, and the other party is notified.
+\textbf{POST-1} The file is securely stored in cloud storage. \newline
+\textbf{POST-2} File metadata (name, URL, public ID, size, uploader) is saved in the database. \newline
+\textbf{POST-3} The file list refreshes and the counterpart is notified.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Upload File} \newline
-1. User clicks the "Upload File" button. \newline
-2. The system prompts the user to select a file from their local device. \newline
-3. User selects the file(s) and clicks "Open" or "Submit". \newline
-4. The system validates the file size and format. \newline
-5. The system uploads the file to the cloud storage and saves the metadata in the database. \newline
-6. The system refreshes the file list, displays a success message, and notifies the other party.
+\textbf{A. Upload Contract File} \newline
+1. The user clicks the ``Upload File'' button or drags a file into the dropzone. \newline
+2. The user selects a file from their local device file chooser. \newline
+3. The system validates file size ($\le$ 25MB) and checks against restricted extensions. \newline
+4. The system streams the file to cloud storage. \newline
+5. The system records the file metadata in the database linked to the contract ID. \newline
+6. The system displays a success toast and appends the new file card to the files list.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.2 Cancel Upload} \newline
-1. At the file selection prompt, the user clicks "Cancel". \newline
-2. The system closes the prompt without initiating an upload. \newline
+\textbf{A.1 Cancel Upload} \newline
+1. The user cancels the file dialog before choosing a file. \newline
+2. The system dismisses the prompt without uploading. \newline
 3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Invalid File Format or Size} \newline
-1. If the file exceeds the maximum size limit or is of a restricted format, the system displays: ``Invalid file format or file size exceeds the maximum limit.'' \newline
+\textbf{EX-01: File Size Exceeded} \newline
+1. If the selected file exceeds 25MB, the system displays: ``File size exceeds 25MB limit. Please upload a smaller file.'' \newline
 2. The use case ends. \newline
-\textbf{EX-02: Upload Failure} \newline
-1. If the server connection is lost during upload, the system displays: ``File upload failed. Please check your connection and try again.'' \newline
+\textbf{EX-02: Unsupported File Format} \newline
+1. If the user attempts to upload an executable or restricted file, the system displays: ``File format not allowed for security reasons.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -513,65 +610,67 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-15: Maximum file size allowed for upload is 50MB per file. \newline
-BR-CONTRACT-16: Executable file types (e.g., .exe, .bat, .sh) are strictly prohibited for security reasons.
+BR-CONTRACT-17: Maximum allowable file size is 25MB per file. \newline
+BR-CONTRACT-18: Executable file types (.exe, .bat, .sh, .cmd) are strictly blocked to prevent malware.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{The system automatically scans all uploaded files for malware or viruses.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Files are stored on secure cloud object storage.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-09.9 Delete Contract File
+% UC-13.10 Delete Contract File
 % =================================================================
-\subparagraph{UC-09.9 Delete Contract File}
+\subparagraph{UC-13.10 Delete Contract File}
 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.9 Delete Contract File} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-13.10 Delete Contract File} \\ \hline
 
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & Cloud Storage \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the "Delete" icon or button next to a specific file in the Contract Files section.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the delete trash icon next to a file card in the Files section.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client or Freelancer, I want to delete files from a contract so that I can remove outdated, incorrect, or irrelevant documents from the workspace.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the file uploader or an Administrator to remove an obsolete or incorrect file from the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged into the system and is on the Contract Files page. \newline
-\textbf{PRE-2} The user has the necessary permissions to delete the file (e.g., they are the original uploader).
+\textbf{PRE-1} The user is logged in. \newline
+\textbf{PRE-2} The user is the original uploader of the file or has an Administrator role. \newline
+\textbf{PRE-3} The target file exists in the active files list.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The selected file is permanently removed from the system storage and database. \newline
-\textbf{POST-2} A deletion event is recorded in the Contract Activities log.
+\textbf{POST-1} The file asset is removed from cloud storage and soft-deleted in the database. \newline
+\textbf{POST-2} The file card is removed from the files view with a confirmation toast.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Delete File} \newline
-1. User clicks the "Delete" icon next to the target file. \newline
-2. The system displays a confirmation dialog asking: "Are you sure you want to delete this file?" \newline
-3. User clicks "Confirm". \newline
-4. The system removes the file from cloud storage and deletes its record from the database. \newline
-5. The system refreshes the file list and displays a success message.
+1. The user clicks the trash icon next to the target file. \newline
+2. The system displays a confirmation dialog: ``Are you sure you want to delete this file?'' \newline
+3. The user clicks ``Delete''. \newline
+4. The system validates ownership and deletes the file asset from cloud storage. \newline
+5. The system marks the database file record with \texttt{deletedAt = new Date()}. \newline
+6. The dialog closes, the file is removed from the list, and a success toast appears.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.3 Cancel Deletion} \newline
-1. At the confirmation dialog, the user clicks "Cancel". \newline
-2. The system closes the dialog without making any changes. \newline
+\textbf{A.1 Cancel Deletion} \newline
+1. At the confirmation dialog, the user clicks ``Cancel''. \newline
+2. The system dismisses the dialog without deleting the file. \newline
 3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: File Not Found} \newline
-1. If the file has already been deleted by another user or moved, the system displays: ``File not found. It may have already been deleted.'' \newline
+\textbf{EX-01: Permission Denied} \newline
+1. If the user is not the uploader and not an Admin, the system displays: ``You do not have permission to delete this file.'' \newline
 2. The use case ends. \newline
-\textbf{EX-02: Unauthorized Deletion} \newline
-1. If the user attempts to delete a file they do not own (and lacking admin override), the system displays: ``You do not have permission to delete this file.'' \newline
+\textbf{EX-02: File Already Deleted} \newline
+1. If the file has already been removed, the system displays: ``File not found or already deleted.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -580,219 +679,12 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-17: Users can only delete files they uploaded themselves, unless they have administrative privileges. \newline
-BR-CONTRACT-18: Deleting a file does not remove its historical trace from the Activity Log.
+BR-CONTRACT-19: Only the user who uploaded the file or an Administrator can delete it. \newline
+BR-CONTRACT-20: File deletion operations are recorded in the contract audit logs.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Deleted files cannot be recovered once removed from the cloud storage.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-09.10 Update Contract Terms
-% =================================================================
-\subparagraph{UC-09.10 Update Contract Terms}
-
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.10 Update Contract Terms} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks the "Edit Terms" button on a pending Contract Detail page.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client, I want to update contract terms and conditions so that I can modify the scope, timeline, milestones, or payment details before the agreement is finalized.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as a Client. \newline
-\textbf{PRE-2} The contract is currently in a "Pending" status (not yet active or completed).
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The contract terms are updated in the database. \newline
-\textbf{POST-2} If the Freelancer had previously signed, their signature is revoked, and they are notified of the updated terms.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Update Contract Terms} \newline
-1. Client navigates to the Contract Detail page of a pending contract. \newline
-2. Client clicks the "Edit Terms" button. \newline
-3. The system displays a form pre-filled with the current contract terms and conditions. \newline
-4. Client modifies the necessary fields (e.g., deadlines, milestones, descriptions) and clicks "Save Updates". \newline
-5. The system validates the input data. \newline
-6. The system updates the contract record in the database. \newline
-7. The system logs the change, displays a success message, and notifies the Freelancer to review the new terms.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Cancel Update} \newline
-1. While on the edit form, the Client clicks "Cancel". \newline
-2. The system discards all unsaved changes. \newline
-3. Return to step A.1.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Contract Status Invalid} \newline
-1. If the contract is already "Active" or "Completed", the system disables the "Edit Terms" button or displays: ``Active contracts cannot be edited. Please propose a formal amendment instead.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: Validation Error} \newline
-1. If the Client leaves mandatory fields blank or inputs invalid dates, the system highlights the errors and displays: ``Please correct the highlighted fields before saving.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-19: Only Clients (the contract creators) have the permission to update the core terms of a pending contract. \newline
-BR-CONTRACT-20: Any modification to the terms automatically invalidates previous signatures on the contract, requiring re-signing by all parties.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Freelancer will review the updated terms via the standard "Sign Contract" process (UC-09.3).} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-09.11 Create Contract
-% =================================================================
-\subparagraph{UC-09.11 Create Contract}
-
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.11 Create Contract} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks the "Create Contract" or "Hire" button from a Freelancer's profile or an accepted proposal.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Client, I want to create and initiate a new contract with a freelancer so that we can formalize the work agreement, milestones, and payment terms.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as a Client. \newline
-\textbf{PRE-2} The target Freelancer exists in the system and is available for work.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} A new contract record is created in the database with a "Pending" status. \newline
-\textbf{POST-2} The Freelancer receives a notification to review and sign the contract.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Create New Contract} \newline
-1. Client clicks "Create Contract". \newline
-2. The system displays the contract creation form. \newline
-3. Client fills in the required details (title, description, timeline, milestones, and payment amount). \newline
-4. Client clicks "Submit Contract". \newline
-5. The system validates the entered data. \newline
-6. The system saves the new contract with a "Pending" status in the database. \newline
-7. The system redirects the Client to the Contract Detail page, displays a success message, and notifies the Freelancer.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.4 Save as Draft} \newline
-1. Client clicks "Save Draft" instead of "Submit Contract". \newline
-2. The system saves the entered information as a draft contract without notifying the Freelancer. \newline
-3. Return to step A.1.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Validation Error} \newline
-1. If required fields are missing or dates are invalid, the system highlights the errors and displays: ``Please fill in all required fields correctly.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: System Error} \newline
-1. If the system cannot create the contract due to a server issue, it displays: ``An error occurred while creating the contract. Please try again.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-21: Only Clients can initiate and create a new contract on the platform. \newline
-BR-CONTRACT-22: The total payment amount must be greater than zero and align with the sum of all milestones.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Client and Freelancer have likely discussed project details prior to the formal contract creation.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-09.12 Progress Update
-% =================================================================
-\subparagraph{UC-09.12 Progress Update}
-
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-09.12 Progress Update} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer clicks "Submit Update" or "Update Progress" on an active contract's milestone.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{As a Freelancer, I want to submit progress updates on contract milestones so that the Client can track the work and approve completed stages.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in. \newline
-\textbf{PRE-2} The contract is in an "Active" status.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The progress update is recorded in the contract history. \newline
-\textbf{POST-2} The Client is notified of the update.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Submit Progress Update} \newline
-1. Freelancer navigates to the specific Contract Detail page. \newline
-2. Freelancer selects a specific milestone and clicks "Update Progress". \newline
-3. The system displays a form to enter comments and attach proof of work (files/links). \newline
-4. Freelancer enters the details and clicks "Submit Update". \newline
-5. The system validates the input. \newline
-6. The system records the update in the database and links it to the milestone. \newline
-7. The system displays a success message, refreshes the progress tracker, and notifies the Client.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{B. Review Progress Update (Client)} \newline
-1. Client receives notification and navigates to the Contract Detail page. \newline
-2. Client views the submitted progress update and attached files. \newline
-3. Client can leave a comment or mark the milestone as approved.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Milestone Already Completed} \newline
-1. If the selected milestone has already been approved and closed, the system displays: ``This milestone is already completed. Updates are no longer accepted.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: Missing Information} \newline
-1. If the update form is completely blank, the system displays: ``Please provide a comment or attach a file to submit an update.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CONTRACT-23: Only the assigned Freelancer can submit progress updates for their tasks. \newline
-BR-CONTRACT-24: Progress updates must be time-stamped and permanently logged in the Contract Activities.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Milestones are clearly defined during contract creation (UC-09.11) to allow for accurate progress tracking.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Deleted files cannot be retrieved by regular contract participants once deleted.} \\ \hline
 
 \end{longtable}
