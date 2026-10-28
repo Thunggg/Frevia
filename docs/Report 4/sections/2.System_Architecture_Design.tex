@@ -1,0 +1,95 @@
+% ========================================================
+% FILE: sections/2.System_Architecture_Design.tex
+% ========================================================
+\section{System Architecture Design}
+
+\subsection{Overall Architecture}
+
+Frevia follows a three-tier, deployment-separated architecture (Figure~\ref{fig:arch:overall}):
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Presentation tier --- Next.js 16 web application:} server components render public pages (job board, job detail, community forum, expert directory) and private dashboards; client components handle interactivity such as forms, likes, and chat. All server access goes through a single typed HTTP client that attaches the JWT access token and refreshes it transparently when it expires.
+    \item \textbf{Application tier --- NestJS REST API:} a modular monolith organized into 31 route modules. Every module is internally layered as Controller $\rightarrow$ Service $\rightarrow$ Repository. Controllers validate and serialize with shared Zod DTOs; services hold business rules and authorization checks; repositories encapsulate all Prisma queries.
+    \item \textbf{Data tier --- PostgreSQL via Prisma 7:} the relational store for 62 domain models. Binary files are never stored in the database but in Cloudinary; real-time transport for chat and notifications is handled by a Socket.io gateway beside the REST API.
+\end{itemize}
+
+\kfig{0.95\textwidth}{images/architecture/overall-architecture}{Overall architecture of the Frevia system}{fig:arch:overall}
+
+The two applications are deployed independently (the web app on Vercel, the API on a Node.js host) and communicate only through the documented REST contract validated by the shared Zod schemas package.
+
+\subsection{System Architecture}
+
+The internal architecture of the API follows a strict layered pattern, enforced identically in every module (Figure~\ref{fig:arch:system}):
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Controller layer} --- thin Routing Layer. Exposes REST endpoints, applies guards (authentication, roles, permissions), binds validated request DTOs, and delegates to a service. Controllers never query the database directly.
+    \item \textbf{Service layer} --- business logic layer. Implements use cases, ownership/authorization checks, state-machine transitions (proposal, contract, dispute), and cross-aggregation logic; it throws typed HTTP exceptions (\texttt{NotFoundException 404}, \texttt{ForbiddenException 403}, \texttt{ConflictException 409}) that a global exception filter converts to a uniform error response.
+    \item \textbf{Repository layer} --- data access layer. The only component allowed to touch Prisma; complex list queries (pagination + counting) are wrapped in \texttt{\$transaction} for consistency.
+    \item \textbf{Shared kernel} --- the \texttt{@shared/types} workspace package contains Zod models, constants, permission names, and error codes shared with the web app.
+\end{itemize}
+
+Security flow: every request carries a JWT access token; the auth guard validates it and resolves the active role; role and permission guards authorize module-specific operations; refresh tokens are stored server-side in a \texttt{Session} row and can be revoked from the session management feature.
+
+AI-assisted pipeline: user-generated content (forum posts/comments, CVs, identity documents) is passed through AI moderation or AI analysis services; forum content can be auto-approved when clean, or queued in \texttt{ModerationQueue} for administrator approval when suspicious.
+
+\subsubsection{API Module Structure}
+
+Table~\ref{tab:modules} summarizes the 31 route modules of the API and their responsibilities.
+
+\begin{longtable}{|L{4.2cm}|L{11.0cm}|}
+\caption{API route modules and responsibilities}
+\label{tab:modules}
+\\
+\hline
+\textbf{Module} & \textbf{Responsibility} \\ \hline
+\endfirsthead
+\hline
+\textbf{Module} & \textbf{Responsibility} \\ \hline
+\endhead
+auth & registration, OTP, login, refresh token, logout, forgot password, Google OAuth, current account, role switching/joining \\ \hline
+sessions & device session listing, detail, revocation \\ \hline
+account-profile & general account profile, avatar, identity verification upload/AI check, client profile, social links, favorite freelancers, following \\ \hline
+users & administrator user management and skill catalog \\ \hline
+roles, permissions & RBAC role and permission administration \\ \hline
+profiles & professional profile, CV upload/AI analysis, skills \\ \hline
+portfolios & portfolio item CRUD on profiles \\ \hline
+expert-profile & expert profile management and public expert directory \\ \hline
+profile-revisions & profile change request approval workflow \\ \hline
+identity-verifications-admin & identity verification review \\ \hline
+job-categories & public job category browsing \\ \hline
+job-categories-admin & job category administration (soft delete + restore) \\ \hline
+skills-admin & skill catalog administration (soft delete + restore) \\ \hline
+browse-job & public job listing and job detail by slug \\ \hline
+manage-job & client job management, bookmarks, skill search \\ \hline
+proposals & proposal lifecycle: draft, submit, withdraw, interview, reject, accept \\ \hline
+contract & contract lifecycle: create, update, sign, complete, cancel \\ \hline
+milestone & milestone management inside a contract \\ \hline
+milestone-file, milestone-submission & milestone attachments and work submission review \\ \hline
+shared-file & contract shared workspace files \\ \hline
+payments & Stripe Connect onboarding, platform fee, milestone funding, release, refund, dispute fee, transactions, webhook \\ \hline
+disputes & dispute lifecycle (user side and admin arbitration side) \\ \hline
+reviews & contract reviews and responses \\ \hline
+conversations & direct messaging with real-time delivery \\ \hline
+notifications & notification feed management \\ \hline
+forums & forum categories and posts (public side) \\ \hline
+forums-comment, forums-like, forums-reports & comments, likes, content reports \\ \hline
+forums-admin & AI moderation queue, pending posts, trash restore, forum statistics \\ \hline
+saved-search & saved job search filters \\ \hline
+banners, banners-admin & advertisement banner delivery and administration \\ \hline
+\end{longtable}
+
+\kfig{0.95\textwidth}{images/architecture/system-architecture}{Layered system architecture with security and AI moderation flows}{fig:arch:system}
+
+\subsection{Package Diagram}
+
+The repository is a pnpm monorepo managed by Turborepo with three workspaces (Figure~\ref{fig:arch:packages}):
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{\texttt{apps/web}} --- the Next.js application. Sub-packages group screens by actor (guest browsing, client, freelancer, admin), shared UI components (\texttt{@repo/ui}), server actions, and the i18n message catalogs used by next-intl.
+    \item \textbf{\texttt{apps/api}} --- the NestJS application. \texttt{src/routes/*} contains the 31 domain modules described above; \texttt{src/shared} contains cross-cutting infrastructure: authentication guards and decorators, permission constants, global HTTP exception filter, Zod serializer interceptor, Cloudinary storage service, and Prisma client setup. Each domain module folder is organized as \texttt{<module>.controller.ts}, \texttt{<module>.service.ts}, \texttt{<module>.repository.ts}, DTO classes, and module-specific error factories (e.g., \texttt{ forums.error.ts}).
+    \item \textbf{\texttt{packages/shared-type}} --- the single source of truth for API contracts: Zod request/response models (\texttt{model/*}), enumeration/constant definitions, and permission name lists, imported by both \texttt{apps/web} and \texttt{apps/api}.
+\end{itemize}
+
+Dependencies only point downwards: \texttt{web} and \texttt{api} both depend on \texttt{shared-type}; no route module imports another route module --- cross-module data needs flow through services at the Prisma schema level.
+
+\kfig{0.9\textwidth}{images/architecture/package-diagram}{Package diagram of the Frevia monorepo}{fig:arch:packages}

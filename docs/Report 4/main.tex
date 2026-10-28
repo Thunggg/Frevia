@@ -1,0 +1,316 @@
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% BASIC PACKAGES  (same setup as Report 3)
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{enumitem}
+
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{longtable}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese,english]{babel}
+
+%====================================================
+% FONT
+%====================================================
+\usepackage{mathptmx}
+
+%====================================================
+% MATH
+%====================================================
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS
+%====================================================
+\usepackage{graphicx}
+
+%----- diagram placeholder macro ---------------------
+% \kfig{width}{path WITHOUT extension}{caption}{label}
+% Prefers the vector <path>.pdf exported from the draw.io SVG
+% (stays sharp at any zoom level), falls back to the raster
+% <path>.png, and finally to a placeholder box so the document
+% always compiles.
+\newcommand{\kfig}[4]{%
+\begin{figure}[H]
+    \centering
+    \IfFileExists{#2.pdf}{%
+        \includegraphics[width=#1,height=0.9\textheight,keepaspectratio]{"#2.pdf"}%
+    }{%
+        \IfFileExists{#2.png}{%
+            \includegraphics[width=#1,height=0.9\textheight,keepaspectratio]{"#2.png"}%
+        }{%
+            \setlength{\fboxsep}{10pt}%
+            \fbox{\parbox[c][5.5cm][c]{0.82\textwidth}{\centering
+                \textit{Diagram pending export}\\[6pt]
+                \texttt{#2.pdf}}}%
+        }%
+    }
+    \caption{#3}
+    \label{#4}
+\end{figure}}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=3.0cm,
+    right=2.0cm
+}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+%====================================================
+% SECTION FORMAT
+%====================================================
+\usepackage{titlesec}
+
+%====================================================
+% PARAGRAPH NUMBERING
+%====================================================
+
+\makeatletter
+
+\renewcommand{\theparagraph}
+{\thesubsection.\arabic{paragraph}}
+
+\@addtoreset{paragraph}{subsection}
+
+\def\toclevel@paragraph{4}
+
+\renewcommand{\thesubparagraph}
+{\thesubsubsection.\arabic{subparagraph}}
+
+\@addtoreset{subparagraph}{subsubsection}
+
+\def\toclevel@subparagraph{4}
+
+\makeatother
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}
+{\theparagraph}
+{1em}
+{}
+
+\titlespacing*{\paragraph}
+{0pt}
+{3.25ex plus 1ex minus .2ex}
+{1em}
+
+\titleformat{\subparagraph}[runin]
+{\normalfont\normalsize\bfseries}
+{\thesubparagraph}
+{1em}
+{}
+
+\titlespacing*{\subparagraph}
+{0pt}
+{3.25ex plus 1ex minus .2ex}
+{1em}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+
+\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+\setlength{\cftparaindent}{\cftsubsubsecindent}
+\setlength{\cftparanumwidth}{\cftsubsubsecnumwidth}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=blue
+}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{headerbg}{RGB}{242,226,204}
+
+%====================================================
+% CUSTOM COLUMN TYPES
+%====================================================
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%====================================================
+% CLASS-SPECIFICATION TABLES
+%====================================================
+\definecolor{tableHeaderOrange}{RGB}{255,140,0}
+
+% Inline code that tolerates underscores and other TeX special characters.
+% Breaks are allowed before camel-case capitals and after punctuation so long
+% class names, paths, and error factories do not overflow narrow table cells.
+\ExplSyntaxOn
+\cs_new_protected:Npn \__code_char:n #1
+  {
+    \regex_match:nnTF { [A-Z] } {#1}
+      { \allowbreak #1 }
+      {
+        #1
+        \regex_match:nnT { [^A-Za-z0-9] } {#1} { \allowbreak }
+      }
+  }
+\NewDocumentCommand{\code}{m}
+  {
+    \texttt
+      {
+        \tl_set:Nx \l_tmpa_tl { \tl_to_str:n {#1} }
+        \tl_replace_all:Nnn \l_tmpa_tl { ~ } { \c_space_token }
+        \tl_map_function:NN \l_tmpa_tl \__code_char:n
+      }
+  }
+\ExplSyntaxOff
+
+% Method table: No | Method | Description
+\newenvironment{ClassMethodTable}{%
+    \begingroup
+    \small
+    \setlength{\tabcolsep}{4pt}%
+    \renewcommand{\arraystretch}{1.18}%
+    \begin{longtable}{|C{0.9cm}|L{5.1cm}|L{9.0cm}|}
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{No} & \textbf{Method} & \textbf{Description} \\ \hline
+    \endfirsthead
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{No} & \textbf{Method} & \textbf{Description} \\ \hline
+    \endhead
+    \hline
+    \endfoot
+}{%
+    \end{longtable}%
+    \endgroup
+}
+
+% Attribute table: No | Attribute | Type
+\newenvironment{ClassAttributeTable}{%
+    \begingroup
+    \small
+    \setlength{\tabcolsep}{4pt}%
+    \renewcommand{\arraystretch}{1.18}%
+    \begin{longtable}{|C{0.9cm}|L{8.0cm}|L{6.1cm}|}
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{No} & \textbf{Attribute} & \textbf{Type} \\ \hline
+    \endfirsthead
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{No} & \textbf{Attribute} & \textbf{Type} \\ \hline
+    \endhead
+    \hline
+    \endfoot
+}{%
+    \end{longtable}%
+    \endgroup
+}
+
+% Generic three-column supporting table (DTOs, errors, entities).
+% The third column absorbs the remaining text width so the table never
+% protrudes into the right margin. The third argument is kept for call-site
+% readability; its requested width is superseded by the computed width.
+\newenvironment{SupportingTable}[3]{%
+    \begingroup
+    \small
+    \setlength{\tabcolsep}{4pt}%
+    \renewcommand{\arraystretch}{1.15}%
+    \begin{longtable}{|L{#1}|L{#2}|L{\dimexpr\textwidth-6\tabcolsep-1.6pt-#1-#2\relax}|}
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{Class / Element} & \textbf{Attributes or Signature} & \textbf{Responsibility} \\ \hline
+    \endfirsthead
+    \hline
+    \rowcolor{tableHeaderOrange}\textbf{Class / Element} & \textbf{Attributes or Signature} & \textbf{Responsibility} \\ \hline
+    \endhead
+    \hline
+    \endfoot
+}{%
+    \end{longtable}%
+    \endgroup
+}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+%====================================================
+% COVER PAGE
+%====================================================
+\input{cover}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\input{table_of_contents}
+
+%====================================================
+% MAIN CONTENT
+%====================================================
+
+\input{sections/1.Overall_Description}
+\input{sections/2.System_Architecture_Design}
+\input{sections/3.System_Detailed_Design}
+\input{sections/4.Class_Specification}
+
+\end{document}
