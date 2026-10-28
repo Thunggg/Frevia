@@ -1,0 +1,208 @@
+\paragraph{Manage Freelancer Skills}
+% =================================================================
+% UC-05.3 Get List Freelancer Skill
+% =================================================================
+\subparagraph{UC-05.3 Get List Freelancer Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Get List Freelancer Skill} \\ \hline
+
+Created By: & HuyNLN & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Guest & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a freelancer's profile or when the freelancer accesses their skills section.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to retrieve and view the complete list of skills added by a specific freelancer, including their proficiency levels.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database. \newline
+\textbf{PRE-2} The freelancer profile exists.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The list of skills and corresponding proficiency levels associated with the freelancer is displayed.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Get List Freelancer Skill} \newline
+1. User accesses the freelancer's profile or skills section. \newline
+2. The system queries the database to retrieve all skills associated with the freelancer's ID. \newline
+3. The system loads the skill names and their respective proficiency levels. \newline
+4. The system displays the list of skills to the user.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a No Skills Found} \newline
+If the freelancer has not added any skills yet (detected at Step 2), the system displays the message: ``No skills added yet.'' \newline
+Return Step 1. \newline
+
+\textbf{1.2b Database Connection Failure} \newline
+If the system cannot retrieve the skills list (detected at Step 2), it displays the message: ``Unable to load skills. Please try again later.'' \newline
+Return Step 1.
+} \\ \hline
+
+Priority: & \multicolumn{3{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SKILL-01: All skills belonging to the freelancer must be displayed along with their proficiency level.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Skills are properly linked to the freelancer's ID in the database.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.4 Add Freelancer Skill
+% =================================================================
+
+\subparagraph{UC-05.4 Add Freelancer Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.4 Add Freelancer Skill} \\ \hline
+
+Created By: & HuyNLN & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer clicks the ``Add Skill'' button in their skills management section.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated freelancer to add a new skill to their profile along with an indicating proficiency level.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged in. \newline
+\textbf{PRE-2} The freelancer is on their profile/skills management page.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new skill record is created and associated with the freelancer. \newline
+\textbf{POST-2} The newly added skill is displayed in the freelancer's skill list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Add Freelancer Skill} \newline
+1. Freelancer clicks the ``Add Skill'' button. \newline
+2. The system displays a form to input the skill. \newline
+3. Freelancer enters/selects a skill name and selects a proficiency level. \newline
+4. Freelancer clicks the ``Save'' button. \newline
+5. The system validates the selected skill and proficiency level. \newline
+6. The system checks if the skill already exists in the freelancer's profile. \newline
+7. The system inserts the new skill record into the database. \newline
+8. The system updates the displayed list of skills and shows a success message.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.4 Cancel Addition} \newline
+1. Freelancer clicks the ``Cancel'' button. \newline
+2. The system discards the input. \newline
+3. The system closes the form without making any changes.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.3a Missing Required Information} \newline
+If the skill name or proficiency level is not provided (entered at Step 3), the system displays the message: ``Please select a skill and a proficiency level.'' \newline
+Return Step 3. \newline
+
+\textbf{1.3b Skill Already Exists} \newline
+If the freelancer tries to add a duplicate skill (entered at Step 3), the system displays: ``This skill has already been added to your profile.'' \newline
+Return Step 3. \newline
+
+\textbf{1.7 Database Connection Failure} \newline
+If the system cannot save the new skill (occurs at Step 7), it displays: ``Unable to add skill. Please try again later.'' \newline
+Return Step 4.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SKILL-02: A freelancer cannot add duplicate skills. \newline
+BR-SKILL-03: Both skill name and proficiency level are required.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Proficiency levels are typically predefined (e.g., Beginner, Intermediate, Expert).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The system provides a standardized list of skills.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-05.5 Delete Freelancer Skill
+% =================================================================
+
+\subparagraph{UC-05.5 Delete Freelancer Skill}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-05.5 Delete Freelancer Skill} \\ \hline
+
+Created By: & HuyNLN & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer clicks the ``Delete'' option next to a specific skill on their profile.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to permanently remove (hard delete) a skill from their profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is authenticated and logged in. \newline
+\textbf{PRE-2} The skill to be deleted currently exists in the freelancer's profile.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The specific skill record is permanently deleted from the database. \newline
+\textbf{POST-2} The skill is removed from the freelancer's displayed skill list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Delete Freelancer Skill} \newline
+1. Freelancer clicks the ``Delete'' option for a specific skill. \newline
+2. The system prompts a confirmation dialog. \newline
+3. Freelancer confirms the deletion. \newline
+4. The system executes a hard delete operation on the database. \newline
+5. The system refreshes the skill list. \newline
+6. The system displays a success message: ``Skill removed successfully.''
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.3 Cancel Deletion} \newline
+1. Freelancer clicks the ``Cancel'' button in the confirmation dialog. \newline
+2. The system closes the dialog. \newline
+3. The skill remains on the profile.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.1a Skill Not Found} \newline
+If the skill record does not exist or has already been removed (triggered at Step 1), the system displays the message: ``Skill not found or already deleted.'' \newline
+Return Step 1. \newline
+
+\textbf{1.4 Database Connection Failure} \newline
+If the system cannot delete the skill (occurs at Step 4), it displays the message: ``Unable to remove skill. Please try again later.'' \newline
+Return Step 3.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SKILL-04: Skill deletion must be a hard delete operation. \newline
+BR-SKILL-05: Only the owning freelancer can delete a skill from their profile.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Deleting a skill from a freelancer's profile does not delete the core skill definition from the system's global master list.} \\ \hline
+
+\end{longtable}

@@ -1,0 +1,121 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Overall Description}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Assumptions}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Design Constraints}{5}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Platform Compatibility}{5}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Integration Complexity}{5}{subsubsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.3}Performance Requirements}{5}{subsubsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.3}Technology Suggestion}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}NestJS Framework}{7}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}Next.js and React 19 Frontend}{7}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}Prisma ORM and PostgreSQL}{7}{subsubsection.1.3.3}%
+\contentsline {subsubsection}{\numberline {1.3.4}Supporting Services}{7}{subsubsection.1.3.4}%
+\contentsline {section}{\numberline {2}System Architecture Design}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Overall Architecture}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}System Architecture}{9}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}API Module Structure}{9}{subsubsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.3}Package Diagram}{11}{subsection.2.3}%
+\contentsline {section}{\numberline {3}System Detailed Design}{12}{section.3}%
+\contentsline {subsection}{\numberline {3.1}View Forum Category List}{12}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}View Forum Category Detail}{13}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}View Post List}{14}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}View Post Detail}{16}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Create Post}{18}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Update Post}{19}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Delete Post}{21}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Like Post}{23}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Unlike Post}{25}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}View Post Likes}{27}{subsection.3.10}%
+\contentsline {subsection}{\numberline {3.11}View Post Comments}{28}{subsection.3.11}%
+\contentsline {subsection}{\numberline {3.12}Create Comment}{30}{subsection.3.12}%
+\contentsline {subsection}{\numberline {3.13}Update Comment}{32}{subsection.3.13}%
+\contentsline {subsection}{\numberline {3.14}Delete Comment}{33}{subsection.3.14}%
+\contentsline {subsection}{\numberline {3.15}Like Comment}{35}{subsection.3.15}%
+\contentsline {subsection}{\numberline {3.16}Unlike Comment}{36}{subsection.3.16}%
+\contentsline {subsection}{\numberline {3.17}Report Content}{38}{subsection.3.17}%
+\contentsline {subsection}{\numberline {3.18}View Conversation List}{41}{subsection.3.18}%
+\contentsline {subsection}{\numberline {3.19}Start Conversation}{42}{subsection.3.19}%
+\contentsline {subsection}{\numberline {3.20}View Conversation Detail}{44}{subsection.3.20}%
+\contentsline {subsection}{\numberline {3.21}Send Message}{46}{subsection.3.21}%
+\contentsline {subsection}{\numberline {3.22}Mark Message as Read}{48}{subsection.3.22}%
+\contentsline {subsection}{\numberline {3.23}Delete/Recall Message}{50}{subsection.3.23}%
+\contentsline {subsection}{\numberline {3.24}Pin/Unpin Conversation}{52}{subsection.3.24}%
+\contentsline {subsection}{\numberline {3.25}Send File}{54}{subsection.3.25}%
+\contentsline {subsection}{\numberline {3.26}View Moderation Queue}{56}{subsection.3.26}%
+\contentsline {subsection}{\numberline {3.27}View Moderation Item Detail}{58}{subsection.3.27}%
+\contentsline {subsection}{\numberline {3.28}Resolve Moderation Item}{60}{subsection.3.28}%
+\contentsline {subsection}{\numberline {3.29}View ID Verification Request List}{61}{subsection.3.29}%
+\contentsline {subsection}{\numberline {3.30}View ID Verification Request Detail}{63}{subsection.3.30}%
+\contentsline {subsection}{\numberline {3.31}Approve ID Verification}{64}{subsection.3.31}%
+\contentsline {subsection}{\numberline {3.32}Reject ID Verification}{66}{subsection.3.32}%
+\contentsline {subsection}{\numberline {3.33}View Deleted Posts/Comments List}{68}{subsection.3.33}%
+\contentsline {subsection}{\numberline {3.34}View Deleted Posts/Comments Detail}{70}{subsection.3.34}%
+\contentsline {subsection}{\numberline {3.35}Restore Deleted Posts/Comments}{72}{subsection.3.35}%
+\contentsline {section}{\numberline {4}Class Specification}{74}{section.4}%
+\contentsline {subsection}{\numberline {4.1}ForumController Class}{74}{subsection.4.1}%
+\contentsline {paragraph}{\numberline {4.1.1}ClassMethod}{74}{paragraph.4.1.1}%
+\contentsline {paragraph}{\numberline {4.1.2}ClassAttribute}{77}{paragraph.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}ForumService Class}{77}{subsection.4.2}%
+\contentsline {paragraph}{\numberline {4.2.1}ClassMethod}{77}{paragraph.4.2.1}%
+\contentsline {paragraph}{\numberline {4.2.2}ClassAttribute}{80}{paragraph.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}ForumRepository Class}{80}{subsection.4.3}%
+\contentsline {paragraph}{\numberline {4.3.1}ClassMethod}{80}{paragraph.4.3.1}%
+\contentsline {paragraph}{\numberline {4.3.2}ClassAttribute}{83}{paragraph.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}ForumLikeController Class}{85}{subsection.4.4}%
+\contentsline {paragraph}{\numberline {4.4.1}ClassMethod}{85}{paragraph.4.4.1}%
+\contentsline {paragraph}{\numberline {4.4.2}ClassAttribute}{85}{paragraph.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}ForumLikeService Class}{85}{subsection.4.5}%
+\contentsline {paragraph}{\numberline {4.5.1}ClassMethod}{85}{paragraph.4.5.1}%
+\contentsline {paragraph}{\numberline {4.5.2}ClassAttribute}{86}{paragraph.4.5.2}%
+\contentsline {subsection}{\numberline {4.6}ForumLikeRepository Class}{86}{subsection.4.6}%
+\contentsline {paragraph}{\numberline {4.6.1}ClassMethod}{86}{paragraph.4.6.1}%
+\contentsline {paragraph}{\numberline {4.6.2}ClassAttribute}{87}{paragraph.4.6.2}%
+\contentsline {subsection}{\numberline {4.7}ForumCommentController Class}{88}{subsection.4.7}%
+\contentsline {paragraph}{\numberline {4.7.1}ClassMethod}{88}{paragraph.4.7.1}%
+\contentsline {paragraph}{\numberline {4.7.2}ClassAttribute}{89}{paragraph.4.7.2}%
+\contentsline {subsection}{\numberline {4.8}ForumCommentService Class}{90}{subsection.4.8}%
+\contentsline {paragraph}{\numberline {4.8.1}ClassMethod}{90}{paragraph.4.8.1}%
+\contentsline {paragraph}{\numberline {4.8.2}ClassAttribute}{91}{paragraph.4.8.2}%
+\contentsline {subsection}{\numberline {4.9}ForumCommentRepository Class}{91}{subsection.4.9}%
+\contentsline {paragraph}{\numberline {4.9.1}ClassMethod}{91}{paragraph.4.9.1}%
+\contentsline {paragraph}{\numberline {4.9.2}ClassAttribute}{93}{paragraph.4.9.2}%
+\contentsline {subsection}{\numberline {4.10}ForumReportController Class}{94}{subsection.4.10}%
+\contentsline {paragraph}{\numberline {4.10.1}ClassMethod}{94}{paragraph.4.10.1}%
+\contentsline {paragraph}{\numberline {4.10.2}ClassAttribute}{96}{paragraph.4.10.2}%
+\contentsline {subsection}{\numberline {4.11}ForumReportService Class}{96}{subsection.4.11}%
+\contentsline {paragraph}{\numberline {4.11.1}ClassMethod}{96}{paragraph.4.11.1}%
+\contentsline {paragraph}{\numberline {4.11.2}ClassAttribute}{98}{paragraph.4.11.2}%
+\contentsline {subsection}{\numberline {4.12}ForumReportRepository Class}{98}{subsection.4.12}%
+\contentsline {paragraph}{\numberline {4.12.1}ClassMethod}{98}{paragraph.4.12.1}%
+\contentsline {paragraph}{\numberline {4.12.2}ClassAttribute}{100}{paragraph.4.12.2}%
+\contentsline {subsubsection}{Supporting DTO classes for reports}{100}{table.28}%
+\contentsline {subsection}{\numberline {4.13}ConversationController Class}{101}{subsection.4.13}%
+\contentsline {paragraph}{\numberline {4.13.1}ClassMethod}{101}{paragraph.4.13.1}%
+\contentsline {paragraph}{\numberline {4.13.2}ClassAttribute}{103}{paragraph.4.13.2}%
+\contentsline {subsection}{\numberline {4.14}ConversationService Class}{103}{subsection.4.14}%
+\contentsline {paragraph}{\numberline {4.14.1}ClassMethod}{103}{paragraph.4.14.1}%
+\contentsline {paragraph}{\numberline {4.14.2}ClassAttribute}{107}{paragraph.4.14.2}%
+\contentsline {subsection}{\numberline {4.15}ConversationRepository Class}{107}{subsection.4.15}%
+\contentsline {paragraph}{\numberline {4.15.1}ClassMethod}{107}{paragraph.4.15.1}%
+\contentsline {paragraph}{\numberline {4.15.2}ClassAttribute}{110}{paragraph.4.15.2}%
+\contentsline {subsection}{\numberline {4.16}ConversationsGateway Class}{110}{subsection.4.16}%
+\contentsline {paragraph}{\numberline {4.16.1}ClassMethod}{110}{paragraph.4.16.1}%
+\contentsline {paragraph}{\numberline {4.16.2}ClassAttribute}{112}{paragraph.4.16.2}%
+\contentsline {subsection}{\numberline {4.17}ForumAdminController Class}{112}{subsection.4.17}%
+\contentsline {paragraph}{\numberline {4.17.1}ClassMethod}{112}{paragraph.4.17.1}%
+\contentsline {paragraph}{\numberline {4.17.2}ClassAttribute}{116}{paragraph.4.17.2}%
+\contentsline {subsection}{\numberline {4.18}ForumAdminService Class}{116}{subsection.4.18}%
+\contentsline {paragraph}{\numberline {4.18.1}ClassMethod}{116}{paragraph.4.18.1}%
+\contentsline {paragraph}{\numberline {4.18.2}ClassAttribute}{120}{paragraph.4.18.2}%
+\contentsline {subsection}{\numberline {4.19}ForumAdminRepository Class}{120}{subsection.4.19}%
+\contentsline {paragraph}{\numberline {4.19.1}ClassMethod}{120}{paragraph.4.19.1}%
+\contentsline {paragraph}{\numberline {4.19.2}ClassAttribute}{124}{paragraph.4.19.2}%
+\contentsline {subsection}{\numberline {4.20}IdentityVerificationsAdminController Class}{124}{subsection.4.20}%
+\contentsline {paragraph}{\numberline {4.20.1}ClassMethod}{124}{paragraph.4.20.1}%
+\contentsline {paragraph}{\numberline {4.20.2}ClassAttribute}{126}{paragraph.4.20.2}%
+\contentsline {subsection}{\numberline {4.21}IdentityVerificationsAdminService Class}{126}{subsection.4.21}%
+\contentsline {paragraph}{\numberline {4.21.1}ClassMethod}{126}{paragraph.4.21.1}%
+\contentsline {paragraph}{\numberline {4.21.2}ClassAttribute}{127}{paragraph.4.21.2}%
+\contentsline {subsection}{\numberline {4.22}IdentityVerificationsAdminRepository Class}{128}{subsection.4.22}%
+\contentsline {paragraph}{\numberline {4.22.1}ClassMethod}{128}{paragraph.4.22.1}%
+\contentsline {paragraph}{\numberline {4.22.2}ClassAttribute}{129}{paragraph.4.22.2}%

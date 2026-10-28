@@ -1,0 +1,71 @@
+Quality management in Frevia is built into the delivery process rather than added as a testing phase at the end. The objective is a platform whose behaviour is predictable under failure, whose financial records can be reconciled against Stripe at any moment, and whose authorisation model cannot be bypassed by calling an endpoint directly.
+
+\begin{itemize}
+    \item \textbf{Defect Prevention and Coding Standards}
+    \begin{itemize}
+        \item Every requirement is traceable to a SMAR identifier in the estimation table, so a change can be checked against a specific item rather than against a general description.
+        \item Request and response shapes are declared once as Zod schemas in the shared package and consumed by both the API and the web client, which removes the class of defect in which the browser accepts an input that the server rejects, or the reverse.
+        \item Coding conventions are written down and enforced by ESLint 9 and Prettier: dotted lower-case file names, PascalCase classes and DTOs, camelCase functions, UPPER\_SNAKE constants, no use of \texttt{any}, and no credential or secret written into source code.
+        \item Configuration is supplied through environment variables validated at start-up by a Zod schema, so a missing or malformed variable stops the application instead of failing later at the first request that needs it.
+    \end{itemize}
+
+    \item \textbf{Code Review and Architecture Review}
+    \begin{itemize}
+        \item Every change reaches the integration branch through a pull request with at least one approving reviewer; the reviewer checks behaviour, error handling, and the permission entry rather than formatting alone.
+        \item Controllers are restricted to request handling and response shaping; business rules live in services and database access lives in repositories. A pull request that puts a query in a controller is returned.
+        \item Database migrations are reviewed as artefacts. A migration must be generated from the Prisma schema, must be reversible in principle, and must not drop or rename a populated column without an accompanying data step.
+        \item Architecture decisions that affect more than one module -- the permission model, the contract and milestone state machines, the dispute lifecycle, and the Stripe event handling -- are reviewed with the whole team before implementation starts.
+    \end{itemize}
+
+    \item \textbf{Software Testing}
+    \begin{itemize}
+        \item Unit tests cover services, repositories, and guards with Jest. The suite already exercises the access-token guard, the authentication role transitions, the contract and proposal repositories, the payment service, the dispute service, the profile revision workflow, the curriculum vitae analyser, and the profile strength calculation.
+        \item Integration tests run against a real PostgreSQL database configured through environment variables, so a query that is syntactically valid but semantically wrong is caught before the sprint review.
+        \item An end-to-end test drives the application through its HTTP surface and verifies the response envelope, the validation behaviour, and the authorisation behaviour of protected routes.
+        \item Manual exploratory testing is performed on the flows that are difficult to automate reliably: the identity document capture sequence, the Stripe Checkout redirect, the dispute evidence upload, and the real-time messaging session.
+        \item Each item is accepted against written acceptance criteria at the Sprint Review, and an item that fails is recorded as a defect rather than counted as delivered.
+    \end{itemize}
+
+    \item \textbf{Security and Data Protection}
+    \begin{itemize}
+        \item Every route is protected by the permission guard unless it is explicitly marked public, and the guard resolves the permission from the role that is active in the session rather than from a role name embedded in the token.
+        \item Passwords are stored as bcrypt hashes; refresh tokens are persisted per session so that a session can be revoked individually; one-time codes are stored hashed with an attempt counter and an expiry.
+        \item Identity documents are served only through authenticated endpoints that check ownership or administrator rights, and are never exposed through the public static upload directory.
+        \item Input is validated at the boundary with the shared schemas, Prisma parameterises every query, and cross-origin access is restricted to the configured web origin.
+        \item Access control is checked negatively as well as positively: every protected endpoint is exercised with the wrong role during review, and the access-token guard is covered by automated tests.
+    \end{itemize}
+
+    \item \textbf{Transaction and Payment Validation}
+    \begin{itemize}
+        \item All payment work is performed in Stripe test mode. The webhook endpoint verifies the signature against the raw request body before parsing the event.
+        \item Handlers are idempotent: the same event delivered twice must not create a second transaction, release a milestone twice, or duplicate a dispute fee.
+        \item Local state is reconciled from Stripe before it is written, and explicit synchronisation endpoints exist for PaymentIntents and Checkout Sessions so that a missed webhook can be repaired without a database edit.
+        \item Every money movement is written to the transaction ledger with a type, a status, and the corresponding Stripe identifier, which makes a contract's financial history reconstructable and auditable.
+    \end{itemize}
+
+    \item \textbf{Performance and Quality Metrics}
+    \begin{itemize}
+        \item List endpoints are paginated and filtered in the database rather than in memory, and the queries used by the job list, proposal list, moderation queue, and notification list are checked against their indexes.
+        \item The team tracks test results, defect counts by severity, item completion against the sprint cap, and the response time of the heaviest endpoints.
+        \item Defects are classified as critical, high, medium, or low, and the resolution targets in Section 1.2 are applied to that classification.
+        \item Additional performance checks are performed before the acceptance milestone on the messaging gateway and on the job search endpoint, which are the two paths most sensitive to load.
+    \end{itemize}
+
+    \item \textbf{Scrum-Based Quality Improvement}
+    \begin{itemize}
+        \item Quality activities are planned as part of each item rather than as a separate task at the end of the sprint.
+        \item Acceptance criteria are written during Sprint Planning, before implementation, so that the reviewer and the developer agree on what "done" means.
+        \item Defects found during the sprint are fixed inside the same sprint when they block a committed item, and are otherwise returned to the backlog with a severity.
+        \item Each retrospective produces at most two process changes, and the following retrospective begins by checking whether they were applied.
+    \end{itemize}
+
+    \item \textbf{Feedback and Issue Management}
+    \begin{itemize}
+        \item Defects, technical debt, and enhancement requests are recorded as issues in the same repository as the code, with a label, a severity, and the SMAR identifier they affect.
+        \item Feedback from the supervisor and from acceptance test participants is triaged at Sprint Planning rather than acted on immediately, so that the current sprint remains stable.
+        \item A defect that reveals a gap in the requirements produces a documentation change as well as a code change, so that the same gap is not reintroduced later.
+        \item The issue list and the test results are reviewed together at the end of each sprint to decide whether the increment is releasable.
+    \end{itemize}
+\end{itemize}
+
+These practices target the failure modes that matter most in this system: an authorisation bypass, an inconsistent payment record, a lost identity document, and a defect that only appears when two modules interact. Integrating review, testing, and feedback into each sprint keeps the product releasable at every sprint boundary instead of concentrating risk at the end of the project.

@@ -1,0 +1,263 @@
+\section{Project Scope \& Limitations}
+
+\subsection{Major Features}
+
+The feature list below describes what the delivered system actually exposes, grouped by functional area. Each identifier is referenced by the estimation table in the Project Management Plan.
+
+\subsubsection*{Identity and Access}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-01] Email and password registration with role selection and one-time-code email verification.
+
+\item[FE-02] Google OAuth sign-in, and linking a Google identity to an existing account.
+
+\item[FE-03] JWT access and refresh token authentication backed by persisted session records containing device information, IP address, and expiry.
+
+\item[FE-04] Session management: listing active sessions, viewing session details, and revoking a session.
+
+\item[FE-05] Password reset through an emailed one-time code, and password change from account settings.
+
+\item[FE-06] Multi-role membership: one primary role, joining an additional role, and switching the active role within a session.
+
+\item[FE-07] Data-driven role-based access control in which a permission binds an HTTP method and path pattern to a module, and roles are granted permissions.
+
+\item[FE-08] Administrative role and permission management, including role creation and permission assignment or removal.
+
+\item[FE-09] Administrative user management: creating users, updating account details, and banning or unbanning accounts.
+
+\end{description}
+
+\subsubsection*{Profiles and Portfolio}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-10] Account profile with avatar and cover upload, display name, biography, online status, availability status, and profile completion percentage.
+
+\item[FE-11] Freelancer profile with professional title, education, certifications, languages, and work experience entries.
+
+\item[FE-12] Skills carrying a proficiency level from one to ten, with skill suggestions and add or remove operations.
+
+\item[FE-13] Portfolio items with description, technologies, external project link, and cover image.
+
+\item[FE-14] Curriculum vitae upload, preview, replacement, and deletion for PDF files up to ten megabytes.
+
+\item[FE-15] AI-assisted curriculum vitae analysis that proposes skills with estimated proficiency levels for the freelancer to review before adding them.
+
+\item[FE-16] Profile strength and completion scoring used to guide profile improvement.
+
+\item[FE-17] Profile revision workflow in which edits are stored as a proposed snapshot and become public only after administrative approval.
+
+\item[FE-18] Client profile with company name, company description, and website.
+
+\item[FE-19] Expert profile with expertise areas, years of experience, education, certifications, and website, together with a public expert directory.
+
+\item[FE-20] Social links, favourite freelancers, follow and unfollow, freelancer discovery, and public profile pages.
+
+\end{description}
+
+\subsubsection*{Identity Verification}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-21] Identity verification submission carrying identity document front and back images, a selfie, and a sequence of liveness frames.
+
+\item[FE-22] AI identity verification covering optical character recognition, QR code reading, image quality assessment, face matching, passive and active liveness detection, and tamper detection.
+
+\item[FE-23] Administrative review of identity verification documents, and display of a verified identity badge on the profile.
+
+\end{description}
+
+\subsubsection*{Job Marketplace}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-24] Job creation with description, fixed-price budget range, deadline, required skills, categories, hiring type, and number of positions.
+
+\item[FE-25] Job editing, deletion, and status lifecycle across draft, open, in progress, completed, closed, and cancelled.
+
+\item[FE-26] Stable slug-based public job URLs that remain valid when a posting is edited.
+
+\item[FE-27] Public job search with keyword matching and multi-criteria filtering by category, skill, budget range, and creation date, with configurable sorting.
+
+\item[FE-28] Job detail page exposing client information, required skills, and contextual actions for the current user.
+
+\item[FE-29] Job bookmarks with save, remove, list, and status lookup.
+
+\item[FE-30] Saved searches that persist a filter configuration for later reuse.
+
+\item[FE-31] Client job dashboard with status and search filters, and applicant counts per posting.
+
+\item[FE-32] Public browsing of job categories.
+
+\end{description}
+
+\subsubsection*{Proposals and Contracts}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-33] Proposal drafting and submission with bid amount, estimated duration, cover letter, and file attachments.
+
+\item[FE-34] Proposal editing, withdrawal, and expiry handling before a hire decision.
+
+\item[FE-35] Freelancer proposal tracking with status filters.
+
+\item[FE-36] Client proposal review for a job, including comparison of applicant profiles and attachments.
+
+\item[FE-37] Hiring or rejecting a proposal, where hiring generates a contract linked to that proposal.
+
+\item[FE-38] Contract list and detail for both client and freelancer.
+
+\item[FE-39] Dual contract signing, recording the client and freelancer signatures separately.
+
+\item[FE-40] Contract total amount and a per-contract platform fee, recorded with its own payment status and set to USD~10.00 by default.
+
+\item[FE-41] Contract completion and cancellation.
+
+\item[FE-42] Milestone creation, editing, deletion, and ordered listing within a contract.
+
+\item[FE-43] Milestone payment state tracking across pending, funded, released, refunded, and disputed.
+
+\item[FE-44] Milestone submission with a message, external links, and uploaded files.
+
+\item[FE-45] Change requests carrying a message and a due date, and submission approval that completes the milestone and makes its funded amount releasable.
+
+\item[FE-46] Milestone file management and contract-level shared files with upload, download, and deletion.
+
+\item[FE-47] Milestone start transition from pending to in progress, restricted to the assigned freelancer and limited to one active milestone per contract.
+
+\end{description}
+
+\subsubsection*{Payments}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-48] Stripe Connect Express onboarding through an account link, with onboarding status tracked on the user record.
+
+\item[FE-49] Saved payment methods and a Stripe customer portal session for managing cards.
+
+\item[FE-50] Platform fee payment initiated as a PaymentIntent, a hosted Checkout Session, or a saved card charge.
+
+\item[FE-51] Milestone funding through a PaymentIntent, a hosted Checkout Session, or a saved card.
+
+\item[FE-52] Milestone release as a Stripe transfer to the freelancer account.
+
+\item[FE-53] Refund processing for a funded milestone.
+
+\item[FE-54] Dispute fee payment with its own deadline, and dispute settlement with split payouts.
+
+\item[FE-55] Transaction ledger recording type, status, amount, and Stripe references for every money movement.
+
+\item[FE-56] Manual synchronisation of PaymentIntent and Checkout Session state with the local record.
+
+\item[FE-57] Stripe webhook endpoint with raw body signature verification.
+
+\end{description}
+
+\subsubsection*{Disputes and Reviews}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-58] Dispute creation on a milestone, with claim evidence attached.
+
+\item[FE-59] Dispute response with evidence uploaded before the response deadline.
+
+\item[FE-60] Dispute list and detail for the two participants, including fee and deadline status.
+
+\item[FE-61] Decision review request as an escalation step after an administrative decision.
+
+\item[FE-62] Administrative arbitration producing a split of the milestone amount, a written reasoning, and a final decision.
+
+\item[FE-63] Contract review with an overall rating and a category breakdown.
+
+\item[FE-64] Review editing, deletion, and contract-level review listing.
+
+\item[FE-65] Review responses and management of those responses.
+
+\end{description}
+
+\subsubsection*{Communication and Notifications}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-66] Conversation list with unread counts, pinning, and hiding on a per-participant basis.
+
+\item[FE-67] Starting a conversation between a client and a freelancer.
+
+\item[FE-68] Real-time messaging over an authenticated WebSocket connection, with text messages, read receipts, typing indicators, and message deletion.
+
+\item[FE-69] File attachments in messages with name, size, and type metadata.
+
+\item[FE-70] Notification list with typed entries and an unread badge.
+
+\item[FE-71] Marking notifications as read individually or all at once, and deleting notifications.
+
+\end{description}
+
+\subsubsection*{Community Forum}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-72] Forum browsing across categories, with search, category filtering, and sorting.
+
+\item[FE-73] Forum post creation with a rich text editor and tags, plus editing and deletion by the author.
+
+\item[FE-74] Comments, likes on posts and comments, and reporting of posts and comments.
+
+\item[FE-75] AI moderation scoring attached to a forum post, with every post held in a pending state until an administrator approves it.
+
+\item[FE-76] Administrative moderation queue, report handling, and trash management for posts and comments.
+
+\end{description}
+
+\subsubsection*{Administration and Platform}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[FE-77] Administrative management of job categories, including status changes, soft deletion, and restore.
+
+\item[FE-78] Administrative management of the skill catalogue, including soft deletion and restore.
+
+\item[FE-79] Advertisement banner management across five placement positions, and display of active banners on the public site.
+
+\item[FE-80] Administrative dashboards for identity verification review and profile revision review.
+
+\item[FE-81] Bilingual interface in English and Vietnamese with cookie-based locale selection that leaves URLs unchanged.
+
+\item[FE-82] Light and dark themes with a responsive layout across desktop and mobile widths.
+
+\item[FE-83] Shared request and response validation schemas between the web client and the API, a standard response envelope, a global exception filter, and containerised deployment of both applications with health checks.
+
+\end{description}
+
+\subsection{Limitations \& Exclusions}
+
+\begin{description}[leftmargin=2.2cm,labelwidth=1.8cm,font=\normalfont\bfseries]
+
+\item[LI-01] All payment and payout functionality is provided by Stripe. Direct bank integration, domestic e-wallets, mobile money, and blockchain or cryptocurrency settlement are outside the scope of the current implementation.
+
+\item[LI-02] Stripe Connect onboarding and payouts depend on the availability of supported Stripe account countries and capabilities. The platform does not hold balances itself, does not operate an internal settlement ledger as a system of record, and cannot pay out to a country that Stripe does not support.
+
+\item[LI-03] Only fixed-price contracts are supported. Hourly contracts, time tracking, work diaries, and automatic billing based on recorded hours are excluded from the current scope.
+
+\item[LI-04] Monetary amounts are handled in United States dollars only. Currency conversion, multi-currency contracts, and locale-specific tax calculation are excluded.
+
+\item[LI-05] Artificial intelligence is limited to three functions: curriculum vitae skill extraction, identity document and liveness verification, and forum content moderation. No recommendation, ranking, or automatic matching engine is implemented, and no AI component makes a hiring, approval, or arbitration decision on its own.
+
+\item[LI-06] The AI functions depend on two external services reachable over HTTP. When either service is unavailable, the affected action fails with an explicit error and administrative manual review remains the fallback; response quality for documents that are poorly photographed, rotated, or outside the supported document types is not guaranteed.
+
+\item[LI-07] Identity verification is tuned to Vietnamese identity documents. Passports, driver licences, and identity documents from other jurisdictions may not be recognised reliably, and no alternative verification channel is provided.
+
+\item[LI-08] Arbitration is an administrative decision made by a platform administrator, not a legal proceeding. The system does not enforce jurisdiction-specific law, does not provide binding legal arbitration, does not issue enforceable awards, and does not handle debt collection or chargeback litigation.
+
+\item[LI-09] The product is delivered as a responsive web application. Native iOS and Android applications are not part of the current scope.
+
+\item[LI-10] One-time codes and account notifications are delivered by email through an SMTP provider. SMS delivery, authenticator application support, and push notifications are excluded; if email delivery is delayed or blocked, account verification and password reset are affected.
+
+\item[LI-11] Several capabilities exist in the data model but are intentionally not exposed through the current release: time-based one-time password two-factor authentication, invoice documents, completion certificates, reusable contract term templates, job alerts, recently viewed jobs, project progress updates, portfolio likes, system settings management, a banned keyword list, and announcement banners.
+
+\item[LI-12] Notification records are persisted and retrieved by the client, but notification events are not pushed over a real-time channel. New notifications become visible on the next fetch or page load.
+
+\item[LI-13] The deployment uses a single API instance with in-memory WebSocket room state. Automated continuous integration, horizontal scaling behind a load balancer, sticky sessions, and a shared adapter for the real-time layer are not implemented, so the current topology does not support running several API replicas concurrently.
+
+\end{description}

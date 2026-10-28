@@ -1,0 +1,54 @@
+Training is scheduled before the sprint in which the related technology is first used, so that no member learns a technology while also carrying a committed item that depends on it. Each session is delivered by the member who owns the corresponding area, lasts the stated duration, and ends with a small exercise that is committed to the repository.
+
+\begingroup
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{2.9cm}|}
+\hline
+\rowcolor{fptOrange} \textbf{Training Area} & \textbf{Participants} & \textbf{When, Duration} & \textbf{Waiver Criteria} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{fptOrange} \textbf{Training Area} & \textbf{Participants} & \textbf{When, Duration} & \textbf{Waiver Criteria} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+Git workflow, branch naming, and pull request review & All members & Week 1 (2 days) & Mandatory \\
+\hline
+Monorepo tooling: pnpm workspaces, Turborepo, shared TypeScript configuration & All members & Week 1 (2 days) & Mandatory \\
+\hline
+Next.js App Router, React 19, and server versus client components & Frontend members & Week 1 (1 week) & Mandatory for frontend work \\
+\hline
+NestJS modules, dependency injection, guards, and interceptors & Backend members & Week 1--2 (1 week) & Mandatory for backend work \\
+\hline
+Prisma schema design, migrations, and seeding & All members & Week 2 (3 days) & Mandatory \\
+\hline
+PostgreSQL modelling for transactional workflows and indexing & Backend members & Week 2 (3 days) & Mandatory for backend work \\
+\hline
+Shared Zod schemas and the permission-based authorisation model & All members & Week 3 (2 days) & Mandatory \\
+\hline
+Tailwind CSS 4, shared component library, and bilingual message catalogues & Frontend members & Week 3 (3 days) & Mandatory for frontend work \\
+\hline
+Docker Compose, environment configuration, and secret management & All members & Week 4 (2 days) & Mandatory \\
+\hline
+Stripe Connect onboarding, PaymentIntent, Checkout Session, and webhook verification & Backend members and payment owner & Week 4 (1 week) & Mandatory before Sprint 4 \\
+\hline
+Socket.IO gateway, JWT handshake authentication, and room-based delivery & Messaging owners & Week 5 (3 days) & Mandatory before the messaging items \\
+\hline
+External AI service integration: curriculum vitae analysis and the identity verification pipeline & Verification owners & Week 6 (3 days) & Mandatory before Sprint 5 \\
+\hline
+UI/UX design with Figma and design hand-off & All members & Project start (3 days) & Recommended \\
+\hline
+
+\end{longtable}
+\endgroup
+
+The Stripe session is placed at the end of Sprint 1 rather than at the start of Sprint 4 because payment work touches the contract, milestone, and dispute modules, and the team needs to see those modules before the payment flow makes sense. The same reasoning applies to the Socket.IO session, which follows the contract module, and to the AI integration session, which follows the milestone module because identity verification is attached to the freelancer profile that the milestone flow already exercises.
