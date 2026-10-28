@@ -1,0 +1,1666 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.11)  23 OCT 2026 02:54
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./main.tex
+(main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.de
+f
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
+\col@sep=\dimen149
+\ar@mcellbox=\box53
+\extrarowheight=\dimen150
+\NC@list=\toks17
+\extratabsurround=\skip51
+\backup@length=\skip52
+\ar@cellbox=\box54
+)
+\everycr=\toks18
+\minrowclearance=\skip53
+\rownum=\count283
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count284
+\float@exts=\toks19
+\float@box=\box55
+\@float@everytoks=\toks20
+\@floatcapt=\box56
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
+\TX@col@width=\dimen151
+\TX@old@table=\dimen152
+\TX@old@col=\dimen153
+\TX@target=\dimen154
+\TX@delta=\dimen155
+\TX@cols=\count285
+\TX@ftn=\toks21
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2025/02/06 v3.11 Customized lists
+\enitkv@toks@=\toks22
+\labelindent=\skip54
+\enit@outerparindent=\dimen156
+\enit@toks=\toks23
+\enit@inbox=\box57
+\enit@count@id=\count286
+\enitdp@description=\count287
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.st
+y
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen157
+\c@nlinenum=\count288
+\TeXr@lab=\toks24
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
+Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
+\LTleft=\skip55
+\LTright=\skip56
+\LTpre=\skip57
+\LTpost=\skip58
+\LTchunksize=\count289
+\LTcapwidth=\dimen158
+\LT@head=\box58
+\LT@firsthead=\box59
+\LT@foot=\box60
+\LT@lastfoot=\box61
+\LT@gbox=\box62
+\LT@cols=\count290
+\LT@rows=\count291
+\c@LT@tables=\count292
+\c@LT@chunks=\count293
+\LT@p@ftn=\toks25
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks26
+\inpenc@posthook=\toks27
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2025/12/11 v25.17 The multilingual framework for LuaLaTeX, pdfLa
+TeX and XeLaTeX
+\babel@savecnt=\count294
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input li
+ne 2068.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input li
+ne 2070.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input lin
+e 2072.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input lin
+e 2073.
+LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) 
+on input line 2074.
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) 
+on input line 2076.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) 
+on input line 2101.
+\U@D=\dimen159
+\l@unhyphenated=\language79
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count295
+Package babel Info: Configuration files are deprecated, as
+(babel)             they can break document portability.
+(babel)             Reported on input line 4196.
+
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/vi\babe
+l-vietnamese.tex)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/en\babe
+l-english.tex)
+Package babel Info: Importing font and identification data for vietnamese
+(babel)             from babel-vi.ini. Reported on input line 4320.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/babel-vietnamese\vietn
+amese.ldf
+Language: vietnamese 
+
+
+Package babel Warning: No hyphenation patterns were preloaded for
+(babel)                the language 'Vietnamese' into the format.
+(babel)                Please, configure your TeX system to add them and
+(babel)                rebuild the format. Now I will use the patterns
+(babel)                preloaded for \language=0 instead on input line 36.
+
+Package babel Info: Hyphen rules for 'vietnamese' set to \l@english
+(babel)             (\language0). Reported on input line 37.
+Package babel Info: Hyphen rules for 'vietnam' set to \l@english
+(babel)             (\language0). Reported on input line 38.
+Loading definitions for the Vietnamese font encoding
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5enc.def
+File: t5enc.def 2006/11/21 v1.4 Vietnamese T5 encoding
+Now handling font encoding T5 ...
+... processing UTF-8 mapping file for font encoding T5
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5enc.dfu
+File: t5enc.dfu 2006/08/19 v1.1 UTF8 support for Vietnamese
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0128 (decimal 296)
+   defining Unicode char U+0129 (decimal 297)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0168 (decimal 360)
+   defining Unicode char U+0169 (decimal 361)
+   defining Unicode char U+01A0 (decimal 416)
+   defining Unicode char U+01A1 (decimal 417)
+   defining Unicode char U+01AF (decimal 431)
+   defining Unicode char U+01B0 (decimal 432)
+   defining Unicode char U+1EA0 (decimal 7840)
+   defining Unicode char U+1EA1 (decimal 7841)
+   defining Unicode char U+1EA2 (decimal 7842)
+   defining Unicode char U+1EA3 (decimal 7843)
+   defining Unicode char U+1EA4 (decimal 7844)
+   defining Unicode char U+1EA5 (decimal 7845)
+   defining Unicode char U+1EA6 (decimal 7846)
+   defining Unicode char U+1EA7 (decimal 7847)
+   defining Unicode char U+1EA8 (decimal 7848)
+   defining Unicode char U+1EA9 (decimal 7849)
+   defining Unicode char U+1EAA (decimal 7850)
+   defining Unicode char U+1EAB (decimal 7851)
+   defining Unicode char U+1EAC (decimal 7852)
+   defining Unicode char U+1EAD (decimal 7853)
+   defining Unicode char U+1EAE (decimal 7854)
+   defining Unicode char U+1EAF (decimal 7855)
+   defining Unicode char U+1EB0 (decimal 7856)
+   defining Unicode char U+1EB1 (decimal 7857)
+   defining Unicode char U+1EB2 (decimal 7858)
+   defining Unicode char U+1EB3 (decimal 7859)
+   defining Unicode char U+1EB4 (decimal 7860)
+   defining Unicode char U+1EB5 (decimal 7861)
+   defining Unicode char U+1EB6 (decimal 7862)
+   defining Unicode char U+1EB7 (decimal 7863)
+   defining Unicode char U+1EB8 (decimal 7864)
+   defining Unicode char U+1EB9 (decimal 7865)
+   defining Unicode char U+1EBA (decimal 7866)
+   defining Unicode char U+1EBB (decimal 7867)
+   defining Unicode char U+1EBC (decimal 7868)
+   defining Unicode char U+1EBD (decimal 7869)
+   defining Unicode char U+1EBE (decimal 7870)
+   defining Unicode char U+1EBF (decimal 7871)
+   defining Unicode char U+1EC0 (decimal 7872)
+   defining Unicode char U+1EC1 (decimal 7873)
+   defining Unicode char U+1EC2 (decimal 7874)
+   defining Unicode char U+1EC3 (decimal 7875)
+   defining Unicode char U+1EC4 (decimal 7876)
+   defining Unicode char U+1EC5 (decimal 7877)
+   defining Unicode char U+1EC6 (decimal 7878)
+   defining Unicode char U+1EC7 (decimal 7879)
+   defining Unicode char U+1EC8 (decimal 7880)
+   defining Unicode char U+1EC9 (decimal 7881)
+   defining Unicode char U+1ECA (decimal 7882)
+   defining Unicode char U+1ECB (decimal 7883)
+   defining Unicode char U+1ECC (decimal 7884)
+   defining Unicode char U+1ECD (decimal 7885)
+   defining Unicode char U+1ECE (decimal 7886)
+   defining Unicode char U+1ECF (decimal 7887)
+   defining Unicode char U+1ED0 (decimal 7888)
+   defining Unicode char U+1ED1 (decimal 7889)
+   defining Unicode char U+1ED2 (decimal 7890)
+   defining Unicode char U+1ED3 (decimal 7891)
+   defining Unicode char U+1ED4 (decimal 7892)
+   defining Unicode char U+1ED5 (decimal 7893)
+   defining Unicode char U+1ED6 (decimal 7894)
+   defining Unicode char U+1ED7 (decimal 7895)
+   defining Unicode char U+1ED8 (decimal 7896)
+   defining Unicode char U+1ED9 (decimal 7897)
+   defining Unicode char U+1EDA (decimal 7898)
+   defining Unicode char U+1EDB (decimal 7899)
+   defining Unicode char U+1EDC (decimal 7900)
+   defining Unicode char U+1EDD (decimal 7901)
+   defining Unicode char U+1EDE (decimal 7902)
+   defining Unicode char U+1EDF (decimal 7903)
+   defining Unicode char U+1EE0 (decimal 7904)
+   defining Unicode char U+1EE1 (decimal 7905)
+   defining Unicode char U+1EE2 (decimal 7906)
+   defining Unicode char U+1EE3 (decimal 7907)
+   defining Unicode char U+1EE4 (decimal 7908)
+   defining Unicode char U+1EE5 (decimal 7909)
+   defining Unicode char U+1EE6 (decimal 7910)
+   defining Unicode char U+1EE7 (decimal 7911)
+   defining Unicode char U+1EE8 (decimal 7912)
+   defining Unicode char U+1EE9 (decimal 7913)
+   defining Unicode char U+1EEA (decimal 7914)
+   defining Unicode char U+1EEB (decimal 7915)
+   defining Unicode char U+1EEC (decimal 7916)
+   defining Unicode char U+1EED (decimal 7917)
+   defining Unicode char U+1EEE (decimal 7918)
+   defining Unicode char U+1EEF (decimal 7919)
+   defining Unicode char U+1EF0 (decimal 7920)
+   defining Unicode char U+1EF1 (decimal 7921)
+   defining Unicode char U+1EF2 (decimal 7922)
+   defining Unicode char U+1EF3 (decimal 7923)
+   defining Unicode char U+1EF4 (decimal 7924)
+   defining Unicode char U+1EF5 (decimal 7925)
+   defining Unicode char U+1EF6 (decimal 7926)
+   defining Unicode char U+1EF7 (decimal 7927)
+   defining Unicode char U+1EF8 (decimal 7928)
+   defining Unicode char U+1EF9 (decimal 7929)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+))
+Package babel Info: Making " an active character on input line 147.
+)
+Package babel Info: Importing font and identification data for english
+(babel)             from babel-en.ini. Reported on input line 4320.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.
+ldf
+Language: english 2017/06/06 v3.3r English support from the babel system
+Package babel Info: Hyphen rules for 'canadian' set to \l@english
+(babel)             (\language0). Reported on input line 102.
+Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
+(babel)             (\language73). Reported on input line 105.
+Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
+(babel)             (\language73). Reported on input line 108.
+))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
+Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/ztmcm/m/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ztmcm/m/n on input line 28.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 29.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/ztmcm/m/it on input line 29.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/ztmcm/m/it on input line 29.
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 30.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/ztmcm/m/n on input line 30.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/ztmcm/m/n on input line 30.
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 31.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
+\symbold=\mathgroup4
+\symitalic=\mathgroup5
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 34.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/ptm/m/it on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
+LaTeX Info: Redefining \hbar on input line 50.
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2025/07/09 v2.17z AMS math features
+\@mathmargin=\skip59
+
+For additional information on amsmath, use the `?' option.
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks28
+\ex@=\dimen160
+))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen161
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count296
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count297
+\leftroot@=\count298
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count299
+\DOTSCASE@=\count300
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box63
+\strutbox@=\box64
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen162
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count301
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count302
+\dotsspace@=\muskip17
+\c@parentequation=\count303
+\dspbrk@lvl=\count304
+\tag@help=\toks29
+\row@=\count305
+\column@=\count306
+\maxfields@=\count307
+\andhelp@=\toks30
+\eqnshift@=\dimen163
+\alignsep@=\dimen164
+\tagshift@=\dimen165
+\tagwidth@=\dimen166
+\totwidth@=\dimen167
+\lineht@=\dimen168
+\@envbody=\toks31
+\multlinegap=\skip60
+\multlinetaggap=\skip61
+\mathdisplay@stack=\toks32
+LaTeX Info: Redefining \[ on input line 2950.
+LaTeX Info: Redefining \] on input line 2951.
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup6
+\symAMSb=\mathgroup7
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.st
+y
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks33
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.
+cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+)
+\Gin@req@height=\dimen169
+\Gin@req@width=\dimen170
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen171
+\lightrulewidth=\dimen172
+\cmidrulewidth=\dimen173
+\belowrulesep=\dimen174
+\belowbottomsep=\dimen175
+\aboverulesep=\dimen176
+\abovetopsep=\dimen177
+\cmidrulesep=\dimen178
+\cmidrulekern=\dimen179
+\defaultaddspace=\dimen180
+\@cmidla=\count308
+\@cmidlb=\count309
+\@aboverulesep=\dimen181
+\@belowrulesep=\dimen182
+\@thisruleclass=\count310
+\@lastruleclass=\count311
+\@thisrulewidth=\dimen183
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.st
+y
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip62
+\multirow@cntb=\count312
+\multirow@dima=\skip63
+\bigstrutjot=\dimen184
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen185
+\captionmargin=\dimen186
+\caption@leftmargin=\dimen187
+\caption@rightmargin=\dimen188
+\caption@width=\dimen189
+\caption@indent=\dimen190
+\caption@parindent=\dimen191
+\caption@hangindent=\dimen192
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count313
+\c@continuedfloat=\count314
+Package caption Info: float package is loaded.
+Package caption Info: longtable package is loaded.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2026/03/07 v6.0 Page Geometry
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count315
+\Gm@cntv=\count316
+\c@Gm@tempcnt=\count317
+\Gm@bindingoffset=\dimen193
+\Gm@wd@mp=\dimen194
+\Gm@odd@mp=\dimen195
+\Gm@even@mp=\dimen196
+\Gm@layoutwidth=\dimen197
+\Gm@layoutheight=\dimen198
+\Gm@layouthoffset=\dimen199
+\Gm@layoutvoffset=\dimen256
+\Gm@dimlist=\toks34
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.st
+y
+Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+Package: titlesec 2025/01/04 v2.17 Sectioning titles
+\ttl@box=\box65
+\beforetitleunit=\skip64
+\aftertitleunit=\skip65
+\ttl@plus=\dimen257
+\ttl@minus=\dimen258
+\ttl@toksa=\toks35
+\titlewidth=\dimen259
+\titlewidthlast=\dimen260
+\titlewidthfirst=\dimen261
+) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2026-08-21 v3.0b parameterised ToC, etc., typesetting
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count318
+)
+Package tocloft Info: The document has section divisions on input line 64.
+\cftparskip=\skip66
+\cftbeforetoctitleskip=\skip67
+\cftaftertoctitleskip=\skip68
+\cftbeforepartskip=\skip69
+\cftpartnumwidth=\skip70
+\cftpartindent=\skip71
+\cftbeforesecskip=\skip72
+\cftsecindent=\skip73
+\cftsecnumwidth=\skip74
+\cftbeforesubsecskip=\skip75
+\cftsubsecindent=\skip76
+\cftsubsecnumwidth=\skip77
+\cftbeforesubsubsecskip=\skip78
+\cftsubsubsecindent=\skip79
+\cftsubsubsecnumwidth=\skip80
+\cftbeforeparaskip=\skip81
+\cftparaindent=\skip82
+\cftparanumwidth=\skip83
+\cftbeforesubparaskip=\skip84
+\cftsubparaindent=\skip85
+\cftsubparanumwidth=\skip86
+\cftbeforeloftitleskip=\skip87
+\cftafterloftitleskip=\skip88
+\cftbeforefigskip=\skip89
+\cftfigindent=\skip90
+\cftfignumwidth=\skip91
+\c@lofdepth=\count319
+\c@lotdepth=\count320
+\cftbeforelottitleskip=\skip92
+\cftafterlottitleskip=\skip93
+\cftbeforetabskip=\skip94
+\cfttabindent=\skip95
+\cfttabnumwidth=\skip96
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.st
+y
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefin
+ekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.
+sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmd
+s.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.
+sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\getti
+tlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.st
+y
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count321
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.
+sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen262
+\Hy@linkcounter=\count322
+\Hy@pagecounter=\count323
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count324
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4195.
+Package hyperref Info: Link nesting OFF on input line 4200.
+Package hyperref Info: Hyper index ON on input line 4203.
+Package hyperref Info: Plain pages OFF on input line 4210.
+Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4462.
+\c@Hy@tempcnt=\count325
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4801.
+\XeTeXLinkMargin=\dimen263
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcal
+c.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count326
+\Field@Width=\dimen264
+\Fld@charsize=\dimen265
+Package hyperref Info: Hyper figures OFF on input line 6078.
+Package hyperref Info: Link nesting OFF on input line 6083.
+Package hyperref Info: Hyper index ON on input line 6086.
+Package hyperref Info: backreferencing OFF on input line 6093.
+Package hyperref Info: Link coloring OFF on input line 6098.
+Package hyperref Info: Link coloring with OCG OFF on input line 6103.
+Package hyperref Info: PDF/A mode OFF on input line 6108.
+\Hy@abspage=\count327
+\c@Item=\count328
+\c@Hfootnote=\count329
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
+\Fld@listcount=\count330
+\c@bookmark@seq@number=\count331
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfi
+lecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\unique
+counter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
+)
+\Hy@SectionHShift=\skip97
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 185.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 29
+5.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pd
+ftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count332
+) (main.aux)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 295.
+LaTeX Font Info:    Trying to load font information for T5+cmr on input line 29
+5.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5cmr.fd
+File: t5cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 295.
+LaTeX Font Info:    ... okay on input line 295.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.m
+kii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count333
+\scratchdimen=\dimen266
+\scratchbox=\box66
+\nofMPsegments=\count334
+\nofMParguments=\count335
+\everyMPshowfont=\toks36
+\MPscratchCnt=\count336
+\MPscratchDim=\dimen267
+\MPnumerator=\count337
+\makeMPintoPDFobject=\count338
+\everyMPtoPDFconversion=\toks37
+)
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-
+base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.
+cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(85.35826pt, 455.24411pt, 56.9055pt)
+* v-part:(T,H,B)=(71.13188pt, 702.78308pt, 71.13188pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=455.24411pt
+* \textheight=702.78308pt
+* \oddsidemargin=13.08827pt
+* \evensidemargin=13.08827pt
+* \topmargin=-38.1381pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package hyperref Info: Link coloring ON on input line 295.
+(main.out) (main.out)
+\@outlinefile=\write3
+\openout3 = `main.out'.
+
+ (cover.tex
+<images/school_logo.png, id=307, 1284.8pt x 500.87125pt>
+File: images/school_logo.png Graphic file (type png)
+<use images/school_logo.png>
+Package pdftex.def Info: images/school_logo.png  used on input line 6.
+(pdftex.def)             Requested size: 182.09486pt x 70.9851pt.
+<images/line.png, id=309, 457.71pt x 4.51688pt>
+File: images/line.png Graphic file (type png)
+<use images/line.png>
+Package pdftex.def Info: images/line.png  used on input line 12.
+(pdftex.def)             Requested size: 318.66948pt x 3.14488pt.
+LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
+ 18.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
+File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
+ 18.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
+File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
+ 18.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
+File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
+ 18.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
+File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
+8.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--35
+[]|\T1/ptm/b/n/12 Capstone Project
+ []
+
+[1
+
+{C:/Users/Lenovo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Len
+ovo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./images/school
+_logo.png> <./images/line.png>]) (table_of_contents.tex (main.toc
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.37 ...9}Start Conversation}{42}{subsection.3.19}
+                                                  % [1] [2])
+\tf@toc=\write4
+\openout4 = `main.toc'.
+
+ [3])
+(sections/1.Overall_Description.tex
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 9
+.
+
+(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+[4]
+Overfull \hbox (0.94278pt too wide) in paragraph at lines 42--43
+\T1/ptm/m/n/12 time fea-tures (mes-sag-ing, no-ti-fi-ca-tions) must prop-a-gate
+ events with min-i-mal de-lay via Socket.io.
+ []
+
+[5] [6]
+Overfull \hbox (12.12244pt too wide) in paragraph at lines 62--63
+[]\T1/ptm/m/n/12 Rich dependency-injection and mod-ule ecosys-tem, match-ing th
+e Controller--Service--Repository
+ []
+
+) (sections/2.System_Architecture_Design.tex [7] [8]
+Overfull \hbox (54.73093pt too wide) in paragraph at lines 26--27
+\T1/ptm/m/n/12 typed HTTP ex-cep-tions (\T1/cmtt/m/n/12 NotFoundException 404\T
+1/ptm/m/n/12 , \T1/cmtt/m/n/12 ForbiddenException 403\T1/ptm/m/n/12 , \T1/cmtt/
+m/n/12 ConflictException
+ []
+
+
+Overfull \hbox (2.43765pt too wide) in alignment at lines 39--45
+ [] [] 
+ []
+
+
+Overfull \hbox (2.43765pt too wide) in alignment at lines 45--48
+ [] [] 
+ []
+
+
+Overfull \hbox (2.43765pt too wide) in alignment at lines 48--79
+ [] [] 
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [9] [10]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 88.
+
+Overfull \hbox (3.06493pt too wide) in paragraph at lines 90--91
+[]\T1/cmtt/m/n/12 packages/shared-type \T1/ptm/m/n/12 --- the sin-gle source of
+ truth for API con-tracts: Zod re-quest/response
+ []
+
+) (sections/3.System_Detailed_Design.tex [11] (sections/kvy/2/sprint1.tex
+<images/sprint1/kvy/classDiagram/View Forum Category List.pdf, id=451, 995.6396
+8pt x 670.42468pt>
+File: images/sprint1/kvy/classDiagram/View Forum Category List.pdf Graphic file
+ (type pdf)
+<use images/sprint1/kvy/classDiagram/View Forum Category List.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Forum Category Li
+st.pdf  used on input line 12.
+(pdftex.def)             Requested size: 418.81908pt x 282.01633pt.
+<images/sprint1/kvy/sequences/ViewForumCategories.pdf, id=452, 1222.5675pt x 76
+9.91638pt>
+File: images/sprint1/kvy/sequences/ViewForumCategories.pdf Graphic file (type p
+df)
+<use images/sprint1/kvy/sequences/ViewForumCategories.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/ViewForumCategories.pdf  
+used on input line 16.
+(pdftex.def)             Requested size: 355.07648pt x 223.61072pt.
+
+[12 <./images/sprint1/kvy/classDiagram/View Forum Category List.pdf>]
+<images/sprint1/kvy/classDiagram/View Forum Category Detail.pdf, id=474, 995.63
+968pt x 739.80388pt>
+File: images/sprint1/kvy/classDiagram/View Forum Category Detail.pdf Graphic fi
+le (type pdf)
+<use images/sprint1/kvy/classDiagram/View Forum Category Detail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Forum Category De
+tail.pdf  used on input line 23.
+(pdftex.def)             Requested size: 418.81908pt x 311.20091pt.
+<images/sprint1/kvy/sequences/ViewForumCategoryDetail.pdf, id=475, 1221.60382pt
+ x 788.9475pt>
+File: images/sprint1/kvy/sequences/ViewForumCategoryDetail.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/ViewForumCategoryDetail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/ViewForumCategoryDetail.p
+df  used on input line 27.
+(pdftex.def)             Requested size: 355.0762pt x 229.31859pt.
+ [13 <./images/sprint1/kvy/sequences/ViewForumCategories.pdf> <./images/sprint1
+/kvy/classDiagram/View Forum Category Detail.pdf>]
+<images/sprint1/kvy/classDiagram/View Post List.pdf, id=511, 1026.9567pt x 839.
+05469pt>
+File: images/sprint1/kvy/classDiagram/View Post List.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/View Post List.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Post List.pdf  us
+ed on input line 34.
+(pdftex.def)             Requested size: 418.82982pt x 342.19664pt.
+ [14 <./images/sprint1/kvy/sequences/ViewForumCategoryDetail.pdf>]
+<images/sprint1/kvy/sequences/PostList.pdf, id=531, 1267.85669pt x 1237.7442pt>
+
+File: images/sprint1/kvy/sequences/PostList.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/PostList.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/PostList.pdf  used on inp
+ut line 38.
+(pdftex.def)             Requested size: 355.07484pt x 346.64156pt.
+ [15 <./images/sprint1/kvy/classDiagram/View Post List.pdf>]
+<images/sprint1/kvy/classDiagram/View Post Detail.pdf, id=552, 1034.90631pt x 8
+81.21219pt>
+File: images/sprint1/kvy/classDiagram/View Post Detail.pdf Graphic file (type p
+df)
+<use images/sprint1/kvy/classDiagram/View Post Detail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Post Detail.pdf  
+used on input line 45.
+(pdftex.def)             Requested size: 418.83472pt x 356.63351pt.
+ [16 <./images/sprint1/kvy/sequences/PostList.pdf>]
+<images/sprint1/kvy/sequences/PostDetail.pdf, id=572, 1267.85669pt x 794.00638p
+t>
+File: images/sprint1/kvy/sequences/PostDetail.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/PostDetail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/PostDetail.pdf  used on i
+nput line 49.
+(pdftex.def)             Requested size: 355.07484pt x 222.36873pt.
+<images/sprint1/kvy/classDiagram/Create Post.pdf, id=573, 1243.7667pt x 921.442
+5pt>
+File: images/sprint1/kvy/classDiagram/Create Post.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Create Post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Create Post.pdf  used 
+on input line 56.
+(pdftex.def)             Requested size: 418.81372pt x 310.27745pt.
+ [17 <./images/sprint1/kvy/classDiagram/View Post Detail.pdf> <./images/sprint1
+/kvy/sequences/PostDetail.pdf>]
+<images/sprint1/kvy/sequences/CreatePost.pdf, id=609, 1406.37419pt x 1627.03856
+pt>
+File: images/sprint1/kvy/sequences/CreatePost.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/CreatePost.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/CreatePost.pdf  used on i
+nput line 60.
+(pdftex.def)             Requested size: 355.09059pt x 410.80537pt.
+ [18 <./images/sprint1/kvy/classDiagram/Create Post.pdf>]
+<images/sprint1/kvy/classDiagram/Update Post.pdf, id=631, 1146.20212pt x 836.16
+388pt>
+File: images/sprint1/kvy/classDiagram/Update Post.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Update Post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Update Post.pdf  used 
+on input line 67.
+(pdftex.def)             Requested size: 418.82378pt x 305.53539pt.
+ [19 <./images/sprint1/kvy/sequences/CreatePost.pdf>]
+<images/sprint1/kvy/sequences/EditPost.pdf, id=656, 1244.73026pt x 1057.0692pt>
+
+File: images/sprint1/kvy/sequences/EditPost.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/EditPost.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/EditPost.pdf  used on inp
+ut line 71.
+(pdftex.def)             Requested size: 355.07469pt x 301.54205pt.
+ [20 <./images/sprint1/kvy/classDiagram/Update Post.pdf>]
+<images/sprint1/kvy/classDiagram/Delete Post.pdf, id=677, 1116.08961pt x 779.79
+33pt>
+File: images/sprint1/kvy/classDiagram/Delete Post.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Delete Post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Delete Post.pdf  used 
+on input line 78.
+(pdftex.def)             Requested size: 418.8221pt x 292.62404pt.
+ [21 <./images/sprint1/kvy/sequences/EditPost.pdf>]
+<images/sprint1/kvy/sequences/DeletePost.pdf, id=702, 1253.64355pt x 1124.28026
+pt>
+File: images/sprint1/kvy/sequences/DeletePost.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/DeletePost.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/DeletePost.pdf  used on i
+nput line 82.
+(pdftex.def)             Requested size: 355.09229pt x 318.45036pt.
+
+[22 <./images/sprint1/kvy/classDiagram/Delete Post.pdf>]
+<images/sprint1/kvy/classDiagram/Like Post.pdf, id=723, 1138.2525pt x 802.91968
+pt>
+File: images/sprint1/kvy/classDiagram/Like Post.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Like Post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Like Post.pdf  used on
+ input line 89.
+(pdftex.def)             Requested size: 418.81949pt x 295.43391pt.
+ [23 <./images/sprint1/kvy/sequences/DeletePost.pdf>]
+<images/sprint1/kvy/sequences/LikePost.pdf, id=748, 1481.535pt x 1568.7408pt>
+File: images/sprint1/kvy/sequences/LikePost.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/LikePost.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/LikePost.pdf  used on inp
+ut line 93.
+(pdftex.def)             Requested size: 355.07832pt x 375.97887pt.
+ [24 <./images/sprint1/kvy/classDiagram/Like Post.pdf>]
+<images/sprint1/kvy/classDiagram/Unlike Post.pdf, id=770, 1123.3167pt x 783.888
+57pt>
+File: images/sprint1/kvy/classDiagram/Unlike Post.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Unlike Post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Unlike Post.pdf  used 
+on input line 100.
+(pdftex.def)             Requested size: 418.80879pt x 292.259pt.
+ [25 <./images/sprint1/kvy/sequences/LikePost.pdf>]
+<images/sprint1/kvy/sequences/UnlikePost.pdf, id=795, 1481.535pt x 1567.77711pt
+>
+File: images/sprint1/kvy/sequences/UnlikePost.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/UnlikePost.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UnlikePost.pdf  used on i
+nput line 104.
+(pdftex.def)             Requested size: 355.07832pt x 375.74791pt.
+ [26 <./images/sprint1/kvy/classDiagram/Unlike Post.pdf>]
+<images/sprint1/kvy/classDiagram/View Post Likes.pdf, id=816, 1063.09169pt x 69
+7.64638pt>
+File: images/sprint1/kvy/classDiagram/View Post Likes.pdf Graphic file (type pd
+f)
+<use images/sprint1/kvy/classDiagram/View Post Likes.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Post Likes.pdf  u
+sed on input line 111.
+(pdftex.def)             Requested size: 418.82167pt x 274.84874pt.
+ [27 <./images/sprint1/kvy/sequences/UnlikePost.pdf>]
+<images/sprint1/kvy/sequences/ViewLikePostDetail.pdf, id=841, 1221.60382pt x 64
+2.48026pt>
+File: images/sprint1/kvy/sequences/ViewLikePostDetail.pdf Graphic file (type pd
+f)
+<use images/sprint1/kvy/sequences/ViewLikePostDetail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/ViewLikePostDetail.pdf  u
+sed on input line 115.
+(pdftex.def)             Requested size: 355.0762pt x 186.74585pt.
+<images/sprint1/kvy/classDiagram/View Post Comment.pdf, id=842, 1161.37881pt x 
+794.00638pt>
+File: images/sprint1/kvy/classDiagram/View Post Comment.pdf Graphic file (type 
+pdf)
+<use images/sprint1/kvy/classDiagram/View Post Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/View Post Comment.pdf 
+ used on input line 122.
+(pdftex.def)             Requested size: 418.82263pt x 286.3388pt.
+ [28 <./images/sprint1/kvy/classDiagram/View Post Likes.pdf> <./images/sprint1/
+kvy/sequences/ViewLikePostDetail.pdf>]
+<images/sprint1/kvy/sequences/PostComments.pdf, id=878, 1221.60382pt x 1199.441
+06pt>
+File: images/sprint1/kvy/sequences/PostComments.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/PostComments.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/PostComments.pdf  used on
+ input line 126.
+(pdftex.def)             Requested size: 355.0762pt x 348.63428pt.
+ [29 <./images/sprint1/kvy/classDiagram/View Post Comment.pdf>]
+<images/sprint1/kvy/classDiagram/Create Comment.pdf, id=899, 1296.76462pt x 717
+.64107pt>
+File: images/sprint1/kvy/classDiagram/Create Comment.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/Create Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Create Comment.pdf  us
+ed on input line 133.
+(pdftex.def)             Requested size: 418.81184pt x 231.77419pt.
+ [30 <./images/sprint1/kvy/sequences/PostComments.pdf>]
+<images/sprint1/kvy/sequences/AddComment.pdf, id=920, 1406.37419pt x 1206.42712
+pt>
+File: images/sprint1/kvy/sequences/AddComment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/AddComment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/AddComment.pdf  used on i
+nput line 137.
+(pdftex.def)             Requested size: 355.09059pt x 304.60664pt.
+<images/sprint1/kvy/classDiagram/Update Comment.pdf, id=921, 1303.9917pt x 699.
+57356pt>
+File: images/sprint1/kvy/classDiagram/Update Comment.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/Update Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Update Comment.pdf  us
+ed on input line 144.
+(pdftex.def)             Requested size: 418.81796pt x 224.69005pt.
+ [31 <./images/sprint1/kvy/classDiagram/Create Comment.pdf> <./images/sprint1/k
+vy/sequences/AddComment.pdf>]
+<images/sprint1/kvy/sequences/EditComment.pdf, id=962, 1244.73026pt x 1304.9552
+6pt>
+File: images/sprint1/kvy/sequences/EditComment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/EditComment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/EditComment.pdf  used on 
+input line 148.
+(pdftex.def)             Requested size: 355.07469pt x 372.25461pt.
+ [32 <./images/sprint1/kvy/classDiagram/Update Comment.pdf>]
+<images/sprint1/kvy/classDiagram/Delete Comment.pdf, id=983, 1318.9275pt x 699.
+57356pt>
+File: images/sprint1/kvy/classDiagram/Delete Comment.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/Delete Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Delete Comment.pdf  us
+ed on input line 155.
+(pdftex.def)             Requested size: 418.82527pt x 222.14949pt.
+ [33 <./images/sprint1/kvy/sequences/EditComment.pdf>]
+<images/sprint1/kvy/sequences/DeleteComment.pdf, id=1008, 1253.64355pt x 1304.9
+5526pt>
+File: images/sprint1/kvy/sequences/DeleteComment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/DeleteComment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/DeleteComment.pdf  used o
+n input line 159.
+(pdftex.def)             Requested size: 355.09229pt x 369.62624pt.
+<images/sprint1/kvy/classDiagram/Like Comment.pdf, id=1009, 1334.1042pt x 749.9
+2169pt>
+File: images/sprint1/kvy/classDiagram/Like Comment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/classDiagram/Like Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Like Comment.pdf  used
+ on input line 166.
+(pdftex.def)             Requested size: 418.82007pt x 235.42558pt.
+
+[34 <./images/sprint1/kvy/classDiagram/Delete Comment.pdf> <./images/sprint1/kv
+y/sequences/DeleteComment.pdf>]
+<images/sprint1/kvy/sequences/LikeComment.pdf, id=1050, 1421.31pt x 1763.62881p
+t>
+File: images/sprint1/kvy/sequences/LikeComment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/LikeComment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/LikeComment.pdf  used on 
+input line 170.
+(pdftex.def)             Requested size: 355.08807pt x 440.6101pt.
+ [35 <./images/sprint1/kvy/classDiagram/Like Comment.pdf>]
+<images/sprint1/kvy/classDiagram/Unlike Comment.pdf, id=1071, 1326.87712pt x 73
+0.64969pt>
+File: images/sprint1/kvy/classDiagram/Unlike Comment.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/Unlike Comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Unlike Comment.pdf  us
+ed on input line 177.
+(pdftex.def)             Requested size: 418.81886pt x 230.62411pt.
+ [36 <./images/sprint1/kvy/sequences/LikeComment.pdf>]
+<images/sprint1/kvy/sequences/UnlikeComment.pdf, id=1097, 1459.37212pt x 1575.9
+6776pt>
+File: images/sprint1/kvy/sequences/UnlikeComment.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/UnlikeComment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UnlikeComment.pdf  used o
+n input line 181.
+(pdftex.def)             Requested size: 355.08867pt x 383.45825pt.
+ [37 <./images/sprint1/kvy/classDiagram/Unlike Comment.pdf>]
+<images/sprint1/kvy/classDiagram/Report Content.pdf, id=1118, 1529.715pt x 881.
+21219pt>
+File: images/sprint1/kvy/classDiagram/Report Content.pdf Graphic file (type pdf
+)
+<use images/sprint1/kvy/classDiagram/Report Content.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/Report Content.pdf  us
+ed on input line 188.
+(pdftex.def)             Requested size: 418.81728pt x 241.26512pt.
+ [38 <./images/sprint1/kvy/sequences/UnlikeComment.pdf>]
+<images/sprint1/kvy/sequences/ReportContent.pdf, id=1143, 1625.11131pt x 3428.7
+2961pt>
+File: images/sprint1/kvy/sequences/ReportContent.pdf Graphic file (type pdf)
+<use images/sprint1/kvy/sequences/ReportContent.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/ReportContent.pdf  used o
+n input line 192.
+(pdftex.def)             Requested size: 299.77298pt x 632.47392pt.
+ [39 <./images/sprint1/kvy/classDiagram/Report Content.pdf>]) (sections/kvy/2/s
+print2.tex
+<images/sprint2/kvy/classDiagram/View Conversation List.pdf, id=1164, 1091.9996
+2pt x 1111.2717pt>
+File: images/sprint2/kvy/classDiagram/View Conversation List.pdf Graphic file (
+type pdf)
+<use images/sprint2/kvy/classDiagram/View Conversation List.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/View Conversation List
+.pdf  used on input line 13.
+(pdftex.def)             Requested size: 418.82988pt x 426.22157pt.
+ [40 <./images/sprint1/kvy/sequences/ReportContent.pdf>]
+<images/sprint2/kvy/sequences/ViewConversationList.pdf, id=1189, 1197.51381pt x
+ 732.81775pt>
+File: images/sprint2/kvy/sequences/ViewConversationList.pdf Graphic file (type 
+pdf)
+<use images/sprint2/kvy/sequences/ViewConversationList.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/ViewConversationList.pdf 
+ used on input line 17.
+(pdftex.def)             Requested size: 355.09077pt x 217.29755pt.
+ [41 <./images/sprint2/kvy/classDiagram/View Conversation List.pdf>]
+<images/sprint2/kvy/classDiagram/Start Conversation.pdf, id=1209, 1091.99962pt 
+x 992.74887pt>
+File: images/sprint2/kvy/classDiagram/Start Conversation.pdf Graphic file (type
+ pdf)
+<use images/sprint2/kvy/classDiagram/Start Conversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Start Conversation.pdf
+  used on input line 24.
+(pdftex.def)             Requested size: 418.82988pt x 380.76285pt.
+
+[42 <./images/sprint2/kvy/sequences/ViewConversationList.pdf>]
+<images/sprint2/kvy/sequences/StartConversation.pdf, id=1235, 1244.73026pt x 10
+87.1817pt>
+File: images/sprint2/kvy/sequences/StartConversation.pdf Graphic file (type pdf
+)
+<use images/sprint2/kvy/sequences/StartConversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/StartConversation.pdf  us
+ed on input line 28.
+(pdftex.def)             Requested size: 355.07469pt x 310.13202pt.
+ [43 <./images/sprint2/kvy/classDiagram/Start Conversation.pdf>]
+<images/sprint2/kvy/classDiagram/View Conversation Detail.pdf, id=1255, 1091.99
+962pt x 1228.59pt>
+File: images/sprint2/kvy/classDiagram/View Conversation Detail.pdf Graphic file
+ (type pdf)
+<use images/sprint2/kvy/classDiagram/View Conversation Detail.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/View Conversation Deta
+il.pdf  used on input line 35.
+(pdftex.def)             Requested size: 418.82988pt x 471.21829pt.
+ [44 <./images/sprint2/kvy/sequences/StartConversation.pdf>]
+<images/sprint2/kvy/sequences/ConversationDetail.pdf, id=1280, 1597.88962pt x 1
+651.12856pt>
+File: images/sprint2/kvy/sequences/ConversationDetail.pdf Graphic file (type pd
+f)
+<use images/sprint2/kvy/sequences/ConversationDetail.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/ConversationDetail.pdf  u
+sed on input line 39.
+(pdftex.def)             Requested size: 355.07217pt x 366.90256pt.
+ [45 <./images/sprint2/kvy/classDiagram/View Conversation Detail.pdf>]
+<images/sprint2/kvy/classDiagram/Send Message.pdf, id=1300, 1091.99962pt x 1267
+.85669pt>
+File: images/sprint2/kvy/classDiagram/Send Message.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/classDiagram/Send Message.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Send Message.pdf  used
+ on input line 46.
+(pdftex.def)             Requested size: 418.82988pt x 486.27881pt.
+ [46 <./images/sprint2/kvy/sequences/ConversationDetail.pdf>]
+<images/sprint2/kvy/sequences/SendMessage.pdf, id=1320, 1663.17355pt x 2456.216
+45pt>
+File: images/sprint2/kvy/sequences/SendMessage.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/sequences/SendMessage.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/SendMessage.pdf  used on 
+input line 50.
+(pdftex.def)             Requested size: 355.0883pt x 524.40334pt.
+ [47 <./images/sprint2/kvy/classDiagram/Send Message.pdf>]
+<images/sprint2/kvy/classDiagram/Mark Message as Read.pdf, id=1340, 1091.99962p
+t x 1072.005pt>
+File: images/sprint2/kvy/classDiagram/Mark Message as Read.pdf Graphic file (ty
+pe pdf)
+<use images/sprint2/kvy/classDiagram/Mark Message as Read.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Mark Message as Read.p
+df  used on input line 57.
+(pdftex.def)             Requested size: 418.82988pt x 411.16107pt.
+ [48 <./images/sprint2/kvy/sequences/SendMessage.pdf>]
+<images/sprint2/kvy/sequences/MarkConversationAsRead.pdf, id=1366, 1307.84605pt
+ x 1515.74275pt>
+File: images/sprint2/kvy/sequences/MarkConversationAsRead.pdf Graphic file (typ
+e pdf)
+<use images/sprint2/kvy/sequences/MarkConversationAsRead.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/MarkConversationAsRead.pd
+f  used on input line 61.
+(pdftex.def)             Requested size: 355.07886pt x 411.5226pt.
+ [49 <./images/sprint2/kvy/classDiagram/Mark Message as Read.pdf>]
+<images/sprint2/kvy/classDiagram/Delete-Recall Message.pdf, id=1386, 1091.99962
+pt x 1073.93213pt>
+File: images/sprint2/kvy/classDiagram/Delete-Recall Message.pdf Graphic file (t
+ype pdf)
+<use images/sprint2/kvy/classDiagram/Delete-Recall Message.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Delete-Recall Message.
+pdf  used on input line 68.
+(pdftex.def)             Requested size: 418.82988pt x 411.9002pt.
+ [50 <./images/sprint2/kvy/sequences/MarkConversationAsRead.pdf>]
+<images/sprint2/kvy/sequences/DeleteMessage.pdf, id=1406, 1325.91356pt x 1251.7
+1632pt>
+File: images/sprint2/kvy/sequences/DeleteMessage.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/sequences/DeleteMessage.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/DeleteMessage.pdf  used o
+n input line 72.
+(pdftex.def)             Requested size: 355.08807pt x 335.21758pt.
+ [51 <./images/sprint2/kvy/classDiagram/Delete-Recall Message.pdf>]
+<images/sprint2/kvy/classDiagram/Pin-Unpin Conversation.pdf, id=1426, 1091.9996
+2pt x 932.52388pt>
+File: images/sprint2/kvy/classDiagram/Pin-Unpin Conversation.pdf Graphic file (
+type pdf)
+<use images/sprint2/kvy/classDiagram/Pin-Unpin Conversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Pin-Unpin Conversation
+.pdf  used on input line 79.
+(pdftex.def)             Requested size: 418.82988pt x 357.66393pt.
+
+[52 <./images/sprint2/kvy/sequences/DeleteMessage.pdf>]
+<images/sprint2/kvy/sequences/PinUnpinMessage.pdf, id=1451, 1244.73026pt x 1161
+.37881pt>
+File: images/sprint2/kvy/sequences/PinUnpinMessage.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/sequences/PinUnpinMessage.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/PinUnpinMessage.pdf  used
+ on input line 83.
+(pdftex.def)             Requested size: 355.07469pt x 331.29767pt.
+ [53 <./images/sprint2/kvy/classDiagram/Pin-Unpin Conversation.pdf>]
+<images/sprint2/kvy/classDiagram/Send File.pdf, id=1471, 1091.99962pt x 1054.90
+106pt>
+File: images/sprint2/kvy/classDiagram/Send File.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/classDiagram/Send File.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/Send File.pdf  used on
+ input line 90.
+(pdftex.def)             Requested size: 418.82988pt x 404.60095pt.
+ [54 <./images/sprint2/kvy/sequences/PinUnpinMessage.pdf>]
+<images/sprint2/kvy/sequences/SendFile.pdf, id=1497, 1745.56131pt x 1636.19275p
+t>
+File: images/sprint2/kvy/sequences/SendFile.pdf Graphic file (type pdf)
+<use images/sprint2/kvy/sequences/SendFile.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/SendFile.pdf  used on inp
+ut line 94.
+(pdftex.def)             Requested size: 355.07234pt x 332.8252pt.
+) [55 <./images/sprint2/kvy/classDiagram/Send File.pdf>] (sections/kvy/2/sprint
+3.tex
+<images/sprint3/kvy/classDiagram/View Moderation Queue.pdf, id=1517, 1099.2267p
+t x 1030.81107pt>
+File: images/sprint3/kvy/classDiagram/View Moderation Queue.pdf Graphic file (t
+ype pdf)
+<use images/sprint3/kvy/classDiagram/View Moderation Queue.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View Moderation Queue.
+pdf  used on input line 12.
+(pdftex.def)             Requested size: 418.8175pt x 392.75038pt.
+ [56 <./images/sprint2/kvy/sequences/SendFile.pdf>]
+<images/sprint3/kvy/sequences/ViewModerationQueue.pdf, id=1537, 1137.28882pt x 
+760.76218pt>
+File: images/sprint3/kvy/sequences/ViewModerationQueue.pdf Graphic file (type p
+df)
+<use images/sprint3/kvy/sequences/ViewModerationQueue.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ViewModerationQueue.pdf  
+used on input line 16.
+(pdftex.def)             Requested size: 355.08952pt x 237.52864pt.
+[57 <./images/sprint3/kvy/classDiagram/View Moderation Queue.pdf>]
+<images/sprint3/kvy/classDiagram/View Moderation Item Detail.pdf, id=1557, 1099
+.2267pt x 1049.84212pt>
+File: images/sprint3/kvy/classDiagram/View Moderation Item Detail.pdf Graphic f
+ile (type pdf)
+<use images/sprint3/kvy/classDiagram/View Moderation Item Detail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View Moderation Item D
+etail.pdf  used on input line 23.
+(pdftex.def)             Requested size: 418.8175pt x 400.00142pt.
+ [58 <./images/sprint3/kvy/sequences/ViewModerationQueue.pdf>]
+<images/sprint3/kvy/sequences/ModerationItemDetail.pdf, id=1577, 1244.73026pt x
+ 589.24138pt>
+File: images/sprint3/kvy/sequences/ModerationItemDetail.pdf Graphic file (type 
+pdf)
+<use images/sprint3/kvy/sequences/ModerationItemDetail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ModerationItemDetail.pdf 
+ used on input line 27.
+(pdftex.def)             Requested size: 355.07469pt x 168.08838pt.
+<images/sprint3/kvy/classDiagram/Resolve Moderation Item.pdf, id=1578, 1099.226
+7pt x 1012.74356pt>
+File: images/sprint3/kvy/classDiagram/Resolve Moderation Item.pdf Graphic file 
+(type pdf)
+<use images/sprint3/kvy/classDiagram/Resolve Moderation Item.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/Resolve Moderation Ite
+m.pdf  used on input line 34.
+(pdftex.def)             Requested size: 418.8175pt x 385.86646pt.
+ [59 <./images/sprint3/kvy/classDiagram/View Moderation Item Detail.pdf> <./ima
+ges/sprint3/kvy/sequences/ModerationItemDetail.pdf>]
+<images/sprint3/kvy/sequences/ResolveModeration.pdf, id=1613, 1244.73026pt x 11
+01.15382pt>
+File: images/sprint3/kvy/sequences/ResolveModeration.pdf Graphic file (type pdf
+)
+<use images/sprint3/kvy/sequences/ResolveModeration.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ResolveModeration.pdf  us
+ed on input line 38.
+(pdftex.def)             Requested size: 355.07469pt x 314.11774pt.
+ [60 <./images/sprint3/kvy/classDiagram/Resolve Moderation Item.pdf>]
+<images/sprint3/kvy/classDiagram/View ID Verification Request List.pdf, id=1634
+, 1257.73882pt x 1012.74356pt>
+File: images/sprint3/kvy/classDiagram/View ID Verification Request List.pdf Gra
+phic file (type pdf)
+<use images/sprint3/kvy/classDiagram/View ID Verification Request List.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View ID Verification R
+equest List.pdf  used on input line 45.
+(pdftex.def)             Requested size: 418.81664pt x 337.23523pt.
+ [61 <./images/sprint3/kvy/sequences/ResolveModeration.pdf>]
+<images/sprint3/kvy/sequences/ViewIDVerification.pdf, id=1659, 1174.3875pt x 76
+2.93025pt>
+File: images/sprint3/kvy/sequences/ViewIDVerification.pdf Graphic file (type pd
+f)
+<use images/sprint3/kvy/sequences/ViewIDVerification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ViewIDVerification.pdf  u
+sed on input line 49.
+(pdftex.def)             Requested size: 355.0786pt x 230.67361pt.
+<images/sprint3/kvy/classDiagram/View ID Verification Request Detail.pdf, id=16
+60, 1257.73882pt x 1130.30275pt>
+File: images/sprint3/kvy/classDiagram/View ID Verification Request Detail.pdf G
+raphic file (type pdf)
+<use images/sprint3/kvy/classDiagram/View ID Verification Request Detail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View ID Verification R
+equest Detail.pdf  used on input line 56.
+(pdftex.def)             Requested size: 418.81664pt x 376.38147pt.
+
+[62 <./images/sprint3/kvy/classDiagram/View ID Verification Request List.pdf> <
+./images/sprint3/kvy/sequences/ViewIDVerification.pdf>]
+<images/sprint3/kvy/sequences/IDVerificationDetail.pdf, id=1695, 1323.98631pt x
+ 1180.41pt>
+File: images/sprint3/kvy/sequences/IDVerificationDetail.pdf Graphic file (type 
+pdf)
+<use images/sprint3/kvy/sequences/IDVerificationDetail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/IDVerificationDetail.pdf 
+ used on input line 60.
+(pdftex.def)             Requested size: 355.077pt x 316.57158pt.
+ [63 <./images/sprint3/kvy/classDiagram/View ID Verification Request Detail.pdf
+>]
+<images/sprint3/kvy/classDiagram/Approve ID Verification.pdf, id=1715, 1257.738
+82pt x 1148.37025pt>
+File: images/sprint3/kvy/classDiagram/Approve ID Verification.pdf Graphic file 
+(type pdf)
+<use images/sprint3/kvy/classDiagram/Approve ID Verification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/Approve ID Verificatio
+n.pdf  used on input line 67.
+(pdftex.def)             Requested size: 418.81664pt x 382.39781pt.
+ [64 <./images/sprint3/kvy/sequences/IDVerificationDetail.pdf>]
+<images/sprint3/kvy/sequences/ApprovedIDVerification.pdf, id=1740, 1560.79106pt
+ x 1492.61632pt>
+File: images/sprint3/kvy/sequences/ApprovedIDVerification.pdf Graphic file (typ
+e pdf)
+<use images/sprint3/kvy/sequences/ApprovedIDVerification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ApprovedIDVerification.pd
+f  used on input line 71.
+(pdftex.def)             Requested size: 355.06862pt x 339.55936pt.
+ [65 <./images/sprint3/kvy/classDiagram/Approve ID Verification.pdf>]
+<images/sprint3/kvy/classDiagram/Reject ID Verification.pdf, id=1760, 1257.7388
+2pt x 1148.37025pt>
+File: images/sprint3/kvy/classDiagram/Reject ID Verification.pdf Graphic file (
+type pdf)
+<use images/sprint3/kvy/classDiagram/Reject ID Verification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/Reject ID Verification
+.pdf  used on input line 78.
+(pdftex.def)             Requested size: 418.81664pt x 382.39781pt.
+ [66 <./images/sprint3/kvy/sequences/ApprovedIDVerification.pdf>]
+<images/sprint3/kvy/sequences/RejectIDVerification.pdf, id=1786, 1600.05775pt x
+ 1492.61632pt>
+File: images/sprint3/kvy/sequences/RejectIDVerification.pdf Graphic file (type 
+pdf)
+<use images/sprint3/kvy/sequences/RejectIDVerification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/RejectIDVerification.pdf 
+ used on input line 82.
+(pdftex.def)             Requested size: 355.09007pt x 331.24632pt.
+ [67 <./images/sprint3/kvy/classDiagram/Reject ID Verification.pdf>]
+<images/sprint3/kvy/classDiagram/View Deleted Posts-Comments List.pdf, id=1806,
+ 1099.2267pt x 971.54968pt>
+File: images/sprint3/kvy/classDiagram/View Deleted Posts-Comments List.pdf Grap
+hic file (type pdf)
+<use images/sprint3/kvy/classDiagram/View Deleted Posts-Comments List.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View Deleted Posts-Com
+ments List.pdf  used on input line 89.
+(pdftex.def)             Requested size: 418.8175pt x 370.17114pt.
+ [68 <./images/sprint3/kvy/sequences/RejectIDVerification.pdf>]
+<images/sprint3/kvy/sequences/ViewDeletedPostOrComment-Page-1.pdf, id=1831, 144
+3.47276pt x 1311.94131pt>
+File: images/sprint3/kvy/sequences/ViewDeletedPostOrComment-Page-1.pdf Graphic 
+file (type pdf)
+<use images/sprint3/kvy/sequences/ViewDeletedPostOrComment-Page-1.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ViewDeletedPostOrComment-
+Page-1.pdf  used on input line 93.
+(pdftex.def)             Requested size: 355.07457pt x 322.71964pt.
+ [69 <./images/sprint3/kvy/classDiagram/View Deleted Posts-Comments List.pdf>]
+<images/sprint3/kvy/classDiagram/View Deleted Posts-Comments Detail.pdf, id=185
+1, 1099.2267pt x 1010.81638pt>
+File: images/sprint3/kvy/classDiagram/View Deleted Posts-Comments Detail.pdf Gr
+aphic file (type pdf)
+<use images/sprint3/kvy/classDiagram/View Deleted Posts-Comments Detail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/View Deleted Posts-Com
+ments Detail.pdf  used on input line 100.
+(pdftex.def)             Requested size: 418.8175pt x 385.13219pt.
+ [70 <./images/sprint3/kvy/sequences/ViewDeletedPostOrComment-Page-1.pdf>]
+<images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentDetai.pdf, id=1871, 1223.
+53107pt x 1085.97713pt>
+File: images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentDetai.pdf Graphic fi
+le (type pdf)
+<use images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentDetai.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentD
+etai.pdf  used on input line 104.
+(pdftex.def)             Requested size: 355.09497pt x 315.17386pt.
+ [71 <./images/sprint3/kvy/classDiagram/View Deleted Posts-Comments Detail.pdf>
+]
+<images/sprint3/kvy/classDiagram/Restore Deleted Posts-Comments.pdf, id=1891, 1
+099.2267pt x 1012.74356pt>
+File: images/sprint3/kvy/classDiagram/Restore Deleted Posts-Comments.pdf Graphi
+c file (type pdf)
+<use images/sprint3/kvy/classDiagram/Restore Deleted Posts-Comments.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/Restore Deleted Posts-
+Comments.pdf  used on input line 111.
+(pdftex.def)             Requested size: 418.8175pt x 385.86646pt.
+ [72 <./images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentDetai.pdf>]
+<images/sprint3/kvy/sequences/RestorePostOrComment.pdf, id=1912, 1485.63025pt x
+ 1763.62881pt>
+File: images/sprint3/kvy/sequences/RestorePostOrComment.pdf Graphic file (type 
+pdf)
+<use images/sprint3/kvy/sequences/RestorePostOrComment.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/RestorePostOrComment.pdf 
+ used on input line 115.
+(pdftex.def)             Requested size: 355.08507pt x 421.53036pt.
+) [73 <./images/sprint3/kvy/classDiagram/Restore Deleted Posts-Comments.pdf>])
+(sections/4.Class_Specification.tex (sections/kvy/4/sprint1.tex [74 <./images/s
+print3/kvy/sequences/RestorePostOrComment.pdf>]
+ignored error: Infinite glue shrinkage found in box being split [75]
+ignored error: Infinite glue shrinkage found in box being split [76]
+ignored error: Infinite glue shrinkage found in box being split [77]
+ignored error: Infinite glue shrinkage found in box being split [78]
+ignored error: Infinite glue shrinkage found in box being split [79]
+ignored error: Infinite glue shrinkage found in box being split [80]
+ignored error: Infinite glue shrinkage found in box being split [81]
+ignored error: Infinite glue shrinkage found in box being split [82]
+ignored error: Infinite glue shrinkage found in box being split [83] [84]
+[85] [86] [87]
+ignored error: Infinite glue shrinkage found in box being split [88] [89]
+ignored error: Infinite glue shrinkage found in box being split [90] [91]
+ignored error: Infinite glue shrinkage found in box being split [92] [93]
+ignored error: Infinite glue shrinkage found in box being split [94]
+ignored error: Infinite glue shrinkage found in box being split [95] [96]
+ignored error: Infinite glue shrinkage found in box being split [97] [98]
+ignored error: Infinite glue shrinkage found in box being split [99]
+ignored error: Infinite glue shrinkage found in box being split [100])
+(sections/kvy/4/sprint2.tex
+ignored error: Infinite glue shrinkage found in box being split [101]
+ignored error: Infinite glue shrinkage found in box being split [102] [103]
+ignored error: Infinite glue shrinkage found in box being split [104]
+ignored error: Infinite glue shrinkage found in box being split [105]
+ignored error: Infinite glue shrinkage found in box being split [106]
+ignored error: Infinite glue shrinkage found in box being split [107]
+ignored error: Infinite glue shrinkage found in box being split [108] [109]
+ignored error: Infinite glue shrinkage found in box being split [110]
+ignored error: Infinite glue shrinkage found in box being split [111])
+(sections/kvy/4/sprint3.tex
+ignored error: Infinite glue shrinkage found in box being split [112]
+ignored error: Infinite glue shrinkage found in box being split [113]
+ignored error: Infinite glue shrinkage found in box being split [114]
+ignored error: Infinite glue shrinkage found in box being split [115] [116]
+ignored error: Infinite glue shrinkage found in box being split [117]
+ignored error: Infinite glue shrinkage found in box being split [118]
+ignored error: Infinite glue shrinkage found in box being split [119] [120]
+ignored error: Infinite glue shrinkage found in box being split [121]
+ignored error: Infinite glue shrinkage found in box being split [122]
+ignored error: Infinite glue shrinkage found in box being split [123]
+ignored error: Infinite glue shrinkage found in box being split [124] [125]
+ignored error: Infinite glue shrinkage found in box being split [126] [127]
+ignored error: Infinite glue shrinkage found in box being split [128]))
+[129] (main.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 58ABB1D0C2E7EE8D6D415971787A071E;13172.
+ ) 
+Here is how much of TeX's memory you used:
+ 16932 strings out of 467871
+ 296506 string characters out of 5417892
+ 728351 words of memory out of 5000000
+ 45142 multiletter control sequences out of 15000+600000
+ 672720 words of font info for 95 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 75i,10n,83p,962b,681s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ect
+t1095.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi
+600\ectt1200.pk><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/
+type1/urw/times/utmb8a.pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts
+/type1/urw/times/utmr8a.pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/font
+s/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (130 pages, 5457337 bytes).
+PDF statistics:
+ 2492 PDF objects out of 2984 (max. 8388607)
+ 372 named destinations out of 1000 (max. 500000)
+ 969 words of extra memory for PDF output out of 10000 (max. 10000000)
+

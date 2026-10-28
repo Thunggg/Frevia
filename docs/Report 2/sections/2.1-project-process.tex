@@ -1,0 +1,36 @@
+The Frevia project is delivered over sixteen weeks in five sprints. Sprint 1 runs for four weeks and Sprints 2 to 5 for three weeks each. The first sprint is longer because it includes the setup work that has no user-visible output but determines whether the remaining sprints can move quickly: repository structure, the shared validation package, the Prisma schema and its first migration, the Docker Compose environment, the authentication flow, and the permission guard.
+
+The following Scrum events are held in every sprint:
+
+\begin{itemize}
+\item \textbf{Sprint Planning (first working day):} Confirms the sprint goal, selects items from the Product Backlog up to the sprint's effort cap, and decomposes each item into tasks of at most one day. An item enters the sprint only if its dependencies are already merged.
+
+\item \textbf{Daily Stand-up (15 minutes):} Each member states what was completed since the previous stand-up, what will be completed before the next one, and any blocker. A blocker that prevents another member from working is resolved immediately after the meeting.
+
+\item \textbf{Backlog Refinement (once per week):} Re-estimates the next sprint's candidate items and splits any item that is still too large to finish inside a sprint.
+
+\item \textbf{Sprint Review (last working day):} Demonstrates the increment on a running environment rather than through slides. The supervisor and invited users exercise the flows, and any item that cannot be demonstrated is returned to the backlog.
+
+\item \textbf{Sprint Retrospective (after the review):} Identifies what worked, what did not, and at most two process changes to apply in the next sprint. The previous sprint's changes are reviewed first so that the team can tell whether they actually helped.
+\end{itemize}
+
+Every item is measured against a single Definition of Done before it is counted as complete. The Definition of Done is deliberately mechanical so that it does not depend on the judgement of the person who wrote the code:
+
+\begin{itemize}
+\item The change is merged into the integration branch through a reviewed pull request, and at least one other member has approved it.
+\item \texttt{pnpm lint} and \texttt{pnpm check-types} pass on the merged result, and the API unit test suite (\texttt{pnpm --filter api test}) passes for the affected modules.
+\item \texttt{docker compose build} and \texttt{docker compose up -d} produce a running API that reports a healthy status and a web client that becomes available once the API is healthy, and the new behaviour can be exercised from the browser.
+\item Database changes are delivered as a migration generated from the Prisma schema, never as a manual alteration of a shared database.
+\item The new endpoint is registered in the permission model with the correct module, method, and path, and an unauthorised role receives a permission error rather than a successful response.
+\item User-facing text exists in both English and Vietnamese message catalogues; no string is hard-coded in a component.
+\item At least one automated test covers the new behaviour, or the pull request states explicitly why a test is not applicable.
+\item Documentation that describes the changed behaviour, including the API reference and the acceptance test steps, is updated in the same pull request.
+\end{itemize}
+
+Work is organised through short-lived branches named after the use case they implement, following the pattern \texttt{uc-[id]-[action-name]}. A branch is created from the integration branch, kept to a single use case, merged by pull request, and deleted afterwards. Direct pushes to the integration branch and to the stable branch are not permitted. The stable branch is updated only at the end of a sprint, from the integration branch, after the increment has been demonstrated at the Sprint Review.
+
+Functional dependencies are sequenced explicitly rather than discovered during implementation. Identity and the permission model land before any protected module; jobs land before proposals; proposals land before contracts; contracts land before milestones; milestones land before funding, release, and disputes. This ordering is why the contract item can assume that a proposal already exists and why the dispute item can assume that a funded milestone already exists, and it is the main reason the estimation table can be read as a dependency order from top to bottom.
+
+Testing activity is distributed across the sprint rather than concentrated at its end. Unit and repository tests are written with the item, integration tests are extended when a state machine changes, and the end-to-end path is executed on the staging environment before the Sprint Review. An item that fails its acceptance criteria is not demonstrated, and the failure is recorded as a defect in the backlog rather than as an unfinished task, so that the sprint velocity measurement reflects delivered work only.
+
+By applying Scrum with an explicit Definition of Done, a strict dependency order, and testing embedded in each item, the Frevia project keeps the increment demonstrable at every sprint boundary and makes the cost of any change visible before it is absorbed.

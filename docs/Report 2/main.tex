@@ -1,0 +1,234 @@
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+%====================================================
+% FONT
+%====================================================
+\usepackage{mathptmx}
+
+%====================================================
+% MATH
+%====================================================
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS
+%====================================================
+\usepackage{graphicx}
+\graphicspath{{./image/}}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{enumitem}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=3.0cm,
+    right=2.0cm,
+    headheight=14pt
+}
+
+\setlength{\emergencystretch}{3em}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{fptLightOrange}{RGB}{255,224,178}
+
+%====================================================
+% SECTION FORMAT
+%====================================================
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{fptred}}
+  {\thesection}{0.8em}{}
+  [\vspace{-0.35em}{\color{fptOrange}\rule{\textwidth}{1pt}}]
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{fptBlue}}
+  {\thesubsection}{0.8em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{black}}
+  {\thesubsubsection}{0.8em}{}
+
+\titlespacing*{\section}{0pt}{2.4ex plus 1ex minus .2ex}{1.2ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.8ex plus .8ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.4ex plus .6ex minus .2ex}{0.6ex plus .2ex}
+
+%====================================================
+% HEADER & FOOTER
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{FREVIA --- Project Management Plan}}
+\fancyhead[R]{\small\leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%====================================================
+% CAPTIONS
+%====================================================
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    skip=6pt
+}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+
+\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=fptBlue,
+    pdftitle={FREVIA Project Management Plan},
+    pdfauthor={Group Frevia}
+}
+
+%====================================================
+% CUSTOM COLUMN TYPES
+%====================================================
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+%====================================================
+% COVER PAGE
+%====================================================
+\pagenumbering{roman}
+\input{introduction}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\newpage
+\renewcommand{\contentsname}{\fontsize{20}{24}\selectfont\bfseries\color{fptred} Table of Contents}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+%====================================================
+% MAIN CONTENT
+%====================================================
+\section{Overview}
+    \subsection{Scope \& Estimation}
+    \input{sections/1.1-scope-and-estimation}
+
+    \subsection{Project Objectives}
+    \input{sections/1-2-objective}
+
+    \subsection{Project Risks}
+    \input{sections/1.3-project-risk}
+
+\section{Management Approach}
+    \input{sections/2-management-approach}
+    \subsection{Project Process}
+    \input{sections/2.1-project-process}
+
+    \subsection{Quality Management}
+    \input{sections/2.2-quality-management}
+
+    \subsection{Training Plan}
+    \input{sections/2.3-training-plan}
+
+\section{Project Organization}
+    \subsection{Team \& Structure}
+    \input{sections/3.1-team-structures}
+
+    \subsection{Role \& Responsibilities}
+    \input{sections/3.2-role-responsibilities}
+
+\section{Project Deliverables}
+\input{sections/4-project-deliverables}
+
+\section{Responsibility Assignments}
+\input{sections/5-responsibility-assignments}
+
+\section{Project Communications}
+\input{sections/6-project-communications}
+
+\section{Configuration Management}
+    \subsection{Document Management}
+    \input{sections/7.1-document-management}
+
+    \subsection{Source Code Management}
+    \input{sections/7.2-source-code-management}
+
+    \subsection{Tools \& Infrastructures}
+    \input{sections/7.3-tools-infrastructures}
+
+\end{document}

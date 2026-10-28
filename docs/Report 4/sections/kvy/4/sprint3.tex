@@ -1,0 +1,494 @@
+% =================================================================
+% FILE: sections/kvy/4/sprint3.tex -- Sprint 3 (Administration)
+% Class specifications for forum and identity-verification administration.
+% =================================================================.
+
+\subsection{ForumAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumAdminController(}\newline\code{adminService: ForumAdminService)} &
+A method to initialize the controller with the administration service.
+\newline -- \code{adminService}: \code{ForumAdminService} -- service dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAdminStats(roleName: string)} &
+A method to return the forum dashboard counters.
+\newline -- \code{roleName}: \code{string} -- current role name from \code{@UserActive('roleName')}.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminStatsType>} -- category, post, comment, report, pending-report, and user totals plus the five newest posts.
+\newline -- Route: \code{GET /forums/admin/stats}; administrator endpoint. \\ \hline
+
+03 & \code{getAdminCategoryLists(}\newline\code{roleName: string, page: number,}\newline\code{limit: number, search: string,}\newline\code{deleted: string,}\newline\code{sortBy: 'id' | 'name' | 'createdAt',}\newline\code{sortOrder: 'asc' | 'desc')} &
+A method to list categories with search, deleted-state filtering, and sorting.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{page}, \code{limit}: \code{number} -- coerced with \code{Number()} and defaulted to 1 and 10.
+\newline -- \code{search}: \code{string} -- optional case-insensitive name search.
+\newline -- \code{deleted}: \code{string} -- optional \code{'true'} or \code{'false'} filter.
+\newline -- \code{sortBy}, \code{sortOrder}: \code{'id' | 'name' | 'createdAt'} and \code{'asc' | 'desc'} -- optional sort controls.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCategoryListResponseType>} -- categories and pagination.
+\newline -- Route: \code{GET /forums/admin/categories}; administrator endpoint. \\ \hline
+
+04 & \code{getAdminCategoryById(}\newline\code{roleName: string, id: number)} &
+A method to return one active category.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail with public post count.
+\newline -- Route: \code{GET /forums/admin/categories/:id}; administrator endpoint. \\ \hline
+
+05 & \code{createAdminCategory(}\newline\code{roleName: string,}\newline\code{body: CreateForumCategoryBodyDto)} &
+A method to create a category.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{body}: \code{CreateForumCategoryBodyDto} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the created category.
+\newline -- Route: \code{POST /forums/admin/categories}; administrator endpoint. \\ \hline
+
+06 & \code{updateAdminCategory(}\newline\code{roleName: string, id: number,}\newline\code{body: UpdateForumCategoryBodyDto)} &
+A method to rename or re-describe a category.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \code{body}: \code{UpdateForumCategoryBodyDto} -- optional name and optional description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the updated category.
+\newline -- Route: \code{PATCH /forums/admin/categories/:id}; administrator endpoint. \\ \hline
+
+07 & \code{deleteAdminCategory(}\newline\code{roleName: string, id: number)} &
+A method to soft-delete a category and detach its posts.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string }>} -- deletion confirmation.
+\newline -- Route: \code{DELETE /forums/admin/categories/:id}; administrator endpoint. \\ \hline
+
+08 & \code{restoreAdminCategory(}\newline\code{roleName: string, id: number)} &
+A method to restore a soft-deleted category.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the restored category.
+\newline -- Route: \code{PATCH /forums/admin/categories/:id/restore}; administrator endpoint. \\ \hline
+
+09 & \code{getAdminCommentLists(}\newline\code{roleName: string, page: number,}\newline\code{limit: number, search: string)} &
+A method to list active comments for administration.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination, defaulted to 1 and 10.
+\newline -- \code{search}: \code{string} -- optional case-insensitive content search.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCommentListResponseType>} -- comments with author and parent-post summaries, plus pagination.
+\newline -- Route: \code{GET /forums/admin/comments}; administrator endpoint. \\ \hline
+
+10 & \code{getPendingPosts(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to list posts waiting for moderation.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination, defaulted to 1 and 10.
+\newline -- \textit{Returns:} \code{Promise<PendingForumPostListResponseType>} -- non-deleted \code{PENDING} posts, oldest first, with pagination.
+\newline -- Route: \code{GET /forums/admin/pending-posts}; administrator endpoint. \\ \hline
+
+11 & \code{getTrashPosts(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to list deleted or rejected posts.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination, defaulted to 1 and 10.
+\newline -- \textit{Returns:} \code{Promise<ForumTrashPostListResponseType>} -- posts with \code{deletedAt} set or moderation status \code{REJECTED}.
+\newline -- Route: \code{GET /forums/admin/trash/posts}; administrator endpoint. \\ \hline
+
+12 & \code{getTrashComments(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to list deleted comments.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination, defaulted to 1 and 10.
+\newline -- \textit{Returns:} \code{Promise<ForumTrashCommentListResponseType>} -- soft-deleted comments with author and parent-post summaries.
+\newline -- Route: \code{GET /forums/admin/trash/comments}; administrator endpoint. \\ \hline
+
+13 & \code{restoreTrashPost(}\newline\code{roleName: string, id: number)} &
+A method to restore a post from the trash.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the restored post.
+\newline -- Route: \code{PATCH /forums/admin/trash/posts/:id/restore}; administrator endpoint. \\ \hline
+
+14 & \code{restoreTrashComment(}\newline\code{roleName: string, id: number)} &
+A method to restore a comment from the trash.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCommentType>} -- the restored comment.
+\newline -- Route: \code{PATCH /forums/admin/trash/comments/:id/restore}; administrator endpoint. \\ \hline
+
+15 & \code{approvePendingPost(}\newline\code{roleName: string, userId: number,}\newline\code{id: number)} &
+A method to approve a pending post.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{userId}: \code{number} -- reviewing administrator recorded in \code{reviewedById}.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the approved post.
+\newline -- Route: \code{PATCH /forums/admin/posts/:id/approve}; administrator endpoint. \\ \hline
+
+16 & \code{rejectPendingPost(}\newline\code{roleName: string, userId: number,}\newline\code{id: number)} &
+A method to reject a pending post and move it to the trash.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{userId}: \code{number} -- reviewing administrator.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the rejected post, now soft-deleted.
+\newline -- Route: \code{PATCH /forums/admin/posts/:id/reject}; administrator endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{adminService} & \code{ForumAdminService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumAdminService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumAdminService(}\newline\code{adminRepository: ForumAdminRepository)} &
+A method to initialize the service with the administration repository.
+\newline -- \code{adminRepository}: \code{ForumAdminRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAdminStats(roleName: string)} &
+A method to authorize an administrator and load dashboard counters.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminStatsType>} -- counters and the five newest posts.
+\newline -- Throws \code{ForumReportForbiddenException} for a non-admin or a repository failure. \\ \hline
+
+03 & \code{getAdminCommentLists(}\newline\code{roleName: string, page: number,}\newline\code{limit: number, search?: string)} &
+A method to authorize an administrator and return a page of active comments.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{search}: \code{string | undefined} -- optional content filter.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCommentListResponseType>} -- comments and pagination with \code{totalPages}. \\ \hline
+
+04 & \code{getAdminCategoryLists(}\newline\code{roleName: string, page: number,}\newline\code{limit: number, search?: string,}\newline\code{sortBy?: 'id' | 'name' | 'createdAt',}\newline\code{sortOrder?: 'asc' | 'desc',}\newline\code{deleted?: string)} &
+A method to authorize an administrator and return a page of categories.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{search}: \code{string | undefined} -- optional name filter.
+\newline -- \code{sortBy}, \code{sortOrder}: optional sort controls; repository defaults are \code{id} and \code{desc}.
+\newline -- \code{deleted}: \code{string | undefined} -- \code{'true'} lists only deleted, \code{'false'} only active.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCategoryListResponseType>} -- categories and pagination. \\ \hline
+
+05 & \code{getAdminCategoryById(}\newline\code{roleName: string, categoryId: number)} &
+A method to authorize an administrator and load one active category.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{categoryId}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail.
+\newline -- Throws \code{ForumCategoryNotFoundException} when absent, or \code{ForumReportForbiddenException} for other failures. \\ \hline
+
+06 & \code{createAdminCategory(}\newline\code{roleName: string,}\newline\code{body: CreateForumCategoryBodyType)} &
+A method to authorize an administrator and create a category.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{body}: \code{CreateForumCategoryBodyType} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the created category.
+\newline -- Unknown repository errors are rethrown unchanged. \\ \hline
+
+07 & \code{updateAdminCategory(}\newline\code{roleName: string, categoryId: number,}\newline\code{body: UpdateForumCategoryBodyType)} &
+A method to authorize an administrator and update a category.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{categoryId}: \code{number} -- category identifier.
+\newline -- \code{body}: \code{UpdateForumCategoryBodyType} -- optional name and description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the updated category.
+\newline -- Unknown repository errors are rethrown unchanged. \\ \hline
+
+08 & \code{deleteAdminCategory(}\newline\code{roleName: string, categoryId: number)} &
+A method to authorize an administrator and soft-delete a category.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{categoryId}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string }>} -- deletion confirmation.
+\newline -- Throws \code{FailedToDeleteForumCategoryException} for an unexpected failure. \\ \hline
+
+09 & \code{restoreAdminCategory(}\newline\code{roleName: string, categoryId: number)} &
+A method to authorize an administrator and restore a deleted category.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{categoryId}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the restored category.
+\newline -- Throws \code{FailedToRestoreForumCategoryException} for an unexpected failure. \\ \hline
+
+10 & \code{getPendingPosts(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to authorize an administrator and load the moderation queue.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<PendingForumPostListResponseType>} -- pending posts and pagination.
+\newline -- Throws \code{ForumReportForbiddenException} for a non-admin or a repository failure. \\ \hline
+
+11 & \code{reviewPendingPost(}\newline\code{roleName: string, postId: number,}\newline\code{status: 'APPROVED' | 'REJECTED',}\newline\code{adminId: number)} &
+A method to authorize an administrator and apply a moderation decision.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \code{status}: \code{'APPROVED' | 'REJECTED'} -- decision passed by the approve/reject routes.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the reviewed post.
+\newline -- A Prisma \code{P2025} error is mapped to \code{ForumPostNotFoundException}; other Prisma errors become \code{FailedToReviewForumPostException}. \\ \hline
+
+12 & \code{getTrashPosts(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to authorize an administrator and load the post trash.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<ForumTrashPostListResponseType>} -- deleted or rejected posts and pagination.
+\newline -- Throws \code{ForumReportForbiddenException} for a non-admin or a repository failure. \\ \hline
+
+13 & \code{getTrashComments(}\newline\code{roleName: string, page: number,}\newline\code{limit: number)} &
+A method to authorize an administrator and load the comment trash.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<ForumTrashCommentListResponseType>} -- deleted comments and pagination.
+\newline -- Throws \code{ForumReportForbiddenException} for a non-admin or a repository failure. \\ \hline
+
+14 & \code{restoreTrashPost(}\newline\code{roleName: string, postId: number)} &
+A method to authorize an administrator and restore a post.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the restored post.
+\newline -- Throws \code{FailedToRestoreForumPostException} for an unexpected failure. \\ \hline
+
+15 & \code{restoreTrashComment(}\newline\code{roleName: string, commentId: number)} &
+A method to authorize an administrator and restore a comment.
+\newline -- \code{roleName}: \code{string} -- must equal \code{RoleName.ADMIN}.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCommentType>} -- the restored comment.
+\newline -- A Prisma \code{P2025} error is mapped to \code{ForumCommentNotFoundException}; other Prisma errors become \code{FailedToRestoreForumCommentException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{adminRepository} & \code{ForumAdminRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumAdminRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumAdminRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPendingPosts(page: number, limit: number)} &
+A method to query the moderation queue and its total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<{ posts: PendingForumPostType[]; total: number }>} -- non-deleted \code{PENDING} posts, oldest first, with author summary.
+\newline -- \code{moderationCategories} is normalized to \code{string[] | null}. \\ \hline
+
+03 & \code{reviewForumPost(}\newline\code{postId: number,}\newline\code{status: 'APPROVED' | 'REJECTED',}\newline\code{adminId: number)} &
+A method to apply a moderation decision only to a non-deleted \code{PENDING} post.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \code{status}: \code{'APPROVED' | 'REJECTED'} -- target moderation status.
+\newline -- \code{adminId}: \code{number} -- reviewer recorded in \code{reviewedById}.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the reviewed post.
+\newline -- \code{REJECTED} also sets \code{deletedAt}; a zero-row update throws \code{ForumPostNotFoundException}. \\ \hline
+
+04 & \code{getAdminStats()} &
+A method to count forum entities and load the five newest posts in one transaction.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminStatsType>} -- active category, post, comment, and user counts; total and pending reports; five recent posts.
+\newline -- Posts, comments, categories, and users exclude soft-deleted rows; report totals include all rows. \\ \hline
+
+05 & \code{getAdminCommentLists(}\newline\code{page: number, limit: number,}\newline\code{search?: string)} &
+A method to query a page of active comments and the matching total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{search}: \code{string | undefined} -- optional case-insensitive content filter.
+\newline -- \textit{Returns:} \code{Promise<{ comments: ForumAdminCommentType[]; total: number }>} -- comments with author and parent-post summaries, newest first. \\ \hline
+
+06 & \code{getAdminCategoryLists(}\newline\code{page: number, limit: number,}\newline\code{search?: string,}\newline\code{sortBy?: 'id' | 'name' | 'createdAt',}\newline\code{sortOrder?: 'asc' | 'desc',}\newline\code{deleted?: string)} &
+A method to query a page of categories and the matching total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{search}: \code{string | undefined} -- optional case-insensitive name filter.
+\newline -- \code{sortBy}, \code{sortOrder}: optional sort controls; defaults are \code{'id'} and \code{'desc'}.
+\newline -- \code{deleted}: \code{string | undefined} -- \code{'true'} selects only deleted rows, \code{'false'} only active rows, omitted selects both.
+\newline -- \textit{Returns:} \code{Promise<{ categories: ForumAdminCategoryType[]; total: number }>} -- categories with \code{postCount} and pagination total. \\ \hline
+
+07 & \code{getAdminCategoryById(id: number)} &
+A method to load one active category with its public post count.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType | null>} -- the category detail or \code{null}. \\ \hline
+
+08 & \code{createAdminCategory(data: { name: string; description?: string | null })} &
+A method to create a category with a unique name and generated slug.
+\newline -- \code{data.name}: \code{string} -- category name.
+\newline -- \code{data.description}: \code{string | null | undefined} -- optional description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the created category with \code{postCount = 0}.
+\newline -- Throws \code{ForumCategoryAlreadyExistsException} for a case-insensitive active-name conflict; slug collisions receive a numeric suffix. \\ \hline
+
+09 & \code{updateAdminCategory(}\newline\code{id: number, data: UpdateForumCategoryBodyType)} &
+A method to update a category and regenerate its slug when the name changes.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \code{data}: \code{UpdateForumCategoryBodyType} -- optional name and description.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the updated category.
+\newline -- Throws \code{ForumCategoryNotFoundException} or \code{ForumCategoryAlreadyExistsException}. \\ \hline
+
+10 & \code{deleteAdminCategory(id: number)} &
+A method to detach posts and soft-delete a category in one transaction.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string }>} -- deletion confirmation.
+\newline -- Non-deleted posts in the category are reassigned to \code{categoryId = null} before the category receives \code{deletedAt}. \\ \hline
+
+11 & \code{restoreAdminCategory(id: number)} &
+A method to restore a soft-deleted category after a name-conflict check.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryType>} -- the restored category.
+\newline -- Throws \code{ForumCategoryNotFoundException} or \code{ForumCategoryAlreadyExistsException}. \\ \hline
+
+12 & \code{getTrashPosts(page: number, limit: number)} &
+A method to query deleted or rejected posts and the matching total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<{ posts: ForumTrashPostType[]; total: number }>} -- trash posts with \code{deletedAt} and author summary.
+\newline -- Ordering is by \code{deletedAt} descending with null values last. \\ \hline
+
+13 & \code{getTrashComments(page: number, limit: number)} &
+A method to query soft-deleted comments and the matching total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \textit{Returns:} \code{Promise<{ comments: ForumTrashCommentType[]; total: number }>} -- trash comments with \code{deletedAt} and parent-post summary, newest deletion first. \\ \hline
+
+14 & \code{restoreTrashPost(postId: number)} &
+A method to restore a post from the trash.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the restored post.
+\newline -- A deleted \code{APPROVED} post becomes visible again; a \code{REJECTED} post returns to \code{PENDING} and its reviewer fields are cleared. \\ \hline
+
+15 & \code{restoreTrashComment(commentId: number)} &
+A method to clear \code{deletedAt} on a trashed comment.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumAdminCommentType>} -- the restored comment with author and parent-post summaries.
+\newline -- Throws \code{ForumCommentNotFoundException} when no deleted row matches. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{IdentityVerificationsAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{IdentityVerificationsAdminController(}\newline\code{service: IdentityVerificationsAdminService)} &
+A method to initialize the controller with the administration service.
+\newline -- \code{service}: \code{IdentityVerificationsAdminService} -- service dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(query: IdentityVerificationAdminFilterDto)} &
+A method to return a filtered, paginated document list.
+\newline -- \code{query}: \code{IdentityVerificationAdminFilterDto} -- page, limit, optional status, and optional search.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminListResponseType>} -- documents and pagination.
+\newline -- Route: \code{GET /admin/identity-verifications}. \\ \hline
+
+03 & \code{detail(id: number)} &
+A method to return one document with user and reviewer detail.
+\newline -- \code{id}: \code{number} -- document identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminDetailType>} -- document, user profile, freelancer verification state, and reviewing administrator.
+\newline -- Route: \code{GET /admin/identity-verifications/:id}. \\ \hline
+
+04 & \code{file(}\newline\code{id: number, side: string | undefined,}\newline\code{response: Response)} &
+A method to stream a legacy \code{local://} document image.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{side}: \code{string | undefined} -- \code{'back'} selects the back image; any other value selects the front.
+\newline -- \code{response}: \code{Response} -- Express response used to set headers.
+\newline -- \textit{Returns:} \code{Promise<StreamableFile>} -- file stream; sets inline \code{Content-Disposition} and \code{application/octet-stream}.
+\newline -- Route: \code{GET /admin/identity-verifications/:id/file}. \\ \hline
+
+05 & \code{approve(}\newline\code{id: number, adminId: number,}\newline\code{body: ApproveIdentityVerificationBodyDto)} &
+A method to approve a pending document.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator from \code{@UserActive('userId')}.
+\newline -- \code{body}: \code{ApproveIdentityVerificationBodyDto} -- optional \code{reviewNotes} up to 1000 characters.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminActionResponseType>} -- the reviewed document detail.
+\newline -- Route: \code{PATCH /admin/identity-verifications/:id/approve}. \\ \hline
+
+06 & \code{reject(}\newline\code{id: number, adminId: number,}\newline\code{body: RejectIdentityVerificationBodyDto)} &
+A method to reject a pending document.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator.
+\newline -- \code{body}: \code{RejectIdentityVerificationBodyDto} -- optional trimmed \code{reviewNotes} up to 1000 characters.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminActionResponseType>} -- the reviewed document detail.
+\newline -- Route: \code{PATCH /admin/identity-verifications/:id/reject}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{IdentityVerificationsAdminService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{IdentityVerificationsAdminService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{IdentityVerificationsAdminService(}\newline\code{repository: IdentityVerificationsAdminRepository)} &
+A method to initialize the service with the identity-verification repository.
+\newline -- \code{repository}: \code{IdentityVerificationsAdminRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{presentFileUrl(document: T)} &
+A private generic method to replace legacy \code{local://} file paths with API URLs.
+\newline -- \code{document}: \code{T} -- object with \code{id}, \code{fileUrl}, and optional \code{backFileUrl}.
+\newline -- \textit{Returns:} the same object with \code{fileUrl} set to the file route and, when needed, \code{backFileUrl} set to the same route with \code{?side=back}.
+\newline -- Non-local URLs are returned unchanged. \\ \hline
+
+03 & \code{presentList(documents: T[])} &
+A private method to map \code{presentFileUrl} over a document list.
+\newline -- \code{documents}: \code{T[]} -- list of document objects.
+\newline -- \textit{Returns:} the mapped list. \\ \hline
+
+04 & \code{list(params: { page: number; limit: number; status?: string; search?: string })} &
+A method to load a filtered page of documents.
+\newline -- \code{params}: object -- page, limit, optional status string, and optional search.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminListResponseType>} -- documents with presentation URLs and pagination.
+\newline -- \code{status} is cast to the Prisma \code{VerificationStatus} union before the repository call. \\ \hline
+
+05 & \code{detail(id: number)} &
+A method to load one document and present its file URLs.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminDetailType>} -- the document detail.
+\newline -- Throws \code{IdentityVerificationNotFoundException}. \\ \hline
+
+06 & \code{review(}\newline\code{id: number, adminId: number,}\newline\code{status: ReviewableStatus,}\newline\code{reviewNotes: string | null)} &
+A method to approve or reject a pending document.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator.
+\newline -- \code{status}: \code{ReviewableStatus} -- \code{APPROVED} or \code{REJECTED}.
+\newline -- \code{reviewNotes}: \code{string | null} -- optional reviewer note.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminActionResponseType>} -- the reviewed document detail.
+\newline -- Throws \code{IdentityVerificationNotFoundException} or \code{IdentityVerificationAlreadyReviewedException}. \\ \hline
+
+07 & \code{getLocalFile(}\newline\code{id: number, side: 'front' | 'back' = 'front')} &
+A method to resolve and validate a legacy local document file.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{side}: \code{'front' | 'back'} -- which stored URL to use; default front.
+\newline -- \textit{Returns:} \code{Promise<{ absolutePath: string; fileName: string }>} -- resolved path and base filename.
+\newline -- Throws \code{IdentityVerificationNotFoundException} or \code{IdentityVerificationFileInvalidException}; rejects paths escaping the uploads root. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{IdentityVerificationsAdminRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{IdentityVerificationsAdminRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{IdentityVerificationsAdminRepository(}\newline\code{prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findDocuments(params: IdentityVerificationAdminListParams)} &
+A method to query a filtered page of active documents and the matching total.
+\newline -- \code{params}: \code{IdentityVerificationAdminListParams} -- page, limit, optional status, and optional search.
+\newline -- \textit{Returns:} \code{Promise<{ documents: IdentityVerificationAdminListItemType[]; total: number }>} -- documents with user summary, newest first.
+\newline -- Search matches user email or profile display name case-insensitively; \code{deletedAt} must be \code{null}. \\ \hline
+
+03 & \code{findDocumentById(id: number)} &
+A method to load the full detail projection of an active document.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminDetailType | null>} -- document, reviewer, user, and freelancer summary, or \code{null}. \\ \hline
+
+04 & \code{findDocumentRaw(id: number)} &
+A method to load the minimal fields needed for review and file streaming.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; userId: number; fileUrl: string; backFileUrl: string | null; status: VerificationStatus } | null>} -- raw document fields, or \code{null}. \\ \hline
+
+05 & \code{reviewDocument(}\newline\code{id: number, adminId: number,}\newline\code{status: VerificationStatus,}\newline\code{reviewNotes: string | null)} &
+A method to persist a review and synchronize the freelancer verification flag in one transaction.
+\newline -- \code{id}: \code{number} -- document identifier.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator.
+\newline -- \code{status}: \code{VerificationStatus} -- \code{APPROVED} or \code{REJECTED}.
+\newline -- \code{reviewNotes}: \code{string | null} -- reviewer note.
+\newline -- \textit{Returns:} \code{Promise<IdentityVerificationAdminDetailType | null>} -- the updated detail, or \code{null}.
+\newline -- Updates the document status, reviewer, notes, and \code{reviewedAt}; sets \code{FreelancerProfile.idVerified} to true only for \code{APPROVED}. Transaction limits are 10s wait and 15s timeout. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}

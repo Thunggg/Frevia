@@ -1,0 +1,197 @@
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+%====================================================
+% FONT
+%====================================================
+\usepackage{mathptmx}
+
+%====================================================
+% MATH
+%====================================================
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS
+%====================================================
+\usepackage{graphicx}
+\graphicspath{{./image/}}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{enumitem}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=3.0cm,
+    right=2.0cm,
+    headheight=14pt
+}
+
+\setlength{\emergencystretch}{3em}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{fptLightOrange}{RGB}{255,224,178}
+
+%====================================================
+% SECTION FORMAT
+%====================================================
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{fptred}}
+  {\thesection}{0.8em}{}
+  [\vspace{-0.35em}{\color{fptOrange}\rule{\textwidth}{1pt}}]
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{fptBlue}}
+  {\thesubsection}{0.8em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{black}}
+  {\thesubsubsection}{0.8em}{}
+
+\titlespacing*{\section}{0pt}{2.4ex plus 1ex minus .2ex}{1.2ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.8ex plus .8ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.4ex plus .6ex minus .2ex}{0.6ex plus .2ex}
+
+%====================================================
+% HEADER & FOOTER
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{FREVIA --- Project Introduction}}
+\fancyhead[R]{\small\leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%====================================================
+% CAPTIONS
+%====================================================
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    skip=6pt
+}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+
+\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=fptBlue,
+    pdftitle={FREVIA Project Introduction},
+    pdfauthor={Group Frevia}
+}
+
+%====================================================
+% CUSTOM COLUMN TYPES
+%====================================================
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+%====================================================
+% COVER PAGE
+%====================================================
+\input{cover}
+
+%====================================================
+% TABLE OF CONTENTS
+%====================================================
+\newpage
+\input{table_of_contents}
+
+\newpage
+
+%====================================================
+% MAIN CONTENT
+%====================================================
+\input{sections/overview}
+
+\input{sections/product_background}
+
+\input{sections/existing_system}
+
+\input{sections/business_opportunity}
+
+\input{sections/software_product_vision}
+
+\input{sections/project_scope_limitations}
+
+\end{document}

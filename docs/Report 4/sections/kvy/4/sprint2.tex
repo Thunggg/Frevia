@@ -1,0 +1,350 @@
+% =================================================================
+% FILE: sections/kvy/4/sprint2.tex -- Sprint 2 (Conversation/Messaging)
+% Class specifications for the direct-conversation implementation.
+% =================================================================
+\subsection{ConversationController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ConversationController(}\newline\code{conversationService: ConversationService)} &
+A method to initialize the controller with the conversation service.
+\newline -- \code{conversationService}: \code{ConversationService} -- service that owns all conversation use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getConversations(userId: number)} &
+A method to return the current user's conversation list.
+\newline -- \code{userId}: \code{number} -- current user identifier injected by \code{@UserActive('userId')}.
+\newline -- \textit{Returns:} \code{Promise<GetConversationsResponseType>} -- conversation items with other user, last message, unread count, and pin time.
+\newline -- Route: \code{GET /conversations}; authenticated endpoint. \\ \hline
+
+03 & \code{createConversation(}\newline\code{userId: number, body: CreateConversationBodyType)} &
+A method to create or reopen a conversation with another user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{body.participantId}: \code{number} -- the other participant, validated by \code{CreateConversationBodyDto}.
+\newline -- \textit{Returns:} \code{Promise<CreateConversationResponseType>} -- id, participant1, participant2, and createdAt.
+\newline -- Route: \code{POST /conversations}; authenticated endpoint. \\ \hline
+
+04 & \code{getMessages(}\newline\code{userId: number, id: number)} &
+A method to return the message history of one conversation.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<DirectMessageType[]>} -- non-deleted messages in ascending creation order.
+\newline -- Route: \code{GET /conversations/:id/messages}; authenticated endpoint. \\ \hline
+
+05 & \code{sendMessage(}\newline\code{userId: number, id: number,}\newline\code{body: SendMessageBodyType)} &
+A method to send a message through the REST fallback.
+\newline -- \code{userId}: \code{number} -- sender identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \code{body}: \code{SendMessageBodyType} -- message text and optional attachment, validated by \code{SendMessageBodyDto}.
+\newline -- \textit{Returns:} \code{Promise<DirectMessageType>} -- the saved message.
+\newline -- Route: \code{POST /conversations/:id/messages}; authenticated endpoint. \\ \hline
+
+06 & \code{uploadFile(}\newline\code{userId: number, id: number,}\newline\code{file?: Express.Multer.File)} &
+A method to upload a message attachment for a conversation participant.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \code{file}: \code{Express.Multer.File | undefined} -- multipart file read into memory by \code{FileInterceptor}.
+\newline -- \textit{Returns:} \code{Promise<MessageAttachmentType>} -- Cloudinary URL, original name, byte size, and MIME type.
+\newline -- Route: \code{POST /conversations/:id/files}; authenticated endpoint. \\ \hline
+
+07 & \code{deleteMessage(}\newline\code{userId: number, id: number,}\newline\code{messageId: number)} &
+A method to soft-delete a message sent by the current user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \code{messageId}: \code{number} -- message identifier.
+\newline -- \textit{Returns:} \code{Promise<DeleteMessageResponseType>} -- the deleted message id.
+\newline -- Route: \code{DELETE /conversations/:id/messages/:messageId}; authenticated endpoint. \\ \hline
+
+08 & \code{markAsRead(}\newline\code{userId: number, id: number)} &
+A method to mark all messages from the other participant as read.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<{ count: number }>} -- number of updated messages. This route has no response DTO decorator.
+\newline -- Route: \code{PATCH /conversations/:id/read}; authenticated endpoint. \\ \hline
+
+09 & \code{hideConversation(}\newline\code{userId: number, id: number)} &
+A method to hide a conversation only for the current user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<HideConversationResponseType>} -- id and hidden flag.
+\newline -- Route: \code{PATCH /conversations/:id/hide}; authenticated endpoint. \\ \hline
+
+10 & \code{pinConversation(}\newline\code{userId: number, id: number,}\newline\code{body: PinConversationBodyType)} &
+A method to pin or unpin a conversation for the current user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- conversation identifier.
+\newline -- \code{body.pinned}: \code{boolean} -- target pin state, validated by \code{PinConversationBodyDto}.
+\newline -- \textit{Returns:} \code{Promise<PinConversationResponseType>} -- id and the new \code{pinnedAt} value.
+\newline -- Route: \code{PATCH /conversations/:id/pin}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{conversationService} & \code{ConversationService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ConversationService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ConversationService(}\newline\code{conversationRepository: ConversationRepository)} &
+A method to initialize the service with the conversation repository.
+\newline -- \code{conversationRepository}: \code{ConversationRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{buildConversationItem(}\newline\code{conversation: RawConversationItem,}\newline\code{userId: number)} &
+A private method to map a repository row to the public conversation item.
+\newline -- \code{conversation}: \code{RawConversationItem} -- row with both participants, last message, and unread count.
+\newline -- \code{userId}: \code{number} -- current user, used to select the other participant and pin time.
+\newline -- \textit{Returns:} \code{ConversationListItemType} -- normalized item with \code{otherUser}, \code{lastMessage}, \code{unreadCount}, and \code{pinnedAt}. \\ \hline
+
+03 & \code{getConversations(userId: number)} &
+A method to load and sort all visible conversations of a user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \textit{Returns:} \code{Promise<GetConversationsResponseType>} -- pinned conversations first, then by last-message time or creation time.
+\newline -- Any failure is mapped to \code{FailedToLoadConversationsException}. \\ \hline
+
+04 & \code{getConversationItem(}\newline\code{conversationId: number, userId: number)} &
+A method to rebuild one conversation item for a realtime update.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- recipient of the realtime item.
+\newline -- \textit{Returns:} \code{Promise<ConversationListItemType | null>} -- the item, or \code{null} when the conversation is not visible to that user. \\ \hline
+
+05 & \code{getMessages(}\newline\code{userId: number, conversationId: number)} &
+A method to authorize a participant and return the message history.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<DirectMessageType[]>} -- non-deleted messages.
+\newline -- Throws \code{ConversationNotFoundException} when the user is not a participant; other failures become \code{FailedToLoadConversationsException}. \\ \hline
+
+06 & \code{createConversation(}\newline\code{userId: number, participantId: number)} &
+A method to create a conversation or return the existing pair.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{participantId}: \code{number} -- the other user.
+\newline -- \textit{Returns:} \code{Promise<CreateConversationResponseType>} -- id, participant1, participant2, and createdAt.
+\newline -- Rejects self-conversation with \code{CannotStartConversationWithSelfException}; an existing hidden conversation is unhidden. \\ \hline
+
+07 & \code{sendMessage(}\newline\code{userId: number, conversationId: number,}\newline\code{message: string,}\newline\code{attachment?: MessageAttachmentType | null)} &
+A method to save a message and unhide the conversation for both participants.
+\newline -- \code{userId}: \code{number} -- sender identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{message}: \code{string} -- text; may be empty when an attachment exists.
+\newline -- \code{attachment}: \code{MessageAttachmentType | null | undefined} -- optional file metadata.
+\newline -- \textit{Returns:} \code{Promise<DirectMessageType>} -- the saved message.
+\newline -- Throws \code{ConversationNotFoundException} or \code{FailedToSendMessageException}. \\ \hline
+
+08 & \code{uploadFile(}\newline\code{userId: number, conversationId: number,}\newline\code{file?: Express.Multer.File)} &
+A method to validate participation and upload a file to Cloudinary.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{file}: \code{Express.Multer.File | undefined} -- in-memory multipart file.
+\newline -- \textit{Returns:} \code{Promise<MessageAttachmentType>} -- secure URL, original name, byte size, and MIME type.
+\newline -- Throws \code{FailedToUploadFileException}, \code{ConversationNotFoundException}, or passes through a Nest \code{HttpException}. \\ \hline
+
+09 & \code{deleteMessage(}\newline\code{userId: number, conversationId: number,}\newline\code{messageId: number)} &
+A method to authorize a participant and soft-delete the sender's message.
+\newline -- \code{userId}: \code{number} -- current user identifier; must be the sender.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{messageId}: \code{number} -- message identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number }>} -- the deleted message id.
+\newline -- Throws \code{ConversationNotFoundException}, \code{MessageNotFoundException}, or \code{FailedToDeleteMessageException}. \\ \hline
+
+10 & \code{markAsRead(}\newline\code{userId: number, conversationId: number)} &
+A method to mark messages from the other participant as read.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<{ count: number }>} -- number of updated messages.
+\newline -- Throws \code{ConversationNotFoundException} or \code{FailedToMarkAsReadException}. \\ \hline
+
+11 & \code{hideConversation(}\newline\code{userId: number, conversationId: number)} &
+A method to set the current participant's hidden timestamp.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<HideConversationResponseType>} -- id and hidden flag.
+\newline -- Throws \code{ConversationNotFoundException} or \code{FailedToHideConversationException}. \\ \hline
+
+12 & \code{pinConversation(}\newline\code{userId: number, conversationId: number,}\newline\code{pinned: boolean)} &
+A method to set or clear the current participant's pin timestamp.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{pinned}: \code{boolean} -- true to pin, false to unpin.
+\newline -- \textit{Returns:} \code{Promise<PinConversationResponseType>} -- id and \code{pinnedAt}.
+\newline -- Throws \code{ConversationNotFoundException} or \code{FailedToPinConversationException}. \\ \hline
+
+13 & \code{ensureParticipant(}\newline\code{conversationId: number, userId: number)} &
+A method used by the gateway to assert that a socket user belongs to a conversation.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- socket user identifier.
+\newline -- \textit{Returns:} the non-deleted \code{Conversation} row.
+\newline -- Throws \code{ConversationAccessDeniedException} when the user is not a participant. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{conversationRepository} & \code{ConversationRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger; records attachment-upload failures. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ConversationRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ConversationRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findConversationBetween(}\newline\code{userId1: number, userId2: number)} &
+A method to find the non-deleted conversation for a user pair in either participant order.
+\newline -- \code{userId1}, \code{userId2}: \code{number} -- the two users.
+\newline -- \textit{Returns:} \code{Promise<Conversation | null>} -- the conversation or \code{null}. \\ \hline
+
+03 & \code{getConversationsByUserId(userId: number)} &
+A method to query all conversations visible to a user with previews and unread counts.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \textit{Returns:} conversation rows with both participant profiles, the latest non-deleted message, and a filtered message count.
+\newline -- A conversation is included only when the current participant's hidden timestamp is \code{null}. \\ \hline
+
+04 & \code{findConversationByIdForUser(}\newline\code{conversationId: number, userId: number)} &
+A method to load a non-deleted conversation only when the user is a participant.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \textit{Returns:} \code{Promise<Conversation | null>} -- the conversation or \code{null}. \\ \hline
+
+05 & \code{findConversationById(conversationId: number)} &
+A method to load a non-deleted conversation without a participant check.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<Conversation | null>} -- the conversation or \code{null}. \\ \hline
+
+06 & \code{hideConversationForUser(}\newline\code{conversationId: number, userId: number)} &
+A method to set the hidden timestamp of the participant who requested the hide.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- participant identifier.
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- true when the row was updated, false when the conversation or participant does not match. \\ \hline
+
+07 & \code{unhideConversation(conversationId: number)} &
+A method to clear both participants' hidden timestamps after new activity.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} the updated \code{Conversation} row. \\ \hline
+
+08 & \code{setPinnedForUser(}\newline\code{conversationId: number, userId: number,}\newline\code{pinned: boolean)} &
+A method to set or clear the participant's pin timestamp.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- participant identifier.
+\newline -- \code{pinned}: \code{boolean} -- true sets the current time, false clears it.
+\newline -- \textit{Returns:} \code{Promise<Date | null>} -- the new timestamp, or \code{null} when unpinned or not a participant. \\ \hline
+
+09 & \code{getMessages(conversationId: number)} &
+A method to query all non-deleted messages of a conversation in ascending time order.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \textit{Returns:} \code{Promise<DirectMessage[]>} -- Prisma message rows. \\ \hline
+
+10 & \code{createConversation(}\newline\code{participant1: number, participant2: number)} &
+A method to insert a conversation pair.
+\newline -- \code{participant1}: \code{number} -- first participant (the creator in the service flow).
+\newline -- \code{participant2}: \code{number} -- second participant.
+\newline -- \textit{Returns:} \code{Promise<Conversation>} -- the inserted row. \\ \hline
+
+11 & \code{createMessage(}\newline\code{conversationId: number, senderId: number,}\newline\code{message: string,}\newline\code{attachment?: MessageAttachmentType)} &
+A method to insert a message and copy optional attachment metadata.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{senderId}: \code{number} -- sender identifier.
+\newline -- \code{message}: \code{string} -- message text.
+\newline -- \code{attachment}: \code{MessageAttachmentType | undefined} -- optional file metadata.
+\newline -- \textit{Returns:} \code{Promise<DirectMessage>} -- the inserted message. \\ \hline
+
+12 & \code{softDeleteMessage(}\newline\code{conversationId: number, messageId: number,}\newline\code{senderId: number)} &
+A method to set \code{deletedAt} only when the message belongs to the conversation and sender.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{messageId}: \code{number} -- message identifier.
+\newline -- \code{senderId}: \code{number} -- sender identifier.
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- true when one non-deleted row was updated. \\ \hline
+
+13 & \code{markMessagesAsRead(}\newline\code{conversationId: number, userId: number)} &
+A method to mark messages from the other participant as read.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- current user; messages sent by this user are excluded.
+\newline -- \textit{Returns:} the Prisma batch payload with the updated row count. \\ \hline
+
+14 & \code{countUnread(}\newline\code{conversationId: number, userId: number)} &
+A method to count unread messages from the other participant.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \textit{Returns:} \code{Promise<number>} -- count of non-deleted, unread messages not sent by the user. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ConversationsGateway Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ConversationsGateway(}\newline\code{conversationService: ConversationService,}\newline\code{tokenService: TokenService)} &
+A method to initialize the gateway dependencies.
+\newline -- \code{conversationService}: \code{ConversationService} -- shared use-case service.
+\newline -- \code{tokenService}: \code{TokenService} -- verifies the access token during the socket handshake.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{handleConnection(client: Socket)} &
+A method to authenticate a new socket and join its user room.
+\newline -- \code{client}: \code{Socket} -- connecting Socket.IO client.
+\newline -- Reads \code{client.handshake.auth.token}, falling back to the bearer token in the authorization header; verifies it with \code{TokenService.verifyAccessToken}.
+\newline -- \textit{Returns:} \code{Promise<void>} -- stores \code{userId} in \code{client.data} and joins \code{user:<userId>}; disconnects on failure. \\ \hline
+
+03 & \code{handleDisconnect(client: Socket)} &
+A method to log a disconnected socket.
+\newline -- \code{client}: \code{Socket} -- disconnected client.
+\newline -- \textit{Returns:} \code{void} -- no return value. \\ \hline
+
+04 & \code{handleSendMessage(}\newline\code{client: Socket, payload: unknown)} &
+A method to handle the \code{message:send} event.
+\newline -- \code{client}: \code{Socket} -- sender socket.
+\newline -- \code{payload}: \code{unknown} -- validated by \code{SendMessagePayloadSchema}.
+\newline -- Ensures participation, saves the message, emits \code{message:new} to both user rooms, and refreshes both conversation lists.
+\newline -- \textit{Returns:} \code{Promise<{ success: boolean; message?: DirectMessageType }>} -- success flag and saved message; emits \code{message:error} on failure. \\ \hline
+
+05 & \code{handleMarkAsRead(}\newline\code{client: Socket, payload: unknown)} &
+A method to handle the \code{message:read} event.
+\newline -- \code{client}: \code{Socket} -- reader socket.
+\newline -- \code{payload}: \code{unknown} -- validated by \code{MarkAsReadPayloadSchema}.
+\newline -- Calls \code{markAsRead} and emits \code{conversation:updated} to both participants.
+\newline -- \textit{Returns:} \code{Promise<{ success: boolean }>} -- success flag. \\ \hline
+
+06 & \code{handleDeleteMessage(}\newline\code{client: Socket, payload: unknown)} &
+A method to handle the \code{message:delete} event.
+\newline -- \code{client}: \code{Socket} -- sender socket.
+\newline -- \code{payload}: \code{unknown} -- validated by \code{DeleteMessagePayloadSchema}.
+\newline -- Calls \code{deleteMessage}, emits \code{message:deleted} to both user rooms, and refreshes both conversation lists.
+\newline -- \textit{Returns:} \code{Promise<{ success: boolean }>} -- success flag; emits \code{message:error} on failure. \\ \hline
+
+07 & \code{handleHideConversation(}\newline\code{client: Socket, payload: unknown)} &
+A method to handle the \code{conversation:hide} event.
+\newline -- \code{client}: \code{Socket} -- current user's socket.
+\newline -- \code{payload}: \code{unknown} -- validated by \code{HideConversationPayloadSchema}.
+\newline -- Calls \code{hideConversation} and emits \code{conversation:hidden} only to the current user's room.
+\newline -- \textit{Returns:} \code{Promise<{ success: boolean }>} -- success flag. \\ \hline
+
+08 & \code{handleTyping(}\newline\code{client: Socket, payload: unknown)} &
+A method to handle the \code{typing} event.
+\newline -- \code{client}: \code{Socket} -- sender socket.
+\newline -- \code{payload}: \code{unknown} -- validated by \code{TypingPayloadSchema}.
+\newline -- Ensures participation and forwards \code{typing} with \code{conversationId} and \code{isTyping} only to the other user's room.
+\newline -- \textit{Returns:} \code{Promise<{ success: boolean }>} -- success flag. \\ \hline
+
+09 & \code{emitConversationUpdated(}\newline\code{conversationId: number, userId: number)} &
+A private method to push the latest conversation item to one user.
+\newline -- \code{conversationId}: \code{number} -- conversation identifier.
+\newline -- \code{userId}: \code{number} -- target user.
+\newline -- \textit{Returns:} \code{Promise<void>} -- emits \code{conversation:updated} when \code{getConversationItem} returns a visible item. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{server} & \code{Server} -- Socket.IO server injected by \code{@WebSocketServer()}; used to address user rooms. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger for connection and event failures. \\ \hline
+03 & \code{conversationService} & \code{ConversationService} -- private readonly service dependency. \\ \hline
+04 & \code{tokenService} & \code{TokenService} -- private readonly access-token verifier. \\ \hline
+\end{ClassAttributeTable}
