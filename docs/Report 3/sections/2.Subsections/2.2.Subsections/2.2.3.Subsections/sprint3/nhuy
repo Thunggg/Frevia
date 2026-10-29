@@ -1,0 +1,389 @@
+\paragraph{Following, Manage Notifications \& Role Switching}
+
+% =================================================================
+% UC-19.1 View Following List
+% =================================================================
+\subparagraph{UC-19.1 View Following List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-19.1 View Following List} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Following section from their profile or network tab.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves the paginated list of freelancers that the user is currently following, showing profile details, latest activity, and status.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of followed freelancers is rendered with quick actions (View Profile, Unfollow).
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Following List} \newline
+1. User clicks on the ``Following'' tab. \newline
+2. System queries \texttt{follow\_freelancers} for matching \texttt{user\_id}. \newline
+3. System fetches profile data for each followed freelancer. \newline
+4. System displays the following list sorted by follow date.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Empty Following List} \newline
+1. System finds no following records. \newline
+2. System displays ``You are not following any freelancers yet.''
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. Database query fails. \newline
+2. System displays error message ``Unable to load following list.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FOL-01: Only active non-deleted freelancer profiles shall appear in the following list.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Follow records are linked by follower user ID and target freelancer ID.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-19.2 Follow Freelancer
+% =================================================================
+\subparagraph{UC-19.2 Follow Freelancer}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-19.2 Follow Freelancer} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Follow'' button on a freelancer's public profile page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to follow a freelancer to track their new project posts, skills updates, and availability.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} Target freelancer profile exists.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Follow mapping record is created in \texttt{follow\_freelancers} and button state changes to ``Following''.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Follow Freelancer} \newline
+1. User clicks ``Follow'' button on freelancer profile. \newline
+2. System verifies user authentication and checks if already following. \newline
+3. System creates a new record in \texttt{follow\_freelancers}. \newline
+4. System updates button to ``Following'' and shows notification ``You are now following [Name].''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Self Follow Attempt} \newline
+1. User attempts to follow themselves. \newline
+2. System displays ``You cannot follow yourself.'' \newline
+3. Use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FOL-02: Duplicate follow records are prevented by a unique constraint on (follower\_id, freelancer\_id).
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-19.3 Unfollow Freelancer
+% =================================================================
+\subparagraph{UC-19.3 Unfollow Freelancer}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-19.3 Unfollow Freelancer} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Following'' button to unfollow a freelancer.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a user to stop following a freelancer (hard delete of follow relationship).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User is currently following the target freelancer.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Follow mapping is deleted from \texttt{follow\_freelancers} and button state reverts to ``Follow''.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Unfollow Freelancer} \newline
+1. User clicks ``Following'' button. \newline
+2. System deletes matching record from \texttt{follow\_freelancers}. \newline
+3. System updates button state back to ``Follow''. \newline
+4. System displays notification ``Unfollowed [Name].''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Not Following} \newline
+1. Follow record does not exist. \newline
+2. System resets button state to ``Follow'' and ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FOL-03: Unfollowing is a hard delete operation.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-20.1 View Notification List
+% =================================================================
+\subparagraph{UC-20.1 View Notification List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-20.1 View Notification List} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the bell icon in header or navigates to the notifications page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves all in-app notifications for the current user, displaying title, message, category type, read status, and creation date with unread badge count.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Paginated notification dropdown or full page list is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Notification List} \newline
+1. User clicks notification bell icon. \newline
+2. System queries \texttt{notifications} table for user ID where \texttt{deletedAt = NULL}. \newline
+3. System orders items by \texttt{createdAt} descending. \newline
+4. System displays notifications list and total unread count badge.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Notifications} \newline
+1. System finds no notification records. \newline
+2. System displays ``No notifications yet.''
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Connection Error} \newline
+1. System fails to load notifications. \newline
+2. System displays warning indicator in dropdown.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-NOTIF-01: Notifications soft-deleted by user shall not be displayed. \newline
+BR-NOTIF-02: Real-time notifications are pushed instantly via Socket.IO events.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Clicking a notification navigates to the related contract, proposal, job, or forum item.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Notification system is active.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-20.2 Mark Notification as Read
+% =================================================================
+\subparagraph{UC-20.2 Mark Notification as Read}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-20.2 Mark Notification as Read} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on an unread notification or clicks its ``Mark as read'' action.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Updates the read status (\texttt{isRead = true}) of a single notification.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} Notification belongs to the user and \texttt{isRead = false}.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Notification \texttt{isRead} is set to true and header unread badge count decrements by 1.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Mark Notification as Read} \newline
+1. User clicks an unread notification item. \newline
+2. System updates \texttt{isRead = true} in \texttt{notifications} table. \newline
+3. System updates UI styling (removes highlight) and decrements unread counter badge. \newline
+4. System redirects user to the target action URL.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Access} \newline
+1. User attempts to update another user's notification. \newline
+2. System rejects update request with 403 status.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-NOTIF-03: Users can only mark their own notifications as read.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Notification exists.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-20.3 Mark All Notifications as Read
+% =================================================================
+\subparagraph{UC-20.3 Mark All Notifications as Read}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-20.3 Mark All Notifications as Read} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Mark all as read'' in the notifications menu.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Bulk updates all unread notifications belonging to the authenticated user to read status (\texttt{isRead = true}).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} All notifications for the user have \texttt{isRead = true} and unread badge count becomes 0.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Mark All Notifications as Read} \newline
+1. User clicks ``Mark all as read'' button. \newline
+2. System executes bulk update setting \texttt{isRead = true} for all notifications matching \texttt{userId}. \newline
+3. System updates UI list state and resets unread badge counter to 0. \newline
+4. System displays toast message ``All notifications marked as read.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Update Failure} \newline
+1. Database operation fails. \newline
+2. System displays ``Unable to update notifications. Try again.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-NOTIF-04: Bulk update applies strictly to the authenticated user's scope.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-20.4 Delete Notification
+% =================================================================
+\subparagraph{UC-20.4 Delete Notification}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-20.4 Delete Notification} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the delete / dismiss icon on a notification item.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Soft-deletes a notification record from the user's notification list.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} Target notification belongs to the user.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Notification is soft-deleted (\texttt{deletedAt = current\_timestamp}) and removed from display.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Notification} \newline
+1. User clicks dismiss icon on a notification. \newline
+2. System sets \texttt{deletedAt = current\_timestamp} on the notification record. \newline
+3. System removes the item from the list display.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Deletion} \newline
+1. Notification belongs to another user. \newline
+2. System returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-NOTIF-05: Notification deletion is implemented as a soft delete (\texttt{deletedAt}).
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-21.1 Switch Role
+% =================================================================
+\subparagraph{UC-21.1 Switch Role}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-21.1 Switch Role} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a dual-role user selects ``Switch to Client'' or ``Switch to Freelancer'' from the profile menu.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users possessing both Client and Freelancer roles to switch their active working context seamlessly without logging out and back in.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User holds both Client and Freelancer role assignments in \texttt{user\_roles}.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Active role context in session/JWT is updated and user is redirected to the corresponding dashboard.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Switch Role} \newline
+1. User clicks the role switcher dropdown in header menu. \newline
+2. User selects the alternative role (e.g., switch from Freelancer to Client context). \newline
+3. System verifies user possesses the target role assignment. \newline
+4. System re-issues session token / JWT with updated active role claim (\texttt{activeRole = CLIENT}). \newline
+5. System updates navigation layout and redirects user to Client Dashboard. \newline
+6. System displays message ``Switched context to Client.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Single Role User} \newline
+1. User only has one active role. \newline
+2. System displays ``You do not have a secondary role. Click 'Join Role' to add one.'' \newline
+3. System prompts UC-21.2.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ROLE-01: Context switching requires valid dual-role assignment in the database. \newline
+BR-ROLE-02: Active role claim in JWT determines endpoint authorization access control.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Avoids requiring re-authentication or password re-entry.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User account has multiple activated roles.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-21.2 Join New Role
+% =================================================================
+\subparagraph{UC-21.2 Join New Role}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-21.2 Join New Role} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user with a single role clicks ``Become a Freelancer'' or ``Become a Client'' in settings.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a user with one role to activate the complementary role (Client adding Freelancer or vice versa), initializing the required role profile and enabling seamless role switching.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User does not already possess the target role.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Target role is assigned in \texttt{user\_roles}, corresponding profile table is initialized, and new JWT is issued.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Join New Role} \newline
+1. User clicks ``Become a Freelancer'' (or ``Become a Client''). \newline
+2. System presents brief onboarding form for initial role details (e.g., title & skills for Freelancer, or company name for Client). \newline
+3. User completes required fields and clicks ``Confirm''. \newline
+4. System assigns target role in \texttt{user\_roles}. \newline
+5. System creates corresponding \texttt{freelancer\_profiles} or \texttt{client\_profiles} record. \newline
+6. System re-issues JWT updated with dual-role permissions and active role set to the new role. \newline
+7. System redirects user to the new role dashboard with success message ``New role activated!''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Activation} \newline
+1. User clicks ``Cancel'' during onboarding. \newline
+2. System discards input and returns to account settings.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Role Already Active} \newline
+1. User already possesses both roles. \newline
+2. System displays ``You already have this role activated.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ROLE-03: Activating a new role must preserve existing account data and primary credentials.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User account is active.} \\ \hline
+\end{longtable}

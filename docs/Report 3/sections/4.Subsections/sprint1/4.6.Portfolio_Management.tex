@@ -1,0 +1,207 @@
+\paragraph{Manage Freelancer Portfolio}
+% =================================================================
+% UC-05.6 View Portfolio List
+% =================================================================
+\subparagraph{UC-05.6 View Portfolio List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.6 View Portfolio List} \\ \hline
+Created By: & HuyNLN & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer, Client, Guest & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the portfolio section of a freelancer profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays the list of portfolio items created by a freelancer.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database. \newline
+\textbf{PRE-2} The freelancer profile exists.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Active portfolio items (where \texttt{deletedAt = NULL}) are displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 View Portfolio List} \newline
+1. User navigates to freelancer portfolio section. \newline
+2. The system queries \texttt{portfolio\_items} table filtering by freelancer ID. \newline
+3. The system filters out soft-deleted portfolios (\texttt{deletedAt IS NOT NULL}). \newline
+4. The system renders portfolio item cards with thumbnails, titles, and tags.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a No Portfolios Found} \newline
+If no portfolios exist, the system displays ``No portfolios available.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-01: Only portfolios with \texttt{deletedAt = NULL} shall be displayed.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Portfolios are linked to freelancer ID.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-05.7 Add New Portfolio
+% =================================================================
+\subparagraph{UC-05.7 Add New Portfolio}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.7 Add New Portfolio} \\ \hline
+Created By: & HuyNLN & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the freelancer submits a new portfolio entry.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to create a new portfolio project entry with title, description, technologies used, and media file attachments.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Freelancer is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new portfolio record is created and visible in the portfolio list.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Add New Portfolio} \newline
+1. Freelancer clicks ``Add Portfolio'' button. \newline
+2. System displays portfolio creation form. \newline
+3. Freelancer enters title, description, project URL, and uploads media attachments. \newline
+4. Freelancer clicks ``Save''. \newline
+5. System validates title and media file sizes. \newline
+6. System uploads media files and creates portfolio record in database. \newline
+7. System displays success message ``Portfolio created successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a Title Missing} \newline
+If title is empty, system displays ``Portfolio title is required.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-02: Portfolio title is a required field. \newline
+BR-PORT-03: Media uploads must conform to size (max 10MB) and format restrictions.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Storage service is available.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-05.8 View Portfolio Detail
+% =================================================================
+\subparagraph{UC-05.8 View Portfolio Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.8 View Portfolio Detail} \\ \hline
+Created By: & HuyNLN & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer, Client, Guest & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a specific portfolio item card.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays detailed information of a portfolio item including full project description, technologies used, project link, and media gallery.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Portfolio item exists and is not soft-deleted.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Full portfolio details are displayed in modal or detail page.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 View Portfolio Detail} \newline
+1. User selects a portfolio item. \newline
+2. System queries \texttt{portfolio\_items} table for matching portfolio ID. \newline
+3. System loads media links and technology tags. \newline
+4. System displays full portfolio details view.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a Portfolio Not Found} \newline
+If portfolio ID is invalid or deleted, system displays ``Portfolio item not found.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-04: Only active portfolios (\texttt{deletedAt = NULL}) are accessible.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Media URLs are accessible.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-05.9 Update Portfolio
+% =================================================================
+\subparagraph{UC-05.9 Update Portfolio}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.9 Update Portfolio} \\ \hline
+Created By: & HuyNLN & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the portfolio owner submits updated portfolio details.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to edit title, description, technologies, project URL, or media of an existing portfolio project.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Freelancer is authenticated. \newline
+\textbf{PRE-2} Freelancer is the owner of the portfolio item.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Portfolio modifications are saved to the database.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Update Portfolio} \newline
+1. Freelancer clicks ``Edit'' on a portfolio item. \newline
+2. System loads portfolio data into form. \newline
+3. Freelancer edits fields or updates media files. \newline
+4. Freelancer clicks ``Save Changes''. \newline
+5. System validates inputs. \newline
+6. System updates portfolio record in database. \newline
+7. System displays success message ``Portfolio updated successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a Unauthorized Edit} \newline
+If user does not own the portfolio, system returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-05: Only the portfolio owner can edit it.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-05.10 Delete Portfolio
+% =================================================================
+\subparagraph{UC-05.10 Delete Portfolio}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-05.10 Delete Portfolio} \\ \hline
+Created By: & HuyNLN & Date Created: & 10/09/2026 \\ \hline
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer clicks ``Delete'' on a portfolio item.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove a portfolio project from public display via soft delete (\texttt{deletedAt = current\_timestamp}).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Freelancer is authenticated. \newline
+\textbf{PRE-2} Freelancer is the owner of the portfolio item.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Portfolio item is soft-deleted and removed from active list view.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.0 Delete Portfolio} \newline
+1. Freelancer clicks delete icon on portfolio item. \newline
+2. System displays confirmation prompt ``Delete this portfolio item?''. \newline
+3. Freelancer confirms deletion. \newline
+4. System sets \texttt{deletedAt = current\_timestamp} on the portfolio record. \newline
+5. System refreshes portfolio list and displays success message.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{1.2a Unauthorized Deletion} \newline
+If user does not own the portfolio, system displays ``You do not have permission to delete this portfolio.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PORT-07: Portfolio deletion must be a soft delete operation. \newline
+BR-PORT-08: Soft-deleted portfolios must not be visible to clients or guests.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Record exists.} \\ \hline
+\end{longtable}

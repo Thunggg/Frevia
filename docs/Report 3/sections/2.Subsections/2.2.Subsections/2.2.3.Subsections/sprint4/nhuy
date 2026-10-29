@@ -1,0 +1,767 @@
+\paragraph{Reviews, Profile Management \& Admin Review}
+
+% =================================================================
+% UC-22.1 View Reviews List
+% =================================================================
+\subparagraph{UC-22.1 View Reviews List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-22.1 View Reviews List} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Reviews section on a contract or profile page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves all reviews associated with a contract or target user profile, displaying overall ratings, detailed breakdown metrics, comments, reviewer identity, and dates.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The system is connected to the database.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of reviews and average rating score is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Reviews List} \newline
+1. User accesses the Reviews tab. \newline
+2. System queries \texttt{reviews} table for target \texttt{reviewee\_id} or \texttt{contract\_id} where \texttt{deletedAt = NULL}. \newline
+3. System calculates average overall rating and breakdown category averages. \newline
+4. System displays review list items with star ratings, reviewer profile details, and responses.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Reviews Found} \newline
+1. System finds no review records. \newline
+2. System displays ``No reviews have been written yet.''
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. Query fails. \newline
+2. System displays ``Unable to load reviews. Please try again later.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-REV-01: Only reviews with \texttt{deletedAt = NULL} shall be visible publicly.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Reviews are linked to completed contracts.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-22.2 View Review Detail
+% =================================================================
+\subparagraph{UC-22.2 View Review Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-22.2 View Review Detail} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Guest, Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a specific review item.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays detailed rating breakdown (Communication, Quality of Work, Adherence to Deadlines), full comment text, contract context, and author response.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Target review exists and is not soft-deleted.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Full review detail view is rendered.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Review Detail} \newline
+1. User clicks review item. \newline
+2. System retrieves review record by \texttt{id}, joining reviewer and contract info. \newline
+3. System parses breakdown JSON metrics. \newline
+4. System displays full review details and associated response.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Review Not Found} \newline
+1. Review ID is invalid or deleted. \newline
+2. System displays ``Review not found.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-REV-02: Rating score breakdown consists of Communication (1-5), Quality (1-5), and Deadlines (1-5).
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Review exist in database.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-22.3 Write Review
+% =================================================================
+\subparagraph{UC-22.3 Write Review}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-22.3 Write Review} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Write Review'' on a completed contract.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a contract participant (Client or Freelancer) to submit a rating and feedback comment for the other party after contract completion.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is a participant in the contract. \newline
+\textbf{PRE-2} Contract status is COMPLETED. \newline
+\textbf{PRE-3} User has not already submitted a review for this contract.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new review is inserted into \texttt{reviews} table and target user's average rating is re-calculated.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Write Review} \newline
+1. User opens the Write Review dialog for a completed contract. \newline
+2. User selects rating scores for overall and sub-criteria (Communication, Quality, Deadlines). \newline
+3. User enters written feedback comment. \newline
+4. User clicks ``Submit Review''. \newline
+5. System validates that ratings are between 1 and 5 and comment is not empty. \newline
+6. System inserts review record into \texttt{reviews}. \newline
+7. System updates target user's overall average rating profile. \newline
+8. System displays success message ``Review submitted successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Review} \newline
+1. User clicks ``Cancel''. \newline
+2. System discards input and closes dialog.
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Already Reviewed} \newline
+1. User has already submitted a review for this contract. \newline
+2. System displays ``You have already reviewed this contract.'' \newline
+3. The use case ends.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-REV-03: Only contract participants can review each other. \newline
+BR-REV-04: Unique constraint on (contract\_id, reviewer\_id) prevents duplicate reviews.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Contract is COMPLETED.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-22.4 Edit Review
+% =================================================================
+\subparagraph{UC-22.4 Edit Review}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-22.4 Edit Review} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author of a review clicks ``Edit Review''.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of an existing review to update their rating scores or comment content.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User is the original author (\texttt{reviewer\_id}) of the review.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Updated ratings and comment are saved in \texttt{reviews} and recipient rating average is updated.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Review} \newline
+1. Review author opens Edit Review modal. \newline
+2. System loads existing scores and comment. \newline
+3. Author modifies scores or text and clicks ``Save Changes''. \newline
+4. System validates inputs and updates the review record. \newline
+5. System recalculates reviewee average score. \newline
+6. System displays success message ``Review updated successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Edit} \newline
+1. User is not the review author. \newline
+2. System returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-REV-05: Only the original reviewer can edit a review.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Review exists.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-22.5 Delete Review
+% =================================================================
+\subparagraph{UC-22.5 Delete Review}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-22.5 Delete Review} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a review author or admin selects ``Delete Review''.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Soft-deletes a review record (\texttt{deletedAt = current\_timestamp}).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is the review author or an authenticated Admin.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Review is soft-deleted and removed from public profile rating calculations.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Review} \newline
+1. User clicks delete icon on a review. \newline
+2. System prompts for confirmation ``Delete this review?''. \newline
+3. User confirms deletion. \newline
+4. System sets \texttt{deletedAt = current\_timestamp} on the review record. \newline
+5. System recalculates overall reviewee rating and removes item from display.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Permission Denied} \newline
+1. User is neither author nor admin. \newline
+2. System returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-REV-06: Review deletion is implemented as a soft delete.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Record exists.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-23.1 Respond to Review
+% =================================================================
+\subparagraph{UC-23.1 Respond to Review}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-23.1 Respond to Review} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the recipient of a review clicks ``Respond to Review''.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the recipient of a review (reviewee) to post a public response addressing feedback received.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User is the reviewee of the target review. \newline
+\textbf{PRE-3} A response has not already been created for this review.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A response record is created in \texttt{review\_responses} and displayed underneath the review.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Respond to Review} \newline
+1. Review recipient clicks ``Respond to Review'' on a received review. \newline
+2. System opens response text dialog. \newline
+3. User enters response message and clicks ``Post Response''. \newline
+4. System validates non-empty message. \newline
+5. System inserts record into \texttt{review\_responses}. \newline
+6. System displays response publicly below the original review.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Response Already Exists} \newline
+1. A response was already submitted for this review. \newline
+2. System displays ``You have already responded to this review.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-RESP-01: Unique constraint on \texttt{review\_id} ensures only one response per review.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Reviewee is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-23.2 Edit Response
+% =================================================================
+\subparagraph{UC-23.2 Edit Response}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-23.2 Edit Response} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author of a review response clicks ``Edit Response''.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of a review response to edit their response text.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is the author of the response.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Updated response text is saved and displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Edit Response} \newline
+1. Author opens Edit Response dialog. \newline
+2. Author modifies text and clicks ``Save''. \newline
+3. System validates input and updates \texttt{review\_responses}. \newline
+4. System displays updated response text with success message.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Edit} \newline
+1. User is not the response author. \newline
+2. System returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-RESP-02: Only the response author can edit their response text.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Response exists.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-23.3 Delete Response
+% =================================================================
+\subparagraph{UC-23.3 Delete Response}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-23.3 Delete Response} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a response author or admin clicks ``Delete Response''.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Soft-deletes a review response (\texttt{deletedAt = current\_timestamp}).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is response author or Admin.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Response is soft-deleted and removed from display.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Response} \newline
+1. User clicks delete response button. \newline
+2. System confirms deletion prompt. \newline
+3. System sets \texttt{deletedAt = current\_timestamp} on \texttt{review\_responses} record. \newline
+4. System updates UI display.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Deletion} \newline
+1. User is not author or admin. \newline
+2. System returns 403 Forbidden.
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-RESP-03: Response deletion is implemented as a soft delete.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Response exists.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-24.1 Get Profile
+% =================================================================
+\subparagraph{UC-24.1 Get Profile}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-24.1 Get Profile} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user loads their account dashboard or profile settings.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves general account profile information (full name, email, avatar URL, phone number, location, roles list, active role context).} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Account profile data is loaded and displayed in profile header and settings forms.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Get Profile} \newline
+1. System sends request \texttt{GET /api/profiles/me}. \newline
+2. System queries \texttt{profiles} table for authenticated user ID. \newline
+3. System loads account details, avatar URL, and assigned roles list. \newline
+4. System populates user header profile avatar and settings form fields.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthenticated} \newline
+1. Token is invalid or expired. \newline
+2. System redirects user to Login page (UC-07).
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROF-05: Account profile endpoint returns data scoped strictly to current user token.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User token is valid.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-24.2 Update Profile
+% =================================================================
+\subparagraph{UC-24.2 Update Profile}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-24.2 Update Profile} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user submits modifications on their general profile settings form.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Updates user account profile details such as display name, phone number, bio, location, and preferred time zone.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} General profile updates are saved to \texttt{profiles} table and displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Profile} \newline
+1. User modifies display name, phone number, or bio in settings. \newline
+2. User clicks ``Save Changes''. \newline
+3. System validates input data. \newline
+4. System updates \texttt{profiles} record for the user. \newline
+5. System displays success message ``Profile updated successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Validation Failed} \newline
+1. Display name is left blank. \newline
+2. System displays ``Display name cannot be empty.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROF-06: Display name is a mandatory field.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User is logged in.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-24.3 Change Password
+% =================================================================
+\subparagraph{UC-24.3 Change Password}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-24.3 Change Password} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user submits the Change Password form in security settings.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to update their account password securely by verifying their current password and providing a new strong password.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated. \newline
+\textbf{PRE-2} User account uses password authentication (non-OAuth exclusive).
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Account password hash is updated in database and existing sessions are refreshed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Change Password} \newline
+1. User enters current password, new password, and password confirmation. \newline
+2. User clicks ``Update Password''. \newline
+3. System verifies current password matches stored bcrypt hash. \newline
+4. System validates new password meets complexity rules (min 8 chars, uppercase, number, special char). \newline
+5. System checks password confirmation matches new password. \newline
+6. System hashes new password with bcrypt (work factor 12) and updates database. \newline
+7. System displays success message ``Password changed successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Incorrect Current Password} \newline
+1. Current password verification fails. \newline
+2. System displays ``Current password is incorrect.'' \newline
+\textbf{EX-02: Weak New Password} \newline
+1. New password fails complexity validation. \newline
+2. System displays ``Password must be at least 8 characters with 1 uppercase, 1 number, and 1 special character.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SEC-01: Passwords must be hashed using bcrypt with work factor 12 before storage.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{OAuth-only accounts are directed to use social provider authentication.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User knows current password.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-24.4 Upload Avatar
+% =================================================================
+\subparagraph{UC-24.4 Upload Avatar}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-24.4 Upload Avatar} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects an image file or uses the avatar cropper tool.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a user to upload and update their profile avatar image with local client-side cropping and format validation.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Avatar image is stored in storage, avatar URL is saved to \texttt{profiles}, and header avatar updates instantly.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Upload Avatar} \newline
+1. User clicks avatar image to upload a new picture. \newline
+2. User selects an image file from local device. \newline
+3. System opens avatar cropping tool modal. \newline
+4. User adjusts crop area and clicks ``Apply \& Save''. \newline
+5. System validates image format (JPEG/PNG/WebP) and size (under 5MB). \newline
+6. System uploads processed image to cloud storage. \newline
+7. System updates \texttt{avatarUrl} field in \texttt{profiles} table. \newline
+8. System updates header and profile page avatar display with success toast.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: File Format / Size Error} \newline
+1. Image exceeds 5MB or format is invalid. \newline
+2. System displays ``Please select a valid image file under 5MB.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PROF-07: Avatar upload size limit is 5MB; supported formats are JPEG, PNG, and WebP.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Client-side cropping reduces upload bandwidth.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Cloud storage is connected.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.1 View List of Pending Profile Update Requests
+% =================================================================
+\subparagraph{UC-25.1 View List of Pending Profile Update Requests}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.1 View List of Pending Profile Update Requests} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to Profile Update Review section in admin panel.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves all profile change requests submitted by users requiring manual administrator inspection before applying changes to live profiles.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated as Admin.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Paginated list of pending profile modification requests is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Pending Profile Update Requests} \newline
+1. Admin opens Profile Update Review section. \newline
+2. System queries profile update requests with status PENDING. \newline
+3. System displays table with user name, submitted date, modified fields summary, and action buttons.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Pending Requests} \newline
+1. System finds no pending requests. \newline
+2. System displays ``No pending profile update requests.''
+} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. Query fails. \newline
+2. System displays ``Unable to load profile update queue.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ADM-01: Only authenticated Admins can access profile review queues.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Admin has appropriate RBAC permissions.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.2 View Profile Update Request Detail
+% =================================================================
+\subparagraph{UC-25.2 View Profile Update Request Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.2 View Profile Update Request Detail} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a pending profile update request from the queue.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Renders a side-by-side comparison view comparing the user's current live profile data with the requested profile changes.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Admin is authenticated. \newline
+\textbf{PRE-2} Target request exists in review queue.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Diff comparison screen is displayed with Approve and Reject action buttons.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Request Detail} \newline
+1. Admin clicks ``Review'' on a request row. \newline
+2. System retrieves request data and user's current profile record. \newline
+3. System renders diff view highlighting modified fields (e.g., modified bio, new qualifications). \newline
+4. Admin reviews changes.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Request Not Found} \newline
+1. Request ID is invalid. \newline
+2. System displays ``Request not found.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ADM-02: Modified fields must be visually highlighted in green/red diff colors.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Request details are parsed correctly.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.3 Approve Profile Update Request
+% =================================================================
+\subparagraph{UC-25.3 Approve Profile Update Request}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.3 Approve Profile Update Request} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Approve'' on a profile update request.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Approves a profile change request, applying proposed modifications directly into the user's live profile tables and notifying the user.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Admin is authenticated. \newline
+\textbf{PRE-2} Request status is PENDING.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Proposed changes are committed to \texttt{profiles} / \texttt{freelancer\_profiles} and request status becomes APPROVED.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Approve Request} \newline
+1. Admin clicks ``Approve Request''. \newline
+2. System confirms approval prompt. \newline
+3. System applies changes to user's profile database records. \newline
+4. System sets request status to APPROVED with admin ID and timestamp. \newline
+5. System sends notification to user ``Your profile update request has been approved.'' \newline
+6. System displays success message ``Request approved and live profile updated.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Update Transaction Failure} \newline
+1. Database transaction fails. \newline
+2. System rolls back changes and displays ``Approval failed. Try again.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ADM-03: Approval automatically updates live profile tables atomically.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Admin has approval authority.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.4 Reject Profile Update Request
+% =================================================================
+\subparagraph{UC-25.4 Reject Profile Update Request}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.4 Reject Profile Update Request} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Reject'' on a profile update request.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Rejects a profile modification request, recording an admin reason note and keeping the user's current live profile intact.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Admin is authenticated. \newline
+\textbf{PRE-2} Request status is PENDING.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Request status is set to REJECTED with rejection reason and live profile remains unchanged.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Reject Request} \newline
+1. Admin clicks ``Reject Request''. \newline
+2. System opens rejection reason modal. \newline
+3. Admin enters detailed rejection reason and clicks ``Confirm Rejection''. \newline
+4. System sets request status to REJECTED and saves rejection reason. \newline
+5. System sends notification to user with rejection reason. \newline
+6. System displays success toast ``Request rejected.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Empty Reason} \newline
+1. Rejection reason is left blank. \newline
+2. System prompts ``Please provide a rejection reason for the user.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ADM-04: Rejection requires a mandatory reason note.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User retains previous profile data.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.5 View Profile Update Request History
+% =================================================================
+\subparagraph{UC-25.5 View Profile Update Request History}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.5 View Profile Update Request History} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Review History'' tab in profile moderation panel.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves historical records of previously processed profile update requests (APPROVED or REJECTED) with admin review logs.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} Admin is authenticated.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Paginated history table of processed profile requests is displayed.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Request History} \newline
+1. Admin opens Review History tab. \newline
+2. System retrieves requests with status APPROVED or REJECTED. \newline
+3. System displays table with user, status badge, reviewing admin, date, and details link.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Database Error} \newline
+1. Query fails. \newline
+2. System displays ``Unable to load review history.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-ADM-05: Review logs are append-only audit records.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{History is stored in database.} \\ \hline
+\end{longtable}
+
+% =================================================================
+% UC-25.6 Update Profile Expert
+% =================================================================
+\subparagraph{UC-25.6 Update Profile Expert}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-25.6 Update Profile Expert} \\ \hline
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 14/09/2026 \\ \hline
+Primary Actor: & Expert, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an expert or admin updates expert consultant profile information.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an expert consultant to update specialized consultation profile attributes, hourly rates, domain expertise badges, and featured landing page info.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} User is authenticated as Expert or Admin.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Expert profile attributes are updated and featured on homepage showcase.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Profile Expert} \newline
+1. Expert opens Expert Profile Editor. \newline
+2. User updates domain expertise tags, consultation rate, and bio. \newline
+3. User clicks ``Save Expert Profile''. \newline
+4. System validates inputs and saves to \texttt{expert\_profiles}. \newline
+5. System displays success message ``Expert profile updated successfully.''
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Invalid Rate} \newline
+1. Consultation rate is less than 0. \newline
+2. System displays ``Hourly rate must be a positive amount.''
+} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-EXP-01: Expert profile updates are visible on the platform homepage expert showcase.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{User has Expert role privileges.} \\ \hline
+\end{longtable}
