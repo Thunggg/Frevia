@@ -1,0 +1,75 @@
+% =================================================================
+% FILE: sections/tthuan/2/sprint2.tex -- Sprint 2
+% Permission, Session, and Forum Category Management
+% =================================================================
+
+% ================= Permission Management =================
+\subsection{Permission Management}
+
+Permission Management exposes the route-level permission catalogue so that an
+administrator can inspect the permissions available for role assignment.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint2/tthuan/classDiagram/PermissionManagement}{Class diagram of Permission Management}{fig:tthuan-cls-permission-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-15.01 -- View Permission List}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewPermissionList}{Sequence diagram of UC-15.01 View Permission List}{fig:tthuan-seq-view-permission-list}
+
+\subsubsection{UC-15.02 -- View Permission Detail}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewPermissionDetail}{Sequence diagram of UC-15.02 View Permission Detail}{fig:tthuan-seq-view-permission-detail}
+
+% ================= Session Management =================
+\subsection{Session Management}
+
+Session Management gives an authenticated user visibility over the devices
+that currently hold a refresh-token session and allows a session to be revoked
+remotely.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint2/tthuan/classDiagram/SessionManagement}{Class diagram of Session Management}{fig:tthuan-cls-session-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-16.01 -- View Session List}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewSessionList}{Sequence diagram of UC-16.01 View Session List}{fig:tthuan-seq-view-session-list}
+
+\subsubsection{UC-16.02 -- View Session Detail}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewSessionDetail}{Sequence diagram of UC-16.02 View Session Detail}{fig:tthuan-seq-view-session-detail}
+
+\subsubsection{UC-16.03 -- Revoke Session}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/RevokeSession}{Sequence diagram of UC-16.03 Revoke Session}{fig:tthuan-seq-revoke-session}
+
+% ================= Forum Category Management =================
+\subsection{Forum Category Management}
+
+Forum Category Management covers the administrator-side category catalogue and
+the public category views used by the forum. Deletion is a soft delete, so a
+category can be restored later.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint2/tthuan/classDiagram/ForumCategoryManagement}{Class diagram of Forum Category Management}{fig:tthuan-cls-forum-category-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-17.01 -- Create Forum Category}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/CreateForumCategory}{Sequence diagram of UC-17.01 Create Forum Category}{fig:tthuan-seq-create-forum-category}
+
+\subsubsection{UC-17.02 -- Update Forum Category}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/UpdateForumCategory}{Sequence diagram of UC-17.02 Update Forum Category}{fig:tthuan-seq-update-forum-category}
+
+\subsubsection{UC-17.03 -- Delete Forum Category}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/DeleteForumCategory}{Sequence diagram of UC-17.03 Delete Forum Category}{fig:tthuan-seq-delete-forum-category}
+
+\subsubsection{UC-17.06 -- Restore Forum Category}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/RestoreForumCategory}{Sequence diagram of UC-17.06 Restore Forum Category}{fig:tthuan-seq-restore-forum-category}
+
+\subsubsection{UC-14.01 -- View Forum Category List}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewForumCategoryList}{Sequence diagram of UC-14.01 View Forum Category List}{fig:tthuan-seq-view-forum-category-list}
+
+\subsubsection{UC-14.02 -- View Forum Category Detail}
+\kfig{0.78\textwidth}{images/sprint2/tthuan/sequences/ViewForumCategoryDetail}{Sequence diagram of UC-14.02 View Forum Category Detail}{fig:tthuan-seq-view-forum-category-detail}

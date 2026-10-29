@@ -1,0 +1,214 @@
+% =================================================================
+% FILE: sections/tthuan/4/sprint2.tex -- Sprint 2
+% Class specifications for Permission and Session Management,
+% with a cross-reference for the shared Forum Category classes.
+% =================================================================
+
+\subsection{PermissionsController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PermissionsController(permissionsService: PermissionsService)} &
+A method to initialize the controller with the permission service.
+\newline -- \code{permissionsService}: \code{PermissionsService} -- service that owns permission queries.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPermissions(query: PermissionFilterDto)} &
+A method to return a filtered page of route permissions.
+\newline -- \code{query}: \code{PermissionFilterDto} -- page, limit, search, method, module, and sort options.
+\newline -- \textit{Returns:} \code{Promise<PermissionListResponseType>} -- permissions, pagination, and module names.
+\newline -- Route: \code{GET /permissions}. \\ \hline
+
+03 & \code{getPermissionById(id: number)} &
+A method to return one permission.
+\newline -- \code{id}: \code{number} -- permission identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<PermissionDetailResponseType>} -- the permission detail.
+\newline -- Route: \code{GET /permissions/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{permissionsService} & \code{PermissionsService} -- private readonly permission service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PermissionsService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PermissionsService(permissionsRepository: PermissionsRepository)} &
+A method to initialize the service with the permission repository.
+\newline -- \code{permissionsRepository}: \code{PermissionsRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPermissions(filter: PermissionFilterType)} &
+A method to load a permission page and compute pagination metadata.
+\newline -- \code{filter}: \code{PermissionFilterType} -- page, limit, search, method, module, and sort options.
+\newline -- \textit{Returns:} \code{Promise<PermissionListResponseType>} -- permissions, pagination, and module names.
+\newline -- Failure is mapped to \code{FailedToLoadPermissionsException}. \\ \hline
+
+03 & \code{getPermissionById(id: number)} &
+A method to load one permission.
+\newline -- \code{id}: \code{number} -- permission identifier.
+\newline -- \textit{Returns:} \code{Promise<PermissionDetailResponseType>} -- the permission detail.
+\newline -- Prisma errors are mapped to \code{FailedToLoadPermissionDetailException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{permissionsRepository} & \code{PermissionsRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PermissionsRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PermissionsRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findAll(filter: PermissionFilterType)} &
+A method to query permissions, the matching total, and the distinct module list.
+\newline -- \code{filter}: \code{PermissionFilterType} -- page, limit, search, method, module, and sort options.
+\newline -- \textit{Returns:} \code{Promise<{ permissions: PermissionListItemType[]; total: number; modules: string[] }>} -- the page and supporting data.
+\newline -- Search matches name, path, or module case-insensitively. \\ \hline
+
+03 & \code{findById(id: number)} &
+A method to load one active permission.
+\newline -- \code{id}: \code{number} -- permission identifier.
+\newline -- \textit{Returns:} \code{Promise<PermissionDetailResponseType>} -- the permission detail.
+\newline -- Throws \code{PermissionNotFoundException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SessionsController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SessionsController(sessionsService: SessionsService)} &
+A method to initialize the controller with the session service.
+\newline -- \code{sessionsService}: \code{SessionsService} -- service that owns session queries.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMySessions(}\newline\code{userId: number, sessionId: number,}\newline\code{query: SessionFilterDto)} &
+A method to return the current user's sessions.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{sessionId}: \code{number} -- current session, used to mark the active row.
+\newline -- \code{query}: \code{SessionFilterDto} -- page, limit, search, and sort options.
+\newline -- \textit{Returns:} \code{Promise<SessionListResponseType>} -- sessions and pagination.
+\newline -- Route: \code{GET /sessions}; authenticated endpoint. \\ \hline
+
+03 & \code{getMySessionById(}\newline\code{userId: number, sessionId: number, id: number)} &
+A method to return one owned session.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{sessionId}: \code{number} -- current session, used to mark the active row.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \textit{Returns:} \code{Promise<SessionDetailResponseType>} -- the session detail.
+\newline -- Route: \code{GET /sessions/:id}; authenticated endpoint. \\ \hline
+
+04 & \code{revokeMySession(}\newline\code{userId: number, sessionId: number, id: number)} &
+A method to revoke one owned session.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{sessionId}: \code{number} -- current session, used to compute \code{loggedOut}.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \textit{Returns:} \code{Promise<RevokeSessionResponseType>} -- a success message and logout flag.
+\newline -- Route: \code{DELETE /sessions/:id}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{sessionsService} & \code{SessionsService} -- private readonly session service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SessionsService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SessionsService(sessionsRepository: SessionsRepository)} &
+A method to initialize the service with the session repository.
+\newline -- \code{sessionsRepository}: \code{SessionsRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMySessions(userId, filter, currentSessionId?)} &
+A method to load a page of the user's sessions.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{filter}: \code{SessionFilterType} -- page, limit, search, and sort options.
+\newline -- \code{currentSessionId}: \code{number | undefined} -- session to mark as current.
+\newline -- \textit{Returns:} \code{Promise<SessionListResponseType>} -- sessions and pagination.
+\newline -- Failure is mapped to \code{FailedToLoadSessionsException}. \\ \hline
+
+03 & \code{getMySessionById(id, userId, currentSessionId?)} &
+A method to load one session owned by the user.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{currentSessionId}: \code{number | undefined} -- session to mark as current.
+\newline -- \textit{Returns:} \code{Promise<SessionDetailResponseType>} -- the session detail.
+\newline -- Prisma errors are mapped to \code{FailedToLoadSessionDetailException}. \\ \hline
+
+04 & \code{revokeMySession(id, userId, currentSessionId?)} &
+A method to delete an active session owned by the user.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{currentSessionId}: \code{number | undefined} -- current session used to compute \code{loggedOut}.
+\newline -- \textit{Returns:} \code{Promise<RevokeSessionResponseType>} -- a success message and logout flag.
+\newline -- Prisma errors are mapped to \code{FailedToRevokeSessionException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{sessionsRepository} & \code{SessionsRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SessionsRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SessionsRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findAllByUserId(userId, filter, currentSessionId?)} &
+A method to query the user's sessions and mark the current one.
+\newline -- \code{userId}: \code{number} -- owner identifier.
+\newline -- \code{filter}: \code{SessionFilterType} -- page, limit, search, and sort options.
+\newline -- \code{currentSessionId}: \code{number | undefined} -- session to mark as current.
+\newline -- \textit{Returns:} \code{Promise<{ sessions: SessionListItemType[]; total: number }>} -- the page and total.
+\newline -- Search matches device information or IP address. \\ \hline
+
+03 & \code{findByIdForUser(id, userId, currentSessionId?)} &
+A method to load one session owned by the user.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \code{userId}: \code{number} -- owner identifier.
+\newline -- \code{currentSessionId}: \code{number | undefined} -- session to mark as current.
+\newline -- \textit{Returns:} \code{Promise<SessionDetailResponseType>} -- the session detail.
+\newline -- Throws \code{SessionNotFoundException}. \\ \hline
+
+04 & \code{deleteActiveByIdForUser(id, userId)} &
+A method to delete an unexpired session owned by the user.
+\newline -- \code{id}: \code{number} -- session identifier.
+\newline -- \code{userId}: \code{number} -- owner identifier.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value.
+\newline -- Throws \code{SessionNotFoundException} or \code{SessionAlreadyExpiredException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+% ================= Forum Category Administration =================
+\subsection{Forum Category Administration (Shared Classes)}
+
+UC-14.01--14.02 and UC-17.01--17.06 use the shared
+\texttt{ForumAdminController}, \texttt{ForumAdminService}, and
+\texttt{ForumAdminRepository}. Their complete specifications, including the
+category list, detail, create, update, delete, and restore endpoints, are
+given once in the shared forum administration class specifications for
+Sprint 3 (see the \texttt{ForumAdminController} subsection).
