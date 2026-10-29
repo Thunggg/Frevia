@@ -51,6 +51,7 @@ const freelancerModules = [
   'DISPUTES',
   'PROFILE-REVISIONS',
   'PAYMENTS',
+  'RECOMMENDATIONS',
 ];
 
 const clientModules = [
@@ -73,6 +74,7 @@ const clientModules = [
   'REVIEWS',
   'PROFILE-REVISIONS',
   'PAYMENTS',
+  'RECOMMENDATIONS',
 ];
 
 const expertModules = [

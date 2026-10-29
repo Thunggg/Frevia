@@ -282,7 +282,6 @@
   "You can only delete your own skills.": "Bạn chỉ có thể xoá kỹ năng của chính mình",
   "You can only edit your own portfolios.": "Bạn chỉ có thể sửa mục portfolio của chính mình",
   "You can only update your own profile.": "Bạn chỉ có thể cập nhật hồ sơ của chính mình",
-
   "Success.ExpertProfileUpdated": "Đã cập nhật hồ sơ chuyên gia",
   "Success.FreelancerProfileUpdated": "Đã cập nhật hồ sơ freelancer",
   "Success.FreelancerSkillsUpdated": "Đã cập nhật kỹ năng freelancer",
@@ -304,13 +303,10 @@
   "Success.SkillDeleted": "Đã xoá kỹ năng",
   "Success.BannerDeleted": "Đã xoá banner",
   "Success.ForumCategoryDeleted": "Đã xoá danh mục",
-
   "Fallback.ContractParticipant": "Một bên tham gia hợp đồng",
-
   "Backend API is not configured.": "Backend API chưa được cấu hình",
   "Request failed": "Yêu cầu thất bại",
   "Response is not valid JSON": "Máy chủ trả về dữ liệu không hợp lệ",
-
   "Bad Request": "Yêu cầu không hợp lệ",
   "Unauthorized": "Bạn chưa đăng nhập",
   "Payment Required": "Cần thanh toán để tiếp tục",
@@ -328,5 +324,7 @@
   "Not Implemented": "Tính năng này chưa khả dụng",
   "Bad Gateway": "Máy chủ tạm thời không khả dụng",
   "Service Unavailable": "Dịch vụ tạm thời không khả dụng",
-  "Gateway Timeout": "Máy chủ phản hồi quá chậm"
+  "Gateway Timeout": "Máy chủ phản hồi quá chậm",
+  "Success.CvAnalysisConfirmed": "Đã xác nhận kết quả phân tích CV",
+  "Success.CvAnalysisDiscarded": "Đã bỏ qua kết quả phân tích CV"
 }

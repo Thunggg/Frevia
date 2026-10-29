@@ -15,6 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import type {
   AddFreelancerSkillType,
+  CvAnalysisConfirmType,
   UpdateFreelancerProfileType,
 } from '@shared/types';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -28,6 +29,10 @@ import {
   AddFreelancerSkillResponseDto,
   CvUploadResponseDto,
   CvAnalyzeResponseDto,
+  CvAnalysisDraftDto,
+  CvAnalysisConfirmDto,
+  CvAnalysisConfirmResultDto,
+  CvAnalysisDiscardResultDto,
   ProfileRevisionSubmissionDto,
 } from './profile.dto';
 import { UseInterceptors } from '@nestjs/common';
@@ -100,6 +105,41 @@ export class ProfileController {
     @UserActive('userId') currentUserId: number,
   ) {
     return this.profileService.analyzeCv(id, currentUserId);
+  }
+
+  @Get(':id/cv/analysis')
+  @ZodSerializerDto(CvAnalysisDraftDto)
+  getCvAnalysis(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.getCvAnalysis(id, currentUserId);
+  }
+
+  @Post(':id/cv/analysis/:analysisId/confirm')
+  @ZodSerializerDto(CvAnalysisConfirmResultDto)
+  confirmCvAnalysis(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('analysisId', ParseIntPipe) analysisId: number,
+    @UserActive('userId') currentUserId: number,
+    @Body() body: CvAnalysisConfirmDto,
+  ) {
+    return this.profileService.confirmCvAnalysis(
+      id,
+      currentUserId,
+      analysisId,
+      body as CvAnalysisConfirmType,
+    );
+  }
+
+  @Post(':id/cv/analysis/:analysisId/discard')
+  @ZodSerializerDto(CvAnalysisDiscardResultDto)
+  discardCvAnalysis(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('analysisId', ParseIntPipe) analysisId: number,
+    @UserActive('userId') currentUserId: number,
+  ) {
+    return this.profileService.discardCvAnalysis(id, currentUserId, analysisId);
   }
 
   @Delete(':id/cv')

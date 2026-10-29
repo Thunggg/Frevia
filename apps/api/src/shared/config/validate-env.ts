@@ -28,6 +28,8 @@ const envSchema = z.object({
   // Dịch vụ AI xác minh CCCD (FastAPI của IDVerification, mặc định :8001)
   AI_SERVICE_URL: z.string().default('http://127.0.0.1:8001'),
   AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(60000),
+  FREVIA_AI_URL: z.string().optional(),
+  FREVIA_AI_TOKEN: z.string().optional(),
 });
 
 const envParsed = envSchema.safeParse(process.env);

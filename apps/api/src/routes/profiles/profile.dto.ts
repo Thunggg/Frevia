@@ -6,6 +6,10 @@ import {
   AddFreelancerSkillResponseSchema,
   CvUploadResponseSchema,
   CvAnalyzeResponseSchema,
+  CvAnalysisDraftSchema,
+  CvAnalysisConfirmSchema,
+  CvAnalysisConfirmResultSchema,
+  CvAnalysisDiscardResultSchema,
   ProfileRevisionSubmissionSchema,
 } from '@shared/types';
 
@@ -33,4 +37,18 @@ export class CvUploadResponseDto extends createZodDto(CvUploadResponseSchema) {}
 
 export class CvAnalyzeResponseDto extends createZodDto(
   CvAnalyzeResponseSchema,
+) {}
+
+export class CvAnalysisDraftDto extends createZodDto(CvAnalysisDraftSchema) {}
+
+export class CvAnalysisConfirmDto extends createZodDto(
+  CvAnalysisConfirmSchema,
+) {}
+
+export class CvAnalysisConfirmResultDto extends createZodDto(
+  CvAnalysisConfirmResultSchema,
+) {}
+
+export class CvAnalysisDiscardResultDto extends createZodDto(
+  CvAnalysisDiscardResultSchema,
 ) {}

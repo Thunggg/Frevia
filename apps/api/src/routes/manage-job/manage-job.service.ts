@@ -27,10 +27,14 @@ import {
   JobNotFoundException,
 } from './manage-job.error';
 import { ManageJobRepository } from './manage-job.repo';
+import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 
 @Injectable()
 export class ManageJobService {
-  constructor(private readonly manageJobRepository: ManageJobRepository) {}
+  constructor(
+    private readonly manageJobRepository: ManageJobRepository,
+    private readonly embeddingOutbox: EmbeddingOutboxService,
+  ) {}
 
   private assertFreelancerRole(roleName: string): void {
     if (roleName !== RoleName.FREELANCER) {
@@ -184,7 +188,13 @@ export class ManageJobService {
 
   async createJob(userId: number, body: CreateJobBodyType): Promise<JobType> {
     try {
-      return await this.manageJobRepository.createJob(userId, body);
+      const job = await this.manageJobRepository.createJob(userId, body);
+      await this.embeddingOutbox.enqueueAndProcess({
+        eventType: 'UPSERT',
+        documentType: 'JOB',
+        documentId: job.id,
+      });
+      return job;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToCreateJobException();
@@ -200,7 +210,13 @@ export class ManageJobService {
     body: UpdateJobBodyType,
   ): Promise<JobType> {
     try {
-      return await this.manageJobRepository.updateJob(userId, jobId, body);
+      const job = await this.manageJobRepository.updateJob(userId, jobId, body);
+      await this.embeddingOutbox.enqueueAndProcess({
+        eventType: 'UPSERT',
+        documentType: 'JOB',
+        documentId: job.id,
+      });
+      return job;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateJobException();
@@ -213,6 +229,11 @@ export class ManageJobService {
   async deleteJob(userId: number, jobId: number): Promise<void> {
     try {
       await this.manageJobRepository.deleteJob(userId, jobId);
+      await this.embeddingOutbox.enqueueAndProcess({
+        eventType: 'DELETE',
+        documentType: 'JOB',
+        documentId: jobId,
+      });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToDeleteJobException();
@@ -228,11 +249,17 @@ export class ManageJobService {
     body: ChangeJobStatusBodyType,
   ): Promise<ChangeJobStatusResponseType> {
     try {
-      return await this.manageJobRepository.changeJobStatus(
+      const job = await this.manageJobRepository.changeJobStatus(
         userId,
         jobId,
         body.status,
       );
+      await this.embeddingOutbox.enqueueAndProcess({
+        eventType: body.status === 'OPEN' ? 'UPSERT' : 'DELETE',
+        documentType: 'JOB',
+        documentId: job.id,
+      });
+      return job;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToChangeJobStatusException();

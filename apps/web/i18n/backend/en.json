@@ -282,7 +282,6 @@
   "You can only delete your own skills.": "You can only delete your own skills",
   "You can only edit your own portfolios.": "You can only edit your own portfolio items",
   "You can only update your own profile.": "You can only update your own profile",
-
   "Success.ExpertProfileUpdated": "Expert profile updated",
   "Success.FreelancerProfileUpdated": "Freelancer profile updated",
   "Success.FreelancerSkillsUpdated": "Freelancer skills updated",
@@ -304,13 +303,10 @@
   "Success.SkillDeleted": "Skill deleted",
   "Success.BannerDeleted": "Banner deleted",
   "Success.ForumCategoryDeleted": "Category deleted",
-
   "Fallback.ContractParticipant": "A contract participant",
-
   "Backend API is not configured.": "Backend API is not configured",
   "Request failed": "Request failed",
   "Response is not valid JSON": "The server returned an invalid response",
-
   "Bad Request": "The request is invalid",
   "Unauthorized": "You are not signed in",
   "Payment Required": "Payment is required",
@@ -328,5 +324,7 @@
   "Not Implemented": "This feature is not available yet",
   "Bad Gateway": "The server is temporarily unavailable",
   "Service Unavailable": "The service is temporarily unavailable",
-  "Gateway Timeout": "The server took too long to respond"
+  "Gateway Timeout": "The server took too long to respond",
+  "Success.CvAnalysisConfirmed": "CV analysis confirmed",
+  "Success.CvAnalysisDiscarded": "CV analysis discarded"
 }

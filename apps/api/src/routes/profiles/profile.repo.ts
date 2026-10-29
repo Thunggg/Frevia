@@ -1,7 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { AvailabilityStatus, Prisma } from '@prisma/client';
+import {
+  AvailabilityStatus,
+  CvAnalysisStatus,
+  CvSourceType,
+  Prisma,
+  ProfileContentSource,
+} from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { calculateFreelancerProfileStrength } from '../../shared/utils/profile-strength';
+
+export type CvAnalysisCreateData = {
+  freelancerProfileId: number;
+  cvUrl: string | null;
+  cvFileName: string | null;
+  cvUploadedAt: Date | null;
+  source: CvSourceType;
+  pages: number;
+  chars: number;
+  truncated: boolean;
+  ocrUsed: boolean;
+  model: string | null;
+  durationMs: number | null;
+  warnings: string[];
+  payload: unknown;
+};
+
+export type CvAnalysisConfirmInput = {
+  analysisId: number;
+  freelancerProfileId: number;
+  skills: { skillId: number; proficiencyLevel: number }[];
+  experience: {
+    title: string | null;
+    company: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    isCurrent: boolean;
+    description: string | null;
+  }[];
+  education: {
+    degree: string | null;
+    school: string | null;
+    startYear: number | null;
+    endYear: number | null;
+    description: string | null;
+  }[];
+  projects: {
+    name: string;
+    technologies: string[];
+    description: string | null;
+  }[];
+};
 
 @Injectable()
 export class ProfileRepository {
@@ -274,6 +322,162 @@ export class ProfileRepository {
   async deleteSkill(skillId: number) {
     return this.prisma.freelancerSkill.delete({
       where: { id: skillId },
+    });
+  }
+
+  /**
+   * Tạo bản nháp phân tích mới. Bản nháp PENDING trước đó (nếu có) bị đánh dấu
+   * DISCARDED để mỗi hồ sơ chỉ có tối đa một bản nháp đang chờ xác nhận.
+   */
+  createCvAnalysis(data: CvAnalysisCreateData) {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.cvAnalysis.updateMany({
+        where: {
+          freelancerProfileId: data.freelancerProfileId,
+          status: CvAnalysisStatus.PENDING,
+        },
+        data: {
+          status: CvAnalysisStatus.DISCARDED,
+          discardedAt: new Date(),
+        },
+      });
+      return tx.cvAnalysis.create({
+        data: { ...data, payload: data.payload as Prisma.InputJsonValue },
+      });
+    });
+  }
+
+  findPendingCvAnalysis(freelancerProfileId: number) {
+    return this.prisma.cvAnalysis.findFirst({
+      where: {
+        freelancerProfileId,
+        status: CvAnalysisStatus.PENDING,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  findCvAnalysisById(analysisId: number) {
+    return this.prisma.cvAnalysis.findUnique({
+      where: { id: analysisId },
+      include: {
+        freelancerProfile: {
+          select: {
+            id: true,
+            profileId: true,
+            cvUrl: true,
+            profile: { select: { userId: true } },
+          },
+        },
+      },
+    });
+  }
+
+  async discardCvAnalysis(analysisId: number) {
+    const result = await this.prisma.cvAnalysis.updateMany({
+      where: { id: analysisId, status: CvAnalysisStatus.PENDING },
+      data: {
+        status: CvAnalysisStatus.DISCARDED,
+        discardedAt: new Date(),
+      },
+    });
+    return result.count > 0;
+  }
+
+  /**
+   * Ghi dữ liệu bản nháp đã xác nhận vào hồ sơ: FreelancerSkill /
+   * FreelancerExperience / FreelancerEducation / PortfolioItem, rồi đánh dấu
+   * CvAnalysis = CONFIRMED. Trả về `null` nếu bản nháp không còn ở PENDING
+   * (đã xác nhận/huỷ ở nơi khác — optimistic claim).
+   */
+  async confirmCvAnalysis(input: CvAnalysisConfirmInput) {
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.cvAnalysis.updateMany({
+        where: { id: input.analysisId, status: CvAnalysisStatus.PENDING },
+        data: {
+          status: CvAnalysisStatus.CONFIRMED,
+          confirmedAt: new Date(),
+        },
+      });
+      if (claimed.count === 0) return null;
+
+      if (input.skills.length > 0) {
+        await tx.freelancerSkill.createMany({
+          data: input.skills.map((skill) => ({
+            freelancerProfileId: input.freelancerProfileId,
+            skillId: skill.skillId,
+            proficiencyLevel: skill.proficiencyLevel,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      if (input.experience.length > 0) {
+        await tx.freelancerExperience.createMany({
+          data: input.experience.map((experience) => ({
+            freelancerProfileId: input.freelancerProfileId,
+            ...experience,
+            source: ProfileContentSource.CV_IMPORT,
+          })),
+        });
+      }
+
+      if (input.education.length > 0) {
+        await tx.freelancerEducation.createMany({
+          data: input.education.map((education) => ({
+            freelancerProfileId: input.freelancerProfileId,
+            ...education,
+            source: ProfileContentSource.CV_IMPORT,
+          })),
+        });
+      }
+
+      if (input.projects.length > 0) {
+        await tx.portfolioItem.createMany({
+          data: input.projects.map((project) => ({
+            freelancerProfileId: input.freelancerProfileId,
+            title: project.name,
+            technologies: project.technologies,
+            description: project.description,
+            source: ProfileContentSource.CV_IMPORT,
+          })),
+        });
+      }
+
+      const freelancerProfile = await tx.freelancerProfile.findUniqueOrThrow({
+        where: { id: input.freelancerProfileId },
+        select: {
+          profileId: true,
+          title: true,
+          education: true,
+          certifications: true,
+          _count: {
+            select: {
+              skills: true,
+              portfolioItems: { where: { deletedAt: null } },
+            },
+          },
+        },
+      });
+      const profile = await tx.profile.findUniqueOrThrow({
+        where: { id: freelancerProfile.profileId },
+        select: { displayName: true, bio: true },
+      });
+      const profileCompletionPercent = calculateFreelancerProfileStrength({
+        displayName: profile.displayName,
+        bio: profile.bio,
+        title: freelancerProfile.title,
+        education: freelancerProfile.education,
+        certifications: freelancerProfile.certifications,
+        skillCount: freelancerProfile._count.skills,
+        portfolioCount: freelancerProfile._count.portfolioItems,
+      });
+      await tx.profile.update({
+        where: { id: freelancerProfile.profileId },
+        data: { profileCompletionPercent },
+      });
+
+      return { profileCompletionPercent };
     });
   }
 }

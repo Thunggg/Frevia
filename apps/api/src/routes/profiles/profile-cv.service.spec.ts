@@ -9,9 +9,15 @@ import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
+import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 import {
+  CvAnalysisNotFoundException,
+  CvAnalysisNotPendingException,
+  CvAnalysisStaleException,
   CvFileInvalidException,
   CvFileRequiredException,
+  CvFileTooLargeException,
+  CvFileTypeException,
   CvNotFoundException,
 } from './profile.error';
 
@@ -23,20 +29,24 @@ jest.mock('fs/promises', () => ({
 
 import { unlink } from 'fs/promises';
 
+const CV_URL = 'https://cdn.example.com/cv.pdf';
+
 const freelancerProfile = ({
   userId = 10,
   cvUrl = null,
   cvPublicId = null,
   cvFileName = null,
+  cvUploadedAt = null,
 }: {
   userId?: number;
   cvUrl?: string | null;
   cvPublicId?: string | null;
   cvFileName?: string | null;
+  cvUploadedAt?: Date | null;
 } = {}) => ({
   id: 5,
   userId,
-  freelancerProfile: { cvUrl, cvPublicId, cvFileName },
+  freelancerProfile: { id: 5, cvUrl, cvPublicId, cvFileName, cvUploadedAt },
   user: {
     userRoles: [{ role: { name: RoleName.FREELANCER } }],
   },
@@ -53,12 +63,83 @@ const pdfFile = (
     ...overrides,
   }) as Express.Multer.File;
 
+const cvAnalyzeResult = (overrides: Record<string, unknown> = {}) => ({
+  skills: [],
+  experience: [],
+  education: [],
+  projects: [],
+  summary: null,
+  meta: {
+    source: 'pdf_text' as const,
+    pages: 1,
+    chars: 100,
+    truncated: false,
+    ocrUsed: false,
+    model: 'qwen2.5:7b-instruct',
+    durationMs: 1000,
+    warnings: [],
+  },
+  ...overrides,
+});
+
+const cvAnalysisRow = (overrides: Record<string, unknown> = {}) => ({
+  id: 7,
+  freelancerProfileId: 5,
+  status: 'PENDING',
+  cvUrl: CV_URL,
+  cvFileName: 'resume.pdf',
+  cvUploadedAt: new Date('2026-01-01T00:00:00Z'),
+  source: 'PDF_TEXT',
+  pages: 1,
+  chars: 100,
+  truncated: false,
+  ocrUsed: false,
+  model: 'qwen2.5:7b-instruct',
+  durationMs: 1000,
+  warnings: [],
+  payload: {
+    skills: [],
+    experience: [],
+    education: [],
+    projects: [],
+    summary: null,
+  },
+  confirmedAt: null,
+  discardedAt: null,
+  createdAt: new Date('2026-01-01T00:00:00Z'),
+  updatedAt: new Date('2026-01-01T00:00:00Z'),
+  ...overrides,
+});
+
+const cvAnalysisWithProfile = (overrides: Record<string, unknown> = {}) => {
+  const { freelancerProfile, ...rest } = overrides as {
+    freelancerProfile?: Record<string, unknown>;
+  } & Record<string, unknown>;
+  return {
+    ...cvAnalysisRow(rest),
+    freelancerProfile: {
+      id: 5,
+      profileId: 3,
+      cvUrl: CV_URL,
+      profile: { userId: 10 },
+      ...freelancerProfile,
+    },
+  };
+};
+
 describe('ProfileService CV', () => {
   let repository: {
     findFreelancerProfileById: jest.Mock;
     updateCv: jest.Mock;
     clearCv: jest.Mock;
     findSkillsByProfileId: jest.Mock;
+    findOrCreateCatalogSkill: jest.Mock;
+    addSkillToProfile: jest.Mock;
+    createCvAnalysis: jest.Mock;
+    findPendingCvAnalysis: jest.Mock;
+    findCvAnalysisById: jest.Mock;
+    discardCvAnalysis: jest.Mock;
+    confirmCvAnalysis: jest.Mock;
   };
   let cloudinary: {
     isConfigured: jest.Mock;
@@ -66,11 +147,15 @@ describe('ProfileService CV', () => {
     deleteFile: jest.Mock;
   };
   let cvAnalyzer: {
+    analyze: jest.Mock;
     extractSkills: jest.Mock;
   };
   let skillResolver: {
     resolveSkills: jest.Mock;
     resolveSkillEntries: jest.Mock;
+  };
+  let recommendationIndex: {
+    enqueueAndProcess: jest.Mock;
   };
   let service: ProfileService;
 
@@ -81,6 +166,13 @@ describe('ProfileService CV', () => {
       updateCv: jest.fn(),
       clearCv: jest.fn().mockResolvedValue(undefined),
       findSkillsByProfileId: jest.fn().mockResolvedValue([]),
+      findOrCreateCatalogSkill: jest.fn(),
+      addSkillToProfile: jest.fn(),
+      createCvAnalysis: jest.fn(),
+      findPendingCvAnalysis: jest.fn(),
+      findCvAnalysisById: jest.fn(),
+      discardCvAnalysis: jest.fn(),
+      confirmCvAnalysis: jest.fn(),
     };
     cloudinary = {
       isConfigured: jest.fn().mockReturnValue(false),
@@ -88,11 +180,15 @@ describe('ProfileService CV', () => {
       deleteFile: jest.fn().mockResolvedValue(undefined),
     };
     cvAnalyzer = {
+      analyze: jest.fn(),
       extractSkills: jest.fn(),
     };
     skillResolver = {
       resolveSkills: jest.fn().mockResolvedValue([]),
       resolveSkillEntries: jest.fn().mockResolvedValue([]),
+    };
+    recommendationIndex = {
+      enqueueAndProcess: jest.fn().mockResolvedValue(undefined),
     };
     service = new ProfileService(
       repository as unknown as ProfileRepository,
@@ -100,6 +196,7 @@ describe('ProfileService CV', () => {
       cvAnalyzer as unknown as AiCvAnalyzerService,
       skillResolver as unknown as SkillResolverService,
       {} as ProfileRevisionService,
+      recommendationIndex as unknown as EmbeddingOutboxService,
     );
   });
 
@@ -128,6 +225,42 @@ describe('ProfileService CV', () => {
       ).rejects.toEqual(CvFileInvalidException());
     });
 
+    it('rejects a file whose mimetype is not PDF', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile(),
+      );
+
+      await expect(
+        service.uploadCv(
+          5,
+          10,
+          pdfFile({ mimetype: 'application/octet-stream' }),
+        ),
+      ).rejects.toEqual(CvFileTypeException());
+    });
+
+    it('accepts a PDF that has leading bytes before the %PDF- header', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile(),
+      );
+      repository.updateCv.mockResolvedValue({
+        cvUrl: 'local://cvs/10/some-uuid.pdf',
+        cvFileName: 'resume.pdf',
+      });
+
+      const buffer = Buffer.concat([
+        Buffer.from([0xef, 0xbb, 0xbf]),
+        Buffer.from('%PDF-1.4\nfake pdf content'),
+      ]);
+
+      await expect(
+        service.uploadCv(5, 10, pdfFile({ buffer })),
+      ).resolves.toEqual({
+        cvUrl: '/api/backend/profiles/5/cv/file',
+        cvFileName: 'resume.pdf',
+      });
+    });
+
     it('rejects a file larger than 10 MB', async () => {
       repository.findFreelancerProfileById.mockResolvedValue(
         freelancerProfile(),
@@ -135,7 +268,7 @@ describe('ProfileService CV', () => {
 
       await expect(
         service.uploadCv(5, 10, pdfFile({ size: 11 * 1024 * 1024 })),
-      ).rejects.toEqual(CvFileInvalidException());
+      ).rejects.toEqual(CvFileTooLargeException());
     });
 
     it('rejects uploading to a profile owned by another user', async () => {
@@ -344,25 +477,45 @@ describe('ProfileService CV', () => {
       await expect(service.analyzeCv(5, 10)).rejects.toEqual(
         CvNotFoundException(),
       );
-      expect(cvAnalyzer.extractSkills).not.toHaveBeenCalled();
+      expect(cvAnalyzer.analyze).not.toHaveBeenCalled();
     });
 
-    it('maps AI-extracted skills to catalog names and drops existing ones', async () => {
+    it('persists a draft and maps AI-extracted skills to catalog names', async () => {
       repository.findFreelancerProfileById.mockResolvedValue(
         freelancerProfile({
-          cvUrl: 'https://cdn.example.com/cv.pdf',
+          cvUrl: CV_URL,
           cvFileName: 'resume.pdf',
+          cvUploadedAt: new Date('2026-01-01T00:00:00Z'),
         }),
       );
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+        arrayBuffer: () => Promise.resolve(Buffer.from('%PDF-fake')),
       }) as unknown as typeof fetch;
-      cvAnalyzer.extractSkills.mockResolvedValue([
-        { name: 'js', proficiencyLevel: 8 },
-        { name: 'PostgreSQL', proficiencyLevel: 7 },
-        { name: 'Standalone AI Skill', proficiencyLevel: 4 },
-      ]);
+      cvAnalyzer.analyze.mockResolvedValue(
+        cvAnalyzeResult({
+          skills: [
+            {
+              name: 'js',
+              proficiencyLevel: 8,
+              confidence: 0.9,
+              evidence: 'js',
+            },
+            {
+              name: 'PostgreSQL',
+              proficiencyLevel: 7,
+              confidence: null,
+              evidence: null,
+            },
+            {
+              name: 'Standalone AI Skill',
+              proficiencyLevel: 4,
+              confidence: null,
+              evidence: null,
+            },
+          ],
+        }),
+      );
       skillResolver.resolveSkillEntries.mockResolvedValue([
         {
           name: 'js',
@@ -383,14 +536,42 @@ describe('ProfileService CV', () => {
           skill: { id: 2, name: 'PostgreSQL' },
         },
       ]);
+      repository.createCvAnalysis.mockResolvedValue(
+        cvAnalysisRow({
+          payload: {
+            skills: [
+              {
+                name: 'js',
+                proficiencyLevel: 8,
+                confidence: 0.9,
+                evidence: 'js',
+              },
+            ],
+            experience: [],
+            education: [],
+            projects: [],
+            summary: null,
+          },
+        }),
+      );
 
-      await expect(service.analyzeCv(5, 10)).resolves.toEqual({
-        suggestions: [
-          { skillName: 'javascript', proficiencyLevel: 8 },
-          { skillName: 'Standalone AI Skill', proficiencyLevel: 4 },
-        ],
-      });
-      expect(cvAnalyzer.extractSkills).toHaveBeenCalledWith(
+      const result = await service.analyzeCv(5, 10);
+
+      expect(result.suggestions).toEqual([
+        { skillName: 'javascript', proficiencyLevel: 8 },
+        { skillName: 'Standalone AI Skill', proficiencyLevel: 4 },
+      ]);
+      expect(result.analysis.id).toBe(7);
+      expect(result.analysis.status).toBe('PENDING');
+      expect(result.analysis.isStale).toBe(false);
+      expect(repository.createCvAnalysis).toHaveBeenCalledWith(
+        expect.objectContaining({
+          freelancerProfileId: 5,
+          cvUrl: CV_URL,
+          source: 'PDF_TEXT',
+        }),
+      );
+      expect(cvAnalyzer.analyze).toHaveBeenCalledWith(
         expect.any(Buffer),
         'resume.pdf',
       );
@@ -399,34 +580,220 @@ describe('ProfileService CV', () => {
     it('throws a service-unavailable exception when the AI call fails', async () => {
       repository.findFreelancerProfileById.mockResolvedValue(
         freelancerProfile({
-          cvUrl: 'https://cdn.example.com/cv.pdf',
+          cvUrl: CV_URL,
         }),
       );
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        arrayBuffer: async () => Buffer.from('%PDF-fake'),
+        arrayBuffer: () => Promise.resolve(Buffer.from('%PDF-fake')),
       }) as unknown as typeof fetch;
-      cvAnalyzer.extractSkills.mockRejectedValue(
+      cvAnalyzer.analyze.mockRejectedValue(
         new Error('AI CV analysis service is unreachable.'),
       );
 
       await expect(service.analyzeCv(5, 10)).rejects.toBeInstanceOf(
         ServiceUnavailableException,
       );
+      expect(repository.createCvAnalysis).not.toHaveBeenCalled();
     });
 
     it('rejects analyzing a profile owned by another user', async () => {
       repository.findFreelancerProfileById.mockResolvedValue(
         freelancerProfile({
           userId: 10,
-          cvUrl: 'https://cdn.example.com/cv.pdf',
+          cvUrl: CV_URL,
         }),
       );
 
       await expect(service.analyzeCv(5, 99)).rejects.toBeInstanceOf(
         ForbiddenException,
       );
-      expect(cvAnalyzer.extractSkills).not.toHaveBeenCalled();
+      expect(cvAnalyzer.analyze).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getCvAnalysis', () => {
+    it('returns the latest pending draft and flags it stale when the CV changed', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: 'https://cdn.example.com/new.pdf' }),
+      );
+      repository.findPendingCvAnalysis.mockResolvedValue(cvAnalysisRow());
+
+      const result = await service.getCvAnalysis(5, 10);
+
+      expect(result.id).toBe(7);
+      expect(result.isStale).toBe(true);
+    });
+
+    it('throws when there is no pending draft', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findPendingCvAnalysis.mockResolvedValue(null);
+
+      await expect(service.getCvAnalysis(5, 10)).rejects.toEqual(
+        CvAnalysisNotFoundException(),
+      );
+    });
+  });
+
+  describe('confirmCvAnalysis', () => {
+    const confirmedDto = {
+      skills: [{ skillName: 'React', proficiencyLevel: 8 }],
+      experience: [
+        {
+          title: 'Frontend Developer',
+          company: 'Acme',
+          startDate: '2022-03',
+          endDate: null,
+          isCurrent: true,
+          description: null,
+        },
+      ],
+      education: [],
+      projects: [],
+    };
+
+    it('throws when the draft does not exist', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(null);
+
+      await expect(
+        service.confirmCvAnalysis(5, 10, 7, confirmedDto),
+      ).rejects.toEqual(CvAnalysisNotFoundException());
+    });
+
+    it('rejects a draft owned by another user', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ userId: 10, cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(
+        cvAnalysisWithProfile({
+          freelancerProfile: {
+            id: 5,
+            profileId: 3,
+            cvUrl: CV_URL,
+            profile: { userId: 99 },
+          },
+        }),
+      );
+
+      await expect(
+        service.confirmCvAnalysis(5, 10, 7, confirmedDto),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('rejects a draft that is no longer pending', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(
+        cvAnalysisWithProfile({ status: 'CONFIRMED' }),
+      );
+
+      await expect(
+        service.confirmCvAnalysis(5, 10, 7, confirmedDto),
+      ).rejects.toEqual(CvAnalysisNotPendingException());
+    });
+
+    it('rejects a stale draft (CV was replaced)', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: 'https://cdn.example.com/new.pdf' }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(cvAnalysisWithProfile());
+
+      await expect(
+        service.confirmCvAnalysis(5, 10, 7, confirmedDto),
+      ).rejects.toEqual(CvAnalysisStaleException());
+    });
+
+    it('writes the confirmed data, recomputes strength and syncs the index', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(cvAnalysisWithProfile());
+      repository.findSkillsByProfileId.mockResolvedValue([]);
+      repository.findOrCreateCatalogSkill.mockResolvedValue({
+        id: 42,
+        name: 'React',
+        slug: 'react',
+      });
+      repository.confirmCvAnalysis.mockResolvedValue({
+        profileCompletionPercent: 57,
+      });
+
+      const result = await service.confirmCvAnalysis(5, 10, 7, confirmedDto);
+
+      expect(repository.confirmCvAnalysis).toHaveBeenCalledWith({
+        analysisId: 7,
+        freelancerProfileId: 5,
+        skills: [{ skillId: 42, proficiencyLevel: 8 }],
+        experience: [
+          {
+            title: 'Frontend Developer',
+            company: 'Acme',
+            startDate: '2022-03',
+            endDate: null,
+            isCurrent: true,
+            description: null,
+          },
+        ],
+        education: [],
+        projects: [],
+      });
+      expect(recommendationIndex.enqueueAndProcess).toHaveBeenCalledWith({
+        eventType: 'UPSERT',
+        documentType: 'CV',
+        documentId: 5,
+      });
+      expect(result).toEqual({
+        message: 'Success.CvAnalysisConfirmed',
+        status: 'CONFIRMED',
+        counts: { skills: 1, experience: 1, education: 0, projects: 0 },
+        profileCompletionPercent: 57,
+      });
+    });
+
+    it('throws when the optimistic claim fails (already processed)', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(cvAnalysisWithProfile());
+      repository.findSkillsByProfileId.mockResolvedValue([]);
+      repository.confirmCvAnalysis.mockResolvedValue(null);
+
+      await expect(
+        service.confirmCvAnalysis(5, 10, 7, { skills: [], experience: [] }),
+      ).rejects.toEqual(CvAnalysisNotPendingException());
+    });
+  });
+
+  describe('discardCvAnalysis', () => {
+    it('marks the draft as discarded', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(cvAnalysisWithProfile());
+      repository.discardCvAnalysis.mockResolvedValue(true);
+
+      await expect(service.discardCvAnalysis(5, 10, 7)).resolves.toEqual({
+        message: 'Success.CvAnalysisDiscarded',
+        status: 'DISCARDED',
+      });
+    });
+
+    it('throws when the draft is already processed', async () => {
+      repository.findFreelancerProfileById.mockResolvedValue(
+        freelancerProfile({ cvUrl: CV_URL }),
+      );
+      repository.findCvAnalysisById.mockResolvedValue(cvAnalysisWithProfile());
+      repository.discardCvAnalysis.mockResolvedValue(false);
+
+      await expect(service.discardCvAnalysis(5, 10, 7)).rejects.toEqual(
+        CvAnalysisNotPendingException(),
+      );
     });
   });
 });

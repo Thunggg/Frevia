@@ -9,6 +9,11 @@ import {
   CvUploadResponseType,
   ApiError,
   ProfileRevisionSubmissionType,
+  CvAnalyzeResponseType,
+  CvAnalysisDraftType,
+  CvAnalysisConfirmType,
+  CvAnalysisConfirmResultType,
+  CvAnalysisDiscardResultType,
 } from "@shared/types";
 import { ApiFail, http } from "@/lib/http";
 
@@ -33,6 +38,28 @@ export const profileApiRequest = {
 
   deleteCv: (id: number) =>
     http.delete<{ message: string }>(`/profiles/${id}/cv`),
+
+  analyzeCv: (id: number) =>
+    http.post<CvAnalyzeResponseType>(`/profiles/${id}/cv/analyze`, {}),
+
+  getCvAnalysis: (id: number) =>
+    http.get<CvAnalysisDraftType>(`/profiles/${id}/cv/analysis`),
+
+  confirmCvAnalysis: (
+    id: number,
+    analysisId: number,
+    body: CvAnalysisConfirmType,
+  ) =>
+    http.post<CvAnalysisConfirmResultType>(
+      `/profiles/${id}/cv/analysis/${analysisId}/confirm`,
+      body,
+    ),
+
+  discardCvAnalysis: (id: number, analysisId: number) =>
+    http.post<CvAnalysisDiscardResultType>(
+      `/profiles/${id}/cv/analysis/${analysisId}/discard`,
+      {},
+    ),
 
   getSkills: (id: number) =>
     http.get<FreelancerSkillType[]>(`/profiles/${id}/skills`),

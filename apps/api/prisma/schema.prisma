@@ -163,6 +163,9 @@ model User {
   // --- Transactions ---
   transactions                Transaction[]
 
+  // --- AI Recommendation (Job-CV matching) ---
+  recommendations Recommendation[] @relation("RecommendationRequester")
+
   @@index([deletedAt])
 }
 
@@ -441,6 +444,106 @@ model FreelancerEducation {
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   @@index([freelancerProfileId, deletedAt])
+}
+
+// ============================
+// 3c. AI Recommendation (Job-CV matching)
+// ============================
+// Các bảng điều phối pipeline recommendation theo plan.cv.md §11.2.
+// `documentId` là polymorphic (FreelancerProfile.id cho CV, Job.id cho JD) nên
+// KHÔNG có khoá ngoại; quyền truy cập và trạng thái vẫn do PostgreSQL/NestJS quyết.
+
+// Trạng thái xử lý ingestion/embedding cho một tài liệu (CV hoặc JD).
+model DocumentProcessingJob {
+  id              Int                @id @default(autoincrement())
+  documentType    AiDocumentType
+  documentId      Int
+  documentVersion Int                @default(1)
+  status          AiProcessingStatus @default(PENDING)
+  attemptCount    Int                @default(0)
+  errorMessage    String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([documentType, documentId])
+  @@index([status, createdAt])
+}
+
+// Theo dõi đồng bộ ChromaDB: một dòng cho mỗi vector (mỗi section + full-text).
+model EmbeddingIndexRecord {
+  id              Int                  @id @default(autoincrement())
+  documentType    AiDocumentType
+  documentId      Int
+  documentVersion Int                  @default(1)
+  // "_full" cho vector full-text, còn lại là tên section (skills, experience, ...).
+  section         String               @default("_full") @db.VarChar(50)
+  embeddingModel  String               @db.VarChar(100)
+  collectionName  String               @db.VarChar(100)
+  vectorRecordId  String               @db.VarChar(255)
+  contentHash     String               @db.VarChar(64)
+  indexStatus     EmbeddingIndexStatus @default(PENDING)
+  indexedAt       DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@unique([vectorRecordId])
+  @@index([documentType, documentId, documentVersion])
+  @@index([indexStatus])
+}
+
+// Lịch sử kết quả recommendation (một dòng cho mỗi cặp được đề xuất).
+model Recommendation {
+  id               Int            @id @default(autoincrement())
+  requesterId      Int
+  sourceType       AiDocumentType
+  sourceDocumentId Int
+  targetType       AiDocumentType
+  targetDocumentId Int
+  semanticScore    Float          @default(0)
+  skillScore       Float          @default(0)
+  experienceScore  Float          @default(0)
+  budgetScore      Float          @default(0)
+  preferenceScore  Float          @default(0)
+  finalScore       Float          @default(0)
+  rankingVersion   String         @db.VarChar(50)
+  embeddingModel   String         @db.VarChar(100)
+  createdAt        DateTime       @default(now())
+
+  requester User                     @relation("RecommendationRequester", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  feedbacks RecommendationFeedback[]
+
+  @@index([requesterId, sourceType, sourceDocumentId, createdAt])
+  @@index([targetType, targetDocumentId])
+}
+
+// Sự kiện phản hồi của người dùng với một kết quả recommendation.
+model RecommendationFeedback {
+  id               Int                        @id @default(autoincrement())
+  recommendationId Int
+  type             RecommendationFeedbackType
+  createdAt        DateTime                   @default(now())
+
+  recommendation Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([recommendationId])
+  @@index([type, createdAt])
+}
+
+// Transactional outbox: sự kiện cần đồng bộ vector sang ChromaDB.
+model EmbeddingOutboxEvent {
+  id              Int               @id @default(autoincrement())
+  eventType       OutboxEventType
+  documentType    AiDocumentType
+  documentId      Int
+  documentVersion Int               @default(1)
+  status          OutboxEventStatus @default(PENDING)
+  attemptCount    Int               @default(0)
+  lastError       String?
+  createdAt       DateTime          @default(now())
+  processedAt     DateTime?
+
+  @@index([status, createdAt])
+  @@index([documentType, documentId])
 }
 
 model SocialLink {
@@ -1633,4 +1736,54 @@ enum CvSourceType {
 enum ProfileContentSource {
   MANUAL
   CV_IMPORT
+}
+
+// ============================
+// AI Recommendation (Job-CV matching)
+// ============================
+
+// Loại tài liệu tham gia recommendation (khác enum DocumentType dùng cho ID verification).
+enum AiDocumentType {
+  CV
+  JOB
+}
+
+// Trạng thái xử lý ingestion/embedding.
+enum AiProcessingStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+// Trạng thái đồng bộ một vector với ChromaDB.
+enum EmbeddingIndexStatus {
+  PENDING
+  INDEXED
+  STALE
+  FAILED
+}
+
+// Loại sự kiện outbox đồng bộ vector.
+enum OutboxEventType {
+  UPSERT
+  DELETE
+}
+
+// Trạng thái xử lý sự kiện outbox.
+enum OutboxEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+// Loại phản hồi của người dùng với một kết quả recommendation.
+enum RecommendationFeedbackType {
+  VIEW
+  SAVE
+  APPLY
+  DISMISS
+  SHORTLIST
+  HIRE
 }

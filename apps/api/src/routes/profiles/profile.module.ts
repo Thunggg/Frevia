@@ -4,9 +4,10 @@ import { ProfileService } from './profile.service';
 import { ProfileRepository } from './profile.repo';
 import { SharedModule } from '../../shared/shared.module';
 import { ProfileRevisionModule } from '../profile-revisions/profile-revision.module';
+import { RecommendationModule } from '../recommendations/recommendation.module';
 
 @Module({
-  imports: [SharedModule, ProfileRevisionModule],
+  imports: [SharedModule, ProfileRevisionModule, RecommendationModule],
   controllers: [ProfileController],
   providers: [ProfileService, ProfileRepository],
   exports: [ProfileService, ProfileRepository],
