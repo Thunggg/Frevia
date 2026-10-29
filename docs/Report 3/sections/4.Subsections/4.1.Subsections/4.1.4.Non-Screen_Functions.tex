@@ -1,8 +1,11 @@
 \subsubsection{Non-Screen Functions}
 
+\begingroup
 \renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{2.8pt}
+\newcolumntype{S}[1]{>{\raggedright\arraybackslash\footnotesize}p{#1}}
 
-\begin{longtable}{|C{0.8cm}|L{2.8cm}|L{6.8cm}|L{5.5cm}|}
+\begin{longtable}{|C{0.7cm}|L{2.6cm}|S{6.6cm}|L{5.2cm}|}
 \hline
 \rowcolor{headerbg}
 
@@ -29,120 +32,482 @@
 \\ \hline
 \endhead
 
-3
-&
-\textbf{Manage Forum}
-&
-[GET] /api/forum/categories \newline
-[GET] /api/forum/categories/\{id\} \newline
-[GET] /api/forum/posts \newline
-[GET] /api/forum/posts/\{id\} \newline
-[GET] /api/forum/comments/\{postId\} \newline
-[GET] /api/forum/comments/\{id\} \newline
-[POST] /api/forum/posts \newline
-[PUT] /api/forum/posts/\{id\} \newline
-[DELETE] /api/forum/posts/\{id\} \newline
-[POST] /api/forum/like-post/\{id\} \newline
-[DELETE] /api/forum/unlike-post/\{id\} \newline
-[POST] /api/forum/comments \newline
-[PUT] /api/forum/comments/\{id\} \newline
-[DELETE] /api/forum/comments/\{id\} \newline
-[POST] /api/forum/like-comments/\{id\} \newline
-[DELETE] /api/forum/unlike-comments/\{id\} \newline
-[POST] /api/forum/report-contents
-&
-The Forum Management feature enables community discussion and knowledge sharing within the platform. Users can browse forum categories, view discussion threads, create and manage posts, add comments, react to content through likes, and report inappropriate content. Guests can access public forum content, while authenticated users can participate in discussions by creating posts, commenting, reacting, and reporting violations. Administrators can moderate forum activities and maintain community standards.
-\\ \hline
-4
-&
-\textbf{Manage Contract}
-&
-[GET] /api/contracts \newline
-[GET] /api/contracts/{id} \newline
-[GET] /api/contracts/{id}/files \newline
-[POST] /api/contracts/{id}/files \newline
-[DELETE] /api/contracts/files/{id} \newline
-[POST] /api/contracts/{id}/sign \newline
-[PUT] /api/contracts/{id}/terms \newline
-[POST] /api/contracts/{id}/milestones/{id}/complete \newline
-[POST] /api/contracts/{id}/cancel
-&
-The Contract Management feature enables clients to manage agreements and collaboration with freelancers throughout the project lifecycle. Users can browse contract lists, view contract details, upload and manage contract-related files, and digitally sign contracts to confirm participation. Clients can update contract terms, manage milestone execution, release escrow payments upon successful milestone completion, and request contract cancellation when necessary. The feature ensures secure transactions, transparent collaboration, and controlled contract execution between both parties. \\ \hline
-5
-&
-\textbf{Manage Freelancer Profile}
-&
-[GET] /api/profiles/\{id\} \newline
-[PUT] /api/profiles/\{id\} \newline
-[GET] /api/profiles/\{id\}/skills \newline
-[POST] /api/profiles/\{id\}/skills \newline
-[DELETE] /api/profiles/skills/\{id\} \newline
-[GET] /api/profiles/\{id\}/portfolios \newline
-[POST] /api/profiles/\{id\}/portfolios \newline
-[GET] /api/profiles/portfolios/\{id\} \newline
-[PUT] /api/profiles/portfolios/\{id\} \newline
-[DELETE] /api/profiles/portfolios/\{id\}
-&
-The Freelancer Profile Management feature enables freelancers to manage their professional identity and showcase their expertise to potential clients. Users can view and update their detailed profile information, including their bio, professional title, education, and availability status. Furthermore, freelancers can manage their skill set by adding or removing specific skills along with proficiency levels. The feature also allows freelancers to build a comprehensive portfolio by creating, updating, and deleting portfolio items with attached media files. This robust profile system helps freelancers build credibility, highlight their capabilities, and attract suitable project opportunities. \\ \hline
-6
-&
-\textbf{Manage Freelancer Skills}
-&
-[GET] /api/profiles/\{id\}/skills \newline
-[POST] /api/profiles/\{id\}/skills \newline
-[DELETE] /api/profiles/skills/\{id\}
-&
-The Freelancer Skills Management feature allows freelancers to define and showcase their professional capabilities. Users can view the complete list of skills associated with a freelancer's profile, add new skills with corresponding proficiency levels (e.g., beginner, intermediate, expert), and permanently remove skills that are no longer relevant. This feature ensures that the freelancer's skill set remains accurate and up-to-date, helping clients easily evaluate their technical and professional qualifications during the talent selection process. \\ \hline
-7
-&
-\textbf{Manage Freelancer Portfolio}
-&
-[GET] /api/profiles/\{id\}/portfolios \newline
-[POST] /api/profiles/\{id\}/portfolios \newline
-[GET] /api/profiles/portfolios/\{id\} \newline
-[PUT] /api/profiles/portfolios/\{id\} \newline
-[DELETE] /api/profiles/portfolios/\{id\}
-&
-The Freelancer Portfolio Management feature enables freelancers to visually demonstrate their past work experience and successful projects. Freelancers can create new portfolio entries by providing project details and uploading associated media files or links. The feature also allows users to view detailed information of specific portfolios, update existing portfolio content or media, and soft-delete portfolios that they no longer wish to display publicly. By maintaining a rich and organized portfolio gallery, freelancers can build stronger credibility and significantly increase their chances of being hired by prospective clients. \\ \hline
-8
+1
 &
 \textbf{Manage Authentication}
 &
-[POST] /api/auth/google \newline
-[POST] /api/auth/login \newline
-[POST] /api/auth/register \newline
-[POST] /api/auth/forgot-password \newline
-[POST] /api/auth/logout
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}register \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}otp \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}login \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}refresh-token \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}logout \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}forgot-password \newline
+[GET] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}google-link \newline
+[GET] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}google/\allowbreak{}callback \newline
+[GET] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}me \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}switch-role \newline
+[POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}join-role
 &
-The Authentication Management feature handles user identity verification and access control. It supports multiple authentication methods including traditional email/password login with JWT token generation, Google OAuth for social sign‑in, and new account registration. The feature also provides secure password reset via email verification links, and allows authenticated users to terminate their session by logging out. Together, these endpoints ensure a seamless and secure authentication experience for all platform users.
+The Authentication feature handles user identity verification and session establishment. It supports account registration with OTP verification, email/password login with JWT access and refresh tokens, token renewal, logout, and password reset through an email verification link. Users can also sign in with Google OAuth, retrieve the currently authenticated account, and switch or join a role (Client or Freelancer) on the same account.
 \\ \hline
+
+2
+&
+\textbf{Manage Account Profile}
+&
+[GET] /\allowbreak{}api/\allowbreak{}account-profile \newline
+[PUT] /\allowbreak{}api/\allowbreak{}account-profile \newline
+[PUT] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}password \newline
+[POST] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}avatar \newline
+[GET] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}avatar/\allowbreak{}\{userId\}/\allowbreak{}file \newline
+[GET] /\allowbreak{}api/\allowbreak{}clients/\allowbreak{}\{userId\} \newline
+[PUT] /\allowbreak{}api/\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile \newline
+[GET] /\allowbreak{}api/\allowbreak{}social-links \newline
+[POST] /\allowbreak{}api/\allowbreak{}social-links \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}social-links/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}favorites/\allowbreak{}freelancers \newline
+[POST] /\allowbreak{}api/\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}\{freelancerId\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}\{freelancerId\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}discover \newline
+[GET] /\allowbreak{}api/\allowbreak{}following/\allowbreak{}freelancers \newline
+[POST] /\allowbreak{}api/\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}\{freelancerId\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}\{freelancerId\}
+&
+The Account Profile feature lets authenticated users manage their account-level information and social network. Users can view and update their account profile, change their password, upload and retrieve their avatar, and manage social links. Clients can view another client's public profile and update their own client profile. Users can also save favorite freelancers, discover and follow freelancers, and unfollow or remove them from the favorites list.
+\\ \hline
+
+3
+&
+\textbf{Manage Freelancer Profile}
+&
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\} \newline
+[PUT] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv \newline
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}file \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}analyze \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv \newline
+[GET] /\allowbreak{}api/\allowbreak{}expert-profile/\allowbreak{}me \newline
+[PUT] /\allowbreak{}api/\allowbreak{}expert-profile/\allowbreak{}me \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}expert-profile \newline
+[GET] /\allowbreak{}api/\allowbreak{}experts \newline
+[GET] /\allowbreak{}api/\allowbreak{}experts/\allowbreak{}\{id\}
+&
+The Freelancer Profile feature enables freelancers to build and maintain their professional identity, including bio, professional title, education, availability status and profile strength. Freelancers can upload, download, delete and AI-analyze their CV. The feature also exposes the expert (verified freelancer) profile endpoints, the public expert directory, and allows a freelancer to view and update their own expert profile while administrators can update it on behalf of a user.
+\\ \hline
+
+4
+&
+\textbf{Manage Freelancer Skills}
+&
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}skills \newline
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}skills/\allowbreak{}suggestions \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}skills \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}skills/\allowbreak{}\{id\}
+&
+The Freelancer Skills feature allows freelancers to define and showcase their professional capabilities. Users can view the skills attached to a profile, search the skill catalog for suggestions while typing, add a skill together with its proficiency level, and remove a skill that is no longer relevant. This keeps each freelancer's skill set accurate for the client's talent evaluation process.
+\\ \hline
+
+5
+&
+\textbf{Manage Freelancer Portfolio}
+&
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}portfolios \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}portfolios \newline
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}\{id\} \newline
+[PUT] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}\{id\}
+&
+The Freelancer Portfolio feature enables freelancers to demonstrate their past work visually. Freelancers can list every portfolio item of a profile, create a new item with project details and media, view the detail of a specific item, update its content or media, and soft-delete an item so that it is no longer displayed publicly. A well-organized portfolio helps freelancers build credibility with prospective clients.
+\\ \hline
+
+6
+&
+\textbf{Manage Job}
+&
+[GET] /\allowbreak{}api/\allowbreak{}jobs \newline
+[GET] /\allowbreak{}api/\allowbreak{}jobs/\allowbreak{}\{slug\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}job-categories \newline
+[GET] /\allowbreak{}api/\allowbreak{}job-categories/\allowbreak{}\{slug\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}skills \newline
+[GET] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
+[GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}status \newline
+[GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks \newline
+[POST] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
+[GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks/\allowbreak{}\{slug\}
+&
+The Job Management feature is the core marketplace functionality that connects clients with freelancers. Guests and freelancers can browse and search the paginated job list, view a job detail by slug, and browse job categories. Clients can create a job posting with description, budget, required skills and timeline, list their own jobs, view a job detail, update or delete a job, and change its status (Open, In Progress, Closed, Cancelled); they can also look up skills while composing a job. Freelancers can list, add and remove bookmarked jobs and check whether a job is bookmarked.
+\\ \hline
+
+7
+&
+\textbf{Manage Job Categories (Admin)}
+&
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories/\allowbreak{}\{id\}/\allowbreak{}restore \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}job-categories/\allowbreak{}\{id\}
+&
+The Job Category Management feature allows administrators to maintain the taxonomy used to classify job postings. Administrators can list all categories, view the detail of a category, create a new category, update its name or description, soft-delete a category, and restore a previously deleted category when it is needed again.
+\\ \hline
+
+8
+&
+\textbf{Manage Saved Searches}
+&
+[GET] /\allowbreak{}api/\allowbreak{}saved-searches \newline
+[GET] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}saved-searches \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\}
+&
+The Saved Search feature allows authenticated users to store job search criteria for later reuse. Users can list their saved searches, view the detail of one saved search, create a new saved search from the current filters, update its name or filter conditions, and delete a saved search that is no longer needed.
+\\ \hline
+
 9
 &
-\textbf{Manage Roles}
+\textbf{Manage Proposals}
 &
-[GET] /api/roles \newline
-[GET] /api/roles/\{id\} \newline
-[POST] /api/roles \newline
-[PUT] /api/roles/\{id\} \newline
-[DELETE] /api/roles/\{id\}
+[GET] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}my \newline
+[GET] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}jobs/\allowbreak{}\{jobId\}/\allowbreak{}mine \newline
+[GET] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}jobs/\allowbreak{}\{jobId\}/\allowbreak{}submitted \newline
+[GET] /\allowbreak{}api/\allowbreak{}jobs/\allowbreak{}\{jobId\}/\allowbreak{}proposals \newline
+[GET] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}client \newline
+[POST] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}jobs/\allowbreak{}\{jobId\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}jobs/\allowbreak{}\{jobId\}/\allowbreak{}drafts \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}draft \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}submit \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}withdraw \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}interview \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}reject \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}accept
 &
-The Role Management feature allows administrators to define and control user permissions within the system. Admin users can retrieve a list of all roles along with their assigned permissions, view detailed information of a specific role, create new roles with custom names and permission sets, update existing roles to modify their access rights, and delete roles that are no longer needed. This feature ensures fine‑grained access control, maintaining system security and proper segregation of duties across different user types.
+The Proposal Management feature supports the bidding process between freelancers and clients. Freelancers can submit a proposal to a job, save it as a draft, update and submit a draft, withdraw a submitted proposal, and view their own proposals for a job. Clients can list all proposals submitted to their job, view proposal details, and move a proposal through interview, acceptance or rejection, while acceptance can later be used to create a contract.
 \\ \hline
 
 10
 &
-\textbf{Manage Job}
+\textbf{Manage Contract}
 &
-[GET] /api/jobs \newline
-[GET] /api/jobs/\{id\} \newline
-[POST] /api/jobs \newline
-[PUT] /api/jobs/\{id\} \newline
-[DELETE] /api/jobs/\{id\} \newline
-[PATCH] /api/jobs/\{id\}/status \newline
-[GET] /api/jobs/bookmarks \newline
-[POST] /api/jobs/\{id\}/bookmark \newline
-[DELETE] /api/jobs/\{id\}/bookmark
+[GET] /\allowbreak{}api/\allowbreak{}contracts \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}contracts \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}sign \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}complete \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}cancel \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files \newline
+[POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files/\allowbreak{}\{fileId\}
 &
-The Job Management feature enables clients to create and manage job postings, and allows freelancers to browse, search, and bookmark interesting opportunities. Clients can post new jobs with detailed descriptions, budgets, required skills, and timelines; edit or delete their own job postings; and update job status (Open, In Progress, Closed, Cancelled). Freelancers can view paginated job lists with filters and sorting, view full job details, and bookmark jobs for later reference. This feature serves as the core marketplace functionality connecting clients with freelancers.
+The Contract Management feature manages the agreement between a client and a freelancer throughout the project lifecycle. Users can create a contract, list their contracts, view contract details, update contract terms, sign the contract to confirm participation, complete the contract and request cancellation. Contract participants can also list, upload and delete contract-level files that document the agreement.
 \\ \hline
+
+11
+&
+\textbf{Manage Milestone}
+&
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\}/\allowbreak{}progress \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\}
+&
+The Milestone Management feature breaks a contract into payable deliverables. Contract participants can list and view the milestones of a contract, create a new milestone with its amount and due date, update milestone information, report progress on a milestone, and delete a milestone that is no longer part of the agreement.
+\\ \hline
+
+12
+&
+\textbf{Manage Milestone Files}
+&
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}files \newline
+[POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}files \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}files/\allowbreak{}\{fileId\}
+&
+The Milestone File feature allows contract participants to attach supporting documents and media to a specific milestone. Users can list every file of a milestone, upload a new file, and delete a file that was uploaded by mistake or is no longer relevant.
+\\ \hline
+
+13
+&
+\textbf{Manage Milestone Submissions}
+&
+[POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}submissions \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}submissions \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}submissions/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}submissions/\allowbreak{}\{id\}/\allowbreak{}request-changes \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}submissions/\allowbreak{}\{id\}/\allowbreak{}approve
+&
+The Milestone Submission feature supports the deliverable review workflow. A freelancer can submit work for a milestone, and both parties can list the submissions of a milestone and view the detail of one submission. The client can request changes so that the freelancer revises and resubmits the work, or approve the submission to complete the milestone and release the corresponding payment.
+\\ \hline
+
+14
+&
+\textbf{Manage Payments}
+&
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}connect/\allowbreak{}onboarding-link \newline
+[GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}connect/\allowbreak{}status \newline
+[GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-methods \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}customer-portal \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}intent \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}checkout-session \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}saved-card \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}intent \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}checkout-session \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}saved-card \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}release \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}refund \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}fee/\allowbreak{}intent \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}fee/\allowbreak{}checkout-session \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}settle \newline
+[GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}transactions \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}\{paymentIntentId\}/\allowbreak{}sync \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-sessions/\allowbreak{}\{sessionId\}/\allowbreak{}sync \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook
+&
+The Payment Management feature integrates Stripe to provide secure escrow-style transactions. Users can connect a Stripe account and check its onboarding status, list saved payment methods, open the Stripe customer portal, and pay the platform fee or fund a milestone either through a PaymentIntent, a checkout session, or a saved card. Clients can release or refund milestone funds, pay a dispute fee and settle a dispute, and view their transaction history. The system also synchronizes PaymentIntent and CheckoutSession status and receives asynchronous Stripe webhook events.
+\\ \hline
+
+15
+&
+\textbf{Manage Dispute}
+&
+[GET] /\allowbreak{}api/\allowbreak{}disputes \newline
+[POST] /\allowbreak{}api/\allowbreak{}disputes \newline
+[GET] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}fee \newline
+[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}response \newline
+[GET] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}milestone/\allowbreak{}\{milestoneId\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}review \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}decision \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}final-decision
+&
+The Dispute Management feature handles conflicts that arise during a milestone. Participants can open a dispute for a milestone, list and view their disputes, pay the dispute fee, submit a response to the other party's claim, and review the proposed resolution. The dispute of a specific milestone can be looked up. Administrators can list all disputes, view dispute details, issue a decision, and record the final decision that settles the conflict.
+\\ \hline
+
+16
+&
+\textbf{Manage Review}
+&
+[GET] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}\{contractId\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}\{contractId\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}\{reviewId\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}\{reviewId\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}\{reviewId\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}\{reviewId\}/\allowbreak{}response \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}\{responseId\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}\{responseId\}
+&
+The Review Management feature lets contract participants rate and comment on each other after a contract is completed. Users can list the reviews of a contract, create a review, view, update and delete their own review, and respond to a review they received. Responses can also be updated or deleted by their author, helping both parties maintain a trustworthy reputation on the platform.
+\\ \hline
+
+17
+&
+\textbf{Manage Forum}
+&
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories/\allowbreak{}top \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories/\allowbreak{}by-slug/\allowbreak{}\{slug\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}top \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}by-slug/\allowbreak{}\{slug\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}users/\allowbreak{}top \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{commentId\}/\allowbreak{}like \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\}/\allowbreak{}like \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\}/\allowbreak{}like \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}reports \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{commentId\}/\allowbreak{}reports \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}is-reported \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{commentId\}/\allowbreak{}is-reported
+&
+The Forum Management feature enables community discussion and knowledge sharing within the platform. Guests and authenticated users can browse forum categories (including the most active categories), browse and search posts (including the most interacted posts and the most active users), and open a post by id or slug. Registered users can create a post, delete their own post, and manage comments (list, add, edit and delete). Posts and comments support a like/unlike toggle and a liker list, and users can report inappropriate posts or comments and check whether they have already reported them.
+\\ \hline
+
+18
+&
+\textbf{Manage Forum Moderation}
+&
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}stats \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories/\allowbreak{}\{id\}/\allowbreak{}restore \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}comments \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}pending-posts \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}trash/\allowbreak{}posts \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}trash/\allowbreak{}comments \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}trash/\allowbreak{}posts/\allowbreak{}\{id\}/\allowbreak{}restore \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}trash/\allowbreak{}comments/\allowbreak{}\{id\}/\allowbreak{}restore \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}posts/\allowbreak{}\{id\}/\allowbreak{}approve \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}posts/\allowbreak{}\{id\}/\allowbreak{}reject \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}reports \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}reports/\allowbreak{}\{reportId\}/\allowbreak{}status
+&
+The Forum Moderation feature gives administrators the tools to keep the community healthy. Administrators can view forum statistics, list, view, create, update, soft-delete and restore forum categories, and list all comments. New posts can be reviewed through the pending-post queue and either approved or rejected, while the trash lists allow deleted posts and comments to be reviewed and restored. The report queue lists content reported by users, and each report's status can be updated once it has been handled.
+\\ \hline
+
+19
+&
+\textbf{Manage Messaging}
+&
+[GET] /\allowbreak{}api/\allowbreak{}conversations \newline
+[POST] /\allowbreak{}api/\allowbreak{}conversations \newline
+[GET] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}messages \newline
+[POST] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}messages \newline
+[POST] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}files \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}messages/\allowbreak{}\{messageId\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}read \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}hide \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}pin
+&
+The Messaging feature provides real-time communication between clients and freelancers. Users can list their conversations, start a new conversation, list and send messages, and send files within a conversation. A message can be deleted or recalled, a conversation can be marked as read to reset its unread counter, hidden from the conversation list, and pinned or unpinned. Messages are delivered in real time through a WebSocket gateway.
+\\ \hline
+
+20
+&
+\textbf{Manage Notification}
+&
+[GET] /\allowbreak{}api/\allowbreak{}notifications \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}notifications/\allowbreak{}read-all \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}notifications/\allowbreak{}\{id\}/\allowbreak{}read \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}notifications/\allowbreak{}\{id\}
+&
+The Notification feature delivers in-app notifications about relevant events such as proposals, contracts, milestones, payments and forum moderation. Users can list their notifications with their read state, mark a single notification or all notifications as read, and delete a notification they no longer want to keep.
+\\ \hline
+
+21
+&
+\textbf{Manage Roles}
+&
+[GET] /\allowbreak{}api/\allowbreak{}roles \newline
+[GET] /\allowbreak{}api/\allowbreak{}roles/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}roles \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}roles/\allowbreak{}\{id\} \newline
+[PUT] /\allowbreak{}api/\allowbreak{}roles/\allowbreak{}\{id\}/\allowbreak{}permissions \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}roles/\allowbreak{}\{id\}
+&
+The Role Management feature allows administrators to define and control user permissions. Administrators can list all roles, view the detail of a role together with its permissions, create a new role, update its name or description, replace the permission set assigned to a role, and delete a role that is no longer needed. This provides fine-grained access control and proper segregation of duties across user types.
+\\ \hline
+
+22
+&
+\textbf{Manage Permissions}
+&
+[GET] /\allowbreak{}api/\allowbreak{}permissions \newline
+[GET] /\allowbreak{}api/\allowbreak{}permissions/\allowbreak{}\{id\}
+&
+The Permission Management feature exposes the catalog of permissions used by the role-based access control system. Administrators can list every available permission and view the details of a single permission so that permissions can be assigned to roles accurately.
+\\ \hline
+
+23
+&
+\textbf{Manage Sessions}
+&
+[GET] /\allowbreak{}api/\allowbreak{}sessions \newline
+[GET] /\allowbreak{}api/\allowbreak{}sessions/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}sessions/\allowbreak{}\{id\}
+&
+The Session Management feature gives authenticated users visibility and control over their active login sessions. Users can list all sessions of their account, view the details of a specific session (such as device and login time), and revoke a session so that the corresponding refresh token can no longer be used.
+\\ \hline
+
+24
+&
+\textbf{Manage Users (Admin)}
+&
+[POST] /\allowbreak{}api/\allowbreak{}users \newline
+[GET] /\allowbreak{}api/\allowbreak{}users \newline
+[GET] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}client-profile \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}freelancer-profile \newline
+[PUT] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}freelancer-profile/\allowbreak{}skills \newline
+[POST] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}freelancer-profile/\allowbreak{}portfolio-items \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}freelancer-profile/\allowbreak{}portfolio-items/\allowbreak{}\{itemId\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}\{id\}/\allowbreak{}freelancer-profile/\allowbreak{}portfolio-items/\allowbreak{}\{itemId\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}users/\allowbreak{}skills-catalog
+&
+The User Management feature allows administrators to manage accounts from the administration side. Administrators can list users, view user details, create a new user, and update general user information. They can also edit a client profile, edit a freelancer's basic profile and replace the freelancer's skills, manage the freelancer's portfolio items, and read the skill catalog when performing these updates.
+\\ \hline
+
+25
+&
+\textbf{Manage Identity Verification}
+&
+[POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}documents \newline
+[POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}ai-check \newline
+[POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}liveness-pose \newline
+[GET] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}status \newline
+[GET] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}documents/\allowbreak{}\{id\}/\allowbreak{}file \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}identity-verifications \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}identity-verifications/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}identity-verifications/\allowbreak{}\{id\}/\allowbreak{}file \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}identity-verifications/\allowbreak{}\{id\}/\allowbreak{}approve \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}identity-verifications/\allowbreak{}\{id\}/\allowbreak{}reject
+&
+The Identity Verification feature supports the eKYC process for user accounts. Users can upload identity documents, run an AI check on the submitted documents, capture liveness-pose images, check their verification status, and download an uploaded document file. Administrators can list verification requests, view request details and the attached file, then approve or reject the verification with a reason.
+\\ \hline
+
+26
+&
+\textbf{Manage Profile Revisions}
+&
+[GET] /\allowbreak{}api/\allowbreak{}profile-revisions/\allowbreak{}me \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}profile-revisions \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}\{id\}/\allowbreak{}approve \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}\{id\}/\allowbreak{}reject
+&
+The Profile Revision feature tracks changes made to freelancer profiles so that they can be moderated. A freelancer can view the latest revision of their own profile, while administrators can list all pending revisions, view the detail of a revision, and approve or reject it before the changes become publicly visible.
+\\ \hline
+
+27
+&
+\textbf{Manage Banners}
+&
+[GET] /\allowbreak{}api/\allowbreak{}banners \newline
+[GET] /\allowbreak{}api/\allowbreak{}banners/\allowbreak{}image/\allowbreak{}\{filename\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}upload-image \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}\{id\}
+&
+The Advertisement Banner feature manages promotional banners displayed on the platform. The public endpoints return the active banners for a given position and serve the banner image files. Administrators can list and view all banners, create a new banner, upload its image, update its content, target position or schedule, and delete a banner.
+\\ \hline
+
+28
+&
+\textbf{Manage Skills (Admin)}
+&
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\} \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\}/\allowbreak{}restore \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\}
+&
+The Skill Management feature allows administrators to maintain the master skill catalog used by freelancer profiles and job postings. Administrators can list skills, view the detail of a skill, create a new skill, update its name or category, soft-delete a skill, and restore a previously deleted skill.
+\\ \hline
+
 \end{longtable}
+\endgroup
