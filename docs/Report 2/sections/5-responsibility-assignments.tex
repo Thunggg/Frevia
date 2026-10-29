@@ -1,0 +1,137 @@
+\renewcommand{\arraystretch}{1.3}
+
+\textit{R = Responsible;\;
+A = Accountable;\;
+C = Consulted;\;
+I = Informed}
+
+\vspace{0.3cm}
+
+\small
+
+\begin{longtable}{|p{5.6cm}|c|c|c|c|c|}
+\hline
+\rowcolor{fptOrange}
+\textbf{Responsibility}
+&
+\textbf{VyPK}
+&
+\textbf{ThuanNT}
+&
+\textbf{TaiTP}
+&
+\textbf{TinVN}
+&
+\textbf{HuyNLN}
+\\ \hline
+\endfirsthead
+
+\hline
+\rowcolor{fptOrange}
+\textbf{Responsibility}
+&
+\textbf{VyPK}
+&
+\textbf{ThuanNT}
+&
+\textbf{TaiTP}
+&
+\textbf{TinVN}
+&
+\textbf{HuyNLN}
+\\ \hline
+\endhead
+
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+Project initiation, scope and risk planning
+& RA & CI & CI & CI & CI \\ \hline
+
+Product Introduction Document
+& RA & CI & CI & CI & CI \\ \hline
+
+Project Management Plan
+& RA & CI & CI & CI & CI \\ \hline
+
+Requirements gathering and user stories
+& A & R & R & CI & CI \\ \hline
+
+UI/UX prototype and component library
+& A & CI & R & CI & R \\ \hline
+
+Software architecture and data model
+& A & R & R & R & R \\ \hline
+
+Authentication, permissions and session management
+& A & R & CI & CI & C \\ \hline
+
+Profile, skills, portfolio and curriculum vitae handling
+& A & C & CI & R & R \\ \hline
+
+Job marketplace, bookmarks and saved search
+& A & C & R & CI & R \\ \hline
+
+Proposal and hiring workflow
+& A & C & R & CI & C \\ \hline
+
+Contract signing, milestones and submissions
+& A & R & C & CI & R \\ \hline
+
+Stripe escrow, release, refund and reconciliation
+& A & C & CI & R & CI \\ \hline
+
+Dispute arbitration and settlement
+& A & R & C & C & CI \\ \hline
+
+Real-time messaging and notifications
+& A & R & CI & C & R \\ \hline
+
+Forum, moderation and content administration
+& RA & CI & C & CI & R \\ \hline
+
+AI integration: identity verification and CV analysis
+& A & C & CI & R & CI \\ \hline
+
+Administrative console, catalogues and banners
+& RA & C & CI & CI & R \\ \hline
+
+Frontend development
+& A & CI & R & CI & R \\ \hline
+
+Backend development
+& A & R & R & R & CI \\ \hline
+
+Unit testing
+& A & R & C & R & C \\ \hline
+
+Integration and end-to-end testing
+& A & C & R & R & R \\ \hline
+
+Payment and webhook security testing
+& A & C & CI & R & CI \\ \hline
+
+User acceptance testing
+& RA & I & I & I & I \\ \hline
+
+Technical training
+& RA & R & R & R & R \\ \hline
+
+Deployment and environment configuration
+& A & R & CI & R & CI \\ \hline
+
+Final project report
+& RA & R & R & R & R \\ \hline
+
+Thesis presentation
+& RA & R & R & R & R \\ \hline
+
+\caption{Responsibility Assignments Matrix}
+\label{tab:raci}
+\end{longtable}
+
+\normalsize
+
+Accountability is not shared on any row: exactly one member is accountable for each responsibility, and that member is the one who reports its status at the Sprint Review. Where a row lists several responsible members, the work is split by module rather than duplicated, and the split is recorded on the task board before the sprint begins. The rows that carry the highest technical risk -- Stripe escrow and reconciliation, dispute arbitration, and AI integration -- pair a responsible owner with at least one consulted member so that a second person can review the implementation.

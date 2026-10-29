@@ -95,31 +95,27 @@ UC-07 & Login & Client, Freelancer, Admin & Allows users to authenticate using e
 \hline
 UC-08 & Logout & Client, Freelancer, Admin & Allows users to securely log out of the system. \\
 \hline
-UC-09 & Manage Contract & Client, Freelancer, Admin & Manages contracts between clients and freelancers. \\
+UC-13 & Manage Contract & Client, Freelancer, Admin & Manages contractual agreements, milestones, deliverables, and file exchanges. \\
 \hline
-UC-09.1 & Get Contract List & Client, Freelancer, Admin & Retrieves paginated list of contracts with status filters and sorting. \\
+UC-13.01 & Create Contract & Client & Allows clients to create and initiate a new contract with a freelancer. \\
 \hline
-UC-09.2 & Get Contract Detail & Client, Freelancer, Admin & Displays full contract details including terms, parties, status, and milestones. \\
+UC-13.02 & Update Contract & Client & Allows clients to update contract terms, budget, milestones, or deadlines before signing. \\
 \hline
-UC-09.3 & Sign Contract & Client, Freelancer & Allows freelancers to digitally sign and accept a contract. \\
+UC-13.03 & Complete Contract & Client, Freelancer & Marks an active contract as completed after all milestones are approved and settled. \\
 \hline
-UC-09.4 & Complete Contract & Client, Freelancer & Marks a contract as completed successfully. \\
+UC-13.04 & View Contract List & Client, Freelancer, Admin & Retrieves paginated list of contracts with status filters and sorting. \\
 \hline
-UC-09.5 & Cancel Contract & Client, Freelancer & Allows either party to cancel a contract before completion. \\
+UC-13.05 & View Contract Detail & Client, Freelancer, Admin & Displays full contract details including terms, parties, status, and milestones. \\
 \hline
-UC-09.6 & Contract Activities & Client, Freelancer, Admin & Tracks all activities and updates related to a contract. \\
+UC-13.06 & Sign Contract & Freelancer, Client & Allows users to digitally accept and sign a contract to activate it. \\
 \hline
-UC-09.7 & Contract Files & Client, Freelancer & Manages files and attachments associated with a contract. \\
+UC-13.07 & Cancel Contract & Client, Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\
 \hline
-UC-09.8 & Upload Contract File & Client, Freelancer & Allows users to upload files to a contract (e.g., deliverables, documents). \\
+UC-13.08 & View Contract Files & Client, Freelancer, Admin & Manages and accesses all files and documentation associated with a contract. \\
 \hline
-UC-09.9 & Delete Contract File & Client, Freelancer & Allows users to delete files from a contract. \\
+UC-13.09 & Upload Contract File & Client, Freelancer & Allows users to upload documents and deliverables to the contract workspace. \\
 \hline
-UC-09.10 & Update Contract Terms & Client & Allows clients to update contract terms and conditions. \\
-\hline
-UC-09.11 & Create Contract & Client & Allows clients to create and initiate a new contract with a freelancer. \\
-\hline
-UC-09.12 & Progress Update & Client, Freelancer & Allows freelancers to submit progress updates on contract milestones. \\
+UC-13.10 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
 \hline
 UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
 \hline
@@ -160,6 +156,48 @@ UC-13.4 & Update Role & Admin & Allows admins to update a role's name and descri
 UC-13.5 & Delete Role & Admin & Allows admins to delete roles from the system. \\
 \hline
 UC-13.6 & Update Role Permissions & Admin & Assigns route access rights to roles by granting or revoking permissions. \\
+\hline
+UC-33 & Manage Dispute & Client, Freelancer, Admin & Manages formal dispute arbitration on funded contract milestones. \\
+\hline
+UC-33.01 & Open Dispute & Client, Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone. \\
+\hline
+UC-33.02 & View Dispute List & Client, Freelancer, Admin & Retrieves paginated overview of disputes with status filtering and deadline badges. \\
+\hline
+UC-33.03 & View Dispute Detail & Client, Freelancer, Admin & Displays full dispute case records, claims, evidence, fees, and resolutions. \\
+\hline
+UC-33.04 & Respond to Dispute & Client, Freelancer & Allows the respondent to submit a rebuttal statement and counter-evidence. \\
+\hline
+UC-33.05 & Respond to Dispute Resolution & Client, Freelancer & Allows involved parties to accept or reject the arbitrator's proposed decision. \\
+\hline
+UC-33.06 & Propose Dispute Resolution & Admin & Allows an administrator/arbitrator to evaluate claims and propose a fund split decision. \\
+\hline
+UC-43 & Manage Payment & Client, Freelancer, Admin & Handles platform financial transactions, escrow deposits, payouts, and fees via Stripe. \\
+\hline
+UC-43.01 & Connect Stripe Account & Freelancer & Connects a freelancer's bank account via Stripe Connect Express to receive payouts. \\
+\hline
+UC-43.02 & View Payout History & Freelancer, Admin & Retrieves paginated history of all payout transfers sent to the freelancer's bank. \\
+\hline
+UC-43.03 & View Payout Detail & Freelancer, Admin & Displays detailed ledger breakdown, fees, and arrival estimates for a payout transfer. \\
+\hline
+UC-43.04 & Fund Milestone & Client & Deposits milestone funds into platform escrow using credit card or saved payment methods. \\
+\hline
+UC-43.05 & Refund Payment & Client, Admin & Returns escrowed milestone funds to the client upon contract cancellation or dispute. \\
+\hline
+UC-43.06 & Pay Platform Fee & Client & Processes the platform engagement fee upon contract initiation via Stripe. \\
+\hline
+UC-43.07 & Release Payment & Client & Authorizes the release of escrowed milestone funds to the freelancer upon work approval. \\
+\hline
+UC-43.08 & Pay Dispute Fee & Client, Freelancer & Processes arbitration fee payment within the 24-hour dispute window via Stripe. \\
+\hline
+UC-43.09 & View Payment History & Client, Freelancer, Admin & Displays a comprehensive, paginated ledger of all account financial transactions. \\
+\hline
+UC-43.10 & View Payment Detail & Client, Freelancer, Admin & Shows itemized receipt details, fees, and downloadable invoice for a transaction. \\
+\hline
+UC-43.11 & Execute Dispute Resolution Payment & Admin, System & Executes split payouts (client refund and freelancer transfer) upon dispute finalization. \\
+\hline
+UC-43.12 & Handle Stripe Webhook Event & Stripe, System & Listens for and verifies asynchronous Stripe webhook events to reconcile database state. \\
+\hline
+UC-43.13 & Sync Payment Intent Status & Client, System & Synchronizes real-time payment intent and checkout status directly with the Stripe API. \\
 \hline
 
 

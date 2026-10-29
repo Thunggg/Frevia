@@ -1,0 +1,71 @@
+\section{Existing Systems}
+
+Several freelance platforms currently dominate the digital labour market. Table \ref{tab:existing-systems} compares their key characteristics with the proposed FREVIA platform. The comparison focuses on four dimensions: the scope of the functional offering, the strengths that explain each platform's adoption, the limitations that remain visible to users, and the general architecture family.
+
+{\small
+\renewcommand{\arraystretch}{1.25}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{center}
+\captionof{table}{Comparison of Existing Freelance Platforms}
+\label{tab:existing-systems}
+\end{center}
+\begin{longtable}{|>{\centering\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\centering\arraybackslash}p{2.2cm}|}
+\hline
+\rowcolor{fptOrange}
+\textbf{Platform} & \textbf{Core Features} & \textbf{Strengths} & \textbf{Limitations} & \textbf{Architecture} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{fptOrange}
+\textbf{Platform} & \textbf{Core Features} & \textbf{Strengths} & \textbf{Limitations} & \textbf{Architecture} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+\textbf{Upwork} &
+Freelancer marketplace with job posting, submitted proposals, hourly and fixed-price contracts, milestones, messaging, work diaries, reviews, and payment protection. &
+Very large global user base, mature reputation system, verified payment method requirement, and a complete contract-to-payment workflow. &
+Service fees on both sides of the transaction, heavy competition on popular postings, and talent discovery that still depends mostly on manual proposal review. &
+Web SaaS
+\\ \hline
+
+\textbf{Fiverr} &
+Service catalogue built from predefined packages (gigs) with fixed scope, orders, in-order messaging, delivery and revision cycles, and reviews. &
+Extremely low friction for buyers, transparent pricing, and a catalogue model that shortens the path from search to purchase. &
+Packaged scope fits poorly with exploratory or long-running projects; there is no bidding, no milestone schedule, and limited room for negotiated requirements. &
+Web SaaS
+\\ \hline
+
+\textbf{Freelancer} &
+Project marketplace with contests, bidding, milestone-based payments, messaging, and reputation management across many categories. &
+Broad category coverage, competitive bidding, and milestone escrow that is available to a worldwide user base. &
+Clients must screen a high volume of low-quality bids, and dispute outcomes depend on a support process that is largely opaque to both parties. &
+Web SaaS
+\\ \hline
+
+\textbf{Toptal} &
+Curated talent network that screens applicants and matches a small, vetted pool of freelancers with clients, supported by account managers. &
+High signal-to-noise ratio for clients, strong screening, and a professional, low-risk engagement model. &
+Selective admission excludes most freelancers, pricing is high, and the matching decision is largely made by the platform rather than by the client. &
+Web SaaS
+\\ \hline
+
+\textbf{FREVIA} &
+Email and Google authentication with one-time-code verification, multi-role accounts with a dynamic permission model, freelancer, client, and expert profiles with administrative revision approval, AI-assisted identity verification, job posting with fixed-price budgets and multiple hiring positions, proposals with drafts and expiry, dual-signed contracts with a fixed per-contract platform fee, milestone funding and release through Stripe, escrow-backed dispute arbitration, contract reviews with responses, one-to-one real-time messaging, in-app notifications, an AI-moderated community forum, and advertisement banners. &
+Verification and escrow are part of the standard transaction instead of an upgrade: identity is checked by an AI document and liveness pipeline, money is funded per milestone before work begins, and disagreement follows a documented arbitration process with evidence, deadlines, a split decision, and a review step. The permission model is data-driven and can be changed without redeployment. &
+The platform is new and has no established user base; payouts require Stripe Connect availability in the participant's country; only fixed-price contracts in US dollars are supported; and artificial intelligence is limited to CV skill extraction, identity verification, and forum moderation, with no automated recommendation or matching engine. &
+Web application + AI services
+\\ \hline
+
+\end{longtable}
+}
+
+The comparison shows where FREVIA differentiates itself and where it deliberately does not compete. Upwork and Freelancer already provide milestone escrow, and Toptal already provides strong vetting, so FREVIA does not claim to invent either concept. What the existing platforms generally do not provide is a transparent arbitration procedure that both parties can drive themselves, an identity check whose evidence is retained and reviewable by an administrator, and a permission model that lets a marketplace operator reshape role capabilities at runtime. Those three properties, together with the decision to keep hiring under human control, define the gap that FREVIA targets.

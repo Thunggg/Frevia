@@ -1,0 +1,557 @@
+% =================================================================
+% Manage Conversation - Start Conversation and Direct Message Management
+% Feature descriptions written against the real implementation:
+%   apps/web/app/(freelancer)/job/[slug]/job-detail-content.tsx
+%   apps/api/src/routes/conversations/* and apps/web/app/conversations/*
+% Procedures are described from the user interface point of view.
+% =================================================================
+
+\subsection{Manage Conversation}
+
+\subsubsection{Start Conversation}
+
+\textbf{Function Trigger:} A logged-in user starts a new chat, either by clicking the ``Connect with client'' button on the job detail page in Find Work, or by clicking the ``New message'' button in the conversation list.
+
+\textbf{Function description:} This function allows a logged-in user to start a direct conversation with another user. When the chat is started from a job, the other participant is the client who posted that job. When the chat is started from the conversation list, the user chooses the other participant. The conversation is created and the user can write the first message. If a conversation with that user already exists, the existing conversation is reopened instead of creating a duplicate.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/CreateConversation.png}
+    \caption{Start conversation screen}
+\end{figure}
+
+\textbf{Function details:}
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The user selected another user who is different from themselves.
+        \end{itemize}
+    \item \textbf{Process}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Start a New Conversation}: The user starts the chat in one of two ways.\
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item From a job in Find Work, the user clicks the ``Connect with client'' button on the job detail page.
+                    \item From the conversation list, the user clicks the ``New message'' button.
+                \end{itemize}
+            \item \textbf{Choose the Participant}: The user provides or confirms the other participant.\
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item When the chat is started from a job, the client of that job is already selected, so the user does not have to choose anyone.
+                    \item When the chat is started from the conversation list, the user enters the identifier of the other participant in the dialog and confirms.
+                \end{itemize}
+            \item \textbf{Create or Reopen the Conversation}: The system checks whether a conversation between the two users already exists.\
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item When no conversation exists, a new conversation between the two users is created.
+                    \item When a conversation already exists, that conversation is reopened, including a conversation that the user had previously deleted from their own list.
+                \end{itemize}
+            \item \textbf{Write the First Message}: The compose screen shows the name and avatar of the other participant, and the user can type and send the first message (see \textbf{Send Message}).
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Conversation Already Exists}: When a conversation with the chosen user already exists, the system opens the existing conversation instead of creating a second one, so there is only one thread per pair of users.
+            \item \textbf{Not Logged In}: When a guest clicks the ``Connect with client'' button, the system asks the user to log in before the conversation can be started.
+            \item \textbf{Cancel}: When the user leaves the compose screen or closes the dialog without confirming, no conversation is created and nothing changes.
+        \end{itemize}
+    \item \textbf{Postconditions}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item A conversation between the two users exists and is open on the screen.
+            \item The conversation is visible in the conversation list of both participants.
+        \end{itemize}
+    \item \textbf{Error Handling}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Cannot Chat with Yourself}: When the user chooses their own account as the participant, the conversation is not created and a message tells the user that a chat with themselves is not allowed.
+            \item \textbf{Participant Not Found}: When the chosen user cannot be found, the conversation is not created and a message tells the user that the participant cannot be found.
+            \item \textbf{Cannot Start Chat}: When the conversation cannot be created, the screen shows a start-chat failure message so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only logged-in users can start a conversation, and the user is always recorded as one of the two participants.
+            \item When the chat is started from a job, the other participant is always the client of that job, so the button cannot be used to start a chat with an unrelated account.
+            \item Only one conversation can exist for a pair of users, so a user cannot create duplicated threads with the same person.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{View Conversation List}
+
+\textbf{Function Trigger:} The logged-in user opens the Messages area by clicking the chat icon in the main navigation.
+
+\textbf{Function description:} This function allows a logged-in user (Client, Freelancer) to see all of their conversations in one list. Each row shows the other participant, a preview of the last message, the time of that message and the number of unread messages. Conversations that the user has pinned are always shown at the top of the list.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/ViewConversationList.png}
+    \caption{Conversation list screen}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The user has at least one conversation, or the empty state is displayed instead.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Messages Area}: The user clicks the chat icon in the main navigation and the conversation list is displayed.
+            \item \textbf{Read Each Conversation Row}: Every row in the list presents the following information.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The avatar and the display name of the other participant.
+                    \item A short preview of the last message, with a paperclip icon when the last message contains a file.
+                    \item The relative time of the last message.
+                    \item A blue unread dot on the avatar and an unread count badge when there are unread messages.
+                    \item A pin icon when the conversation is pinned.
+                \end{itemize}
+            \item \textbf{Search for a Conversation}: The user types a keyword in the search box and the list shows only the conversations whose participant name or last message contains that keyword.
+            \item \textbf{Sorting}: Pinned conversations are shown first, and the remaining conversations are ordered by the time of the last message, newest first.
+            \item \textbf{Open a Conversation}: The user clicks a conversation row to open the chat thread (see \textbf{View Conversation Detail}).
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{No Conversation}: When the user has no conversation at all, the screen shows an empty state with a ``New message'' button, and the user can start a new chat from there (see \textbf{Create Conversation}).
+            \item \textbf{No Search Result}: When the search keyword does not match any conversation, the list is replaced by a message telling the user that no chat matches the keyword.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user sees all of their conversations, with the pinned ones at the top and the unread counts for each conversation.
+            \item Opening the list does not change any message; unread messages are only cleared when the user opens a thread (see \textbf{Mark Conversation as Read}).
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Cannot Load Conversations}: When the conversation list cannot be loaded, the screen shows a load-failure message so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only the conversations of the logged-in user are shown, so a user can never see the chats of another account.
+            \item Conversations that the user has deleted from their own list are not shown again until a new message arrives.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{View Conversation Detail}
+
+\textbf{Function Trigger:} The user clicks a conversation row in the conversation list.
+
+\textbf{Function description:} This function allows the user to read the whole chat thread with the other participant. The thread shows all messages in chronological order, the avatar and display name of the other user, the attachments that were exchanged and the read state of the messages that the user has sent.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/ViewConversationDetail.png}
+    \caption{Conversation detail screen (chat thread)}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The user is a participant of the conversation that is being opened.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Conversation}: The user clicks a conversation row and the chat thread is displayed.
+            \item \textbf{Read the Thread Header}: The header of the thread shows the following information.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The avatar and the display name of the other participant.
+                    \item A button that opens the profile of the other participant.
+                    \item A back button that returns to the conversation list.
+                \end{itemize}
+            \item \textbf{Read the Messages}: The messages are shown in chronological order, oldest at the top and newest at the bottom.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item Messages sent by the user are aligned on one side, and messages received from the other user on the other side.
+                    \item Image attachments are shown as pictures that can be opened in a new tab.
+                    \item Other files are shown as a download card with the file name and the file size.
+                    \item A message that contains only emojis is displayed with a larger font.
+                \end{itemize}
+            \item \textbf{Check the Read State}: Messages that the user has sent show a read indicator.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item A single check mark means that the message has been delivered but not read.
+                    \item A double check mark means that the other user has read the message.
+                \end{itemize}
+            \item \textbf{Use the Thread Actions}: The user can send a message (see \textbf{Send Message}), attach a file (see \textbf{Send File}) or delete one of their own messages (see \textbf{Delete Message}).
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Empty Thread}: When the conversation has no message yet, the thread shows an empty state with a hint to write the first message.
+            \item \textbf{User Is Typing}: When the other user is typing, an animated typing indicator is shown at the bottom of the thread.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user sees the whole chat thread with the other participant, including the attachments and the read state of their own messages.
+            \item The messages of the other user are marked as read while the thread is open (see \textbf{Mark Conversation as Read}).
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Conversation Not Found}: When the conversation no longer exists, the screen shows a not-found state and offers the user a way back to the conversation list.
+            \item \textbf{Access Denied}: When the user is not a participant of the conversation, the thread is not opened and a permission message is shown.
+            \item \textbf{Cannot Load Messages}: When the messages cannot be loaded, the thread shows a load-failure message so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only the two participants of a conversation can read its messages; another user is refused even when the conversation link is known.
+            \item Messages that have been deleted are never shown again in the thread.
+        \end{itemize}
+\end{itemize}
+
+
+\subsubsection{Send Message}
+
+\textbf{Function Trigger:} The user types a message in the input box at the bottom of the chat thread and clicks the send button.
+
+\textbf{Function description:} This function allows a logged-in user to send a text message to the other participant of the conversation. The user types the text and sends it, and the message appears in the thread of both users immediately.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/SendMessage.png}
+    \caption{Sending a message in the chat thread}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The user is a participant of the conversation and the chat thread is open.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Type the Message}: The user types the text in the input box at the bottom of the thread. The send button stays disabled while the input box is empty.
+            \item \textbf{Add an Emoji if Wanted}: The user can click the emoji button to pick an emoji, and the chosen emoji is added to the input box.
+            \item \textbf{Send the Message}: The user clicks the send button or presses the Enter key.
+            \item \textbf{View the Result}: When the message is sent, the screen shows the result.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The message appears at the bottom of the thread on the user's side.
+                    \item The input box is cleared.
+                    \item The message shows a single check mark, meaning that it has been sent but not read yet.
+                \end{itemize}
+            \item \textbf{Message Arrives for the Other User}: The other participant receives the message in real time, and the conversation list of that user shows the new message preview and the unread count.
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Enter Key}: When the user presses the Enter key without holding Shift, the message is sent in the same way as clicking the send button.
+            \item \textbf{Empty Message}: When the input box is empty, the send button remains disabled and the user cannot send an empty message.
+            \item \textbf{Emoji Only}: When the message contains only emojis, the message is displayed with a larger font in the thread.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The new message is stored in the conversation and is shown to both participants.
+            \item The conversation list of both users is updated with the new last message.
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Conversation Not Found}: When the conversation no longer exists, the message is not sent and the thread shows a message telling the user that the conversation cannot be found.
+            \item \textbf{Access Denied}: When the user is not a participant of the conversation, the message is refused and a permission message is shown.
+            \item \textbf{Cannot Send Message}: When the message cannot be sent, the thread shows a send-failure message and the text is kept so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only a participant of the conversation can send a message into it, and the sender is always the account that is currently logged in.
+            \item The length of a message is limited, so very large text cannot be sent.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Send File}
+
+\textbf{Function Trigger:} The user clicks the attach-file button in the input box of the chat thread and chooses a file from their device.
+
+\textbf{Function description:} This function allows a logged-in user to send a file, such as a picture or a document, to the other participant of the conversation. The user chooses a file, the system uploads it and the file is sent as a message with a preview or a download card.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/SendFile.png}
+    \caption{Sending a file in the chat thread}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The user is a participant of the conversation and the chat thread is open.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Click the Attach Button}: The user clicks the paperclip button in the input box, and the file chooser of the device is opened.
+            \item \textbf{Choose the File}: The user selects a file. The file chooser accepts images, documents, archives and other supported file types.
+            \item \textbf{Upload the File}: The system uploads the file before sending it, and a loading state is shown while the upload is running.
+            \item \textbf{Send the File as a Message}: When the upload finishes, the file is sent to the conversation as a message.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item When the file is an image, it is displayed as a picture that can be opened in a new tab.
+                    \item When the file is not an image, it is displayed as a download card with the file name and the file size.
+                \end{itemize}
+            \item \textbf{View the Result}: The file message appears at the bottom of the thread, and the conversation list of both users shows the file preview with a paperclip icon.
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Cancel the File Chooser}: When the user closes the file chooser without choosing a file, no upload is started and nothing changes.
+            \item \textbf{Image Preview}: When the chosen file is an image, the picture is rendered directly inside the message bubble instead of a download card.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The file is uploaded and attached to a new message in the conversation.
+            \item Both participants can see the file message in the thread and can open or download the file.
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{File Too Large}: When the chosen file is larger than the allowed size, the upload is stopped and a message tells the user that the file is too large.
+            \item \textbf{File Type Not Allowed}: When the chosen file type is not supported, the upload is stopped and a message tells the user that this file type is not allowed.
+            \item \textbf{Cannot Upload File}: When the upload fails, the file message is not sent and a failure message is shown so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only supported file types can be uploaded, and the size of the file is limited before the upload starts.
+            \item Only a participant of the conversation can send a file into it, and the sender is always the account that is currently logged in.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Mark Conversation as Read}
+
+\textbf{Function Trigger:} The user opens a conversation from the conversation list, or a new message arrives while the thread is already open.
+
+\textbf{Function description:} This function allows a logged-in user to clear the unread messages of a conversation. The unread badge disappears from the conversation list and the double check mark appears on the messages of the other user in the thread, so the other participant can see that the messages have been read.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/MarkAsRead.png}
+    \caption{Conversation after being marked as read}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The conversation contains at least one unread message from the other participant.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Conversation}: The user opens the conversation, and the system automatically marks the received messages as read.
+            \item \textbf{View the Result in the List}: The conversation row in the conversation list is updated.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The blue unread dot disappears from the avatar.
+                    \item The unread count badge is removed from the row.
+                \end{itemize}
+            \item \textbf{Mark Manually if Wanted}: The user can also choose the ``Mark as read'' action from the ``...'' menu of a conversation row.
+            \item \textbf{Notify the Sender}: The other participant sees the read state change in real time.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item Messages that were shown with a single check mark are updated to a double check mark.
+                \end{itemize}
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Nothing to Read}: When the conversation has no unread message, the ``Mark as read'' action is disabled in the menu.
+            \item \textbf{New Message While Reading}: When a new message arrives while the thread is open, that message is marked as read immediately.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item All messages received from the other participant in this conversation are marked as read.
+            \item The unread count of the conversation is cleared for the current user, and the other participant sees the double check mark on their sent messages.
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Conversation Not Found}: When the conversation no longer exists, the read state is not updated and a message tells the user that the conversation cannot be found.
+            \item \textbf{Cannot Mark as Read}: When the read state cannot be updated, the unread badge stays on the row and a failure message is shown so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only the messages received by the current user are marked as read, so a user cannot change the read state of their own sent messages through this action.
+            \item Only a participant of the conversation can mark it as read.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Pin Conversation}
+
+\textbf{Function Trigger:} The user opens the ``...'' menu of a conversation row and chooses ``Pin chat''.
+
+\textbf{Function description:} This function allows a logged-in user to keep an important conversation at the top of the conversation list. The user pins a conversation and the row is moved to the pinned group, which is always shown above the other conversations.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.49\linewidth]{image/screenshot/sprint2/kvy/BeforePinConversation.png}
+    \includegraphics[width=0.49\linewidth]{image/screenshot/sprint2/kvy/AfterPinConversation.png}
+    \caption{Conversation list before pinning (left) and after pinning (right)}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The conversation that the user wants to pin is shown in the conversation list.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Row Menu}: The user clicks the ``...'' button of the conversation row and the menu is displayed.
+            \item \textbf{Choose Pin Chat}: The user clicks the ``Pin chat'' action in the menu.
+            \item \textbf{View the Result}: The conversation list is updated.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The conversation is moved to the top of the list, above the not-pinned conversations.
+                    \item A pin icon is shown on the conversation row.
+                \end{itemize}
+            \item \textbf{Unpin if Wanted}: The user can open the same menu again and choose ``Unpin chat'' to remove the conversation from the pinned group.
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Unpin Conversation}: When the user chooses ``Unpin chat'', the pin icon is removed and the conversation returns to the normal order of the list.
+            \item \textbf{Pin State Is Personal}: The pin of one user does not change the order of the conversation list of the other participant.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The pinned conversation stays at the top of the conversation list of the current user.
+            \item The content of the conversation and the messages are not changed by this action.
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Conversation Not Found}: When the conversation no longer exists, the pin is not applied and a message tells the user that the conversation cannot be found.
+            \item \textbf{Cannot Pin Conversation}: When the pin state cannot be saved, the row returns to its previous position and a failure message is shown so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The pin belongs to the current user only, so pinning a chat never affects the conversation list of the other participant.
+            \item Only a participant of the conversation can pin it.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Delete Message}
+
+\textbf{Function Trigger:} The user moves the pointer over one of their own messages in the chat thread and clicks the delete button.
+
+\textbf{Function description:} This function allows a logged-in user to remove a message that they have sent. The user deletes their own message and the message disappears from the chat thread of both participants. The user can only delete messages that they sent themselves.
+
+\textbf{Screen layout:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint2/kvy/DeleteRecallMessage.png}
+    \caption{Deleting a message in the chat thread}
+\end{figure}
+
+\textbf{Function details:}
+
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Precondition}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in.
+            \item The user is connected to the internet.
+            \item The message belongs to the current user and is shown in the chat thread.
+        \end{itemize}
+    \item \textbf{Process}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Point at the Message}: The user moves the pointer over one of their own messages and the delete button appears.
+            \item \textbf{Click the Delete Button}: The user clicks the delete button of that message.
+            \item \textbf{View the Result}: The message is removed from the thread.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item The message disappears from the thread of the current user.
+                    \item The message also disappears from the thread of the other participant in real time.
+                \end{itemize}
+            \item \textbf{Conversation List Update}: When the deleted message was the last message of the conversation, the preview in the conversation list is refreshed to show the previous message.
+        \end{itemize}
+    \item \textbf{Alternative Flow}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Delete a File Message}: When the deleted message contains a file, the whole file message is removed from the thread in the same way.
+            \item \textbf{Message Already Deleted}: When the message has already been deleted, the delete button is not available for it.
+        \end{itemize}
+    \item \textbf{Postconditions}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The message no longer appears in the chat thread of either participant.
+            \item The message is kept in the system for record-keeping but is never shown to users again.
+        \end{itemize}
+    \item \textbf{Error Handling}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Message Not Found}: When the message no longer exists or has already been deleted, the page shows a message telling the user that the message cannot be found.
+            \item \textbf{Not the Sender}: When the user tries to delete a message that they did not send, the action is refused and a permission message is shown.
+            \item \textbf{Cannot Delete Message}: When the message cannot be deleted, the message stays in the thread and a delete-failure message is shown so that the user can try again.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the screen shows a ``Lost Connection'' state and asks the user to reconnect.
+        \end{itemize}
+    \item \textbf{Security Measures}
+
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The delete button is shown only on the messages that the current user sent.
+            \item The system also checks the sender when the deletion is confirmed, so a user can never delete a message that belongs to the other participant.
+        \end{itemize}
+\end{itemize}

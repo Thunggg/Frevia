@@ -91,11 +91,21 @@
 \makeatletter
 
 \renewcommand{\theparagraph}
-{\thesubsubsection.\arabic{paragraph}}
+{\thesubsection.\arabic{paragraph}}
 
-\@addtoreset{paragraph}{subsubsection}
+\@addtoreset{paragraph}{subsection}
 
-\def\toclevel@paragraph{4}
+\def\toclevel@paragraph{3}
+
+% Subparagraphs are used for the small ERDs inside
+% 4.1.5 Entity Relationship Diagram, so they are numbered like
+% 4.1.5.1, 4.1.5.2, ... and sit one level below the subsubsection.
+\renewcommand{\thesubparagraph}
+{\thesubsubsection.\arabic{subparagraph}}
+
+\@addtoreset{subparagraph}{subsubsection}
+
+\def\toclevel@subparagraph{4}
 
 \makeatother
 
@@ -106,6 +116,17 @@
 {}
 
 \titlespacing*{\paragraph}
+{0pt}
+{3.25ex plus 1ex minus .2ex}
+{1em}
+
+\titleformat{\subparagraph}[runin]
+{\normalfont\normalsize\bfseries}
+{\thesubparagraph}
+{1em}
+{}
+
+\titlespacing*{\subparagraph}
 {0pt}
 {3.25ex plus 1ex minus .2ex}
 {1em}
@@ -125,6 +146,11 @@
 \setlength{\cftbeforesecskip}{6pt}
 \setlength{\cftbeforesubsecskip}{2pt}
 
+% Paragraph entries are numbered like subsubsections (e.g. 4.2.1), so they
+% must be indented at the same level in the table of contents.
+\setlength{\cftparaindent}{\cftsubsubsecindent}
+\setlength{\cftparanumwidth}{\cftsubsubsecnumwidth}
+
 %====================================================
 % HYPERLINKS
 %====================================================
@@ -135,7 +161,8 @@
     linkcolor=black,
     citecolor=black,
     filecolor=black,
-    urlcolor=blue
+    urlcolor=blue,
+    hypertexnames=false
 }
 
 %====================================================

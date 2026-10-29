@@ -31,15 +31,36 @@ export const DocumentTypeSchema = z.nativeEnum(DocumentType);
 export const VerificationStatusSchema = z.nativeEnum(VerificationStatus);
 export const SocialPlatformSchema = z.nativeEnum(SocialPlatform);
 
+/**
+ * Kết quả đối chiếu QR ↔ OCR do AI tính (qr_service.compare).
+ * Chỉ trả về tên field (document_number, full_name, ...) — KHÔNG chứa giá trị
+ * PII đọc được từ QR/OCR.
+ */
+export const QrConsistencySchema = z.object({
+  // MATCH | PARTIAL | MISMATCH | NOT_FOUND
+  status: z.string(),
+  score: z.number().nullable().optional(),
+  matchedFields: z.array(z.string()),
+  mismatchedFields: z.array(z.string()),
+  notCheckedFields: z.array(z.string()).optional(),
+});
+
 export const IdentityVerificationDocumentSchema = z.object({
   id: z.number(),
   userId: z.number(),
   documentType: DocumentTypeSchema,
   fileUrl: z.string().min(1),
+  // Mặt sau CCCD — nullable (tài liệu cũ hoặc chưa upload mặt sau)
+  backFileUrl: z.string().nullable().optional(),
   status: VerificationStatusSchema,
   reviewNotes: z.string().nullable(),
   createdAt: DateTimeSchema,
   reviewedAt: DateTimeSchema.nullable(),
+  // Kết quả quét AI (IDVerification pipeline) — nullable, chỉ có sau khi chạy AI
+  aiStatus: z.string().nullable().optional(),
+  aiScore: z.number().nullable().optional(),
+  aiError: z.string().nullable().optional(),
+  qrConsistency: QrConsistencySchema.nullable().optional(),
 });
 
 export const IdentityVerificationStatusSchema = z.object({
@@ -223,6 +244,7 @@ export type SocialPlatformType = z.infer<typeof SocialPlatformSchema>;
 export type IdentityVerificationDocumentType = z.infer<
   typeof IdentityVerificationDocumentSchema
 >;
+export type QrConsistencyType = z.infer<typeof QrConsistencySchema>;
 export type IdentityVerificationStatusType = z.infer<
   typeof IdentityVerificationStatusSchema
 >;

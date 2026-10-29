@@ -70,6 +70,10 @@ export default async function proxy(request: NextRequest) {
   let hasSession = Boolean(refreshToken);
   const response = NextResponse.next();
 
+  // Cho layout server biết pathname hiện tại (vd: layout chặn dashboard
+  // của freelancer chưa xác minh danh tính nhưng phải bỏ qua /freelancer/profile)
+  response.headers.set("x-pathname", pathname);
+
   // Nếu có refresh token và access token cần refresh thì exchange refresh token
   if (refreshToken && accessTokenNeedsRefresh(accessToken)) {
     const tokens = await exchangeRefreshToken(refreshToken);

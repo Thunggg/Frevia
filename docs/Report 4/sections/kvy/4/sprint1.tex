@@ -1,0 +1,792 @@
+% =================================================================
+% FILE: sections/kvy/4/sprint1.tex -- Sprint 1 (Community Forum)
+% Class specifications for the community-forum implementation.
+% =================================================================
+
+\subsection{ForumController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumController(forumService: ForumService)} &
+A method to initialize a new instance of the controller with the forum service.
+\newline -- \code{forumService}: \code{ForumService} -- the service that owns category and post use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getForumCategories()} &
+A method to retrieve all active forum categories.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryListResponseType>} -- the category list produced by the service.
+\newline -- Route: \code{GET /forums/categories}; public endpoint. \\ \hline
+
+03 & \code{getTopForumCategories(}\newline\code{query: { limit: number })} &
+A method to retrieve the categories with the largest number of public posts.
+\newline -- \code{query.limit}: \code{number} -- maximum number of categories, validated by \code{TopLimitSchema} with default 3 and range 1--10.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryTopListResponseType>} -- ranked category list.
+\newline -- Route: \code{GET /forums/categories/top}; public endpoint. \\ \hline
+
+04 & \code{getTopActiveUsers(}\newline\code{query: { limit: number })} &
+A method to retrieve the users with the most forum activity.
+\newline -- \code{query.limit}: \code{number} -- maximum number of users, validated by \code{TopLimitSchema} with default 3 and range 1--10.
+\newline -- \textit{Returns:} \code{Promise<ForumTopActiveUserListResponseType>} -- users with post and comment counts.
+\newline -- Route: \code{GET /forums/users/top}; public endpoint. \\ \hline
+
+05 & \code{getForumCategoryById(id: number)} &
+A method to retrieve one forum category by its identifier.
+\newline -- \code{id}: \code{number} -- category identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail with post count.
+\newline -- Route: \code{GET /forums/categories/:id}; public endpoint. \\ \hline
+
+06 & \code{getForumCategoryBySlug(slug: string)} &
+A method to retrieve one forum category by its slug.
+\newline -- \code{slug}: \code{string} -- unique category slug.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail with post count.
+\newline -- Route: \code{GET /forums/categories/by-slug/:slug}; public endpoint. \\ \hline
+
+07 & \code{getForumPostLists(}\newline\code{filter: ForumPostFilterType)} &
+A method to retrieve a paginated, filterable list of public posts.
+\newline -- \code{filter}: \code{ForumPostFilterType} -- page, limit, optional categoryId, optional userId, and optional search text, validated by \code{ForumPostFilterDto}.
+\newline -- \textit{Returns:} \code{Promise<ForumPostListResponseType>} -- posts plus pagination metadata.
+\newline -- Route: \code{GET /forums/posts}; public endpoint. \\ \hline
+
+08 & \code{getTopInteractedPosts(}\newline\code{query: { limit: number; categoryId?: number })} &
+A method to retrieve the most interacted posts from the previous seven days.
+\newline -- \code{query.limit}: \code{number} -- maximum number of posts, default 3.
+\newline -- \code{query.categoryId}: \code{number | undefined} -- optional category filter.
+\newline -- \textit{Returns:} \code{Promise<ForumTopPostListResponseType>} -- ranked posts with like and comment counts.
+\newline -- Route: \code{GET /forums/posts/top}; public endpoint. \\ \hline
+
+09 & \code{viewForumPostDetail(id: number)} &
+A method to retrieve the public detail of one post.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ViewForumPostDetailResponseType>} -- post, author summary, and category summary.
+\newline -- Route: \code{GET /forums/posts/:id}; public endpoint. \\ \hline
+
+10 & \code{getForumPostBySlug(slug: string)} &
+A method to retrieve the public detail of one post by slug.
+\newline -- \code{slug}: \code{string} -- unique post slug.
+\newline -- \textit{Returns:} \code{Promise<ViewForumPostDetailResponseType>} -- post detail.
+\newline -- Route: \code{GET /forums/posts/by-slug/:slug}; public endpoint. \\ \hline
+
+11 & \code{createForumPost(}\newline\code{userId: number, body: CreateForumPostType)} &
+A method to create a forum post for the authenticated user.
+\newline -- \code{userId}: \code{number} -- author identifier injected by \code{@UserActive('userId')}.
+\newline -- \code{body}: \code{CreateForumPostType} -- categoryId, title, content, and optional moderation result, validated by \code{CreateForumPostDto}.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the created post.
+\newline -- Route: \code{POST /forums/posts}; authenticated endpoint. \\ \hline
+
+12 & \code{deleteForumPost(}\newline\code{userId: number, roleName: string,}\newline\code{id: number)} &
+A method to soft-delete a post when the caller is its owner or an administrator.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{roleName}: \code{string} -- current role name, used for the administrator override.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the soft-deleted post.
+\newline -- Route: \code{DELETE /forums/posts/:id}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumService} & \code{ForumService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumService(forumRepository: ForumRepository)} &
+A method to initialize the service with the forum repository.
+\newline -- \code{forumRepository}: \code{ForumRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getForumCategories()} &
+A method to load all active categories.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryListResponseType>} -- category list with public post counts.
+\newline -- Failure is mapped to \code{FailedToLoadForumCategoriesException}. \\ \hline
+
+03 & \code{getTopForumCategories(limit: number = 3)} &
+A method to load the categories with the most public posts.
+\newline -- \code{limit}: \code{number} -- maximum number of categories; default 3.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryTopListResponseType>} -- ranked categories.
+\newline -- Failure is mapped to \code{FailedToLoadForumCategoriesException}. \\ \hline
+
+04 & \code{getTopActiveUsers(limit: number = 5)} &
+A method to load the most active users by post and comment counts.
+\newline -- \code{limit}: \code{number} -- maximum number of users; default 5.
+\newline -- \textit{Returns:} \code{Promise<ForumTopActiveUserListResponseType>} -- user activity summaries.
+\newline -- The current implementation reuses \code{FailedToLoadForumCategoriesException} for this failure path. \\ \hline
+
+05 & \code{getForumCategoryById(id: number)} &
+A method to load one category by identifier.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail.
+\newline -- Prisma known errors are mapped to \code{FailedToLoadForumCategoriesException}. \\ \hline
+
+06 & \code{getForumCategoryBySlug(slug: string)} &
+A method to resolve a category slug and return its detail.
+\newline -- \code{slug}: \code{string} -- category slug.
+\newline -- \textit{Returns:} \code{Promise<ForumCategoryDetailResponseType>} -- category detail.
+\newline -- Throws \code{ForumCategoryNotFoundException} when the slug does not exist. \\ \hline
+
+07 & \code{getForumPostBySlug(slug: string)} &
+A method to resolve a post slug and return its public detail.
+\newline -- \code{slug}: \code{string} -- post slug.
+\newline -- \textit{Returns:} \code{Promise<ViewForumPostDetailResponseType>} -- post detail.
+\newline -- Throws \code{ForumPostNotFoundException} when the slug does not exist. \\ \hline
+
+08 & \code{getForumPostLists(filter: ForumPostFilterType)} &
+A method to build a paginated post list from the repository result.
+\newline -- \code{filter}: \code{ForumPostFilterType} -- page, limit, category, author, and search filters.
+\newline -- \textit{Returns:} \code{Promise<ForumPostListResponseType>} -- posts and pagination metadata, including \code{totalPages}.
+\newline -- Prisma known errors are mapped to \code{FailedToLoadForumPostsException}. \\ \hline
+
+09 & \code{createForumPost(}\newline\code{userId: number, body: CreateForumPostType)} &
+A method to validate the optional category and create a post.
+\newline -- \code{userId}: \code{number} -- author identifier.
+\newline -- \code{body}: \code{CreateForumPostType} -- post data and optional AI moderation result.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the created post.
+\newline -- Throws \code{ForumCategoryNotFoundException} for an unknown category and \code{FailedToCreateForumPostException} for a persistence failure. \\ \hline
+
+10 & \code{viewForumPostDetail(id: number)} &
+A method to load the public detail of a post.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ViewForumPostDetailResponseType>} -- post, author, and category summary.
+\newline -- Prisma known errors are mapped to \code{FailedToViewForumPostException}. \\ \hline
+
+11 & \code{updateForumPost(}\newline\code{id: number, userId: number,}\newline\code{body: UpdateForumPostType)} &
+A method to update a post after checking existence and ownership.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{body}: \code{UpdateForumPostType} -- updated category, title, and content.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the updated post.
+\newline -- Throws \code{ForumPostNotFoundException} or \code{ForumPostNotOwnedException}. The controller route is currently commented out. \\ \hline
+
+12 & \code{deleteForumPost(}\newline\code{id: number, userId: number,}\newline\code{roleName: string)} &
+A method to authorize and soft-delete a post.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{roleName}: \code{string} -- current role name; \code{ADMIN} bypasses the owner check.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the soft-deleted post.
+\newline -- Throws \code{ForumPostNotFoundException}, \code{ForumPostNotOwnedException}, or \code{FailedToDeleteForumPostException}. \\ \hline
+
+13 & \code{getTopInteractedPosts(}\newline\code{limit: number = 3,}\newline\code{categoryId?: number)} &
+A method to return the most interacted posts from the last seven days.
+\newline -- \code{limit}: \code{number} -- maximum number of posts; default 3.
+\newline -- \code{categoryId}: \code{number | undefined} -- optional category restriction.
+\newline -- \textit{Returns:} \code{Promise<ForumTopPostListResponseType>} -- ranked posts.
+\newline -- Failure is mapped to \code{FailedToLoadForumPostsException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumRepository} & \code{ForumRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- pooled database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getForumCategories()} &
+A method to query active categories ordered by name.
+\newline -- \textit{Returns:} \code{Promise<Array<Pick<ForumCategoryType, 'id' | 'name' | 'slug' | 'description' | 'createdAt' | 'updatedAt' | 'postCount'>>>} -- category rows with public post counts.
+\newline -- Only non-deleted posts with moderation status \code{APPROVED} are counted. \\ \hline
+
+03 & \code{getTopForumCategories(limit: number = 3)} &
+A method to query active categories ordered by public post count.
+\newline -- \code{limit}: \code{number} -- maximum number of rows; default 3.
+\newline -- \textit{Returns:} the same category projection as \code{getForumCategories()}, ranked by \code{posts._count} descending. \\ \hline
+
+04 & \code{getTopActiveUsers(limit: number = 5)} &
+A method to query non-deleted, non-banned users ordered by post count.
+\newline -- \code{limit}: \code{number} -- maximum number of rows; default 5.
+\newline -- \textit{Returns:} \code{Promise<ForumTopActiveUserType[]>} -- user id, display name, avatar, post count, and comment count.
+\newline -- Comment counts include only non-deleted comments. \\ \hline
+
+05 & \code{findForumCategoryById(id: number)} &
+A method to check whether an active category exists.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<Pick<ForumCategoryType, 'id'> | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+06 & \code{getForumCategoryById(id: number)} &
+A method to load one active category with its post count.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} category projection with \code{postCount}.
+\newline -- Throws \code{ForumCategoryNotFoundException} when no active row exists. \\ \hline
+
+07 & \code{findForumCategoryBySlug(slug: string)} &
+A method to resolve an active category by slug.
+\newline -- \code{slug}: \code{string} -- category slug.
+\newline -- \textit{Returns:} \code{Promise<Pick<ForumCategoryType, 'id'> | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+08 & \code{getForumPostLists(filter: ForumPostFilterType)} &
+A method to query a page of public posts and the matching total in one transaction.
+\newline -- \code{filter}: \code{ForumPostFilterType} -- pagination, category, author, and case-insensitive title search.
+\newline -- \textit{Returns:} \code{Promise<{ posts: ForumPostWithUserType[]; total: number }>} -- mapped post rows and total count.
+\newline -- Visibility requires \code{deletedAt = null} and moderation status \code{APPROVED}. \\ \hline
+
+09 & \code{createForumPost(}\newline\code{categoryId: number | null, userId: number,}\newline\code{title: string, content: string,}\newline\code{moderation?: ForumModerationType)} &
+A method to insert a post and generate its slug.
+\newline -- \code{categoryId}: \code{number | null} -- optional category.
+\newline -- \code{userId}: \code{number} -- author identifier.
+\newline -- \code{title}, \code{content}: \code{string} -- post text.
+\newline -- \code{moderation}: \code{ForumModerationType | undefined} -- optional AI result; status defaults to \code{PENDING}.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the inserted post. \\ \hline
+
+10 & \code{viewForumPostDetail(id: number)} &
+A method to query one public post with author and category summaries.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ViewForumPostDetailResponseType>} -- post detail.
+\newline -- Throws \code{ForumPostNotFoundException} when the post is missing, deleted, or not approved. \\ \hline
+
+11 & \code{findForumPostById(id: number)} &
+A method to load a non-deleted post for ownership checks.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType | null>} -- the post or \code{null}. \\ \hline
+
+12 & \code{findForumPostBySlug(slug: string)} &
+A method to resolve a public post slug.
+\newline -- \code{slug}: \code{string} -- post slug.
+\newline -- \textit{Returns:} \code{Promise<Pick<ForumPostType, 'id'> | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+13 & \code{updateForumPost(}\newline\code{id: number, data: UpdateForumPostType)} &
+A method to update a non-deleted post and regenerate its slug from the title.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \code{data}: \code{UpdateForumPostType} -- category, title, and content.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the updated post. \\ \hline
+
+14 & \code{softDeleteForumPost(id: number)} &
+A method to set \code{deletedAt} on a non-deleted post.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumPostType>} -- the soft-deleted post. \\ \hline
+
+15 & \code{getTopInteractedPosts(}\newline\code{limit: number = 3,}\newline\code{categoryId?: number)} &
+A method to query posts created during the previous seven days and rank them by interactions.
+\newline -- \code{limit}: \code{number} -- maximum number of rows; default 3.
+\newline -- \code{categoryId}: \code{number | undefined} -- optional category restriction.
+\newline -- \textit{Returns:} \code{Promise<ForumTopPostType[]>} -- posts with like count, comment count, and \code{interactionScore}.
+\newline -- Ordering is by likes, then comments, then creation time, all descending. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for category and post management}
+
+\begin{SupportingTable}{4.0cm}{7.2cm}{4.6cm}
+\code{ForumCategoryListResponseDto} & Array of \code{ForumCategoryType}: \code{id}, \code{name}, \code{slug}, \code{description}, \code{createdAt}, \code{updatedAt}, \code{postCount}. & Response of \code{GET /forums/categories}. \\ \hline
+\code{ForumCategoryDetailResponseDto} & \code{id: number}, \code{name: string}, \code{slug: string}, \code{description: string | null}, \code{createdAt: Date}, \code{updatedAt: Date}, \code{postCount: number}. & Detail response for category id and slug routes. \\ \hline
+\code{ForumCategoryTopListResponseDto} & Array of \code{ForumCategoryType}. & Response of the top-category route. \\ \hline
+\code{ForumTopActiveUserListResponseDto} & Array of \code{ForumTopActiveUserType}: \code{id}, \code{displayName}, \code{avatarUrl}, \code{postCount}, \code{commentCount}. & Response of the top-active-user route. \\ \hline
+\code{ForumPostListResponseDto} & \code{posts: ForumPostWithUserType[]}, \code{pagination: PaginationType}. & Paginated post-list response. \\ \hline
+\code{ForumPostFilterDto} & \code{page: number}, \code{limit: number}, \code{categoryId?: number}, \code{userId?: number}, \code{search?: string}. & Query validation for the post list. \\ \hline
+\code{CreateForumPostDto} & \code{categoryId?: number}, \code{title: string}, \code{content: string}, \code{moderation?: ForumModerationType}. & Request body for post creation. \\ \hline
+\code{CreateForumPostResponseDto} & \code{ForumPostType}: \code{id}, \code{categoryId}, \code{userId}, \code{title}, \code{slug}, \code{content}, \code{moderationStatus}, \code{moderationScore}, \code{moderationCategories}, \code{createdAt}, \code{updatedAt}. & Response of post creation. \\ \hline
+\code{ViewForumPostDetailResponseDto} & \code{ForumPostType} fields plus \code{category: { id, name, slug } | null} and \code{user: { id, profile }}. & Public post-detail response. \\ \hline
+\code{UpdateForumPostDto} & \code{categoryId?: number}, \code{title: string}, \code{content: string}. & Request body for the implemented update-post method. \\ \hline
+\code{UpdateForumPostResponseDto} & \code{ForumPostType}. & Response of the implemented update-post method. \\ \hline
+\code{ForumTopPostListResponseDto} & Array of \code{ForumTopPostType}: post fields plus \code{likeCount}, \code{commentCount}, \code{interactionScore}, \code{user}, and \code{category}. & Response of the top-post route. \\ \hline
+\end{SupportingTable}
+
+\subsection{ForumLikeController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumLikeController(forumLikeService: ForumLikeService)} &
+A method to initialize the controller with the post-like service.
+\newline -- \code{forumLikeService}: \code{ForumLikeService} -- service dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{toggleLikePost(userId: number, id: number)} &
+A method to toggle the current user's like on a post.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{id}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ToggleLikeResponseType>} -- \code{liked: true} after a like, \code{liked: false} after an unlike.
+\newline -- Route: \code{POST /forums/posts/:id/like}; authenticated endpoint. \\ \hline
+
+03 & \code{viewForumLikeDetail(postId: number)} &
+A method to list the users who liked a post.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumLikeDetailResponseType>} -- like rows with user summaries.
+\newline -- Route: \code{GET /forums/posts/:id/like}; public endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumLikeService} & \code{ForumLikeService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumLikeService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumLikeService(forumLikeRepository: ForumLikeRepository)} &
+A method to initialize the service with the post-like repository.
+\newline -- \code{forumLikeRepository}: \code{ForumLikeRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{toggleLikePost(userId: number, postId: number)} &
+A method to decide whether a like must be created or removed.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ToggleLikeResponseType>} -- the new like state.
+\newline -- Throws \code{ForumPostNotFoundException} when the post is missing; other failures become \code{FailedToLikeForumPostException}. \\ \hline
+
+03 & \code{viewForumLikeDetail(postId: number)} &
+A method to load the like rows of a post.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumLikeDetailResponseType>} -- like rows with user summaries.
+\newline -- Failure is mapped to \code{FailedToViewForumLikeDetailException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumLikeRepository} & \code{ForumLikeRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumLikeRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumLikeRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findPostById(postId: number)} &
+A method to check that a non-deleted post exists.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+03 & \code{findLikeByUserAndPost(}\newline\code{userId: number, postId: number)} &
+A method to find a user's reaction row for a post.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; commentId: number | null } | null>} -- reaction id and optional comment link. \\ \hline
+
+04 & \code{findCommentOnlyLike(userId: number)} &
+A method to find a reaction row that currently links only to a comment.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the reusable reaction row, otherwise \code{null}. \\ \hline
+
+05 & \code{createPostLike(userId: number, postId: number)} &
+A method to create a post reaction, reusing a comment-only row when possible.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} the created or updated \code{ForumLike} row. \\ \hline
+
+06 & \code{deletePostLike(userId: number, postId: number)} &
+A method to remove a post reaction while preserving a comment reaction on the same row.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} the updated or deleted \code{ForumLike} row, or \code{undefined} when no row exists. \\ \hline
+
+07 & \code{viewForumLikeDetail(postId: number)} &
+A method to query all reaction rows for a post.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumLikeDetailResponseType>} -- reaction rows with user id, profile display name, and avatar. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for post reactions}
+
+\begin{SupportingTable}{4.4cm}{7.4cm}{4.0cm}
+\code{ToggleLikeResponseDto} & \code{liked: boolean}. & Response of the toggle-like route. \\ \hline
+\code{ViewForumLikeDetailResponseDto} & Array of \code{ForumLikeType} with \code{user}: \code{id}, \code{userId}, \code{postId}, \code{commentId}, \code{reactionType}, \code{createdAt}, and user profile summary. & Response of the post-like detail route. \\ \hline
+\end{SupportingTable}
+
+\subsection{ForumCommentController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumCommentController(}\newline\code{forumCommentService: ForumCommentService)} &
+A method to initialize the controller with the comment service.
+\newline -- \code{forumCommentService}: \code{ForumCommentService} -- service dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getForumCommentLists(}\newline\code{postId: number,}\newline\code{filter: ForumCommentFilterType,}\newline\code{userId: number)} &
+A method to list the comments of a post with pagination.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{filter}: \code{ForumCommentFilterType} -- page and limit.
+\newline -- \code{userId}: \code{number} -- current user, used to compute \code{likedByMe}.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentListResponseType>} -- comments and pagination.
+\newline -- Route: \code{GET /forums/posts/:postId/comments}; authenticated endpoint. \\ \hline
+
+03 & \code{createForumComment(}\newline\code{userId: number, postId: number,}\newline\code{body: CreateForumCommentType)} &
+A method to create a comment on a post.
+\newline -- \code{userId}: \code{number} -- author identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{body}: \code{CreateForumCommentType} -- comment content.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the created comment.
+\newline -- Route: \code{POST /forums/posts/:postId/comments}; authenticated endpoint. \\ \hline
+
+04 & \code{updateForumComment(}\newline\code{userId: number, postId: number,}\newline\code{id: number, body: EditForumCommentType)} &
+A method to edit a comment owned by the current user.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \code{body}: \code{EditForumCommentType} -- new content.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the updated comment.
+\newline -- Route: \code{PATCH /forums/posts/:postId/comments/:id}; authenticated endpoint. \\ \hline
+
+05 & \code{deleteForumComment(}\newline\code{userId: number, roleName: string,}\newline\code{postId: number, id: number)} &
+A method to soft-delete a comment owned by the user or by an administrator.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{roleName}: \code{string} -- current role name.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the soft-deleted comment.
+\newline -- Route: \code{DELETE /forums/posts/:postId/comments/:id}; authenticated endpoint. \\ \hline
+
+06 & \code{toggleLikeComment(}\newline\code{userId: number, postId: number,}\newline\code{commentId: number)} &
+A method to toggle the current user's like on a comment.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ToggleLikeCommentType>} -- the new like state.
+\newline -- Route: \code{POST /forums/posts/:postId/comments/:commentId/like}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumCommentService} & \code{ForumCommentService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumCommentService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumCommentService(}\newline\code{forumCommentRepository: ForumCommentRepository)} &
+A method to initialize the service with the comment repository.
+\newline -- \code{forumCommentRepository}: \code{ForumCommentRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createForumComment(}\newline\code{postId: number, userId: number,}\newline\code{body: CreateForumCommentType)} &
+A method to verify the parent post and create a comment.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{userId}: \code{number} -- author identifier.
+\newline -- \code{body}: \code{CreateForumCommentType} -- comment content.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the created comment.
+\newline -- Throws \code{ForumPostNotFoundException} or \code{FailedToCreateForumCommentException}. \\ \hline
+
+03 & \code{updateForumComment(}\newline\code{postId: number, id: number,}\newline\code{userId: number, body: EditForumCommentType)} &
+A method to verify comment existence, parent post, and ownership before editing.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{body}: \code{EditForumCommentType} -- new content.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the updated comment.
+\newline -- Throws \code{ForumCommentNotFoundException} or \code{ForumCommentNotOwnedException}. \\ \hline
+
+04 & \code{deleteForumComment(}\newline\code{postId: number, id: number,}\newline\code{userId: number, roleName: string)} &
+A method to authorize and soft-delete a comment.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{roleName}: \code{string} -- \code{ADMIN} bypasses the owner check.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the soft-deleted comment.
+\newline -- Throws \code{ForumCommentNotFoundException}, \code{ForumCommentNotOwnedException}, or \code{FailedToDeleteForumCommentException}. \\ \hline
+
+05 & \code{toggleLikeComment(}\newline\code{userId: number, postId: number,}\newline\code{commentId: number)} &
+A method to create or remove a comment reaction.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ToggleLikeCommentType>} -- the new like state.
+\newline -- Throws \code{ForumCommentNotFoundException} or \code{FailedToLikeForumCommentException}. \\ \hline
+
+06 & \code{getForumCommentLists(filter: ForumCommentFilterType)} &
+A method to build a paginated comment list.
+\newline -- \code{filter}: \code{ForumCommentFilterType} -- page, limit, postId, and optional userId.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentListResponseType>} -- comments and pagination metadata.
+\newline -- Prisma known errors are mapped to \code{FailedToLoadForumCommentsException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumCommentRepository} & \code{ForumCommentRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumCommentRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumCommentRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findPostById(postId: number)} &
+A method to check that a non-deleted post exists.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+03 & \code{findCommentById(id: number)} &
+A method to load a non-deleted comment with its parent post and author summary.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} the comment projection or \code{null}. \\ \hline
+
+04 & \code{createForumComment(}\newline\code{postId: number, userId: number,}\newline\code{content: string)} &
+A method to insert a comment and return the response shape.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{userId}: \code{number} -- author identifier.
+\newline -- \code{content}: \code{string} -- comment text.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the comment with \code{likeCount = 0} and \code{likedByMe = false}. \\ \hline
+
+05 & \code{updateForumComment(}\newline\code{id: number, data: EditForumCommentType)} &
+A method to update the content of a non-deleted comment.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \code{data}: \code{EditForumCommentType} -- new content.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the updated comment. \\ \hline
+
+06 & \code{softDeleteForumComment(id: number)} &
+A method to set \code{deletedAt} on a non-deleted comment.
+\newline -- \code{id}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumCommentType>} -- the soft-deleted comment. \\ \hline
+
+07 & \code{getForumCommentLists(}\newline\code{filter: ForumCommentFilterType)} &
+A method to query a page of comments and the matching total in one transaction.
+\newline -- \code{filter}: \code{ForumCommentFilterType} -- page, limit, postId, and optional current user.
+\newline -- \textit{Returns:} \code{Promise<{ comments: ForumCommentType[]; total: number }>} -- mapped comments and total.
+\newline -- \code{likedByMe} is computed from the optional user reaction. \\ \hline
+
+08 & \code{findLikeByUserAndComment(}\newline\code{userId: number, commentId: number)} &
+A method to find a user's comment reaction.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; postId: number | null } | null>} -- reaction id and optional post link. \\ \hline
+
+09 & \code{findLikeByUserAndPost(}\newline\code{userId: number, postId: number)} &
+A method to find a user's post reaction for reuse by the comment-like flow.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; commentId: number | null } | null>} -- reaction id and optional comment link. \\ \hline
+
+10 & \code{createCommentLike(}\newline\code{userId: number, postId: number,}\newline\code{commentId: number)} &
+A method to create a comment reaction, reusing a post-only row when possible.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} the created or updated \code{ForumLike} row. \\ \hline
+
+11 & \code{deleteCommentLike(}\newline\code{userId: number, commentId: number)} &
+A method to remove a comment reaction while preserving a post reaction on the same row.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} the updated or deleted \code{ForumLike} row, or \code{undefined} when no row exists. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for comments}
+
+\begin{SupportingTable}{4.2cm}{7.4cm}{4.2cm}
+\code{ForumCommentListResponseDto} & \code{comments: ForumCommentType[]}, \code{pagination: PaginationType}. & Paginated comment-list response. \\ \hline
+\code{ForumCommentFilterDto} & \code{page: number}, \code{limit: number}. & Query validation for comment listing. \\ \hline
+\code{CreateForumCommentDto} & \code{content: string}. & Comment-creation body. \\ \hline
+\code{CreateForumCommentResponseDto} & \code{ForumCommentType}: \code{id}, \code{postId}, \code{user}, \code{content}, \code{createdAt}, \code{updatedAt}, \code{likeCount}, \code{likedByMe}. & Comment-creation response. \\ \hline
+\code{EditForumCommentDto} & \code{content: string}. & Comment-update body. \\ \hline
+\code{EditForumCommentResponseDto} & \code{ForumCommentType}. & Comment-update response. \\ \hline
+\code{DeleteForumCommentResponseDto} & \code{ForumCommentType}. & Soft-delete response. \\ \hline
+\code{ToggleLikeCommentResponseDto} & \code{liked: boolean}. & Comment-like toggle response. \\ \hline
+\end{SupportingTable}
+
+\subsection{ForumReportController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumReportController(}\newline\code{forumReportService: ForumReportService)} &
+A method to initialize the controller with the report service.
+\newline -- \code{forumReportService}: \code{ForumReportService} -- service dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createPostReport(}\newline\code{userId: number, postId: number,}\newline\code{body: CreateForumReportType)} &
+A method to report a post.
+\newline -- \code{userId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number} -- reported post identifier.
+\newline -- \code{body}: \code{CreateForumReportType} -- report reason.
+\newline -- \textit{Returns:} \code{Promise<CreateForumReportResponseType>} -- the created report.
+\newline -- Route: \code{POST /forums/posts/:postId/reports}; authenticated endpoint. \\ \hline
+
+03 & \code{createCommentReport(}\newline\code{userId: number, postId: number,}\newline\code{commentId: number,}\newline\code{body: CreateForumReportType)} &
+A method to report a comment.
+\newline -- \code{userId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- reported comment identifier.
+\newline -- \code{body}: \code{CreateForumReportType} -- report reason.
+\newline -- \textit{Returns:} \code{Promise<CreateForumReportResponseType>} -- the created report.
+\newline -- Route: \code{POST /forums/posts/:postId/comments/:commentId/reports}; authenticated endpoint. \\ \hline
+
+04 & \code{checkPostReported(}\newline\code{userId: number, postId: number)} &
+A method to check whether the current user has reported a post.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ reported: boolean }>} -- true when a matching report exists.
+\newline -- Route: \code{GET /forums/posts/:postId/is-reported}; authenticated endpoint. \\ \hline
+
+05 & \code{checkCommentReported(}\newline\code{userId: number, postId: number,}\newline\code{commentId: number)} &
+A method to check whether the current user has reported a comment.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<{ reported: boolean }>} -- true when a matching report exists.
+\newline -- Route: \code{GET /forums/posts/:postId/comments/:commentId/is-reported}; authenticated endpoint. \\ \hline
+
+06 & \code{getForumReportLists(}\newline\code{userId: number, roleName: string,}\newline\code{page: number, limit: number,}\newline\code{status: string, search: string)} &
+A method to list the report queue for administrators.
+\newline -- \code{userId}: \code{number} -- current user identifier.
+\newline -- \code{roleName}: \code{string} -- role checked by the service.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination, defaulted to 1 and 10.
+\newline -- \code{status}, \code{search}: \code{string} -- optional status and reason filters.
+\newline -- \textit{Returns:} \code{Promise<ForumReportListResponseType>} -- reports and pagination.
+\newline -- Route: \code{GET /forums/reports}; administrator endpoint. \\ \hline
+
+07 & \code{updateReportStatus(}\newline\code{userId: number, roleName: string,}\newline\code{reportId: number,}\newline\code{body: UpdateReportStatusType)} &
+A method to change the status of a report.
+\newline -- \code{userId}: \code{number} -- administrator identifier recorded on the report.
+\newline -- \code{roleName}: \code{string} -- role checked by the service.
+\newline -- \code{reportId}: \code{number} -- report identifier.
+\newline -- \code{body}: \code{UpdateReportStatusType} -- target status.
+\newline -- \textit{Returns:} \code{Promise<UpdateReportStatusResponseType>} -- the updated report.
+\newline -- Route: \code{PATCH /forums/reports/:reportId/status}; administrator endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumReportService} & \code{ForumReportService} -- private readonly service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumReportService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumReportService(}\newline\code{forumReportRepository: ForumReportRepository)} &
+A method to initialize the service with the report repository.
+\newline -- \code{forumReportRepository}: \code{ForumReportRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createPostReport(}\newline\code{reporterId: number, postId: number,}\newline\code{reason: string)} &
+A method to validate a post and create its first report by the user.
+\newline -- \code{reporterId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number} -- reported post identifier.
+\newline -- \code{reason}: \code{string} -- report reason.
+\newline -- \textit{Returns:} \code{Promise<CreateForumReportResponseType>} -- the created report.
+\newline -- Throws \code{ForumPostNotFoundException}, \code{ForumReportAlreadyExistsException}, or \code{FailedToCreateForumReportException}. \\ \hline
+
+03 & \code{createCommentReport(}\newline\code{reporterId: number, postId: number,}\newline\code{commentId: number, reason: string)} &
+A method to validate a comment and create its first report by the user.
+\newline -- \code{reporterId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number} -- parent post identifier.
+\newline -- \code{commentId}: \code{number} -- reported comment identifier.
+\newline -- \code{reason}: \code{string} -- report reason.
+\newline -- \textit{Returns:} \code{Promise<CreateForumReportResponseType>} -- the created report.
+\newline -- Throws \code{ForumCommentNotFoundException}, \code{ForumReportAlreadyExistsException}, or \code{FailedToCreateForumReportException}. \\ \hline
+
+04 & \code{checkReportedByUser(}\newline\code{reporterId: number, postId: number | null,}\newline\code{commentId: number | null)} &
+A method to find an existing report for the current user and target.
+\newline -- \code{reporterId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number | null} -- post target, or \code{null}.
+\newline -- \code{commentId}: \code{number | null} -- comment target, or \code{null}.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the report id when one exists. \\ \hline
+
+05 & \code{getForumReportLists(}\newline\code{roleName: string, page: number,}\newline\code{limit: number, status?: string,}\newline\code{search?: string)} &
+A method to authorize an administrator and return the report queue.
+\newline -- \code{roleName}: \code{string} -- must equal \code{ADMIN}.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{status}, \code{search}: \code{string | undefined} -- optional filters.
+\newline -- \textit{Returns:} \code{Promise<ForumReportListResponseType>} -- reports and pagination.
+\newline -- Throws \code{ForumReportForbiddenException} or \code{FailedToLoadForumReportsException}. \\ \hline
+
+06 & \code{updateReportStatus(}\newline\code{reportId: number, status: string,}\newline\code{adminId: number, roleName: string)} &
+A method to authorize an administrator and update a post report status.
+\newline -- \code{reportId}: \code{number} -- report identifier.
+\newline -- \code{status}: \code{string} -- target status.
+\newline -- \code{adminId}: \code{number} -- administrator identifier.
+\newline -- \code{roleName}: \code{string} -- must equal \code{ADMIN}.
+\newline -- \textit{Returns:} \code{Promise<UpdateReportStatusResponseType>} -- the updated report.
+\newline -- Throws \code{ForumReportForbiddenException}, \code{ForumReportNotFoundException}, or \code{FailedToUpdateReportStatusException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{forumReportRepository} & \code{ForumReportRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ForumReportRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ForumReportRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma service.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findPostById(postId: number)} &
+A method to check that a non-deleted post exists.
+\newline -- \code{postId}: \code{number} -- post identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the id when found, otherwise \code{null}. \\ \hline
+
+03 & \code{findCommentById(commentId: number)} &
+A method to check that a non-deleted comment exists and belongs to a post.
+\newline -- \code{commentId}: \code{number} -- comment identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; postId: number } | null>} -- comment id and parent post id. \\ \hline
+
+04 & \code{findExistingReport(}\newline\code{reporterId: number, postId: number | null,}\newline\code{commentId: number | null)} &
+A method to find a duplicate report by the same user and target.
+\newline -- \code{reporterId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}: \code{number | null} -- post target, or \code{null}.
+\newline -- \code{commentId}: \code{number | null} -- comment target, or \code{null}.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the report id when one exists. \\ \hline
+
+05 & \code{createReport(}\newline\code{reporterId: number, postId: number | null,}\newline\code{commentId: number | null, reason: string)} &
+A method to insert a report.
+\newline -- \code{reporterId}: \code{number} -- reporter identifier.
+\newline -- \code{postId}, \code{commentId}: \code{number | null} -- exactly one target is populated by the service.
+\newline -- \code{reason}: \code{string} -- report reason.
+\newline -- \textit{Returns:} \code{Promise<ForumReportType>} -- the created report. \\ \hline
+
+06 & \code{findReportById(id: number)} &
+A method to load a report by identifier.
+\newline -- \code{id}: \code{number} -- report identifier.
+\newline -- \textit{Returns:} \code{Promise<ForumReportType | null>} -- the report or \code{null}. \\ \hline
+
+07 & \code{getReportList(}\newline\code{page: number, limit: number,}\newline\code{status?: string, search?: string)} &
+A method to query a page of reports and the matching total in one transaction.
+\newline -- \code{page}, \code{limit}: \code{number} -- pagination.
+\newline -- \code{status}: \code{string | undefined} -- optional status filter.
+\newline -- \code{search}: \code{string | undefined} -- optional case-insensitive reason search.
+\newline -- \textit{Returns:} \code{Promise<{ reports: ForumReportListResponseType['reports']; total: number }>} -- report rows and total. \\ \hline
+
+08 & \code{updateReportStatus(}\newline\code{id: number, status: string,}\newline\code{adminId: number | null)} &
+A method to update a report status and record the reviewing administrator.
+\newline -- \code{id}: \code{number} -- report identifier.
+\newline -- \code{status}: \code{string} -- target status, converted to upper case.
+\newline -- \code{adminId}: \code{number | null} -- reviewing administrator.
+\newline -- \textit{Returns:} \code{Promise<ForumReportType>} -- the updated report. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for reports}
+\addcontentsline{toc}{subsubsection}{Supporting DTO classes for reports}
+
+\begin{SupportingTable}{4.4cm}{7.2cm}{4.2cm}
+\code{CreateForumReportDto} & \code{reason: string}. & Report-creation body. \\ \hline
+\code{CreateForumReportResponseDto} & \code{ForumReportType}: \code{id}, \code{reporterId}, \code{postId}, \code{commentId}, \code{reason}, \code{status}, \code{adminId}, \code{createdAt}. & Report-creation response. \\ \hline
+\code{UpdateReportStatusDto} & \code{status: PENDING | REVIEWED | RESOLVED | DISMISSED}. & Report-status body. \\ \hline
+\code{UpdateReportStatusResponseDto} & \code{ForumReportType}. & Report-status response. \\ \hline
+\code{ForumReportListResponseDto} & \code{reports: ForumReportType[]} with reporter, post, and comment summaries, plus \code{pagination}. & Administrator report queue. \\ \hline
+\end{SupportingTable}

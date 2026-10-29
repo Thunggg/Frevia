@@ -7,7 +7,12 @@ import {
   ChangePasswordType,
   UpdateGeneralProfileType,
 } from '@shared/types';
+import { Prisma, VerificationStatus } from '@prisma/client';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import {
+  IdentityAiService,
+  type IdentityAiVerifyResult,
+} from '../../shared/services/identity-ai.service';
 import { randomUUID } from 'crypto';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
@@ -23,6 +28,12 @@ import {
   IdentityFileInvalidException,
   IdentityFileRequiredException,
   IdentityDocumentNotFoundException,
+  IdentityAiFrontRequiredException,
+  IdentityAiSelfieRequiredException,
+  IdentityAiLivenessRequiredException,
+  IdentityAiImageInvalidException,
+  IdentityAiFramesInvalidException,
+  IdentityAlreadyVerifiedException,
   ProfileNotFoundException,
   SocialLinkDuplicateException,
   SocialLinkNotFoundException,
@@ -42,6 +53,7 @@ export class AccountProfileService {
     private readonly profileRevisionService: ProfileRevisionService,
     private readonly cloudinary: CloudinaryService,
     private readonly hashing: HashingService,
+    private readonly identityAi: IdentityAiService,
   ) {}
 
   private presentAvatarUrl(
@@ -237,15 +249,89 @@ export class AccountProfileService {
     return user;
   }
 
-  private presentIdentityDocument<T extends { id: number; fileUrl: string }>(
-    document: T,
-  ) {
-    return document.fileUrl.startsWith('local://')
-      ? {
-          ...document,
-          fileUrl: `/api/backend/identity-verifications/documents/${document.id}/file`,
-        }
-      : document;
+  /**
+   * Chuẩn hóa số CCCD trước khi lưu/check trùng: bỏ ký tự phân tách
+   * (space, dấu chấm, gạch...) để "0012 345 678 90" và "001234567890"
+   * không thành 2 giá trị khác nhau. Giữ nguyên chữ/số (CCCD 12 số,
+   * hộ chiếu có chữ) — chỉ loại ký tự ngoài [A-Za-z0-9].
+   */
+  private normalizeIdentityNumber(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+    const stripped = value.replace(/[^A-Za-z0-9]/g, '');
+    return stripped ? stripped.slice(0, 50) : null;
+  }
+
+  /**
+   * Đọc `aiSummary.qr_consistency` (lưu từ AI) → dạng an toàn cho API:
+   * chỉ status/score + TÊN field (matched/mismatched), không kèm giá trị PII.
+   */
+  private presentQrConsistency(summary: unknown) {
+    if (!summary || typeof summary !== 'object' || Array.isArray(summary)) {
+      return null;
+    }
+    const raw = (summary as Record<string, unknown>).qr_consistency;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const qr = raw as Record<string, unknown>;
+    if (typeof qr.status !== 'string' || !qr.status) return null;
+    const toStrings = (value: unknown) =>
+      Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === 'string')
+        : [];
+    return {
+      status: qr.status,
+      score: typeof qr.score === 'number' ? qr.score : null,
+      matchedFields: toStrings(qr.matched_fields),
+      mismatchedFields: toStrings(qr.mismatched_fields),
+      notCheckedFields: toStrings(qr.not_checked_fields),
+    };
+  }
+
+  private presentIdentityDocument<
+    T extends {
+      id: number;
+      fileUrl: string;
+      backFileUrl?: string | null;
+      aiSummary?: unknown;
+    },
+  >(document: T) {
+    const localUrl = (value: string, side?: 'back') =>
+      value.startsWith('local://')
+        ? `/api/backend/identity-verifications/documents/${document.id}/file${side ? '?side=back' : ''}`
+        : value;
+    return {
+      ...document,
+      fileUrl: localUrl(document.fileUrl),
+      backFileUrl:
+        typeof document.backFileUrl === 'string'
+          ? localUrl(document.backFileUrl, 'back')
+          : (document.backFileUrl ?? null),
+      qrConsistency: this.presentQrConsistency(document.aiSummary),
+    };
+  }
+
+  private async persistIdentityFile(
+    userId: number,
+    file: Express.Multer.File,
+  ): Promise<string> {
+    if (this.cloudinary.isConfigured()) {
+      const uploaded = await this.cloudinary.uploadFile(
+        file,
+        `frevia/identity-verifications/${userId}`,
+      );
+      return uploaded.secure_url;
+    }
+    const extension =
+      extname(file.originalname).toLowerCase() ||
+      (file.mimetype === 'application/pdf' ? '.pdf' : '.png');
+    const relativePath = join(
+      'identity-verifications',
+      String(userId),
+      `${randomUUID()}${extension}`,
+    );
+    const absolutePath = join(process.cwd(), 'uploads', relativePath);
+    await mkdir(dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, file.buffer);
+    return `local://${relativePath.replace(/\\/g, '/')}`;
   }
 
   async uploadIdentityDocument(
@@ -259,33 +345,159 @@ export class AccountProfileService {
     if (!allowedTypes.includes(file.mimetype) || file.size > 10 * 1024 * 1024) {
       throw IdentityFileInvalidException();
     }
-    let fileUrl: string;
-    if (this.cloudinary.isConfigured()) {
-      const uploaded = await this.cloudinary.uploadFile(
-        file,
-        `frevia/identity-verifications/${userId}`,
-      );
-      fileUrl = uploaded.secure_url;
-    } else {
-      const extension =
-        extname(file.originalname).toLowerCase() ||
-        (file.mimetype === 'application/pdf' ? '.pdf' : '.png');
-      const relativePath = join(
-        'identity-verifications',
-        String(userId),
-        `${randomUUID()}${extension}`,
-      );
-      const absolutePath = join(process.cwd(), 'uploads', relativePath);
-      await mkdir(dirname(absolutePath), { recursive: true });
-      await writeFile(absolutePath, file.buffer);
-      fileUrl = `local://${relativePath.replace(/\\/g, '/')}`;
-    }
+    const fileUrl = await this.persistIdentityFile(userId, file);
     const document = await this.repository.createIdentityDocument(
       userId,
       documentType,
       fileUrl,
     );
     return this.presentIdentityDocument(document);
+  }
+
+  private assertAiImage(file: Express.Multer.File, path: string) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.mimetype) || file.size > 10 * 1024 * 1024) {
+      throw IdentityAiImageInvalidException(path);
+    }
+  }
+
+  /**
+   * Nhận CCCD (trước/sau) + selfie + frames liveness, gọi AI service
+   * (IDVerification pipeline: OCR → QR → tamper → face match → liveness).
+   *
+   * Quy tắc chặn (theo plan.md của IDVerification):
+   *   - Lỗi AI (503/504/không trả lời) KHÔNG BAO GIỜ tạo document → client
+   *     có thể thử lại.
+   *   - AI REJECTED → document tạo ngay với status REJECTED + rejection
+   *     reason trong reviewNotes.
+   *   - AI VERIFIED → document với status PENDING (chờ admin duyệt).
+   *   - Trùng số CCCD đã được tài khoản khác duyệt → ép REJECTED.
+   */
+  async submitIdentityAiCheck(
+    userId: number,
+    documentType: DocumentTypeType,
+    files: {
+      front?: Express.Multer.File;
+      back?: Express.Multer.File;
+      selfie?: Express.Multer.File;
+      liveness: Express.Multer.File[];
+    },
+  ) {
+    await this.requireRole(userId, RoleName.FREELANCER);
+    const { front, back, selfie, liveness } = files;
+    if (!front) throw IdentityAiFrontRequiredException();
+    if (!selfie) throw IdentityAiSelfieRequiredException();
+    if (!liveness.length || liveness.length > 40) {
+      throw IdentityAiLivenessRequiredException();
+    }
+    this.assertAiImage(front, 'front');
+    if (back) this.assertAiImage(back, 'back');
+    this.assertAiImage(selfie, 'selfie');
+    for (const frame of liveness) {
+      if (
+        !['image/jpeg', 'image/png', 'image/webp'].includes(frame.mimetype) ||
+        frame.size > 2 * 1024 * 1024
+      ) {
+        throw IdentityAiFramesInvalidException();
+      }
+    }
+
+    const existing = await this.repository.findIdentityDocuments(userId);
+    if (existing[0]?.status === VerificationStatus.APPROVED) {
+      throw IdentityAlreadyVerifiedException();
+    }
+
+    const ai: IdentityAiVerifyResult = await this.identityAi.verify({
+      front,
+      back,
+      selfie,
+      liveness,
+    });
+
+    const aiStatus =
+      typeof ai.status === 'string' && ai.status.trim()
+        ? ai.status.trim()
+        : null;
+    const aiVerified = aiStatus === 'VERIFIED';
+
+    const rawIdentityNumber =
+      ai.ocr?.front?.document_number ?? ai.qr?.fields?.document_number ?? null;
+    const identityNumber = this.normalizeIdentityNumber(rawIdentityNumber);
+
+    let status = aiVerified
+      ? VerificationStatus.PENDING
+      : VerificationStatus.REJECTED;
+    let reviewNotes = aiVerified
+      ? null
+      : typeof ai.rejection_reason === 'string' && ai.rejection_reason.trim()
+        ? ai.rejection_reason.trim()
+        : 'AI verification failed.';
+    let duplicateOfId: number | null = null;
+
+    if (identityNumber) {
+      const duplicate =
+        await this.repository.findApprovedIdentityDocumentByIdentityNumber(
+          userId,
+          identityNumber,
+        );
+      if (duplicate) {
+        status = VerificationStatus.REJECTED;
+        duplicateOfId = duplicate.id;
+        reviewNotes = `This ID card (${identityNumber}) is already verified by another account.`;
+      }
+    }
+
+    const fileUrl = await this.persistIdentityFile(userId, front);
+    const backFileUrl = back
+      ? await this.persistIdentityFile(userId, back)
+      : null;
+    const selfieUrl = await this.persistIdentityFile(userId, selfie);
+
+    const document = await this.repository.createIdentityAiDocument({
+      userId,
+      documentType,
+      fileUrl,
+      backFileUrl,
+      status,
+      reviewNotes,
+      duplicateOfId,
+      aiStatus: (aiStatus ?? 'UNKNOWN').slice(0, 20),
+      aiScore:
+        typeof ai.face_match?.match_score === 'number'
+          ? ai.face_match.match_score
+          : null,
+      aiError: null,
+      aiSummary: {
+        status: aiStatus,
+        rejection_reason: reviewNotes,
+        // QR đầy đủ từ AI: { front, back (raw extract), fields (document_number,
+        // full_name, dob, ...), enabled } — object runtime đầy đủ, type chỉ khai
+        // báo phần dùng nên JSON lưu trọn vẹn payload.
+        qr: ai.qr ?? null,
+        qr_consistency: ai.qr_consistency ?? null,
+        tamper: ai.tamper ?? null,
+        document_quality: ai.document_quality ?? null,
+        ocr_document_number: identityNumber,
+      } as Prisma.InputJsonValue,
+      aiSelfieSummary: {
+        fileUrl: selfieUrl,
+        face_match: ai.face_match ?? null,
+        passive_liveness: ai.passive_liveness ?? null,
+        active_liveness: ai.active_liveness ?? null,
+        selfie_face_count: ai.selfie_face_count ?? null,
+        multiple_faces: ai.multiple_faces ?? null,
+      } as Prisma.InputJsonValue,
+      aiScannedAt: new Date(),
+    });
+    return this.presentIdentityDocument(document);
+  }
+
+  /** Proxy 1 khung webcam → AI /liveness/pose (poll trong lúc làm thử thách). */
+  async livenessPose(userId: number, file?: Express.Multer.File) {
+    await this.requireRole(userId, RoleName.FREELANCER);
+    if (!file) throw IdentityAiFramesInvalidException();
+    this.assertAiImage(file, 'file');
+    return this.identityAi.livenessPose(file);
   }
 
   async getIdentityStatus(userId: number) {
@@ -299,16 +511,21 @@ export class AccountProfileService {
     };
   }
 
-  async getIdentityDocumentFile(userId: number, id: number) {
+  async getIdentityDocumentFile(
+    userId: number,
+    id: number,
+    side: 'front' | 'back' = 'front',
+  ) {
     await this.requireRole(userId, RoleName.FREELANCER);
     const document = await this.repository.findIdentityDocumentById(id);
     if (!document || document.userId !== userId) {
       throw IdentityDocumentNotFoundException();
     }
-    if (!document.fileUrl.startsWith('local://')) {
+    const source = side === 'back' ? document.backFileUrl : document.fileUrl;
+    if (!source || !source.startsWith('local://')) {
       throw IdentityDocumentNotFoundException();
     }
-    const relativePath = document.fileUrl.slice('local://'.length);
+    const relativePath = source.slice('local://'.length);
     const uploadsRoot = resolve(process.cwd(), 'uploads');
     const absolutePath = resolve(uploadsRoot, relativePath);
     const pathFromUploadsRoot = relative(uploadsRoot, absolutePath);

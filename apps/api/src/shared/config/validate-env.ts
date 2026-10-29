@@ -25,6 +25,9 @@ const envSchema = z.object({
     .default('whsec_dummy_webhook_secret_frevia'),
   STRIPE_ACCOUNT_COUNTRY: z.string().default('US'),
   STRIPE_ACCOUNT_TYPE: z.enum(['standard', 'express']).default('standard'),
+  // Dịch vụ AI xác minh CCCD (FastAPI của IDVerification, mặc định :8001)
+  AI_SERVICE_URL: z.string().default('http://127.0.0.1:8001'),
+  AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(60000),
 });
 
 const envParsed = envSchema.safeParse(process.env);

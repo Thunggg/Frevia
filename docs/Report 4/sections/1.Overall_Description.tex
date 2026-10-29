@@ -1,0 +1,79 @@
+% ========================================================
+% FILE: sections/1.Overall_Description.tex
+% ========================================================
+\section{Overall Description}
+
+\subsection{Assumptions}
+
+This system is designed based on the following assumptions:
+\begin{itemize}[leftmargin=*]
+    \item The Node.js runtime and the frameworks chosen for the project (NestJS 11 for the backend and Next.js 16 for the frontend) will continue to be actively supported and maintained, ensuring long-term stability and compatibility with evolving technologies.
+    \item The RESTful API architecture will remain a scalable and efficient choice for separating the Next.js presentation layer from the NestJS business layer.
+    \item PostgreSQL, accessed through Prisma ORM 7, will continue to provide reliable, scalable, and secure relational data storage suitable for handling user identity, jobs, contracts, escrow payments, and forum data.
+    \item Third-party services used by the platform --- Stripe (payments and escrow), Cloudinary (file storage), Google (OAuth login), the AI moderation/analysis service, and mail delivery via Nodemailer --- will stay available and API-compatible during the project lifetime.
+    \item Modern web browsers (e.g., Chrome, Edge, Firefox, Safari) will continue to support the front-end standards required by Next.js/React 19, including HTML5, CSS3 (TailwindCSS), JavaScript ESM, and responsive rendering with React Server Components.
+    \item The application will be deployed in environments with stable internet access to support real-time messaging (Socket.io) and online payment processing.
+    \item Users (Guests, Clients, Freelancers, Experts, and Admins) are familiar with basic web application navigation: browsing job boards, filling forms, managing profiles, and following payment flows.
+\end{itemize}
+
+This system design is also based on the following risks:
+\begin{itemize}[leftmargin=*]
+    \item Any breaking change in the major versions of Next.js, NestJS, or Prisma could require refactoring of the user interface components or of the data access layer.
+    \item Cross-browser inconsistencies or outdated device software may affect rendering or the real-time messaging experience.
+    \item Cybersecurity threats such as credential stuffing, token hijacking, or database breaches could compromise sensitive personal and financial information if not proactively managed (the design therefore includes bcrypt-hashed passwords, JWT access/refresh tokens, session revocation, and role-based access control).
+    \item Outages or policy changes of the integrated third-party services (Stripe, Cloudinary, Google OAuth, AI moderation) could temporarily disrupt payments, file uploads, login, or content moderation.
+    \item Network connectivity issues could disrupt access to job proposals, contract collaboration, or checkout flows that rely on server interaction.
+\end{itemize}
+
+\subsection{Design Constraints}
+
+This system should comply with the following constraints:
+
+\subsubsection{Platform Compatibility}
+
+The Frevia application must be compatible with modern web browsers (e.g., Chrome, Edge, Firefox, Safari) for all user roles including Guest, Client, Freelancer, Expert, and Admin. The frontend is implemented with Next.js 16 (App Router, React Server Components) styled with TailwindCSS 4 and shadcn/ui components; the backend is a NestJS 11 REST API. Responsive web design principles must be applied so that a consistent user experience is provided across desktop, tablet, and mobile browsers. Internationalization is achieved with next-intl so the interface can be served in multiple languages from the same code base.
+
+\subsubsection{Integration Complexity}
+
+The Frevia platform integrates a variety of components: the Next.js web application, the NestJS REST API, the PostgreSQL database (via Prisma 7 with the pg adapter), Stripe Checkout and Stripe Connect for escrow payments and payouts, Cloudinary for image and document storage, Socket.io for real-time chat and notifications, Google OAuth for federated login, e-mail for OTP delivery, and AI services for content moderation, CV parsing, and identity document verification. Communication between the client and the server is carried out through versioned REST endpoints secured with JWT access tokens and refresh tokens stored in dedicated session records; role-based access control restricts each operation to the allowed roles. Design decisions must keep these integrations loosely coupled behind services and repositories so that a provider can be replaced without rewriting business logic.
+
+\subsubsection{Performance Requirements}
+
+The application must remain responsive under concurrent usage by many freelancers and clients. Job browsing, proposal listing, forum feeds, and conversation histories must load promptly; therefore the design mandates server-side pagination for every list operation, database indexes on frequently filtered columns, optimized Prisma queries executed inside transactions for counted lists, and streaming React Server Components to reduce time-to-first-byte. Real-time features (messaging, notifications) must propagate events with minimal delay via Socket.io. Payment operations must reconcile eventual states through Stripe webhooks and explicit synchronization endpoints.
+
+\subsection{Technology Suggestion}
+
+Frevia adopts a RESTful API architecture to support secure, stateless, and scalable communication between the Next.js frontend and the NestJS backend. This approach provides:
+\begin{itemize}[leftmargin=*]
+    \item Modular, reusable API endpoints for account management, job posting, proposals, contracting, milestone escrow, dispute resolution, community forum, and administration.
+    \item Easy extension for mobile applications or third-party integrations in the future.
+    \item Secure access using JWT tokens with role-based authorization for every endpoint.
+    \item Uniform use of standard HTTP methods (GET, POST, PATCH, PUT, DELETE), making the system intuitive to maintain.
+    \item A clear separation between the presentation layer and the business logic layer.
+\end{itemize}
+All request/response payloads are validated and typed with shared Zod schemas packaged in \texttt{@shared/types}, which is consumed by both the frontend and the backend so that a single source of truth prevents contract drift between the two applications.
+
+\kfig{0.9\linewidth}{images/architecture/restful-api}{RESTful API communication between the Next.js frontend and the NestJS backend}{fig:restful-api}
+
+\subsubsection{NestJS Framework}
+
+The backend of Frevia is built with NestJS 11, a TypeScript-first, modular web framework running on Node.js. It is selected for its:
+\begin{itemize}[leftmargin=*]
+    \item Rich dependency-injection and module ecosystem, matching the Controller--Service--Repository layering.
+    \item First-class decorator-based REST routing with guards and interceptors for authentication, roles, permissions, and response serialization.
+    \item Excellent support for Zod schema validation (nestjs-zod) and typed DTOs.
+    \item Component structure for WebSockets (Socket.io gateways) used by the messaging module.
+    \item Straightforward integration with Prisma ORM and PostgreSQL for persistence.
+\end{itemize}
+
+\subsubsection{Next.js and React 19 Frontend}
+
+The web client uses Next.js 16 with the App Router. React Server Components render public pages (job lists, job details, forum) directly from the server, while TanStack Query drives interactive islands (forms, likes, real-time chat). react-hook-form together with Zod resolvers validate user input with the same schemas the API uses.
+
+\subsubsection{Prisma ORM and PostgreSQL}
+
+Persistence relies on PostgreSQL accessed through Prisma 7. The schema defines 62 models covering identity and access, profiles, jobs, proposals, contracts and milestones, payments and disputes, reviews, messaging, the community forum, and platform configuration. Prisma's type-safe client keeps data access code verifiable at compile time.
+
+\subsubsection{Supporting Services}
+
+Payments and payouts use Stripe Checkout and Stripe Connect with webhook-driven reconciliation; binaries are stored in Cloudinary; emails (OTP, notifications) are sent with Nodemailer; Google login uses OAuth 2.0; environment configuration is loaded through Infisical so no secret is committed to the repository.
