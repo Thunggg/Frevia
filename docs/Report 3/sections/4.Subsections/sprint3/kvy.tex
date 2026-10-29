@@ -205,141 +205,141 @@
         \end{itemize}
 \end{itemize}
 
-% =================================================================
+% % =================================================================
 
-\subsection{Content Reports}
+% \subsection{Content Reports}
 
-\subsubsection{View Report List}
+% \subsubsection{View Report List}
 
-\textbf{Function Trigger:} The logged-in administrator opens the Reports screen by choosing \textbf{Forum} $\rightarrow$ \textbf{Reports} in the admin sidebar.
+% \textbf{Function Trigger:} The logged-in administrator opens the Reports screen by choosing \textbf{Forum} $\rightarrow$ \textbf{Reports} in the admin sidebar.
 
-\textbf{Function description:} This function allows an administrator to see all the content reports that users have sent. Every row shows the identifier, the reporter, the reason, the reported target and the current status. The administrator can filter the list by status, search inside the reasons and open a report to read it in full.
+% \textbf{Function description:} This function allows an administrator to see all the content reports that users have sent. Every row shows the identifier, the reporter, the reason, the reported target and the current status. The administrator can filter the list by status, search inside the reasons and open a report to read it in full.
 
-\textbf{Screen layout:}
+% \textbf{Screen layout:}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint3/kvy/ViewReportList.png}
-    \caption{Content report list screen}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.95\linewidth]{image/screenshot/sprint3/kvy/ViewReportList.png}
+%     \caption{Content report list screen}
+% \end{figure}
 
-\textbf{Function details:}
-\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Precondition}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item The user is logged in with an administrator account.
-            \item The user is connected to the internet.
-            \item At least one user has already sent a report, otherwise the list is empty.
-        \end{itemize}
-    \item \textbf{Process}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Open the Reports Screen}: The user selects \textbf{Forum} in the sidebar and then \textbf{Reports}, and the screen titled ``Reports Management'' is displayed.
-            \item \textbf{Read the Summary Line}: The subtitle shows the total number of reports in the form ``Review and manage content reports (n total)''.
-            \item \textbf{Read Each Row}: Every row of the table presents the following information.
-                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
-                    \item \textbf{ID}: The identifier of the report, shown as a small badge.
-                    \item \textbf{Reporter}: The user who sent the report.
-                    \item \textbf{Reason}: The reason given by the reporter, shortened when it is too long.
-                    \item \textbf{Target}: The title of the reported post, or ``Comment \#id'' when a comment was reported.
-                    \item \textbf{Status}: The current status of the report, shown as a badge with the labels Pending, Reviewed, Resolved or Dismissed.
-                    \item \textbf{Reported}: The date on which the report was sent.
-                \end{itemize}
-            \item \textbf{Filter by Status}: The user chooses one of the tabs \textbf{All}, \textbf{Pending}, \textbf{Reviewed}, \textbf{Resolved} or \textbf{Dismissed} to show only the reports with that status.
-            \item \textbf{Search}: The user types a text in the search box with the placeholder ``Search report reasons...'' and submits it, and only the reports whose reason contains that text are shown.
-            \item \textbf{Move Between Pages}: When there is more than one page, the user uses the page numbers or the \textbf{Previous} and \textbf{Next} buttons at the bottom of the list.
-            \item \textbf{Choose a Report}: The user opens a report with the view button, or changes its status with the status selector in the row (see \textbf{Update Report Status}).
-        \end{itemize}
-    \item \textbf{Alternative Flow}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{No Report}: When no report matches the current filter or search, the table shows the message ``No reports found.''.
-            \item \textbf{Clear the Search}: When the user clears the search box, all reports are listed again.
-            \item \textbf{Report on a Deleted Target}: When the reported content can no longer be read, the row still shows the report and the target is displayed with the identifier of the content.
-        \end{itemize}
-    \item \textbf{Postconditions}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item The administrator sees the reports that match the chosen status and search text.
-            \item No data is changed by this function, so the reports stay exactly as they were.
-        \end{itemize}
-    \item \textbf{Error Handling}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Not Allowed}: When a user who is not an administrator opens the screen, the user is sent to the access-denied page, because only administrators may read the reports.
-            \item \textbf{Lost Connection}: When the reports cannot be loaded, the screen shows an empty list so that the administrator can reload the page and try again.
-        \end{itemize}
-    \item \textbf{Security Measures}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item The report list is only returned to administrator accounts, so the identity of the reporters is never exposed to ordinary users.
-            \item The screen is reached only through the admin area, which refuses guests, banned accounts and users without the administrator role.
-        \end{itemize}
-\end{itemize}
+% \textbf{Function details:}
+% \begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+%     \item \textbf{Precondition}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item The user is logged in with an administrator account.
+%             \item The user is connected to the internet.
+%             \item At least one user has already sent a report, otherwise the list is empty.
+%         \end{itemize}
+%     \item \textbf{Process}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{Open the Reports Screen}: The user selects \textbf{Forum} in the sidebar and then \textbf{Reports}, and the screen titled ``Reports Management'' is displayed.
+%             \item \textbf{Read the Summary Line}: The subtitle shows the total number of reports in the form ``Review and manage content reports (n total)''.
+%             \item \textbf{Read Each Row}: Every row of the table presents the following information.
+%                 \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+%                     \item \textbf{ID}: The identifier of the report, shown as a small badge.
+%                     \item \textbf{Reporter}: The user who sent the report.
+%                     \item \textbf{Reason}: The reason given by the reporter, shortened when it is too long.
+%                     \item \textbf{Target}: The title of the reported post, or ``Comment \#id'' when a comment was reported.
+%                     \item \textbf{Status}: The current status of the report, shown as a badge with the labels Pending, Reviewed, Resolved or Dismissed.
+%                     \item \textbf{Reported}: The date on which the report was sent.
+%                 \end{itemize}
+%             \item \textbf{Filter by Status}: The user chooses one of the tabs \textbf{All}, \textbf{Pending}, \textbf{Reviewed}, \textbf{Resolved} or \textbf{Dismissed} to show only the reports with that status.
+%             \item \textbf{Search}: The user types a text in the search box with the placeholder ``Search report reasons...'' and submits it, and only the reports whose reason contains that text are shown.
+%             \item \textbf{Move Between Pages}: When there is more than one page, the user uses the page numbers or the \textbf{Previous} and \textbf{Next} buttons at the bottom of the list.
+%             \item \textbf{Choose a Report}: The user opens a report with the view button, or changes its status with the status selector in the row (see \textbf{Update Report Status}).
+%         \end{itemize}
+%     \item \textbf{Alternative Flow}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{No Report}: When no report matches the current filter or search, the table shows the message ``No reports found.''.
+%             \item \textbf{Clear the Search}: When the user clears the search box, all reports are listed again.
+%             \item \textbf{Report on a Deleted Target}: When the reported content can no longer be read, the row still shows the report and the target is displayed with the identifier of the content.
+%         \end{itemize}
+%     \item \textbf{Postconditions}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item The administrator sees the reports that match the chosen status and search text.
+%             \item No data is changed by this function, so the reports stay exactly as they were.
+%         \end{itemize}
+%     \item \textbf{Error Handling}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{Not Allowed}: When a user who is not an administrator opens the screen, the user is sent to the access-denied page, because only administrators may read the reports.
+%             \item \textbf{Lost Connection}: When the reports cannot be loaded, the screen shows an empty list so that the administrator can reload the page and try again.
+%         \end{itemize}
+%     \item \textbf{Security Measures}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item The report list is only returned to administrator accounts, so the identity of the reporters is never exposed to ordinary users.
+%             \item The screen is reached only through the admin area, which refuses guests, banned accounts and users without the administrator role.
+%         \end{itemize}
+% \end{itemize}
 
-% =================================================================
+% % =================================================================
 
-\subsubsection{Update Report Status}
+% \subsubsection{Update Report Status}
 
-\textbf{Function Trigger:} The logged-in administrator changes the status selector in a row of the report list, or opens a report and reads its detail.
+% \textbf{Function Trigger:} The logged-in administrator changes the status selector in a row of the report list, or opens a report and reads its detail.
 
-\textbf{Function description:} This function allows an administrator to read a report in full and to move it through its lifecycle by choosing one of the statuses Pending, Reviewed, Resolved or Dismissed. Reading the detail shows who reported the content, why, when, and what exactly was reported, so that the administrator can decide how to handle it.
+% \textbf{Function description:} This function allows an administrator to read a report in full and to move it through its lifecycle by choosing one of the statuses Pending, Reviewed, Resolved or Dismissed. Reading the detail shows who reported the content, why, when, and what exactly was reported, so that the administrator can decide how to handle it.
 
-\textbf{Screen layout:}
+% \textbf{Screen layout:}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\linewidth]{image/screenshot/sprint3/kvy/UpdateReportStatus.png}
-    \caption{Report status selector and report detail dialog}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.95\linewidth]{image/screenshot/sprint3/kvy/UpdateReportStatus.png}
+%     \caption{Report status selector and report detail dialog}
+% \end{figure}
 
-\textbf{Function details:}
-\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Precondition}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item The user is logged in with an administrator account.
-            \item The user is connected to the internet.
-            \item The report that is being handled exists and is visible in the report list.
-        \end{itemize}
-    \item \textbf{Process}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Open the Detail}: The user clicks the view button on a row, and a dialog titled ``Report Detail'' opens.
-                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
-                    \item The header shows who sent the report, the date and the current status of the report.
-                    \item The section \textbf{Reason} shows the reason written by the reporter.
-                    \item The section \textbf{Reported Content} shows the title of the reported post or the text of the reported comment, or ``Content unavailable'' when the content can no longer be read.
-                    \item The footer shows the identifier of the report and of the reported post.
-                \end{itemize}
-            \item \textbf{Choose a New Status}: The user opens the status selector in the row and chooses one of \textbf{Pending}, \textbf{Reviewed}, \textbf{Resolved} or \textbf{Dismissed}.
-            \item \textbf{Apply the Status}: The chosen status is saved straight away and the badge in the row is updated to the new status.
-                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
-                    \item The screen shows the message ``Report status updated''.
-                    \item Use \textbf{Reviewed} when the report has been examined, \textbf{Resolved} when it has been handled and \textbf{Dismissed} when it does not require any action.
-                \end{itemize}
-            \item \textbf{Close the Detail}: The user closes the dialog and returns to the list, where the row reflects the new status.
-        \end{itemize}
-    \item \textbf{Alternative Flow}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Same Status Chosen}: When the user chooses the status that is already set, the report stays as it is and nothing changes.
-            \item \textbf{Reopen a Report}: When a handled report must be examined again, the user sets its status back to \textbf{Pending} and it appears again under the Pending tab.
-            \item \textbf{Missing Content}: When the reported post or comment has been deleted, the dialog shows ``Content unavailable'' but the report can still be handled.
-        \end{itemize}
-    \item \textbf{Postconditions}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item The report has the status that the administrator chose.
-            \item The report appears under the tab of its new status and no longer under the previous one.
-        \end{itemize}
-    \item \textbf{Error Handling}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Not Allowed}: When a user who is not an administrator tries to change a status, the action is refused because only administrators may handle reports.
-            \item \textbf{Report Not Found}: When the report no longer exists, the change is refused and the screen shows the message ``Couldn't update status. Try again.''.
-            \item \textbf{Report With No Target}: When the report is not attached to any post, the change is refused and the status stays the same.
-            \item \textbf{Lost Connection}: When the connection to the server is lost, the new status is not saved and the screen asks the user to try again.
-        \end{itemize}
-    \item \textbf{Security Measures}
-        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item Only administrators may read a report or change its status, and the check is made again on the server for every change.
-            \item The reason and the identity of the reporter are shown only to administrators.
-            \item A status can only be one of the four allowed values, so no other value can be forced into a report.
-        \end{itemize}
-\end{itemize}
+% \textbf{Function details:}
+% \begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+%     \item \textbf{Precondition}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item The user is logged in with an administrator account.
+%             \item The user is connected to the internet.
+%             \item The report that is being handled exists and is visible in the report list.
+%         \end{itemize}
+%     \item \textbf{Process}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{Open the Detail}: The user clicks the view button on a row, and a dialog titled ``Report Detail'' opens.
+%                 \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+%                     \item The header shows who sent the report, the date and the current status of the report.
+%                     \item The section \textbf{Reason} shows the reason written by the reporter.
+%                     \item The section \textbf{Reported Content} shows the title of the reported post or the text of the reported comment, or ``Content unavailable'' when the content can no longer be read.
+%                     \item The footer shows the identifier of the report and of the reported post.
+%                 \end{itemize}
+%             \item \textbf{Choose a New Status}: The user opens the status selector in the row and chooses one of \textbf{Pending}, \textbf{Reviewed}, \textbf{Resolved} or \textbf{Dismissed}.
+%             \item \textbf{Apply the Status}: The chosen status is saved straight away and the badge in the row is updated to the new status.
+%                 \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+%                     \item The screen shows the message ``Report status updated''.
+%                     \item Use \textbf{Reviewed} when the report has been examined, \textbf{Resolved} when it has been handled and \textbf{Dismissed} when it does not require any action.
+%                 \end{itemize}
+%             \item \textbf{Close the Detail}: The user closes the dialog and returns to the list, where the row reflects the new status.
+%         \end{itemize}
+%     \item \textbf{Alternative Flow}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{Same Status Chosen}: When the user chooses the status that is already set, the report stays as it is and nothing changes.
+%             \item \textbf{Reopen a Report}: When a handled report must be examined again, the user sets its status back to \textbf{Pending} and it appears again under the Pending tab.
+%             \item \textbf{Missing Content}: When the reported post or comment has been deleted, the dialog shows ``Content unavailable'' but the report can still be handled.
+%         \end{itemize}
+%     \item \textbf{Postconditions}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item The report has the status that the administrator chose.
+%             \item The report appears under the tab of its new status and no longer under the previous one.
+%         \end{itemize}
+%     \item \textbf{Error Handling}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item \textbf{Not Allowed}: When a user who is not an administrator tries to change a status, the action is refused because only administrators may handle reports.
+%             \item \textbf{Report Not Found}: When the report no longer exists, the change is refused and the screen shows the message ``Couldn't update status. Try again.''.
+%             \item \textbf{Report With No Target}: When the report is not attached to any post, the change is refused and the status stays the same.
+%             \item \textbf{Lost Connection}: When the connection to the server is lost, the new status is not saved and the screen asks the user to try again.
+%         \end{itemize}
+%     \item \textbf{Security Measures}
+%         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+%             \item Only administrators may read a report or change its status, and the check is made again on the server for every change.
+%             \item The reason and the identity of the reporter are shown only to administrators.
+%             \item A status can only be one of the four allowed values, so no other value can be forced into a report.
+%         \end{itemize}
+% \end{itemize}
 
-% =================================================================
+% % =================================================================
 
 \subsection{ID Verification}
 

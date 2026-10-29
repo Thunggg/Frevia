@@ -1,122 +1,272 @@
 \subsubsection{Entity Relationship Diagram}
 
+% The ERD headings are followed directly by [H] figures, so the run-in
+% subparagraph format would push each title below its figure. Inside this
+% group the subparagraph headings are block headings instead, keeping the
+% number (4.1.5.1, 4.1.5.2, ...) above its diagram. The run-in format used
+% by the use-case headings elsewhere is not affected.
+\begingroup
+\titleformat{\subparagraph}
+{\normalfont\normalsize\bfseries}
+{\thesubparagraph}
+{1em}
+{}
+\titlespacing*{\subparagraph}
+{0pt}
+{3.25ex plus 1ex minus .2ex}
+{1em}
+
 % ===============================================
-% ERD1
+% 4.1.5.1 ERD tong
 % ===============================================
-\paragraph{Authentication \& Role-Based Access}
+\subparagraph{Overall Entity Relationship Diagram}
+\label{sec:erd-overall}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD1.png}
-    \caption{Authentication \& Role-Based Access ERD}
-    \label{fig:authentication-role-based-access}
+    \includegraphics[width=\linewidth]{image/ERD/ERD-ALL.drawio.pdf}
+    \caption{Overall Entity Relationship Diagram}
+    \label{fig:erd-overall}
 \end{figure}
 
 % ===============================================
-% ERD2
+% 4.1.5.2 ERD1
 % ===============================================
-\paragraph{Manage Profile}
+\subparagraph{Authentication \& Sessions}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD2.png}
-    \caption{Manage Profile ERD}
-    \label{fig:manage-profile}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD1.drawio.pdf}
+    \caption{Authentication \& Sessions ERD}
+    \label{fig:erd-authentication-sessions}
 \end{figure}
 
 % ===============================================
-% ERD3
+% 4.1.5.3 ERD2
 % ===============================================
-\paragraph{Portfolio \& Freelancer Network}
+\subparagraph{Role-Based Access Control}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD3.png}
-    \caption{Portfolio \& Freelancer Network ERD}
-    \label{fig:portfolio-freelancer-network}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD2.drawio.pdf}
+    \caption{Role-Based Access Control ERD}
+    \label{fig:erd-rbac}
 \end{figure}
 
 % ===============================================
-% ERD4
+% 4.1.5.4 ERD3
 % ===============================================
-\paragraph{Job Posting \& Discovery}
+\subparagraph{Profile Core}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD4.png}
-    \caption{Job Posting \& Discovery ERD}
-    \label{fig:job-posting-discovery}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD3.drawio.pdf}
+    \caption{Profile Core ERD}
+    \label{fig:erd-profile-core}
 \end{figure}
 
 % ===============================================
-% ERD5
+% 4.1.5.5 ERD4
 % ===============================================
-\paragraph{Manage Proposal}
+\subparagraph{Profile History \& Social Links}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD5.png}
-    \caption{Manage Proposal ERD}
-    \label{fig:manage-proposal}
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD4.drawio.pdf}
+    \caption{Profile History \& Social Links ERD}
+    \label{fig:erd-profile-history}
 \end{figure}
 
 % ===============================================
-% ERD6
+% 4.1.5.6 ERD5
 % ===============================================
-\paragraph{Manage Contract}
+\subparagraph{Identity Verification \& Profile Visits}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD6.png}
-    \caption{Manage Contract ERD}
-    \label{fig:manage-contract}
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD5.drawio.pdf}
+    \caption{Identity Verification \& Profile Visits ERD}
+    \label{fig:erd-identity-verification}
 \end{figure}
 
 % ===============================================
-% ERD7
+% 4.1.5.7 ERD6
 % ===============================================
-\paragraph{Escrow, Payments \& Dispute Resolution}
+\subparagraph{Portfolio \& Skills}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD7.png}
-    \caption{Escrow, Payments \& Dispute Resolution ERD}
-    \label{fig:escrow-payments-dispute-resolutiont}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD6.drawio.pdf}
+    \caption{Portfolio \& Skills ERD}
+    \label{fig:erd-portfolio-skills}
 \end{figure}
 
 % ===============================================
-% ERD8
+% 4.1.5.8 ERD7
 % ===============================================
-\paragraph{Reviews \& Reputation System}
+\subparagraph{Favorites \& Follows}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD8.png}
-    \caption{Reviews \& Reputation SystemERD}
-    \label{fig:reviews-reputation-ystem}
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD7.drawio.pdf}
+    \caption{Favorites \& Follows ERD}
+    \label{fig:erd-favorites-follows}
 \end{figure}
 
 % ===============================================
-% ERD9
+% 4.1.5.9 ERD8
 % ===============================================
-\paragraph{Forum \& Community}
+\subparagraph{Job Posting}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD9.png}
-    \caption{Forum \& Community ERD}
-    \label{fig:forum-community}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD8.drawio.pdf}
+    \caption{Job Posting ERD}
+    \label{fig:erd-job-posting}
 \end{figure}
 
 % ===============================================
-% ERD10
+% 4.1.5.10 ERD9
 % ===============================================
-\paragraph{Messaging \& Notifications}
+\subparagraph{Job Discovery \& Alerts}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD10.png}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD9.drawio.pdf}
+    \caption{Job Discovery \& Alerts ERD}
+    \label{fig:erd-job-discovery}
+\end{figure}
+
+% ===============================================
+% 4.1.5.11 ERD10
+% ===============================================
+\subparagraph{Proposal}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD10.drawio.pdf}
+    \caption{Proposal ERD}
+    \label{fig:erd-proposal}
+\end{figure}
+
+% ===============================================
+% 4.1.5.12 ERD11
+% ===============================================
+\subparagraph{Contract}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD11.drawio.pdf}
+    \caption{Contract ERD}
+    \label{fig:erd-contract}
+\end{figure}
+
+% ===============================================
+% 4.1.5.13 ERD12
+% ===============================================
+\subparagraph{Milestone \& Project Progress}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD12.drawio.pdf}
+    \caption{Milestone \& Project Progress ERD}
+    \label{fig:erd-milestone-progress}
+\end{figure}
+
+% ===============================================
+% 4.1.5.14 ERD13
+% ===============================================
+\subparagraph{Milestone Submission}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD13.drawio.pdf}
+    \caption{Milestone Submission ERD}
+    \label{fig:erd-milestone-submission}
+\end{figure}
+
+% ===============================================
+% 4.1.5.15 ERD14
+% ===============================================
+\subparagraph{Escrow, Payments \& Certificates}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD14.drawio.pdf}
+    \caption{Escrow, Payments \& Certificates ERD}
+    \label{fig:erd-escrow-payments}
+\end{figure}
+
+% ===============================================
+% 4.1.5.16 ERD15
+% ===============================================
+\subparagraph{Dispute Core}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD15.drawio.pdf}
+    \caption{Dispute Core ERD}
+    \label{fig:erd-dispute-core}
+\end{figure}
+
+% ===============================================
+% 4.1.5.17 ERD16
+% ===============================================
+\subparagraph{Dispute Resolution}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD16.drawio.pdf}
+    \caption{Dispute Resolution ERD}
+    \label{fig:erd-dispute-resolution}
+\end{figure}
+
+% ===============================================
+% 4.1.5.18 ERD17
+% ===============================================
+\subparagraph{Reviews \& Reputation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
+    \caption{Reviews \& Reputation ERD}
+    \label{fig:erd-reviews}
+\end{figure}
+
+% ===============================================
+% 4.1.5.19 ERD18
+% ===============================================
+\subparagraph{Forum Posts \& Comments}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD18.drawio.pdf}
+    \caption{Forum Posts \& Comments ERD}
+    \label{fig:erd-forum-posts}
+\end{figure}
+
+% ===============================================
+% 4.1.5.20 ERD19
+% ===============================================
+\subparagraph{Forum Likes}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
+    \caption{Forum Likes ERD}
+    \label{fig:erd-forum-likes}
+\end{figure}
+
+% ===============================================
+% 4.1.5.21 ERD20
+% ===============================================
+\subparagraph{Forum Reports \& Moderation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
+    \caption{Forum Reports \& Moderation ERD}
+    \label{fig:erd-forum-reports}
+\end{figure}
+
+% ===============================================
+% 4.1.5.22 ERD21
+% ===============================================
+\subparagraph{Messaging \& Notifications}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD21.drawio.pdf}
     \caption{Messaging \& Notifications ERD}
-    \label{fig:mesaging-}
+    \label{fig:erd-messaging}
 \end{figure}
 
 % ===============================================
-% ERD11
+% 4.1.5.23 ERD22
 % ===============================================
-\paragraph{Administration \& Moderation}
+\subparagraph{Administration \& System}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD11.png}
-    \caption{Administration \& Moderation ERD}
-    \label{fig:administration-moderration}
+    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD22.drawio.pdf}
+    \caption{Administration \& System ERD}
+    \label{fig:erd-administration}
 \end{figure}
+\endgroup
