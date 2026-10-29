@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" pages="11"><diagram name="Admin (1/2)" id="116e29de8a7d4f8582c8de11458891cc"><mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3815" pageHeight="2867" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Admin0-68702ab4514e" parent="1" value="Admin (1/2)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="40" y="1403" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-8f427485a127" parent="1" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=28;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="180" y="40" width="3115" height="2787" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-ce5e9c9f13a1" parent="Admin0-8f427485a127" value="Logout&lt;div&gt;UC-03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="0" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-f87b95068272" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-ce5e9c9f13a1" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-7c55d24da8fc" parent="Admin0-8f427485a127" value="Role Management&lt;div&gt;UC-06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="336" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-116f2a04f137" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-7c55d24da8fc" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-f283b74494e3" parent="Admin0-8f427485a127" value="View Role List&lt;div&gt;UC-06.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="110" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-386b1efd219c" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-f283b74494e3" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-297913eb1222" parent="Admin0-8f427485a127" value="View Role Detail&lt;div&gt;UC-06.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="198" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-de2dfac202d0" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-297913eb1222" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-e2456a0c426e" parent="Admin0-8f427485a127" value="Create Role&lt;div&gt;UC-06.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="286" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-ce3e958016e3" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-e2456a0c426e" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-40d3be549041" parent="Admin0-8f427485a127" value="Update Role&lt;div&gt;UC-06.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="374" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-35edff8ef90f" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-40d3be549041" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-a4a4c38344fb" parent="Admin0-8f427485a127" value="Delete Role&lt;div&gt;UC-06.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="462" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-06eabc019c26" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-a4a4c38344fb" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-6cb707bb9fda" parent="Admin0-8f427485a127" value="Update Role Permissions&lt;div&gt;UC-06.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="550" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-e84e292bd9d2" edge="1" parent="Admin0-8f427485a127" source="Admin0-7c55d24da8fc" target="Admin0-6cb707bb9fda" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-3ea11a43046c" parent="Admin0-8f427485a127" value="Contract Management&lt;div&gt;UC-13&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="849" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-9e76fb97d07b" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-3ea11a43046c" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-713bc79a9898" parent="Admin0-8f427485a127" value="View All Contracts&lt;div&gt;UC-13.11&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="673" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-2a0e868a0999" edge="1" parent="Admin0-8f427485a127" source="Admin0-3ea11a43046c" target="Admin0-713bc79a9898" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-d00864d7f140" parent="Admin0-8f427485a127" value="View Contract Detail&lt;div&gt;UC-13.12&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="761" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-50cc17886498" edge="1" parent="Admin0-8f427485a127" source="Admin0-3ea11a43046c" target="Admin0-d00864d7f140" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-1626d635c2e7" parent="Admin0-8f427485a127" value="Admin Cancel Contract&lt;div&gt;UC-13.13&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="849" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-e93b66b6e248" edge="1" parent="Admin0-8f427485a127" source="Admin0-3ea11a43046c" target="Admin0-1626d635c2e7" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-64029adb3f71" parent="Admin0-8f427485a127" value="Admin Update Contract Status&lt;div&gt;UC-13.14&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="937" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-c922c5433446" edge="1" parent="Admin0-8f427485a127" source="Admin0-3ea11a43046c" target="Admin0-64029adb3f71" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-473986d05951" parent="Admin0-8f427485a127" value="View Contract Disputes&lt;div&gt;UC-13.15&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1025" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-793d1916ae31" edge="1" parent="Admin0-8f427485a127" source="Admin0-3ea11a43046c" target="Admin0-473986d05951" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-4d745a0c841d" parent="Admin0-8f427485a127" value="Permission Management&lt;div&gt;UC-15&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1192" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-7cc214bb9a4d" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-4d745a0c841d" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-e88b364dc503" parent="Admin0-8f427485a127" value="View Permission List&lt;div&gt;UC-15.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1148" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-fc68cd40751f" edge="1" parent="Admin0-8f427485a127" source="Admin0-4d745a0c841d" target="Admin0-e88b364dc503" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-faf4b21cf994" parent="Admin0-8f427485a127" value="View Permission Detail&lt;div&gt;UC-15.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1236" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-1a79a1da953c" edge="1" parent="Admin0-8f427485a127" source="Admin0-4d745a0c841d" target="Admin0-faf4b21cf994" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-3616d68e1e30" parent="Admin0-8f427485a127" value="Session Management&lt;div&gt;UC-16&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1427" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-a23d38355dec" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-3616d68e1e30" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-fb45bbf28901" parent="Admin0-8f427485a127" value="View Session List&lt;div&gt;UC-16.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1359" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-a0a741536fc8" edge="1" parent="Admin0-8f427485a127" source="Admin0-3616d68e1e30" target="Admin0-fb45bbf28901" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-ef35b419c1ed" parent="Admin0-8f427485a127" value="View Session Detail&lt;div&gt;UC-16.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1434" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-b50c958ab790" edge="1" parent="Admin0-8f427485a127" source="Admin0-3616d68e1e30" target="Admin0-ef35b419c1ed" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-6ec2a77f0b4e" parent="Admin0-8f427485a127" value="Revoke Session&lt;div&gt;UC-16.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1509" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-d54495386dda" edge="1" parent="Admin0-8f427485a127" source="Admin0-3616d68e1e30" target="Admin0-6ec2a77f0b4e" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-7d92914c1bb3" parent="Admin0-8f427485a127" value="Forum Category Management&lt;div&gt;UC-17&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1839" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-bcf3b00a6e3d" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-7d92914c1bb3" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-d08c96397a66" parent="Admin0-8f427485a127" value="Create Forum Category&lt;div&gt;UC-17.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1619" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-2773a1fa51e5" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-d08c96397a66" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-21823fbec2a6" parent="Admin0-8f427485a127" value="Update Forum Category&lt;div&gt;UC-17.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1707" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-b308559b92ce" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-21823fbec2a6" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-8b010b988b24" parent="Admin0-8f427485a127" value="Delete Forum Category&lt;div&gt;UC-17.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1795" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-5dba67167628" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-8b010b988b24" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-28feae608501" parent="Admin0-8f427485a127" value="View Forum Category List&lt;div&gt;UC-17.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1883" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-3ff777e6bd7b" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-28feae608501" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-b35ba0131e57" parent="Admin0-8f427485a127" value="View Forum Category Detail&lt;div&gt;UC-17.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1971" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-ec17f2a6c447" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-b35ba0131e57" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-23fe90aaf2c7" parent="Admin0-8f427485a127" value="Restore Forum Category&lt;div&gt;UC-17.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2059" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-76250f079297" edge="1" parent="Admin0-8f427485a127" source="Admin0-7d92914c1bb3" target="Admin0-23fe90aaf2c7" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-6b6bc195d8ef" parent="Admin0-8f427485a127" value="User Management&lt;div&gt;UC-28&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="2364" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-862128caffad" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-6b6bc195d8ef" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-c21d6e9c2af2" parent="Admin0-8f427485a127" value="View User List&lt;div&gt;UC-28.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2182" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-523999076714" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-c21d6e9c2af2" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-f1d2adad566b" parent="Admin0-8f427485a127" value="View User Detail&lt;div&gt;UC-28.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2270" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-457694c08705" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-f1d2adad566b" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-cb31f07ee971" parent="Admin0-8f427485a127" value="Create User&lt;div&gt;UC-28.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2358" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-5e1ebe855557" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-cb31f07ee971" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-1243ab3e6761" parent="Admin0-8f427485a127" value="Update User&lt;div&gt;UC-28.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2446" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-32f4b4d87cd9" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-1243ab3e6761" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-fba410aa9a64" parent="Admin0-8f427485a127" value="Update Client Profile&lt;div&gt;UC-28.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2534" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-f28ba00fb9e4" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-fba410aa9a64" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-dc06a891cfe0" parent="Admin0-8f427485a127" value="Update Freelancer Basic Info&lt;div&gt;UC-28.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="340" y="2182" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-bb40ddfdd747" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-dc06a891cfe0" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-e23e9e9ebc6b" parent="Admin0-8f427485a127" value="Update Freelancer Skills&lt;div&gt;UC-28.07&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="340" y="2270" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-174b0162c9f2" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-e23e9e9ebc6b" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-2667d40e1584" parent="Admin0-8f427485a127" value="Update Freelancer Portfolio&lt;div&gt;UC-28.08&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="340" y="2358" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-a455eea01698" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-2667d40e1584" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-0ecb19392cea" parent="Admin0-8f427485a127" value="Update Expert Profile&lt;div&gt;UC-28.09&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="340" y="2446" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-04e0359576a2" edge="1" parent="Admin0-8f427485a127" source="Admin0-6b6bc195d8ef" target="Admin0-0ecb19392cea" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-2546a712dbde" parent="Admin0-8f427485a127" value="Dispute Management&lt;div&gt;UC-33&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="2665" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-b8454e1db330" edge="1" parent="1" source="Admin0-68702ab4514e" target="Admin0-2546a712dbde" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-8e93162d11aa" parent="Admin0-8f427485a127" value="Propose Dispute Resolution&lt;div&gt;UC-33.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="2657" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin0-5fbf2569ed87" edge="1" parent="Admin0-8f427485a127" source="Admin0-2546a712dbde" target="Admin0-8e93162d11aa" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

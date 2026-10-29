@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0" pages="49"><diagram name="Guest 1/2" id="Guest1"><mxGraphModel dx="1042" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0" adaptiveColors="simple">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Guest1-t" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontFamily=Tahoma;fontStyle=1;" value="Guest — Use Case Diagram (1/2)" vertex="1">
+          <mxGeometry height="30" width="640" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-ma" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=Tahoma;" value="Guest" vertex="1">
+          <mxGeometry height="60" width="30" x="70" y="395" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-sw" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=16;fontFamily=Tahoma;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Frevia" vertex="1">
+          <mxGeometry height="730" width="470" x="180" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u0" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="Login with Google&lt;div&gt;UC-01&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u1" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="Login&lt;div&gt;UC-02&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u2" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="Register&lt;div&gt;UC-04&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u3" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="Forgot Password&lt;div&gt;UC-05&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u4" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="Job Browsing&lt;div&gt;UC-10&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u5" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="View Job List&lt;div&gt;UC-10.01&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="300" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-u6" parent="Guest1-sw" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" value="View Job Detail&lt;div&gt;UC-10.02&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="300" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-e0" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=Tahoma;" value="Google Service" vertex="1">
+          <mxGeometry height="60" width="30" x="710" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m1" edge="1" parent="1" source="Guest1-ma" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Guest1-u0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m2" edge="1" parent="1" source="Guest1-ma" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Guest1-u1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m3" edge="1" parent="1" source="Guest1-ma" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-u2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m4" edge="1" parent="1" source="Guest1-ma" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-u3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m5" edge="1" parent="1" source="Guest1-ma" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-u4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m6" edge="1" parent="1" source="Guest1-u4" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-u5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m7" edge="1" parent="1" source="Guest1-u4" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-u6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Guest1-m9" edge="1" parent="1" source="Guest1-u0" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="Guest1-e0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

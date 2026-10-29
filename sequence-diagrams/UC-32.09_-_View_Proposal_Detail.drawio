@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron" pages="9"><diagram name="UC-32.09 - View Proposal Detail" id="uc3209"><mxGraphModel dx="1226" dy="793" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pp9-title" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="UC-32.09 - View Proposal Detail [Proposal Management]" vertex="1">
+          <mxGeometry x="40" y="100" width="700" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Client" vertex="1">
+          <mxGeometry x="130" y="200" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-view" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalDetailSheet" vertex="1">
+          <mxGeometry x="260" y="240" width="120" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-route" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalRoute" vertex="1">
+          <mxGeometry x="440" y="240" width="160" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-ctrl" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalController" vertex="1">
+          <mxGeometry x="660" y="240" width="160" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-svc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalService" vertex="1">
+          <mxGeometry x="880" y="240" width="160" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-repo" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalRepository" vertex="1">
+          <mxGeometry x="1100" y="240" width="160" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-lf-model" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":ProposalModel" vertex="1">
+          <mxGeometry x="1320" y="240" width="160" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-db-icon" parent="1" style="strokeWidth=1;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry x="1597.5" y="210" width="45" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-db-label" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" value="Database" vertex="1">
+          <mxGeometry x="1545" y="270" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-actor" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="140" y="300" width="10" height="1036" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-view" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="315" y="300" width="10" height="1036" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-route" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="515" y="340" width="10" height="956" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-ctrl" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="735" y="416" width="10" height="840" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-svc" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="955" y="656" width="10" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-repo" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="1175" y="696" width="10" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-model" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="1395" y="736" width="10" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-bar-db" parent="1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" value="" vertex="1">
+          <mxGeometry x="1615" y="776" width="10" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-f1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=160;height=30;fontSize=13;" value="alt" vertex="1">
+          <mxGeometry x="40" y="378" width="1660" height="998" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-f2" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=160;height=30;fontSize=13;" value="alt" vertex="1">
+          <mxGeometry x="90" y="936" width="1610" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-g1" parent="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=13;" value="[not authorized / not found]" vertex="1">
+          <mxGeometry x="280" y="380" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-g2" parent="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=13;" value="[job owner or proposal owner]" vertex="1">
+          <mxGeometry x="280" y="578" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-g3" parent="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=13;" value="[load failed]" vertex="1">
+          <mxGeometry x="280" y="938" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-g4" parent="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=13;" value="[found]" vertex="1">
+          <mxGeometry x="280" y="1138" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="pp9-d1" edge="1" parent="1" source="pp9-f1" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.1984;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="40" y="576" as="sourcePoint" />
+            <mxPoint x="1700" y="576" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-d2" edge="1" parent="1" source="pp9-f2" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="1136" as="sourcePoint" />
+            <mxPoint x="1700" y="1136" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m1" edge="1" parent="1" source="pp9-bar-actor" target="pp9-bar-view" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="1. Select proposal to view full detail">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="300" as="sourcePoint" />
+            <mxPoint x="320" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m2" edge="1" parent="1" source="pp9-bar-view" target="pp9-bar-route" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.0386;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="2. GET /api/proposals/:id/client">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="325" y="340" as="sourcePoint" />
+            <mxPoint x="520" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m3" edge="1" parent="1" source="pp9-bar-route" target="pp9-bar-ctrl" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.0795;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.1.1 Forward GET">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="416" as="sourcePoint" />
+            <mxPoint x="740" y="416" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m4" edge="1" parent="1" source="pp9-bar-ctrl" target="pp9-bar-route" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.0476;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.1213;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.1.2 Return 404/403">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="456" as="sourcePoint" />
+            <mxPoint x="525" y="456" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m5" edge="1" parent="1" source="pp9-bar-route" target="pp9-bar-view" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.1632;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.1892;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.1.3 Show not-authorized message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="496" as="sourcePoint" />
+            <mxPoint x="325" y="496" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m6" edge="1" parent="1" source="pp9-bar-view" target="pp9-bar-actor" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.2278;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.2278;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.1.4 Show not-authorized message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="325" y="536" as="sourcePoint" />
+            <mxPoint x="150" y="536" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m7" edge="1" parent="1" source="pp9-bar-route" target="pp9-bar-ctrl" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.2887;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.2381;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.1 Forward GET">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="616" as="sourcePoint" />
+            <mxPoint x="740" y="616" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m8" edge="1" parent="1" source="pp9-bar-ctrl" target="pp9-bar-svc" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.2857;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.2 getProposalDetailForClient(id)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="656" as="sourcePoint" />
+            <mxPoint x="960" y="656" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m9" edge="1" parent="1" source="pp9-bar-svc" target="pp9-bar-repo" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.0714;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.3 Find proposal detail (access: job owner or proposal owner)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="965" y="696" as="sourcePoint" />
+            <mxPoint x="1180" y="696" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m10" edge="1" parent="1" source="pp9-bar-repo" target="pp9-bar-model" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.1667;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.4 Execute query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1185" y="736" as="sourcePoint" />
+            <mxPoint x="1400" y="736" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m11" edge="1" parent="1" source="pp9-bar-model" target="pp9-bar-db" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.25;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.5 Execute query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1405" y="776" as="sourcePoint" />
+            <mxPoint x="1620" y="776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m12" edge="1" parent="1" source="pp9-bar-db" target="pp9-bar-model" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.6 Return result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1625" y="816" as="sourcePoint" />
+            <mxPoint x="1405" y="816" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m13" edge="1" parent="1" source="pp9-bar-model" target="pp9-bar-repo" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.75;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.6667;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.7 Return proposal detail">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1405" y="856" as="sourcePoint" />
+            <mxPoint x="1185" y="856" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m14" edge="1" parent="1" source="pp9-bar-repo" target="pp9-bar-svc" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.8333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.4286;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.8 Return proposal detail">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1185" y="896" as="sourcePoint" />
+            <mxPoint x="965" y="896" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m15" edge="1" parent="1" source="pp9-bar-svc" target="pp9-bar-ctrl" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.5714;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.6667;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.1 Return error">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="965" y="976" as="sourcePoint" />
+            <mxPoint x="745" y="976" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m16" edge="1" parent="1" source="pp9-bar-ctrl" target="pp9-bar-route" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.7143;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.7071;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.2 Return 500">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="1016" as="sourcePoint" />
+            <mxPoint x="525" y="1016" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m17" edge="1" parent="1" source="pp9-bar-route" target="pp9-bar-view" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.749;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.7297;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.3 Show failed-to-load message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="1056" as="sourcePoint" />
+            <mxPoint x="325" y="1056" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m18" edge="1" parent="1" source="pp9-bar-view" target="pp9-bar-actor" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.7683;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.7683;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.4 Show failed-to-load message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="325" y="1096" as="sourcePoint" />
+            <mxPoint x="150" y="1096" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m19" edge="1" parent="1" source="pp9-bar-svc" target="pp9-bar-ctrl" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.9286;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.9048;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.5 Return proposal detail">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="965" y="1176" as="sourcePoint" />
+            <mxPoint x="745" y="1176" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m20" edge="1" parent="1" source="pp9-bar-ctrl" target="pp9-bar-route" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.9524;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.9163;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.6 Return 200 OK">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="1216" as="sourcePoint" />
+            <mxPoint x="525" y="1216" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m21" edge="1" parent="1" source="pp9-bar-route" target="pp9-bar-view" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.9582;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.9228;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.7 Return proposal detail">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="1256" as="sourcePoint" />
+            <mxPoint x="325" y="1256" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-m22" edge="1" parent="1" source="pp9-bar-view" target="pp9-bar-actor" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=13;exitX=1;exitY=0.9614;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.9614;entryDx=0;entryDy=0;entryPerimeter=0;" value="3.2.9.8 Render detail (cover letter, bid amount, estimated duration, freelancer profile, attachments)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="325" y="1296" as="sourcePoint" />
+            <mxPoint x="150" y="1296" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-c-actor" edge="1" parent="1" source="pp9-bar-actor" target="pp9-actor" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="145" y="300" as="sourcePoint" />
+            <mxPoint x="145" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pp9-c-db" edge="1" parent="1" source="pp9-bar-db" target="pp9-db-label" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1620" y="776" as="sourcePoint" />
+            <mxPoint x="1620" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

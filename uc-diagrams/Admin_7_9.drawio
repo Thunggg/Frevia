@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0" pages="49"><diagram name="Admin 7/9" id="Admin7"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Admin7-t" value="Admin — Use Case Diagram (7/9)" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontFamily=Tahoma;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="640" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-ma" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=Tahoma;" vertex="1" parent="1">
+          <mxGeometry x="70" y="475" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-sw" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=16;fontFamily=Tahoma;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="180" y="70" width="470" height="890" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u0" value="Delete Banner&lt;div&gt;UC-37.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="40" y="50" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u1" value="Skill Management&lt;div&gt;UC-38&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="40" y="400" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u2" value="View Skill List&lt;div&gt;UC-38.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="160" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u3" value="View Skill Detail&lt;div&gt;UC-38.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="250" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u4" value="Create Skill&lt;div&gt;UC-38.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="340" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u5" value="Update Skill&lt;div&gt;UC-38.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="430" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u6" value="Delete Skill&lt;div&gt;UC-38.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="520" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u7" value="Restore Skill&lt;div&gt;UC-38.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="610" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u8" value="Account Profile Management&lt;div&gt;UC-41&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="40" y="755" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-u9" value="View Profile&lt;div&gt;UC-41.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;" vertex="1" parent="Admin7-sw">
+          <mxGeometry x="300" y="740" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-e0" value="Stripe" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=Tahoma;" vertex="1" parent="1">
+          <mxGeometry x="710" y="130" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-ma" target="Admin7-u0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m2" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-ma" target="Admin7-u1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m3" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m4" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m5" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m6" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m7" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m8" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u1" target="Admin7-u7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m9" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-ma" target="Admin7-u8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin7-m10" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="Admin7-u8" target="Admin7-u9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

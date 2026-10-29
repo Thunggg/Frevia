@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" pages="11"><diagram name="AI Service" id="5a775a12799340beb00442993d40d9a9"><mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1910" pageHeight="492" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="AIServ0-744eacdbc8c2" parent="1" value="AI" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="40" y="216" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-8428ed50cb29" parent="1" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=28;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="180" y="40" width="1210" height="412" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-81af2aebea3e" parent="AIServ0-8428ed50cb29" value="Job &amp; Freelancer Recommendation&lt;div&gt;UC-42&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="8" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-ae65fae04d6e" edge="1" parent="1" source="AIServ0-744eacdbc8c2" target="AIServ0-81af2aebea3e" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-d590dcbc934c" parent="AIServ0-8428ed50cb29" value="Recommend Jobs / Freelancers&lt;div&gt;UC-42.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="0" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-27c332ad4c6b" edge="1" parent="AIServ0-8428ed50cb29" source="AIServ0-81af2aebea3e" target="AIServ0-d590dcbc934c" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-4f25e644272b" parent="AIServ0-8428ed50cb29" value="AI Content Moderation&lt;div&gt;UC-44&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="148" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-74a5ad7054d8" edge="1" parent="1" source="AIServ0-744eacdbc8c2" target="AIServ0-4f25e644272b" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-57c75a3aa106" parent="AIServ0-8428ed50cb29" value="Moderate Content by AI&lt;div&gt;UC-44.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="140" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-e5d1c78d52a5" edge="1" parent="AIServ0-8428ed50cb29" source="AIServ0-4f25e644272b" target="AIServ0-57c75a3aa106" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-0a0e71d2f826" parent="AIServ0-8428ed50cb29" value="AI Face Scan &amp; Duplicate Detection&lt;div&gt;UC-45&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="289" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-ae34a8de10a4" edge="1" parent="1" source="AIServ0-744eacdbc8c2" target="AIServ0-0a0e71d2f826" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-7c9ff591cb44" parent="AIServ0-8428ed50cb29" value="Scan Face and Detect Duplicate Identity&lt;div&gt;UC-45.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="280" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="AIServ0-d75e0ee15125" edge="1" parent="AIServ0-8428ed50cb29" source="AIServ0-0a0e71d2f826" target="AIServ0-7c9ff591cb44" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

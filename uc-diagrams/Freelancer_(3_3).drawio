@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" pages="11"><diagram name="Freelancer (3/3)" id="421c1195b1844f2e8cec1947e6a9a7b4"><mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="5420" pageHeight="2838" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Freela2-001ab16a2ae2" parent="1" value="Freelancer (3/3)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="40" y="1389" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d13d0d3e2041" parent="1" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=28;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="180" y="40" width="4720" height="2758" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-7318f52707ea" parent="Freela2-d13d0d3e2041" value="Milestone File Management&lt;div&gt;UC-25&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="88" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1a413caa5e01" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-7318f52707ea" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a66297f66bef" parent="Freela2-d13d0d3e2041" value="View Milestone Files&lt;div&gt;UC-25.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="0" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-599ee089f0c3" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-7318f52707ea" target="Freela2-a66297f66bef" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-eac8a1e2ea71" parent="Freela2-d13d0d3e2041" value="Upload Milestone File&lt;div&gt;UC-25.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="88" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-17a175fb6358" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-7318f52707ea" target="Freela2-eac8a1e2ea71" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-8c73f2dc4b5b" parent="Freela2-d13d0d3e2041" value="Delete Milestone File&lt;div&gt;UC-25.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="176" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-dabc133a6f90" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-7318f52707ea" target="Freela2-8c73f2dc4b5b" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-282f5fe18cae" parent="Freela2-d13d0d3e2041" value="Milestone Submission Management&lt;div&gt;UC-26&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="333" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-8bb855ce8394" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-282f5fe18cae" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-920fef0eb691" parent="Freela2-d13d0d3e2041" value="Submit Milestone&lt;div&gt;UC-26.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="299" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-c93318f42cef" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-282f5fe18cae" target="Freela2-920fef0eb691" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-144a4170f1bd" parent="Freela2-d13d0d3e2041" value="Delete Milestone Submission&lt;div&gt;UC-26.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="387" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-9db32daa0f99" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-282f5fe18cae" target="Freela2-144a4170f1bd" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-36e232275f0a" parent="Freela2-d13d0d3e2041" value="Conversation Management&lt;div&gt;UC-27&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="818" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-68d9359c39ed" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-36e232275f0a" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-848bc96f50b6" parent="Freela2-d13d0d3e2041" value="View Conversation List&lt;div&gt;UC-27.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="510" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-f18fefcf9271" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-848bc96f50b6" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-c78f7bef7314" parent="Freela2-d13d0d3e2041" value="Start Conversation&lt;div&gt;UC-27.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="598" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-6a3adbec7e33" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-c78f7bef7314" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-4155a5ec202d" parent="Freela2-d13d0d3e2041" value="View Conversation Detail&lt;div&gt;UC-27.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="686" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1d7786ada51a" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-4155a5ec202d" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b784665d9ec3" parent="Freela2-d13d0d3e2041" value="Send Message&lt;div&gt;UC-27.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="774" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-4a4c4f6b18f8" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-b784665d9ec3" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-95b70d2b6388" parent="Freela2-d13d0d3e2041" value="Mark Message as Read&lt;div&gt;UC-27.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="862" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-76a46dc0549a" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-95b70d2b6388" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-c6aafba21bf9" parent="Freela2-d13d0d3e2041" value="Delete/Recall Message&lt;div&gt;UC-27.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="950" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a3c17f5929eb" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-c6aafba21bf9" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-3de479f1a949" parent="Freela2-d13d0d3e2041" value="Pin/Unpin Conversation&lt;div&gt;UC-27.07&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1038" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-2e19c83dc276" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-3de479f1a949" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-f43caac5b368" parent="Freela2-d13d0d3e2041" value="Send File&lt;div&gt;UC-27.08&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1126" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d19bd60b2dc6" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-36e232275f0a" target="Freela2-f43caac5b368" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b72d929efc11" parent="Freela2-d13d0d3e2041" value="Notification Management&lt;div&gt;UC-30&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1419" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-3f67dbbe43b8" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-b72d929efc11" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b699e367bcd5" parent="Freela2-d13d0d3e2041" value="View Notification List&lt;div&gt;UC-30.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1249" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-e205c4a1b745" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-b72d929efc11" target="Freela2-b699e367bcd5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-343424b6297c" parent="Freela2-d13d0d3e2041" value="Mark Notification as Read&lt;div&gt;UC-30.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1356" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-493d18246cb5" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-b72d929efc11" target="Freela2-343424b6297c" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-341691c66002" parent="Freela2-d13d0d3e2041" value="Mark All Notifications as Read&lt;div&gt;UC-30.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1463" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a9c91999c6c7" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-b72d929efc11" target="Freela2-341691c66002" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-9ce183b00b85" parent="Freela2-d13d0d3e2041" value="Delete Notification&lt;div&gt;UC-30.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1570" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a6f9e22de690" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-b72d929efc11" target="Freela2-9ce183b00b85" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a0a3853119f4" parent="Freela2-d13d0d3e2041" value="Account Role Management&lt;div&gt;UC-31&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1743" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-07f8b2195e19" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-a0a3853119f4" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-83808a467a45" parent="Freela2-d13d0d3e2041" value="Switch Role&lt;div&gt;UC-31.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1712" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a637bbef3be1" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a0a3853119f4" target="Freela2-83808a467a45" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-623499f20683" parent="Freela2-d13d0d3e2041" value="Join New Role&lt;div&gt;UC-31.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1787" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-cb4b5c4ff9a5" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a0a3853119f4" target="Freela2-623499f20683" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-f382527dd9cb" parent="Freela2-d13d0d3e2041" value="Proposal Management&lt;div&gt;UC-32&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="176" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-6e483d36e483" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-f382527dd9cb" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a0c0142fb270" parent="Freela2-d13d0d3e2041" value="View My Proposal List&lt;div&gt;UC-32.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="0" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-beafb78a1720" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-f382527dd9cb" target="Freela2-a0c0142fb270" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a6436b8366e9" parent="Freela2-d13d0d3e2041" value="View My Proposal Detail&lt;div&gt;UC-32.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="88" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-6d09b077df6e" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-f382527dd9cb" target="Freela2-a6436b8366e9" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-82c984f0e030" parent="Freela2-d13d0d3e2041" value="Submit Proposal&lt;div&gt;UC-32.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="176" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-f6ca07aec660" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-f382527dd9cb" target="Freela2-82c984f0e030" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-e15658e6f8dd" parent="Freela2-d13d0d3e2041" value="Update Proposal&lt;div&gt;UC-32.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="264" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-06ffb791c005" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-f382527dd9cb" target="Freela2-e15658e6f8dd" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-365740fd967e" parent="Freela2-d13d0d3e2041" value="Withdraw Proposal&lt;div&gt;UC-32.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="352" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b7e33f18907e" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-f382527dd9cb" target="Freela2-365740fd967e" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a6233f23660a" parent="Freela2-d13d0d3e2041" value="Dispute Management&lt;div&gt;UC-33&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="651" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-28eaad5fc61b" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-a6233f23660a" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-7d8719bf6473" parent="Freela2-d13d0d3e2041" value="Open Dispute&lt;div&gt;UC-33.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="475" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-2245b4598501" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a6233f23660a" target="Freela2-7d8719bf6473" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-e8883e92a966" parent="Freela2-d13d0d3e2041" value="View Dispute List&lt;div&gt;UC-33.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="563" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-4ba61aaf4f2d" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a6233f23660a" target="Freela2-e8883e92a966" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d93825217a24" parent="Freela2-d13d0d3e2041" value="View Dispute Detail&lt;div&gt;UC-33.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="651" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-88246c85ed77" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a6233f23660a" target="Freela2-d93825217a24" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-9f1e01918bd5" parent="Freela2-d13d0d3e2041" value="Respond to Dispute&lt;div&gt;UC-33.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="739" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-0b6f54a1c48d" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a6233f23660a" target="Freela2-9f1e01918bd5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1dd8d1225b34" parent="Freela2-d13d0d3e2041" value="Respond to Dispute Resolution&lt;div&gt;UC-33.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="827" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-0d0bed0d2c9b" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-a6233f23660a" target="Freela2-1dd8d1225b34" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-44f8b22bdb2e" parent="Freela2-d13d0d3e2041" value="Review Management&lt;div&gt;UC-39&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="1093" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b745a61c8c88" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-44f8b22bdb2e" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d959cfe23960" parent="Freela2-d13d0d3e2041" value="View Review List&lt;div&gt;UC-39.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="950" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-2f0662171835" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-44f8b22bdb2e" target="Freela2-d959cfe23960" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-316d14ae7af7" parent="Freela2-d13d0d3e2041" value="View Review Detail&lt;div&gt;UC-39.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1025" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-c70f34bfba68" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-44f8b22bdb2e" target="Freela2-316d14ae7af7" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-e1a4b698e960" parent="Freela2-d13d0d3e2041" value="Write Review&lt;div&gt;UC-39.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1100" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-da9d9d9d4dbd" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-44f8b22bdb2e" target="Freela2-e1a4b698e960" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-14a958679133" parent="Freela2-d13d0d3e2041" value="Update Review&lt;div&gt;UC-39.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1175" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-cfe81459ed1b" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-44f8b22bdb2e" target="Freela2-14a958679133" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-96751a6a5ade" parent="Freela2-d13d0d3e2041" value="Delete Review&lt;div&gt;UC-39.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1250" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1cc514e3259f" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-44f8b22bdb2e" target="Freela2-96751a6a5ade" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d5f446b86b9b" parent="Freela2-d13d0d3e2041" value="Review Response Management&lt;div&gt;UC-40&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="1448" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-45012c5fd795" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-d5f446b86b9b" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-92b312170377" parent="Freela2-d13d0d3e2041" value="Respond to Review&lt;div&gt;UC-40.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1360" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-7df721bccf06" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d5f446b86b9b" target="Freela2-92b312170377" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-81a3f67b5db3" parent="Freela2-d13d0d3e2041" value="Update Review Response&lt;div&gt;UC-40.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1448" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-2a7860516fe8" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d5f446b86b9b" target="Freela2-81a3f67b5db3" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-3a67efa8894f" parent="Freela2-d13d0d3e2041" value="Delete Review Response&lt;div&gt;UC-40.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1536" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-331373ec7185" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d5f446b86b9b" target="Freela2-3a67efa8894f" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-6a5df0d77583" parent="Freela2-d13d0d3e2041" value="Account Profile Management&lt;div&gt;UC-41&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="1765" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-20dccb91a196" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-6a5df0d77583" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-68b56b15dc02" parent="Freela2-d13d0d3e2041" value="View Profile&lt;div&gt;UC-41.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1659" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-ca7172682446" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-6a5df0d77583" target="Freela2-68b56b15dc02" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-60dd563d36a4" parent="Freela2-d13d0d3e2041" value="Update Profile&lt;div&gt;UC-41.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1734" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-74acab7d210a" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-6a5df0d77583" target="Freela2-60dd563d36a4" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-c14ad714a775" parent="Freela2-d13d0d3e2041" value="Change Password&lt;div&gt;UC-41.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1809" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-438a689ece34" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-6a5df0d77583" target="Freela2-c14ad714a775" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-7600774ffd40" parent="Freela2-d13d0d3e2041" value="Upload Avatar&lt;div&gt;UC-41.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1884" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-747aa78691ba" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-6a5df0d77583" target="Freela2-7600774ffd40" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-64f6f859bb8e" parent="Freela2-d13d0d3e2041" value="Payment Management&lt;div&gt;UC-43&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="2214" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-95e45bca5cbf" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-64f6f859bb8e" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-22098f1a74b5" parent="Freela2-d13d0d3e2041" value="Connect Stripe Account&lt;div&gt;UC-43.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="1994" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-e2546a3a5036" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-22098f1a74b5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-26ad337df024" parent="Freela2-d13d0d3e2041" value="View Payout History&lt;div&gt;UC-43.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2082" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-77b504655d26" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-26ad337df024" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-7bc5efb95def" parent="Freela2-d13d0d3e2041" value="View Payout Detail&lt;div&gt;UC-43.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2170" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1cd25099776a" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-7bc5efb95def" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-ba2d8f78b2fb" parent="Freela2-d13d0d3e2041" value="Pay Dispute Fee&lt;div&gt;UC-43.08&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2258" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-a9a95a710487" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-ba2d8f78b2fb" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-0cc48df93db6" parent="Freela2-d13d0d3e2041" value="View Payment History&lt;div&gt;UC-43.09&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2346" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b762597da6e6" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-0cc48df93db6" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-416c9bc650bc" parent="Freela2-d13d0d3e2041" value="View Payment Detail&lt;div&gt;UC-43.10&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2434" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-fd5cbebb58f7" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-64f6f859bb8e" target="Freela2-416c9bc650bc" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d918063e3888" parent="Freela2-d13d0d3e2041" value="Job Category Management&lt;div&gt;UC-46&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1950" y="2601" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-937a01b0ea70" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-d918063e3888" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-9ba2d2494626" parent="Freela2-d13d0d3e2041" value="View Job Category List&lt;div&gt;UC-46.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2557" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-f2d0c556ae88" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d918063e3888" target="Freela2-9ba2d2494626" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-bdd407a869e5" parent="Freela2-d13d0d3e2041" value="View Job Category Detail&lt;div&gt;UC-46.07&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="2135" y="2645" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-680924b90fad" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d918063e3888" target="Freela2-bdd407a869e5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-cb786869bfc7" parent="1" value="Stripe" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="4990" y="100" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-1f263720bbfa" edge="1" parent="1" source="Freela2-22098f1a74b5" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-3d90e0c190f6" edge="1" parent="1" source="Freela2-26ad337df024" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-d643547876d9" edge="1" parent="1" source="Freela2-7bc5efb95def" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-27a3afd63c11" edge="1" parent="1" source="Freela2-ba2d8f78b2fb" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-fa36d0abba28" edge="1" parent="1" source="Freela2-0cc48df93db6" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Freela2-b06e51ec7e7c" edge="1" parent="1" source="Freela2-416c9bc650bc" target="Freela2-cb786869bfc7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>

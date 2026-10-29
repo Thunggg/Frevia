@@ -1,0 +1,308 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" pages="11"><diagram name="Admin (2/2)" id="0bc7b52b8a724b858388a38985fc8eca"><mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4640" pageHeight="2326" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Admin1-b2836af5a3a7" parent="1" value="Admin (2/2)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="40" y="1133" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a733a278d1c0" parent="1" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=28;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="180" y="40" width="3940" height="2246" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-90bcb3d2541d" parent="Admin1-a733a278d1c0" value="Moderation Management&lt;div&gt;UC-34&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="88" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-31e2e3fc1e68" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-90bcb3d2541d" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-9870c4210d6e" parent="Admin1-a733a278d1c0" value="View Moderation Queue&lt;div&gt;UC-34.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="0" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-f8a2b171395f" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-90bcb3d2541d" target="Admin1-9870c4210d6e" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-adc6f51d2eae" parent="Admin1-a733a278d1c0" value="View Moderation Item Detail&lt;div&gt;UC-34.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="88" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-450764c861f6" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-90bcb3d2541d" target="Admin1-adc6f51d2eae" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-4a3efd394ee9" parent="Admin1-a733a278d1c0" value="Resolve Moderation Item&lt;div&gt;UC-34.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="176" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-06b18dfa8e85" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-90bcb3d2541d" target="Admin1-4a3efd394ee9" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-56b095749239" parent="Admin1-a733a278d1c0" value="ID Verification Review&lt;div&gt;UC-35&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="431" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-6e7f2511f7bc" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-56b095749239" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-2cff6abbd804" parent="Admin1-a733a278d1c0" value="View ID Verification Request List&lt;div&gt;UC-35.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="299" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-54048c4f638f" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-56b095749239" target="Admin1-2cff6abbd804" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-cc52e767cd97" parent="Admin1-a733a278d1c0" value="View ID Verification Request Detail&lt;div&gt;UC-35.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="387" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-2915ae92221d" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-56b095749239" target="Admin1-cc52e767cd97" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-ba4e15e039d5" parent="Admin1-a733a278d1c0" value="Approve ID Verification&lt;div&gt;UC-35.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="475" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7e76887d34f2" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-56b095749239" target="Admin1-ba4e15e039d5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fbc32258c757" parent="Admin1-a733a278d1c0" value="Reject ID Verification&lt;div&gt;UC-35.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="563" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a5c708002ccf" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-56b095749239" target="Admin1-fbc32258c757" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-e26da46f883a" parent="Admin1-a733a278d1c0" value="Forum Trash Management&lt;div&gt;UC-36&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="802" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-f95b42cd035c" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-e26da46f883a" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fcdd4b3eea8b" parent="Admin1-a733a278d1c0" value="View Deleted Posts/Comments List&lt;div&gt;UC-36.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="686" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-eab164b2aa0a" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-e26da46f883a" target="Admin1-fcdd4b3eea8b" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-b41403bd1ea3" parent="Admin1-a733a278d1c0" value="View Deleted Posts/Comments Detail&lt;div&gt;UC-36.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="793" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-32685a9b7ce3" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-e26da46f883a" target="Admin1-b41403bd1ea3" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-65d461e019eb" parent="Admin1-a733a278d1c0" value="Restore Deleted Posts/Comments&lt;div&gt;UC-36.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="900" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-0e28dc4dbdd0" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-e26da46f883a" target="Admin1-65d461e019eb" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-238ee4e4d3d8" parent="Admin1-a733a278d1c0" value="Banner Management&lt;div&gt;UC-37&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="0" y="1185" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a311bcb0496d" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-238ee4e4d3d8" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-c9f4df15f1fb" parent="Admin1-a733a278d1c0" value="View Banner List&lt;div&gt;UC-37.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1042" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-5b1371f976b7" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-238ee4e4d3d8" target="Admin1-c9f4df15f1fb" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7ece4ad9ba73" parent="Admin1-a733a278d1c0" value="View Banner Detail&lt;div&gt;UC-37.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1117" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-f45469b1aa98" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-238ee4e4d3d8" target="Admin1-7ece4ad9ba73" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-0c5f35b604e9" parent="Admin1-a733a278d1c0" value="Create Banner&lt;div&gt;UC-37.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1192" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-8faf141a7f37" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-238ee4e4d3d8" target="Admin1-0c5f35b604e9" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-254aba73c169" parent="Admin1-a733a278d1c0" value="Update Banner&lt;div&gt;UC-37.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1267" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-69b9a42e184e" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-238ee4e4d3d8" target="Admin1-254aba73c169" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-8b10cc236811" parent="Admin1-a733a278d1c0" value="Delete Banner&lt;div&gt;UC-37.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="185" y="1342" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a55b1f3761d5" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-238ee4e4d3d8" target="Admin1-8b10cc236811" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fdd9988188c7" parent="Admin1-a733a278d1c0" value="Skill Management&lt;div&gt;UC-38&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="187" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fd38cbe9fcd7" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-fdd9988188c7" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a994d3773502" parent="Admin1-a733a278d1c0" value="View Skill List&lt;div&gt;UC-38.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="0" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-2c83a266a6bb" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-a994d3773502" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-b0756b86ca3f" parent="Admin1-a733a278d1c0" value="View Skill Detail&lt;div&gt;UC-38.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="75" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-5d618f35c0cb" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-b0756b86ca3f" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-af8263972cd3" parent="Admin1-a733a278d1c0" value="Create Skill&lt;div&gt;UC-38.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="150" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-9440d8fb1b80" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-af8263972cd3" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-cd851efb1bdf" parent="Admin1-a733a278d1c0" value="Update Skill&lt;div&gt;UC-38.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="225" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-4b5d49714fb0" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-cd851efb1bdf" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-3e2b53973b39" parent="Admin1-a733a278d1c0" value="Delete Skill&lt;div&gt;UC-38.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="300" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-cf05a146eaf2" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-3e2b53973b39" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-5bfb99baae32" parent="Admin1-a733a278d1c0" value="Restore Skill&lt;div&gt;UC-38.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="375" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-f5bbe8061f8c" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-fdd9988188c7" target="Admin1-5bfb99baae32" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7b336fa8ecf2" parent="Admin1-a733a278d1c0" value="Account Profile Management&lt;div&gt;UC-41&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="591" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-5a9ca0015749" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-7b336fa8ecf2" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-46a3767899b1" parent="Admin1-a733a278d1c0" value="View Profile&lt;div&gt;UC-41.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="485" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-06b1a5cdde99" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-7b336fa8ecf2" target="Admin1-46a3767899b1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fde1e7783865" parent="Admin1-a733a278d1c0" value="Update Profile&lt;div&gt;UC-41.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="560" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a0c8d16c09e6" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-7b336fa8ecf2" target="Admin1-fde1e7783865" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-faca99b84060" parent="Admin1-a733a278d1c0" value="Change Password&lt;div&gt;UC-41.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="635" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-34fb4aaf14fb" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-7b336fa8ecf2" target="Admin1-faca99b84060" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-b9d5e28ef903" parent="Admin1-a733a278d1c0" value="Upload Avatar&lt;div&gt;UC-41.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="710" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-6ae3a0f456a5" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-7b336fa8ecf2" target="Admin1-b9d5e28ef903" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-64a9ebe197cf" parent="Admin1-a733a278d1c0" value="Payment Management&lt;div&gt;UC-43&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="829" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-af5973d043e3" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-64a9ebe197cf" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-4b5540b38715" parent="Admin1-a733a278d1c0" value="Execute Dispute Resolution Payment&lt;div&gt;UC-43.11&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="820" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fe149a76acd5" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-64a9ebe197cf" target="Admin1-4b5540b38715" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-33f4410600bd" parent="Admin1-a733a278d1c0" value="Job Category Management&lt;div&gt;UC-46&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="1138" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-90b162c7cb5e" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-33f4410600bd" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-5bb74f142793" parent="Admin1-a733a278d1c0" value="View Job Category List&lt;div&gt;UC-46.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="962" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-60d20b6477c9" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-5bb74f142793" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-509acf4c3ba5" parent="Admin1-a733a278d1c0" value="View Job Category Detail&lt;div&gt;UC-46.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1050" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a0240bf2fdb9" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-509acf4c3ba5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7f8df2576054" parent="Admin1-a733a278d1c0" value="Create Job Category&lt;div&gt;UC-46.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1138" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a99a3f2c65ab" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-7f8df2576054" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-b9ca1b38c889" parent="Admin1-a733a278d1c0" value="Update Job Category&lt;div&gt;UC-46.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1226" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-785781c55127" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-b9ca1b38c889" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-fd6ac97e1aa1" parent="Admin1-a733a278d1c0" value="Delete Job Category&lt;div&gt;UC-46.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1314" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-490d2196d23d" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-fd6ac97e1aa1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-aab4bf6e84c6" parent="Admin1-a733a278d1c0" value="Profile Update Review&lt;div&gt;UC-47&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="1660" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-cf02bf637eff" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-aab4bf6e84c6" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-18303b094649" parent="Admin1-a733a278d1c0" value="View Pending Profile Update Request List&lt;div&gt;UC-47.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1437" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-209a3359909f" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-aab4bf6e84c6" target="Admin1-18303b094649" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-bd4f9c49373f" parent="Admin1-a733a278d1c0" value="View Profile Update Request Detail&lt;div&gt;UC-47.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1544" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-48b70c8e90a1" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-aab4bf6e84c6" target="Admin1-bd4f9c49373f" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-318db28bb25a" parent="Admin1-a733a278d1c0" value="Approve Profile Update Request&lt;div&gt;UC-47.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1651" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-cba7c67f93bd" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-aab4bf6e84c6" target="Admin1-318db28bb25a" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-a9d79614b42c" parent="Admin1-a733a278d1c0" value="Reject Profile Update Request&lt;div&gt;UC-47.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1758" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-6b477a6f472f" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-aab4bf6e84c6" target="Admin1-a9d79614b42c" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-b78473b63224" parent="Admin1-a733a278d1c0" value="View Profile Update Request History&lt;div&gt;UC-47.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1865" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-4a317b3f7747" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-aab4bf6e84c6" target="Admin1-b78473b63224" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-49e906aa9b95" parent="Admin1-a733a278d1c0" value="ID Document Retention Policy Management&lt;div&gt;UC-48&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1560" y="2060" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-14cdf6806963" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-49e906aa9b95" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7f72a1c505c1" parent="Admin1-a733a278d1c0" value="View ID Document Retention Policy&lt;div&gt;UC-48.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="2007" width="140" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-659401a8690d" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-49e906aa9b95" target="Admin1-7f72a1c505c1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-25b57a35e0dd" parent="Admin1-a733a278d1c0" value="Configure ID Document Retention Policy&lt;div&gt;UC-48.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="2114" width="140" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-8aecf2b5e5ea" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-49e906aa9b95" target="Admin1-25b57a35e0dd" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-f9eeeed9442e" parent="1" value="Stripe" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="4210" y="100" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-02f6a468a849" edge="1" parent="1" source="Admin1-4b5540b38715" target="Admin1-f9eeeed9442e" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram></mxfile>
