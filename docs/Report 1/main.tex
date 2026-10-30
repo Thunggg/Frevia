@@ -11,6 +11,7 @@
 % FONT
 %====================================================
 \usepackage{mathptmx}
+\usepackage{helvet} % sans-serif face used by the template's Record of Changes table
 
 %====================================================
 % MATH
@@ -35,6 +36,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{multirow}
+\usepackage{makecell}
 \usepackage{caption}
 \usepackage{enumitem}
 
@@ -43,10 +45,10 @@
 %====================================================
 \usepackage{geometry}
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
-    left=3.0cm,
-    right=2.0cm,
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
     headheight=14pt
 }
 
@@ -69,6 +71,9 @@
 \definecolor{fptBlue}{RGB}{0,0,139}
 \definecolor{fptOrange}{RGB}{255,140,0}
 \definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{fptHeader}{RGB}{255,232,225}
+\definecolor{fptHeaderText}{RGB}{110,37,0}
+\definecolor{fptTocBlue}{RGB}{46,116,181}
 
 %====================================================
 % SECTION FORMAT
@@ -78,22 +83,35 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
-\titleformat{\section}
-  {\normalfont\Large\bfseries\color{fptred}}
-  {\thesection}{0.8em}{}
-  [\vspace{-0.35em}{\color{fptOrange}\rule{\textwidth}{1pt}}]
+% Level 1 (I., II.) -- 16 pt bold, dark red, matching Heading 1 of the template
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
 
+% Level 2 (1., 2., ...) -- 13 pt bold, black, matching Heading 2 of the template
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\thesection}{0.8em}{}
+
+% Level 3 (1.1, 1.2, ...) -- 12 pt bold, black, matching Heading 3 of the template
 \titleformat{\subsection}
-  {\normalfont\large\bfseries\color{fptBlue}}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
   {\thesubsection}{0.8em}{}
 
+% Level 4 (1.1.1, ...) -- 12 pt bold italic, matching Heading 4 of the template
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries\color{black}}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\itshape\color{black}}
   {\thesubsubsection}{0.8em}{}
 
-\titlespacing*{\section}{0pt}{2.4ex plus 1ex minus .2ex}{1.2ex plus .2ex}
-\titlespacing*{\subsection}{0pt}{1.8ex plus .8ex minus .2ex}{0.8ex plus .2ex}
-\titlespacing*{\subsubsection}{0pt}{1.4ex plus .6ex minus .2ex}{0.6ex plus .2ex}
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titlespacing*{\part}{0pt}{0pt}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
 
 %====================================================
 % HEADER & FOOTER
@@ -102,10 +120,8 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{FREVIA --- Project Introduction}}
-\fancyhead[R]{\small\leftmark}
 \fancyfoot[C]{\small\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
 \fancypagestyle{plain}{
@@ -129,15 +145,23 @@
 %====================================================
 \usepackage{tocloft}
 
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
 
-\renewcommand{\cftsecfont}{\bfseries}
-\renewcommand{\cftsecpagefont}{\bfseries}
+\renewcommand{\cftpartfont}{\normalfont\normalsize}
+\renewcommand{\cftpartpagefont}{\normalfont\normalsize}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
 
-\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforepartskip}{8pt}
+\setlength{\cftbeforesecskip}{4pt}
 \setlength{\cftbeforesubsecskip}{2pt}
+
+\setlength{\cftsecindent}{0.4cm}
+\setlength{\cftsubsecindent}{0.8cm}
+\setlength{\cftsubsubsecindent}{1.2cm}
 
 %====================================================
 % HYPERLINKS
@@ -171,17 +195,21 @@
 %====================================================
 \input{cover}
 
+% The cover is page 1 of the template, so the table of contents starts on page 2.
+\setcounter{page}{2}
+
 %====================================================
 % TABLE OF CONTENTS
 %====================================================
-\newpage
 \input{table_of_contents}
-
-\newpage
 
 %====================================================
 % MAIN CONTENT
 %====================================================
+\input{sections/record_of_changes}
+
+\part{Project Introduction}
+
 \input{sections/overview}
 
 \input{sections/product_background}

@@ -1,0 +1,74 @@
+\section{Requirement Appendix}
+
+This appendix collects the requirements that apply across features rather than to a single screen: the business rules that every use case must respect, the common requirements that hold for the whole system, and the standard application messages that the interface reuses.
+
+\subsection{Business Rules}
+
+The rules below are grouped by the feature they constrain. A use case that violates a rule is rejected, and the identifier of the rule is quoted in the corresponding alternative flow.
+
+\input{sections/5.Subsections/5.1.Business_Rules}
+
+\subsection{Common Requirements}
+
+The following requirements apply to every feature of the platform and are therefore not repeated in each use case.
+
+\begin{itemize}
+    \item \textbf{Authorisation.} Every endpoint is protected by the server-side permission guard, which checks the method, the path, and the module against the permissions of the caller's role. A hidden button or a disabled menu item is never treated as an access control.
+    \item \textbf{Pagination.} Every list endpoint is paginated, with a default page size of 10 items and an explicit page parameter, so that no screen loads an unbounded result set.
+    \item \textbf{Deletion.} Records that other records refer to are soft-deleted by setting \texttt{deleted\_at}; a soft-deleted record is excluded from every public listing and from every lookup used by a normal user. Hard deletion is limited to join records such as skills, bookmarks, and reactions.
+    \item \textbf{Timestamps.} Creation and modification times are stored in UTC and displayed in the time zone of the browser.
+    \item \textbf{Money.} All amounts are stored in the smallest currency unit and displayed with two decimals and an explicit currency; a financial record is never updated in place but is corrected by a new ledger entry.
+    \item \textbf{File uploads.} Every uploaded file is validated for type and size on the client before the request is sent and on the server before the file is stored.
+    \item \textbf{Language.} Every label, message, and validation error is read from the message catalogue, so that the same screen can be rendered in English and in Vietnamese without a code change.
+\end{itemize}
+
+\subsection{Application Messages List}
+
+The messages below are reused across features. The context column states when the message is raised, and the content column gives the English source text that the message catalogue translates.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+
+\begin{longtable}{|C{0.8cm}|C{1.5cm}|L{3.2cm}|L{4.2cm}|L{4.9cm}|}
+\hline
+\rowcolor{headerbg}
+\textbf{\#} &
+\textbf{Message code} &
+\textbf{Message Type} &
+\textbf{Context} &
+\textbf{Content} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{headerbg}
+\textbf{\#} &
+\textbf{Message code} &
+\textbf{Message Type} &
+\textbf{Context} &
+\textbf{Content} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+1 & MSG01 & Toast, red & The API cannot be reached or the network is down & Cannot connect to the server. Please try again later. \\ \hline
+2 & MSG02 & Toast, red & The server returns an unexpected error & Unable to process your request. Please try again later. \\ \hline
+3 & MSG03 & Toast, red & The caller requests a route outside the permissions of its role & You do not have permission to access this page. \\ \hline
+4 & MSG04 & Inline, under the field & A required field is left empty & All fields are required. \\ \hline
+5 & MSG05 & Inline, under the field & The email does not match a valid format & Please enter a valid email address. \\ \hline
+6 & MSG06 & Inline, under the field & The password does not meet the password policy & Password must be at least 8 characters and include at least one uppercase letter, one number, and one special character. \\ \hline
+7 & MSG07 & Inline, under the field & The password confirmation differs from the password & Passwords do not match. \\ \hline
+8 & MSG08 & Toast, red & A requested record does not exist or has been soft-deleted & Post not found. / Comment not found. / Proposal not found. \\ \hline
+9 & MSG09 & Toast, green & A record has been saved & Profile updated successfully. / Skill added successfully. / Portfolio created successfully. \\ \hline
+
+\caption{Application Messages List}
+\label{tab:application-messages}
+\end{longtable}
+
+\endgroup

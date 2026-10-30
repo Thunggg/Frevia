@@ -1,301 +1,325 @@
 \babel@toc {english}{}\relax 
-\contentsline {section}{\numberline {1}Overall Description}{7}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Assumptions}{7}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Design Constraints}{8}{subsection.1.2}%
-\contentsline {subsubsection}{\numberline {1.2.1}Platform Compatibility}{8}{subsubsection.1.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2}Integration Complexity}{8}{subsubsection.1.2.2}%
-\contentsline {subsubsection}{\numberline {1.2.3}Performance Requirements}{8}{subsubsection.1.2.3}%
-\contentsline {subsection}{\numberline {1.3}Technology Suggestion}{9}{subsection.1.3}%
-\contentsline {subsubsection}{\numberline {1.3.1}NestJS Framework}{10}{subsubsection.1.3.1}%
-\contentsline {subsubsection}{\numberline {1.3.2}Next.js and React 19 Frontend}{10}{subsubsection.1.3.2}%
-\contentsline {subsubsection}{\numberline {1.3.3}Prisma ORM and PostgreSQL}{10}{subsubsection.1.3.3}%
-\contentsline {subsubsection}{\numberline {1.3.4}Supporting Services}{10}{subsubsection.1.3.4}%
-\contentsline {section}{\numberline {2}System Architecture Design}{11}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Overall Architecture}{11}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}System Architecture}{12}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}API Module Structure}{12}{subsubsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.3}Package Diagram}{14}{subsection.2.3}%
-\contentsline {section}{\numberline {3}System Detailed Design}{15}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Forum Management}{15}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}UC-14.01 -- View Forum Category List}{17}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}UC-14.02 -- View Forum Category Detail}{18}{subsubsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.3}UC-14.03 -- View Post List}{19}{subsubsection.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.1.4}UC-14.04 -- View Post Detail}{20}{subsubsection.3.1.4}%
-\contentsline {subsubsection}{\numberline {3.1.5}UC-14.05 -- Create Post}{21}{subsubsection.3.1.5}%
-\contentsline {subsubsection}{\numberline {3.1.6}UC-14.06 -- Update Post}{22}{subsubsection.3.1.6}%
-\contentsline {subsubsection}{\numberline {3.1.7}UC-14.07 -- Delete Post}{23}{subsubsection.3.1.7}%
-\contentsline {subsubsection}{\numberline {3.1.8}UC-14.08 -- Like Post}{24}{subsubsection.3.1.8}%
-\contentsline {subsubsection}{\numberline {3.1.9}UC-14.09 -- Unlike Post}{25}{subsubsection.3.1.9}%
-\contentsline {subsubsection}{\numberline {3.1.10}UC-14.10 -- View Post Likes}{26}{subsubsection.3.1.10}%
-\contentsline {subsubsection}{\numberline {3.1.11}UC-14.11 -- View Post Comments}{27}{subsubsection.3.1.11}%
-\contentsline {subsubsection}{\numberline {3.1.12}UC-14.12 -- Create Comment}{28}{subsubsection.3.1.12}%
-\contentsline {subsubsection}{\numberline {3.1.13}UC-14.13 -- Update Comment}{29}{subsubsection.3.1.13}%
-\contentsline {subsubsection}{\numberline {3.1.14}UC-14.14 -- Delete Comment}{30}{subsubsection.3.1.14}%
-\contentsline {subsubsection}{\numberline {3.1.15}UC-14.15 -- Like Comment}{31}{subsubsection.3.1.15}%
-\contentsline {subsubsection}{\numberline {3.1.16}UC-14.16 -- Unlike Comment}{32}{subsubsection.3.1.16}%
-\contentsline {subsubsection}{\numberline {3.1.17}UC-14.17 -- Report Content}{33}{subsubsection.3.1.17}%
-\contentsline {subsection}{\numberline {3.2}Job Browsing}{34}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}UC-10.01 -- View Job List}{35}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}UC-10.02 -- View Job Detail}{36}{subsubsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.3}Job Management}{36}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}UC-11.01 -- View My Jobs}{38}{subsubsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}UC-11.02 -- Create Job}{39}{subsubsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3}UC-11.03 -- Publish Job}{40}{subsubsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.4}UC-11.04 -- Update Job}{41}{subsubsection.3.3.4}%
-\contentsline {subsubsection}{\numberline {3.3.5}UC-11.05 -- Delete Job}{42}{subsubsection.3.3.5}%
-\contentsline {subsubsection}{\numberline {3.3.6}UC-11.06 -- Change Job Status}{43}{subsubsection.3.3.6}%
-\contentsline {subsection}{\numberline {3.4}Bookmarked Jobs Management}{43}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}UC-12.01 -- View Bookmarked Job List}{45}{subsubsection.3.4.1}%
-\contentsline {subsubsection}{\numberline {3.4.2}UC-12.02 -- Bookmark Job}{46}{subsubsection.3.4.2}%
-\contentsline {subsubsection}{\numberline {3.4.3}UC-12.03 -- Remove Bookmark}{47}{subsubsection.3.4.3}%
-\contentsline {subsection}{\numberline {3.5}Authentication}{47}{subsection.3.5}%
-\contentsline {subsubsection}{\numberline {3.5.1}UC-01 -- Login with Google}{49}{subsubsection.3.5.1}%
-\contentsline {subsubsection}{\numberline {3.5.2}UC-02 -- Login}{50}{subsubsection.3.5.2}%
-\contentsline {subsubsection}{\numberline {3.5.3}UC-03 -- Logout}{51}{subsubsection.3.5.3}%
-\contentsline {subsubsection}{\numberline {3.5.4}UC-04 -- Register}{52}{subsubsection.3.5.4}%
-\contentsline {subsubsection}{\numberline {3.5.5}UC-05 -- Forgot Password}{53}{subsubsection.3.5.5}%
-\contentsline {subsection}{\numberline {3.6}Role Management}{53}{subsection.3.6}%
-\contentsline {subsubsection}{\numberline {3.6.1}UC-06.01 -- View Role List}{55}{subsubsection.3.6.1}%
-\contentsline {subsubsection}{\numberline {3.6.2}UC-06.02 -- View Role Detail}{56}{subsubsection.3.6.2}%
-\contentsline {subsubsection}{\numberline {3.6.3}UC-06.03 -- Create Role}{57}{subsubsection.3.6.3}%
-\contentsline {subsubsection}{\numberline {3.6.4}UC-06.04 -- Update Role}{58}{subsubsection.3.6.4}%
-\contentsline {subsubsection}{\numberline {3.6.5}UC-06.05 -- Delete Role}{59}{subsubsection.3.6.5}%
-\contentsline {subsubsection}{\numberline {3.6.6}UC-06.06 -- Update Role Permissions}{60}{subsubsection.3.6.6}%
-\contentsline {subsection}{\numberline {3.7}Manage Conversation}{60}{subsection.3.7}%
-\contentsline {subsubsection}{\numberline {3.7.1}UC-27.01 -- View Conversation List}{62}{subsubsection.3.7.1}%
-\contentsline {subsubsection}{\numberline {3.7.2}UC-27.02 -- Start Conversation}{63}{subsubsection.3.7.2}%
-\contentsline {subsubsection}{\numberline {3.7.3}UC-27.03 -- View Conversation Detail}{64}{subsubsection.3.7.3}%
-\contentsline {subsubsection}{\numberline {3.7.4}UC-27.04 -- Send Message}{65}{subsubsection.3.7.4}%
-\contentsline {subsubsection}{\numberline {3.7.5}UC-27.05 -- Mark Message as Read}{66}{subsubsection.3.7.5}%
-\contentsline {subsubsection}{\numberline {3.7.6}UC-27.06 -- Delete/Recall Message}{67}{subsubsection.3.7.6}%
-\contentsline {subsubsection}{\numberline {3.7.7}UC-27.07 -- Pin/Unpin Conversation}{68}{subsubsection.3.7.7}%
-\contentsline {subsubsection}{\numberline {3.7.8}UC-27.08 -- Send File}{69}{subsubsection.3.7.8}%
-\contentsline {subsection}{\numberline {3.8}Saved Search Management}{69}{subsection.3.8}%
-\contentsline {subsubsection}{\numberline {3.8.1}UC-22.01 -- View Saved Search List}{71}{subsubsection.3.8.1}%
-\contentsline {subsubsection}{\numberline {3.8.2}UC-22.02 -- View Saved Search Detail}{72}{subsubsection.3.8.2}%
-\contentsline {subsubsection}{\numberline {3.8.3}UC-22.03 -- Create Saved Search}{73}{subsubsection.3.8.3}%
-\contentsline {subsubsection}{\numberline {3.8.4}UC-22.04 -- Update Saved Search}{74}{subsubsection.3.8.4}%
-\contentsline {subsubsection}{\numberline {3.8.5}UC-22.05 -- Delete Saved Search}{75}{subsubsection.3.8.5}%
-\contentsline {subsection}{\numberline {3.9}Job Alert Management}{75}{subsection.3.9}%
-\contentsline {subsubsection}{\numberline {3.9.1}UC-23.01 -- View Job Alert List}{77}{subsubsection.3.9.1}%
-\contentsline {subsubsection}{\numberline {3.9.2}UC-23.02 -- View Job Alert Detail}{78}{subsubsection.3.9.2}%
-\contentsline {subsubsection}{\numberline {3.9.3}UC-23.03 -- Create Job Alert}{79}{subsubsection.3.9.3}%
-\contentsline {subsubsection}{\numberline {3.9.4}UC-23.04 -- Update Job Alert}{80}{subsubsection.3.9.4}%
-\contentsline {subsubsection}{\numberline {3.9.5}UC-23.05 -- Delete Job Alert}{81}{subsubsection.3.9.5}%
-\contentsline {subsection}{\numberline {3.10}Permission Management}{81}{subsection.3.10}%
-\contentsline {subsubsection}{\numberline {3.10.1}UC-15.01 -- View Permission List}{82}{subsubsection.3.10.1}%
-\contentsline {subsubsection}{\numberline {3.10.2}UC-15.02 -- View Permission Detail}{83}{subsubsection.3.10.2}%
-\contentsline {subsection}{\numberline {3.11}Session Management}{83}{subsection.3.11}%
-\contentsline {subsubsection}{\numberline {3.11.1}UC-16.01 -- View Session List}{85}{subsubsection.3.11.1}%
-\contentsline {subsubsection}{\numberline {3.11.2}UC-16.02 -- View Session Detail}{86}{subsubsection.3.11.2}%
-\contentsline {subsubsection}{\numberline {3.11.3}UC-16.03 -- Revoke Session}{87}{subsubsection.3.11.3}%
-\contentsline {subsection}{\numberline {3.12}Forum Category Management}{88}{subsection.3.12}%
-\contentsline {subsubsection}{\numberline {3.12.1}UC-17.01 -- Create Forum Category}{89}{subsubsection.3.12.1}%
-\contentsline {subsubsection}{\numberline {3.12.2}UC-17.02 -- Update Forum Category}{90}{subsubsection.3.12.2}%
-\contentsline {subsubsection}{\numberline {3.12.3}UC-17.03 -- Delete Forum Category}{91}{subsubsection.3.12.3}%
-\contentsline {subsubsection}{\numberline {3.12.4}UC-17.06 -- Restore Forum Category}{92}{subsubsection.3.12.4}%
-\contentsline {subsubsection}{\numberline {3.12.5}UC-14.01 -- View Forum Category List}{93}{subsubsection.3.12.5}%
-\contentsline {subsubsection}{\numberline {3.12.6}UC-14.02 -- View Forum Category Detail}{94}{subsubsection.3.12.6}%
-\contentsline {subsection}{\numberline {3.13}Manage Moderation}{94}{subsection.3.13}%
-\contentsline {subsubsection}{\numberline {3.13.1}UC-34.01 -- View Moderation Queue}{95}{subsubsection.3.13.1}%
-\contentsline {subsubsection}{\numberline {3.13.2}UC-34.02 -- View Moderation Item Detail}{96}{subsubsection.3.13.2}%
-\contentsline {subsubsection}{\numberline {3.13.3}UC-34.03 -- Resolve Moderation Item}{97}{subsubsection.3.13.3}%
-\contentsline {subsection}{\numberline {3.14}Manage ID Verification}{98}{subsection.3.14}%
-\contentsline {subsubsection}{\numberline {3.14.1}UC-35.01 -- View ID Verification Request List}{99}{subsubsection.3.14.1}%
-\contentsline {subsubsection}{\numberline {3.14.2}UC-35.02 -- View ID Verification Request Detail}{100}{subsubsection.3.14.2}%
-\contentsline {subsubsection}{\numberline {3.14.3}UC-35.03 -- Approve ID Verification}{101}{subsubsection.3.14.3}%
-\contentsline {subsubsection}{\numberline {3.14.4}UC-35.04 -- Reject ID Verification}{102}{subsubsection.3.14.4}%
-\contentsline {subsection}{\numberline {3.15}Manage Forum Trash}{103}{subsection.3.15}%
-\contentsline {subsubsection}{\numberline {3.15.1}UC-36.01 -- View Deleted Posts/Comments List}{104}{subsubsection.3.15.1}%
-\contentsline {subsubsection}{\numberline {3.15.2}UC-36.02 -- View Deleted Posts/Comments Detail}{105}{subsubsection.3.15.2}%
-\contentsline {subsubsection}{\numberline {3.15.3}UC-36.03 -- Restore Deleted Posts/Comments}{106}{subsubsection.3.15.3}%
-\contentsline {subsection}{\numberline {3.16}Proposal Management}{107}{subsection.3.16}%
-\contentsline {subsubsection}{\numberline {3.16.1}UC-32.01 -- View My Proposal List}{109}{subsubsection.3.16.1}%
-\contentsline {subsubsection}{\numberline {3.16.2}UC-32.02 -- View My Proposal Detail}{110}{subsubsection.3.16.2}%
-\contentsline {subsubsection}{\numberline {3.16.3}UC-32.03 -- Submit Proposal}{111}{subsubsection.3.16.3}%
-\contentsline {subsubsection}{\numberline {3.16.4}UC-32.04 -- Update Proposal}{112}{subsubsection.3.16.4}%
-\contentsline {subsubsection}{\numberline {3.16.5}UC-32.05 -- Withdraw Proposal}{113}{subsubsection.3.16.5}%
-\contentsline {subsubsection}{\numberline {3.16.6}UC-32.06 -- Accept Proposal}{114}{subsubsection.3.16.6}%
-\contentsline {subsubsection}{\numberline {3.16.7}UC-32.07 -- Reject Proposal}{115}{subsubsection.3.16.7}%
-\contentsline {subsubsection}{\numberline {3.16.8}UC-32.08 -- View Job Proposal List}{116}{subsubsection.3.16.8}%
-\contentsline {subsubsection}{\numberline {3.16.9}UC-32.09 -- View Proposal Detail}{117}{subsubsection.3.16.9}%
-\contentsline {subsection}{\numberline {3.17}User Management}{117}{subsection.3.17}%
-\contentsline {subsubsection}{\numberline {3.17.1}UC-28.01 -- View User List}{119}{subsubsection.3.17.1}%
-\contentsline {subsubsection}{\numberline {3.17.2}UC-28.02 -- View User Detail}{120}{subsubsection.3.17.2}%
-\contentsline {subsubsection}{\numberline {3.17.3}UC-28.03 -- Create User}{121}{subsubsection.3.17.3}%
-\contentsline {subsubsection}{\numberline {3.17.4}UC-28.04 -- Update User}{122}{subsubsection.3.17.4}%
-\contentsline {subsubsection}{\numberline {3.17.5}UC-28.05 -- Update Client Profile}{123}{subsubsection.3.17.5}%
-\contentsline {subsubsection}{\numberline {3.17.6}UC-28.06 -- Update Freelancer Basic Info}{124}{subsubsection.3.17.6}%
-\contentsline {subsubsection}{\numberline {3.17.7}UC-28.07 -- Update Freelancer Skills}{125}{subsubsection.3.17.7}%
-\contentsline {subsubsection}{\numberline {3.17.8}UC-28.08 -- Update Freelancer Portfolio}{126}{subsubsection.3.17.8}%
-\contentsline {subsection}{\numberline {3.18}Banner Management}{127}{subsection.3.18}%
-\contentsline {subsubsection}{\numberline {3.18.1}UC-37.01 -- View Banner List}{128}{subsubsection.3.18.1}%
-\contentsline {subsubsection}{\numberline {3.18.2}UC-37.02 -- View Banner Detail}{129}{subsubsection.3.18.2}%
-\contentsline {subsubsection}{\numberline {3.18.3}UC-37.03 -- Create Banner}{130}{subsubsection.3.18.3}%
-\contentsline {subsubsection}{\numberline {3.18.4}UC-37.04 -- Update Banner}{131}{subsubsection.3.18.4}%
-\contentsline {subsubsection}{\numberline {3.18.5}UC-37.05 -- Delete Banner}{132}{subsubsection.3.18.5}%
-\contentsline {subsection}{\numberline {3.19}Skill Management}{133}{subsection.3.19}%
-\contentsline {subsubsection}{\numberline {3.19.1}UC-38.01 -- View Skill List}{134}{subsubsection.3.19.1}%
-\contentsline {subsubsection}{\numberline {3.19.2}UC-38.02 -- View Skill Detail}{135}{subsubsection.3.19.2}%
-\contentsline {subsubsection}{\numberline {3.19.3}UC-38.03 -- Create Skill}{136}{subsubsection.3.19.3}%
-\contentsline {subsubsection}{\numberline {3.19.4}UC-38.04 -- Update Skill}{137}{subsubsection.3.19.4}%
-\contentsline {subsubsection}{\numberline {3.19.5}UC-38.05 -- Delete Skill}{138}{subsubsection.3.19.5}%
-\contentsline {subsubsection}{\numberline {3.19.6}UC-38.06 -- Restore Skill}{139}{subsubsection.3.19.6}%
-\contentsline {subsection}{\numberline {3.20}Expert Profile Management}{139}{subsection.3.20}%
-\contentsline {subsubsection}{\numberline {3.20.1}UC-28.09 -- Update Expert Profile}{141}{subsubsection.3.20.1}%
-\contentsline {subsection}{\numberline {3.21}Job Category Management}{142}{subsection.3.21}%
-\contentsline {subsubsection}{\numberline {3.21.1}UC-46.01 -- View Job Category List}{143}{subsubsection.3.21.1}%
-\contentsline {subsubsection}{\numberline {3.21.2}UC-46.02 -- View Job Category Detail}{144}{subsubsection.3.21.2}%
-\contentsline {subsubsection}{\numberline {3.21.3}UC-46.03 -- Create Job Category}{145}{subsubsection.3.21.3}%
-\contentsline {subsubsection}{\numberline {3.21.4}UC-46.04 -- Update Job Category}{146}{subsubsection.3.21.4}%
-\contentsline {subsubsection}{\numberline {3.21.5}UC-46.05 -- Delete Job Category}{147}{subsubsection.3.21.5}%
-\contentsline {section}{\numberline {4}Class Specification}{148}{section.4}%
-\contentsline {subsection}{\numberline {4.1}ForumController Class}{148}{subsection.4.1}%
-\contentsline {paragraph}{\numberline {4.1.1}ClassMethod}{148}{paragraph.4.1.1}%
-\contentsline {paragraph}{\numberline {4.1.2}ClassAttribute}{150}{paragraph.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}ForumService Class}{150}{subsection.4.2}%
-\contentsline {paragraph}{\numberline {4.2.1}ClassMethod}{150}{paragraph.4.2.1}%
-\contentsline {paragraph}{\numberline {4.2.2}ClassAttribute}{153}{paragraph.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}ForumRepository Class}{154}{subsection.4.3}%
-\contentsline {paragraph}{\numberline {4.3.1}ClassMethod}{154}{paragraph.4.3.1}%
-\contentsline {paragraph}{\numberline {4.3.2}ClassAttribute}{156}{paragraph.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}ForumLikeController Class}{158}{subsection.4.4}%
-\contentsline {paragraph}{\numberline {4.4.1}ClassMethod}{158}{paragraph.4.4.1}%
-\contentsline {paragraph}{\numberline {4.4.2}ClassAttribute}{158}{paragraph.4.4.2}%
-\contentsline {subsection}{\numberline {4.5}ForumLikeService Class}{158}{subsection.4.5}%
-\contentsline {paragraph}{\numberline {4.5.1}ClassMethod}{158}{paragraph.4.5.1}%
-\contentsline {paragraph}{\numberline {4.5.2}ClassAttribute}{159}{paragraph.4.5.2}%
-\contentsline {subsection}{\numberline {4.6}ForumLikeRepository Class}{159}{subsection.4.6}%
-\contentsline {paragraph}{\numberline {4.6.1}ClassMethod}{159}{paragraph.4.6.1}%
-\contentsline {paragraph}{\numberline {4.6.2}ClassAttribute}{160}{paragraph.4.6.2}%
-\contentsline {subsection}{\numberline {4.7}ForumCommentController Class}{161}{subsection.4.7}%
-\contentsline {paragraph}{\numberline {4.7.1}ClassMethod}{161}{paragraph.4.7.1}%
-\contentsline {paragraph}{\numberline {4.7.2}ClassAttribute}{162}{paragraph.4.7.2}%
-\contentsline {subsection}{\numberline {4.8}ForumCommentService Class}{163}{subsection.4.8}%
-\contentsline {paragraph}{\numberline {4.8.1}ClassMethod}{163}{paragraph.4.8.1}%
-\contentsline {paragraph}{\numberline {4.8.2}ClassAttribute}{164}{paragraph.4.8.2}%
-\contentsline {subsection}{\numberline {4.9}ForumCommentRepository Class}{164}{subsection.4.9}%
-\contentsline {paragraph}{\numberline {4.9.1}ClassMethod}{164}{paragraph.4.9.1}%
-\contentsline {paragraph}{\numberline {4.9.2}ClassAttribute}{166}{paragraph.4.9.2}%
-\contentsline {subsection}{\numberline {4.10}ForumReportController Class}{167}{subsection.4.10}%
-\contentsline {paragraph}{\numberline {4.10.1}ClassMethod}{167}{paragraph.4.10.1}%
-\contentsline {paragraph}{\numberline {4.10.2}ClassAttribute}{169}{paragraph.4.10.2}%
-\contentsline {subsection}{\numberline {4.11}ForumReportService Class}{169}{subsection.4.11}%
-\contentsline {paragraph}{\numberline {4.11.1}ClassMethod}{169}{paragraph.4.11.1}%
-\contentsline {paragraph}{\numberline {4.11.2}ClassAttribute}{171}{paragraph.4.11.2}%
-\contentsline {subsection}{\numberline {4.12}ForumReportRepository Class}{171}{subsection.4.12}%
-\contentsline {paragraph}{\numberline {4.12.1}ClassMethod}{171}{paragraph.4.12.1}%
-\contentsline {paragraph}{\numberline {4.12.2}ClassAttribute}{173}{paragraph.4.12.2}%
-\contentsline {subsubsection}{Supporting DTO classes for reports}{173}{table.28}%
-\contentsline {subsection}{\numberline {4.13}AuthController Class}{174}{subsection.4.13}%
-\contentsline {paragraph}{\numberline {4.13.1}ClassMethod}{174}{paragraph.4.13.1}%
-\contentsline {paragraph}{\numberline {4.13.2}ClassAttribute}{176}{paragraph.4.13.2}%
-\contentsline {subsection}{\numberline {4.14}AuthService Class}{177}{subsection.4.14}%
-\contentsline {paragraph}{\numberline {4.14.1}ClassMethod}{177}{paragraph.4.14.1}%
-\contentsline {paragraph}{\numberline {4.14.2}ClassAttribute}{180}{paragraph.4.14.2}%
-\contentsline {subsection}{\numberline {4.15}AuthRepository Class}{181}{subsection.4.15}%
-\contentsline {paragraph}{\numberline {4.15.1}ClassMethod}{181}{paragraph.4.15.1}%
-\contentsline {paragraph}{\numberline {4.15.2}ClassAttribute}{183}{paragraph.4.15.2}%
-\contentsline {subsection}{\numberline {4.16}RolesController Class}{184}{subsection.4.16}%
-\contentsline {paragraph}{\numberline {4.16.1}ClassMethod}{184}{paragraph.4.16.1}%
-\contentsline {paragraph}{\numberline {4.16.2}ClassAttribute}{185}{paragraph.4.16.2}%
-\contentsline {subsection}{\numberline {4.17}RolesService Class}{185}{subsection.4.17}%
-\contentsline {paragraph}{\numberline {4.17.1}ClassMethod}{185}{paragraph.4.17.1}%
-\contentsline {paragraph}{\numberline {4.17.2}ClassAttribute}{187}{paragraph.4.17.2}%
-\contentsline {subsection}{\numberline {4.18}RolesRepository Class}{187}{subsection.4.18}%
-\contentsline {paragraph}{\numberline {4.18.1}ClassMethod}{187}{paragraph.4.18.1}%
-\contentsline {paragraph}{\numberline {4.18.2}ClassAttribute}{188}{paragraph.4.18.2}%
-\contentsline {subsection}{\numberline {4.19}ConversationController Class}{189}{subsection.4.19}%
-\contentsline {paragraph}{\numberline {4.19.1}ClassMethod}{189}{paragraph.4.19.1}%
-\contentsline {paragraph}{\numberline {4.19.2}ClassAttribute}{191}{paragraph.4.19.2}%
-\contentsline {subsection}{\numberline {4.20}ConversationService Class}{191}{subsection.4.20}%
-\contentsline {paragraph}{\numberline {4.20.1}ClassMethod}{191}{paragraph.4.20.1}%
-\contentsline {paragraph}{\numberline {4.20.2}ClassAttribute}{195}{paragraph.4.20.2}%
-\contentsline {subsection}{\numberline {4.21}ConversationRepository Class}{195}{subsection.4.21}%
-\contentsline {paragraph}{\numberline {4.21.1}ClassMethod}{195}{paragraph.4.21.1}%
-\contentsline {paragraph}{\numberline {4.21.2}ClassAttribute}{198}{paragraph.4.21.2}%
-\contentsline {subsection}{\numberline {4.22}ConversationsGateway Class}{198}{subsection.4.22}%
-\contentsline {paragraph}{\numberline {4.22.1}ClassMethod}{198}{paragraph.4.22.1}%
-\contentsline {paragraph}{\numberline {4.22.2}ClassAttribute}{200}{paragraph.4.22.2}%
-\contentsline {subsection}{\numberline {4.23}PermissionsController Class}{200}{subsection.4.23}%
-\contentsline {paragraph}{\numberline {4.23.1}ClassMethod}{200}{paragraph.4.23.1}%
-\contentsline {paragraph}{\numberline {4.23.2}ClassAttribute}{201}{paragraph.4.23.2}%
-\contentsline {subsection}{\numberline {4.24}PermissionsService Class}{201}{subsection.4.24}%
-\contentsline {paragraph}{\numberline {4.24.1}ClassMethod}{201}{paragraph.4.24.1}%
-\contentsline {paragraph}{\numberline {4.24.2}ClassAttribute}{202}{paragraph.4.24.2}%
-\contentsline {subsection}{\numberline {4.25}PermissionsRepository Class}{202}{subsection.4.25}%
-\contentsline {paragraph}{\numberline {4.25.1}ClassMethod}{202}{paragraph.4.25.1}%
-\contentsline {paragraph}{\numberline {4.25.2}ClassAttribute}{203}{paragraph.4.25.2}%
-\contentsline {subsection}{\numberline {4.26}SessionsController Class}{203}{subsection.4.26}%
-\contentsline {paragraph}{\numberline {4.26.1}ClassMethod}{203}{paragraph.4.26.1}%
-\contentsline {paragraph}{\numberline {4.26.2}ClassAttribute}{204}{paragraph.4.26.2}%
-\contentsline {subsection}{\numberline {4.27}SessionsService Class}{204}{subsection.4.27}%
-\contentsline {paragraph}{\numberline {4.27.1}ClassMethod}{204}{paragraph.4.27.1}%
-\contentsline {paragraph}{\numberline {4.27.2}ClassAttribute}{205}{paragraph.4.27.2}%
-\contentsline {subsection}{\numberline {4.28}SessionsRepository Class}{206}{subsection.4.28}%
-\contentsline {paragraph}{\numberline {4.28.1}ClassMethod}{206}{paragraph.4.28.1}%
-\contentsline {paragraph}{\numberline {4.28.2}ClassAttribute}{207}{paragraph.4.28.2}%
-\contentsline {subsection}{\numberline {4.29}Forum Category Administration (Shared Classes)}{207}{subsection.4.29}%
-\contentsline {subsection}{\numberline {4.30}ForumAdminController Class}{207}{subsection.4.30}%
-\contentsline {paragraph}{\numberline {4.30.1}ClassMethod}{207}{paragraph.4.30.1}%
-\contentsline {paragraph}{\numberline {4.30.2}ClassAttribute}{211}{paragraph.4.30.2}%
-\contentsline {subsection}{\numberline {4.31}ForumAdminService Class}{211}{subsection.4.31}%
-\contentsline {paragraph}{\numberline {4.31.1}ClassMethod}{211}{paragraph.4.31.1}%
-\contentsline {paragraph}{\numberline {4.31.2}ClassAttribute}{215}{paragraph.4.31.2}%
-\contentsline {subsection}{\numberline {4.32}ForumAdminRepository Class}{215}{subsection.4.32}%
-\contentsline {paragraph}{\numberline {4.32.1}ClassMethod}{215}{paragraph.4.32.1}%
-\contentsline {paragraph}{\numberline {4.32.2}ClassAttribute}{219}{paragraph.4.32.2}%
-\contentsline {subsection}{\numberline {4.33}IdentityVerificationsAdminController Class}{219}{subsection.4.33}%
-\contentsline {paragraph}{\numberline {4.33.1}ClassMethod}{219}{paragraph.4.33.1}%
-\contentsline {paragraph}{\numberline {4.33.2}ClassAttribute}{221}{paragraph.4.33.2}%
-\contentsline {subsection}{\numberline {4.34}IdentityVerificationsAdminService Class}{221}{subsection.4.34}%
-\contentsline {paragraph}{\numberline {4.34.1}ClassMethod}{221}{paragraph.4.34.1}%
-\contentsline {paragraph}{\numberline {4.34.2}ClassAttribute}{222}{paragraph.4.34.2}%
-\contentsline {subsection}{\numberline {4.35}IdentityVerificationsAdminRepository Class}{223}{subsection.4.35}%
-\contentsline {paragraph}{\numberline {4.35.1}ClassMethod}{223}{paragraph.4.35.1}%
-\contentsline {paragraph}{\numberline {4.35.2}ClassAttribute}{224}{paragraph.4.35.2}%
-\contentsline {subsection}{\numberline {4.36}UsersController Class}{224}{subsection.4.36}%
-\contentsline {paragraph}{\numberline {4.36.1}ClassMethod}{224}{paragraph.4.36.1}%
-\contentsline {paragraph}{\numberline {4.36.2}ClassAttribute}{227}{paragraph.4.36.2}%
-\contentsline {subsection}{\numberline {4.37}UsersService Class}{227}{subsection.4.37}%
-\contentsline {paragraph}{\numberline {4.37.1}ClassMethod}{227}{paragraph.4.37.1}%
-\contentsline {paragraph}{\numberline {4.37.2}ClassAttribute}{230}{paragraph.4.37.2}%
-\contentsline {subsection}{\numberline {4.38}UsersRepository Class}{230}{subsection.4.38}%
-\contentsline {paragraph}{\numberline {4.38.1}ClassMethod}{230}{paragraph.4.38.1}%
-\contentsline {paragraph}{\numberline {4.38.2}ClassAttribute}{233}{paragraph.4.38.2}%
-\contentsline {subsection}{\numberline {4.39}BannersAdminController Class}{233}{subsection.4.39}%
-\contentsline {paragraph}{\numberline {4.39.1}ClassMethod}{233}{paragraph.4.39.1}%
-\contentsline {paragraph}{\numberline {4.39.2}ClassAttribute}{235}{paragraph.4.39.2}%
-\contentsline {subsection}{\numberline {4.40}BannersAdminService Class}{235}{subsection.4.40}%
-\contentsline {paragraph}{\numberline {4.40.1}ClassMethod}{235}{paragraph.4.40.1}%
-\contentsline {paragraph}{\numberline {4.40.2}ClassAttribute}{236}{paragraph.4.40.2}%
-\contentsline {subsection}{\numberline {4.41}BannersAdminRepository Class}{237}{subsection.4.41}%
-\contentsline {paragraph}{\numberline {4.41.1}ClassMethod}{237}{paragraph.4.41.1}%
-\contentsline {paragraph}{\numberline {4.41.2}ClassAttribute}{238}{paragraph.4.41.2}%
-\contentsline {subsection}{\numberline {4.42}SkillsAdminController Class}{238}{subsection.4.42}%
-\contentsline {paragraph}{\numberline {4.42.1}ClassMethod}{238}{paragraph.4.42.1}%
-\contentsline {paragraph}{\numberline {4.42.2}ClassAttribute}{239}{paragraph.4.42.2}%
-\contentsline {subsection}{\numberline {4.43}SkillsAdminService Class}{240}{subsection.4.43}%
-\contentsline {paragraph}{\numberline {4.43.1}ClassMethod}{240}{paragraph.4.43.1}%
-\contentsline {paragraph}{\numberline {4.43.2}ClassAttribute}{241}{paragraph.4.43.2}%
-\contentsline {subsection}{\numberline {4.44}SkillsAdminRepository Class}{241}{subsection.4.44}%
-\contentsline {paragraph}{\numberline {4.44.1}ClassMethod}{241}{paragraph.4.44.1}%
-\contentsline {paragraph}{\numberline {4.44.2}ClassAttribute}{243}{paragraph.4.44.2}%
-\contentsline {subsection}{\numberline {4.45}AdminExpertProfileController Class}{243}{subsection.4.45}%
-\contentsline {paragraph}{\numberline {4.45.1}ClassMethod}{243}{paragraph.4.45.1}%
-\contentsline {paragraph}{\numberline {4.45.2}ClassAttribute}{244}{paragraph.4.45.2}%
-\contentsline {subsection}{\numberline {4.46}ExpertProfileService Class}{244}{subsection.4.46}%
-\contentsline {paragraph}{\numberline {4.46.1}ClassMethod}{244}{paragraph.4.46.1}%
-\contentsline {paragraph}{\numberline {4.46.2}ClassAttribute}{246}{paragraph.4.46.2}%
-\contentsline {subsection}{\numberline {4.47}ExpertProfileRepository Class}{246}{subsection.4.47}%
-\contentsline {paragraph}{\numberline {4.47.1}ClassMethod}{246}{paragraph.4.47.1}%
-\contentsline {paragraph}{\numberline {4.47.2}ClassAttribute}{247}{paragraph.4.47.2}%
-\contentsline {subsection}{\numberline {4.48}JobCategoriesAdminController Class}{247}{subsection.4.48}%
-\contentsline {paragraph}{\numberline {4.48.1}ClassMethod}{247}{paragraph.4.48.1}%
-\contentsline {paragraph}{\numberline {4.48.2}ClassAttribute}{249}{paragraph.4.48.2}%
-\contentsline {subsection}{\numberline {4.49}JobCategoriesAdminService Class}{249}{subsection.4.49}%
-\contentsline {paragraph}{\numberline {4.49.1}ClassMethod}{249}{paragraph.4.49.1}%
-\contentsline {paragraph}{\numberline {4.49.2}ClassAttribute}{250}{paragraph.4.49.2}%
-\contentsline {subsection}{\numberline {4.50}JobCategoriesAdminRepository Class}{250}{subsection.4.50}%
-\contentsline {paragraph}{\numberline {4.50.1}ClassMethod}{250}{paragraph.4.50.1}%
-\contentsline {paragraph}{\numberline {4.50.2}ClassAttribute}{252}{paragraph.4.50.2}%
+\contentsline {part}{I.\hspace {1em}Record of Changes}{9}{part.1}%
+\contentsline {part}{II.\hspace {1em}Software Design Document}{10}{part.2}%
+\contentsline {section}{\numberline {1.}System Design}{10}{section.1}%
+\contentsline {subsection}{\numberline {1.1}System Architecture}{10}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Layered Architecture}{11}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}API Module Structure}{12}{subsubsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.2}Package Diagram}{13}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Assumptions and Risks}{15}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Design Constraints}{16}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}Platform Compatibility}{17}{subsubsection.1.4.1}%
+\contentsline {subsubsection}{\numberline {1.4.2}Integration Complexity}{17}{subsubsection.1.4.2}%
+\contentsline {subsubsection}{\numberline {1.4.3}Performance Requirements}{17}{subsubsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.5}Technology Stack}{17}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}NestJS Framework}{18}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Next.js and React 19 Frontend}{19}{subsubsection.1.5.2}%
+\contentsline {subsubsection}{\numberline {1.5.3}Prisma ORM and PostgreSQL}{19}{subsubsection.1.5.3}%
+\contentsline {subsubsection}{\numberline {1.5.4}Supporting Services}{19}{subsubsection.1.5.4}%
+\contentsline {section}{\numberline {2.}Database Design}{19}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Table Relationships}{20}{subsection.2.1}%
+\contentsline {section}{\numberline {3.}Detailed Design}{29}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Forum Management}{29}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Class Diagram}{30}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}UC-14.01 -- View Forum Category List}{31}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}UC-14.02 -- View Forum Category Detail}{32}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}UC-14.03 -- View Post List}{33}{subsubsection.3.1.4}%
+\contentsline {subsubsection}{\numberline {3.1.5}UC-14.04 -- View Post Detail}{34}{subsubsection.3.1.5}%
+\contentsline {subsubsection}{\numberline {3.1.6}UC-14.05 -- Create Post}{35}{subsubsection.3.1.6}%
+\contentsline {subsubsection}{\numberline {3.1.7}UC-14.06 -- Update Post}{36}{subsubsection.3.1.7}%
+\contentsline {subsubsection}{\numberline {3.1.8}UC-14.07 -- Delete Post}{37}{subsubsection.3.1.8}%
+\contentsline {subsubsection}{\numberline {3.1.9}UC-14.08 -- Like Post}{38}{subsubsection.3.1.9}%
+\contentsline {subsubsection}{\numberline {3.1.10}UC-14.09 -- Unlike Post}{39}{subsubsection.3.1.10}%
+\contentsline {subsubsection}{\numberline {3.1.11}UC-14.10 -- View Post Likes}{40}{subsubsection.3.1.11}%
+\contentsline {subsubsection}{\numberline {3.1.12}UC-14.11 -- View Post Comments}{41}{subsubsection.3.1.12}%
+\contentsline {subsubsection}{\numberline {3.1.13}UC-14.12 -- Create Comment}{42}{subsubsection.3.1.13}%
+\contentsline {subsubsection}{\numberline {3.1.14}UC-14.13 -- Update Comment}{43}{subsubsection.3.1.14}%
+\contentsline {subsubsection}{\numberline {3.1.15}UC-14.14 -- Delete Comment}{44}{subsubsection.3.1.15}%
+\contentsline {subsubsection}{\numberline {3.1.16}UC-14.15 -- Like Comment}{45}{subsubsection.3.1.16}%
+\contentsline {subsubsection}{\numberline {3.1.17}UC-14.16 -- Unlike Comment}{46}{subsubsection.3.1.17}%
+\contentsline {subsubsection}{\numberline {3.1.18}UC-14.17 -- Report Content}{47}{subsubsection.3.1.18}%
+\contentsline {subsection}{\numberline {3.2}Job Browsing}{48}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Class Diagram}{48}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}UC-10.01 -- View Job List}{49}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}UC-10.02 -- View Job Detail}{50}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Job Management}{50}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Class Diagram}{51}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}UC-11.01 -- View My Jobs}{52}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}UC-11.02 -- Create Job}{53}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}UC-11.03 -- Publish Job}{54}{subsubsection.3.3.4}%
+\contentsline {subsubsection}{\numberline {3.3.5}UC-11.04 -- Update Job}{55}{subsubsection.3.3.5}%
+\contentsline {subsubsection}{\numberline {3.3.6}UC-11.05 -- Delete Job}{56}{subsubsection.3.3.6}%
+\contentsline {subsubsection}{\numberline {3.3.7}UC-11.06 -- Change Job Status}{57}{subsubsection.3.3.7}%
+\contentsline {subsection}{\numberline {3.4}Bookmarked Jobs Management}{57}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Class Diagram}{58}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}UC-12.01 -- View Bookmarked Job List}{59}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}UC-12.02 -- Bookmark Job}{60}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}UC-12.03 -- Remove Bookmark}{61}{subsubsection.3.4.4}%
+\contentsline {subsection}{\numberline {3.5}Authentication}{61}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Class Diagram}{62}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}UC-01 -- Login with Google}{63}{subsubsection.3.5.2}%
+\contentsline {subsubsection}{\numberline {3.5.3}UC-02 -- Login}{64}{subsubsection.3.5.3}%
+\contentsline {subsubsection}{\numberline {3.5.4}UC-03 -- Logout}{65}{subsubsection.3.5.4}%
+\contentsline {subsubsection}{\numberline {3.5.5}UC-04 -- Register}{66}{subsubsection.3.5.5}%
+\contentsline {subsubsection}{\numberline {3.5.6}UC-05 -- Forgot Password}{67}{subsubsection.3.5.6}%
+\contentsline {subsection}{\numberline {3.6}Role Management}{67}{subsection.3.6}%
+\contentsline {subsubsection}{\numberline {3.6.1}Class Diagram}{68}{subsubsection.3.6.1}%
+\contentsline {subsubsection}{\numberline {3.6.2}UC-06.01 -- View Role List}{69}{subsubsection.3.6.2}%
+\contentsline {subsubsection}{\numberline {3.6.3}UC-06.02 -- View Role Detail}{70}{subsubsection.3.6.3}%
+\contentsline {subsubsection}{\numberline {3.6.4}UC-06.03 -- Create Role}{71}{subsubsection.3.6.4}%
+\contentsline {subsubsection}{\numberline {3.6.5}UC-06.04 -- Update Role}{72}{subsubsection.3.6.5}%
+\contentsline {subsubsection}{\numberline {3.6.6}UC-06.05 -- Delete Role}{73}{subsubsection.3.6.6}%
+\contentsline {subsubsection}{\numberline {3.6.7}UC-06.06 -- Update Role Permissions}{74}{subsubsection.3.6.7}%
+\contentsline {subsection}{\numberline {3.7}Manage Conversation}{74}{subsection.3.7}%
+\contentsline {subsubsection}{\numberline {3.7.1}Class Diagram}{75}{subsubsection.3.7.1}%
+\contentsline {subsubsection}{\numberline {3.7.2}UC-27.01 -- View Conversation List}{76}{subsubsection.3.7.2}%
+\contentsline {subsubsection}{\numberline {3.7.3}UC-27.02 -- Start Conversation}{77}{subsubsection.3.7.3}%
+\contentsline {subsubsection}{\numberline {3.7.4}UC-27.03 -- View Conversation Detail}{78}{subsubsection.3.7.4}%
+\contentsline {subsubsection}{\numberline {3.7.5}UC-27.04 -- Send Message}{79}{subsubsection.3.7.5}%
+\contentsline {subsubsection}{\numberline {3.7.6}UC-27.05 -- Mark Message as Read}{80}{subsubsection.3.7.6}%
+\contentsline {subsubsection}{\numberline {3.7.7}UC-27.06 -- Delete/Recall Message}{81}{subsubsection.3.7.7}%
+\contentsline {subsubsection}{\numberline {3.7.8}UC-27.07 -- Pin/Unpin Conversation}{82}{subsubsection.3.7.8}%
+\contentsline {subsubsection}{\numberline {3.7.9}UC-27.08 -- Send File}{83}{subsubsection.3.7.9}%
+\contentsline {subsection}{\numberline {3.8}Saved Search Management}{83}{subsection.3.8}%
+\contentsline {subsubsection}{\numberline {3.8.1}Class Diagram}{84}{subsubsection.3.8.1}%
+\contentsline {subsubsection}{\numberline {3.8.2}UC-22.01 -- View Saved Search List}{85}{subsubsection.3.8.2}%
+\contentsline {subsubsection}{\numberline {3.8.3}UC-22.02 -- View Saved Search Detail}{86}{subsubsection.3.8.3}%
+\contentsline {subsubsection}{\numberline {3.8.4}UC-22.03 -- Create Saved Search}{87}{subsubsection.3.8.4}%
+\contentsline {subsubsection}{\numberline {3.8.5}UC-22.04 -- Update Saved Search}{88}{subsubsection.3.8.5}%
+\contentsline {subsubsection}{\numberline {3.8.6}UC-22.05 -- Delete Saved Search}{89}{subsubsection.3.8.6}%
+\contentsline {subsection}{\numberline {3.9}Job Alert Management}{89}{subsection.3.9}%
+\contentsline {subsubsection}{\numberline {3.9.1}Class Diagram}{90}{subsubsection.3.9.1}%
+\contentsline {subsubsection}{\numberline {3.9.2}UC-23.01 -- View Job Alert List}{91}{subsubsection.3.9.2}%
+\contentsline {subsubsection}{\numberline {3.9.3}UC-23.02 -- View Job Alert Detail}{92}{subsubsection.3.9.3}%
+\contentsline {subsubsection}{\numberline {3.9.4}UC-23.03 -- Create Job Alert}{93}{subsubsection.3.9.4}%
+\contentsline {subsubsection}{\numberline {3.9.5}UC-23.04 -- Update Job Alert}{94}{subsubsection.3.9.5}%
+\contentsline {subsubsection}{\numberline {3.9.6}UC-23.05 -- Delete Job Alert}{95}{subsubsection.3.9.6}%
+\contentsline {subsection}{\numberline {3.10}Permission Management}{95}{subsection.3.10}%
+\contentsline {subsubsection}{\numberline {3.10.1}Class Diagram}{96}{subsubsection.3.10.1}%
+\contentsline {subsubsection}{\numberline {3.10.2}UC-15.01 -- View Permission List}{96}{subsubsection.3.10.2}%
+\contentsline {subsubsection}{\numberline {3.10.3}UC-15.02 -- View Permission Detail}{97}{subsubsection.3.10.3}%
+\contentsline {subsection}{\numberline {3.11}Session Management}{97}{subsection.3.11}%
+\contentsline {subsubsection}{\numberline {3.11.1}Class Diagram}{98}{subsubsection.3.11.1}%
+\contentsline {subsubsection}{\numberline {3.11.2}UC-16.01 -- View Session List}{99}{subsubsection.3.11.2}%
+\contentsline {subsubsection}{\numberline {3.11.3}UC-16.02 -- View Session Detail}{100}{subsubsection.3.11.3}%
+\contentsline {subsubsection}{\numberline {3.11.4}UC-16.03 -- Revoke Session}{101}{subsubsection.3.11.4}%
+\contentsline {subsection}{\numberline {3.12}Forum Category Management}{101}{subsection.3.12}%
+\contentsline {subsubsection}{\numberline {3.12.1}Class Diagram}{102}{subsubsection.3.12.1}%
+\contentsline {subsubsection}{\numberline {3.12.2}UC-17.01 -- Create Forum Category}{103}{subsubsection.3.12.2}%
+\contentsline {subsubsection}{\numberline {3.12.3}UC-17.02 -- Update Forum Category}{104}{subsubsection.3.12.3}%
+\contentsline {subsubsection}{\numberline {3.12.4}UC-17.03 -- Delete Forum Category}{105}{subsubsection.3.12.4}%
+\contentsline {subsubsection}{\numberline {3.12.5}UC-17.06 -- Restore Forum Category}{106}{subsubsection.3.12.5}%
+\contentsline {subsubsection}{\numberline {3.12.6}UC-14.01 -- View Forum Category List}{107}{subsubsection.3.12.6}%
+\contentsline {subsubsection}{\numberline {3.12.7}UC-14.02 -- View Forum Category Detail}{108}{subsubsection.3.12.7}%
+\contentsline {subsection}{\numberline {3.13}Manage Moderation}{108}{subsection.3.13}%
+\contentsline {subsubsection}{\numberline {3.13.1}Class Diagram}{108}{subsubsection.3.13.1}%
+\contentsline {subsubsection}{\numberline {3.13.2}UC-34.01 -- View Moderation Queue}{109}{subsubsection.3.13.2}%
+\contentsline {subsubsection}{\numberline {3.13.3}UC-34.02 -- View Moderation Item Detail}{110}{subsubsection.3.13.3}%
+\contentsline {subsubsection}{\numberline {3.13.4}UC-34.03 -- Resolve Moderation Item}{111}{subsubsection.3.13.4}%
+\contentsline {subsection}{\numberline {3.14}Manage ID Verification}{112}{subsection.3.14}%
+\contentsline {subsubsection}{\numberline {3.14.1}Class Diagram}{112}{subsubsection.3.14.1}%
+\contentsline {subsubsection}{\numberline {3.14.2}UC-35.01 -- View ID Verification Request List}{113}{subsubsection.3.14.2}%
+\contentsline {subsubsection}{\numberline {3.14.3}UC-35.02 -- View ID Verification Request Detail}{114}{subsubsection.3.14.3}%
+\contentsline {subsubsection}{\numberline {3.14.4}UC-35.03 -- Approve ID Verification}{115}{subsubsection.3.14.4}%
+\contentsline {subsubsection}{\numberline {3.14.5}UC-35.04 -- Reject ID Verification}{116}{subsubsection.3.14.5}%
+\contentsline {subsection}{\numberline {3.15}Manage Forum Trash}{117}{subsection.3.15}%
+\contentsline {subsubsection}{\numberline {3.15.1}Class Diagram}{117}{subsubsection.3.15.1}%
+\contentsline {subsubsection}{\numberline {3.15.2}UC-36.01 -- View Deleted Posts/Comments List}{118}{subsubsection.3.15.2}%
+\contentsline {subsubsection}{\numberline {3.15.3}UC-36.02 -- View Deleted Posts/Comments Detail}{119}{subsubsection.3.15.3}%
+\contentsline {subsubsection}{\numberline {3.15.4}UC-36.03 -- Restore Deleted Posts/Comments}{120}{subsubsection.3.15.4}%
+\contentsline {subsection}{\numberline {3.16}Proposal Management}{121}{subsection.3.16}%
+\contentsline {subsubsection}{\numberline {3.16.1}Class Diagram}{121}{subsubsection.3.16.1}%
+\contentsline {subsubsection}{\numberline {3.16.2}UC-32.01 -- View My Proposal List}{123}{subsubsection.3.16.2}%
+\contentsline {subsubsection}{\numberline {3.16.3}UC-32.02 -- View My Proposal Detail}{124}{subsubsection.3.16.3}%
+\contentsline {subsubsection}{\numberline {3.16.4}UC-32.03 -- Submit Proposal}{125}{subsubsection.3.16.4}%
+\contentsline {subsubsection}{\numberline {3.16.5}UC-32.04 -- Update Proposal}{126}{subsubsection.3.16.5}%
+\contentsline {subsubsection}{\numberline {3.16.6}UC-32.05 -- Withdraw Proposal}{127}{subsubsection.3.16.6}%
+\contentsline {subsubsection}{\numberline {3.16.7}UC-32.06 -- Accept Proposal}{128}{subsubsection.3.16.7}%
+\contentsline {subsubsection}{\numberline {3.16.8}UC-32.07 -- Reject Proposal}{129}{subsubsection.3.16.8}%
+\contentsline {subsubsection}{\numberline {3.16.9}UC-32.08 -- View Job Proposal List}{130}{subsubsection.3.16.9}%
+\contentsline {subsubsection}{\numberline {3.16.10}UC-32.09 -- View Proposal Detail}{131}{subsubsection.3.16.10}%
+\contentsline {subsection}{\numberline {3.17}User Management}{131}{subsection.3.17}%
+\contentsline {subsubsection}{\numberline {3.17.1}Class Diagram}{132}{subsubsection.3.17.1}%
+\contentsline {subsubsection}{\numberline {3.17.2}UC-28.01 -- View User List}{133}{subsubsection.3.17.2}%
+\contentsline {subsubsection}{\numberline {3.17.3}UC-28.02 -- View User Detail}{134}{subsubsection.3.17.3}%
+\contentsline {subsubsection}{\numberline {3.17.4}UC-28.03 -- Create User}{135}{subsubsection.3.17.4}%
+\contentsline {subsubsection}{\numberline {3.17.5}UC-28.04 -- Update User}{136}{subsubsection.3.17.5}%
+\contentsline {subsubsection}{\numberline {3.17.6}UC-28.05 -- Update Client Profile}{137}{subsubsection.3.17.6}%
+\contentsline {subsubsection}{\numberline {3.17.7}UC-28.06 -- Update Freelancer Basic Info}{138}{subsubsection.3.17.7}%
+\contentsline {subsubsection}{\numberline {3.17.8}UC-28.07 -- Update Freelancer Skills}{139}{subsubsection.3.17.8}%
+\contentsline {subsubsection}{\numberline {3.17.9}UC-28.08 -- Update Freelancer Portfolio}{140}{subsubsection.3.17.9}%
+\contentsline {subsection}{\numberline {3.18}Banner Management}{141}{subsection.3.18}%
+\contentsline {subsubsection}{\numberline {3.18.1}Class Diagram}{141}{subsubsection.3.18.1}%
+\contentsline {subsubsection}{\numberline {3.18.2}UC-37.01 -- View Banner List}{142}{subsubsection.3.18.2}%
+\contentsline {subsubsection}{\numberline {3.18.3}UC-37.02 -- View Banner Detail}{143}{subsubsection.3.18.3}%
+\contentsline {subsubsection}{\numberline {3.18.4}UC-37.03 -- Create Banner}{144}{subsubsection.3.18.4}%
+\contentsline {subsubsection}{\numberline {3.18.5}UC-37.04 -- Update Banner}{145}{subsubsection.3.18.5}%
+\contentsline {subsubsection}{\numberline {3.18.6}UC-37.05 -- Delete Banner}{146}{subsubsection.3.18.6}%
+\contentsline {subsection}{\numberline {3.19}Skill Management}{146}{subsection.3.19}%
+\contentsline {subsubsection}{\numberline {3.19.1}Class Diagram}{147}{subsubsection.3.19.1}%
+\contentsline {subsubsection}{\numberline {3.19.2}UC-38.01 -- View Skill List}{148}{subsubsection.3.19.2}%
+\contentsline {subsubsection}{\numberline {3.19.3}UC-38.02 -- View Skill Detail}{149}{subsubsection.3.19.3}%
+\contentsline {subsubsection}{\numberline {3.19.4}UC-38.03 -- Create Skill}{150}{subsubsection.3.19.4}%
+\contentsline {subsubsection}{\numberline {3.19.5}UC-38.04 -- Update Skill}{151}{subsubsection.3.19.5}%
+\contentsline {subsubsection}{\numberline {3.19.6}UC-38.05 -- Delete Skill}{152}{subsubsection.3.19.6}%
+\contentsline {subsubsection}{\numberline {3.19.7}UC-38.06 -- Restore Skill}{153}{subsubsection.3.19.7}%
+\contentsline {subsection}{\numberline {3.20}Expert Profile Management}{153}{subsection.3.20}%
+\contentsline {subsubsection}{\numberline {3.20.1}Class Diagram}{154}{subsubsection.3.20.1}%
+\contentsline {subsubsection}{\numberline {3.20.2}UC-28.09 -- Update Expert Profile}{155}{subsubsection.3.20.2}%
+\contentsline {subsection}{\numberline {3.21}Job Category Management}{156}{subsection.3.21}%
+\contentsline {subsubsection}{\numberline {3.21.1}Class Diagram}{156}{subsubsection.3.21.1}%
+\contentsline {subsubsection}{\numberline {3.21.2}UC-46.01 -- View Job Category List}{157}{subsubsection.3.21.2}%
+\contentsline {subsubsection}{\numberline {3.21.3}UC-46.02 -- View Job Category Detail}{158}{subsubsection.3.21.3}%
+\contentsline {subsubsection}{\numberline {3.21.4}UC-46.03 -- Create Job Category}{159}{subsubsection.3.21.4}%
+\contentsline {subsubsection}{\numberline {3.21.5}UC-46.04 -- Update Job Category}{160}{subsubsection.3.21.5}%
+\contentsline {subsubsection}{\numberline {3.21.6}UC-46.05 -- Delete Job Category}{161}{subsubsection.3.21.6}%
+\contentsline {section}{\numberline {4.}Class Specification}{162}{section.4}%
+\contentsline {subsection}{\numberline {4.1}ForumController Class}{162}{subsection.4.1}%
+\contentsline {paragraph}{\numberline {4.1.1}ClassMethod}{162}{paragraph.4.1.1}%
+\contentsline {paragraph}{\numberline {4.1.2}ClassAttribute}{164}{paragraph.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}ForumService Class}{164}{subsection.4.2}%
+\contentsline {paragraph}{\numberline {4.2.1}ClassMethod}{164}{paragraph.4.2.1}%
+\contentsline {paragraph}{\numberline {4.2.2}ClassAttribute}{167}{paragraph.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}ForumRepository Class}{167}{subsection.4.3}%
+\contentsline {paragraph}{\numberline {4.3.1}ClassMethod}{167}{paragraph.4.3.1}%
+\contentsline {paragraph}{\numberline {4.3.2}ClassAttribute}{170}{paragraph.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}ForumLikeController Class}{171}{subsection.4.4}%
+\contentsline {paragraph}{\numberline {4.4.1}ClassMethod}{171}{paragraph.4.4.1}%
+\contentsline {paragraph}{\numberline {4.4.2}ClassAttribute}{172}{paragraph.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}ForumLikeService Class}{172}{subsection.4.5}%
+\contentsline {paragraph}{\numberline {4.5.1}ClassMethod}{172}{paragraph.4.5.1}%
+\contentsline {paragraph}{\numberline {4.5.2}ClassAttribute}{173}{paragraph.4.5.2}%
+\contentsline {subsection}{\numberline {4.6}ForumLikeRepository Class}{173}{subsection.4.6}%
+\contentsline {paragraph}{\numberline {4.6.1}ClassMethod}{173}{paragraph.4.6.1}%
+\contentsline {paragraph}{\numberline {4.6.2}ClassAttribute}{174}{paragraph.4.6.2}%
+\contentsline {subsection}{\numberline {4.7}ForumCommentController Class}{175}{subsection.4.7}%
+\contentsline {paragraph}{\numberline {4.7.1}ClassMethod}{175}{paragraph.4.7.1}%
+\contentsline {paragraph}{\numberline {4.7.2}ClassAttribute}{176}{paragraph.4.7.2}%
+\contentsline {subsection}{\numberline {4.8}ForumCommentService Class}{176}{subsection.4.8}%
+\contentsline {paragraph}{\numberline {4.8.1}ClassMethod}{176}{paragraph.4.8.1}%
+\contentsline {paragraph}{\numberline {4.8.2}ClassAttribute}{178}{paragraph.4.8.2}%
+\contentsline {subsection}{\numberline {4.9}ForumCommentRepository Class}{178}{subsection.4.9}%
+\contentsline {paragraph}{\numberline {4.9.1}ClassMethod}{178}{paragraph.4.9.1}%
+\contentsline {paragraph}{\numberline {4.9.2}ClassAttribute}{180}{paragraph.4.9.2}%
+\contentsline {subsection}{\numberline {4.10}ForumReportController Class}{181}{subsection.4.10}%
+\contentsline {paragraph}{\numberline {4.10.1}ClassMethod}{181}{paragraph.4.10.1}%
+\contentsline {paragraph}{\numberline {4.10.2}ClassAttribute}{183}{paragraph.4.10.2}%
+\contentsline {subsection}{\numberline {4.11}ForumReportService Class}{183}{subsection.4.11}%
+\contentsline {paragraph}{\numberline {4.11.1}ClassMethod}{183}{paragraph.4.11.1}%
+\contentsline {paragraph}{\numberline {4.11.2}ClassAttribute}{185}{paragraph.4.11.2}%
+\contentsline {subsection}{\numberline {4.12}ForumReportRepository Class}{185}{subsection.4.12}%
+\contentsline {paragraph}{\numberline {4.12.1}ClassMethod}{185}{paragraph.4.12.1}%
+\contentsline {paragraph}{\numberline {4.12.2}ClassAttribute}{186}{paragraph.4.12.2}%
+\contentsline {subsubsection}{Supporting DTO classes for reports}{187}{table.30}%
+\contentsline {subsection}{\numberline {4.13}AuthController Class}{187}{subsection.4.13}%
+\contentsline {paragraph}{\numberline {4.13.1}ClassMethod}{187}{paragraph.4.13.1}%
+\contentsline {paragraph}{\numberline {4.13.2}ClassAttribute}{190}{paragraph.4.13.2}%
+\contentsline {subsection}{\numberline {4.14}AuthService Class}{190}{subsection.4.14}%
+\contentsline {paragraph}{\numberline {4.14.1}ClassMethod}{190}{paragraph.4.14.1}%
+\contentsline {paragraph}{\numberline {4.14.2}ClassAttribute}{193}{paragraph.4.14.2}%
+\contentsline {subsection}{\numberline {4.15}AuthRepository Class}{194}{subsection.4.15}%
+\contentsline {paragraph}{\numberline {4.15.1}ClassMethod}{194}{paragraph.4.15.1}%
+\contentsline {paragraph}{\numberline {4.15.2}ClassAttribute}{197}{paragraph.4.15.2}%
+\contentsline {subsection}{\numberline {4.16}RolesController Class}{197}{subsection.4.16}%
+\contentsline {paragraph}{\numberline {4.16.1}ClassMethod}{197}{paragraph.4.16.1}%
+\contentsline {paragraph}{\numberline {4.16.2}ClassAttribute}{198}{paragraph.4.16.2}%
+\contentsline {subsection}{\numberline {4.17}RolesService Class}{198}{subsection.4.17}%
+\contentsline {paragraph}{\numberline {4.17.1}ClassMethod}{198}{paragraph.4.17.1}%
+\contentsline {paragraph}{\numberline {4.17.2}ClassAttribute}{200}{paragraph.4.17.2}%
+\contentsline {subsection}{\numberline {4.18}RolesRepository Class}{200}{subsection.4.18}%
+\contentsline {paragraph}{\numberline {4.18.1}ClassMethod}{200}{paragraph.4.18.1}%
+\contentsline {paragraph}{\numberline {4.18.2}ClassAttribute}{201}{paragraph.4.18.2}%
+\contentsline {subsection}{\numberline {4.19}ConversationController Class}{202}{subsection.4.19}%
+\contentsline {paragraph}{\numberline {4.19.1}ClassMethod}{202}{paragraph.4.19.1}%
+\contentsline {paragraph}{\numberline {4.19.2}ClassAttribute}{204}{paragraph.4.19.2}%
+\contentsline {subsection}{\numberline {4.20}ConversationService Class}{204}{subsection.4.20}%
+\contentsline {paragraph}{\numberline {4.20.1}ClassMethod}{204}{paragraph.4.20.1}%
+\contentsline {paragraph}{\numberline {4.20.2}ClassAttribute}{208}{paragraph.4.20.2}%
+\contentsline {subsection}{\numberline {4.21}ConversationRepository Class}{208}{subsection.4.21}%
+\contentsline {paragraph}{\numberline {4.21.1}ClassMethod}{208}{paragraph.4.21.1}%
+\contentsline {paragraph}{\numberline {4.21.2}ClassAttribute}{211}{paragraph.4.21.2}%
+\contentsline {subsection}{\numberline {4.22}ConversationsGateway Class}{211}{subsection.4.22}%
+\contentsline {paragraph}{\numberline {4.22.1}ClassMethod}{211}{paragraph.4.22.1}%
+\contentsline {paragraph}{\numberline {4.22.2}ClassAttribute}{213}{paragraph.4.22.2}%
+\contentsline {subsection}{\numberline {4.23}PermissionsController Class}{213}{subsection.4.23}%
+\contentsline {paragraph}{\numberline {4.23.1}ClassMethod}{213}{paragraph.4.23.1}%
+\contentsline {paragraph}{\numberline {4.23.2}ClassAttribute}{214}{paragraph.4.23.2}%
+\contentsline {subsection}{\numberline {4.24}PermissionsService Class}{214}{subsection.4.24}%
+\contentsline {paragraph}{\numberline {4.24.1}ClassMethod}{214}{paragraph.4.24.1}%
+\contentsline {paragraph}{\numberline {4.24.2}ClassAttribute}{215}{paragraph.4.24.2}%
+\contentsline {subsection}{\numberline {4.25}PermissionsRepository Class}{215}{subsection.4.25}%
+\contentsline {paragraph}{\numberline {4.25.1}ClassMethod}{215}{paragraph.4.25.1}%
+\contentsline {paragraph}{\numberline {4.25.2}ClassAttribute}{216}{paragraph.4.25.2}%
+\contentsline {subsection}{\numberline {4.26}SessionsController Class}{216}{subsection.4.26}%
+\contentsline {paragraph}{\numberline {4.26.1}ClassMethod}{216}{paragraph.4.26.1}%
+\contentsline {paragraph}{\numberline {4.26.2}ClassAttribute}{217}{paragraph.4.26.2}%
+\contentsline {subsection}{\numberline {4.27}SessionsService Class}{217}{subsection.4.27}%
+\contentsline {paragraph}{\numberline {4.27.1}ClassMethod}{217}{paragraph.4.27.1}%
+\contentsline {paragraph}{\numberline {4.27.2}ClassAttribute}{218}{paragraph.4.27.2}%
+\contentsline {subsection}{\numberline {4.28}SessionsRepository Class}{219}{subsection.4.28}%
+\contentsline {paragraph}{\numberline {4.28.1}ClassMethod}{219}{paragraph.4.28.1}%
+\contentsline {paragraph}{\numberline {4.28.2}ClassAttribute}{219}{paragraph.4.28.2}%
+\contentsline {subsection}{\numberline {4.29}Forum Category Administration (Shared Classes)}{220}{subsection.4.29}%
+\contentsline {subsection}{\numberline {4.30}ForumAdminController Class}{220}{subsection.4.30}%
+\contentsline {paragraph}{\numberline {4.30.1}ClassMethod}{220}{paragraph.4.30.1}%
+\contentsline {paragraph}{\numberline {4.30.2}ClassAttribute}{224}{paragraph.4.30.2}%
+\contentsline {subsection}{\numberline {4.31}ForumAdminService Class}{224}{subsection.4.31}%
+\contentsline {paragraph}{\numberline {4.31.1}ClassMethod}{224}{paragraph.4.31.1}%
+\contentsline {paragraph}{\numberline {4.31.2}ClassAttribute}{228}{paragraph.4.31.2}%
+\contentsline {subsection}{\numberline {4.32}ForumAdminRepository Class}{228}{subsection.4.32}%
+\contentsline {paragraph}{\numberline {4.32.1}ClassMethod}{228}{paragraph.4.32.1}%
+\contentsline {paragraph}{\numberline {4.32.2}ClassAttribute}{232}{paragraph.4.32.2}%
+\contentsline {subsection}{\numberline {4.33}IdentityVerificationsAdminController Class}{232}{subsection.4.33}%
+\contentsline {paragraph}{\numberline {4.33.1}ClassMethod}{232}{paragraph.4.33.1}%
+\contentsline {paragraph}{\numberline {4.33.2}ClassAttribute}{233}{paragraph.4.33.2}%
+\contentsline {subsection}{\numberline {4.34}IdentityVerificationsAdminService Class}{234}{subsection.4.34}%
+\contentsline {paragraph}{\numberline {4.34.1}ClassMethod}{234}{paragraph.4.34.1}%
+\contentsline {paragraph}{\numberline {4.34.2}ClassAttribute}{235}{paragraph.4.34.2}%
+\contentsline {subsection}{\numberline {4.35}IdentityVerificationsAdminRepository Class}{235}{subsection.4.35}%
+\contentsline {paragraph}{\numberline {4.35.1}ClassMethod}{235}{paragraph.4.35.1}%
+\contentsline {paragraph}{\numberline {4.35.2}ClassAttribute}{237}{paragraph.4.35.2}%
+\contentsline {subsection}{\numberline {4.36}UsersController Class}{237}{subsection.4.36}%
+\contentsline {paragraph}{\numberline {4.36.1}ClassMethod}{237}{paragraph.4.36.1}%
+\contentsline {paragraph}{\numberline {4.36.2}ClassAttribute}{239}{paragraph.4.36.2}%
+\contentsline {subsection}{\numberline {4.37}UsersService Class}{239}{subsection.4.37}%
+\contentsline {paragraph}{\numberline {4.37.1}ClassMethod}{239}{paragraph.4.37.1}%
+\contentsline {paragraph}{\numberline {4.37.2}ClassAttribute}{243}{paragraph.4.37.2}%
+\contentsline {subsection}{\numberline {4.38}UsersRepository Class}{243}{subsection.4.38}%
+\contentsline {paragraph}{\numberline {4.38.1}ClassMethod}{243}{paragraph.4.38.1}%
+\contentsline {paragraph}{\numberline {4.38.2}ClassAttribute}{246}{paragraph.4.38.2}%
+\contentsline {subsection}{\numberline {4.39}BannersAdminController Class}{246}{subsection.4.39}%
+\contentsline {paragraph}{\numberline {4.39.1}ClassMethod}{246}{paragraph.4.39.1}%
+\contentsline {paragraph}{\numberline {4.39.2}ClassAttribute}{247}{paragraph.4.39.2}%
+\contentsline {subsection}{\numberline {4.40}BannersAdminService Class}{247}{subsection.4.40}%
+\contentsline {paragraph}{\numberline {4.40.1}ClassMethod}{247}{paragraph.4.40.1}%
+\contentsline {paragraph}{\numberline {4.40.2}ClassAttribute}{249}{paragraph.4.40.2}%
+\contentsline {subsection}{\numberline {4.41}BannersAdminRepository Class}{249}{subsection.4.41}%
+\contentsline {paragraph}{\numberline {4.41.1}ClassMethod}{249}{paragraph.4.41.1}%
+\contentsline {paragraph}{\numberline {4.41.2}ClassAttribute}{250}{paragraph.4.41.2}%
+\contentsline {subsection}{\numberline {4.42}SkillsAdminController Class}{251}{subsection.4.42}%
+\contentsline {paragraph}{\numberline {4.42.1}ClassMethod}{251}{paragraph.4.42.1}%
+\contentsline {paragraph}{\numberline {4.42.2}ClassAttribute}{252}{paragraph.4.42.2}%
+\contentsline {subsection}{\numberline {4.43}SkillsAdminService Class}{252}{subsection.4.43}%
+\contentsline {paragraph}{\numberline {4.43.1}ClassMethod}{252}{paragraph.4.43.1}%
+\contentsline {paragraph}{\numberline {4.43.2}ClassAttribute}{253}{paragraph.4.43.2}%
+\contentsline {subsection}{\numberline {4.44}SkillsAdminRepository Class}{254}{subsection.4.44}%
+\contentsline {paragraph}{\numberline {4.44.1}ClassMethod}{254}{paragraph.4.44.1}%
+\contentsline {paragraph}{\numberline {4.44.2}ClassAttribute}{255}{paragraph.4.44.2}%
+\contentsline {subsection}{\numberline {4.45}AdminExpertProfileController Class}{255}{subsection.4.45}%
+\contentsline {paragraph}{\numberline {4.45.1}ClassMethod}{255}{paragraph.4.45.1}%
+\contentsline {paragraph}{\numberline {4.45.2}ClassAttribute}{256}{paragraph.4.45.2}%
+\contentsline {subsection}{\numberline {4.46}ExpertProfileService Class}{256}{subsection.4.46}%
+\contentsline {paragraph}{\numberline {4.46.1}ClassMethod}{256}{paragraph.4.46.1}%
+\contentsline {paragraph}{\numberline {4.46.2}ClassAttribute}{258}{paragraph.4.46.2}%
+\contentsline {subsection}{\numberline {4.47}ExpertProfileRepository Class}{258}{subsection.4.47}%
+\contentsline {paragraph}{\numberline {4.47.1}ClassMethod}{258}{paragraph.4.47.1}%
+\contentsline {paragraph}{\numberline {4.47.2}ClassAttribute}{259}{paragraph.4.47.2}%
+\contentsline {subsection}{\numberline {4.48}JobCategoriesAdminController Class}{259}{subsection.4.48}%
+\contentsline {paragraph}{\numberline {4.48.1}ClassMethod}{259}{paragraph.4.48.1}%
+\contentsline {paragraph}{\numberline {4.48.2}ClassAttribute}{260}{paragraph.4.48.2}%
+\contentsline {subsection}{\numberline {4.49}JobCategoriesAdminService Class}{261}{subsection.4.49}%
+\contentsline {paragraph}{\numberline {4.49.1}ClassMethod}{261}{paragraph.4.49.1}%
+\contentsline {paragraph}{\numberline {4.49.2}ClassAttribute}{262}{paragraph.4.49.2}%
+\contentsline {subsection}{\numberline {4.50}JobCategoriesAdminRepository Class}{262}{subsection.4.50}%
+\contentsline {paragraph}{\numberline {4.50.1}ClassMethod}{262}{paragraph.4.50.1}%
+\contentsline {paragraph}{\numberline {4.50.2}ClassAttribute}{264}{paragraph.4.50.2}%

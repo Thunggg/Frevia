@@ -6,489 +6,518 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \babel@aux{english}{}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Overall Description}{7}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Assumptions}{7}{subsection.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Design Constraints}{8}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}Platform Compatibility}{8}{subsubsection.1.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Integration Complexity}{8}{subsubsection.1.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.3}Performance Requirements}{8}{subsubsection.1.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Technology Suggestion}{9}{subsection.1.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RESTful API communication between the Next.js frontend and the NestJS backend}}{9}{figure.caption.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {part}{I.\hspace  {1em}Record of Changes}{9}{part.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {part}{II.\hspace  {1em}Software Design Document}{10}{part.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1.}System Design}{10}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}System Architecture}{10}{subsection.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overall architecture of the Frevia system}}{10}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:restful-api}{{1}{9}{RESTful API communication between the Next.js frontend and the NestJS backend}{figure.caption.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.1}NestJS Framework}{10}{subsubsection.1.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.2}Next.js and React 19 Frontend}{10}{subsubsection.1.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.3}Prisma ORM and PostgreSQL}{10}{subsubsection.1.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.4}Supporting Services}{10}{subsubsection.1.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}System Architecture Design}{11}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Overall Architecture}{11}{subsection.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Overall architecture of the Frevia system}}{11}{figure.caption.2}\protected@file@percent }
-\newlabel{fig:arch:overall}{{2}{11}{Overall architecture of the Frevia system}{figure.caption.2}{}}
+\newlabel{fig:arch:overall}{{1}{10}{Overall architecture of the Frevia system}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.1.1}Layered Architecture}{11}{subsubsection.1.1.1}\protected@file@percent }
 \gdef \LT@i {\LT@entry 
     {1}{132.30147pt}\LT@entry 
     {1}{325.3803pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}System Architecture}{12}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}API Module Structure}{12}{subsubsection.2.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Layered system architecture with security and AI moderation flows}}{12}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:arch:system}{{2}{12}{Layered system architecture with security and AI moderation flows}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.1.2}API Module Structure}{12}{subsubsection.1.1.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces API route modules and responsibilities}}{12}{table.1}\protected@file@percent }
 \newlabel{tab:modules}{{1}{12}{API route modules and responsibilities}{table.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Layered system architecture with security and AI moderation flows}}{14}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:arch:system}{{3}{14}{Layered system architecture with security and AI moderation flows}{figure.caption.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Package Diagram}{14}{subsection.2.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Package diagram of the Frevia monorepo}}{15}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:arch:packages}{{4}{15}{Package diagram of the Frevia monorepo}{figure.caption.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}System Detailed Design}{15}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Forum Management}{15}{subsection.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Class diagram of Forum Management}}{16}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:kvy-cls-forum-management}{{5}{16}{Class diagram of Forum Management}{figure.caption.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}UC-14.01 -- View Forum Category List}{17}{subsubsection.3.1.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{17}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-01}{{6}{17}{Sequence diagram of UC-14.01 View Forum Category List}{figure.caption.6}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}UC-14.02 -- View Forum Category Detail}{18}{subsubsection.3.1.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{18}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-02}{{7}{18}{Sequence diagram of UC-14.02 View Forum Category Detail}{figure.caption.7}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}UC-14.03 -- View Post List}{19}{subsubsection.3.1.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Sequence diagram of UC-14.03 View Post List}}{19}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-03}{{8}{19}{Sequence diagram of UC-14.03 View Post List}{figure.caption.8}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}UC-14.04 -- View Post Detail}{20}{subsubsection.3.1.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Sequence diagram of UC-14.04 View Post Detail}}{20}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-04}{{9}{20}{Sequence diagram of UC-14.04 View Post Detail}{figure.caption.9}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.5}UC-14.05 -- Create Post}{21}{subsubsection.3.1.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Sequence diagram of UC-14.05 Create Post}}{21}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-05}{{10}{21}{Sequence diagram of UC-14.05 Create Post}{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.6}UC-14.06 -- Update Post}{22}{subsubsection.3.1.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Sequence diagram of UC-14.06 Update Post}}{22}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-06}{{11}{22}{Sequence diagram of UC-14.06 Update Post}{figure.caption.11}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.7}UC-14.07 -- Delete Post}{23}{subsubsection.3.1.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Sequence diagram of UC-14.07 Delete Post}}{23}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-07}{{12}{23}{Sequence diagram of UC-14.07 Delete Post}{figure.caption.12}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.8}UC-14.08 -- Like Post}{24}{subsubsection.3.1.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Sequence diagram of UC-14.08 Like Post}}{24}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-08}{{13}{24}{Sequence diagram of UC-14.08 Like Post}{figure.caption.13}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.9}UC-14.09 -- Unlike Post}{25}{subsubsection.3.1.9}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Sequence diagram of UC-14.09 Unlike Post}}{25}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-09}{{14}{25}{Sequence diagram of UC-14.09 Unlike Post}{figure.caption.14}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.10}UC-14.10 -- View Post Likes}{26}{subsubsection.3.1.10}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Sequence diagram of UC-14.10 View Post Likes}}{26}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-10}{{15}{26}{Sequence diagram of UC-14.10 View Post Likes}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.11}UC-14.11 -- View Post Comments}{27}{subsubsection.3.1.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Sequence diagram of UC-14.11 View Post Comments}}{27}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-11}{{16}{27}{Sequence diagram of UC-14.11 View Post Comments}{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.12}UC-14.12 -- Create Comment}{28}{subsubsection.3.1.12}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Sequence diagram of UC-14.12 Create Comment}}{28}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-12}{{17}{28}{Sequence diagram of UC-14.12 Create Comment}{figure.caption.17}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.13}UC-14.13 -- Update Comment}{29}{subsubsection.3.1.13}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Sequence diagram of UC-14.13 Update Comment}}{29}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-13}{{18}{29}{Sequence diagram of UC-14.13 Update Comment}{figure.caption.18}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.14}UC-14.14 -- Delete Comment}{30}{subsubsection.3.1.14}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Sequence diagram of UC-14.14 Delete Comment}}{30}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-14}{{19}{30}{Sequence diagram of UC-14.14 Delete Comment}{figure.caption.19}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.15}UC-14.15 -- Like Comment}{31}{subsubsection.3.1.15}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Sequence diagram of UC-14.15 Like Comment}}{31}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-15}{{20}{31}{Sequence diagram of UC-14.15 Like Comment}{figure.caption.20}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.16}UC-14.16 -- Unlike Comment}{32}{subsubsection.3.1.16}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Sequence diagram of UC-14.16 Unlike Comment}}{32}{figure.caption.21}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-16}{{21}{32}{Sequence diagram of UC-14.16 Unlike Comment}{figure.caption.21}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.17}UC-14.17 -- Report Content}{33}{subsubsection.3.1.17}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Sequence diagram of UC-14.17 Report Content}}{33}{figure.caption.22}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-14-17}{{22}{33}{Sequence diagram of UC-14.17 Report Content}{figure.caption.22}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Job Browsing}{34}{subsection.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Class diagram of Job Browsing}}{34}{figure.caption.23}\protected@file@percent }
-\newlabel{fig:ptai-cls-job-browsing}{{23}{34}{Class diagram of Job Browsing}{figure.caption.23}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}UC-10.01 -- View Job List}{35}{subsubsection.3.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Sequence diagram of UC-10.01 View Job List}}{35}{figure.caption.24}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-10-01}{{24}{35}{Sequence diagram of UC-10.01 View Job List}{figure.caption.24}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}UC-10.02 -- View Job Detail}{36}{subsubsection.3.2.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Sequence diagram of UC-10.02 View Job Detail}}{36}{figure.caption.25}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-10-02}{{25}{36}{Sequence diagram of UC-10.02 View Job Detail}{figure.caption.25}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Job Management}{36}{subsection.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Class diagram of Job Management}}{37}{figure.caption.26}\protected@file@percent }
-\newlabel{fig:ptai-cls-job-management}{{26}{37}{Class diagram of Job Management}{figure.caption.26}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}UC-11.01 -- View My Jobs}{38}{subsubsection.3.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Sequence diagram of UC-11.01 View My Jobs}}{38}{figure.caption.27}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-01}{{27}{38}{Sequence diagram of UC-11.01 View My Jobs}{figure.caption.27}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}UC-11.02 -- Create Job}{39}{subsubsection.3.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {28}{\ignorespaces Sequence diagram of UC-11.02 Create Job}}{39}{figure.caption.28}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-02}{{28}{39}{Sequence diagram of UC-11.02 Create Job}{figure.caption.28}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3}UC-11.03 -- Publish Job}{40}{subsubsection.3.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces Sequence diagram of UC-11.03 Publish Job}}{40}{figure.caption.29}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-03}{{29}{40}{Sequence diagram of UC-11.03 Publish Job}{figure.caption.29}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4}UC-11.04 -- Update Job}{41}{subsubsection.3.3.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Sequence diagram of UC-11.04 Update Job}}{41}{figure.caption.30}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-04}{{30}{41}{Sequence diagram of UC-11.04 Update Job}{figure.caption.30}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.5}UC-11.05 -- Delete Job}{42}{subsubsection.3.3.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces Sequence diagram of UC-11.05 Delete Job}}{42}{figure.caption.31}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-05}{{31}{42}{Sequence diagram of UC-11.05 Delete Job}{figure.caption.31}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.6}UC-11.06 -- Change Job Status}{43}{subsubsection.3.3.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces Sequence diagram of UC-11.06 Change Job Status}}{43}{figure.caption.32}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-11-06}{{32}{43}{Sequence diagram of UC-11.06 Change Job Status}{figure.caption.32}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Bookmarked Jobs Management}{43}{subsection.3.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {33}{\ignorespaces Class diagram of Bookmarked Jobs Management}}{44}{figure.caption.33}\protected@file@percent }
-\newlabel{fig:ptai-cls-bookmarked-jobs}{{33}{44}{Class diagram of Bookmarked Jobs Management}{figure.caption.33}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}UC-12.01 -- View Bookmarked Job List}{45}{subsubsection.3.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {34}{\ignorespaces Sequence diagram of UC-12.01 View Bookmarked Job List}}{45}{figure.caption.34}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-12-01}{{34}{45}{Sequence diagram of UC-12.01 View Bookmarked Job List}{figure.caption.34}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}UC-12.02 -- Bookmark Job}{46}{subsubsection.3.4.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {35}{\ignorespaces Sequence diagram of UC-12.02 Bookmark Job}}{46}{figure.caption.35}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-12-02}{{35}{46}{Sequence diagram of UC-12.02 Bookmark Job}{figure.caption.35}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.3}UC-12.03 -- Remove Bookmark}{47}{subsubsection.3.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {36}{\ignorespaces Sequence diagram of UC-12.03 Remove Bookmark}}{47}{figure.caption.36}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-12-03}{{36}{47}{Sequence diagram of UC-12.03 Remove Bookmark}{figure.caption.36}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Authentication}{47}{subsection.3.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {37}{\ignorespaces Class diagram of Authentication}}{48}{figure.caption.37}\protected@file@percent }
-\newlabel{fig:tthuan-cls-auth}{{37}{48}{Class diagram of Authentication}{figure.caption.37}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}UC-01 -- Login with Google}{49}{subsubsection.3.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {38}{\ignorespaces Sequence diagram of UC-01 Login with Google}}{49}{figure.caption.38}\protected@file@percent }
-\newlabel{fig:tthuan-seq-login-google}{{38}{49}{Sequence diagram of UC-01 Login with Google}{figure.caption.38}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}UC-02 -- Login}{50}{subsubsection.3.5.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {39}{\ignorespaces Sequence diagram of UC-02 Login}}{50}{figure.caption.39}\protected@file@percent }
-\newlabel{fig:tthuan-seq-login}{{39}{50}{Sequence diagram of UC-02 Login}{figure.caption.39}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}UC-03 -- Logout}{51}{subsubsection.3.5.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {40}{\ignorespaces Sequence diagram of UC-03 Logout}}{51}{figure.caption.40}\protected@file@percent }
-\newlabel{fig:tthuan-seq-logout}{{40}{51}{Sequence diagram of UC-03 Logout}{figure.caption.40}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.4}UC-04 -- Register}{52}{subsubsection.3.5.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {41}{\ignorespaces Sequence diagram of UC-04 Register}}{52}{figure.caption.41}\protected@file@percent }
-\newlabel{fig:tthuan-seq-register}{{41}{52}{Sequence diagram of UC-04 Register}{figure.caption.41}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.5}UC-05 -- Forgot Password}{53}{subsubsection.3.5.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {42}{\ignorespaces Sequence diagram of UC-05 Forgot Password}}{53}{figure.caption.42}\protected@file@percent }
-\newlabel{fig:tthuan-seq-forgot-password}{{42}{53}{Sequence diagram of UC-05 Forgot Password}{figure.caption.42}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Role Management}{53}{subsection.3.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {43}{\ignorespaces Class diagram of Role Management}}{54}{figure.caption.43}\protected@file@percent }
-\newlabel{fig:tthuan-cls-role-management}{{43}{54}{Class diagram of Role Management}{figure.caption.43}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.1}UC-06.01 -- View Role List}{55}{subsubsection.3.6.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {44}{\ignorespaces Sequence diagram of UC-06.01 View Role List}}{55}{figure.caption.44}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-role-list}{{44}{55}{Sequence diagram of UC-06.01 View Role List}{figure.caption.44}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.2}UC-06.02 -- View Role Detail}{56}{subsubsection.3.6.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {45}{\ignorespaces Sequence diagram of UC-06.02 View Role Detail}}{56}{figure.caption.45}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-role-detail}{{45}{56}{Sequence diagram of UC-06.02 View Role Detail}{figure.caption.45}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.3}UC-06.03 -- Create Role}{57}{subsubsection.3.6.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {46}{\ignorespaces Sequence diagram of UC-06.03 Create Role}}{57}{figure.caption.46}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-role}{{46}{57}{Sequence diagram of UC-06.03 Create Role}{figure.caption.46}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.4}UC-06.04 -- Update Role}{58}{subsubsection.3.6.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {47}{\ignorespaces Sequence diagram of UC-06.04 Update Role}}{58}{figure.caption.47}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-role}{{47}{58}{Sequence diagram of UC-06.04 Update Role}{figure.caption.47}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.5}UC-06.05 -- Delete Role}{59}{subsubsection.3.6.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {48}{\ignorespaces Sequence diagram of UC-06.05 Delete Role}}{59}{figure.caption.48}\protected@file@percent }
-\newlabel{fig:tthuan-seq-delete-role}{{48}{59}{Sequence diagram of UC-06.05 Delete Role}{figure.caption.48}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.6}UC-06.06 -- Update Role Permissions}{60}{subsubsection.3.6.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {49}{\ignorespaces Sequence diagram of UC-06.06 Update Role Permissions}}{60}{figure.caption.49}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-role-permissions}{{49}{60}{Sequence diagram of UC-06.06 Update Role Permissions}{figure.caption.49}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Manage Conversation}{60}{subsection.3.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {50}{\ignorespaces Class diagram of Manage Conversation}}{61}{figure.caption.50}\protected@file@percent }
-\newlabel{fig:kvy-cls-manage-conversation}{{50}{61}{Class diagram of Manage Conversation}{figure.caption.50}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.1}UC-27.01 -- View Conversation List}{62}{subsubsection.3.7.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {51}{\ignorespaces Sequence diagram of UC-27.01 View Conversation List}}{62}{figure.caption.51}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-01}{{51}{62}{Sequence diagram of UC-27.01 View Conversation List}{figure.caption.51}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.2}UC-27.02 -- Start Conversation}{63}{subsubsection.3.7.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {52}{\ignorespaces Sequence diagram of UC-27.02 Start Conversation}}{63}{figure.caption.52}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-02}{{52}{63}{Sequence diagram of UC-27.02 Start Conversation}{figure.caption.52}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.3}UC-27.03 -- View Conversation Detail}{64}{subsubsection.3.7.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {53}{\ignorespaces Sequence diagram of UC-27.03 View Conversation Detail}}{64}{figure.caption.53}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-03}{{53}{64}{Sequence diagram of UC-27.03 View Conversation Detail}{figure.caption.53}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.4}UC-27.04 -- Send Message}{65}{subsubsection.3.7.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {54}{\ignorespaces Sequence diagram of UC-27.04 Send Message}}{65}{figure.caption.54}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-04}{{54}{65}{Sequence diagram of UC-27.04 Send Message}{figure.caption.54}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.5}UC-27.05 -- Mark Message as Read}{66}{subsubsection.3.7.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {55}{\ignorespaces Sequence diagram of UC-27.05 Mark Message as Read}}{66}{figure.caption.55}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-05}{{55}{66}{Sequence diagram of UC-27.05 Mark Message as Read}{figure.caption.55}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.6}UC-27.06 -- Delete/Recall Message}{67}{subsubsection.3.7.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {56}{\ignorespaces Sequence diagram of UC-27.06 Delete/Recall Message}}{67}{figure.caption.56}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-06}{{56}{67}{Sequence diagram of UC-27.06 Delete/Recall Message}{figure.caption.56}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.7}UC-27.07 -- Pin/Unpin Conversation}{68}{subsubsection.3.7.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {57}{\ignorespaces Sequence diagram of UC-27.07 Pin/Unpin Conversation}}{68}{figure.caption.57}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-07}{{57}{68}{Sequence diagram of UC-27.07 Pin/Unpin Conversation}{figure.caption.57}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.8}UC-27.08 -- Send File}{69}{subsubsection.3.7.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {58}{\ignorespaces Sequence diagram of UC-27.08 Send File}}{69}{figure.caption.58}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-27-08}{{58}{69}{Sequence diagram of UC-27.08 Send File}{figure.caption.58}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Saved Search Management}{69}{subsection.3.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {59}{\ignorespaces Class diagram of Saved Search Management}}{70}{figure.caption.59}\protected@file@percent }
-\newlabel{fig:ptai-cls-saved-search}{{59}{70}{Class diagram of Saved Search Management}{figure.caption.59}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.1}UC-22.01 -- View Saved Search List}{71}{subsubsection.3.8.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {60}{\ignorespaces Sequence diagram of UC-22.01 View Saved Search List}}{71}{figure.caption.60}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-22-01}{{60}{71}{Sequence diagram of UC-22.01 View Saved Search List}{figure.caption.60}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.2}UC-22.02 -- View Saved Search Detail}{72}{subsubsection.3.8.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {61}{\ignorespaces Sequence diagram of UC-22.02 View Saved Search Detail}}{72}{figure.caption.61}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-22-02}{{61}{72}{Sequence diagram of UC-22.02 View Saved Search Detail}{figure.caption.61}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.3}UC-22.03 -- Create Saved Search}{73}{subsubsection.3.8.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {62}{\ignorespaces Sequence diagram of UC-22.03 Create Saved Search}}{73}{figure.caption.62}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-22-03}{{62}{73}{Sequence diagram of UC-22.03 Create Saved Search}{figure.caption.62}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.4}UC-22.04 -- Update Saved Search}{74}{subsubsection.3.8.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {63}{\ignorespaces Sequence diagram of UC-22.04 Update Saved Search}}{74}{figure.caption.63}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-22-04}{{63}{74}{Sequence diagram of UC-22.04 Update Saved Search}{figure.caption.63}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.5}UC-22.05 -- Delete Saved Search}{75}{subsubsection.3.8.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {64}{\ignorespaces Sequence diagram of UC-22.05 Delete Saved Search}}{75}{figure.caption.64}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-22-05}{{64}{75}{Sequence diagram of UC-22.05 Delete Saved Search}{figure.caption.64}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}Job Alert Management}{75}{subsection.3.9}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {65}{\ignorespaces Class diagram of Job Alert Management}}{76}{figure.caption.65}\protected@file@percent }
-\newlabel{fig:ptai-cls-job-alert}{{65}{76}{Class diagram of Job Alert Management}{figure.caption.65}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.1}UC-23.01 -- View Job Alert List}{77}{subsubsection.3.9.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {66}{\ignorespaces Sequence diagram of UC-23.01 View Job Alert List}}{77}{figure.caption.66}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-23-01}{{66}{77}{Sequence diagram of UC-23.01 View Job Alert List}{figure.caption.66}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.2}UC-23.02 -- View Job Alert Detail}{78}{subsubsection.3.9.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {67}{\ignorespaces Sequence diagram of UC-23.02 View Job Alert Detail}}{78}{figure.caption.67}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-23-02}{{67}{78}{Sequence diagram of UC-23.02 View Job Alert Detail}{figure.caption.67}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.3}UC-23.03 -- Create Job Alert}{79}{subsubsection.3.9.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {68}{\ignorespaces Sequence diagram of UC-23.03 Create Job Alert}}{79}{figure.caption.68}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-23-03}{{68}{79}{Sequence diagram of UC-23.03 Create Job Alert}{figure.caption.68}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.4}UC-23.04 -- Update Job Alert}{80}{subsubsection.3.9.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {69}{\ignorespaces Sequence diagram of UC-23.04 Update Job Alert}}{80}{figure.caption.69}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-23-04}{{69}{80}{Sequence diagram of UC-23.04 Update Job Alert}{figure.caption.69}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.5}UC-23.05 -- Delete Job Alert}{81}{subsubsection.3.9.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {70}{\ignorespaces Sequence diagram of UC-23.05 Delete Job Alert}}{81}{figure.caption.70}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-23-05}{{70}{81}{Sequence diagram of UC-23.05 Delete Job Alert}{figure.caption.70}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}Permission Management}{81}{subsection.3.10}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {71}{\ignorespaces Class diagram of Permission Management}}{82}{figure.caption.71}\protected@file@percent }
-\newlabel{fig:tthuan-cls-permission-management}{{71}{82}{Class diagram of Permission Management}{figure.caption.71}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.10.1}UC-15.01 -- View Permission List}{82}{subsubsection.3.10.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {72}{\ignorespaces Sequence diagram of UC-15.01 View Permission List}}{82}{figure.caption.72}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-permission-list}{{72}{82}{Sequence diagram of UC-15.01 View Permission List}{figure.caption.72}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.10.2}UC-15.02 -- View Permission Detail}{83}{subsubsection.3.10.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {73}{\ignorespaces Sequence diagram of UC-15.02 View Permission Detail}}{83}{figure.caption.73}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-permission-detail}{{73}{83}{Sequence diagram of UC-15.02 View Permission Detail}{figure.caption.73}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.11}Session Management}{83}{subsection.3.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {74}{\ignorespaces Class diagram of Session Management}}{84}{figure.caption.74}\protected@file@percent }
-\newlabel{fig:tthuan-cls-session-management}{{74}{84}{Class diagram of Session Management}{figure.caption.74}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.1}UC-16.01 -- View Session List}{85}{subsubsection.3.11.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {75}{\ignorespaces Sequence diagram of UC-16.01 View Session List}}{85}{figure.caption.75}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-session-list}{{75}{85}{Sequence diagram of UC-16.01 View Session List}{figure.caption.75}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.2}UC-16.02 -- View Session Detail}{86}{subsubsection.3.11.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {76}{\ignorespaces Sequence diagram of UC-16.02 View Session Detail}}{86}{figure.caption.76}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-session-detail}{{76}{86}{Sequence diagram of UC-16.02 View Session Detail}{figure.caption.76}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.3}UC-16.03 -- Revoke Session}{87}{subsubsection.3.11.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {77}{\ignorespaces Sequence diagram of UC-16.03 Revoke Session}}{87}{figure.caption.77}\protected@file@percent }
-\newlabel{fig:tthuan-seq-revoke-session}{{77}{87}{Sequence diagram of UC-16.03 Revoke Session}{figure.caption.77}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.12}Forum Category Management}{88}{subsection.3.12}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {78}{\ignorespaces Class diagram of Forum Category Management}}{88}{figure.caption.78}\protected@file@percent }
-\newlabel{fig:tthuan-cls-forum-category-management}{{78}{88}{Class diagram of Forum Category Management}{figure.caption.78}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.1}UC-17.01 -- Create Forum Category}{89}{subsubsection.3.12.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {79}{\ignorespaces Sequence diagram of UC-17.01 Create Forum Category}}{89}{figure.caption.79}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-forum-category}{{79}{89}{Sequence diagram of UC-17.01 Create Forum Category}{figure.caption.79}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.2}UC-17.02 -- Update Forum Category}{90}{subsubsection.3.12.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {80}{\ignorespaces Sequence diagram of UC-17.02 Update Forum Category}}{90}{figure.caption.80}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-forum-category}{{80}{90}{Sequence diagram of UC-17.02 Update Forum Category}{figure.caption.80}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.3}UC-17.03 -- Delete Forum Category}{91}{subsubsection.3.12.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {81}{\ignorespaces Sequence diagram of UC-17.03 Delete Forum Category}}{91}{figure.caption.81}\protected@file@percent }
-\newlabel{fig:tthuan-seq-delete-forum-category}{{81}{91}{Sequence diagram of UC-17.03 Delete Forum Category}{figure.caption.81}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.4}UC-17.06 -- Restore Forum Category}{92}{subsubsection.3.12.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {82}{\ignorespaces Sequence diagram of UC-17.06 Restore Forum Category}}{92}{figure.caption.82}\protected@file@percent }
-\newlabel{fig:tthuan-seq-restore-forum-category}{{82}{92}{Sequence diagram of UC-17.06 Restore Forum Category}{figure.caption.82}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.5}UC-14.01 -- View Forum Category List}{93}{subsubsection.3.12.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {83}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{93}{figure.caption.83}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-forum-category-list}{{83}{93}{Sequence diagram of UC-14.01 View Forum Category List}{figure.caption.83}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.6}UC-14.02 -- View Forum Category Detail}{94}{subsubsection.3.12.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {84}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{94}{figure.caption.84}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-forum-category-detail}{{84}{94}{Sequence diagram of UC-14.02 View Forum Category Detail}{figure.caption.84}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.13}Manage Moderation}{94}{subsection.3.13}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {85}{\ignorespaces Class diagram of Manage Moderation}}{94}{figure.caption.85}\protected@file@percent }
-\newlabel{fig:kvy-cls-manage-moderation}{{85}{94}{Class diagram of Manage Moderation}{figure.caption.85}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.1}UC-34.01 -- View Moderation Queue}{95}{subsubsection.3.13.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {86}{\ignorespaces Sequence diagram of UC-34.01 View Moderation Queue}}{95}{figure.caption.86}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-34-01}{{86}{95}{Sequence diagram of UC-34.01 View Moderation Queue}{figure.caption.86}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.2}UC-34.02 -- View Moderation Item Detail}{96}{subsubsection.3.13.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {87}{\ignorespaces Sequence diagram of UC-34.02 View Moderation Item Detail}}{96}{figure.caption.87}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-34-02}{{87}{96}{Sequence diagram of UC-34.02 View Moderation Item Detail}{figure.caption.87}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.3}UC-34.03 -- Resolve Moderation Item}{97}{subsubsection.3.13.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {88}{\ignorespaces Sequence diagram of UC-34.03 Resolve Moderation Item}}{97}{figure.caption.88}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-34-03}{{88}{97}{Sequence diagram of UC-34.03 Resolve Moderation Item}{figure.caption.88}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.14}Manage ID Verification}{98}{subsection.3.14}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {89}{\ignorespaces Class diagram of Manage ID Verification}}{98}{figure.caption.89}\protected@file@percent }
-\newlabel{fig:kvy-cls-manage-id-verification}{{89}{98}{Class diagram of Manage ID Verification}{figure.caption.89}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.1}UC-35.01 -- View ID Verification Request List}{99}{subsubsection.3.14.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {90}{\ignorespaces Sequence diagram of UC-35.01 View ID Verification Request List}}{99}{figure.caption.90}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-35-01}{{90}{99}{Sequence diagram of UC-35.01 View ID Verification Request List}{figure.caption.90}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.2}UC-35.02 -- View ID Verification Request Detail}{100}{subsubsection.3.14.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {91}{\ignorespaces Sequence diagram of UC-35.02 View ID Verification Request Detail}}{100}{figure.caption.91}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-35-02}{{91}{100}{Sequence diagram of UC-35.02 View ID Verification Request Detail}{figure.caption.91}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.3}UC-35.03 -- Approve ID Verification}{101}{subsubsection.3.14.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {92}{\ignorespaces Sequence diagram of UC-35.03 Approve ID Verification}}{101}{figure.caption.92}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-35-03}{{92}{101}{Sequence diagram of UC-35.03 Approve ID Verification}{figure.caption.92}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.4}UC-35.04 -- Reject ID Verification}{102}{subsubsection.3.14.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {93}{\ignorespaces Sequence diagram of UC-35.04 Reject ID Verification}}{102}{figure.caption.93}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-35-04}{{93}{102}{Sequence diagram of UC-35.04 Reject ID Verification}{figure.caption.93}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.15}Manage Forum Trash}{103}{subsection.3.15}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {94}{\ignorespaces Class diagram of Manage Forum Trash}}{103}{figure.caption.94}\protected@file@percent }
-\newlabel{fig:kvy-cls-manage-forum-trash}{{94}{103}{Class diagram of Manage Forum Trash}{figure.caption.94}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.1}UC-36.01 -- View Deleted Posts/Comments List}{104}{subsubsection.3.15.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {95}{\ignorespaces Sequence diagram of UC-36.01 View Deleted Posts/Comments List}}{104}{figure.caption.95}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-36-01}{{95}{104}{Sequence diagram of UC-36.01 View Deleted Posts/Comments List}{figure.caption.95}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.2}UC-36.02 -- View Deleted Posts/Comments Detail}{105}{subsubsection.3.15.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {96}{\ignorespaces Sequence diagram of UC-36.02 View Deleted Posts/Comments Detail}}{105}{figure.caption.96}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-36-02}{{96}{105}{Sequence diagram of UC-36.02 View Deleted Posts/Comments Detail}{figure.caption.96}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.3}UC-36.03 -- Restore Deleted Posts/Comments}{106}{subsubsection.3.15.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {97}{\ignorespaces Sequence diagram of UC-36.03 Restore Deleted Posts/Comments}}{106}{figure.caption.97}\protected@file@percent }
-\newlabel{fig:kvy-seq-uc-36-03}{{97}{106}{Sequence diagram of UC-36.03 Restore Deleted Posts/Comments}{figure.caption.97}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.16}Proposal Management}{107}{subsection.3.16}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {98}{\ignorespaces Class diagram of Freelancer Proposal Management}}{107}{figure.caption.98}\protected@file@percent }
-\newlabel{fig:ptai-cls-freelancer-proposal}{{98}{107}{Class diagram of Freelancer Proposal Management}{figure.caption.98}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {99}{\ignorespaces Class diagram of Client Proposal Management}}{108}{figure.caption.99}\protected@file@percent }
-\newlabel{fig:ptai-cls-client-proposal}{{99}{108}{Class diagram of Client Proposal Management}{figure.caption.99}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.1}UC-32.01 -- View My Proposal List}{109}{subsubsection.3.16.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {100}{\ignorespaces Sequence diagram of UC-32.01 View My Proposal List}}{109}{figure.caption.100}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-01}{{100}{109}{Sequence diagram of UC-32.01 View My Proposal List}{figure.caption.100}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.2}UC-32.02 -- View My Proposal Detail}{110}{subsubsection.3.16.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {101}{\ignorespaces Sequence diagram of UC-32.02 View My Proposal Detail}}{110}{figure.caption.101}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-02}{{101}{110}{Sequence diagram of UC-32.02 View My Proposal Detail}{figure.caption.101}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.3}UC-32.03 -- Submit Proposal}{111}{subsubsection.3.16.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {102}{\ignorespaces Sequence diagram of UC-32.03 Submit Proposal}}{111}{figure.caption.102}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-03}{{102}{111}{Sequence diagram of UC-32.03 Submit Proposal}{figure.caption.102}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.4}UC-32.04 -- Update Proposal}{112}{subsubsection.3.16.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {103}{\ignorespaces Sequence diagram of UC-32.04 Update Proposal}}{112}{figure.caption.103}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-04}{{103}{112}{Sequence diagram of UC-32.04 Update Proposal}{figure.caption.103}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.5}UC-32.05 -- Withdraw Proposal}{113}{subsubsection.3.16.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {104}{\ignorespaces Sequence diagram of UC-32.05 Withdraw Proposal}}{113}{figure.caption.104}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-05}{{104}{113}{Sequence diagram of UC-32.05 Withdraw Proposal}{figure.caption.104}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.6}UC-32.06 -- Accept Proposal}{114}{subsubsection.3.16.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {105}{\ignorespaces Sequence diagram of UC-32.06 Accept Proposal}}{114}{figure.caption.105}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-06}{{105}{114}{Sequence diagram of UC-32.06 Accept Proposal}{figure.caption.105}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.7}UC-32.07 -- Reject Proposal}{115}{subsubsection.3.16.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {106}{\ignorespaces Sequence diagram of UC-32.07 Reject Proposal}}{115}{figure.caption.106}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-07}{{106}{115}{Sequence diagram of UC-32.07 Reject Proposal}{figure.caption.106}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.8}UC-32.08 -- View Job Proposal List}{116}{subsubsection.3.16.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {107}{\ignorespaces Sequence diagram of UC-32.08 View Job Proposal List}}{116}{figure.caption.107}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-08}{{107}{116}{Sequence diagram of UC-32.08 View Job Proposal List}{figure.caption.107}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.9}UC-32.09 -- View Proposal Detail}{117}{subsubsection.3.16.9}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {108}{\ignorespaces Sequence diagram of UC-32.09 View Proposal Detail}}{117}{figure.caption.108}\protected@file@percent }
-\newlabel{fig:ptai-seq-uc-32-09}{{108}{117}{Sequence diagram of UC-32.09 View Proposal Detail}{figure.caption.108}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.17}User Management}{117}{subsection.3.17}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {109}{\ignorespaces Class diagram of User Management}}{118}{figure.caption.109}\protected@file@percent }
-\newlabel{fig:tthuan-cls-user-management}{{109}{118}{Class diagram of User Management}{figure.caption.109}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.1}UC-28.01 -- View User List}{119}{subsubsection.3.17.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {110}{\ignorespaces Sequence diagram of UC-28.01 View User List}}{119}{figure.caption.110}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-user-list}{{110}{119}{Sequence diagram of UC-28.01 View User List}{figure.caption.110}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.2}UC-28.02 -- View User Detail}{120}{subsubsection.3.17.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {111}{\ignorespaces Sequence diagram of UC-28.02 View User Detail}}{120}{figure.caption.111}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-user-detail}{{111}{120}{Sequence diagram of UC-28.02 View User Detail}{figure.caption.111}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.3}UC-28.03 -- Create User}{121}{subsubsection.3.17.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {112}{\ignorespaces Sequence diagram of UC-28.03 Create User}}{121}{figure.caption.112}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-user}{{112}{121}{Sequence diagram of UC-28.03 Create User}{figure.caption.112}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.4}UC-28.04 -- Update User}{122}{subsubsection.3.17.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {113}{\ignorespaces Sequence diagram of UC-28.04 Update User}}{122}{figure.caption.113}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-user}{{113}{122}{Sequence diagram of UC-28.04 Update User}{figure.caption.113}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.5}UC-28.05 -- Update Client Profile}{123}{subsubsection.3.17.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {114}{\ignorespaces Sequence diagram of UC-28.05 Update Client Profile}}{123}{figure.caption.114}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-client-profile}{{114}{123}{Sequence diagram of UC-28.05 Update Client Profile}{figure.caption.114}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.6}UC-28.06 -- Update Freelancer Basic Info}{124}{subsubsection.3.17.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {115}{\ignorespaces Sequence diagram of UC-28.06 Update Freelancer Basic Info}}{124}{figure.caption.115}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-freelancer-basic-info}{{115}{124}{Sequence diagram of UC-28.06 Update Freelancer Basic Info}{figure.caption.115}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.7}UC-28.07 -- Update Freelancer Skills}{125}{subsubsection.3.17.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {116}{\ignorespaces Sequence diagram of UC-28.07 Update Freelancer Skills}}{125}{figure.caption.116}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-freelancer-skills}{{116}{125}{Sequence diagram of UC-28.07 Update Freelancer Skills}{figure.caption.116}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.8}UC-28.08 -- Update Freelancer Portfolio}{126}{subsubsection.3.17.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {117}{\ignorespaces Sequence diagram of UC-28.08 Update Freelancer Portfolio}}{126}{figure.caption.117}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-freelancer-portfolio}{{117}{126}{Sequence diagram of UC-28.08 Update Freelancer Portfolio}{figure.caption.117}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.18}Banner Management}{127}{subsection.3.18}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {118}{\ignorespaces Class diagram of Banner Management}}{127}{figure.caption.118}\protected@file@percent }
-\newlabel{fig:tthuan-cls-banner-management}{{118}{127}{Class diagram of Banner Management}{figure.caption.118}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.1}UC-37.01 -- View Banner List}{128}{subsubsection.3.18.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {119}{\ignorespaces Sequence diagram of UC-37.01 View Banner List}}{128}{figure.caption.119}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-banner-list}{{119}{128}{Sequence diagram of UC-37.01 View Banner List}{figure.caption.119}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.2}UC-37.02 -- View Banner Detail}{129}{subsubsection.3.18.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {120}{\ignorespaces Sequence diagram of UC-37.02 View Banner Detail}}{129}{figure.caption.120}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-banner-detail}{{120}{129}{Sequence diagram of UC-37.02 View Banner Detail}{figure.caption.120}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.3}UC-37.03 -- Create Banner}{130}{subsubsection.3.18.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {121}{\ignorespaces Sequence diagram of UC-37.03 Create Banner}}{130}{figure.caption.121}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-banner}{{121}{130}{Sequence diagram of UC-37.03 Create Banner}{figure.caption.121}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.4}UC-37.04 -- Update Banner}{131}{subsubsection.3.18.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {122}{\ignorespaces Sequence diagram of UC-37.04 Update Banner}}{131}{figure.caption.122}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-banner}{{122}{131}{Sequence diagram of UC-37.04 Update Banner}{figure.caption.122}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.5}UC-37.05 -- Delete Banner}{132}{subsubsection.3.18.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {123}{\ignorespaces Sequence diagram of UC-37.05 Delete Banner}}{132}{figure.caption.123}\protected@file@percent }
-\newlabel{fig:tthuan-seq-delete-banner}{{123}{132}{Sequence diagram of UC-37.05 Delete Banner}{figure.caption.123}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.19}Skill Management}{133}{subsection.3.19}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {124}{\ignorespaces Class diagram of Skill Management}}{133}{figure.caption.124}\protected@file@percent }
-\newlabel{fig:tthuan-cls-skill-management}{{124}{133}{Class diagram of Skill Management}{figure.caption.124}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.1}UC-38.01 -- View Skill List}{134}{subsubsection.3.19.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {125}{\ignorespaces Sequence diagram of UC-38.01 View Skill List}}{134}{figure.caption.125}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-skill-list}{{125}{134}{Sequence diagram of UC-38.01 View Skill List}{figure.caption.125}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.2}UC-38.02 -- View Skill Detail}{135}{subsubsection.3.19.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {126}{\ignorespaces Sequence diagram of UC-38.02 View Skill Detail}}{135}{figure.caption.126}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-skill-detail}{{126}{135}{Sequence diagram of UC-38.02 View Skill Detail}{figure.caption.126}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.3}UC-38.03 -- Create Skill}{136}{subsubsection.3.19.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {127}{\ignorespaces Sequence diagram of UC-38.03 Create Skill}}{136}{figure.caption.127}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-skill}{{127}{136}{Sequence diagram of UC-38.03 Create Skill}{figure.caption.127}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.4}UC-38.04 -- Update Skill}{137}{subsubsection.3.19.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {128}{\ignorespaces Sequence diagram of UC-38.04 Update Skill}}{137}{figure.caption.128}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-skill}{{128}{137}{Sequence diagram of UC-38.04 Update Skill}{figure.caption.128}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.5}UC-38.05 -- Delete Skill}{138}{subsubsection.3.19.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {129}{\ignorespaces Sequence diagram of UC-38.05 Delete Skill}}{138}{figure.caption.129}\protected@file@percent }
-\newlabel{fig:tthuan-seq-delete-skill}{{129}{138}{Sequence diagram of UC-38.05 Delete Skill}{figure.caption.129}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.6}UC-38.06 -- Restore Skill}{139}{subsubsection.3.19.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {130}{\ignorespaces Sequence diagram of UC-38.06 Restore Skill}}{139}{figure.caption.130}\protected@file@percent }
-\newlabel{fig:tthuan-seq-restore-skill}{{130}{139}{Sequence diagram of UC-38.06 Restore Skill}{figure.caption.130}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.20}Expert Profile Management}{139}{subsection.3.20}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {131}{\ignorespaces Class diagram of Expert Profile Management}}{140}{figure.caption.131}\protected@file@percent }
-\newlabel{fig:tthuan-cls-expert-profile-management}{{131}{140}{Class diagram of Expert Profile Management}{figure.caption.131}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.20.1}UC-28.09 -- Update Expert Profile}{141}{subsubsection.3.20.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {132}{\ignorespaces Sequence diagram of UC-28.09 Update Expert Profile}}{141}{figure.caption.132}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-expert-profile}{{132}{141}{Sequence diagram of UC-28.09 Update Expert Profile}{figure.caption.132}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.21}Job Category Management}{142}{subsection.3.21}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {133}{\ignorespaces Class diagram of Job Category Management}}{142}{figure.caption.133}\protected@file@percent }
-\newlabel{fig:tthuan-cls-job-category-management}{{133}{142}{Class diagram of Job Category Management}{figure.caption.133}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.1}UC-46.01 -- View Job Category List}{143}{subsubsection.3.21.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {134}{\ignorespaces Sequence diagram of UC-46.01 View Job Category List}}{143}{figure.caption.134}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-job-category-list}{{134}{143}{Sequence diagram of UC-46.01 View Job Category List}{figure.caption.134}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.2}UC-46.02 -- View Job Category Detail}{144}{subsubsection.3.21.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {135}{\ignorespaces Sequence diagram of UC-46.02 View Job Category Detail}}{144}{figure.caption.135}\protected@file@percent }
-\newlabel{fig:tthuan-seq-view-job-category-detail}{{135}{144}{Sequence diagram of UC-46.02 View Job Category Detail}{figure.caption.135}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.3}UC-46.03 -- Create Job Category}{145}{subsubsection.3.21.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {136}{\ignorespaces Sequence diagram of UC-46.03 Create Job Category}}{145}{figure.caption.136}\protected@file@percent }
-\newlabel{fig:tthuan-seq-create-job-category}{{136}{145}{Sequence diagram of UC-46.03 Create Job Category}{figure.caption.136}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.4}UC-46.04 -- Update Job Category}{146}{subsubsection.3.21.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {137}{\ignorespaces Sequence diagram of UC-46.04 Update Job Category}}{146}{figure.caption.137}\protected@file@percent }
-\newlabel{fig:tthuan-seq-update-job-category}{{137}{146}{Sequence diagram of UC-46.04 Update Job Category}{figure.caption.137}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.5}UC-46.05 -- Delete Job Category}{147}{subsubsection.3.21.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {138}{\ignorespaces Sequence diagram of UC-46.05 Delete Job Category}}{147}{figure.caption.138}\protected@file@percent }
-\newlabel{fig:tthuan-seq-delete-job-category}{{138}{147}{Sequence diagram of UC-46.05 Delete Job Category}{figure.caption.138}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Package Diagram}{13}{subsection.1.2}\protected@file@percent }
+\newlabel{subsec:package-diagram}{{1.2}{13}{Package Diagram}{subsection.1.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Package diagram of the Frevia monorepo}}{14}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:arch:packages}{{3}{14}{Package diagram of the Frevia monorepo}{figure.caption.3}{}}
 \gdef \LT@ii {\LT@entry 
-    {1}{34.40729pt}\LT@entry 
-    {1}{153.50922pt}\LT@entry 
-    {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Class Specification}{148}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}ForumController Class}{148}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.1.1}ClassMethod}{148}{paragraph.4.1.1}\protected@file@percent }
+    {1}{38.40729pt}\LT@entry 
+    {1}{166.0447pt}\LT@entry 
+    {1}{251.40297pt}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Workspace packages and their responsibility}}{15}{table.2}\protected@file@percent }
+\newlabel{tab:packages}{{2}{15}{Workspace packages and their responsibility}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Assumptions and Risks}{15}{subsection.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Design Constraints}{16}{subsection.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.1}Platform Compatibility}{17}{subsubsection.1.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.2}Integration Complexity}{17}{subsubsection.1.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.3}Performance Requirements}{17}{subsubsection.1.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Technology Stack}{17}{subsection.1.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces RESTful API communication between the Next.js frontend and the NestJS backend}}{18}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:restful-api}{{4}{18}{RESTful API communication between the Next.js frontend and the NestJS backend}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}NestJS Framework}{18}{subsubsection.1.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}Next.js and React 19 Frontend}{19}{subsubsection.1.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.3}Prisma ORM and PostgreSQL}{19}{subsubsection.1.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.4}Supporting Services}{19}{subsubsection.1.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.}Database Design}{19}{section.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Entity--relationship diagram of the Frevia database}}{20}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:db:erd}{{5}{20}{Entity--relationship diagram of the Frevia database}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Table Relationships}{20}{subsection.2.1}\protected@file@percent }
 \gdef \LT@iii {\LT@entry 
-    {1}{34.40729pt}\LT@entry 
-    {1}{236.02203pt}\LT@entry 
-    {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.1.2}ClassAttribute}{150}{paragraph.4.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}ForumService Class}{150}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.2.1}ClassMethod}{150}{paragraph.4.2.1}\protected@file@percent }
+    {1}{38.40729pt}\LT@entry 
+    {1}{154.66377pt}\LT@entry 
+    {1}{262.78433pt}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Table descriptions of the Frevia database}}{21}{table.3}\protected@file@percent }
+\newlabel{tab:db:tables}{{3}{21}{Table descriptions of the Frevia database}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.}Detailed Design}{29}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Forum Management}{29}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Class Diagram}{30}{subsubsection.3.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Class diagram of Forum Management}}{30}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:kvy-cls-forum-management}{{6}{30}{Class diagram of Forum Management}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}UC-14.01 -- View Forum Category List}{31}{subsubsection.3.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{31}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-01}{{7}{31}{Sequence diagram of UC-14.01 View Forum Category List}{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}UC-14.02 -- View Forum Category Detail}{32}{subsubsection.3.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{32}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-02}{{8}{32}{Sequence diagram of UC-14.02 View Forum Category Detail}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}UC-14.03 -- View Post List}{33}{subsubsection.3.1.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Sequence diagram of UC-14.03 View Post List}}{33}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-03}{{9}{33}{Sequence diagram of UC-14.03 View Post List}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.5}UC-14.04 -- View Post Detail}{34}{subsubsection.3.1.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Sequence diagram of UC-14.04 View Post Detail}}{34}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-04}{{10}{34}{Sequence diagram of UC-14.04 View Post Detail}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.6}UC-14.05 -- Create Post}{35}{subsubsection.3.1.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Sequence diagram of UC-14.05 Create Post}}{35}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-05}{{11}{35}{Sequence diagram of UC-14.05 Create Post}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.7}UC-14.06 -- Update Post}{36}{subsubsection.3.1.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Sequence diagram of UC-14.06 Update Post}}{36}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-06}{{12}{36}{Sequence diagram of UC-14.06 Update Post}{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.8}UC-14.07 -- Delete Post}{37}{subsubsection.3.1.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Sequence diagram of UC-14.07 Delete Post}}{37}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-07}{{13}{37}{Sequence diagram of UC-14.07 Delete Post}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.9}UC-14.08 -- Like Post}{38}{subsubsection.3.1.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Sequence diagram of UC-14.08 Like Post}}{38}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-08}{{14}{38}{Sequence diagram of UC-14.08 Like Post}{figure.caption.14}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.10}UC-14.09 -- Unlike Post}{39}{subsubsection.3.1.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Sequence diagram of UC-14.09 Unlike Post}}{39}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-09}{{15}{39}{Sequence diagram of UC-14.09 Unlike Post}{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.11}UC-14.10 -- View Post Likes}{40}{subsubsection.3.1.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Sequence diagram of UC-14.10 View Post Likes}}{40}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-10}{{16}{40}{Sequence diagram of UC-14.10 View Post Likes}{figure.caption.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.12}UC-14.11 -- View Post Comments}{41}{subsubsection.3.1.12}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Sequence diagram of UC-14.11 View Post Comments}}{41}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-11}{{17}{41}{Sequence diagram of UC-14.11 View Post Comments}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.13}UC-14.12 -- Create Comment}{42}{subsubsection.3.1.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Sequence diagram of UC-14.12 Create Comment}}{42}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-12}{{18}{42}{Sequence diagram of UC-14.12 Create Comment}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.14}UC-14.13 -- Update Comment}{43}{subsubsection.3.1.14}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Sequence diagram of UC-14.13 Update Comment}}{43}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-13}{{19}{43}{Sequence diagram of UC-14.13 Update Comment}{figure.caption.19}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.15}UC-14.14 -- Delete Comment}{44}{subsubsection.3.1.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Sequence diagram of UC-14.14 Delete Comment}}{44}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-14}{{20}{44}{Sequence diagram of UC-14.14 Delete Comment}{figure.caption.20}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.16}UC-14.15 -- Like Comment}{45}{subsubsection.3.1.16}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Sequence diagram of UC-14.15 Like Comment}}{45}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-15}{{21}{45}{Sequence diagram of UC-14.15 Like Comment}{figure.caption.21}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.17}UC-14.16 -- Unlike Comment}{46}{subsubsection.3.1.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Sequence diagram of UC-14.16 Unlike Comment}}{46}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-16}{{22}{46}{Sequence diagram of UC-14.16 Unlike Comment}{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.18}UC-14.17 -- Report Content}{47}{subsubsection.3.1.18}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Sequence diagram of UC-14.17 Report Content}}{47}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-14-17}{{23}{47}{Sequence diagram of UC-14.17 Report Content}{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Job Browsing}{48}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Class Diagram}{48}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Class diagram of Job Browsing}}{48}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:ptai-cls-job-browsing}{{24}{48}{Class diagram of Job Browsing}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}UC-10.01 -- View Job List}{49}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Sequence diagram of UC-10.01 View Job List}}{49}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-10-01}{{25}{49}{Sequence diagram of UC-10.01 View Job List}{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}UC-10.02 -- View Job Detail}{50}{subsubsection.3.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Sequence diagram of UC-10.02 View Job Detail}}{50}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-10-02}{{26}{50}{Sequence diagram of UC-10.02 View Job Detail}{figure.caption.26}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Job Management}{50}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Class Diagram}{51}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Class diagram of Job Management}}{51}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:ptai-cls-job-management}{{27}{51}{Class diagram of Job Management}{figure.caption.27}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}UC-11.01 -- View My Jobs}{52}{subsubsection.3.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {28}{\ignorespaces Sequence diagram of UC-11.01 View My Jobs}}{52}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-01}{{28}{52}{Sequence diagram of UC-11.01 View My Jobs}{figure.caption.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3}UC-11.02 -- Create Job}{53}{subsubsection.3.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces Sequence diagram of UC-11.02 Create Job}}{53}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-02}{{29}{53}{Sequence diagram of UC-11.02 Create Job}{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4}UC-11.03 -- Publish Job}{54}{subsubsection.3.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Sequence diagram of UC-11.03 Publish Job}}{54}{figure.caption.30}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-03}{{30}{54}{Sequence diagram of UC-11.03 Publish Job}{figure.caption.30}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.5}UC-11.04 -- Update Job}{55}{subsubsection.3.3.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces Sequence diagram of UC-11.04 Update Job}}{55}{figure.caption.31}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-04}{{31}{55}{Sequence diagram of UC-11.04 Update Job}{figure.caption.31}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.6}UC-11.05 -- Delete Job}{56}{subsubsection.3.3.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces Sequence diagram of UC-11.05 Delete Job}}{56}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-05}{{32}{56}{Sequence diagram of UC-11.05 Delete Job}{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.7}UC-11.06 -- Change Job Status}{57}{subsubsection.3.3.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {33}{\ignorespaces Sequence diagram of UC-11.06 Change Job Status}}{57}{figure.caption.33}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-11-06}{{33}{57}{Sequence diagram of UC-11.06 Change Job Status}{figure.caption.33}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Bookmarked Jobs Management}{57}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Class Diagram}{58}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {34}{\ignorespaces Class diagram of Bookmarked Jobs Management}}{58}{figure.caption.34}\protected@file@percent }
+\newlabel{fig:ptai-cls-bookmarked-jobs}{{34}{58}{Class diagram of Bookmarked Jobs Management}{figure.caption.34}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}UC-12.01 -- View Bookmarked Job List}{59}{subsubsection.3.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {35}{\ignorespaces Sequence diagram of UC-12.01 View Bookmarked Job List}}{59}{figure.caption.35}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-12-01}{{35}{59}{Sequence diagram of UC-12.01 View Bookmarked Job List}{figure.caption.35}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.3}UC-12.02 -- Bookmark Job}{60}{subsubsection.3.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {36}{\ignorespaces Sequence diagram of UC-12.02 Bookmark Job}}{60}{figure.caption.36}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-12-02}{{36}{60}{Sequence diagram of UC-12.02 Bookmark Job}{figure.caption.36}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.4}UC-12.03 -- Remove Bookmark}{61}{subsubsection.3.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {37}{\ignorespaces Sequence diagram of UC-12.03 Remove Bookmark}}{61}{figure.caption.37}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-12-03}{{37}{61}{Sequence diagram of UC-12.03 Remove Bookmark}{figure.caption.37}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Authentication}{61}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Class Diagram}{62}{subsubsection.3.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {38}{\ignorespaces Class diagram of Authentication}}{62}{figure.caption.38}\protected@file@percent }
+\newlabel{fig:tthuan-cls-auth}{{38}{62}{Class diagram of Authentication}{figure.caption.38}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}UC-01 -- Login with Google}{63}{subsubsection.3.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {39}{\ignorespaces Sequence diagram of UC-01 Login with Google}}{63}{figure.caption.39}\protected@file@percent }
+\newlabel{fig:tthuan-seq-login-google}{{39}{63}{Sequence diagram of UC-01 Login with Google}{figure.caption.39}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}UC-02 -- Login}{64}{subsubsection.3.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {40}{\ignorespaces Sequence diagram of UC-02 Login}}{64}{figure.caption.40}\protected@file@percent }
+\newlabel{fig:tthuan-seq-login}{{40}{64}{Sequence diagram of UC-02 Login}{figure.caption.40}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.4}UC-03 -- Logout}{65}{subsubsection.3.5.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {41}{\ignorespaces Sequence diagram of UC-03 Logout}}{65}{figure.caption.41}\protected@file@percent }
+\newlabel{fig:tthuan-seq-logout}{{41}{65}{Sequence diagram of UC-03 Logout}{figure.caption.41}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.5}UC-04 -- Register}{66}{subsubsection.3.5.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {42}{\ignorespaces Sequence diagram of UC-04 Register}}{66}{figure.caption.42}\protected@file@percent }
+\newlabel{fig:tthuan-seq-register}{{42}{66}{Sequence diagram of UC-04 Register}{figure.caption.42}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.6}UC-05 -- Forgot Password}{67}{subsubsection.3.5.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {43}{\ignorespaces Sequence diagram of UC-05 Forgot Password}}{67}{figure.caption.43}\protected@file@percent }
+\newlabel{fig:tthuan-seq-forgot-password}{{43}{67}{Sequence diagram of UC-05 Forgot Password}{figure.caption.43}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Role Management}{67}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.1}Class Diagram}{68}{subsubsection.3.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {44}{\ignorespaces Class diagram of Role Management}}{68}{figure.caption.44}\protected@file@percent }
+\newlabel{fig:tthuan-cls-role-management}{{44}{68}{Class diagram of Role Management}{figure.caption.44}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.2}UC-06.01 -- View Role List}{69}{subsubsection.3.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {45}{\ignorespaces Sequence diagram of UC-06.01 View Role List}}{69}{figure.caption.45}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-role-list}{{45}{69}{Sequence diagram of UC-06.01 View Role List}{figure.caption.45}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.3}UC-06.02 -- View Role Detail}{70}{subsubsection.3.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {46}{\ignorespaces Sequence diagram of UC-06.02 View Role Detail}}{70}{figure.caption.46}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-role-detail}{{46}{70}{Sequence diagram of UC-06.02 View Role Detail}{figure.caption.46}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.4}UC-06.03 -- Create Role}{71}{subsubsection.3.6.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {47}{\ignorespaces Sequence diagram of UC-06.03 Create Role}}{71}{figure.caption.47}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-role}{{47}{71}{Sequence diagram of UC-06.03 Create Role}{figure.caption.47}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.5}UC-06.04 -- Update Role}{72}{subsubsection.3.6.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {48}{\ignorespaces Sequence diagram of UC-06.04 Update Role}}{72}{figure.caption.48}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-role}{{48}{72}{Sequence diagram of UC-06.04 Update Role}{figure.caption.48}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.6}UC-06.05 -- Delete Role}{73}{subsubsection.3.6.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {49}{\ignorespaces Sequence diagram of UC-06.05 Delete Role}}{73}{figure.caption.49}\protected@file@percent }
+\newlabel{fig:tthuan-seq-delete-role}{{49}{73}{Sequence diagram of UC-06.05 Delete Role}{figure.caption.49}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.7}UC-06.06 -- Update Role Permissions}{74}{subsubsection.3.6.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {50}{\ignorespaces Sequence diagram of UC-06.06 Update Role Permissions}}{74}{figure.caption.50}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-role-permissions}{{50}{74}{Sequence diagram of UC-06.06 Update Role Permissions}{figure.caption.50}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Manage Conversation}{74}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.1}Class Diagram}{75}{subsubsection.3.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {51}{\ignorespaces Class diagram of Manage Conversation}}{75}{figure.caption.51}\protected@file@percent }
+\newlabel{fig:kvy-cls-manage-conversation}{{51}{75}{Class diagram of Manage Conversation}{figure.caption.51}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.2}UC-27.01 -- View Conversation List}{76}{subsubsection.3.7.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {52}{\ignorespaces Sequence diagram of UC-27.01 View Conversation List}}{76}{figure.caption.52}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-01}{{52}{76}{Sequence diagram of UC-27.01 View Conversation List}{figure.caption.52}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.3}UC-27.02 -- Start Conversation}{77}{subsubsection.3.7.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {53}{\ignorespaces Sequence diagram of UC-27.02 Start Conversation}}{77}{figure.caption.53}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-02}{{53}{77}{Sequence diagram of UC-27.02 Start Conversation}{figure.caption.53}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.4}UC-27.03 -- View Conversation Detail}{78}{subsubsection.3.7.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {54}{\ignorespaces Sequence diagram of UC-27.03 View Conversation Detail}}{78}{figure.caption.54}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-03}{{54}{78}{Sequence diagram of UC-27.03 View Conversation Detail}{figure.caption.54}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.5}UC-27.04 -- Send Message}{79}{subsubsection.3.7.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {55}{\ignorespaces Sequence diagram of UC-27.04 Send Message}}{79}{figure.caption.55}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-04}{{55}{79}{Sequence diagram of UC-27.04 Send Message}{figure.caption.55}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.6}UC-27.05 -- Mark Message as Read}{80}{subsubsection.3.7.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {56}{\ignorespaces Sequence diagram of UC-27.05 Mark Message as Read}}{80}{figure.caption.56}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-05}{{56}{80}{Sequence diagram of UC-27.05 Mark Message as Read}{figure.caption.56}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.7}UC-27.06 -- Delete/Recall Message}{81}{subsubsection.3.7.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {57}{\ignorespaces Sequence diagram of UC-27.06 Delete/Recall Message}}{81}{figure.caption.57}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-06}{{57}{81}{Sequence diagram of UC-27.06 Delete/Recall Message}{figure.caption.57}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.8}UC-27.07 -- Pin/Unpin Conversation}{82}{subsubsection.3.7.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {58}{\ignorespaces Sequence diagram of UC-27.07 Pin/Unpin Conversation}}{82}{figure.caption.58}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-07}{{58}{82}{Sequence diagram of UC-27.07 Pin/Unpin Conversation}{figure.caption.58}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.7.9}UC-27.08 -- Send File}{83}{subsubsection.3.7.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {59}{\ignorespaces Sequence diagram of UC-27.08 Send File}}{83}{figure.caption.59}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-27-08}{{59}{83}{Sequence diagram of UC-27.08 Send File}{figure.caption.59}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Saved Search Management}{83}{subsection.3.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.1}Class Diagram}{84}{subsubsection.3.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {60}{\ignorespaces Class diagram of Saved Search Management}}{84}{figure.caption.60}\protected@file@percent }
+\newlabel{fig:ptai-cls-saved-search}{{60}{84}{Class diagram of Saved Search Management}{figure.caption.60}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.2}UC-22.01 -- View Saved Search List}{85}{subsubsection.3.8.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {61}{\ignorespaces Sequence diagram of UC-22.01 View Saved Search List}}{85}{figure.caption.61}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-22-01}{{61}{85}{Sequence diagram of UC-22.01 View Saved Search List}{figure.caption.61}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.3}UC-22.02 -- View Saved Search Detail}{86}{subsubsection.3.8.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {62}{\ignorespaces Sequence diagram of UC-22.02 View Saved Search Detail}}{86}{figure.caption.62}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-22-02}{{62}{86}{Sequence diagram of UC-22.02 View Saved Search Detail}{figure.caption.62}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.4}UC-22.03 -- Create Saved Search}{87}{subsubsection.3.8.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {63}{\ignorespaces Sequence diagram of UC-22.03 Create Saved Search}}{87}{figure.caption.63}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-22-03}{{63}{87}{Sequence diagram of UC-22.03 Create Saved Search}{figure.caption.63}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.5}UC-22.04 -- Update Saved Search}{88}{subsubsection.3.8.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {64}{\ignorespaces Sequence diagram of UC-22.04 Update Saved Search}}{88}{figure.caption.64}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-22-04}{{64}{88}{Sequence diagram of UC-22.04 Update Saved Search}{figure.caption.64}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.6}UC-22.05 -- Delete Saved Search}{89}{subsubsection.3.8.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {65}{\ignorespaces Sequence diagram of UC-22.05 Delete Saved Search}}{89}{figure.caption.65}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-22-05}{{65}{89}{Sequence diagram of UC-22.05 Delete Saved Search}{figure.caption.65}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}Job Alert Management}{89}{subsection.3.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.1}Class Diagram}{90}{subsubsection.3.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {66}{\ignorespaces Class diagram of Job Alert Management}}{90}{figure.caption.66}\protected@file@percent }
+\newlabel{fig:ptai-cls-job-alert}{{66}{90}{Class diagram of Job Alert Management}{figure.caption.66}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.2}UC-23.01 -- View Job Alert List}{91}{subsubsection.3.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {67}{\ignorespaces Sequence diagram of UC-23.01 View Job Alert List}}{91}{figure.caption.67}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-23-01}{{67}{91}{Sequence diagram of UC-23.01 View Job Alert List}{figure.caption.67}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.3}UC-23.02 -- View Job Alert Detail}{92}{subsubsection.3.9.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {68}{\ignorespaces Sequence diagram of UC-23.02 View Job Alert Detail}}{92}{figure.caption.68}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-23-02}{{68}{92}{Sequence diagram of UC-23.02 View Job Alert Detail}{figure.caption.68}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.4}UC-23.03 -- Create Job Alert}{93}{subsubsection.3.9.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {69}{\ignorespaces Sequence diagram of UC-23.03 Create Job Alert}}{93}{figure.caption.69}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-23-03}{{69}{93}{Sequence diagram of UC-23.03 Create Job Alert}{figure.caption.69}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.5}UC-23.04 -- Update Job Alert}{94}{subsubsection.3.9.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {70}{\ignorespaces Sequence diagram of UC-23.04 Update Job Alert}}{94}{figure.caption.70}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-23-04}{{70}{94}{Sequence diagram of UC-23.04 Update Job Alert}{figure.caption.70}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.9.6}UC-23.05 -- Delete Job Alert}{95}{subsubsection.3.9.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {71}{\ignorespaces Sequence diagram of UC-23.05 Delete Job Alert}}{95}{figure.caption.71}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-23-05}{{71}{95}{Sequence diagram of UC-23.05 Delete Job Alert}{figure.caption.71}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}Permission Management}{95}{subsection.3.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.10.1}Class Diagram}{96}{subsubsection.3.10.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {72}{\ignorespaces Class diagram of Permission Management}}{96}{figure.caption.72}\protected@file@percent }
+\newlabel{fig:tthuan-cls-permission-management}{{72}{96}{Class diagram of Permission Management}{figure.caption.72}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.10.2}UC-15.01 -- View Permission List}{96}{subsubsection.3.10.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {73}{\ignorespaces Sequence diagram of UC-15.01 View Permission List}}{96}{figure.caption.73}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-permission-list}{{73}{96}{Sequence diagram of UC-15.01 View Permission List}{figure.caption.73}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.10.3}UC-15.02 -- View Permission Detail}{97}{subsubsection.3.10.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {74}{\ignorespaces Sequence diagram of UC-15.02 View Permission Detail}}{97}{figure.caption.74}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-permission-detail}{{74}{97}{Sequence diagram of UC-15.02 View Permission Detail}{figure.caption.74}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.11}Session Management}{97}{subsection.3.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.1}Class Diagram}{98}{subsubsection.3.11.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {75}{\ignorespaces Class diagram of Session Management}}{98}{figure.caption.75}\protected@file@percent }
+\newlabel{fig:tthuan-cls-session-management}{{75}{98}{Class diagram of Session Management}{figure.caption.75}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.2}UC-16.01 -- View Session List}{99}{subsubsection.3.11.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {76}{\ignorespaces Sequence diagram of UC-16.01 View Session List}}{99}{figure.caption.76}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-session-list}{{76}{99}{Sequence diagram of UC-16.01 View Session List}{figure.caption.76}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.3}UC-16.02 -- View Session Detail}{100}{subsubsection.3.11.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {77}{\ignorespaces Sequence diagram of UC-16.02 View Session Detail}}{100}{figure.caption.77}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-session-detail}{{77}{100}{Sequence diagram of UC-16.02 View Session Detail}{figure.caption.77}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.11.4}UC-16.03 -- Revoke Session}{101}{subsubsection.3.11.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {78}{\ignorespaces Sequence diagram of UC-16.03 Revoke Session}}{101}{figure.caption.78}\protected@file@percent }
+\newlabel{fig:tthuan-seq-revoke-session}{{78}{101}{Sequence diagram of UC-16.03 Revoke Session}{figure.caption.78}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.12}Forum Category Management}{101}{subsection.3.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.1}Class Diagram}{102}{subsubsection.3.12.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {79}{\ignorespaces Class diagram of Forum Category Management}}{102}{figure.caption.79}\protected@file@percent }
+\newlabel{fig:tthuan-cls-forum-category-management}{{79}{102}{Class diagram of Forum Category Management}{figure.caption.79}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.2}UC-17.01 -- Create Forum Category}{103}{subsubsection.3.12.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {80}{\ignorespaces Sequence diagram of UC-17.01 Create Forum Category}}{103}{figure.caption.80}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-forum-category}{{80}{103}{Sequence diagram of UC-17.01 Create Forum Category}{figure.caption.80}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.3}UC-17.02 -- Update Forum Category}{104}{subsubsection.3.12.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {81}{\ignorespaces Sequence diagram of UC-17.02 Update Forum Category}}{104}{figure.caption.81}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-forum-category}{{81}{104}{Sequence diagram of UC-17.02 Update Forum Category}{figure.caption.81}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.4}UC-17.03 -- Delete Forum Category}{105}{subsubsection.3.12.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {82}{\ignorespaces Sequence diagram of UC-17.03 Delete Forum Category}}{105}{figure.caption.82}\protected@file@percent }
+\newlabel{fig:tthuan-seq-delete-forum-category}{{82}{105}{Sequence diagram of UC-17.03 Delete Forum Category}{figure.caption.82}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.5}UC-17.06 -- Restore Forum Category}{106}{subsubsection.3.12.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {83}{\ignorespaces Sequence diagram of UC-17.06 Restore Forum Category}}{106}{figure.caption.83}\protected@file@percent }
+\newlabel{fig:tthuan-seq-restore-forum-category}{{83}{106}{Sequence diagram of UC-17.06 Restore Forum Category}{figure.caption.83}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.6}UC-14.01 -- View Forum Category List}{107}{subsubsection.3.12.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {84}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{107}{figure.caption.84}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-forum-category-list}{{84}{107}{Sequence diagram of UC-14.01 View Forum Category List}{figure.caption.84}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.12.7}UC-14.02 -- View Forum Category Detail}{108}{subsubsection.3.12.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {85}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{108}{figure.caption.85}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-forum-category-detail}{{85}{108}{Sequence diagram of UC-14.02 View Forum Category Detail}{figure.caption.85}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.13}Manage Moderation}{108}{subsection.3.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.1}Class Diagram}{108}{subsubsection.3.13.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {86}{\ignorespaces Class diagram of Manage Moderation}}{108}{figure.caption.86}\protected@file@percent }
+\newlabel{fig:kvy-cls-manage-moderation}{{86}{108}{Class diagram of Manage Moderation}{figure.caption.86}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.2}UC-34.01 -- View Moderation Queue}{109}{subsubsection.3.13.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {87}{\ignorespaces Sequence diagram of UC-34.01 View Moderation Queue}}{109}{figure.caption.87}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-34-01}{{87}{109}{Sequence diagram of UC-34.01 View Moderation Queue}{figure.caption.87}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.3}UC-34.02 -- View Moderation Item Detail}{110}{subsubsection.3.13.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {88}{\ignorespaces Sequence diagram of UC-34.02 View Moderation Item Detail}}{110}{figure.caption.88}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-34-02}{{88}{110}{Sequence diagram of UC-34.02 View Moderation Item Detail}{figure.caption.88}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.13.4}UC-34.03 -- Resolve Moderation Item}{111}{subsubsection.3.13.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {89}{\ignorespaces Sequence diagram of UC-34.03 Resolve Moderation Item}}{111}{figure.caption.89}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-34-03}{{89}{111}{Sequence diagram of UC-34.03 Resolve Moderation Item}{figure.caption.89}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.14}Manage ID Verification}{112}{subsection.3.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.1}Class Diagram}{112}{subsubsection.3.14.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {90}{\ignorespaces Class diagram of Manage ID Verification}}{112}{figure.caption.90}\protected@file@percent }
+\newlabel{fig:kvy-cls-manage-id-verification}{{90}{112}{Class diagram of Manage ID Verification}{figure.caption.90}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.2}UC-35.01 -- View ID Verification Request List}{113}{subsubsection.3.14.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {91}{\ignorespaces Sequence diagram of UC-35.01 View ID Verification Request List}}{113}{figure.caption.91}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-35-01}{{91}{113}{Sequence diagram of UC-35.01 View ID Verification Request List}{figure.caption.91}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.3}UC-35.02 -- View ID Verification Request Detail}{114}{subsubsection.3.14.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {92}{\ignorespaces Sequence diagram of UC-35.02 View ID Verification Request Detail}}{114}{figure.caption.92}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-35-02}{{92}{114}{Sequence diagram of UC-35.02 View ID Verification Request Detail}{figure.caption.92}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.4}UC-35.03 -- Approve ID Verification}{115}{subsubsection.3.14.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {93}{\ignorespaces Sequence diagram of UC-35.03 Approve ID Verification}}{115}{figure.caption.93}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-35-03}{{93}{115}{Sequence diagram of UC-35.03 Approve ID Verification}{figure.caption.93}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.14.5}UC-35.04 -- Reject ID Verification}{116}{subsubsection.3.14.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {94}{\ignorespaces Sequence diagram of UC-35.04 Reject ID Verification}}{116}{figure.caption.94}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-35-04}{{94}{116}{Sequence diagram of UC-35.04 Reject ID Verification}{figure.caption.94}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.15}Manage Forum Trash}{117}{subsection.3.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.1}Class Diagram}{117}{subsubsection.3.15.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {95}{\ignorespaces Class diagram of Manage Forum Trash}}{117}{figure.caption.95}\protected@file@percent }
+\newlabel{fig:kvy-cls-manage-forum-trash}{{95}{117}{Class diagram of Manage Forum Trash}{figure.caption.95}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.2}UC-36.01 -- View Deleted Posts/Comments List}{118}{subsubsection.3.15.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {96}{\ignorespaces Sequence diagram of UC-36.01 View Deleted Posts/Comments List}}{118}{figure.caption.96}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-36-01}{{96}{118}{Sequence diagram of UC-36.01 View Deleted Posts/Comments List}{figure.caption.96}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.3}UC-36.02 -- View Deleted Posts/Comments Detail}{119}{subsubsection.3.15.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {97}{\ignorespaces Sequence diagram of UC-36.02 View Deleted Posts/Comments Detail}}{119}{figure.caption.97}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-36-02}{{97}{119}{Sequence diagram of UC-36.02 View Deleted Posts/Comments Detail}{figure.caption.97}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.15.4}UC-36.03 -- Restore Deleted Posts/Comments}{120}{subsubsection.3.15.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {98}{\ignorespaces Sequence diagram of UC-36.03 Restore Deleted Posts/Comments}}{120}{figure.caption.98}\protected@file@percent }
+\newlabel{fig:kvy-seq-uc-36-03}{{98}{120}{Sequence diagram of UC-36.03 Restore Deleted Posts/Comments}{figure.caption.98}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.16}Proposal Management}{121}{subsection.3.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.1}Class Diagram}{121}{subsubsection.3.16.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {99}{\ignorespaces Class diagram of Freelancer Proposal Management}}{121}{figure.caption.99}\protected@file@percent }
+\newlabel{fig:ptai-cls-freelancer-proposal}{{99}{121}{Class diagram of Freelancer Proposal Management}{figure.caption.99}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {100}{\ignorespaces Class diagram of Client Proposal Management}}{122}{figure.caption.100}\protected@file@percent }
+\newlabel{fig:ptai-cls-client-proposal}{{100}{122}{Class diagram of Client Proposal Management}{figure.caption.100}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.2}UC-32.01 -- View My Proposal List}{123}{subsubsection.3.16.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {101}{\ignorespaces Sequence diagram of UC-32.01 View My Proposal List}}{123}{figure.caption.101}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-01}{{101}{123}{Sequence diagram of UC-32.01 View My Proposal List}{figure.caption.101}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.3}UC-32.02 -- View My Proposal Detail}{124}{subsubsection.3.16.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {102}{\ignorespaces Sequence diagram of UC-32.02 View My Proposal Detail}}{124}{figure.caption.102}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-02}{{102}{124}{Sequence diagram of UC-32.02 View My Proposal Detail}{figure.caption.102}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.4}UC-32.03 -- Submit Proposal}{125}{subsubsection.3.16.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {103}{\ignorespaces Sequence diagram of UC-32.03 Submit Proposal}}{125}{figure.caption.103}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-03}{{103}{125}{Sequence diagram of UC-32.03 Submit Proposal}{figure.caption.103}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.5}UC-32.04 -- Update Proposal}{126}{subsubsection.3.16.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {104}{\ignorespaces Sequence diagram of UC-32.04 Update Proposal}}{126}{figure.caption.104}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-04}{{104}{126}{Sequence diagram of UC-32.04 Update Proposal}{figure.caption.104}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.6}UC-32.05 -- Withdraw Proposal}{127}{subsubsection.3.16.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {105}{\ignorespaces Sequence diagram of UC-32.05 Withdraw Proposal}}{127}{figure.caption.105}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-05}{{105}{127}{Sequence diagram of UC-32.05 Withdraw Proposal}{figure.caption.105}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.7}UC-32.06 -- Accept Proposal}{128}{subsubsection.3.16.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {106}{\ignorespaces Sequence diagram of UC-32.06 Accept Proposal}}{128}{figure.caption.106}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-06}{{106}{128}{Sequence diagram of UC-32.06 Accept Proposal}{figure.caption.106}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.8}UC-32.07 -- Reject Proposal}{129}{subsubsection.3.16.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {107}{\ignorespaces Sequence diagram of UC-32.07 Reject Proposal}}{129}{figure.caption.107}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-07}{{107}{129}{Sequence diagram of UC-32.07 Reject Proposal}{figure.caption.107}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.9}UC-32.08 -- View Job Proposal List}{130}{subsubsection.3.16.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {108}{\ignorespaces Sequence diagram of UC-32.08 View Job Proposal List}}{130}{figure.caption.108}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-08}{{108}{130}{Sequence diagram of UC-32.08 View Job Proposal List}{figure.caption.108}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.16.10}UC-32.09 -- View Proposal Detail}{131}{subsubsection.3.16.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {109}{\ignorespaces Sequence diagram of UC-32.09 View Proposal Detail}}{131}{figure.caption.109}\protected@file@percent }
+\newlabel{fig:ptai-seq-uc-32-09}{{109}{131}{Sequence diagram of UC-32.09 View Proposal Detail}{figure.caption.109}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.17}User Management}{131}{subsection.3.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.1}Class Diagram}{132}{subsubsection.3.17.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {110}{\ignorespaces Class diagram of User Management}}{132}{figure.caption.110}\protected@file@percent }
+\newlabel{fig:tthuan-cls-user-management}{{110}{132}{Class diagram of User Management}{figure.caption.110}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.2}UC-28.01 -- View User List}{133}{subsubsection.3.17.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {111}{\ignorespaces Sequence diagram of UC-28.01 View User List}}{133}{figure.caption.111}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-user-list}{{111}{133}{Sequence diagram of UC-28.01 View User List}{figure.caption.111}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.3}UC-28.02 -- View User Detail}{134}{subsubsection.3.17.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {112}{\ignorespaces Sequence diagram of UC-28.02 View User Detail}}{134}{figure.caption.112}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-user-detail}{{112}{134}{Sequence diagram of UC-28.02 View User Detail}{figure.caption.112}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.4}UC-28.03 -- Create User}{135}{subsubsection.3.17.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {113}{\ignorespaces Sequence diagram of UC-28.03 Create User}}{135}{figure.caption.113}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-user}{{113}{135}{Sequence diagram of UC-28.03 Create User}{figure.caption.113}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.5}UC-28.04 -- Update User}{136}{subsubsection.3.17.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {114}{\ignorespaces Sequence diagram of UC-28.04 Update User}}{136}{figure.caption.114}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-user}{{114}{136}{Sequence diagram of UC-28.04 Update User}{figure.caption.114}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.6}UC-28.05 -- Update Client Profile}{137}{subsubsection.3.17.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {115}{\ignorespaces Sequence diagram of UC-28.05 Update Client Profile}}{137}{figure.caption.115}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-client-profile}{{115}{137}{Sequence diagram of UC-28.05 Update Client Profile}{figure.caption.115}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.7}UC-28.06 -- Update Freelancer Basic Info}{138}{subsubsection.3.17.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {116}{\ignorespaces Sequence diagram of UC-28.06 Update Freelancer Basic Info}}{138}{figure.caption.116}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-freelancer-basic-info}{{116}{138}{Sequence diagram of UC-28.06 Update Freelancer Basic Info}{figure.caption.116}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.8}UC-28.07 -- Update Freelancer Skills}{139}{subsubsection.3.17.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {117}{\ignorespaces Sequence diagram of UC-28.07 Update Freelancer Skills}}{139}{figure.caption.117}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-freelancer-skills}{{117}{139}{Sequence diagram of UC-28.07 Update Freelancer Skills}{figure.caption.117}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.17.9}UC-28.08 -- Update Freelancer Portfolio}{140}{subsubsection.3.17.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {118}{\ignorespaces Sequence diagram of UC-28.08 Update Freelancer Portfolio}}{140}{figure.caption.118}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-freelancer-portfolio}{{118}{140}{Sequence diagram of UC-28.08 Update Freelancer Portfolio}{figure.caption.118}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.18}Banner Management}{141}{subsection.3.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.1}Class Diagram}{141}{subsubsection.3.18.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {119}{\ignorespaces Class diagram of Banner Management}}{141}{figure.caption.119}\protected@file@percent }
+\newlabel{fig:tthuan-cls-banner-management}{{119}{141}{Class diagram of Banner Management}{figure.caption.119}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.2}UC-37.01 -- View Banner List}{142}{subsubsection.3.18.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {120}{\ignorespaces Sequence diagram of UC-37.01 View Banner List}}{142}{figure.caption.120}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-banner-list}{{120}{142}{Sequence diagram of UC-37.01 View Banner List}{figure.caption.120}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.3}UC-37.02 -- View Banner Detail}{143}{subsubsection.3.18.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {121}{\ignorespaces Sequence diagram of UC-37.02 View Banner Detail}}{143}{figure.caption.121}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-banner-detail}{{121}{143}{Sequence diagram of UC-37.02 View Banner Detail}{figure.caption.121}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.4}UC-37.03 -- Create Banner}{144}{subsubsection.3.18.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {122}{\ignorespaces Sequence diagram of UC-37.03 Create Banner}}{144}{figure.caption.122}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-banner}{{122}{144}{Sequence diagram of UC-37.03 Create Banner}{figure.caption.122}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.5}UC-37.04 -- Update Banner}{145}{subsubsection.3.18.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {123}{\ignorespaces Sequence diagram of UC-37.04 Update Banner}}{145}{figure.caption.123}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-banner}{{123}{145}{Sequence diagram of UC-37.04 Update Banner}{figure.caption.123}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.18.6}UC-37.05 -- Delete Banner}{146}{subsubsection.3.18.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {124}{\ignorespaces Sequence diagram of UC-37.05 Delete Banner}}{146}{figure.caption.124}\protected@file@percent }
+\newlabel{fig:tthuan-seq-delete-banner}{{124}{146}{Sequence diagram of UC-37.05 Delete Banner}{figure.caption.124}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.19}Skill Management}{146}{subsection.3.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.1}Class Diagram}{147}{subsubsection.3.19.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {125}{\ignorespaces Class diagram of Skill Management}}{147}{figure.caption.125}\protected@file@percent }
+\newlabel{fig:tthuan-cls-skill-management}{{125}{147}{Class diagram of Skill Management}{figure.caption.125}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.2}UC-38.01 -- View Skill List}{148}{subsubsection.3.19.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {126}{\ignorespaces Sequence diagram of UC-38.01 View Skill List}}{148}{figure.caption.126}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-skill-list}{{126}{148}{Sequence diagram of UC-38.01 View Skill List}{figure.caption.126}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.3}UC-38.02 -- View Skill Detail}{149}{subsubsection.3.19.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {127}{\ignorespaces Sequence diagram of UC-38.02 View Skill Detail}}{149}{figure.caption.127}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-skill-detail}{{127}{149}{Sequence diagram of UC-38.02 View Skill Detail}{figure.caption.127}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.4}UC-38.03 -- Create Skill}{150}{subsubsection.3.19.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {128}{\ignorespaces Sequence diagram of UC-38.03 Create Skill}}{150}{figure.caption.128}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-skill}{{128}{150}{Sequence diagram of UC-38.03 Create Skill}{figure.caption.128}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.5}UC-38.04 -- Update Skill}{151}{subsubsection.3.19.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {129}{\ignorespaces Sequence diagram of UC-38.04 Update Skill}}{151}{figure.caption.129}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-skill}{{129}{151}{Sequence diagram of UC-38.04 Update Skill}{figure.caption.129}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.6}UC-38.05 -- Delete Skill}{152}{subsubsection.3.19.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {130}{\ignorespaces Sequence diagram of UC-38.05 Delete Skill}}{152}{figure.caption.130}\protected@file@percent }
+\newlabel{fig:tthuan-seq-delete-skill}{{130}{152}{Sequence diagram of UC-38.05 Delete Skill}{figure.caption.130}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.19.7}UC-38.06 -- Restore Skill}{153}{subsubsection.3.19.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {131}{\ignorespaces Sequence diagram of UC-38.06 Restore Skill}}{153}{figure.caption.131}\protected@file@percent }
+\newlabel{fig:tthuan-seq-restore-skill}{{131}{153}{Sequence diagram of UC-38.06 Restore Skill}{figure.caption.131}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.20}Expert Profile Management}{153}{subsection.3.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.20.1}Class Diagram}{154}{subsubsection.3.20.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {132}{\ignorespaces Class diagram of Expert Profile Management}}{154}{figure.caption.132}\protected@file@percent }
+\newlabel{fig:tthuan-cls-expert-profile-management}{{132}{154}{Class diagram of Expert Profile Management}{figure.caption.132}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.20.2}UC-28.09 -- Update Expert Profile}{155}{subsubsection.3.20.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {133}{\ignorespaces Sequence diagram of UC-28.09 Update Expert Profile}}{155}{figure.caption.133}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-expert-profile}{{133}{155}{Sequence diagram of UC-28.09 Update Expert Profile}{figure.caption.133}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.21}Job Category Management}{156}{subsection.3.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.1}Class Diagram}{156}{subsubsection.3.21.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {134}{\ignorespaces Class diagram of Job Category Management}}{156}{figure.caption.134}\protected@file@percent }
+\newlabel{fig:tthuan-cls-job-category-management}{{134}{156}{Class diagram of Job Category Management}{figure.caption.134}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.2}UC-46.01 -- View Job Category List}{157}{subsubsection.3.21.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {135}{\ignorespaces Sequence diagram of UC-46.01 View Job Category List}}{157}{figure.caption.135}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-job-category-list}{{135}{157}{Sequence diagram of UC-46.01 View Job Category List}{figure.caption.135}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.3}UC-46.02 -- View Job Category Detail}{158}{subsubsection.3.21.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {136}{\ignorespaces Sequence diagram of UC-46.02 View Job Category Detail}}{158}{figure.caption.136}\protected@file@percent }
+\newlabel{fig:tthuan-seq-view-job-category-detail}{{136}{158}{Sequence diagram of UC-46.02 View Job Category Detail}{figure.caption.136}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.4}UC-46.03 -- Create Job Category}{159}{subsubsection.3.21.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {137}{\ignorespaces Sequence diagram of UC-46.03 Create Job Category}}{159}{figure.caption.137}\protected@file@percent }
+\newlabel{fig:tthuan-seq-create-job-category}{{137}{159}{Sequence diagram of UC-46.03 Create Job Category}{figure.caption.137}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.5}UC-46.04 -- Update Job Category}{160}{subsubsection.3.21.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {138}{\ignorespaces Sequence diagram of UC-46.04 Update Job Category}}{160}{figure.caption.138}\protected@file@percent }
+\newlabel{fig:tthuan-seq-update-job-category}{{138}{160}{Sequence diagram of UC-46.04 Update Job Category}{figure.caption.138}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.21.6}UC-46.05 -- Delete Job Category}{161}{subsubsection.3.21.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {139}{\ignorespaces Sequence diagram of UC-46.05 Delete Job Category}}{161}{figure.caption.139}\protected@file@percent }
+\newlabel{fig:tthuan-seq-delete-job-category}{{139}{161}{Sequence diagram of UC-46.05 Delete Job Category}{figure.caption.139}{}}
 \gdef \LT@iv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.}Class Specification}{162}{section.4}\protected@file@percent }
+\newlabel{sec:class-specification}{{4.}{162}{Class Specification}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}ForumController Class}{162}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.1.1}ClassMethod}{162}{paragraph.4.1.1}\protected@file@percent }
 \gdef \LT@v {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.2.2}ClassAttribute}{153}{paragraph.4.2.2}\protected@file@percent }
 \gdef \LT@vi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ForumRepository Class}{154}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.3.1}ClassMethod}{154}{paragraph.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.1.2}ClassAttribute}{164}{paragraph.4.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}ForumService Class}{164}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.2.1}ClassMethod}{164}{paragraph.4.2.1}\protected@file@percent }
 \gdef \LT@vii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
 \gdef \LT@viii {\LT@entry 
-    {1}{122.61101pt}\LT@entry 
-    {1}{213.25974pt}\LT@entry 
-    {1}{119.37334pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.3.2}ClassAttribute}{156}{paragraph.4.3.2}\protected@file@percent }
-\gdef \LT@ix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\gdef \LT@x {\LT@entry 
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.2.2}ClassAttribute}{167}{paragraph.4.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}ForumRepository Class}{167}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.3.1}ClassMethod}{167}{paragraph.4.3.1}\protected@file@percent }
+\gdef \LT@ix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}ForumLikeController Class}{158}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.4.1}ClassMethod}{158}{paragraph.4.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.4.2}ClassAttribute}{158}{paragraph.4.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}ForumLikeService Class}{158}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.5.1}ClassMethod}{158}{paragraph.4.5.1}\protected@file@percent }
+\gdef \LT@x {\LT@entry 
+    {1}{122.61101pt}\LT@entry 
+    {1}{213.25974pt}\LT@entry 
+    {1}{119.37334pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.3.2}ClassAttribute}{170}{paragraph.4.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}ForumLikeController Class}{171}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.4.1}ClassMethod}{171}{paragraph.4.4.1}\protected@file@percent }
 \gdef \LT@xi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
@@ -497,46 +526,46 @@
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.5.2}ClassAttribute}{159}{paragraph.4.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}ForumLikeRepository Class}{159}{subsection.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.6.1}ClassMethod}{159}{paragraph.4.6.1}\protected@file@percent }
 \gdef \LT@xiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.6.2}ClassAttribute}{160}{paragraph.4.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.4.2}ClassAttribute}{172}{paragraph.4.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}ForumLikeService Class}{172}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.5.1}ClassMethod}{172}{paragraph.4.5.1}\protected@file@percent }
 \gdef \LT@xiv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
 \gdef \LT@xv {\LT@entry 
-    {1}{133.99193pt}\LT@entry 
-    {1}{218.95021pt}\LT@entry 
-    {1}{102.30194pt}}
-\gdef \LT@xvi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}ForumCommentController Class}{161}{subsection.4.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.7.1}ClassMethod}{161}{paragraph.4.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.7.2}ClassAttribute}{162}{paragraph.4.7.2}\protected@file@percent }
-\gdef \LT@xvii {\LT@entry 
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.5.2}ClassAttribute}{173}{paragraph.4.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}ForumLikeRepository Class}{173}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.6.1}ClassMethod}{173}{paragraph.4.6.1}\protected@file@percent }
+\gdef \LT@xvi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.6.2}ClassAttribute}{174}{paragraph.4.6.2}\protected@file@percent }
+\gdef \LT@xvii {\LT@entry 
+    {1}{133.99193pt}\LT@entry 
+    {1}{218.95021pt}\LT@entry 
+    {1}{102.30194pt}}
 \gdef \LT@xviii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}ForumCommentService Class}{163}{subsection.4.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.8.1}ClassMethod}{163}{paragraph.4.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}ForumCommentController Class}{175}{subsection.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.7.1}ClassMethod}{175}{paragraph.4.7.1}\protected@file@percent }
 \gdef \LT@xix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.8.2}ClassAttribute}{164}{paragraph.4.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}ForumCommentRepository Class}{164}{subsection.4.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.9.1}ClassMethod}{164}{paragraph.4.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.7.2}ClassAttribute}{176}{paragraph.4.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}ForumCommentService Class}{176}{subsection.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.8.1}ClassMethod}{176}{paragraph.4.8.1}\protected@file@percent }
 \gdef \LT@xx {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
@@ -545,88 +574,88 @@
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.9.2}ClassAttribute}{166}{paragraph.4.9.2}\protected@file@percent }
 \gdef \LT@xxii {\LT@entry 
-    {1}{128.30147pt}\LT@entry 
-    {1}{218.95021pt}\LT@entry 
-    {1}{107.9924pt}}
-\gdef \LT@xxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.10}ForumReportController Class}{167}{subsection.4.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.10.1}ClassMethod}{167}{paragraph.4.10.1}\protected@file@percent }
-\gdef \LT@xxiv {\LT@entry 
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.8.2}ClassAttribute}{178}{paragraph.4.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}ForumCommentRepository Class}{178}{subsection.4.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.9.1}ClassMethod}{178}{paragraph.4.9.1}\protected@file@percent }
+\gdef \LT@xxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.10.2}ClassAttribute}{169}{paragraph.4.10.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.11}ForumReportService Class}{169}{subsection.4.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.11.1}ClassMethod}{169}{paragraph.4.11.1}\protected@file@percent }
+\gdef \LT@xxiv {\LT@entry 
+    {1}{128.30147pt}\LT@entry 
+    {1}{218.95021pt}\LT@entry 
+    {1}{107.9924pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.9.2}ClassAttribute}{180}{paragraph.4.9.2}\protected@file@percent }
 \gdef \LT@xxv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.10}ForumReportController Class}{181}{subsection.4.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.10.1}ClassMethod}{181}{paragraph.4.10.1}\protected@file@percent }
 \gdef \LT@xxvi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.11.2}ClassAttribute}{171}{paragraph.4.11.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.12}ForumReportRepository Class}{171}{subsection.4.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.12.1}ClassMethod}{171}{paragraph.4.12.1}\protected@file@percent }
 \gdef \LT@xxvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.10.2}ClassAttribute}{183}{paragraph.4.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.11}ForumReportService Class}{183}{subsection.4.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.11.1}ClassMethod}{183}{paragraph.4.11.1}\protected@file@percent }
 \gdef \LT@xxviii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
 \gdef \LT@xxix {\LT@entry 
-    {1}{133.99193pt}\LT@entry 
-    {1}{213.25974pt}\LT@entry 
-    {1}{107.99242pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.12.2}ClassAttribute}{173}{paragraph.4.12.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Supporting DTO classes for reports}{173}{table.28}\protected@file@percent }
-\gdef \LT@xxx {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.13}AuthController Class}{174}{subsection.4.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.13.1}ClassMethod}{174}{paragraph.4.13.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.13.2}ClassAttribute}{176}{paragraph.4.13.2}\protected@file@percent }
-\gdef \LT@xxxi {\LT@entry 
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.11.2}ClassAttribute}{185}{paragraph.4.11.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.12}ForumReportRepository Class}{185}{subsection.4.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.12.1}ClassMethod}{185}{paragraph.4.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.12.2}ClassAttribute}{186}{paragraph.4.12.2}\protected@file@percent }
+\gdef \LT@xxx {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\gdef \LT@xxxi {\LT@entry 
+    {1}{133.99193pt}\LT@entry 
+    {1}{213.25974pt}\LT@entry 
+    {1}{107.99242pt}}
 \gdef \LT@xxxii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.14}AuthService Class}{177}{subsection.4.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.14.1}ClassMethod}{177}{paragraph.4.14.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Supporting DTO classes for reports}{187}{table.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.13}AuthController Class}{187}{subsection.4.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.13.1}ClassMethod}{187}{paragraph.4.13.1}\protected@file@percent }
 \gdef \LT@xxxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.14.2}ClassAttribute}{180}{paragraph.4.14.2}\protected@file@percent }
 \gdef \LT@xxxiv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.15}AuthRepository Class}{181}{subsection.4.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.15.1}ClassMethod}{181}{paragraph.4.15.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.15.2}ClassAttribute}{183}{paragraph.4.15.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.13.2}ClassAttribute}{190}{paragraph.4.13.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.14}AuthService Class}{190}{subsection.4.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.14.1}ClassMethod}{190}{paragraph.4.14.1}\protected@file@percent }
 \gdef \LT@xxxv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.14.2}ClassAttribute}{193}{paragraph.4.14.2}\protected@file@percent }
 \gdef \LT@xxxvi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.16}RolesController Class}{184}{subsection.4.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.16.1}ClassMethod}{184}{paragraph.4.16.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.15}AuthRepository Class}{194}{subsection.4.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.15.1}ClassMethod}{194}{paragraph.4.15.1}\protected@file@percent }
 \gdef \LT@xxxvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -635,9 +664,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.16.2}ClassAttribute}{185}{paragraph.4.16.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.17}RolesService Class}{185}{subsection.4.17}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.17.1}ClassMethod}{185}{paragraph.4.17.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.15.2}ClassAttribute}{197}{paragraph.4.15.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.16}RolesController Class}{197}{subsection.4.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.16.1}ClassMethod}{197}{paragraph.4.16.1}\protected@file@percent }
 \gdef \LT@xxxix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -646,10 +675,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.17.2}ClassAttribute}{187}{paragraph.4.17.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.18}RolesRepository Class}{187}{subsection.4.18}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.18.1}ClassMethod}{187}{paragraph.4.18.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.18.2}ClassAttribute}{188}{paragraph.4.18.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.16.2}ClassAttribute}{198}{paragraph.4.16.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.17}RolesService Class}{198}{subsection.4.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.17.1}ClassMethod}{198}{paragraph.4.17.1}\protected@file@percent }
 \gdef \LT@xli {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -658,8 +686,10 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.19}ConversationController Class}{189}{subsection.4.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.19.1}ClassMethod}{189}{paragraph.4.19.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.17.2}ClassAttribute}{200}{paragraph.4.17.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.18}RolesRepository Class}{200}{subsection.4.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.18.1}ClassMethod}{200}{paragraph.4.18.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.18.2}ClassAttribute}{201}{paragraph.4.18.2}\protected@file@percent }
 \gdef \LT@xliii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -668,9 +698,8 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.19.2}ClassAttribute}{191}{paragraph.4.19.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.20}ConversationService Class}{191}{subsection.4.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.20.1}ClassMethod}{191}{paragraph.4.20.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.19}ConversationController Class}{202}{subsection.4.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.19.1}ClassMethod}{202}{paragraph.4.19.1}\protected@file@percent }
 \gdef \LT@xlv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -679,9 +708,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.20.2}ClassAttribute}{195}{paragraph.4.20.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.21}ConversationRepository Class}{195}{subsection.4.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.21.1}ClassMethod}{195}{paragraph.4.21.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.19.2}ClassAttribute}{204}{paragraph.4.19.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.20}ConversationService Class}{204}{subsection.4.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.20.1}ClassMethod}{204}{paragraph.4.20.1}\protected@file@percent }
 \gdef \LT@xlvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -690,9 +719,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.21.2}ClassAttribute}{198}{paragraph.4.21.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.22}ConversationsGateway Class}{198}{subsection.4.22}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.22.1}ClassMethod}{198}{paragraph.4.22.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.20.2}ClassAttribute}{208}{paragraph.4.20.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.21}ConversationRepository Class}{208}{subsection.4.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.21.1}ClassMethod}{208}{paragraph.4.21.1}\protected@file@percent }
 \gdef \LT@xlix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -701,9 +730,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.22.2}ClassAttribute}{200}{paragraph.4.22.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.23}PermissionsController Class}{200}{subsection.4.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.23.1}ClassMethod}{200}{paragraph.4.23.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.21.2}ClassAttribute}{211}{paragraph.4.21.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.22}ConversationsGateway Class}{211}{subsection.4.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.22.1}ClassMethod}{211}{paragraph.4.22.1}\protected@file@percent }
 \gdef \LT@li {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -712,9 +741,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.23.2}ClassAttribute}{201}{paragraph.4.23.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.24}PermissionsService Class}{201}{subsection.4.24}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.24.1}ClassMethod}{201}{paragraph.4.24.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.22.2}ClassAttribute}{213}{paragraph.4.22.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.23}PermissionsController Class}{213}{subsection.4.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.23.1}ClassMethod}{213}{paragraph.4.23.1}\protected@file@percent }
 \gdef \LT@liii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -723,9 +752,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.24.2}ClassAttribute}{202}{paragraph.4.24.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.25}PermissionsRepository Class}{202}{subsection.4.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.25.1}ClassMethod}{202}{paragraph.4.25.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.23.2}ClassAttribute}{214}{paragraph.4.23.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.24}PermissionsService Class}{214}{subsection.4.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.24.1}ClassMethod}{214}{paragraph.4.24.1}\protected@file@percent }
 \gdef \LT@lv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -734,21 +763,20 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.25.2}ClassAttribute}{203}{paragraph.4.25.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.26}SessionsController Class}{203}{subsection.4.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.26.1}ClassMethod}{203}{paragraph.4.26.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.24.2}ClassAttribute}{215}{paragraph.4.24.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.25}PermissionsRepository Class}{215}{subsection.4.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.25.1}ClassMethod}{215}{paragraph.4.25.1}\protected@file@percent }
 \gdef \LT@lvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.26.2}ClassAttribute}{204}{paragraph.4.26.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.27}SessionsService Class}{204}{subsection.4.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.27.1}ClassMethod}{204}{paragraph.4.27.1}\protected@file@percent }
 \gdef \LT@lviii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.27.2}ClassAttribute}{205}{paragraph.4.27.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.25.2}ClassAttribute}{216}{paragraph.4.25.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.26}SessionsController Class}{216}{subsection.4.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.26.1}ClassMethod}{216}{paragraph.4.26.1}\protected@file@percent }
 \gdef \LT@lix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -757,42 +785,43 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.28}SessionsRepository Class}{206}{subsection.4.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.28.1}ClassMethod}{206}{paragraph.4.28.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.26.2}ClassAttribute}{217}{paragraph.4.26.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.27}SessionsService Class}{217}{subsection.4.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.27.1}ClassMethod}{217}{paragraph.4.27.1}\protected@file@percent }
 \gdef \LT@lxi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.27.2}ClassAttribute}{218}{paragraph.4.27.2}\protected@file@percent }
 \gdef \LT@lxii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.28.2}ClassAttribute}{207}{paragraph.4.28.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.29}Forum Category Administration (Shared Classes)}{207}{subsection.4.29}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.30}ForumAdminController Class}{207}{subsection.4.30}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.30.1}ClassMethod}{207}{paragraph.4.30.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.28}SessionsRepository Class}{219}{subsection.4.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.28.1}ClassMethod}{219}{paragraph.4.28.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.28.2}ClassAttribute}{219}{paragraph.4.28.2}\protected@file@percent }
 \gdef \LT@lxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.30.2}ClassAttribute}{211}{paragraph.4.30.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.31}ForumAdminService Class}{211}{subsection.4.31}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.31.1}ClassMethod}{211}{paragraph.4.31.1}\protected@file@percent }
 \gdef \LT@lxiv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.29}Forum Category Administration (Shared Classes)}{220}{subsection.4.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.30}ForumAdminController Class}{220}{subsection.4.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.30.1}ClassMethod}{220}{paragraph.4.30.1}\protected@file@percent }
 \gdef \LT@lxv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.31.2}ClassAttribute}{215}{paragraph.4.31.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.32}ForumAdminRepository Class}{215}{subsection.4.32}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.32.1}ClassMethod}{215}{paragraph.4.32.1}\protected@file@percent }
 \gdef \LT@lxvi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.30.2}ClassAttribute}{224}{paragraph.4.30.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.31}ForumAdminService Class}{224}{subsection.4.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.31.1}ClassMethod}{224}{paragraph.4.31.1}\protected@file@percent }
 \gdef \LT@lxvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -801,9 +830,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.32.2}ClassAttribute}{219}{paragraph.4.32.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.33}IdentityVerificationsAdminController Class}{219}{subsection.4.33}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.33.1}ClassMethod}{219}{paragraph.4.33.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.31.2}ClassAttribute}{228}{paragraph.4.31.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.32}ForumAdminRepository Class}{228}{subsection.4.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.32.1}ClassMethod}{228}{paragraph.4.32.1}\protected@file@percent }
 \gdef \LT@lxix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -812,31 +841,31 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.33.2}ClassAttribute}{221}{paragraph.4.33.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.34}IdentityVerificationsAdminService Class}{221}{subsection.4.34}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.34.1}ClassMethod}{221}{paragraph.4.34.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.32.2}ClassAttribute}{232}{paragraph.4.32.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.33}IdentityVerificationsAdminController Class}{232}{subsection.4.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.33.1}ClassMethod}{232}{paragraph.4.33.1}\protected@file@percent }
 \gdef \LT@lxxi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.34.2}ClassAttribute}{222}{paragraph.4.34.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.33.2}ClassAttribute}{233}{paragraph.4.33.2}\protected@file@percent }
 \gdef \LT@lxxii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.35}IdentityVerificationsAdminRepository Class}{223}{subsection.4.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.35.1}ClassMethod}{223}{paragraph.4.35.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.34}IdentityVerificationsAdminService Class}{234}{subsection.4.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.34.1}ClassMethod}{234}{paragraph.4.34.1}\protected@file@percent }
 \gdef \LT@lxxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.34.2}ClassAttribute}{235}{paragraph.4.34.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.35}IdentityVerificationsAdminRepository Class}{235}{subsection.4.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.35.1}ClassMethod}{235}{paragraph.4.35.1}\protected@file@percent }
 \gdef \LT@lxxiv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.35.2}ClassAttribute}{224}{paragraph.4.35.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.36}UsersController Class}{224}{subsection.4.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.36.1}ClassMethod}{224}{paragraph.4.36.1}\protected@file@percent }
 \gdef \LT@lxxv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -845,16 +874,16 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.36.2}ClassAttribute}{227}{paragraph.4.36.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.37}UsersService Class}{227}{subsection.4.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.37.1}ClassMethod}{227}{paragraph.4.37.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.35.2}ClassAttribute}{237}{paragraph.4.35.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.36}UsersController Class}{237}{subsection.4.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.36.1}ClassMethod}{237}{paragraph.4.36.1}\protected@file@percent }
 \gdef \LT@lxxvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.37.2}ClassAttribute}{230}{paragraph.4.37.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.38}UsersRepository Class}{230}{subsection.4.38}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.38.1}ClassMethod}{230}{paragraph.4.38.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.36.2}ClassAttribute}{239}{paragraph.4.36.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.37}UsersService Class}{239}{subsection.4.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.37.1}ClassMethod}{239}{paragraph.4.37.1}\protected@file@percent }
 \gdef \LT@lxxviii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
@@ -863,13 +892,13 @@
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.38.2}ClassAttribute}{233}{paragraph.4.38.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.39}BannersAdminController Class}{233}{subsection.4.39}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.39.1}ClassMethod}{233}{paragraph.4.39.1}\protected@file@percent }
 \gdef \LT@lxxx {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.37.2}ClassAttribute}{243}{paragraph.4.37.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.38}UsersRepository Class}{243}{subsection.4.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.38.1}ClassMethod}{243}{paragraph.4.38.1}\protected@file@percent }
 \gdef \LT@lxxxi {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -878,20 +907,20 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.39.2}ClassAttribute}{235}{paragraph.4.39.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.40}BannersAdminService Class}{235}{subsection.4.40}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.40.1}ClassMethod}{235}{paragraph.4.40.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.40.2}ClassAttribute}{236}{paragraph.4.40.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.38.2}ClassAttribute}{246}{paragraph.4.38.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.39}BannersAdminController Class}{246}{subsection.4.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.39.1}ClassMethod}{246}{paragraph.4.39.1}\protected@file@percent }
 \gdef \LT@lxxxiii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.39.2}ClassAttribute}{247}{paragraph.4.39.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.40}BannersAdminService Class}{247}{subsection.4.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.40.1}ClassMethod}{247}{paragraph.4.40.1}\protected@file@percent }
 \gdef \LT@lxxxiv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.41}BannersAdminRepository Class}{237}{subsection.4.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.41.1}ClassMethod}{237}{paragraph.4.41.1}\protected@file@percent }
 \gdef \LT@lxxxv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -900,42 +929,42 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.41.2}ClassAttribute}{238}{paragraph.4.41.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.42}SkillsAdminController Class}{238}{subsection.4.42}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.42.1}ClassMethod}{238}{paragraph.4.42.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.42.2}ClassAttribute}{239}{paragraph.4.42.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.40.2}ClassAttribute}{249}{paragraph.4.40.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.41}BannersAdminRepository Class}{249}{subsection.4.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.41.1}ClassMethod}{249}{paragraph.4.41.1}\protected@file@percent }
 \gdef \LT@lxxxvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.41.2}ClassAttribute}{250}{paragraph.4.41.2}\protected@file@percent }
 \gdef \LT@lxxxviii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.43}SkillsAdminService Class}{240}{subsection.4.43}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.43.1}ClassMethod}{240}{paragraph.4.43.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.42}SkillsAdminController Class}{251}{subsection.4.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.42.1}ClassMethod}{251}{paragraph.4.42.1}\protected@file@percent }
 \gdef \LT@lxxxix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.43.2}ClassAttribute}{241}{paragraph.4.43.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.44}SkillsAdminRepository Class}{241}{subsection.4.44}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.44.1}ClassMethod}{241}{paragraph.4.44.1}\protected@file@percent }
 \gdef \LT@xc {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.42.2}ClassAttribute}{252}{paragraph.4.42.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.43}SkillsAdminService Class}{252}{subsection.4.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.43.1}ClassMethod}{252}{paragraph.4.43.1}\protected@file@percent }
 \gdef \LT@xci {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.43.2}ClassAttribute}{253}{paragraph.4.43.2}\protected@file@percent }
 \gdef \LT@xcii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.44.2}ClassAttribute}{243}{paragraph.4.44.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.45}AdminExpertProfileController Class}{243}{subsection.4.45}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.45.1}ClassMethod}{243}{paragraph.4.45.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.44}SkillsAdminRepository Class}{254}{subsection.4.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.44.1}ClassMethod}{254}{paragraph.4.44.1}\protected@file@percent }
 \gdef \LT@xciii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -944,9 +973,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.45.2}ClassAttribute}{244}{paragraph.4.45.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.46}ExpertProfileService Class}{244}{subsection.4.46}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.46.1}ClassMethod}{244}{paragraph.4.46.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.44.2}ClassAttribute}{255}{paragraph.4.44.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.45}AdminExpertProfileController Class}{255}{subsection.4.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.45.1}ClassMethod}{255}{paragraph.4.45.1}\protected@file@percent }
 \gdef \LT@xcv {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -955,9 +984,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.46.2}ClassAttribute}{246}{paragraph.4.46.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.47}ExpertProfileRepository Class}{246}{subsection.4.47}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.47.1}ClassMethod}{246}{paragraph.4.47.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.45.2}ClassAttribute}{256}{paragraph.4.45.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.46}ExpertProfileService Class}{256}{subsection.4.46}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.46.1}ClassMethod}{256}{paragraph.4.46.1}\protected@file@percent }
 \gdef \LT@xcvii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -966,9 +995,9 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.47.2}ClassAttribute}{247}{paragraph.4.47.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.48}JobCategoriesAdminController Class}{247}{subsection.4.48}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.48.1}ClassMethod}{247}{paragraph.4.48.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.46.2}ClassAttribute}{258}{paragraph.4.46.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.47}ExpertProfileRepository Class}{258}{subsection.4.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.47.1}ClassMethod}{258}{paragraph.4.47.1}\protected@file@percent }
 \gdef \LT@xcix {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
@@ -977,23 +1006,34 @@
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.48.2}ClassAttribute}{249}{paragraph.4.48.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.49}JobCategoriesAdminService Class}{249}{subsection.4.49}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.49.1}ClassMethod}{249}{paragraph.4.49.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.47.2}ClassAttribute}{259}{paragraph.4.47.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.48}JobCategoriesAdminController Class}{259}{subsection.4.48}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.48.1}ClassMethod}{259}{paragraph.4.48.1}\protected@file@percent }
 \gdef \LT@ci {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.49.2}ClassAttribute}{250}{paragraph.4.49.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.50}JobCategoriesAdminRepository Class}{250}{subsection.4.50}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.50.1}ClassMethod}{250}{paragraph.4.50.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.48.2}ClassAttribute}{260}{paragraph.4.48.2}\protected@file@percent }
 \gdef \LT@cii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{153.50922pt}\LT@entry 
     {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.49}JobCategoriesAdminService Class}{261}{subsection.4.49}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.49.1}ClassMethod}{261}{paragraph.4.49.1}\protected@file@percent }
 \gdef \LT@ciii {\LT@entry 
     {1}{34.40729pt}\LT@entry 
     {1}{236.02203pt}\LT@entry 
     {1}{181.96198pt}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {4.50.2}ClassAttribute}{252}{paragraph.4.50.2}\protected@file@percent }
-\gdef \@abspage@last{253}
+\gdef \LT@civ {\LT@entry 
+    {1}{34.40729pt}\LT@entry 
+    {1}{153.50922pt}\LT@entry 
+    {1}{264.4748pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.49.2}ClassAttribute}{262}{paragraph.4.49.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.50}JobCategoriesAdminRepository Class}{262}{subsection.4.50}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.50.1}ClassMethod}{262}{paragraph.4.50.1}\protected@file@percent }
+\gdef \LT@cv {\LT@entry 
+    {1}{34.40729pt}\LT@entry 
+    {1}{236.02203pt}\LT@entry 
+    {1}{181.96198pt}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {4.50.2}ClassAttribute}{264}{paragraph.4.50.2}\protected@file@percent }
+\gdef \@abspage@last{264}

@@ -1,80 +1,79 @@
-The following risks have been identified from the project backlog and from the technical characteristics of the system: payment escrow, an external identity verification pipeline, a real-time messaging layer, and a dispute process that produces decisions with financial consequences. Each risk is rated by impact and possibility, and is paired with a response plan that is owned by a named role in Section 3.2.
+The following risks have been identified from the project backlog and from the technical characteristics of the system: payment escrow, an external identity verification pipeline, a real-time messaging layer, and a dispute process that produces decisions with financial consequences. Each risk is rated by impact and possibility, and is paired with a response plan that is owned by a named role in Section 4.2.
 
 \begingroup
-\setlength\LTleft{0pt}
-\setlength\LTright{0pt}
-\begin{longtable}{|>{\raggedright\arraybackslash}p{4.8cm}|>{\centering\arraybackslash}p{1.3cm}|>{\centering\arraybackslash}p{1.7cm}|>{\raggedright\arraybackslash}p{5.6cm}|}
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.7cm}|L{4.6cm}|C{1.5cm}|C{1.9cm}|L{5.5cm}|}
 \hline
-\rowcolor{fptOrange} \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
+\rowcolor{fptHeader} \textbf{\#} & \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
 \hline
 \endfirsthead
 \hline
-\rowcolor{fptOrange} \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
+\rowcolor{fptHeader} \textbf{\#} & \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
 \hline
 \endhead
 \hline
 \endfoot
-\textbf{Stripe escrow and webhook failures}
+1 & \textbf{Stripe escrow and webhook failures}
 (PaymentIntent and Checkout Session funding, transfer release, refund, and duplicate or out-of-order webhook events)
     & High & High &
     Develop and test exclusively in Stripe test mode. Verify the signature against the raw request body, make every handler idempotent by keying on the Stripe event identifier, and always reconcile local state from Stripe before writing. Keep an explicit synchronisation endpoint so an operator can repair a stuck record without a database edit. \\
 \hline
-\textbf{Stripe Connect onboarding and regional payout limits}
+2 & \textbf{Stripe Connect onboarding and regional payout limits}
 (Express account requirements, country availability, and capability restrictions)
     & High & Medium &
     Detect onboarding completion from the account status instead of assuming success after the redirect. Block payout-dependent actions until the account is verified, show the reason to the user, and document the supported countries in the limitation section of Report 1. \\
 \hline
-\textbf{External AI service unavailability}
+3 & \textbf{External AI service unavailability}
 (curriculum vitae analysis and identity verification both call services outside the monorepo)
     & High & High &
     Keep both integrations behind a single service class with an explicit timeout. Return a clear error instead of a silent failure, allow the user to retry, and keep administrative manual review as the fallback for identity verification. Develop the frontend against a stub response so that UI work is never blocked by the AI service. \\
 \hline
-\textbf{Identity document accuracy and privacy}
+4 & \textbf{Identity document accuracy and privacy}
 (sensitive personal documents are uploaded, stored, and reviewed by administrators)
     & High & Medium &
     Serve identity documents only through authenticated endpoints with ownership or administrator checks, never through the public static directory. Store only the verification outcome and summary on the profile, restrict the review queue to the administrator role, and define a retention rule for rejected submissions. \\
 \hline
-\textbf{Arbitration load and perceived fairness}
+5 & \textbf{Arbitration load and perceived fairness}
 (an administrator must decide disputes with real money at stake)
     & Medium & High &
     Keep the evidence structure symmetric, record the reasoning with every decision, and expose the split amounts to both parties. Publish a target of 48 hours for a first decision, provide the review request as an escalation path, and rotate the deciding administrator when a review is requested. \\
 \hline
-\textbf{Scope creep across five sprints}
+6 & \textbf{Scope creep across five sprints}
 (214 SMAR items and a fixed envelope of 372 man-days)
     & High & High &
     Freeze the backlog at sprint planning. Any addition must be exchanged for an item of comparable effort rather than added on top, and the sprint commitment may not exceed 67 man-days. Total effort must stay within 372 $\pm$ 5\% (max. 391 man-days). \\
 \hline
-\textbf{Prisma schema evolution}
+7 & \textbf{Prisma schema evolution}
 (milestone payment state, dispute state, and transaction types change during delivery)
     & Medium & High &
     Treat migrations as reviewable artefacts, generate them from the schema rather than editing the database by hand, and apply them to a staging database before merging. Keep enums aligned with the state machines described in the design document so that a new status cannot be introduced without updating both the API and the interface. \\
 \hline
-\textbf{Monorepo toolchain drift}
+8 & \textbf{Monorepo toolchain drift}
 (Next.js, React, Tailwind, Prisma, and NestJS are on recent major versions)
     & Medium & Medium &
     Pin versions in the lockfile, upgrade one dependency at a time on a dedicated branch, and require the full pipeline (lint, type check, unit tests, and a Docker build) to pass before merging. Keep the shared packages built from the same TypeScript version as the applications. \\
 \hline
-\textbf{Real-time layer limited to one API instance}
+9 & \textbf{Real-time layer limited to one API instance}
 (WebSocket rooms are held in memory on a single process)
     & Medium & Medium &
     Document the limitation explicitly, avoid designing any feature that requires cross-instance presence, and keep the gateway isolated so that a shared adapter can be introduced later without changing the event contract. Load-test the messaging flow with concurrent clients before acceptance. \\
 \hline
-\textbf{Third-party service availability}
+10 & \textbf{Third-party service availability}
 (Google OAuth, SMTP for one-time codes, and Cloudinary for media)
     & Medium & Medium &
     Keep email and password authentication available at all times so that a Google outage does not lock users out. Surface delivery failures to the user with a resend option, and keep uploaded documents on the application's own storage path so that a media provider outage cannot block identity verification. \\
 \hline
-\textbf{Integration testing bottleneck}
+11 & \textbf{Integration testing bottleneck}
 (many modules share the contract, milestone, and payment state machines)
     & Medium & High &
     Write the end-to-end path first and extend it as modules land: job, proposal, contract, signature, milestone, funding, submission, approval, and release. Keep repository-level tests for state transitions, and run the full suite before every merge rather than only at the end of the sprint. \\
 \hline
-\textbf{Team knowledge gap}
+12 & \textbf{Team knowledge gap}
 (only part of the team has prior experience with Stripe, Prisma migrations, or Socket.IO)
     & High & Medium &
     Run internal sessions before Sprint 2 (Prisma and NestJS patterns) and before Sprint 4 (Stripe escrow and webhooks). Pair an experienced member with the owner of each high-complexity item, and require a code review on every payment and verification change. \\
 \hline
-\textbf{Data privacy and retention}
+13 & \textbf{Data privacy and retention}
 (personal data, identity documents, and financial records are stored together)
     & Medium & Medium &
     Avoid writing personal data into application logs, restrict document access by role, and define what is retained after a dispute is finalised. Keep the privacy notice and the consent step aligned with what the system actually collects. \\
