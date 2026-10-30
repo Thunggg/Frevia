@@ -117,6 +117,32 @@ UC-13.09 & Upload Contract File & Client, Freelancer & Allows users to upload do
 \hline
 UC-13.10 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
 \hline
+UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
+\hline
+UC-10.1 & View Detailed Freelancer Profile & Freelancer & Displays full freelancer profile including skills, portfolio, experience, and ratings. \\
+\hline
+UC-10.2 & Update Your Detailed Freelancer Profile & Freelancer & Allows freelancers to edit and update their profile information. \\
+\hline
+UC-11 & Manage Skills & Freelancer & Manages freelancer skill set and proficiency levels. \\
+\hline
+UC-11.1 & View List Freelancer Skill & Freelancer & Retrieve the list of skills added by the freelancer. \\
+\hline
+UC-11.2 & Add Freelancer Skill & Freelancer & Allows freelancers to add new skills to their profile. \\
+\hline
+UC-11.3 & Delete Freelancer Skill & Freelancer & Allows freelancers to remove skills from their profile. \\
+\hline
+UC-12 & Manage Portfolio & Freelancer & Manages freelancer portfolio projects and work samples. \\
+\hline
+UC-12.1 & View Portfolio List & Freelancer & Retrieve the list of portfolios created by the freelancer. \\
+\hline
+UC-12.2 & Add New Portfolio & Freelancer & Allows freelancers to add new portfolio items with images and descriptions. \\
+\hline
+UC-12.3 & View Portfolio Detail & Freelancer & Displays full details of a portfolio item including media, description, and technologies used. \\
+\hline
+UC-12.4 & Update Portfolio & Freelancer & Allows freelancers to edit and update their portfolio items. \\
+\hline
+UC-12.5 & Delete Portfolio & Freelancer & Allows freelancers to remove portfolio items. \\
+\hline
 UC-13 & Manage Role & Admin & Manages user roles and permissions within the system. \\
 \hline
 UC-13.1 & View Role List & Admin & Retrieves list of all roles in the system. \\
@@ -178,61 +204,3 @@ UC-43.13 & Sync Payment Intent Status & Client, System & Synchronizes real-time 
 
 \end{longtable}
 \label{tab:use_cases}
-
-% BEGIN NHUY CANONICAL
-\paragraph{Canonical use cases by sprint -- Nguyen Lu Nhat Huy}
-\begin{longtable}{|L{1.9cm}|L{4.2cm}|L{2.5cm}|L{5.4cm}|}\hline
-ID & Use Case & Actor & Description \\ \hline
-UC-07.01 & View Freelancer Profile & Visitor / Freelancer & Sprint 1. Display profile information \\ \hline
-UC-07.02 & Update Freelancer Profile & Freelancer & Sprint 1. Close editor; show submitted / updated message; update local profile only if reviewRequired=false \\ \hline
-UC-08.01 & View Freelancer Skill List & Visitor / Freelancer & Sprint 1. Display skill list or empty state \\ \hline
-UC-08.02 & Add Freelancer Skill & Freelancer & Sprint 1. Insert skill into local list sorted by name; close editor \\ \hline
-UC-08.03 & Delete Freelancer Skill & Freelancer & Sprint 1. Remove skill from local list; show success \\ \hline
-UC-09.01 & View Portfolio List & Visitor / Freelancer & Sprint 1. Display portfolio cards or empty state \\ \hline
-UC-09.02 & Add Portfolio & Freelancer & Sprint 1. Prepend portfolio to local list; close editor; show success \\ \hline
-UC-09.03 & View Portfolio Detail & Visitor / Freelancer & Sprint 1. Display title, description, technologies and project link \\ \hline
-UC-09.04 & Update Portfolio & Freelancer & Sprint 1. Replace item in local list and open detail; close editor; show success \\ \hline
-UC-09.05 & Delete Portfolio & Freelancer & Sprint 1. Remove local item; close matching detail and confirmation; show success \\ \hline
-UC-18.01 & Upload Identity Documents & Freelancer & Sprint 2. Display submitted / rejected result; refresh verification state \\ \hline
-UC-18.02 & View Verification Status & Freelancer & Sprint 2. Display latest status, history and review notes; empty history has null status \\ \hline
-UC-19.01 & View Client Profile & Visitor / User & Sprint 2. Display client profile and company information \\ \hline
-UC-19.02 & Update Company Information & Client & Sprint 2. Show server submitted / updated message \\ \hline
-UC-20.01 & View Social Link List & Authenticated User & Sprint 2. Display social links or empty list \\ \hline
-UC-20.02 & Add Social Link & Authenticated User & Sprint 2. Append link to local list; clear URL; show success \\ \hline
-UC-20.03 & Delete Social Link & Authenticated User & Sprint 2. Remove link from local list; show success \\ \hline
-UC-21.01 & View Favorite Freelancer List & Client & Sprint 2. Display favorite freelancers or empty list \\ \hline
-UC-21.02 & Add Freelancer to Favorites & Client & Sprint 2. Display favorite state and success \\ \hline
-UC-21.03 & Remove Freelancer from Favorites & Client & Sprint 2. Remove freelancer from local favorites list; show success \\ \hline
-UC-29.01 & View Following List & Client & Sprint 3. Display following freelancers or empty list \\ \hline
-UC-29.02 & Follow Freelancer & Client & Sprint 3. Set local isFollowing=true; show success \\ \hline
-UC-29.03 & Unfollow Freelancer & Client & Sprint 3. Set local isFollowing=false; show success \\ \hline
-UC-30.01 & View Notification List & Authenticated User & Sprint 3. Display notifications and unread state; empty list if none \\ \hline
-UC-30.02 & Mark Notification as Read & Authenticated User & Sprint 3. Invalidate notifications query; refetch list and unread state \\ \hline
-UC-30.03 & Mark All Notifications as Read & Authenticated User & Sprint 3. Invalidate notifications query; refetch list; count may be zero \\ \hline
-UC-30.04 & Delete Notification & Authenticated User & Sprint 3. Invalidate notifications query; refetch active list \\ \hline
-UC-31.01 & Switch Role & Authenticated User & Sprint 3. Use new role and navigate to its workspace \\ \hline
-UC-31.02 & Join New Role & Authenticated User & Sprint 3. Use new role and navigate to its workspace \\ \hline
-UC-39.01 & View Review List & Authenticated User & Sprint 4. Display contract reviews or empty list \\ \hline
-UC-39.02 & View Review Detail & Authenticated User & Sprint 4. Display rating, breakdown, comment and active response \\ \hline
-UC-39.03 & Write Review & Authenticated User & Sprint 4. Display created review \\ \hline
-UC-39.04 & Update Review & Authenticated User & Sprint 4. Display updated review \\ \hline
-UC-39.05 & Delete Review & Authenticated User & Sprint 4. Remove review from visible list \\ \hline
-UC-40.01 & Respond to Review & Authenticated User & Sprint 4. Display response to review \\ \hline
-UC-40.02 & Update Review Response & Authenticated User & Sprint 4. Display updated response \\ \hline
-UC-40.03 & Delete Review Response & Authenticated User & Sprint 4. Hide deleted response \\ \hline
-UC-41.01 & View Profile & Authenticated User & Sprint 4. Display current user profile, email, avatar and roles \\ \hline
-UC-41.02 & Update Profile & Authenticated User & Sprint 4. Show submitted / updated message \\ \hline
-UC-41.03 & Change Password & Authenticated User & Sprint 4. Clear password inputs; show success \\ \hline
-UC-41.04 & Upload Avatar & Authenticated User & Sprint 4. Display new avatar; invalidate me query; show success \\ \hline
-UC-07.03 & Upload CV & Freelancer & Sprint 5. Display stored CV filename and link \\ \hline
-UC-07.04 & View CV & Freelancer & Sprint 5. Browser follows remote redirect or receives PDF download \\ \hline
-UC-07.05 & Replace CV & Freelancer & Sprint 5. Display stored CV filename and link \\ \hline
-UC-07.06 & Delete CV & Freelancer & Sprint 5. Clear displayed CV filename and link; show success \\ \hline
-UC-47.01 & View Pending Profile Update Request List & Administrator & Sprint 5. Display pending request list or empty state \\ \hline
-UC-47.02 & View Profile Update Request Detail & Administrator & Sprint 5. Display currentData, proposedData, profile type, strength and review information \\ \hline
-UC-47.03 & Approve Profile Update Request & Administrator & Sprint 5. Display reviewed request; refresh administrative list \\ \hline
-UC-47.04 & Reject Profile Update Request & Administrator & Sprint 5. Display reviewed request; refresh administrative list \\ \hline
-UC-47.05 & View Profile Update Request History & Administrator & Sprint 5. Display history with status, admin, review notes and reviewed time \\ \hline
-UC-47.06 & Update Profile Expert & Expert & Sprint 5. Show request submitted for review \\ \hline
-\end{longtable}
-% END NHUY CANONICAL
