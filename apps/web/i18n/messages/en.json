@@ -1754,7 +1754,16 @@
     "deleteTitle": "Delete job",
     "deleteHint": "Are you sure you want to delete this job? This action cannot be undone.",
     "deleteJob": "Delete job",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "publish": "Publish",
+    "published": "Job published successfully",
+    "publishFailed": "Failed to publish job",
+    "close": "Close Job",
+    "closed": "Job closed successfully",
+    "closeFailed": "Failed to close job",
+    "reopen": "Reopen Job",
+    "reopened": "Job reopened successfully",
+    "reopenFailed": "Failed to reopen job"
   },
   "postJobForm": {
     "titleLabel": "Job title",
@@ -2661,13 +2670,27 @@
       "positions": "Positions"
     },
     "proposal": {
-      "DRAFT": { "message": "You have a saved draft for this job." },
-      "SUBMITTED": { "message": "You already submitted a proposal for this job." },
-      "INTERVIEWING": { "message": "The client is interviewing you for this job." },
-      "HIRED": { "message": "You have been hired for this job. Sign the contract to start." },
-      "REJECTED": { "message": "Your proposal for this job was not selected." },
-      "WITHDRAWN": { "message": "" },
-      "EXPIRED": { "message": "Your proposal expired because the client did not respond in time." }
+      "DRAFT": {
+        "message": "You have a saved draft for this job."
+      },
+      "SUBMITTED": {
+        "message": "You already submitted a proposal for this job."
+      },
+      "INTERVIEWING": {
+        "message": "The client is interviewing you for this job."
+      },
+      "HIRED": {
+        "message": "You have been hired for this job. Sign the contract to start."
+      },
+      "REJECTED": {
+        "message": "Your proposal for this job was not selected."
+      },
+      "WITHDRAWN": {
+        "message": ""
+      },
+      "EXPIRED": {
+        "message": "Your proposal expired because the client did not respond in time."
+      }
     },
     "positionsBadge": "{filled}/{required} positions filled",
     "positionsFilled": "{filled}/{required} hired",

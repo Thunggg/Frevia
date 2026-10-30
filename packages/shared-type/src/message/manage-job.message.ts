@@ -64,8 +64,23 @@ export const ManageJobMessage = {
   FAILED_TO_DELETE_JOB: "Error.FailedToDeleteJob",
 
   // =========================
-  // Change Job Status
+  // Publish Job
   // =========================
-  FAILED_TO_CHANGE_JOB_STATUS: "Error.FailedToChangeJobStatus",
+  JOB_CANNOT_BE_PUBLISHED: "Error.JobCannotBePublished",
+  FAILED_TO_PUBLISH_JOB: "Error.FailedToPublishJob",
+
+  // =========================
+  // Close Job
+  // =========================
+  JOB_CANNOT_BE_CLOSED: "Error.JobCannotBeClosed",
+  FAILED_TO_CLOSE_JOB: "Error.FailedToCloseJob",
+
+  // =========================
+  // Reopen Job
+  // =========================
+  JOB_CANNOT_BE_REOPENED: "Error.JobCannotBeReopened",
+  FAILED_TO_REOPEN_JOB: "Error.FailedToReopenJob",
+
+  JOB_ONLY_FOR_CLIENT: "Error.JobOnlyForClient",
   JOB_STATUS_INVALID: "Error.JobStatusInvalid",
 } as const;

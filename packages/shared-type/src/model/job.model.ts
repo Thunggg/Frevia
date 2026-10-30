@@ -350,3 +350,11 @@ export type UpdateJobResponseType = z.infer<typeof UpdateJobResponseSchema>;
 export type ChangeJobStatusResponseType = z.infer<
   typeof ChangeJobStatusResponseSchema
 >;
+
+export const PublishJobResponseSchema = JobSchema;
+export const CloseJobResponseSchema = JobSchema;
+export const ReopenJobResponseSchema = JobSchema;
+
+export type PublishJobResponseType = z.infer<typeof PublishJobResponseSchema>;
+export type CloseJobResponseType = z.infer<typeof CloseJobResponseSchema>;
+export type ReopenJobResponseType = z.infer<typeof ReopenJobResponseSchema>;

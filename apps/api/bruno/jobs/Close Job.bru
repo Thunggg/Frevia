@@ -1,0 +1,19 @@
+meta {
+  name: Close Job
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/manage-jobs/{{jobId}}/close
+  body: none
+  auth: bearer
+}
+
+vars:pre-request {
+  jobId: 1
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

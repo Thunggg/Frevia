@@ -1746,7 +1746,16 @@
     "deleteTitle": "Xoá việc làm",
     "deleteHint": "Bạn có chắc muốn xoá việc làm này? Thao tác này không thể hoàn tác.",
     "deleteJob": "Xoá việc làm",
-    "cancel": "Huỷ"
+    "cancel": "Huỷ",
+    "publish": "Đăng tin",
+    "published": "Đăng tin tuyển dụng thành công",
+    "publishFailed": "Không thể đăng tin",
+    "close": "Đóng tin",
+    "closed": "Đã đóng tin tuyển dụng",
+    "closeFailed": "Không thể đóng tin",
+    "reopen": "Mở lại",
+    "reopened": "Đã mở lại tin tuyển dụng",
+    "reopenFailed": "Không thể mở lại tin"
   },
   "postJobForm": {
     "titleLabel": "Tên công việc",
@@ -2653,13 +2662,27 @@
       "positions": "Số lượng tuyển"
     },
     "proposal": {
-      "DRAFT": { "message": "Bạn có bản nháp đã lưu cho công việc này." },
-      "SUBMITTED": { "message": "Bạn đã gửi đề xuất cho công việc này." },
-      "INTERVIEWING": { "message": "Khách hàng đang phỏng vấn bạn cho công việc này." },
-      "HIRED": { "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu." },
-      "REJECTED": { "message": "Đề xuất của bạn cho công việc này không được chọn." },
-      "WITHDRAWN": { "message": "" },
-      "EXPIRED": { "message": "Đề xuất đã quá hạn vì khách hàng không phản hồi." }
+      "DRAFT": {
+        "message": "Bạn có bản nháp đã lưu cho công việc này."
+      },
+      "SUBMITTED": {
+        "message": "Bạn đã gửi đề xuất cho công việc này."
+      },
+      "INTERVIEWING": {
+        "message": "Khách hàng đang phỏng vấn bạn cho công việc này."
+      },
+      "HIRED": {
+        "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu."
+      },
+      "REJECTED": {
+        "message": "Đề xuất của bạn cho công việc này không được chọn."
+      },
+      "WITHDRAWN": {
+        "message": ""
+      },
+      "EXPIRED": {
+        "message": "Đề xuất đã quá hạn vì khách hàng không phản hồi."
+      }
     },
     "positionsBadge": "Đã tuyển {filled}/{required} vị trí",
     "positionsFilled": "Đã tuyển {filled}/{required}",

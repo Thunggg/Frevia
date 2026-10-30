@@ -13,6 +13,9 @@ import {
 
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
+  JobCannotBeClosedException,
+  JobCannotBePublishedException,
+  JobCannotBeReopenedException,
   JobCategoriesNotFoundException,
   JobNotFoundException,
   PositionsRequiredBelowFilledException,
@@ -308,12 +311,12 @@ export class ManageJobRepository {
     });
   }
 
-  async changeJobStatus(
-    userId: number,
-    jobId: number,
-    status: JobStatus,
-  ): Promise<JobType> {
-    await this.checkJobOwner(userId, jobId);
+  async publishJob(userId: number, jobId: number): Promise<JobType> {
+    const job = await this.checkJobOwner(userId, jobId);
+
+    if (job.status !== JobStatus.DRAFT) {
+      throw JobCannotBePublishedException();
+    }
 
     const updatedJob = await this.prisma.job.update({
       where: {
@@ -321,7 +324,7 @@ export class ManageJobRepository {
       },
 
       data: {
-        status,
+        status: JobStatus.OPEN,
       },
 
       select: jobSelect,
@@ -330,7 +333,58 @@ export class ManageJobRepository {
     return this.normalizeJob(updatedJob);
   }
 
-  private async checkJobOwner(userId: number, jobId: number): Promise<void> {
+  async closeJob(userId: number, jobId: number): Promise<JobType> {
+    const job = await this.checkJobOwner(userId, jobId);
+
+    if (
+      job.status === JobStatus.CLOSED ||
+      job.status === JobStatus.COMPLETED ||
+      job.status === JobStatus.CANCELLED
+    ) {
+      throw JobCannotBeClosedException();
+    }
+
+    const updatedJob = await this.prisma.job.update({
+      where: {
+        id: jobId,
+      },
+
+      data: {
+        status: JobStatus.CLOSED,
+      },
+
+      select: jobSelect,
+    });
+
+    return this.normalizeJob(updatedJob);
+  }
+
+  async reopenJob(userId: number, jobId: number): Promise<JobType> {
+    const job = await this.checkJobOwner(userId, jobId);
+
+    if (job.status !== JobStatus.CLOSED) {
+      throw JobCannotBeReopenedException();
+    }
+
+    const updatedJob = await this.prisma.job.update({
+      where: {
+        id: jobId,
+      },
+
+      data: {
+        status: JobStatus.OPEN,
+      },
+
+      select: jobSelect,
+    });
+
+    return this.normalizeJob(updatedJob);
+  }
+
+  private async checkJobOwner(
+    userId: number,
+    jobId: number,
+  ): Promise<{ id: number; status: JobStatus }> {
     const job = await this.prisma.job.findFirst({
       where: {
         id: jobId,
@@ -340,12 +394,15 @@ export class ManageJobRepository {
 
       select: {
         id: true,
+        status: true,
       },
     });
 
     if (!job) {
       throw JobNotFoundException();
     }
+
+    return job;
   }
 
   private normalizeJob<

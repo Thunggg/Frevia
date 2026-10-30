@@ -2,29 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 import {
-  ChangeJobStatusBodyType,
-  ChangeJobStatusResponseType,
   CreateJobBodyType,
   JobType,
   RoleName,
   UpdateJobBodyType,
   ViewBookmarkedJobParsedFilterType,
   ViewBookmarkedJobResponseType,
+  ViewJobDetailResType,
   ViewListJobParsedFilterType,
   ViewListJobResponseType,
-  ViewJobDetailResType,
 } from '@shared/types';
 
 import {
   BookmarkJobOnlyForFreelancerException,
   BookmarkNotFoundException,
-  FailedToChangeJobStatusException,
+  FailedToCloseJobException,
   FailedToCreateJobException,
   FailedToDeleteJobException,
+  FailedToPublishJobException,
+  FailedToReopenJobException,
   FailedToRemoveBookmarkException,
   FailedToUpdateJobException,
   JobAlreadyBookmarkedException,
   JobNotFoundException,
+  JobOnlyForClientException,
 } from './manage-job.error';
 import { ManageJobRepository } from './manage-job.repo';
 
@@ -35,6 +36,12 @@ export class ManageJobService {
   private assertFreelancerRole(roleName: string): void {
     if (roleName !== RoleName.FREELANCER) {
       throw BookmarkJobOnlyForFreelancerException();
+    }
+  }
+
+  private assertClientRole(roleName: string): void {
+    if (roleName !== RoleName.CLIENT) {
+      throw JobOnlyForClientException();
     }
   }
 
@@ -90,9 +97,7 @@ export class ManageJobService {
     roleName: string,
     filter: ViewListJobParsedFilterType,
   ): Promise<ViewListJobResponseType> {
-    if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
-    }
+    this.assertClientRole(roleName);
 
     const { jobs, total } = await this.manageJobRepository.getClientJobLists(
       userId,
@@ -110,9 +115,7 @@ export class ManageJobService {
   }
 
   async searchSkills(roleName: string, search?: string) {
-    if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
-    }
+    this.assertClientRole(roleName);
 
     return this.manageJobRepository.searchSkills(search);
   }
@@ -122,9 +125,7 @@ export class ManageJobService {
     roleName: string,
     jobId: number,
   ): Promise<ViewJobDetailResType> {
-    if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
-    }
+    this.assertClientRole(roleName);
 
     const job = await this.manageJobRepository.getClientJobDetail(
       userId,
@@ -222,20 +223,54 @@ export class ManageJobService {
     }
   }
 
-  async changeJobStatus(
+  async publishJob(
     userId: number,
+    roleName: string,
     jobId: number,
-    body: ChangeJobStatusBodyType,
-  ): Promise<ChangeJobStatusResponseType> {
+  ): Promise<JobType> {
+    this.assertClientRole(roleName);
+
     try {
-      return await this.manageJobRepository.changeJobStatus(
-        userId,
-        jobId,
-        body.status,
-      );
+      return await this.manageJobRepository.publishJob(userId, jobId);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        throw FailedToChangeJobStatusException();
+        throw FailedToPublishJobException();
+      }
+
+      throw error;
+    }
+  }
+
+  async closeJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<JobType> {
+    this.assertClientRole(roleName);
+
+    try {
+      return await this.manageJobRepository.closeJob(userId, jobId);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToCloseJobException();
+      }
+
+      throw error;
+    }
+  }
+
+  async reopenJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<JobType> {
+    this.assertClientRole(roleName);
+
+    try {
+      return await this.manageJobRepository.reopenJob(userId, jobId);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToReopenJobException();
       }
 
       throw error;

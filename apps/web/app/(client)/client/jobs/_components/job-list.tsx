@@ -16,7 +16,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   X,
@@ -39,7 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { JobStatusType, JobType } from "@shared/types";
+import type { JobType } from "@shared/types";
 
 import { PostJobForm } from "./post-job-form";
 
@@ -53,7 +52,13 @@ type JobListProps = {
   };
 };
 
-type StatusFilterType = "ALL" | "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CLOSED";
+type StatusFilterType =
+  | "ALL"
+  | "DRAFT"
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "CLOSED";
 
 const JOB_STATUS_KEYS = [
   "DRAFT",
@@ -71,6 +76,7 @@ interface StatusCapsuleBarProps {
   onSelectFilter: (filter: StatusFilterType) => void;
   counts: {
     all: number;
+    draft: number;
     open: number;
     inProgress: number;
     completed: number;
@@ -95,32 +101,44 @@ function StatusCapsuleBar({
         "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
     },
     {
+      id: "DRAFT" as const,
+      label: tStatus("DRAFT"),
+      count: counts.draft,
+      icon: FileText,
+      circleClass:
+        "bg-[#F1F0F5] shadow-amber-500/20 dark:bg-amber-700 dark:shadow-amber-700/20",
+    },
+    {
       id: "OPEN" as const,
       label: tStatus("OPEN"),
       count: counts.open,
       icon: TrendingUp,
-      circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+      circleClass:
+        "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
     },
     {
       id: "IN_PROGRESS" as const,
       label: tStatus("IN_PROGRESS"),
       count: counts.inProgress,
       icon: Clock,
-      circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+      circleClass:
+        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
     },
     {
       id: "COMPLETED" as const,
       label: tStatus("COMPLETED"),
       count: counts.completed,
       icon: CheckCircle2,
-      circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+      circleClass:
+        "bg-[#F1F0F5] shadow-purple-500/20 dark:bg-purple-700 dark:shadow-purple-700/20",
     },
     {
       id: "CLOSED" as const,
       label: tStatus("CLOSED"),
       count: counts.closed,
       icon: XCircle,
-      circleClass: "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+      circleClass:
+        "bg-[#F1F0F5] shadow-stone-500/20 dark:bg-stone-700 dark:shadow-stone-700/20",
     },
   ];
 
@@ -131,7 +149,7 @@ function StatusCapsuleBar({
       transition={{ duration: 0.35, delay: 0.1 }}
       className="mt-6 w-full rounded-full bg-[#F3F3F7] p-0.5 border border-black/5 dark:bg-zinc-900/90 dark:border-white/10"
     >
-      <div className="grid grid-cols-6 w-full items-center gap-1">
+      <div className="grid grid-cols-7 w-full items-center gap-1">
         {items.map((item) => {
           const isActive = currentFilter === item.id;
           const Icon = item.icon;
@@ -140,36 +158,36 @@ function StatusCapsuleBar({
               key={item.id}
               type="button"
               onClick={() => onSelectFilter(item.id)}
-              className={`group flex items-center gap-1.5 sm:gap-2 rounded-full py-1 sm:py-1.5 px-2.5 sm:px-3 transition-all duration-200 cursor-pointer overflow-hidden ${isActive
-                ? "col-span-2 bg-white text-foreground shadow-xs font-semibold justify-between dark:bg-zinc-800"
-                : "col-span-1 text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-zinc-800/60 font-medium justify-center"
-                }`}
+              className={`group flex items-center gap-1.5 sm:gap-2 rounded-full py-1 sm:py-1.5 px-2.5 sm:px-3 transition-all duration-200 cursor-pointer overflow-hidden ${
+                isActive
+                  ? "col-span-2 bg-white text-foreground shadow-xs font-semibold justify-between dark:bg-zinc-800"
+                  : "col-span-1 text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-zinc-800/60 font-medium justify-center"
+              }`}
             >
               <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                {/* Circular badge icon */}
                 <div
                   className={`flex size-5 sm:size-5.5 shrink-0 items-center justify-center rounded-full text-gray-600 transition-transform duration-200 group-hover:scale-105 ${item.circleClass}`}
                 >
                   <Icon className="size-3 sm:size-3.5" />
                 </div>
 
-                {/* Label */}
                 <span
-                  className={`text-xs truncate ${isActive
-                    ? "font-semibold text-foreground inline-block"
-                    : "hidden lg:inline text-muted-foreground group-hover:text-foreground"
-                    }`}
+                  className={`text-xs truncate ${
+                    isActive
+                      ? "font-semibold text-foreground inline-block"
+                      : "hidden lg:inline text-muted-foreground group-hover:text-foreground"
+                  }`}
                 >
                   {item.label}
                 </span>
               </div>
 
-              {/* Count badge */}
               <span
-                className={`flex h-4 min-w-4 sm:h-4.5 sm:min-w-4.5 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-bold ${isActive
-                  ? "bg-muted text-foreground"
-                  : "bg-black/5 text-muted-foreground dark:bg-white/10 group-hover:text-foreground"
-                  }`}
+                className={`flex h-4 min-w-4 sm:h-4.5 sm:min-w-4.5 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+                  isActive
+                    ? "bg-muted text-foreground"
+                    : "bg-black/5 text-muted-foreground dark:bg-white/10 group-hover:text-foreground"
+                }`}
               >
                 {item.count}
               </span>
@@ -181,62 +199,22 @@ function StatusCapsuleBar({
   );
 }
 
-const STATUS_OPTIONS: {
-  value: JobStatusType;
-  labelKey: string;
-  icon: typeof TrendingUp;
-  circleBg: string;
-}[] = [
-    {
-      value: "OPEN",
-      labelKey: "OPEN",
-      icon: TrendingUp,
-      circleBg: "bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400",
-    },
-    {
-      value: "IN_PROGRESS",
-      labelKey: "IN_PROGRESS",
-      icon: Clock,
-      circleBg: "bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400",
-    },
-    {
-      value: "COMPLETED",
-      labelKey: "COMPLETED",
-      icon: CheckCircle2,
-      circleBg: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400",
-    },
-    {
-      value: "DRAFT",
-      labelKey: "DRAFT",
-      icon: FileText,
-      circleBg: "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
-    },
-    {
-      value: "CLOSED",
-      labelKey: "CLOSED",
-      icon: XCircle,
-      circleBg: "bg-stone-200 text-stone-600 dark:bg-stone-800 dark:text-stone-300",
-    },
-    {
-      value: "CANCELLED",
-      labelKey: "CANCELLED",
-      icon: XCircle,
-      circleBg: "bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400",
-    },
-  ];
-
 function JobRowCard({
   job,
   index,
   onEdit,
   onDelete,
-  onChangeStatus,
+  onPublish,
+  onClose,
+  onReopen,
 }: {
   job: JobType;
   index: number;
   onEdit: (job: JobType) => void;
   onDelete: (id: number) => void;
-  onChangeStatus: (id: number, status: JobStatusType) => void;
+  onPublish: (id: number) => void;
+  onClose: (id: number) => void;
+  onReopen: (id: number) => void;
 }) {
   const t = useTranslations("jobsList");
   const tStatus = useTranslations("jobStatus");
@@ -245,10 +223,10 @@ function JobRowCard({
 
   const formattedDate = job.createdAt
     ? format.dateTime(new Date(job.createdAt), {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    })
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
     : null;
 
   const currentStatusLabel = (JOB_STATUS_KEYS as readonly string[]).includes(
@@ -270,6 +248,11 @@ function JobRowCard({
       maximumFractionDigits: 0,
     });
 
+  const isDraft = job.status === "DRAFT";
+  const isOpen = job.status === "OPEN";
+  const isClosed = job.status === "CLOSED";
+  const isInProgress = job.status === "IN_PROGRESS";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -280,8 +263,8 @@ function JobRowCard({
       }}
       className="group relative flex items-center justify-between gap-4 rounded-full border border-border bg-card p-4 sm:p-5 transition-colors hover:bg-accent/10"
     >
-      {/* Tiêu đề in đậm, Số tiền & Ngày tạo chữ không đậm - tất cả nằm ngang */}
-      <div className="flex-col min-w-0  flex-wrap items-center gap-x-3.5 gap-y-1">
+      {/* Tiêu đề in đậm, Số tiền & Ngày tạo */}
+      <div className="flex-col min-w-0 flex-wrap items-center gap-x-3.5 gap-y-1">
         <Link
           href={`/client/jobs/${job.id}`}
           className="text-base text-foreground transition-colors hover:text-foreground/80 line-clamp-1"
@@ -297,55 +280,55 @@ function JobRowCard({
         </span>
         {formattedDate && (
           <span className="shrink-0 text-xs font-normal text-muted-foreground">
-            • {formattedDate}
+            {" "}• {formattedDate}
           </span>
         )}
       </div>
 
-      {/* Cụm hành động nằm ngang: Status và icon 3 chấm */}
+      {/* Cụm hành động nằm ngang: Status badge, Quick action, icon 3 chấm */}
       <div className="flex shrink-0 items-center gap-2">
-        {/* Status Dropdown - giao diện dạng capsule y hệt như hình */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-[#D0E1F8] dark:bg-zinc-800/90 px-4 py-4 text-sm font-semibold text-[#0069D3] dark:text-green-300 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700/80 transition-colors cursor-pointer outline-none"
-            >
-              <span>{currentStatusLabel}</span>
-              <ChevronDown className="size-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            sideOffset={6}
-            className="w-56 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
-          >
-            {STATUS_OPTIONS.map((st) => (
-              <DropdownMenuItem
-                key={st.value}
-                onClick={() => onChangeStatus(job.id, st.value)}
-                className={`group flex items-center justify-between rounded-full px-3 py-2 cursor-pointer transition-all duration-200 outline-none ${job.status === st.value
-                  ? "bg-[#EAE9F0] dark:bg-zinc-800 font-semibold ring-1 ring-black/5 dark:ring-white/10"
-                  : "bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800"
-                  }`}
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div
-                    className={`flex size-7 shrink-0 items-center justify-center rounded-full ${st.circleBg} shadow-xs transition-transform group-hover:scale-105`}
-                  >
-                    <st.icon className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground truncate">
-                    {tStatus(st.labelKey)}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Status Badge */}
+        <div
+          className={`inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold select-none ${
+            isOpen
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/40"
+              : isDraft
+                ? "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/40"
+                : isInProgress
+                  ? "bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800/40"
+                  : job.status === "COMPLETED"
+                    ? "bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800/40"
+                    : "bg-stone-100 text-stone-600 border border-stone-200/60 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700"
+          }`}
+        >
+          <span className="size-1.5 rounded-full bg-current" />
+          <span>{currentStatusLabel}</span>
+        </div>
 
-        {/* 3-dot Action Menu (Edit & Delete) - giao diện capsule y hệt như hình */}
+        {/* Quick action button for primary transitions */}
+        {isDraft && (
+          <button
+            type="button"
+            onClick={() => onPublish(job.id)}
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+          >
+            <TrendingUp className="size-3.5" />
+            <span>{t("publish")}</span>
+          </button>
+        )}
+
+        {isClosed && (
+          <button
+            type="button"
+            onClick={() => onReopen(job.id)}
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#EAE9F0] hover:bg-[#D0E1F8] text-[#0069D3] dark:bg-zinc-800 dark:text-blue-300 px-3.5 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            <CheckCircle2 className="size-3.5" />
+            <span>{t("reopen")}</span>
+          </button>
+        )}
+
+        {/* 3-dot Action Menu (Publish, Close, Reopen, Edit & Delete) */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
@@ -359,9 +342,57 @@ function JobRowCard({
           <DropdownMenuContent
             align="end"
             sideOffset={6}
-            className="w-48 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
+            className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
           >
-            {/* Nút Edit */}
+            {/* UC-11.03 Publish Job */}
+            {isDraft && (
+              <DropdownMenuItem
+                onClick={() => onPublish(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-emerald-50 focus:bg-emerald-50 dark:bg-zinc-800/60 dark:hover:bg-emerald-950/40 dark:focus:bg-emerald-950/40 cursor-pointer transition-all duration-200 outline-none text-emerald-700 dark:text-emerald-400"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
+                    <TrendingUp className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("publish")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-emerald-400/50 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
+
+            {/* UC-11.06 Close Job */}
+            {(isOpen || isInProgress) && (
+              <DropdownMenuItem
+                onClick={() => onClose(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 shadow-xs transition-transform group-hover:scale-105">
+                    <XCircle className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("close")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
+
+            {/* UC-11.07 Reopen Job */}
+            {isClosed && (
+              <DropdownMenuItem
+                onClick={() => onReopen(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
+                    <CheckCircle2 className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("reopen")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
+
+            {/* UC-11.04 Update Job */}
             <DropdownMenuItem
               onClick={() => onEdit(job)}
               className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
@@ -377,7 +408,7 @@ function JobRowCard({
               <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
             </DropdownMenuItem>
 
-            {/* Nút Delete */}
+            {/* UC-11.05 Delete Job */}
             <DropdownMenuItem
               onClick={() => onDelete(job.id)}
               className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
@@ -408,6 +439,7 @@ export function JobList({
   const tStatus = useTranslations("jobStatus");
   const tSidebar = useTranslations("sidebar");
   const tCommon = useTranslations("common");
+
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("ALL");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -416,10 +448,11 @@ export function JobList({
     null,
   );
 
+  const draftCount = jobs.filter((j) => j.status === "DRAFT").length;
   const openCount = jobs.filter((j) => j.status === "OPEN").length;
   const inProgressCount = jobs.filter((j) => j.status === "IN_PROGRESS").length;
   const completedCount = jobs.filter((j) => j.status === "COMPLETED").length;
-  const cancelledCount = jobs.filter(
+  const closedCount = jobs.filter(
     (j) => j.status === "CLOSED" || j.status === "CANCELLED",
   ).length;
 
@@ -451,17 +484,48 @@ export function JobList({
     setEditingJob(null);
   };
 
-  const changeStatus = async (id: number, status: JobStatusType) => {
-    const prev = jobs;
-    setJobs((current) =>
-      current.map((job) => (job.id === id ? { ...job, status } : job)),
-    );
+  const publishJob = async (id: number) => {
     try {
-      await jobApiRequest.changeJobStatus(id, { status });
-      toastSuccess({ message: t("statusUpdated") });
+      const response = await jobApiRequest.publishJob(id);
+      if (!response.success) throw new Error();
+      setJobs((current) =>
+        current.map((job) =>
+          job.id === id ? { ...job, status: "OPEN" } : job,
+        ),
+      );
+      toastSuccess({ message: t("published") });
     } catch {
-      setJobs(prev);
-      toastError({ message: t("statusUpdateFailed") });
+      toastError({ message: t("publishFailed") });
+    }
+  };
+
+  const closeJob = async (id: number) => {
+    try {
+      const response = await jobApiRequest.closeJob(id);
+      if (!response.success) throw new Error();
+      setJobs((current) =>
+        current.map((job) =>
+          job.id === id ? { ...job, status: "CLOSED" } : job,
+        ),
+      );
+      toastSuccess({ message: t("closed") });
+    } catch {
+      toastError({ message: t("closeFailed") });
+    }
+  };
+
+  const reopenJob = async (id: number) => {
+    try {
+      const response = await jobApiRequest.reopenJob(id);
+      if (!response.success) throw new Error();
+      setJobs((current) =>
+        current.map((job) =>
+          job.id === id ? { ...job, status: "OPEN" } : job,
+        ),
+      );
+      toastSuccess({ message: t("reopened") });
+    } catch {
+      toastError({ message: t("reopenFailed") });
     }
   };
 
@@ -518,16 +582,17 @@ export function JobList({
             onSelectFilter={setStatusFilter}
             counts={{
               all: jobs.length,
+              draft: draftCount,
               open: openCount,
               inProgress: inProgressCount,
               completed: completedCount,
-              closed: cancelledCount,
+              closed: closedCount,
             }}
           />
         </div>
       </section>
 
-      {/* ── Job list (Horizontal Cards like Proposals) ── */}
+      {/* ── Job list (Horizontal Cards) ── */}
       <div className="px-6 py-8 lg:px-8">
         {filteredJobs.length ? (
           <>
@@ -542,7 +607,9 @@ export function JobList({
                     setIsFormOpen(true);
                   }}
                   onDelete={setPendingDeleteJobId}
-                  onChangeStatus={changeStatus}
+                  onPublish={publishJob}
+                  onClose={closeJob}
+                  onReopen={reopenJob}
                 />
               ))}
             </div>
@@ -654,7 +721,6 @@ export function JobList({
       >
         <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
-            {/* Header info */}
             <div className="px-1">
               <AlertDialogTitle className="text-base font-bold text-foreground">
                 {t("deleteTitle")}
@@ -664,7 +730,6 @@ export function JobList({
               </AlertDialogDescription>
             </div>
 
-            {/* Action options as sleek capsules */}
             <div className="mt-1 flex flex-col gap-2">
               <button
                 type="button"
