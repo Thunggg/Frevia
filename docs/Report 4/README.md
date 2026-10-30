@@ -18,22 +18,36 @@ Hoặc: `pdflatex main.tex` chạy 2 lần (để cập nhật mục lục).
 | 1 | `sections/1.Overall_Description.tex` | Assumptions, Design Constraints, Technology Suggestion |
 | 2 | `sections/2.System_Architecture_Design.tex` | Overall Architecture, System Architecture (31 route modules), Package Diagram |
 | 3 | `sections/3.System_Detailed_Design.tex` | System Detailed Design — điều hướng vào `sections/<member>/sprint<N>.tex` |
-| 3.1 | `sections/kvy/sprint1.tex` | **Sprint 1 — Community Forum, 17 chức năng** (mỗi chức năng có *a. Class Diagram* + *b. Sequence Diagram(s)*) |
+| 3.1 | `sections/kvy/2/sprint1.tex` | **Sprint 1 — Forum Management (UC-14)**: 1 class diagram + 17 sequence diagram |
+| 3.4 | `sections/kvy/2/sprint2.tex` | **Sprint 2 — Manage Conversation (UC-27)**: 1 class diagram + 8 sequence diagram |
+| 3.8 | `sections/kvy/2/sprint3.tex` | **Sprint 3 — Manage Moderation (UC-34), Manage ID Verification (UC-35), Manage Forum Trash (UC-36)**: mỗi module 1 class diagram + các sequence diagram |
 | 4 | `sections/4.Class_Specification.tex` | Quy ước class, class spec module forum, entity catalog (64 model Prisma) |
 
-### 17 chức năng sprint 1 (member kvy)
+Mỗi module gồm 1 `\subsection`, một class diagram cấp module (*a.~Class Diagram*),
+rồi các `\subsubsection{UC-xx.yy -- ...}` chứa sequence diagram (*b.~Sequence Diagram(s)*)
+— cùng khuôn với các module của member khác.
 
-View Forum Category List · View Forum Category Detail · View Post List · View Post Detail ·
-Create Post · Update Post · Delete Post · Like Post · Unlike Post · View Post Likes ·
-View Post Comments · Create Comment · Update Comment · Delete Comment · Like Comment ·
-Unlike Comment · Report Content
+### Các UC của member kvy
+
+| Module | UC | Số sequence |
+|---|---|---|
+| Forum Management | UC-14.01 … UC-14.17 | 17 |
+| Manage Conversation | UC-27.01 … UC-27.08 | 8 |
+| Manage Moderation | UC-34.01 … UC-34.03 | 3 |
+| Manage ID Verification | UC-35.01 … UC-35.04 | 4 |
+| Manage Forum Trash | UC-36.01 … UC-36.03 | 3 |
 
 ## Hình ảnh
 
 ```
-images/sprint1/kvy/sequences/<TenFile>.svg   -> .pdf (vector)
-images/sprint1/kvy/classDiagram/<Ten Chuc Nang>.svg -> .pdf (vector)
+images/sprint<N>/kvy/sequences/UC-<xx>.<yy>-<ten-uc>.svg   -> .pdf (vector)
+images/sprint<N>/kvy/classDiagram/<TenModule>.svg          -> .pdf (vector)
 ```
+
+- Sequence diagram lấy từ `sequence-diagrams/UC-<xx>.<yy>-<ten-uc>.drawio`.
+- Class diagram cấp module lấy từ `class-diagrams/UC-<xx>_<TenModule>_Class_Diagram.drawio`
+  (`ForumManagement`, `ManageConversation`, `ManageModeration`, `ManageIDVerification`,
+  `ManageForumTrash`).
 
 - Nguồn là các file **SVG** (export từ draw.io, đã chỉnh theme sáng).
 - `pdflatex` không chèn trực tiếp SVG được, nên mỗi SVG được xuất sang **PDF vector**
@@ -42,6 +56,19 @@ images/sprint1/kvy/classDiagram/<Ten Chuc Nang>.svg -> .pdf (vector)
 - Macro `\kfig{width}{path-không-đuôi}{caption}{label}` trong `main.tex`:
   ưu tiên `<path>.pdf`, sau đó `<path>.png`, nếu chưa có thì in khung
   *"Diagram pending export"* — nhờ vậy tài liệu **luôn compile được** dù thiếu hình.
+
+### Xuất SVG từ draw.io
+
+Class/sequence diagram nguồn là file `.drawio`; xuất sang SVG (light theme, cắt theo nội dung)
+bằng draw.io desktop CLI rồi mới chuyển sang PDF:
+
+```powershell
+cd "docs\Report 4"
+& "C:\Program Files\draw.io\draw.io.exe" -x -f svg --theme light --size diagram `
+    -o "images\sprint3\kvy\classDiagram\ManageForumTrash.svg" `
+    "..\..\class-diagrams\UC-36_Manage_Forum_Trash_Class_Diagram.drawio"
+node tools/svg2pdf.js "images\sprint3\kvy\classDiagram\ManageForumTrash.svg"
+```
 
 ### Xuất lại PDF vector sau khi sửa SVG
 
