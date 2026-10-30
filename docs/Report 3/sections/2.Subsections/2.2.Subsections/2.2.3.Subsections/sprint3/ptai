@@ -9,7 +9,7 @@
 
 UC ID and Name & \multicolumn{3}{l|}{UC View My Proposals} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 06/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -82,7 +82,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more su
 
 UC ID and Name & \multicolumn{3}{l|}{UC View My Proposal Detail} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 07/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -155,7 +155,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The proposal detail is only reachable
 
 UC ID and Name & \multicolumn{3}{l|}{UC Submit Proposal} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 08/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -241,7 +241,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer is a verified register
 
 UC ID and Name & \multicolumn{3}{l|}{UC Edit Proposal} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 09/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -325,7 +325,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit proposal
 
 UC ID and Name & \multicolumn{3}{l|}{UC Withdraw Proposal} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 10/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -403,7 +403,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only withdraw prop
 
 UC ID and Name & \multicolumn{3}{l|}{UC View Job Proposals} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 11/10/2026 \\ \hline
 
 Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
@@ -488,7 +488,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Only submitted proposals are listed.}
 
 UC ID and Name & \multicolumn{3}{l|}{UC View Proposal Detail} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 11/10/2026 \\ \hline
 
 Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
@@ -570,7 +570,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each proposal is associated with exac
 
 UC ID and Name & \multicolumn{3}{l|}{UC Accept Proposal} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 12/10/2026 \\ \hline
 
 Primary Actor: & Client & Secondary Actors: & Freelancer, System \\ \hline
 
@@ -669,7 +669,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The proposal carries a valid bid amou
 
 UC ID and Name & \multicolumn{3}{l|}{UC Reject Proposal} \\ \hline
 
-Created By: & Tran Phat Tai & Date Created: & DD/MM/YYYY \\ \hline
+Created By: & Tran Phat Tai & Date Created: & 13/10/2026 \\ \hline
 
 Primary Actor: & Client & Secondary Actors: & Freelancer, System \\ \hline
 

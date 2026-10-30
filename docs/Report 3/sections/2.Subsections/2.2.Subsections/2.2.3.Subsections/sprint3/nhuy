@@ -497,7 +497,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Join New Role} \newline
 1. User clicks ``Become a Freelancer'' (or ``Become a Client''). \newline
-2. System presents brief onboarding form for initial role details (e.g., title & skills for Freelancer, or company name for Client). \newline
+2. System presents brief onboarding form for initial role details (e.g., title \& skills for Freelancer, or company name for Client). \newline
 3. User completes required fields and clicks ``Confirm''. \newline
 4. System assigns target role in \texttt{user\_roles}. \newline
 5. System creates corresponding \texttt{freelancer\_profiles} or \texttt{client\_profiles} record. \newline
