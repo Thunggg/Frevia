@@ -361,7 +361,7 @@ function JobRowCard({
             )}
 
             {/* UC-11.06 Close Job */}
-            {(isOpen || isInProgress) && (
+            {isOpen && (
               <DropdownMenuItem
                 onClick={() => onClose(job.id)}
                 className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
@@ -409,8 +409,9 @@ function JobRowCard({
             </DropdownMenuItem>
 
             {/* UC-11.05 Delete Job */}
-            <DropdownMenuItem
-              onClick={() => onDelete(job.id)}
+            {!isInProgress && (
+              <DropdownMenuItem
+                onClick={() => onDelete(job.id)}
               className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
             >
               <div className="flex items-center gap-2.5">
@@ -423,6 +424,7 @@ function JobRowCard({
               </div>
               <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
             </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

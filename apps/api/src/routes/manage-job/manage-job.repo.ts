@@ -426,11 +426,26 @@ export class ManageJobRepository {
   async closeJob(userId: number, jobId: number): Promise<JobType> {
     const job = await this.checkJobOwner(userId, jobId);
 
-    if (
-      job.status === JobStatus.CLOSED ||
-      job.status === JobStatus.COMPLETED ||
-      job.status === JobStatus.CANCELLED
-    ) {
+    // BR-J22 & BR-J28: Chỉ đóng được Job khi đang OPEN và chưa có hợp đồng hiệu lực
+    if (job.status !== JobStatus.OPEN) {
+      throw JobCannotBeClosedException();
+    }
+
+    const activeContract = await this.prisma.contract.findFirst({
+      where: {
+        jobId,
+        status: {
+          in: [
+            ContractStatus.PENDING_SIGN,
+            ContractStatus.ACTIVE,
+            ContractStatus.DISPUTED,
+          ],
+        },
+      },
+      select: { id: true },
+    });
+
+    if (activeContract) {
       throw JobCannotBeClosedException();
     }
 
