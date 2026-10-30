@@ -1,0 +1,533 @@
+% =================================================================
+% FILE: sections/ntin/4/sprint2.tex -- Sprint 2 (Milestone, File & Submission)
+% Class specifications for Milestone, Milestone File, and Milestone Submission
+% =================================================================
+
+\subsection{MilestoneController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneController(}\newline\code{milestoneService: MilestoneService)} &
+A method to initialize the controller with the milestone service dependency.
+\newline -- \code{milestoneService}: \code{MilestoneService} -- service encapsulating milestone business logic.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMilestoneList(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number,}\newline\code{query: GetMilestoneListQueryDTO)} &
+A method to retrieve a paginated and status-filtered list of milestones for an active contract.
+\newline -- \code{userId}: \code{number} -- caller user identifier injected by \code{@UserActive('userId')}.
+\newline -- \code{roleName}: \code{string} -- role name for authorization checks.
+\newline -- \code{contractId}: \code{number} -- parent contract identifier parsed by \code{ParseIntPipe}.
+\newline -- \code{query}: \code{GetMilestoneListQueryDTO} -- pagination parameters and optional status filter.
+\newline -- \textit{Returns:} \code{Promise<GetMilestoneListResponseDTO>} -- paginated milestone items.
+\newline -- Route: \code{GET /contracts/:contractId/milestones}; authenticated endpoint. \\ \hline
+
+03 & \code{getMilestoneDetail(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number,}\newline\code{milestoneId: number)} &
+A method to retrieve full detail and dispute linkages of a specific contract milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- target milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<GetMilestoneDetailResponseDTO>} -- milestone detail payload.
+\newline -- Route: \code{GET /contracts/:contractId/milestones/:id}; authenticated endpoint. \\ \hline
+
+04 & \code{createMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{body: CreateMilestoneBodyDTO)} &
+A method for the client to define and attach a new milestone to a contract.
+\newline -- \code{userId}: \code{number} -- client identifier injected by \code{@UserActive('userId')}.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{body}: \code{CreateMilestoneBodyDTO} -- title, description, amount, and optional due date.
+\newline -- \textit{Returns:} \code{Promise<CreateMilestoneResponseDTO>} -- created milestone record.
+\newline -- Route: \code{POST /contracts/:contractId/milestones}; authenticated endpoint. \\ \hline
+
+05 & \code{updateMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number,}\newline\code{body: UpdateMilestoneBodyDTO)} &
+A method for the client to update milestone deliverables or budget prior to funding.
+\newline -- \code{userId}: \code{number} -- client identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{UpdateMilestoneBodyDTO} -- mutable fields (title, description, amount, dueDate).
+\newline -- \textit{Returns:} \code{Promise<UpdateMilestoneResponseDTO>} -- updated milestone.
+\newline -- Route: \code{PATCH /contracts/:contractId/milestones/:id}; authenticated endpoint. \\ \hline
+
+06 & \code{progressMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method for the freelancer to advance a funded milestone into the in-progress state.
+\newline -- \code{userId}: \code{number} -- freelancer identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- target milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<ProgressMilestoneResponseDTO>} -- milestone with updated in-progress status.
+\newline -- Route: \code{PATCH /contracts/:contractId/milestones/:id/progress}; authenticated endpoint. \\ \hline
+
+07 & \code{deleteMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method for the client to soft-delete an unfunded pending milestone.
+\newline -- \code{userId}: \code{number} -- client identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<DeleteMilestoneResponseDTO>} -- deleted milestone confirmation.
+\newline -- Route: \code{DELETE /contracts/:contractId/milestones/:id}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{milestoneService} & \code{MilestoneService} -- private readonly milestone service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneService(}\newline\code{milestoneRepository: MilestoneRepository)} &
+A method to initialize the service with the milestone repository dependency.
+\newline -- \code{milestoneRepository}: \code{MilestoneRepository} -- data access layer for milestone entities.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMilestoneList(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number,}\newline\code{query: GetMilestoneListQueryType)} &
+A method to verify contract membership and retrieve paginated milestones with dispute metadata.
+\newline -- \code{userId}: \code{number} -- requesting user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{query}: \code{GetMilestoneListQueryType} -- pagination and filtering criteria.
+\newline -- \textit{Returns:} \code{Promise<MilestoneListResponseType>} -- paginated milestone items. \\ \hline
+
+03 & \code{getMilestoneDetail(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number,}\newline\code{milestoneId: number)} &
+A method to verify participant authorization and fetch comprehensive milestone details.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneDetailType>} -- single milestone detail object. \\ \hline
+
+04 & \code{createMilestone(}\newline\code{clientId: number, contractId: number,}\newline\code{body: CreateMilestoneBodyType)} &
+A method to enforce contract status constraints, verify cumulative budget limits, and create a milestone.
+\newline -- \code{clientId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{body}: \code{CreateMilestoneBodyType} -- milestone parameters.
+\newline -- \textit{Returns:} \code{Promise<MilestoneType>} -- created milestone entity. \\ \hline
+
+05 & \code{updateMilestone(}\newline\code{clientId: number, contractId: number,}\newline\code{milestoneId: number,}\newline\code{body: UpdateMilestoneBodyType)} &
+A method to verify that a milestone is still pending, validate cumulative contract ceiling, and update attributes.
+\newline -- \code{clientId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{UpdateMilestoneBodyType} -- revised milestone attributes.
+\newline -- \textit{Returns:} \code{Promise<MilestoneType>} -- updated milestone entity. \\ \hline
+
+06 & \code{deleteMilestone(}\newline\code{clientId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to verify client ownership, ensure milestone is unfunded and pending, and soft-delete it.
+\newline -- \code{clientId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneType>} -- deleted milestone record. \\ \hline
+
+07 & \code{progressMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to verify freelancer ownership, ensure milestone is funded, check that no other milestone is currently in progress, and transition status to in-progress.
+\newline -- \code{userId}: \code{number} -- freelancer user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneType>} -- updated milestone in progress. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{milestoneRepository} & \code{MilestoneRepository} -- private readonly repository dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneRepository(prisma: PrismaService)} &
+A method to initialize the repository with the Prisma database client.
+\newline -- \code{prisma}: \code{PrismaService} -- injected Prisma database service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findContractById(contractId: number)} &
+A method to fetch contract participants, total amount, and status for permission checks.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<Contract | null>} -- found contract record or null. \\ \hline
+
+03 & \code{getTotalMilestoneAmount(}\newline\code{contractId: number,}\newline\code{excludeMilestoneId?: number)} &
+A method to calculate the cumulative sum of existing non-deleted milestones within a contract.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{excludeMilestoneId}: \code{number | undefined} -- optional milestone ID to exclude from sum when updating.
+\newline -- \textit{Returns:} \code{Promise<number>} -- aggregate sum amount. \\ \hline
+
+04 & \code{findMilestoneById(milestoneId: number)} &
+A method to retrieve a non-deleted milestone record by primary key.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- milestone record or null. \\ \hline
+
+05 & \code{findInProgressMilestone(contractId: number)} &
+A method to find any active milestone currently with in-progress status in a contract.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- in-progress milestone record if exists. \\ \hline
+
+06 & \code{getMilestoneList(}\newline\code{contractId: number,}\newline\code{query: GetMilestoneListQueryType)} &
+A method to execute a transaction fetching paginated milestone records and total count.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{query}: \code{GetMilestoneListQueryType} -- page, limit, and status filters.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Milestone>>} -- paginated milestone collection. \\ \hline
+
+07 & \code{getMilestoneDetail(milestoneId: number)} &
+A method to load complete milestone data including associated dispute status.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- milestone detail object. \\ \hline
+
+08 & \code{createMilestone(}\newline\code{contractId: number,}\newline\code{data: CreateMilestoneBodyType)} &
+A method to insert a new milestone record into the database.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{data}: \code{CreateMilestoneBodyType} -- milestone fields.
+\newline -- \textit{Returns:} \code{Promise<Milestone>} -- newly created milestone entity. \\ \hline
+
+09 & \code{updateMilestone(}\newline\code{milestoneId: number,}\newline\code{data: UpdateMilestoneBodyType)} &
+A method to update specific fields of an existing milestone.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{data}: \code{UpdateMilestoneBodyType} -- fields to update.
+\newline -- \textit{Returns:} \code{Promise<Milestone>} -- updated milestone entity. \\ \hline
+
+10 & \code{deleteMilestone(milestoneId: number)} &
+A method to perform a soft-delete by updating the deletedAt timestamp.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone>} -- soft-deleted milestone record. \\ \hline
+
+11 & \code{progressMilestone(milestoneId: number)} &
+A method to transition the status of a milestone to in-progress.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone>} -- updated milestone record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly Prisma connection instance. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneFileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneFileController(}\newline\code{milestoneFileService: MilestoneFileService)} &
+A method to initialize the controller with the milestone file service dependency.
+\newline -- \code{milestoneFileService}: \code{MilestoneFileService} -- milestone file handling service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMilestoneFiles(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number,}\newline\code{milestoneId: number)} &
+A method to retrieve all non-deleted files uploaded for a milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<GetMilestoneFilesResponseDTO>} -- list of milestone file items.
+\newline -- Route: \code{GET /contracts/:contractId/milestones/:milestoneId/files}; authenticated endpoint. \\ \hline
+
+03 & \code{uploadMilestoneFile(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number,}\newline\code{file: Express.Multer.File)} &
+A method to accept a multipart file, upload it to cloud storage, and persist the record.
+\newline -- \code{userId}: \code{number} -- uploader user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{file}: \code{Express.Multer.File} -- validated multipart binary uploaded via \code{FileInterceptor}.
+\newline -- \textit{Returns:} \code{Promise<UploadMilestoneFileResponseDTO>} -- uploaded file metadata.
+\newline -- Route: \code{POST /contracts/:contractId/milestones/:milestoneId/files}; authenticated endpoint. \\ \hline
+
+04 & \code{deleteMilestoneFile(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number, fileId: number)} &
+A method to soft-delete an uploaded milestone file and remove it from cloud storage.
+\newline -- \code{userId}: \code{number} -- uploader user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{fileId}: \code{number} -- file identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<DeleteMilestoneFileResponseDTO>} -- deleted file confirmation.
+\newline -- Route: \code{DELETE /contracts/:contractId/milestones/:milestoneId/files/:fileId}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{milestoneFileService} & \code{MilestoneFileService} -- private readonly milestone file service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneFileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneFileService(}\newline\code{milestoneFileRepository: MilestoneFileRepository,}\newline\code{cloudinaryService: CloudinaryService)} &
+A method to initialize the service with repository and cloud asset dependencies.
+\newline -- \code{milestoneFileRepository}: \code{MilestoneFileRepository} -- persistence access layer for files.
+\newline -- \code{cloudinaryService}: \code{CloudinaryService} -- cloud storage adapter for file hosting.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMilestoneFiles(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number)} &
+A method to verify contract participation and retrieve all files linked to the milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFileType[]>} -- array of milestone file objects. \\ \hline
+
+03 & \code{uploadMilestoneFile(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number, file: Express.Multer.File)} &
+A method to verify access, stream file to Cloudinary in milestone folder, and persist file metadata.
+\newline -- \code{userId}: \code{number} -- uploader user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{file}: \code{Express.Multer.File} -- multipart uploaded file.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFileType>} -- saved milestone file entity. \\ \hline
+
+04 & \code{deleteMilestoneFile(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number, fileId: number)} &
+A method to ensure uploader ownership, purge asset from Cloudinary, and soft-delete the database record.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{fileId}: \code{number} -- target file identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFileType>} -- soft-deleted file record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{milestoneFileRepository} & \code{MilestoneFileRepository} -- private readonly repository dependency. \\ \hline
+02 & \code{cloudinaryService} & \code{CloudinaryService} -- private readonly Cloudinary storage provider. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneFileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneFileRepository(prisma: PrismaService)} &
+A method to initialize the repository with the Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- Prisma database service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findContractById(contractId: number)} &
+A method to query contract participants and status.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<Contract | null>} -- found contract record or null. \\ \hline
+
+03 & \code{findMilestoneById(milestoneId: number)} &
+A method to verify milestone existence and parent contract linkage.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- found milestone or null. \\ \hline
+
+04 & \code{findFileById(fileId: number)} &
+A method to retrieve a specific milestone file record by ID.
+\newline -- \code{fileId}: \code{number} -- file identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFile | null>} -- file record or null. \\ \hline
+
+05 & \code{getMilestoneFiles(milestoneId: number)} &
+A method to fetch all non-deleted files for a milestone in descending order.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFile[]>} -- list of file records. \\ \hline
+
+06 & \code{createMilestoneFile(data: CreateMilestoneFileData)} &
+A method to insert a new milestone file record into the database.
+\newline -- \code{data}: \code{CreateMilestoneFileData} -- milestoneId, uploaderId, fileUrl, publicId, fileName.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFile>} -- created file record. \\ \hline
+
+07 & \code{softDeleteFile(fileId: number)} &
+A method to record a soft-deletion timestamp on the file record.
+\newline -- \code{fileId}: \code{number} -- file identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneFile>} -- updated file record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly Prisma connection instance. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneSubmissionController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneSubmissionController(}\newline\code{submissionService: MilestoneSubmissionService)} &
+A method to initialize the controller with the milestone submission service.
+\newline -- \code{submissionService}: \code{MilestoneSubmissionService} -- deliverable submission service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{submitMilestone(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{body: SubmitMilestoneBodyDTO)} &
+A method for the freelancer to submit completed work packages with comments and file attachments.
+\newline -- \code{userId}: \code{number} -- freelancer user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{SubmitMilestoneBodyDTO} -- work description, external links, and uploaded file IDs.
+\newline -- \textit{Returns:} \code{Promise<SubmitMilestoneResponseDTO>} -- submitted deliverable package.
+\newline -- Route: \code{POST .../milestones/:milestoneId/submissions}; authenticated endpoint. \\ \hline
+
+03 & \code{getSubmissions(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number)} &
+A method to retrieve the complete submission review history for a milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<GetSubmissionsResponseDTO>} -- array of milestone submission packages.
+\newline -- Route: \code{GET .../milestones/:milestoneId/submissions}; authenticated endpoint. \\ \hline
+
+04 & \code{getSubmissionDetail(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number)} &
+A method to inspect full details and attached file evidence of an individual submission.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<GetSubmissionResponseDTO>} -- submission detail entity.
+\newline -- Route: \code{GET .../milestones/:milestoneId/submissions/:id}; authenticated endpoint. \\ \hline
+
+05 & \code{requestChanges(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number,}\newline\code{body: RequestChangesBodyDTO)} &
+A method for the client to reject a submission package and request deliverable revisions with feedback.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- target submission identifier.
+\newline -- \code{body}: \code{RequestChangesBodyDTO} -- revision remarks and requested turnaround due date.
+\newline -- \textit{Returns:} \code{Promise<RequestChangesResponseDTO>} -- updated submission with revision status.
+\newline -- Route: \code{PATCH .../submissions/:id/request-changes}; authenticated endpoint. \\ \hline
+
+06 & \code{approveMilestone(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number)} &
+A method for the client to approve accepted deliverables and mark milestone as completed.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<ApproveMilestoneResponseDTO>} -- approved submission and completed milestone.
+\newline -- Route: \code{PATCH .../submissions/:id/approve}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{submissionService} & \code{MilestoneSubmissionService} -- private readonly submission service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneSubmissionService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneSubmissionService(}\newline\code{submissionRepository: MilestoneSubmissionRepository)} &
+A method to initialize the service with the milestone submission repository.
+\newline -- \code{submissionRepository}: \code{MilestoneSubmissionRepository} -- submission data access layer.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{resolveAndGuardContext(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{role: 'participant' | 'freelancer' | 'client')} &
+A private helper method to validate contract existence, milestone membership, and enforce strict role-based access.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- user role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{role}: \code{'participant' | 'freelancer' | 'client'} -- required caller privilege.
+\newline -- \textit{Returns:} \code{Promise<{contract, milestone}>} -- resolved context entities. \\ \hline
+
+03 & \code{submitMilestone(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{body: SubmitMilestoneBodyType)} &
+A method to verify that milestone is funded and in-progress, persist the submission package, and transition status to submitted.
+\newline -- \code{userId}: \code{number} -- freelancer user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{SubmitMilestoneBodyType} -- message, links, and file IDs.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- created submission record. \\ \hline
+
+04 & \code{getSubmission(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number)} &
+A method to retrieve all submission attempts and attached deliverables for a milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission[]>} -- list of submission records. \\ \hline
+
+05 & \code{getSubmissionDetail(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number)} &
+A method to load a single submission package with associated file details.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- detailed submission entity. \\ \hline
+
+06 & \code{requestChanges(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number,}\newline\code{body: RequestChangesBodyType)} &
+A method to verify client ownership, confirm pending review status, save revision requirements, and set milestone to changes requested.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \code{body}: \code{RequestChangesBodyType} -- revision remarks and optional deadline.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- updated submission entity. \\ \hline
+
+07 & \code{approveMilestone(}\newline\code{userId: number, roleName: string,}\newline\code{contractId: number, milestoneId: number,}\newline\code{submissionId: number)} &
+A method to verify client ownership, confirm pending review status, mark submission as approved, and complete the milestone.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- approved submission entity. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{submissionRepository} & \code{MilestoneSubmissionRepository} -- private readonly repository dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MilestoneSubmissionRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{MilestoneSubmissionRepository(prisma: PrismaService)} &
+A method to initialize the repository with the Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- Prisma database service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findContractById(contractId: number)} &
+A method to retrieve contract participant identifiers and status.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<Contract | null>} -- contract record or null. \\ \hline
+
+03 & \code{findMilestoneById(milestoneId: number)} &
+A method to query milestone status, payment status, and parent contract ID.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- milestone record or null. \\ \hline
+
+04 & \code{findSubmissionById(submissionId: number)} &
+A method to retrieve a submission record by primary key.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission | null>} -- submission record or null. \\ \hline
+
+05 & \code{getSubmissionDetail(milestoneId: number)} &
+A method to retrieve all submission records with attached file objects for a milestone.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission[]>} -- list of submission entities with files. \\ \hline
+
+06 & \code{getSubmission(submissionId: number)} &
+A method to load an individual submission along with all nested file records.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission | null>} -- detailed submission or null. \\ \hline
+
+07 & \code{createSubmission(}\newline\code{milestoneId: number, freelancerId: number,}\newline\code{body: SubmitMilestoneBodyType)} &
+A method to execute an atomic transaction creating the submission, linking file references, and updating milestone status to submitted.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer identifier.
+\newline -- \code{body}: \code{SubmitMilestoneBodyType} -- message, links, and fileIds array.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- created submission record. \\ \hline
+
+08 & \code{requestChanges(}\newline\code{submissionId: number, milestoneId: number,}\newline\code{body: RequestChangesBodyType)} &
+A method to atomically mark submission as changes requested and transition milestone status to changes requested.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{RequestChangesBodyType} -- revision remarks and due date.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- updated submission entity. \\ \hline
+
+09 & \code{approveSubmission(}\newline\code{submissionId: number, milestoneId: number)} &
+A method to atomically mark submission as approved, record reviewed timestamp, and transition milestone to completed.
+\newline -- \code{submissionId}: \code{number} -- submission identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneSubmission>} -- approved submission entity. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly Prisma connection instance. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for milestone, file, and submission management}
+\begin{SupportingTable}{4.5cm}{5.5cm}{4.0cm}
+\code{CreateMilestoneBodyDTO} & \code{title: string, amount: number, description?: string, dueDate?: string} & Validates milestone creation payload and budget parameters. \\ \hline
+\code{UpdateMilestoneBodyDTO} & \code{title?: string, amount?: number, description?: string, dueDate?: string} & Validates mutable fields of pending milestones. \\ \hline
+\code{GetMilestoneListQueryDTO} & \code{page: number, limit: number, status?: MilestoneStatus} & Validates milestone list pagination and status filter queries. \\ \hline
+\code{UploadMilestoneFileResponseDTO} & \code{id: number, milestoneId: number, fileUrl: string, fileName?: string} & Serializes uploaded milestone attachment response. \\ \hline
+\code{SubmitMilestoneBodyDTO} & \code{message?: string, links?: string[], fileIds?: number[]} & Validates deliverable submission package and attachment IDs. \\ \hline
+\code{RequestChangesBodyDTO} & \code{changeRequestMessage: string, changeRequestDueDate?: string} & Validates deliverable revision remarks and target turnaround date. \\ \hline
+\code{ApproveMilestoneResponseDTO} & \code{id: number, status: string, reviewedAt: Date} & Serializes deliverable approval result and milestone completion state. \\ \hline
+\end{SupportingTable}
+

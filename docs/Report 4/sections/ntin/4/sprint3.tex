@@ -1,0 +1,343 @@
+% =================================================================
+% FILE: sections/ntin/4/sprint3.tex -- Sprint 3 (Dispute Management)
+% Class specifications for Dispute Management & Arbitration
+% =================================================================
+
+\subsection{DisputeController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{DisputeController(}\newline\code{disputeService: DisputeService)} &
+A method to initialize the controller with the dispute service dependency.
+\newline -- \code{disputeService}: \code{DisputeService} -- service encapsulating arbitration business logic.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listMyDisputes(}\newline\code{userId: number,}\newline\code{query: GetDisputeListQueryDTO)} &
+A method to retrieve a paginated list of disputes in which the current user is an initiator or respondent.
+\newline -- \code{userId}: \code{number} -- caller user identifier injected by \code{@UserActive('userId')}.
+\newline -- \code{query}: \code{GetDisputeListQueryDTO} -- search keyword, status filter, page, and limit.
+\newline -- \textit{Returns:} \code{Promise<DisputeListResponseDTO>} -- user's dispute cases with pagination metadata.
+\newline -- Route: \code{GET /disputes}; authenticated endpoint. \\ \hline
+
+03 & \code{createDispute(}\newline\code{userId: number,}\newline\code{body: CreateDisputeBodyDTO)} &
+A method for a contract participant to open an official dispute case on an eligible funded milestone.
+\newline -- \code{userId}: \code{number} -- user opening the dispute.
+\newline -- \code{body}: \code{CreateDisputeBodyDTO} -- milestoneId, dispute reason, detailed narrative, and evidence file references.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- created dispute record with fee assessment.
+\newline -- Route: \code{POST /disputes}; authenticated endpoint. \\ \hline
+
+04 & \code{payFee(}\newline\code{userId: number, disputeId: number,}\newline\code{body: PayDisputeFeeBodyDTO)} &
+A method for a disputing party to record payment of their assigned arbitration fee.
+\newline -- \code{userId}: \code{number} -- user paying the fee.
+\newline -- \code{disputeId}: \code{number} -- target dispute case identifier parsed by \code{ParseIntPipe}.
+\newline -- \code{body}: \code{PayDisputeFeeBodyDTO} -- payment method reference and payment intent identifier.
+\newline -- \textit{Returns:} \code{Promise<{success: boolean, fee: DisputeFee}>} -- updated fee status.
+\newline -- Route: \code{POST /disputes/:id/fee}; authenticated endpoint. \\ \hline
+
+05 & \code{submitResponse(}\newline\code{userId: number, disputeId: number,}\newline\code{body: SubmitDisputeResponseBodyDTO)} &
+A method for the respondent to submit their formal rebuttal explanation and supporting evidence.
+\newline -- \code{userId}: \code{number} -- respondent user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{SubmitDisputeResponseBodyDTO} -- defense description and counter-evidence file IDs.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- updated dispute with submitted response.
+\newline -- Route: \code{POST /disputes/:id/response}; authenticated endpoint. \\ \hline
+
+06 & \code{getDisputeByMilestoneId(}\newline\code{userId: number, roleName: string,}\newline\code{milestoneId: number)} &
+A method to retrieve dispute information associated with a specific contract milestone.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- dispute dossier entity.
+\newline -- Route: \code{GET /disputes/milestone/:milestoneId}; authenticated endpoint. \\ \hline
+
+07 & \code{getDisputeDetail(}\newline\code{userId: number, roleName: string,}\newline\code{disputeId: number)} &
+A method to retrieve complete dispute dossier including claims, evidence, fees, and arbitrator decisions.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{disputeId}: \code{number} -- dispute case identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- comprehensive dispute details.
+\newline -- Route: \code{GET /disputes/:id}; authenticated endpoint. \\ \hline
+
+08 & \code{submitDecisionReview(}\newline\code{userId: number, disputeId: number,}\newline\code{body: ReviewDisputeDecisionBodyDTO)} &
+A method for either disputing party to accept or contest an arbitrator's proposed split resolution.
+\newline -- \code{userId}: \code{number} -- participant submitting decision review.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{ReviewDisputeDecisionBodyDTO} -- response flag (ACCEPTED/REJECTED) and objection justification.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- updated dispute or finalized settlement.
+\newline -- Route: \code{POST /disputes/:id/review}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{disputeService} & \code{DisputeService} -- private readonly dispute service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{DisputeAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{DisputeAdminController(}\newline\code{disputeService: DisputeService)} &
+A method to initialize the administrative controller with the dispute service dependency.
+\newline -- \code{disputeService}: \code{DisputeService} -- dispute service handling administrator actions.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listDisputes(}\newline\code{roleName: string,}\newline\code{query: GetDisputeListQueryDTO)} &
+A method for platform administrators to list all system disputes with status and date filtering.
+\newline -- \code{roleName}: \code{string} -- administrator role name verified via \code{@UserActive('roleName')}.
+\newline -- \code{query}: \code{GetDisputeListQueryDTO} -- pagination parameters and dispute status filters.
+\newline -- \textit{Returns:} \code{Promise<DisputeListResponseDTO>} -- full dispute list and count.
+\newline -- Route: \code{GET /admin/disputes}; administrator-only endpoint. \\ \hline
+
+03 & \code{getDisputeDetail(}\newline\code{userId: number, roleName: string,}\newline\code{disputeId: number)} &
+A method for administrators to examine all dispute claims, submissions, and payment logs.
+\newline -- \code{userId}: \code{number} -- administrator user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- comprehensive dispute dossier.
+\newline -- Route: \code{GET /admin/disputes/:id}; administrator-only endpoint. \\ \hline
+
+04 & \code{adminMakeDecision(}\newline\code{adminId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: AdminDisputeDecisionBodyDTO)} &
+A method for an arbitrator to issue the initial proposed fund split between client and freelancer.
+\newline -- \code{adminId}: \code{number} -- presiding administrator identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{AdminDisputeDecisionBodyDTO} -- freelancerAmount, clientAmount, and legal reasoning.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- dispute transitioned to DECISION\_MADE.
+\newline -- Route: \code{POST /admin/disputes/:id/decision}; administrator-only endpoint. \\ \hline
+
+05 & \code{adminFinalDecision(}\newline\code{adminId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: AdminDisputeFinalDecisionBodyDTO)} &
+A method for an arbitrator to issue a binding final decision when a party rejected the initial proposal.
+\newline -- \code{adminId}: \code{number} -- presiding administrator identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{AdminDisputeFinalDecisionBodyDTO} -- final fund distribution and binding explanation.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailResponseDTO>} -- finalized dispute triggering financial settlement.
+\newline -- Route: \code{POST /admin/disputes/:id/final-decision}; administrator-only endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{disputeService} & \code{DisputeService} -- private readonly dispute service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{DisputeService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{DisputeService(}\newline\code{disputeRepo: DisputeRepository)} &
+A method to initialize the service with the dispute repository dependency.
+\newline -- \code{disputeRepo}: \code{DisputeRepository} -- database repository for dispute operations.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createDispute(}\newline\code{userId: number, body: CreateDisputeBodyType)} &
+A method to validate participant ownership, verify milestone funding, enforce evidence limits, and initialize dispute case with arbitration fee schedules.
+\newline -- \code{userId}: \code{number} -- initiator identifier.
+\newline -- \code{body}: \code{CreateDisputeBodyType} -- milestone ID, reason, narrative, and attached files.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- created dispute entity. \\ \hline
+
+03 & \code{payFee(}\newline\code{userId: number, disputeId: number,}\newline\code{body: PayDisputeFeeBodyType)} &
+A method to verify participant authorization, check pending fee status, and record paid fee status.
+\newline -- \code{userId}: \code{number} -- payer user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute case identifier.
+\newline -- \code{body}: \code{PayDisputeFeeBodyType} -- payment method reference.
+\newline -- \textit{Returns:} \code{Promise<{success: boolean, fee: DisputeFee}>} -- paid fee confirmation. \\ \hline
+
+04 & \code{submitResponse(}\newline\code{userId: number, disputeId: number,}\newline\code{body: SubmitDisputeResponseBodyType)} &
+A method to ensure only the respondent can reply, verify dispute status, enforce single-response policy, and store rebuttal evidence.
+\newline -- \code{userId}: \code{number} -- respondent user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{SubmitDisputeResponseBodyType} -- rebuttal text and evidence file IDs.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- updated dispute entity. \\ \hline
+
+05 & \code{getDisputeDetail(}\newline\code{userId: number, roleName: string,}\newline\code{disputeId: number)} &
+A method to verify access rights, detect overdue unpaid arbitration fees, and return complete case data.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- dispute dossier entity. \\ \hline
+
+06 & \code{getDisputeByMilestoneId(}\newline\code{userId: number, roleName: string,}\newline\code{milestoneId: number)} &
+A method to look up dispute case linked to a specific milestone with permission validation.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- dispute entity. \\ \hline
+
+07 & \code{listMyDisputes(}\newline\code{userId: number, query: GetDisputeListQueryType)} &
+A method to return all disputes where caller is either initiator or defendant.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{query}: \code{GetDisputeListQueryType} -- pagination and filter options.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Dispute>>} -- paginated dispute list. \\ \hline
+
+08 & \code{adminListDisputes(}\newline\code{roleName: string, query: GetDisputeListQueryType)} &
+A method to enforce admin privileges and return system-wide dispute cases.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{query}: \code{GetDisputeListQueryType} -- status filter and pagination.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Dispute>>} -- all system disputes. \\ \hline
+
+09 & \code{adminMakeDecision(}\newline\code{adminId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: AdminDisputeDecisionBodyType)} &
+A method to validate that the fund split equals the milestone total, record proposed split amounts, and set status to DECISION\_MADE.
+\newline -- \code{adminId}: \code{number} -- administrator identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{AdminDisputeDecisionBodyType} -- freelancer and client distribution.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- updated dispute with proposal. \\ \hline
+
+10 & \code{submitDecisionReview(}\newline\code{userId: number, disputeId: number,}\newline\code{body: ReviewDisputeDecisionBodyType)} &
+A method to process party feedback: if rejected, moves dispute to REVIEW\_REQUESTED; if both accept, automatically executes finalization.
+\newline -- \code{userId}: \code{number} -- participant identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{ReviewDisputeDecisionBodyType} -- accept/reject decision and reason.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- dispute status after review. \\ \hline
+
+11 & \code{adminFinalDecision(}\newline\code{adminId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: AdminDisputeFinalDecisionBodyType)} &
+A method for the administrator to render a final, unappealable decision and trigger payout execution.
+\newline -- \code{adminId}: \code{number} -- administrator identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{AdminDisputeFinalDecisionBodyType} -- final amounts and justification.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetailType>} -- finalized dispute. \\ \hline
+
+12 & \code{executeFinalization(}\newline\code{dispute: Dispute, freelancerAmount: number,}\newline\code{clientAmount: number, decisionReason: string,}\newline\code{adminId?: number)} &
+A private helper method to atomically record dispute finalization and transition milestone status.
+\newline -- \code{dispute}: \code{Dispute} -- dispute record being finalized.
+\newline -- \code{freelancerAmount}: \code{number} -- final freelancer entitlement.
+\newline -- \code{clientAmount}: \code{number} -- final client refund entitlement.
+\newline -- \code{decisionReason}: \code{string} -- recorded legal summary.
+\newline -- \code{adminId}: \code{number | undefined} -- deciding admin ID.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- updated dispute entity. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{disputeRepo} & \code{DisputeRepository} -- private readonly repository dependency. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS system logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{DisputeRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{DisputeRepository(prisma: PrismaService)} &
+A method to initialize the repository with the Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database service instance.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findMilestoneWithContract(}\newline\code{milestoneId: number)} &
+A method to fetch a milestone along with its parent contract and existing dispute.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<MilestoneWithContract | null>} -- milestone with contract or null. \\ \hline
+
+03 & \code{findDisputeById(disputeId: number)} &
+A method to query full dispute entity with claims, fees, evidence, and milestone data.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetail | null>} -- complete dispute record. \\ \hline
+
+04 & \code{findDisputeByMilestoneId(}\newline\code{milestoneId: number)} &
+A method to query the active dispute record for a given milestone.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDetail | null>} -- dispute record or null. \\ \hline
+
+05 & \code{findSharedFilesByIds(}\newline\code{fileIds: number[], contractId: number)} &
+A method to verify that referenced evidence files exist within the contract boundary.
+\newline -- \code{fileIds}: \code{number[]} -- array of file identifiers.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<SharedFile[]>} -- valid file records. \\ \hline
+
+06 & \code{createDisputeTransaction(}\newline\code{data: CreateDisputeTransactionData)} &
+A method to atomically insert dispute record, initialize arbitration fees for both parties, and attach initial evidence.
+\newline -- \code{data}: \code{CreateDisputeTransactionData} -- dispute parameters and evidence files.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- created dispute entity. \\ \hline
+
+07 & \code{findFeeByDisputeAndUser(}\newline\code{disputeId: number, userId: number)} &
+A method to retrieve the arbitration fee invoice for a specific party in a dispute.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeFee | null>} -- dispute fee record. \\ \hline
+
+08 & \code{updateFeeStatus(}\newline\code{feeId: number, status: DisputeFeeStatus,}\newline\code{paymentReference?: string, paidAt?: Date)} &
+A method to update fee payment state and record payment gateway transaction reference.
+\newline -- \code{feeId}: \code{number} -- fee identifier.
+\newline -- \code{status}: \code{DisputeFeeStatus} -- new fee status (e.g. PAID).
+\newline -- \code{paymentReference}: \code{string | undefined} -- payment tracking identifier.
+\newline -- \code{paidAt}: \code{Date | undefined} -- payment timestamp.
+\newline -- \textit{Returns:} \code{Promise<DisputeFee>} -- updated fee entity. \\ \hline
+
+09 & \code{markFeeOverdue(feeId: number)} &
+A method to set an expired unpaid fee to OVERDUE status.
+\newline -- \code{feeId}: \code{number} -- fee identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeFee>} -- updated fee entity. \\ \hline
+
+10 & \code{hasUserSubmittedEvidence(}\newline\code{disputeId: number, userId: number, type: string)} &
+A method to check whether a participant has already submitted evidence for a specific dispute phase.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{type}: \code{string} -- submission stage (e.g. RESPONSE).
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- true if already submitted. \\ \hline
+
+11 & \code{submitResponseTransaction(}\newline\code{disputeId: number, respondentId: number,}\newline\code{description: string,}\newline\code{evidenceFiles?: DisputeEvidenceFileInput[])} &
+A method to atomically persist respondent statement, save evidence attachments, and transition dispute status to UNDER\_REVIEW.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{respondentId}: \code{number} -- respondent user ID.
+\newline -- \code{description}: \code{string} -- response argument text.
+\newline -- \code{evidenceFiles}: \code{DisputeEvidenceFileInput[] | undefined} -- evidence files.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- updated dispute record. \\ \hline
+
+12 & \code{listDisputes(}\newline\code{query: GetDisputeListQueryType, userId?: number)} &
+A method to retrieve paginated disputes with status filtering and optional participant scoping.
+\newline -- \code{query}: \code{GetDisputeListQueryType} -- pagination parameters.
+\newline -- \code{userId}: \code{number | undefined} -- optional user ID filter.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Dispute>>} -- paginated dispute cases. \\ \hline
+
+13 & \code{makeDecisionTransaction(}\newline\code{disputeId: number, adminId: number,}\newline\code{freelancerAmount: number, clientAmount: number,}\newline\code{decisionReason: string,}\newline\code{clientId: number, freelancerId: number)} &
+A method to record proposed split amounts, set dispute status to DECISION\_MADE, and initialize pending decision review entries for both parties.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{adminId}: \code{number} -- administrator user ID.
+\newline -- \code{freelancerAmount}: \code{number} -- allocated freelancer amount.
+\newline -- \code{clientAmount}: \code{number} -- allocated client refund amount.
+\newline -- \code{decisionReason}: \code{string} -- justification summary.
+\newline -- \code{clientId}: \code{number} -- client identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer identifier.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- updated dispute record. \\ \hline
+
+14 & \code{upsertDecisionReview(}\newline\code{disputeId: number, userId: number,}\newline\code{response: DisputeDecisionResponse, reason?: string)} &
+A method to persist a participant's accept or reject review vote.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{userId}: \code{number} -- participant user ID.
+\newline -- \code{response}: \code{DisputeDecisionResponse} -- ACCEPTED or REJECTED.
+\newline -- \code{reason}: \code{string | undefined} -- optional objection feedback.
+\newline -- \textit{Returns:} \code{Promise<DisputeDecisionReview>} -- saved review record. \\ \hline
+
+15 & \code{findDecisionReviews(disputeId: number)} &
+A method to query all recorded decision review votes for a dispute.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeDecisionReview[]>} -- review vote entries. \\ \hline
+
+16 & \code{updateDisputeStatus(}\newline\code{disputeId: number, status: DisputeStatus)} &
+A method to transition dispute state directly in the database.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{status}: \code{DisputeStatus} -- target dispute status.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- updated dispute record. \\ \hline
+
+17 & \code{finalizeDisputeTransaction(}\newline\code{data: FinalizeDisputeData)} &
+A method to atomically set final dispute distribution, mark milestone as completed, and record resolution timestamp.
+\newline -- \code{data}: \code{FinalizeDisputeData} -- final amounts, milestone status, and timestamps.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- finalized dispute record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly Prisma connection instance. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for dispute management and arbitration}
+\begin{SupportingTable}{4.5cm}{5.5cm}{4.0cm}
+\code{CreateDisputeBodyDTO} & \code{milestoneId: number, reason: string, description: string, evidenceFiles?: object[]} & Validates formal dispute filing payload and attached evidence. \\ \hline
+\code{PayDisputeFeeBodyDTO} & \code{paymentMethodId?: string, paymentIntentId?: string} & Validates arbitration fee payment transaction payload. \\ \hline
+\code{SubmitDisputeResponseBodyDTO} & \code{description: string, evidenceFiles?: object[]} & Validates respondent rebuttal statement and supporting counter-evidence. \\ \hline
+\code{ReviewDisputeDecisionBodyDTO} & \code{response: DisputeDecisionResponse, reason?: string} & Validates party acceptance or objection to arbitrator proposed split. \\ \hline
+\code{AdminDisputeDecisionBodyDTO} & \code{freelancerAmount: number, clientAmount: number, decisionReason: string} & Validates arbitrator initial proposed fund split and justification. \\ \hline
+\code{AdminDisputeFinalDecisionBodyDTO} & \code{freelancerAmount: number, clientAmount: number, decisionReason: string} & Validates arbitrator binding final fund distribution verdict. \\ \hline
+\code{GetDisputeListQueryDTO} & \code{page: number, limit: number, status?: DisputeStatus, q?: string} & Validates dispute dossier query filters and pagination parameters. \\ \hline
+\end{SupportingTable}
+
