@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0" pages="2">
+  <diagram name="Freelancer 1/7" id="Freelancer_1">
+    <mxGraphModel dx="2084" dy="1348" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="swimlane_frevia" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="140" y="60" width="780" height="490" as="geometry"/>
+        </mxCell>
+        <mxCell id="act_1" value="Freelancer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1" parent="1">
+          <mxGeometry x="40" y="265" width="35" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_2" value="Logout&#10;UC-03" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="50" y="85" width="135" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_3" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_4" value="Login&#10;UC-02" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="370" y="225" width="140" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_5" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc_6" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" edge="1" parent="1" source="uc_2" target="uc_4">
+          <mxGeometry relative="1" x="0.75" y="-10" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_7" value="Forgot Password&#10;UC-05" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="50" y="345" width="135" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_8" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Freelancer 2/7" id="Freelancer_2">
+    <mxGraphModel dx="2084" dy="1348" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="swimlane_frevia" value="Frevia" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="130" y="60" width="970" height="1020" as="geometry"/>
+        </mxCell>
+        <mxCell id="act_1" value="Freelancer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" vertex="1" parent="1">
+          <mxGeometry x="40" y="470" width="35" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_2" value="UC-02&#10;Login" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="780" y="475" width="105" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_3" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_mod_4" value="Freelancer Profile Management&#10;UC-07" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="30" y="307" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_5" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_mod_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc_6" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" edge="1" parent="1" source="uc_mod_4" target="uc_2">
+          <mxGeometry relative="1" x="0.75" y="-10" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_sub_7" value="View Freelancer Profile&#10;UC-07.01" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="252" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_8" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_9" value="Update Freelancer Profile&#10;UC-07.02" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="337" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_10" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_11" value="Upload CV&#10;UC-07.03" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="252" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_12" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_13" value="View CV&#10;UC-07.04" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="337" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_15" value="Replace CV&#10;UC-07.05" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="545" y="252" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_16" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_15">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_17" value="Delete CV&#10;UC-07.06" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="545" y="337" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_18" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_4" target="uc_sub_17">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_mod_19" value="Freelancer Skill Management&#10;UC-08" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="30" y="477" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_20" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_mod_19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc_21" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" edge="1" parent="1" source="uc_mod_19" target="uc_2">
+          <mxGeometry relative="1" x="0.75" y="-10" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_sub_22" value="View Freelancer Skill List&#10;UC-08.01" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="422" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_23" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_19" target="uc_sub_22">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_24" value="Add Freelancer Skill&#10;UC-08.02" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="507" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_25" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_19" target="uc_sub_24">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_26" value="Delete Freelancer Skill&#10;UC-08.03" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="422" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_27" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_19" target="uc_sub_26">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_mod_28" value="Portfolio Management&#10;UC-09" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="30" y="647" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_29" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_mod_28">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc_30" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" edge="1" parent="1" source="uc_mod_28" target="uc_2">
+          <mxGeometry relative="1" x="0.75" y="-10" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_sub_31" value="View Portfolio List&#10;UC-09.01" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="592" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_32" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_28" target="uc_sub_31">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_33" value="Add Portfolio&#10;UC-09.02" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="677" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_34" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_28" target="uc_sub_33">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_35" value="View Portfolio Detail&#10;UC-09.03" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="592" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_36" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_28" target="uc_sub_35">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_37" value="Update Portfolio&#10;UC-09.04" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="677" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_38" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_28" target="uc_sub_37">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_39" value="Delete Portfolio&#10;UC-09.05" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="545" y="592" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_40" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_28" target="uc_sub_39">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_mod_41" value="Job Browsing&#10;UC-10" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="30" y="774" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_42" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="act_1" target="uc_mod_41">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc_43" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" edge="1" parent="1" source="uc_mod_41" target="uc_2">
+          <mxGeometry relative="1" x="0.75" y="-10" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_sub_44" value="View Job List&#10;UC-10.01" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="240" y="762" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_45" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_41" target="uc_sub_44">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_sub_46" value="View Job Detail&#10;UC-10.02" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="swimlane_frevia">
+          <mxGeometry x="395" y="762" width="135" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_47" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" edge="1" parent="1" source="uc_mod_41" target="uc_sub_46">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
