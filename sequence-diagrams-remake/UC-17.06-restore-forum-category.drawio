@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-17.06-restore-forum-category" name="UC-17.06 Restore Forum Category">
-    <mxGraphModel dx="3391" dy="1043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2550" math="0" shadow="0">
+    <mxGraphModel dx="2880" dy="736" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2550" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -108,7 +108,7 @@
             <mxPoint x="105" y="490" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m3" value="3. PATCH /api/backend/api/forums/admin/categories/:id/restore" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="m3" value="3. PATCH /api/forums/admin/categories/:id/restore" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="305" y="570" as="sourcePoint" />
             <mxPoint x="495" y="570" as="targetPoint" />
@@ -252,7 +252,7 @@
             <mxPoint x="105" y="1520" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="div_alt_1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.203;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1" source="fr_alt_1">
+        <mxCell id="div_alt_1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.203;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="fr_alt_1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="40" y="1570" as="sourcePoint" />
             <mxPoint x="1540" y="1570" as="targetPoint" />
@@ -342,7 +342,7 @@
             <mxPoint x="105" y="2140" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="div_alt_2" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.461;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1" source="fr_alt_2">
+        <mxCell id="div_alt_2" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.461;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="fr_alt_2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="55" y="2190" as="sourcePoint" />
             <mxPoint x="1525" y="2190" as="targetPoint" />

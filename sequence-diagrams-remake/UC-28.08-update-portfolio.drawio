@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-28.08-update-portfolio" name="UC-28.08 Update Portfolio">
-    <mxGraphModel dx="2522" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2550" math="0" shadow="0">
+    <mxGraphModel dx="2097" dy="266" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2550" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -308,15 +308,15 @@
         <mxCell id="act_self_update" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="920" y="1905" width="10" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="m12_2_7" value="12.2.7. Handle update portfolio result" style="html=1;align=left;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_self_update" edge="1">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="m12_2_7" value="12.2.7. Handle update&amp;nbsp;&lt;div&gt;portfolio result&lt;/div&gt;" style="html=1;align=left;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_self_update" edge="1">
+          <mxGeometry x="0.3" y="-5" relative="1" as="geometry">
             <mxPoint x="925" y="1885" as="sourcePoint" />
             <mxPoint x="930" y="1905" as="targetPoint" />
             <Array as="points">
               <mxPoint x="965" y="1885" />
               <mxPoint x="965" y="1910" />
             </Array>
-            <mxPoint x="45" y="-12" as="offset" />
+            <mxPoint x="5" y="5" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="m12_2_7_1_1" value="12.2.7.1.1. throw 500&lt;br&gt;FailedToUpdatePortfolioItemException" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">

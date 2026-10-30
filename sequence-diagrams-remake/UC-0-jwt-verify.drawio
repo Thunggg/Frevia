@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="UQM80PhKJEX320JelHsv">
-    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1850" math="0" shadow="0">
+    <mxGraphModel dx="1603" dy="963" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -80,8 +80,8 @@
           <mxGeometry x="1375" y="1240" width="10" height="50" as="geometry" />
         </mxCell>
         <mxCell id="m1" value="1. Check route is public&lt;br&gt;(isPublic)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m1" edge="1">
-          <mxGeometry x="0.12" y="65" relative="1" as="geometry">
-            <mxPoint as="offset" />
+          <mxGeometry x="0.3333" y="75" relative="1" as="geometry">
+            <mxPoint y="3" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="328" />
               <mxPoint x="345" y="348" />
@@ -94,11 +94,11 @@
           <mxGeometry x="160" y="390" width="440" height="80" as="geometry" />
         </mxCell>
         <mxCell id="b1_g" value="[route is public]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="390" width="240" height="30" as="geometry" />
+          <mxGeometry x="320" y="390" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m11" value="1.1. Skip auth, continue" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m11" edge="1">
-          <mxGeometry x="0.3333" y="75" relative="1" as="geometry">
-            <mxPoint x="75" y="-73" as="offset" />
+          <mxGeometry x="0.3333" y="65" relative="1" as="geometry">
+            <mxPoint y="3" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="418" />
               <mxPoint x="345" y="438" />
@@ -108,8 +108,8 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="m2" value="2. Extract Bearer token" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m2" edge="1">
-          <mxGeometry x="0.3333" y="75" relative="1" as="geometry">
-            <mxPoint x="75" y="-73" as="offset" />
+          <mxGeometry x="0.3333" y="-75" relative="1" as="geometry">
+            <mxPoint x="150" y="1" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="488" />
               <mxPoint x="345" y="508" />
@@ -122,11 +122,11 @@
           <mxGeometry x="160" y="550" width="440" height="80" as="geometry" />
         </mxCell>
         <mxCell id="b2_g" value="[no Bearer token]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="550" width="240" height="30" as="geometry" />
+          <mxGeometry x="320" y="550" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m21" value="2.1. throw 401&lt;br&gt;(Unauthorized)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m21" edge="1">
-          <mxGeometry x="0.12" y="55" relative="1" as="geometry">
-            <mxPoint as="offset" />
+          <mxGeometry x="0.3333" y="107" relative="1" as="geometry">
+            <mxPoint x="-2" y="23" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="578" />
               <mxPoint x="345" y="598" />
@@ -156,17 +156,18 @@
           <mxGeometry x="160" y="760" width="640" height="130" as="geometry" />
         </mxCell>
         <mxCell id="b3_g" value="[verify failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="760" width="240" height="30" as="geometry" />
+          <mxGeometry x="320" y="760" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m311" value="3.1.1. throw error&lt;br&gt;(invalid / expired)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry x="-0.0263" relative="1" as="geometry">
             <mxPoint x="695" y="810" as="sourcePoint" />
             <mxPoint x="315" y="810" as="targetPoint" />
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="m312" value="3.1.2. Map to 401&lt;br&gt;(UnauthorizedException)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m312" edge="1">
-          <mxGeometry x="0.3333" y="76" relative="1" as="geometry">
-            <mxPoint x="75" y="-64" as="offset" />
+          <mxGeometry x="0.3333" y="88" relative="1" as="geometry">
+            <mxPoint x="-3" y="23" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="828" />
               <mxPoint x="345" y="848" />
@@ -182,8 +183,8 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="m32" value="3.2. Check payload.sessionId" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m32" edge="1">
-          <mxGeometry x="0.3333" y="95" relative="1" as="geometry">
-            <mxPoint x="95" y="-93" as="offset" />
+          <mxGeometry x="0.12" y="85" relative="1" as="geometry">
+            <mxPoint as="offset" />
             <Array as="points">
               <mxPoint x="345" y="958" />
               <mxPoint x="345" y="978" />
@@ -196,11 +197,11 @@
           <mxGeometry x="160" y="1020" width="440" height="80" as="geometry" />
         </mxCell>
         <mxCell id="b4_g" value="[sessionId is missing]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="1020" width="240" height="30" as="geometry" />
+          <mxGeometry x="320" y="1020" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m321" value="3.2.1. throw 401&lt;br&gt;(Unauthorized)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m321" edge="1">
-          <mxGeometry x="0.3333" y="76" relative="1" as="geometry">
-            <mxPoint x="75" y="-64" as="offset" />
+          <mxGeometry x="0.3333" y="69" relative="1" as="geometry">
+            <mxPoint x="-4" y="23" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="1048" />
               <mxPoint x="345" y="1068" />
@@ -249,11 +250,11 @@
           <mxGeometry x="160" y="1410" width="440" height="100" as="geometry" />
         </mxCell>
         <mxCell id="b5_g" value="[session is null]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="1410" width="240" height="30" as="geometry" />
+          <mxGeometry x="330" y="1410" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m336" value="3.3.6. throw 401&lt;br&gt;(Unauthorized)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m336" edge="1">
-          <mxGeometry x="0.3333" y="65" relative="1" as="geometry">
-            <mxPoint x="65" y="-63" as="offset" />
+          <mxGeometry x="0.3333" y="78" relative="1" as="geometry">
+            <mxPoint x="-3" y="23" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="1448" />
               <mxPoint x="345" y="1468" />
@@ -263,8 +264,8 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="m34" value="3.4. Check user.isBanned&lt;br&gt;|| user.deletedAt" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m34" edge="1">
-          <mxGeometry x="0.3333" y="75" relative="1" as="geometry">
-            <mxPoint x="75" y="-73" as="offset" />
+          <mxGeometry x="0.3333" y="66" relative="1" as="geometry">
+            <mxPoint x="-1" y="13" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="1528" />
               <mxPoint x="345" y="1548" />
@@ -277,11 +278,11 @@
           <mxGeometry x="160" y="1590" width="440" height="90" as="geometry" />
         </mxCell>
         <mxCell id="b6_g" value="[user is banned or deleted]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="1590" width="240" height="30" as="geometry" />
+          <mxGeometry x="330" y="1590" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m341" value="3.4.1. throw 403&lt;br&gt;(Forbidden)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m341" edge="1">
-          <mxGeometry x="0.3333" y="66" relative="1" as="geometry">
-            <mxPoint x="65" y="-54" as="offset" />
+          <mxGeometry x="0.3333" y="47" relative="1" as="geometry">
+            <mxPoint x="-2" y="13" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="1618" />
               <mxPoint x="345" y="1638" />
@@ -291,8 +292,8 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="m35" value="3.5. Attach {userId, roleId,&lt;br&gt;roleName, sessionId} to req" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_m35" edge="1">
-          <mxGeometry x="0.3333" y="86" relative="1" as="geometry">
-            <mxPoint x="85" y="-74" as="offset" />
+          <mxGeometry x="0.3333" y="85" relative="1" as="geometry">
+            <mxPoint y="3" as="offset" />
             <Array as="points">
               <mxPoint x="345" y="1698" />
               <mxPoint x="345" y="1718" />

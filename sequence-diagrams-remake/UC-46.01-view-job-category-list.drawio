@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-46.01-view-job-category-list" name="UC-46.01 View Job Category List">
-    <mxGraphModel dx="709" dy="421" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1850" math="0" shadow="0">
+    <mxGraphModel dx="1489" dy="894" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -138,7 +138,7 @@
             <mxPoint x="105" y="715" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m4" value="4. GET /api/admin/job-categories?page=&amp;amp;limit=&amp;amp;search=&amp;amp;status=&amp;amp;deleted=&amp;amp;sortBy=&amp;amp;sortOrder=" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1" target="act_controller">
+        <mxCell id="m4" value="4. GET /api/admin/job-categories?page=&amp;amp;limit=&amp;amp;search=&amp;amp;status=&amp;amp;deleted=&amp;amp;sortBy=&amp;amp;sortOrder=" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_controller" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="505" y="770" as="sourcePoint" />
             <mxPoint x="705" y="770" as="targetPoint" />
@@ -156,7 +156,7 @@
             <mxPoint x="1109" y="870" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m7" value="7. prisma.$transaction&lt;div&gt;([jobCategory.findMany,&amp;nbsp;&lt;div&gt;jobCategory.count])&lt;/div&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1" source="act_repo">
+        <mxCell id="m7" value="7. prisma.$transaction&lt;div&gt;([jobCategory.findMany,&amp;nbsp;&lt;div&gt;jobCategory.count])&lt;/div&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" source="act_repo" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1130" y="920" as="sourcePoint" />
             <mxPoint x="1310" y="920" as="targetPoint" />
@@ -175,7 +175,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m10" value="10. Return [jobCategories, total]" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1" target="act_repo">
+        <mxCell id="m10" value="10. Return [jobCategories, total]" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_repo" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1310" y="1060" as="sourcePoint" />
             <mxPoint x="1130" y="1060" as="targetPoint" />
@@ -190,7 +190,7 @@
         <mxCell id="act_self_query" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="909" y="1160" width="10" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="m12" value="12. Handle get job categories&amp;nbsp;&lt;div&gt;result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_self_query" edge="1">
+        <mxCell id="m12" value="12. Handle get&amp;nbsp;&lt;div&gt;job categories&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;result&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_self_query" edge="1">
           <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
             <mxPoint x="914" y="1140" as="sourcePoint" />
             <mxPoint x="919" y="1160" as="targetPoint" />
@@ -213,7 +213,7 @@
             <mxPoint x="704" y="1245" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_1_2" value="12.1.2. Return 200 OK (empty list)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1" source="act_controller">
+        <mxCell id="m12_1_2" value="12.1.2. Return 200 OK (empty list)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" source="act_controller" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="705" y="1295" as="sourcePoint" />
             <mxPoint x="505" y="1295" as="targetPoint" />
@@ -240,7 +240,7 @@
         <mxCell id="g_alt_2" value="[job categories found]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="120" y="1455" width="160" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="m12_2_1" value="12.2.1. Return&amp;nbsp;&lt;div&gt;JobCategoryAdminListResponseDto&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1" target="act_controller">
+        <mxCell id="m12_2_1" value="12.2.1. Return&amp;nbsp;&lt;div&gt;JobCategoryAdminListResponseDto&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" target="act_controller" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="915" y="1495" as="sourcePoint" />
             <mxPoint x="715" y="1495" as="targetPoint" />

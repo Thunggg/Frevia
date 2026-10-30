@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-06_06-update-role-permissions" name="UC-06.06 Update Role Permissions">
-    <mxGraphModel dx="3143" dy="894" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="3250" math="0" shadow="0">
+    <mxGraphModel dx="3391" dy="1043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="3250" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -126,14 +126,14 @@
             <mxPoint x="105" y="490" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m3" value="3. PUT /api/backend/api/roles/:id/permissions" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
+        <mxCell id="m3" value="3. PUT /api/roles/:id/permissions" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="305" y="570" as="sourcePoint" />
             <mxPoint x="495" y="570" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="fr_ref" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="430" y="610" width="280" height="50" as="geometry" />
+          <mxGeometry x="430" y="610" width="200" height="50" as="geometry" />
         </mxCell>
         <mxCell id="fr_ref_lbl" value="3.1. Verify jwt" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="525" y="625" width="160" height="20" as="geometry" />

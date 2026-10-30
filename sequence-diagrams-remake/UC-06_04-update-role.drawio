@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="4aKiYo5KNk293Dq4hL1u">
-    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="992" dy="596" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -77,7 +77,7 @@
           <mxGeometry x="1785" y="986" width="10" height="144" as="geometry" />
         </mxCell>
         <mxCell id="0aAsh6-9vLErepZBPXBb-77" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="40" y="450" width="510" height="110" as="geometry" />
+          <mxGeometry x="40" y="450" width="390" height="110" as="geometry" />
         </mxCell>
         <mxCell id="0aAsh6-9vLErepZBPXBb-78" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="40" y="675" width="650" height="150" as="geometry" />
@@ -124,7 +124,7 @@
             <mxPoint x="665" y="590" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="0aAsh6-9vLErepZBPXBb-90" value="3. PATCH /api/backend/api/roles/:id" style="text;html=1;align=center;verticalAlign=bottom;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="0aAsh6-9vLErepZBPXBb-90" value="3. PATCH /api/roles/:id" style="text;html=1;align=center;verticalAlign=bottom;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="412" y="567" width="246" height="22" as="geometry" />
         </mxCell>
         <mxCell id="0aAsh6-9vLErepZBPXBb-91" value="[no Bearer token || verify failed&amp;nbsp;&lt;div&gt;|| session is null]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
