@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.11)  23 OCT 2026 03:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  30 OCT 2026 23:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -6,9 +6,9 @@ entering extended mode
 (main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
 File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count275
@@ -23,15 +23,15 @@ File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 \belowcaptionskip=\skip50
 \bibindent=\dimen148
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
 Package: babel 2025/12/11 v25.17 The multilingual framework for LuaLaTeX, pdfLa
 TeX and XeLaTeX
 \babel@savecnt=\count283
@@ -52,7 +52,7 @@ on input line 2101.
 \U@D=\dimen149
 \l@unhyphenated=\language79
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
 \bbl@readstream=\read2
 \bbl@dirlevel=\count284
 Package babel Info: Configuration files are deprecated, as
@@ -62,17 +62,17 @@ Package babel Info: Configuration files are deprecated, as
 *************************************
 * Local config file bblopts.cfg used
 *
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
  babel
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/en\babe
-l-english.tex)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/en\babel-
+english.tex)
 Package babel Info: Importing font and identification data for english
 (babel)             from babel-en.ini. Reported on input line 4320.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.
-ldf
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.ld
+f
 Language: english 2017/06/06 v3.3r English support from the babel system
 Package babel Info: Hyphen rules for 'canadian' set to \l@english
 (babel)             (\language0). Reported on input line 102.
@@ -80,8 +80,7 @@ Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
 (babel)             (\language73). Reported on input line 105.
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
 (babel)             (\language73). Reported on input line 108.
-))
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
+)) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
 Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -116,25 +115,24 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
-)
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
 \ex@=\dimen150
 ))
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen151
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count285
@@ -185,49 +183,49 @@ LaTeX Info: Redefining \Relbar on input line 970.
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup6
 \symAMSb=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.st
-y
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks24
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.
-cfg
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cf
+g
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.de
-f
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen159
 \Gin@req@width=\dimen160
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
-)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
@@ -237,11 +235,10 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-)
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
 Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
 Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \col@sep=\dimen161
 \ar@mcellbox=\box55
@@ -255,7 +252,7 @@ Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \minrowclearance=\skip56
 \rownum=\count297
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count298
 \float@exts=\toks27
@@ -263,7 +260,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@everytoks=\toks28
 \@floatcapt=\box58
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen163
 \lightrulewidth=\dimen164
@@ -282,7 +279,8 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count301
 \@lastruleclass=\count302
 \@thisrulewidth=\dimen175
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
 Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
 \LTleft=\skip57
 \LTright=\skip58
@@ -301,7 +299,7 @@ Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
 \c@LT@chunks=\count307
 \LT@p@ftn=\toks29
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
 Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
 \TX@col@width=\dimen177
 \TX@old@table=\dimen178
@@ -311,16 +309,17 @@ Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
 \TX@cols=\count308
 \TX@ftn=\toks30
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+(C:\Program Files\MiKTeX\tex/latex/multirow\multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@colwidth=\skip61
 \multirow@cntb=\count309
 \multirow@dima=\skip62
 \bigstrutjot=\dimen182
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
 \caption@tempdima=\dimen183
 \captionmargin=\dimen184
@@ -337,10 +336,10 @@ Package caption Info: Standard document class detected.
 Package caption Info: float package is loaded.
 Package caption Info: longtable package is loaded.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 ))
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip63
 \enit@outerparindent=\dimen191
@@ -348,13 +347,14 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@inbox=\box64
 \enit@count@id=\count312
 \enitdp@description=\count313
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.st
-y
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 \Gm@cnth=\count314
@@ -370,15 +370,14 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@layoutvoffset=\dimen199
 \Gm@dimlist=\toks32
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)
-)
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.st
-y
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.sty
 Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box65
 \beforetitleunit=\skip64
@@ -389,8 +388,8 @@ Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \titlewidth=\dimen258
 \titlewidthlast=\dimen259
 \titlewidthfirst=\dimen260
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.st
-y
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 
 \f@nch@headwidth=\skip66
@@ -408,10 +407,11 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthC=\skip78
 \f@nch@widthR=\skip79
 \@temptokenb=\toks34
-) (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
-Package: tocloft 2026-08-21 v3.0b parameterised ToC, etc., typesetting
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count317
 )
@@ -450,75 +450,70 @@ Package tocloft Info: The document has section divisions on input line 64.
 \cfttabindent=\skip109
 \cfttabnumwidth=\skip110
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.st
-y
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefin
-ekeys.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinek
+eys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.
-sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.st
+y
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
-
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+ (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmd
-s.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.
+sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.
-sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.st
+y
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-))
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-)
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\getti
-tlestring.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitl
+estring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.st
-y
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
 \c@section@level=\count320
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.
-sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
+y
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen261
 \Hy@linkcounter=\count321
 \Hy@pagecounter=\count322
-
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+ (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count323
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
@@ -532,18 +527,18 @@ Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
 \c@Hy@tempcnt=\count324
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4801.
 \XeTeXLinkMargin=\dimen262
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcal
-c.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.
+sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
@@ -563,17 +558,17 @@ Package hyperref Info: PDF/A mode OFF on input line 6108.
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
 \Fld@listcount=\count329
 \c@bookmark@seq@number=\count330
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfi
-lecheck.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
+check.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\unique
-counter.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniqueco
+unter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
@@ -581,41 +576,41 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip111
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 155.
+Package hyperref Info: Option `colorlinks' set `true' on input line 154.
 LaTeX Font Info:    Trying to load font information for T1+ptm on input line 16
-7.
+6.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pd
-ftex.def
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
+ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count331
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 167.
-LaTeX Font Info:    ... okay on input line 167.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 166.
+LaTeX Font Info:    ... okay on input line 166.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.m
-kii
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
+i
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count332
 \scratchdimen=\dimen265
@@ -629,14 +624,14 @@ kii
 \makeMPintoPDFobject=\count337
 \everyMPtoPDFconversion=\toks36
 )
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-
-base.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
+se.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.
-cfg
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cf
+g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package caption Info: Begin \AtBeginDocument code.
@@ -677,7 +672,7 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 167.
+Package hyperref Info: Link coloring ON on input line 166.
 (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
@@ -688,54 +683,59 @@ Package hyperref Info: Option `pageanchor' set `false' on input line 4.
 File: image/school_logo.png Graphic file (type png)
 <use image/school_logo.png>
 Package pdftex.def Info: image/school_logo.png  used on input line 6.
-(pdftex.def)             Requested size: 172.99498pt x 67.4389pt.
+(pdftex.def)             Requested size: 182.09486pt x 70.9851pt.
+<image/line.png, id=49, 457.71pt x 4.51688pt>
+File: image/line.png Graphic file (type png)
+<use image/line.png>
+Package pdftex.def Info: image/line.png  used on input line 12.
+(pdftex.def)             Requested size: 318.66948pt x 3.14488pt.
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 20.
+ 19.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 20.
+ 19.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 20.
+ 19.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 20.
+ 19.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
-0.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
+9.
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 20.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 20.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 20.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
 
-Underfull \hbox (badness 10000) in paragraph at lines 35--35
+Underfull \hbox (badness 10000) in paragraph at lines 34--34
 []|\T1/ptm/b/n/12 Capstone Project
  []
 
-Package hyperref Info: Option `pageanchor' set `true' on input line 41.
+Package hyperref Info: Option `pageanchor' set `true' on input line 40.
 [1
 
-{C:/Users/Lenovo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Len
-ovo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./image/school_
-logo.png>]) (table_of_contents.tex (main.toc)
+{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./image/school_logo
+.png> <./image/line.png>]) (table_of_contents.tex (main.toc)
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
@@ -749,7 +749,7 @@ l.7 \newpage
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 6
 .
 
-(C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 Underfull \hbox (badness 10000) in alignment at lines 99--99
@@ -789,10 +789,9 @@ Underfull \hbox (badness 10000) in alignment at lines 31--68
 
 ignored error: Infinite glue shrinkage found in box being split [5]
 ignored error: Infinite glue shrinkage found in box being split [6]) [7]
-(sections/business_opportunity.tex [8]) [9]
-(sections/software_product_vision.tex [10])
-(sections/project_scope_limitations.tex [11] [12] [13] [14] [15] [16] [17])
-[18] (main.aux)
+(sections/business_opportunity.tex [8]) (sections/software_product_vision.tex
+[9] [10]) (sections/project_scope_limitations.tex [11] [12] [13] [14] [15]
+[16] [17]) [18] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -801,20 +800,20 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 61EB6BD754C78E53A760C38415134FEE;1545.
  ) 
 Here is how much of TeX's memory you used:
- 15430 strings out of 467871
- 248206 string characters out of 5417892
- 693725 words of memory out of 5000000
- 44022 multiletter control sequences out of 15000+600000
+ 15436 strings out of 467871
+ 247531 string characters out of 5418860
+ 692716 words of memory out of 5000000
+ 44028 multiletter control sequences out of 15000+600000
  674018 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,91p,1188b,691s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.p
-fb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.
-pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8
-a.pfb>
-Output written on main.pdf (19 pages, 155530 bytes).
+ 75i,12n,83p,1144b,691s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb
+><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb>
+<C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+
+Output written on main.pdf (19 pages, 155716 bytes).
 PDF statistics:
- 172 PDF objects out of 1000 (max. 8388607)
+ 174 PDF objects out of 1000 (max. 8388607)
  34 named destinations out of 1000 (max. 500000)
- 94 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 99 words of extra memory for PDF output out of 10000 (max. 10000000)
 

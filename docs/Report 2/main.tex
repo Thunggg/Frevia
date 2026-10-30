@@ -68,7 +68,7 @@
 \definecolor{fptred}{RGB}{192,0,0}
 \definecolor{fptBlue}{RGB}{0,0,139}
 \definecolor{fptOrange}{RGB}{255,140,0}
-\definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{headerbg}{RGB}{242,226,204}
 
 %====================================================
 % SECTION FORMAT
@@ -79,16 +79,15 @@
 \setcounter{tocdepth}{3}
 
 \titleformat{\section}
-  {\normalfont\Large\bfseries\color{fptred}}
+  {\normalfont\Large\bfseries}
   {\thesection}{0.8em}{}
-  [\vspace{-0.35em}{\color{fptOrange}\rule{\textwidth}{1pt}}]
 
 \titleformat{\subsection}
-  {\normalfont\large\bfseries\color{fptBlue}}
+  {\normalfont\large\bfseries}
   {\thesubsection}{0.8em}{}
 
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries\color{black}}
+  {\normalfont\normalsize\bfseries}
   {\thesubsubsection}{0.8em}{}
 
 \titlespacing*{\section}{0pt}{2.4ex plus 1ex minus .2ex}{1.2ex plus .2ex}
@@ -149,7 +148,7 @@
     linkcolor=black,
     citecolor=black,
     filecolor=black,
-    urlcolor=fptBlue,
+    urlcolor=blue,
     pdftitle={FREVIA Project Management Plan},
     pdfauthor={Group Frevia}
 }
@@ -176,7 +175,7 @@
 % TABLE OF CONTENTS
 %====================================================
 \newpage
-\renewcommand{\contentsname}{\fontsize{20}{24}\selectfont\bfseries\color{fptred} Table of Contents}
+\renewcommand{\contentsname}{\fontsize{20}{24}\selectfont\bfseries Table of Contents}
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
