@@ -73,11 +73,10 @@ def add_edge(root, id_val, value="", style="", parent="1", sx=None, sy=None, tx=
 
 def add_rule14_self_call(root, bar_id, edge_id, value, bar_x, bar_y, main_right_x, sy, ty, mid_x):
     """
-    Implements Rule 14:
-    Activation bar:
-    <mxCell id="2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" vertex="1" parent="1"><mxGeometry x="920" y="2515" width="10" height="20" as="geometry"/></mxCell>
-    Edge:
-    <mxCell id="3" value="..." style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" edge="1" target="2" parent="1"><mxGeometry x="0.3" y="-75" relative="1" as="geometry"><mxPoint x="925" y="2495" as="sourcePoint"/><mxPoint x="930" y="2515" as="targetPoint"/><Array as="points"><mxPoint x="965" y="2495"/><mxPoint x="965" y="2520"/></Array><mxPoint x="75" y="75" as="offset"/></mxGeometry></mxCell>
+    Implements Rule 14 with clean positioning (no overlap onto arrow UI):
+    - Text starts past mid_x (outside loop)
+    - align=left so text expands to the right
+    - verticalAlign=bottom with offset y=-12 so text sits safely above the horizontal arrow
     """
     bar = ET.SubElement(root, 'mxCell', {
         'id': bar_id,
@@ -97,14 +96,14 @@ def add_rule14_self_call(root, bar_id, edge_id, value, bar_x, bar_y, main_right_
     edge = ET.SubElement(root, 'mxCell', {
         'id': edge_id,
         'value': value,
-        'style': STYLE_MSG,
+        'style': 'html=1;align=left;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;',
         'edge': '1',
         'target': bar_id,
         'parent': '1'
     })
     geom = ET.SubElement(edge, 'mxGeometry', {
-        'x': '0.3',
-        'y': '-75',
+        'x': '0',
+        'y': '0',
         'relative': '1',
         'as': 'geometry'
     })
@@ -113,7 +112,9 @@ def add_rule14_self_call(root, bar_id, edge_id, value, bar_x, bar_y, main_right_
     pts = ET.SubElement(geom, 'Array', {'as': 'points'})
     ET.SubElement(pts, 'mxPoint', {'x': str(mid_x), 'y': str(sy)})
     ET.SubElement(pts, 'mxPoint', {'x': str(mid_x), 'y': str(ty + 5)})
-    ET.SubElement(geom, 'mxPoint', {'x': '75', 'y': '75', 'as': 'offset'})
+    # Offset x=45 pushes text from main_right_x (925) to 970 (past mid_x=965)
+    # Offset y=-12 lifts text above sy=1140
+    ET.SubElement(geom, 'mxPoint', {'x': '45', 'y': '-12', 'as': 'offset'})
     return bar, edge
 
 def save_tree(mxfile, filename):
@@ -1555,83 +1556,443 @@ def build_uc_28_05():
 
     return mxfile
 
+def build_uc_28_06():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-28.06-update-freelancer-basic-info", "UC-28.06 Update Freelancer Basic Info", 1654, Y_BOTTOM + 100)
+
+    # Actor & Lifelines
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+
+    # Frames and Dividers (created BEFORE activation bars so bars are drawn ON TOP)
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=440, y=490, w=180, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=475, y=505, w=130, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed || session is null]", style=STYLE_GUARD, x=120, y=560, w=320, h=20)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[!context || !canEdit]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[canEdit]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+
+    # Activation bars (created AFTER frames so they render in foreground)
+    # Endpoints match last arrows exactly:
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1935)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1935)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1775)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1405)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1305)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
+
+    # Messages (wrapped to prevent overlapping activation bars)
+    add_edge(root, "m1", value='1. Click "Edit" on&lt;br&gt;Freelancer basic info tab', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Edit title, bio, languages,&lt;br&gt;education, certifications&lt;br&gt;&amp; Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PATCH&lt;br&gt;/api/users/:id/freelancer-profile", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    add_edge(root, "m4", value="4. PATCH&lt;br&gt;/api/users/:id/freelancer-profile", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. updateFreelancerProfile(&lt;br&gt;id, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findFreelancerProfileEditContext(&lt;br&gt;userId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({&lt;br&gt;where: { id: userId,&lt;br&gt;deletedAt: null },&lt;br&gt;select: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find&lt;br&gt;freelancer profile context", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return context or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return context or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find freelancer&lt;br&gt;profile context result",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Outer Alt
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFound /&lt;br&gt;403 NoFreelancerRoleException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message&lt;br&gt;"Freelancer profile not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    # Step 2: update freelancer profile in DB
+    add_edge(root, "m12_2_1", value="12.2.1. updateFreelancerProfileByAdmin(&lt;br&gt;userId, data)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.user.update({&lt;br&gt;where: { id: userId },&lt;br&gt;data: { profile: { ... } } })", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to&lt;br&gt;update freelancer profile", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated result", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated result", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
+
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update freelancer&lt;br&gt;basic info result",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
+
+    # Nested Alt
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500&lt;br&gt;FailedToUpdateFreelancerProfileException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message&lt;br&gt;"Update freelancer basic info failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return MessageResDTO", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message&lt;br&gt;"Update freelancer basic info success"&lt;br&gt;&amp; refresh tab', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
+
+    return mxfile
+
+# ==============================================================================
+# UC-28.07: Update Freelancer Skills
+# ==============================================================================
+def build_uc_28_07():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-28.07-update-freelancer-skills", "UC-28.07 Update Freelancer Skills", 1654, Y_BOTTOM + 100)
+
+    # Actor & Lifelines
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+
+    # Frames and Dividers (created BEFORE activation bars)
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=440, y=490, w=180, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=475, y=505, w=130, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed || session is null]", style=STYLE_GUARD, x=120, y=560, w=320, h=20)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[!context || !canEdit]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[canEdit]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+
+    # Activation bars (created AFTER frames so they render in foreground)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1935)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1935)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1775)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1405)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1305)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
+
+    # Messages (wrapped to prevent overlapping activation bars)
+    add_edge(root, "m1", value='1. Click "Edit skills" on&lt;br&gt;Freelancer skills tab', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Select skills from catalog&lt;br&gt;&amp; Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PUT&lt;br&gt;/api/users/:id/freelancer-profile/skills", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    add_edge(root, "m4", value="4. PUT&lt;br&gt;/api/users/:id/freelancer-profile/skills", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. replaceFreelancerSkills(&lt;br&gt;id, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findFreelancerProfileEditContext(&lt;br&gt;userId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({&lt;br&gt;where: { id: userId,&lt;br&gt;deletedAt: null },&lt;br&gt;select: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find&lt;br&gt;freelancer profile context", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return context or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return context or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find freelancer&lt;br&gt;profile context result",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Outer Alt
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFound /&lt;br&gt;403 NoFreelancerRoleException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message&lt;br&gt;"Freelancer profile not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    # Step 2: replace skills in DB
+    add_edge(root, "m12_2_1", value="12.2.1. replaceFreelancerSkills(&lt;br&gt;freelancerProfileId, skills)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.$transaction([&lt;br&gt;deleteMany skills,&lt;br&gt;createMany skills])", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute transaction query&lt;br&gt;to replace skills", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated skills result", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated skills result", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
+
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update skills result",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
+
+    # Nested Alt
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500&lt;br&gt;FailedToSaveSkillsException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message&lt;br&gt;"Update skills failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return MessageResDTO", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message&lt;br&gt;"Update skills success"&lt;br&gt;&amp; refresh list', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
+
+    return mxfile
+
+# ==============================================================================
+# UC-28.08: Update Portfolio
+# ==============================================================================
+def build_uc_28_08():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-28.08-update-portfolio", "UC-28.08 Update Portfolio", 1654, Y_BOTTOM + 100)
+
+    # Actor & Lifelines
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+
+    # Frames and Dividers (created BEFORE activation bars)
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=440, y=490, w=180, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=475, y=505, w=130, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed || session is null]", style=STYLE_GUARD, x=120, y=560, w=320, h=20)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[!context || !canEdit]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[canEdit]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+
+    # Activation bars (created AFTER frames so they render in foreground)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1935)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1935)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1775)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1405)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1305)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
+
+    # Messages (wrapped to prevent overlapping activation bars)
+    add_edge(root, "m1", value='1. Click "Edit portfolio" on&lt;br&gt;Portfolio tab', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Edit portfolio items&lt;br&gt;&amp; Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PATCH /api/users/:id/&lt;br&gt;freelancer-profile/portfolio-items/:itemId", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    add_edge(root, "m4", value="4. PATCH /api/users/:id/&lt;br&gt;freelancer-profile/portfolio-items/:itemId", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. updatePortfolioItem(&lt;br&gt;id, itemId, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findFreelancerProfileEditContext(&lt;br&gt;userId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({&lt;br&gt;where: { id: userId,&lt;br&gt;deletedAt: null },&lt;br&gt;select: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find&lt;br&gt;freelancer profile context", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return context or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return context or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find portfolio&lt;br&gt;context result",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Outer Alt
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFound /&lt;br&gt;403 NoFreelancerRoleException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message&lt;br&gt;"Portfolio not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    # Step 2: update portfolio item in DB
+    add_edge(root, "m12_2_1", value="12.2.1. updatePortfolioItemByAdmin(&lt;br&gt;itemId, data)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.portfolioItem.update({&lt;br&gt;where: { id: itemId },&lt;br&gt;data: { ... } })", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to&lt;br&gt;update portfolio item", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated portfolio item", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated portfolio item", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
+
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update portfolio result",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
+
+    # Nested Alt
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500&lt;br&gt;FailedToUpdatePortfolioItemException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message&lt;br&gt;"Update portfolio failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return MessageResDTO", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message&lt;br&gt;"Update portfolio success"&lt;br&gt;&amp; refresh list', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
+
+    return mxfile
+
+# ==============================================================================
+# UC-28.09: Update Expert Profile
+# ==============================================================================
+def build_uc_28_09():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-28.09-update-expert-profile", "UC-28.09 Update Expert Profile", 1654, Y_BOTTOM + 100)
+
+    # Actor & Lifelines
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_controller", value=":AdminExpertProfileController", style=STYLE_LIFELINE, x=615, y=240, w=190, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_service", value=":ExpertProfileService", style=STYLE_LIFELINE, x=835, y=240, w=170, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_repo", value=":ExpertProfileRepository", style=STYLE_LIFELINE, x=1045, y=240, w=160, h=Y_BOTTOM - 240)
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+
+    # Frames and Dividers (created BEFORE activation bars)
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=440, y=490, w=180, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=475, y=505, w=130, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed || session is null]", style=STYLE_GUARD, x=120, y=560, w=320, h=20)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[!user || !hasExpertRole]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[hasExpertRole]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+
+    # Activation bars (created AFTER frames so they render in foreground)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1935)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1935)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1775)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1405)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1305)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
+
+    # Messages (wrapped to prevent overlapping activation bars)
+    add_edge(root, "m1", value='1. Click "Edit" on&lt;br&gt;Expert profile tab', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Edit title, bio, expertise,&lt;br&gt;yearsOfExperience &amp; Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PATCH /api/users/:id/&lt;br&gt;expert-profile", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    add_edge(root, "m4", value="4. PATCH /api/users/:id/&lt;br&gt;expert-profile", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. update(id, adminId, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findByUserId(userId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({&lt;br&gt;where: { id: userId,&lt;br&gt;deletedAt: null },&lt;br&gt;select: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find&lt;br&gt;expert profile context", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return user context or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return user context or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find expert profile&lt;br&gt;context result",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Outer Alt
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 ExpertProfileNotFound /&lt;br&gt;403 NotAnExpertAccountException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message&lt;br&gt;"Expert profile not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    # Step 2: update expert profile in DB
+    add_edge(root, "m12_2_1", value="12.2.1. updateDirect(userId,&lt;br&gt;adminId, sanitized, strength)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.$transaction([&lt;br&gt;profileRevision.updateMany,&lt;br&gt;expertProfile.upsert])", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to&lt;br&gt;update expert profile", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated result", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated result", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
+
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update expert profile result",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
+
+    # Nested Alt
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500&lt;br&gt;FailedToUpdateExpertProfileException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message&lt;br&gt;"Update expert profile failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return MessageResDTO", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message&lt;br&gt;"Update expert profile success"&lt;br&gt;&amp; refresh tab', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
+
+    return mxfile
+
 if __name__ == "__main__":
     out_dir = "sequence-diagrams-remake"
     target_dir = "sequence-diagrams"
+    upload_dir = r"C:\Users\ASUS\.gemini\antigravity\brain\9714116c-2560-4830-b0f0-b02794b6a43c\.user_uploaded"
     os.makedirs(out_dir, exist_ok=True)
     os.makedirs(target_dir, exist_ok=True)
 
-    # 1. UC-06.05
-    f1 = build_uc_06_05()
-    p1 = os.path.join(out_dir, "UC-06.05-delete-role.drawio")
-    save_tree(f1, p1)
-    shutil.copyfile(p1, os.path.join(out_dir, "UC-06_05-delete-role.drawio"))
-    shutil.copyfile(p1, os.path.join(target_dir, "UC-06.05-delete-role.drawio"))
-    shutil.copyfile(p1, os.path.join(target_dir, "UC-06_05-delete-role.drawio"))
+    # Only generate the files sent by user in this request:
+    files_to_build = [
+        ("UC-28.06-update-freelancer-basic-info.drawio", build_uc_28_06, "media_1793382155566_f6784263.drawio"),
+        ("UC-28.07-update-freelancer-skills.drawio", build_uc_28_07, "media_1793382155566_376a9a81.drawio"),
+        ("UC-28.08-update-portfolio.drawio", build_uc_28_08, "media_1793382155568_be9fe02b.drawio"),
+        ("UC-28.09-update-expert-profile.drawio", build_uc_28_09, "media_1793382155568_ef2d93be.drawio"),
+    ]
 
-    # 2. UC-06.06
-    f2 = build_uc_06_06()
-    p2 = os.path.join(out_dir, "UC-06.06-update-role-permissions.drawio")
-    save_tree(f2, p2)
-    shutil.copyfile(p2, os.path.join(out_dir, "UC-06_06-update-role-permissions.drawio"))
-    shutil.copyfile(p2, os.path.join(target_dir, "UC-06.06-update-role-permissions.drawio"))
-    shutil.copyfile(p2, os.path.join(target_dir, "UC-06_06-update-role-permissions.drawio"))
-
-    # 3. UC-14.01
-    f3 = build_uc_14_01()
-    p3 = os.path.join(out_dir, "UC-14.01-view-forum-category-list.drawio")
-    save_tree(f3, p3)
-    shutil.copyfile(p3, os.path.join(target_dir, "UC-14.01-view-forum-category-list.drawio"))
-
-    # 4. UC-14.02
-    f4 = build_uc_14_02()
-    p4 = os.path.join(out_dir, "UC-14.02-view-forum-category-detail.drawio")
-    save_tree(f4, p4)
-    shutil.copyfile(p4, os.path.join(target_dir, "UC-14.02-view-forum-category-detail.drawio"))
-
-    # 5. UC-15.01
-    f5 = build_uc_15_01()
-    p5 = os.path.join(out_dir, "UC-15.01-view-permission-list.drawio")
-    save_tree(f5, p5)
-    shutil.copyfile(p5, os.path.join(target_dir, "UC-15.01-view-permission-list.drawio"))
-
-    # 6. UC-15.02
-    f6 = build_uc_15_02()
-    p6 = os.path.join(out_dir, "UC-15.02-view-permission-detail.drawio")
-    save_tree(f6, p6)
-    shutil.copyfile(p6, os.path.join(target_dir, "UC-15.02-view-permission-detail.drawio"))
-
-    # 7. UC-16.01
-    f7 = build_uc_16_01()
-    p7 = os.path.join(out_dir, "UC-16.01-view-session-list.drawio")
-    save_tree(f7, p7)
-    shutil.copyfile(p7, os.path.join(target_dir, "UC-16.01-view-session-list.drawio"))
-
-    # 8. UC-16.02
-    f8 = build_uc_16_02()
-    p8 = os.path.join(out_dir, "UC-16.02-view-session-detail.drawio")
-    save_tree(f8, p8)
-    shutil.copyfile(p8, os.path.join(target_dir, "UC-16.02-view-session-detail.drawio"))
-
-    # 9. UC-16.03
-    f9 = build_uc_16_03()
-    p9 = os.path.join(out_dir, "UC-16.03-revoke-session.drawio")
-    save_tree(f9, p9)
-    shutil.copyfile(p9, os.path.join(target_dir, "UC-16.03-revoke-session.drawio"))
-
-    
-    # UC-28.01 - UC-28.05
-    for fname, builder in [
-        ("UC-28.01-view-user-list.drawio", build_uc_28_01),
-        ("UC-28.02-view-user-detail.drawio", build_uc_28_02),
-        ("UC-28.03-create-user.drawio", build_uc_28_03),
-        ("UC-28.04-update-user.drawio", build_uc_28_04),
-        ("UC-28.05-update-client-profile.drawio", build_uc_28_05),
-    ]:
+    for fname, builder, upload_name in files_to_build:
         mx = builder()
         p = os.path.join(out_dir, fname)
         save_tree(mx, p)
         shutil.copyfile(p, os.path.join(target_dir, fname))
+        if upload_name and os.path.exists(upload_dir):
+            upload_path = os.path.join(upload_dir, upload_name)
+            shutil.copyfile(p, upload_path)
+            print(f"  -> synced to upload {upload_name}")
 
-    print("All perfect diagrams generated and synchronized successfully!")
-
+    print(f"Successfully generated and synced {len(files_to_build)} requested diagrams!")
