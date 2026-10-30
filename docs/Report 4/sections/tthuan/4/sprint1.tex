@@ -1,0 +1,481 @@
+% =================================================================
+% FILE: sections/tthuan/4/sprint1.tex -- Sprint 1
+% Class specifications for Authentication and Role Management
+% =================================================================
+
+\subsection{AuthController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AuthController(authService: AuthService)} &
+A method to initialize the controller with the authentication service.
+\newline -- \code{authService}: \code{AuthService} -- service that owns the authentication use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{register(body: RegisterDto)} &
+A method to create an email/password account after OTP verification.
+\newline -- \code{body}: \code{RegisterDto} -- email, OTP code, password, full name, and initial role.
+\newline -- \textit{Returns:} \code{Promise<RegisterResponseType>} -- the created account without password fields.
+\newline -- Route: \code{POST /auth/register}; public endpoint. \\ \hline
+
+03 & \code{sendOTP(body: SendOTPBodyDTO)} &
+A method to generate and email an OTP for registration or password reset.
+\newline -- \code{body}: \code{SendOTPBodyDTO} -- email and verification-code type.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{POST /auth/otp}; public endpoint. \\ \hline
+
+04 & \code{login(}\newline\code{body: LoginBodyDTO,}\newline\code{userAgent: string, ipAddress: string)} &
+A method to authenticate an email/password account and create a session.
+\newline -- \code{body}: \code{LoginBodyDTO} -- email and password.
+\newline -- \code{userAgent}: \code{string} -- device information used as session metadata.
+\newline -- \code{ipAddress}: \code{string} -- client IP stored with the session.
+\newline -- \textit{Returns:} \code{Promise<LoginResponseType>} -- access and refresh tokens.
+\newline -- Route: \code{POST /auth/login}; public endpoint. \\ \hline
+
+05 & \code{refreshToken(}\newline\code{body: RefreshTokenBodyDTO,}\newline\code{userAgent: string, ipAddress: string)} &
+A method to rotate a valid refresh token into a new token pair.
+\newline -- \code{body.refreshToken}: \code{string} -- the current refresh token.
+\newline -- \code{userAgent}: \code{string} -- device information for the replacement session.
+\newline -- \code{ipAddress}: \code{string} -- client IP for the replacement session.
+\newline -- \textit{Returns:} \code{Promise<LoginResponseType>} -- the new access and refresh tokens.
+\newline -- Route: \code{POST /auth/refresh-token}; public endpoint. \\ \hline
+
+06 & \code{logout(body: LogoutBodyDTO)} &
+A method to terminate the session identified by a refresh token.
+\newline -- \code{body.refreshToken}: \code{string} -- refresh token of the session to remove.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{POST /auth/logout}; public endpoint. \\ \hline
+
+07 & \code{forgotPassword(body: ForgotPasswordBodyDTO)} &
+A method to reset a password after validating a password-reset OTP.
+\newline -- \code{body}: \code{ForgotPasswordBodyDTO} -- email, OTP code, and new password.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{POST /auth/forgot-password}; public endpoint. \\ \hline
+
+08 & \code{getGoogleLink(}\newline\code{userAgent: string, ip: string)} &
+A method to build the Google OAuth consent URL.
+\newline -- \code{userAgent}: \code{string} -- encoded in the OAuth state.
+\newline -- \code{ip}: \code{string} -- encoded in the OAuth state.
+\newline -- \textit{Returns:} \code{GetAuthorizationUrlResType} -- the authorization URL.
+\newline -- Route: \code{GET /auth/google-link}; public endpoint. \\ \hline
+
+09 & \code{googleCallback(}\newline\code{code: string, state: string, res: Response)} &
+A method to exchange the Google authorization code and redirect the browser.
+\newline -- \code{code}: \code{string} -- authorization code returned by Google.
+\newline -- \code{state}: \code{string} -- base64url payload with device and IP information.
+\newline -- \code{res}: \code{Response} -- Express response used for the redirect.
+\newline -- \textit{Returns:} \code{Promise<void>} -- redirects to the web application with tokens or an error flag.
+\newline -- Route: \code{GET /auth/google/callback}; public endpoint. \\ \hline
+
+10 & \code{getMe(userId: number)} &
+A method to return the authenticated account and its roles.
+\newline -- \code{userId}: \code{number} -- current user injected by \code{@UserActive('userId')}.
+\newline -- \textit{Returns:} \code{Promise<GetMeResType>} -- account, profile summary, and roles.
+\newline -- Route: \code{GET /auth/me}; authenticated endpoint. \\ \hline
+
+11 & \code{switchRole(}\newline\code{userId: number, sessionId: number,}\newline\code{body: SwitchRoleBodyDto)} &
+A method to make an already assigned role the primary role.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{sessionId}: \code{number} -- current session identifier.
+\newline -- \code{body.role}: role name to activate.
+\newline -- \textit{Returns:} \code{Promise<SwitchRoleResponseType>} -- a new access token for that role.
+\newline -- Route: \code{POST /auth/switch-role}; authenticated endpoint. \\ \hline
+
+12 & \code{joinRole(}\newline\code{userId: number, sessionId: number,}\newline\code{body: JoinRoleBodyDto)} &
+A method to assign an additional Client or Freelancer role.
+\newline -- \code{userId}: \code{number} -- current user.
+\newline -- \code{sessionId}: \code{number} -- current session identifier.
+\newline -- \code{body.role}: role name to join.
+\newline -- \textit{Returns:} \code{Promise<JoinRoleResponseType>} -- a new access token for the joined role.
+\newline -- Route: \code{POST /auth/join-role}; authenticated endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{authService} & \code{AuthService} -- private readonly authentication service. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger for OAuth callback errors. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AuthService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AuthService(}\newline\code{hashingService: HashingService,}\newline\code{emailService: EmailService,}\newline\code{sharedRoleRepository: SharedRoleRepository,}\newline\code{authRepository: AuthRepository,}\newline\code{tokenService: TokenService)} &
+A method to initialize the service and its Google OAuth client.
+\newline -- \code{hashingService}: \code{HashingService} -- password hashing and verification.
+\newline -- \code{emailService}: \code{EmailService} -- OTP delivery.
+\newline -- \code{sharedRoleRepository}: \code{SharedRoleRepository} -- resolves system role identifiers.
+\newline -- \code{authRepository}: \code{AuthRepository} -- account, OTP, session, and OAuth persistence.
+\newline -- \code{tokenService}: \code{TokenService} -- JWT signing and verification.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{register(body: RegisterBodyType)} &
+A method to validate registration data and create an account.
+\newline -- \code{body}: \code{RegisterBodyType} -- email, OTP, password, full name, and role.
+\newline -- \textit{Returns:} \code{Promise<UserType>} -- the created account without sensitive fields.
+\newline -- Throws \code{EmailAlreadyExistsException}, \code{UserBannedException}, \code{InvalidVerificationCodeException}, or \code{OTPExpiredException}. \\ \hline
+
+03 & \code{sendOTP(body: SendOTPBodyType)} &
+A method to issue an OTP while enforcing the attempt window.
+\newline -- \code{body}: \code{SendOTPBodyType} -- email and verification-code type.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{EmailAlreadyExistsException}, \code{EmailNotFoundException}, or \code{TooManyAttemptsException}. \\ \hline
+
+04 & \code{login(body: LoginBodyType and session metadata)} &
+A method to verify credentials, ban state, and the primary role before issuing tokens.
+\newline -- \code{body}: \code{LoginBodyType} -- email, password, user agent, and IP address.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string; refreshToken: string }>} -- the token pair.
+\newline -- Throws \code{IncorrectEmailException}, \code{IncorrectPasswordException}, \code{UserBannedException}, or \code{RoleNotFoundException}. \\ \hline
+
+05 & \code{generateAccessAndRefreshTokens(payload)} &
+A private method to sign a refresh token, persist a session, and sign the access token.
+\newline -- \code{payload}: object -- user id, role id, role name, user agent, and IP address.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string; refreshToken: string }>} -- the new token pair.
+\newline -- The access token carries the persisted session id. \\ \hline
+
+06 & \code{refreshToken(payload)} &
+A method to validate and rotate a refresh token.
+\newline -- \code{payload}: object -- refresh token, user agent, and IP address.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string; refreshToken: string }>} -- the replacement token pair.
+\newline -- Throws \code{RefreshTokenRevokedException} or \code{UserBannedException}. \\ \hline
+
+07 & \code{logout(refreshToken: string)} &
+A method to remove the session that owns a refresh token.
+\newline -- \code{refreshToken}: \code{string} -- token of the session to terminate.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{RefreshTokenRevokedException} when the session is absent. \\ \hline
+
+08 & \code{forgotPassword(payload: ForgotPasswordBodyType)} &
+A method to validate a reset OTP, hash the new password, and remove the OTP.
+\newline -- \code{payload}: \code{ForgotPasswordBodyType} -- email, OTP, and new password.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{EmailNotFoundException}, \code{UserBannedException}, or OTP validation errors. \\ \hline
+
+09 & \code{validateVerificationCode(uniqueValue)} &
+A method to load an OTP and reject missing or expired codes.
+\newline -- \code{uniqueValue}: object -- email, code, and verification type.
+\newline -- \textit{Returns:} \code{Promise<EmailVerificationType>} -- the matching OTP record.
+\newline -- Throws \code{InvalidVerificationCodeException} or \code{OTPExpiredException}. \\ \hline
+
+10 & \code{getMe(userId: number)} &
+A method to return the current account, profile summary, and roles.
+\newline -- \code{userId}: \code{number} -- current account identifier.
+\newline -- \textit{Returns:} \code{Promise<GetMeResType>} -- the authenticated account view.
+\newline -- Throws \code{NotFoundException} when absent or \code{UserBannedException} when banned. \\ \hline
+
+11 & \code{switchRole(userId, sessionId, body)} &
+A method to change the primary role and issue a new access token.
+\newline -- \code{userId}: \code{number} -- current account.
+\newline -- \code{sessionId}: \code{number} -- current session.
+\newline -- \code{body}: \code{SwitchRoleBodyType} -- target role.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string }>} -- the role-scoped access token.
+\newline -- Throws \code{RoleNotFoundException}. \\ \hline
+
+12 & \code{joinRole(userId, sessionId, body)} &
+A method to assign an additional role and issue a new access token.
+\newline -- \code{userId}: \code{number} -- current account.
+\newline -- \code{sessionId}: \code{number} -- current session.
+\newline -- \code{body}: \code{JoinRoleBodyType} -- role to join.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string }>} -- the role-scoped access token.
+\newline -- Throws \code{RoleNotFoundException} or \code{RoleAlreadyAssignedException}. \\ \hline
+
+13 & \code{getAuthorizationUrl(payload)} &
+A method to build the Google OAuth consent URL with a base64url state.
+\newline -- \code{payload}: object -- user agent and IP address.
+\newline -- \textit{Returns:} \code{GetAuthorizationUrlResType} -- the authorization URL. \\ \hline
+
+14 & \code{googleCallback(payload)} &
+A method to exchange a Google code, create or load the account, and issue tokens.
+\newline -- \code{payload}: object -- Google authorization code and state.
+\newline -- \textit{Returns:} \code{Promise<{ accessToken: string; refreshToken: string }>} -- the token pair.
+\newline -- Creates a Client account and an OAuth account on first login; rejects banned accounts. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{hashingService} & \code{HashingService} -- private readonly password utility. \\ \hline
+02 & \code{emailService} & \code{EmailService} -- private readonly OTP delivery utility. \\ \hline
+03 & \code{sharedRoleRepository} & \code{SharedRoleRepository} -- private readonly system-role lookup. \\ \hline
+04 & \code{authRepository} & \code{AuthRepository} -- private readonly authentication persistence. \\ \hline
+05 & \code{tokenService} & \code{TokenService} -- private readonly JWT utility. \\ \hline
+06 & \code{oauth2Client} & \code{OAuth2Client} -- public Google OAuth client. \\ \hline
+07 & \code{logger} & \code{Logger} -- private readonly NestJS logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AuthRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AuthRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findUserByEmail(email: string)} &
+A method to load a non-deleted account by email.
+\newline -- \code{email}: \code{string} -- unique account email.
+\newline -- \textit{Returns:} \code{Promise<UserType | null>} -- the account without password timestamps, or \code{null}. \\ \hline
+
+03 & \code{findUserByEmailIncludeRoles(email: string)} &
+A method to load an account with its role assignments.
+\newline -- \code{email}: \code{string} -- unique account email.
+\newline -- \textit{Returns:} \code{Promise<UserType and roles | null>} -- the account and ordered roles, or \code{null}. \\ \hline
+
+04 & \code{findVerificationCode(uniqueValue)} &
+A method to find an OTP by email, code, and type.
+\newline -- \code{uniqueValue}: object -- email, code, and verification type.
+\newline -- \textit{Returns:} \code{Promise<EmailVerificationType | null>} -- the matching OTP, or \code{null}. \\ \hline
+
+05 & \code{findVerificationCodeByEmailAndType(email, type)} &
+A method to load the current OTP record for an email and type.
+\newline -- \code{email}: \code{string} -- account email.
+\newline -- \code{type}: \code{VerificationCodeType} -- registration or password-reset code.
+\newline -- \textit{Returns:} \code{Promise<EmailVerificationType | null>} -- the OTP record, or \code{null}. \\ \hline
+
+06 & \code{createUserAndRegister(deleteOtp, user)} &
+A method to delete the consumed OTP and create the account in one transaction.
+\newline -- \code{deleteOtp}: object -- OTP code, type, and email.
+\newline -- \code{user}: object -- email, password, full name, and initial role.
+\newline -- \textit{Returns:} \code{Promise<UserType>} -- the created account. \\ \hline
+
+07 & \code{createUserAndRegisterGoogle(user)} &
+A method to create a Google account with a Client role and profile.
+\newline -- \code{user}: object -- email, full name, and role identifier.
+\newline -- \textit{Returns:} \code{Promise<UserType and roles>} -- the created account with roles. \\ \hline
+
+08 & \code{upsertVerificationCode(data)} &
+A method to create or replace an OTP record.
+\newline -- \code{data}: object -- email, type, code, expiry, and attempt count.
+\newline -- \textit{Returns:} \code{Promise<EmailVerificationType>} -- the persisted OTP. \\ \hline
+
+09 & \code{findUserForLogin(email: string)} &
+A method to load an account and ordered roles for authentication.
+\newline -- \code{email}: \code{string} -- account email.
+\newline -- \textit{Returns:} \code{Promise<UserType and roles | null>} -- the account, or \code{null}. \\ \hline
+
+10 & \code{createSession(data)} &
+A method to persist a refresh-token session.
+\newline -- \code{data}: object -- user id, refresh token, device, IP address, and expiry.
+\newline -- \textit{Returns:} \code{Promise<Session>} -- the created session with its identifier. \\ \hline
+
+11 & \code{deleteSessionByRefreshToken(data)} &
+A method to delete a session by refresh token and user id.
+\newline -- \code{data}: object -- refresh token and user id.
+\newline -- \textit{Returns:} \code{Promise<Session>} -- the deleted session. \\ \hline
+
+12 & \code{findUniqueRefreshTokenIncludeUserRole(data)} &
+A method to load a session, its account, and the account roles by refresh token.
+\newline -- \code{data.refreshToken}: \code{string} -- refresh token to resolve.
+\newline -- \textit{Returns:} \code{Promise<Session and user roles | null>} -- the session graph, or \code{null}. \\ \hline
+
+13 & \code{update(where, data)} &
+A method to update a non-deleted account.
+\newline -- \code{where}: object -- account identifier.
+\newline -- \code{data}: \code{Partial<UserType>} -- fields to change.
+\newline -- \textit{Returns:} \code{Promise<UserType | null>} -- the updated account. \\ \hline
+
+14 & \code{deleteVerifycationCode(uniqueValue)} &
+A method to delete an OTP after a successful password reset.
+\newline -- \code{uniqueValue}: object -- email and verification type.
+\newline -- \textit{Returns:} \code{Promise<EmailVerificationType>} -- the deleted OTP. \\ \hline
+
+15 & \code{findUserById(userId: number)} &
+A method to load an account with profile and ordered roles.
+\newline -- \code{userId}: \code{number} -- account identifier.
+\newline -- \textit{Returns:} \code{Promise<UserType and profile and roles | null>} -- the account view, or \code{null}. \\ \hline
+
+16 & \code{switchPrimaryRole(userId, roleName)} &
+A method to make an assigned role primary in one transaction.
+\newline -- \code{userId}: \code{number} -- account identifier.
+\newline -- \code{roleName}: \code{string} -- role to activate.
+\newline -- \textit{Returns:} \code{Promise<RoleType | null>} -- the activated role, or \code{null} when not assigned. \\ \hline
+
+17 & \code{joinRole(userId, roleName)} &
+A method to assign a Client or Freelancer role and create its profile row.
+\newline -- \code{userId}: \code{number} -- account identifier.
+\newline -- \code{roleName}: \code{JoinRoleBodyType['role']} -- role to join.
+\newline -- \textit{Returns:} \code{Promise<{ status: 'joined' | 'already-assigned'; role: RoleType } | null>} -- the assignment result, or \code{null} when the role is absent. \\ \hline
+
+18 & \code{createOauthAccount(data)} &
+A method to link a Google identity to an account.
+\newline -- \code{data}: object -- user id, provider, and provider user id.
+\newline -- \textit{Returns:} \code{Promise<OauthAccount>} -- the created OAuth link. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{RolesController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{RolesController(rolesService: RolesService)} &
+A method to initialize the controller with the role service.
+\newline -- \code{rolesService}: \code{RolesService} -- service that owns role use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getRoles()} &
+A method to return all active roles.
+\newline -- \textit{Returns:} \code{Promise<RoleListResponseType>} -- the role list.
+\newline -- Route: \code{GET /roles}. \\ \hline
+
+03 & \code{getRoleById(id: number)} &
+A method to return one role with its permissions.
+\newline -- \code{id}: \code{number} -- role identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<RoleDetailResponseType>} -- the role detail.
+\newline -- Route: \code{GET /roles/:id}. \\ \hline
+
+04 & \code{createRole(body: CreateRoleBodyDto)} &
+A method to create a custom role.
+\newline -- \code{body}: \code{CreateRoleBodyDto} -- role name and optional description.
+\newline -- \textit{Returns:} \code{Promise<CreateRoleResponseType>} -- the created role.
+\newline -- Route: \code{POST /roles}. \\ \hline
+
+05 & \code{updateRole(id: number, body: UpdateRoleBodyDto)} &
+A method to update a role's name or description.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \code{body}: \code{UpdateRoleBodyDto} -- optional name and description.
+\newline -- \textit{Returns:} \code{Promise<UpdateRoleResponseType>} -- the updated role.
+\newline -- Route: \code{PATCH /roles/:id}. \\ \hline
+
+06 & \code{setRolePermissions(}\newline\code{id: number,}\newline\code{body: SetRolePermissionsBodyDto)} &
+A method to replace every permission assigned to a role.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \code{body.permissionIds}: \code{number[]} -- the complete replacement set.
+\newline -- \textit{Returns:} \code{Promise<SetRolePermissionsResponseType>} -- the updated role detail.
+\newline -- Route: \code{PUT /roles/:id/permissions}. \\ \hline
+
+07 & \code{deleteRole(id: number)} &
+A method to soft-delete an unused custom role.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<DeleteRoleResponseType>} -- a success message.
+\newline -- Route: \code{DELETE /roles/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{rolesService} & \code{RolesService} -- private readonly role service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{RolesService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{RolesService(rolesRepository: RolesRepository)} &
+A method to initialize the service with the role repository.
+\newline -- \code{rolesRepository}: \code{RolesRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{isSystemRoleName(name: string)} &
+A private method to detect the four built-in role names.
+\newline -- \code{name}: \code{string} -- role name to test.
+\newline -- \textit{Returns:} \code{boolean} -- true for Admin, Client, Freelancer, or Expert. \\ \hline
+
+03 & \code{getRoles()} &
+A method to load the active role list.
+\newline -- \textit{Returns:} \code{Promise<RoleListResponseType>} -- the role list.
+\newline -- Failure is mapped to \code{FailedToLoadRolesException}. \\ \hline
+
+04 & \code{getRoleById(id: number)} &
+A method to load a role and its permissions.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<RoleDetailResponseType>} -- the role detail.
+\newline -- Prisma errors are mapped to \code{FailedToLoadRoleDetailException}. \\ \hline
+
+05 & \code{createRole(body: CreateRoleBodyType)} &
+A method to validate the name and create a custom role.
+\newline -- \code{body}: \code{CreateRoleBodyType} -- role name and optional description.
+\newline -- \textit{Returns:} \code{Promise<CreateRoleResponseType>} -- the created role.
+\newline -- Throws \code{CannotModifySystemRoleException} or \code{RoleAlreadyExistsException}. \\ \hline
+
+06 & \code{updateRole(id: number, body: UpdateRoleBodyType)} &
+A method to validate system-role and duplicate-name rules before updating.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \code{body}: \code{UpdateRoleBodyType} -- optional name and description.
+\newline -- \textit{Returns:} \code{Promise<UpdateRoleResponseType>} -- the updated role.
+\newline -- Throws \code{CannotModifySystemRoleException} or \code{RoleAlreadyExistsException}. \\ \hline
+
+07 & \code{deleteRole(id: number)} &
+A method to soft-delete a custom role that is not assigned to any user.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<DeleteRoleResponseType>} -- a success message.
+\newline -- Throws \code{CannotModifySystemRoleException} or \code{RoleInUseException}. \\ \hline
+
+08 & \code{setRolePermissions(id, body)} &
+A method to validate permission ids and replace the role permission set.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \code{body}: \code{SetRolePermissionsBodyType} -- permission ids to assign.
+\newline -- \textit{Returns:} \code{Promise<SetRolePermissionsResponseType>} -- the updated role detail.
+\newline -- Throws \code{InvalidPermissionIdsException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{rolesRepository} & \code{RolesRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{RolesRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{RolesRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findAll()} &
+A method to load all non-deleted roles ordered by id.
+\newline -- \textit{Returns:} \code{Promise<RoleListItemType[]>} -- the role list. \\ \hline
+
+03 & \code{findById(id: number)} &
+A method to load a role and its active permissions.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<RoleDetailResponseType>} -- the role detail.
+\newline -- Throws \code{RoleNotFoundException}. \\ \hline
+
+04 & \code{findActiveByName(name, excludeId?)} &
+A method to find an active role by case-insensitive name.
+\newline -- \code{name}: \code{string} -- role name.
+\newline -- \code{excludeId}: \code{number | undefined} -- optional role to exclude.
+\newline -- \textit{Returns:} \code{Promise<RoleListItemType | null>} -- the matching role, or \code{null}. \\ \hline
+
+05 & \code{createRole(body: CreateRoleBodyType)} &
+A method to insert a role.
+\newline -- \code{body}: \code{CreateRoleBodyType} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<CreateRoleResponseType>} -- the created role. \\ \hline
+
+06 & \code{updateRole(id: number, body: UpdateRoleBodyType)} &
+A method to update the provided role fields.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \code{body}: \code{UpdateRoleBodyType} -- optional name and description.
+\newline -- \textit{Returns:} \code{Promise<UpdateRoleResponseType>} -- the updated role. \\ \hline
+
+07 & \code{softDeleteRole(id: number)} &
+A method to set \code{deletedAt} on a role.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value. \\ \hline
+
+08 & \code{countAssignedUsers(roleId: number)} &
+A method to count user-role assignments.
+\newline -- \code{roleId}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<number>} -- the assignment count. \\ \hline
+
+09 & \code{findActivePermissionIds(ids: number[])} &
+A method to filter permission ids down to active permissions.
+\newline -- \code{ids}: \code{number[]} -- requested permission ids.
+\newline -- \textit{Returns:} \code{Promise<number[]>} -- the active ids. \\ \hline
+
+10 & \code{replaceRolePermissions(roleId, permissionIds)} &
+A method to delete the old role permissions and insert the new set in a transaction.
+\newline -- \code{roleId}: \code{number} -- role identifier.
+\newline -- \code{permissionIds}: \code{number[]} -- replacement permission ids.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}

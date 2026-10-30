@@ -1,0 +1,48 @@
+% =================================================================
+% FILE: sections/tthuan/2/sprint5.tex -- Sprint 5
+% Expert Profile and Job Category Management
+% =================================================================
+
+% ================= Expert Profile Management =================
+\subsection{Expert Profile Management}
+
+The administrator-side Expert Profile editor updates an expert account
+directly. Any pending self-service revision is superseded, and the account
+owner is notified of the administrative change.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint5/tthuan/classDiagram/ExpertProfileManagement}{Class diagram of Expert Profile Management}{fig:tthuan-cls-expert-profile-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-28.09 -- Update Expert Profile}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/UpdateExpertProfile}{Sequence diagram of UC-28.09 Update Expert Profile}{fig:tthuan-seq-update-expert-profile}
+
+% ================= Job Category Management =================
+\subsection{Job Category Management}
+
+Job Category Management maintains the taxonomy used by job postings. A
+category can be created, updated, soft-deleted, and restored; deletion is
+blocked while active jobs still reference the category.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint5/tthuan/classDiagram/JobCategoryManagement}{Class diagram of Job Category Management}{fig:tthuan-cls-job-category-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-46.01 -- View Job Category List}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/ViewJobCategoryList}{Sequence diagram of UC-46.01 View Job Category List}{fig:tthuan-seq-view-job-category-list}
+
+\subsubsection{UC-46.02 -- View Job Category Detail}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/ViewJobCategoryDetail}{Sequence diagram of UC-46.02 View Job Category Detail}{fig:tthuan-seq-view-job-category-detail}
+
+\subsubsection{UC-46.03 -- Create Job Category}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/CreateJobCategory}{Sequence diagram of UC-46.03 Create Job Category}{fig:tthuan-seq-create-job-category}
+
+\subsubsection{UC-46.04 -- Update Job Category}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/UpdateJobCategory}{Sequence diagram of UC-46.04 Update Job Category}{fig:tthuan-seq-update-job-category}
+
+\subsubsection{UC-46.05 -- Delete Job Category}
+\kfig{0.78\textwidth}{images/sprint5/tthuan/sequences/DeleteJobCategory}{Sequence diagram of UC-46.05 Delete Job Category}{fig:tthuan-seq-delete-job-category}

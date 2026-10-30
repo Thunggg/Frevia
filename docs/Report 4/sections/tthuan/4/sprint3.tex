@@ -1,0 +1,305 @@
+% =================================================================
+% FILE: sections/tthuan/4/sprint3.tex -- Sprint 3
+% Class specifications for User Management
+% =================================================================
+
+\subsection{UsersController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{UsersController(service: UsersService)} &
+A method to initialize the controller with the user administration service.
+\newline -- \code{service}: \code{UsersService} -- service that owns admin user use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createUser(body: AdminCreateUserBodyDto)} &
+A method to create an account with an initial role.
+\newline -- \code{body}: \code{AdminCreateUserBodyDto} -- email, password, full name, and role.
+\newline -- \textit{Returns:} \code{Promise<AdminCreateUserResponseType>} -- the created account.
+\newline -- Route: \code{POST /users}. \\ \hline
+
+03 & \code{updateUser(}\newline\code{id: number, actorId: number,}\newline\code{body: AdminUpdateUserBodyDto)} &
+A method to update email, display name, or ban state.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{actorId}: \code{number} -- current administrator, used for the self-ban check.
+\newline -- \code{body}: \code{AdminUpdateUserBodyDto} -- optional email, full name, and ban flag.
+\newline -- \textit{Returns:} \code{Promise<AdminUpdateUserResponseType>} -- the updated account.
+\newline -- Route: \code{PATCH /users/:id}. \\ \hline
+
+04 & \code{updateClientProfile(}\newline\code{id: number,}\newline\code{body: AdminUpdateClientProfileBodyDto)} &
+A method to update the Client profile attached to an account.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminUpdateClientProfileBodyDto} -- company name, description, and website.
+\newline -- \textit{Returns:} \code{Promise<AdminClientProfileResponseType>} -- the updated Client profile.
+\newline -- Route: \code{PATCH /users/:id/client-profile}. \\ \hline
+
+05 & \code{updateFreelancerProfile(}\newline\code{id: number,}\newline\code{body: AdminUpdateFreelancerProfileBodyDto)} &
+A method to update the Freelancer headline and biography.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminUpdateFreelancerProfileBodyDto} -- title, bio, languages, education, and certifications.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{PATCH /users/:id/freelancer-profile}. \\ \hline
+
+06 & \code{replaceFreelancerSkills(}\newline\code{id: number,}\newline\code{body: AdminReplaceFreelancerSkillsBodyDto)} &
+A method to replace every skill on a Freelancer profile.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{body.skills}: array of skill name and proficiency pairs.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{PUT /users/:id/freelancer-profile/skills}. \\ \hline
+
+07 & \code{createPortfolioItem(}\newline\code{id: number,}\newline\code{body: AdminCreatePortfolioItemBodyDto)} &
+A method to add a portfolio item to a Freelancer profile.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminCreatePortfolioItemBodyDto} -- title, description, technologies, and project URL.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{POST /users/:id/freelancer-profile/portfolio-items}. \\ \hline
+
+08 & \code{updatePortfolioItem(}\newline\code{id: number, itemId: number,}\newline\code{body: AdminUpdatePortfolioItemBodyDto)} &
+A method to update one portfolio item owned by the Freelancer profile.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{itemId}: \code{number} -- portfolio item identifier.
+\newline -- \code{body}: \code{AdminUpdatePortfolioItemBodyDto} -- optional item fields.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{PATCH /users/:id/freelancer-profile/portfolio-items/:itemId}. \\ \hline
+
+09 & \code{deletePortfolioItem(}\newline\code{id: number, itemId: number)} &
+A method to soft-delete one portfolio item.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{itemId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{DELETE /users/:id/freelancer-profile/portfolio-items/:itemId}. \\ \hline
+
+10 & \code{getUsers(query: AdminUserQueryDto)} &
+A method to return a filtered, paginated user list.
+\newline -- \code{query}: \code{AdminUserQueryDto} -- page, limit, search, role, sort, and status filters.
+\newline -- \textit{Returns:} \code{Promise<AdminUserListResponseType>} -- users and pagination.
+\newline -- Route: \code{GET /users}. \\ \hline
+
+11 & \code{getSkillCatalog()} &
+A method to return the active skill catalogue for the profile editor.
+\newline -- \textit{Returns:} \code{Promise<AdminSkillCatalogListType>} -- active skills ordered by name.
+\newline -- Route: \code{GET /users/skills-catalog}. \\ \hline
+
+12 & \code{getUserById(id: number)} &
+A method to return a consolidated user detail.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \textit{Returns:} \code{Promise<AdminUserDetailResponseType>} -- account, roles, and profile summaries.
+\newline -- Route: \code{GET /users/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{UsersService} -- private readonly user administration service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{UsersService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{UsersService(}\newline\code{repository: UsersRepository,}\newline\code{hashingService: HashingService)} &
+A method to initialize the service with persistence and password hashing.
+\newline -- \code{repository}: \code{UsersRepository} -- user persistence dependency.
+\newline -- \code{hashingService}: \code{HashingService} -- password hashing utility.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createUser(body: AdminCreateUserBodyType)} &
+A method to validate the email and role, hash the password, and create the account.
+\newline -- \code{body}: \code{AdminCreateUserBodyType} -- email, password, full name, and role id.
+\newline -- \textit{Returns:} \code{Promise<AdminCreateUserResponseType>} -- the created account.
+\newline -- Throws \code{EmailAlreadyExistsException}, \code{CreateUserRoleNotFoundException}, \code{CannotAssignAdminRoleException}, or \code{FailedToCreateUserException}. \\ \hline
+
+03 & \code{getUsers(query: AdminUserQueryType)} &
+A method to load a user page.
+\newline -- \code{query}: \code{AdminUserQueryType} -- page, limit, search, role, sort, and status filters.
+\newline -- \textit{Returns:} \code{Promise<AdminUserListResponseType>} -- users and pagination.
+\newline -- Failure is mapped to \code{FailedToGetUsersException}. \\ \hline
+
+04 & \code{getUserById(id: number)} &
+A method to load a consolidated account detail.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \textit{Returns:} \code{Promise<AdminUserDetailResponseType>} -- account, roles, and profiles.
+\newline -- Throws \code{UserNotFoundException} when absent or \code{FailedToGetUserException} on an unexpected read failure. \\ \hline
+
+05 & \code{listSkillCatalog()} &
+A method to return the active skill catalogue.
+\newline -- \textit{Returns:} \code{Promise<AdminSkillCatalogListType>} -- active skills ordered by name. \\ \hline
+
+06 & \code{updateUser(id, actorId, body)} &
+A method to update account fields while enforcing the self-ban and email rules.
+\newline -- \code{id}: \code{number} -- target user identifier.
+\newline -- \code{actorId}: \code{number} -- current administrator.
+\newline -- \code{body}: \code{AdminUpdateUserBodyType} -- optional email, full name, and ban flag.
+\newline -- \textit{Returns:} \code{Promise<AdminUpdateUserResponseType>} -- the updated account.
+\newline -- Throws \code{CannotBanSelfException}, \code{EmailAlreadyExistsException}, \code{UserNotFoundException}, or \code{FailedToUpdateUserException}. \\ \hline
+
+07 & \code{updateClientProfile(userId, body)} &
+A method to validate the Client profile context and upsert the profile.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminUpdateClientProfileBodyType} -- company fields.
+\newline -- \textit{Returns:} \code{Promise<AdminClientProfileResponseType>} -- the updated Client profile.
+\newline -- Throws \code{UserNotFoundException}, \code{NoClientRoleForClientProfileException}, or \code{FailedToUpdateClientProfileException}. \\ \hline
+
+08 & \code{updateFreelancerProfile(userId, body)} &
+A method to validate the Freelancer context and upsert profile fields.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminUpdateFreelancerProfileBodyType} -- title, bio, languages, education, and certifications.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{NoFreelancerRoleForProfileException} or \code{FailedToUpdateFreelancerProfileException}. \\ \hline
+
+09 & \code{replaceFreelancerSkills(userId, body)} &
+A method to replace all Freelancer skills and create missing catalogue skills.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminReplaceFreelancerSkillsBodyType} -- skill name and proficiency pairs.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{NoFreelancerRoleForProfileException} or \code{FailedToSaveSkillsException}. \\ \hline
+
+10 & \code{createPortfolioItem(userId, body)} &
+A method to create a portfolio item on the Freelancer profile.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{body}: \code{AdminCreatePortfolioItemBodyType} -- item fields.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{FailedToCreatePortfolioItemException}. \\ \hline
+
+11 & \code{updatePortfolioItem(userId, itemId, body)} &
+A method to update an owned portfolio item.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{itemId}: \code{number} -- portfolio item identifier.
+\newline -- \code{body}: \code{AdminUpdatePortfolioItemBodyType} -- optional item fields.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{PortfolioItemNotFoundException} or \code{FailedToUpdatePortfolioItemException}. \\ \hline
+
+12 & \code{deletePortfolioItem(userId, itemId)} &
+A method to soft-delete an owned portfolio item.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{itemId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{PortfolioItemNotFoundException} or \code{FailedToDeletePortfolioItemException}. \\ \hline
+
+13 & \code{getFreelancerProfileContext(userId)} &
+A private method to load the profile and role context for a Freelancer edit.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \textit{Returns:} \code{Promise<context>} -- profile id, Freelancer profile id, and role flag.
+\newline -- Throws \code{UserNotFoundException} or \code{NoFreelancerRoleForProfileException}. \\ \hline
+
+14 & \code{ensureFreelancerProfileRow(userId, context)} &
+A private method to create the Profile and FreelancerProfile rows when missing.
+\newline -- \code{userId}: \code{number} -- target user identifier.
+\newline -- \code{context}: object -- profile id and role context.
+\newline -- \textit{Returns:} \code{Promise<number | null>} -- the Freelancer profile id.
+\newline -- Used by skill and portfolio editors before writing child rows. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{UsersRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{hashingService} & \code{HashingService} -- private readonly password utility. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{UsersRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{UsersRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getUsers(query: AdminUserQueryType)} &
+A method to query users with search, role, status, sorting, and pagination.
+\newline -- \code{query}: \code{AdminUserQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<AdminUserListResponseType>} -- users and pagination. \\ \hline
+
+03 & \code{createUserByAdmin(data)} &
+A method to create the account, profile, and primary role in one write.
+\newline -- \code{data}: object -- email, hashed password, full name, role id, and role name.
+\newline -- \textit{Returns:} \code{Promise<AdminCreateUserResponseType>} -- the created account.
+\newline -- Creates an empty Expert profile when the role is Expert. \\ \hline
+
+04 & \code{findUserByEmail(email)} &
+A method to find a non-deleted account by email.
+\newline -- \code{email}: \code{string} -- account email.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the account id, or \code{null}. \\ \hline
+
+05 & \code{findActiveRoleById(id)} &
+A method to load an active role by id.
+\newline -- \code{id}: \code{number} -- role identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string } | null>} -- the role, or \code{null}. \\ \hline
+
+06 & \code{updateUserByAdmin(id, data)} &
+A method to update account fields, profile name, and sessions on ban.
+\newline -- \code{id}: \code{number} -- target account.
+\newline -- \code{data}: object -- optional email, full name, and ban flag.
+\newline -- \textit{Returns:} \code{Promise<AdminUpdateUserResponseType | null>} -- the updated account, or \code{null} when absent.
+\newline -- Setting \code{isBanned} to true deletes every session in the same transaction. \\ \hline
+
+07 & \code{findClientProfileEditContext(id)} &
+A method to load the profile context required by the Client editor.
+\newline -- \code{id}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<context | null>} -- profile id, Client profile id, and role flag. \\ \hline
+
+08 & \code{upsertClientProfileByAdmin(userId, data)} &
+A method to create or update the Client profile.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \code{data}: object -- company name, description, and website.
+\newline -- \textit{Returns:} \code{Promise<ClientProfile | null>} -- the persisted Client profile. \\ \hline
+
+09 & \code{findFreelancerProfileEditContext(id)} &
+A method to load the profile context required by the Freelancer editor.
+\newline -- \code{id}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<context | null>} -- profile id, Freelancer profile id, and role flag. \\ \hline
+
+10 & \code{updateFreelancerProfileByAdmin(userId, data)} &
+A method to update Profile biography and Freelancer profile fields.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \code{data}: object -- title, bio, languages, education, and certifications.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value. \\ \hline
+
+11 & \code{ensureFreelancerProfile(userId, profileId)} &
+A method to create the missing Profile or FreelancerProfile row.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \code{profileId}: \code{number | null} -- existing profile id, or \code{null}.
+\newline -- \textit{Returns:} \code{Promise<number | null>} -- the Freelancer profile id. \\ \hline
+
+12 & \code{replaceFreelancerSkills(freelancerProfileId, skills)} &
+A method to replace all skills and create missing catalogue skills in a transaction.
+\newline -- \code{freelancerProfileId}: \code{number} -- Freelancer profile identifier.
+\newline -- \code{skills}: array of skill name and proficiency pairs.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value.
+\newline -- Free-text names are matched case-insensitively; missing skills receive a generated slug. \\ \hline
+
+13 & \code{createPortfolioItem(freelancerProfileId, data)} &
+A method to insert a portfolio item.
+\newline -- \code{freelancerProfileId}: \code{number} -- Freelancer profile identifier.
+\newline -- \code{data}: object -- title, description, technologies, and project URL.
+\newline -- \textit{Returns:} \code{Promise<PortfolioItem>} -- the created item. \\ \hline
+
+14 & \code{findPortfolioItemOwned(id)} &
+A method to load a portfolio item with its owner and delete state.
+\newline -- \code{id}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; freelancerProfileId: number; deletedAt: Date | null } | null>} -- the ownership record, or \code{null}. \\ \hline
+
+15 & \code{updatePortfolioItemByAdmin(id, data)} &
+A method to update only the provided portfolio item fields.
+\newline -- \code{id}: \code{number} -- portfolio item identifier.
+\newline -- \code{data}: object -- optional item fields.
+\newline -- \textit{Returns:} \code{Promise<PortfolioItem>} -- the updated item. \\ \hline
+
+16 & \code{softDeletePortfolioItem(id)} &
+A method to set the portfolio item delete timestamp.
+\newline -- \code{id}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} \code{Promise<PortfolioItem>} -- the soft-deleted item. \\ \hline
+
+17 & \code{listActiveSkillCatalog()} &
+A method to return active skills ordered by name.
+\newline -- \textit{Returns:} \code{Promise<AdminSkillCatalogListType>} -- the catalogue. \\ \hline
+
+18 & \code{getUserById(id)} &
+A method to load the full account graph for the detail page.
+\newline -- \code{id}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<AdminUserDetailResponseType | null>} -- the detail view, or \code{null}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}

@@ -1,0 +1,63 @@
+% =================================================================
+% FILE: sections/tthuan/2/sprint4.tex -- Sprint 4
+% Banner Management and Skill Management
+% =================================================================
+
+% ================= Banner Management =================
+\subsection{Banner Management}
+
+Banner Management maintains the advertisement banners shown in configured
+page positions. The module supports image upload, lifecycle dates, activation
+state, and hard deletion.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint4/tthuan/classDiagram/BannerManagement}{Class diagram of Banner Management}{fig:tthuan-cls-banner-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-37.01 -- View Banner List}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/ViewBannerList}{Sequence diagram of UC-37.01 View Banner List}{fig:tthuan-seq-view-banner-list}
+
+\subsubsection{UC-37.02 -- View Banner Detail}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/ViewBannerDetail}{Sequence diagram of UC-37.02 View Banner Detail}{fig:tthuan-seq-view-banner-detail}
+
+\subsubsection{UC-37.03 -- Create Banner}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/CreateBanner}{Sequence diagram of UC-37.03 Create Banner}{fig:tthuan-seq-create-banner}
+
+\subsubsection{UC-37.04 -- Update Banner}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/UpdateBanner}{Sequence diagram of UC-37.04 Update Banner}{fig:tthuan-seq-update-banner}
+
+\subsubsection{UC-37.05 -- Delete Banner}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/DeleteBanner}{Sequence diagram of UC-37.05 Delete Banner}{fig:tthuan-seq-delete-banner}
+
+% ================= Skill Management =================
+\subsection{Skill Management}
+
+Skill Management owns the master skill catalogue used by freelancer profiles
+and job postings. Skills are soft-deleted so that existing references remain
+valid, and a deleted skill can be restored.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint4/tthuan/classDiagram/SkillManagement}{Class diagram of Skill Management}{fig:tthuan-cls-skill-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-38.01 -- View Skill List}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/ViewSkillList}{Sequence diagram of UC-38.01 View Skill List}{fig:tthuan-seq-view-skill-list}
+
+\subsubsection{UC-38.02 -- View Skill Detail}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/ViewSkillDetail}{Sequence diagram of UC-38.02 View Skill Detail}{fig:tthuan-seq-view-skill-detail}
+
+\subsubsection{UC-38.03 -- Create Skill}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/CreateSkill}{Sequence diagram of UC-38.03 Create Skill}{fig:tthuan-seq-create-skill}
+
+\subsubsection{UC-38.04 -- Update Skill}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/UpdateSkill}{Sequence diagram of UC-38.04 Update Skill}{fig:tthuan-seq-update-skill}
+
+\subsubsection{UC-38.05 -- Delete Skill}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/DeleteSkill}{Sequence diagram of UC-38.05 Delete Skill}{fig:tthuan-seq-delete-skill}
+
+\subsubsection{UC-38.06 -- Restore Skill}
+\kfig{0.78\textwidth}{images/sprint4/tthuan/sequences/RestoreSkill}{Sequence diagram of UC-38.06 Restore Skill}{fig:tthuan-seq-restore-skill}
