@@ -120,6 +120,19 @@ def save_tree(mxfile, filename):
     tree = ET.ElementTree(mxfile)
     ET.indent(tree, space="  ", level=0)
     tree.write(filename, encoding="utf-8", xml_declaration=False)
+    with open(filename, 'r', encoding='utf-8') as f:
+        content = f.read()
+    # Fix double-escaped HTML entities so draw.io renders them as rich formatting, not literal tags
+    content = content.replace('&amp;lt;br&amp;gt;', '&lt;br&gt;')
+    content = content.replace('&amp;lt;div&amp;gt;', '&lt;div&gt;')
+    content = content.replace('&amp;lt;/div&amp;gt;', '&lt;/div&gt;')
+    content = content.replace('&amp;amp;nbsp;', '&amp;nbsp;')
+    content = content.replace('&amp;quot;', '&quot;')
+    content = content.replace('&amp;lt;', '&lt;')
+    content = content.replace('&amp;gt;', '&gt;')
+    content = content.replace('&amp;amp;', '&amp;')
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(content)
     print(f"Generated {filename}")
 
 # ==============================================================================
@@ -754,6 +767,293 @@ def build_uc_15_02():
 
     return mxfile
 
+# ==============================================================================
+# 7. UC-16.01 VIEW SESSION LIST
+# ==============================================================================
+def build_uc_16_01():
+    Y_BOTTOM = 1750
+    mxfile, root = create_base_diagram("UC-16.01-view-session-list", "UC-16.01 View Session List", 1654, Y_BOTTOM + 100)
+
+    # Actor
+    add_cell(root, "lf_actor", value="Client / Freelancer", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1305) # 340 to 1645
+
+    # Lifelines - standard center coordinates: 300, 500, 710, 920, 1125, 1315, 1480
+    add_cell(root, "lf_view", value=":SessionView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1305) # 340 to 1645
+
+    add_cell(root, "lf_route", value=":SessionRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1145) # 450 to 1595
+
+    add_cell(root, "lf_controller", value=":SessionsController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=775) # 770 to 1545
+
+    add_cell(root, "lf_service", value=":SessionsService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=675) # 820 to 1495
+
+    add_cell(root, "lf_repo", value=":SessionsRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230) # 870 to 1100
+
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "act_prisma", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140) # 920 to 1060
+
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+    add_cell(root, "act_db", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50) # 970 to 1020
+
+    # Messages
+    add_edge(root, "m1", value='1. Click "Active sessions"', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_rule14_self_call(root, "act_self_param", "m2", "2. Check query&nbsp;<div>parameters</div>",
+                         bar_x=300, bar_y=410, main_right_x=305, sy=390, ty=410, mid_x=345)
+
+    add_edge(root, "m3", value="3. GET /api/backend/api/sessions", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+
+    # JWT Ref & Alt
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    # Controller & Service
+    add_edge(root, "m4", value="4. GET /api/sessions", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. getMySessions(userId, query, sessionId)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findAllByUserId(userId, filter, currentSessionId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.$transaction([findMany, count])", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute query to find active sessions and count", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return result", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return { sessions, total }", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 1 & Rule 14)
+    add_rule14_self_call(root, "act_self_query", "m12", "12. Handle find sessions&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Alt query result (Rule 5, Rule 7, Rule 13)
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=485)
+    add_cell(root, "g_alt_1", value="[sessions list<br>is empty]", style=STYLE_GUARD, x=120, y=1200, w=160, h=36)
+    add_edge(root, "m12_1_1", value="12.1.1. Return empty list &amp; pagination", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "No active sessions"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[sessions list<br>is not empty]", style=STYLE_GUARD, x=120, y=1450, w=160, h=36)
+    add_edge(root, "m12_2_1", value="12.2.1. Return sessions list &amp; pagination", style=STYLE_REPLY, sx=915, sy=1495, tx=715, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=1545, tx=505, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=1595, tx=305, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Display active session list (device, IP, login time)", style=STYLE_REPLY, sx=295, sy=1645, tx=105, ty=1645)
+
+    return mxfile
+
+# ==============================================================================
+# 8. UC-16.02 VIEW SESSION DETAIL
+# ==============================================================================
+def build_uc_16_02():
+    Y_BOTTOM = 1750
+    mxfile, root = create_base_diagram("UC-16.02-view-session-detail", "UC-16.02 View Session Detail", 1654, Y_BOTTOM + 100)
+
+    # Actor
+    add_cell(root, "lf_actor", value="Client / Freelancer", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1305) # 340 to 1645
+
+    # Lifelines - standard center coordinates: 300, 500, 710, 920, 1125, 1315, 1480
+    add_cell(root, "lf_view", value=":SessionView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1305) # 340 to 1645
+
+    add_cell(root, "lf_route", value=":SessionRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1145) # 450 to 1595
+
+    add_cell(root, "lf_controller", value=":SessionsController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=775) # 770 to 1545
+
+    add_cell(root, "lf_service", value=":SessionsService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=675) # 820 to 1495
+
+    add_cell(root, "lf_repo", value=":SessionsRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230) # 870 to 1100
+
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "act_prisma", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140) # 920 to 1060
+
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+    add_cell(root, "act_db", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50) # 970 to 1020
+
+    # Messages
+    add_edge(root, "m1", value='1. Click "View detail"<br>on a session', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_rule14_self_call(root, "act_self_param", "m2", "2. Check session id&nbsp;<div>parameter</div>",
+                         bar_x=300, bar_y=410, main_right_x=305, sy=390, ty=410, mid_x=345)
+
+    add_edge(root, "m3", value="3. GET /api/backend/api/sessions/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+
+    # JWT Ref & Alt
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    # Controller & Service
+    add_edge(root, "m4", value="4. GET /api/sessions/:id", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. getMySessionById(id, userId, sessionId)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findByIdForUser(id, userId, sessionId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.session.findFirst({ where: { id, userId } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute query to find login session", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return session or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return session or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 1 & Rule 14)
+    add_rule14_self_call(root, "act_self_query", "m12", "12. Handle find session&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Alt query result (Rule 5, Rule 7, Rule 13)
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=485)
+    add_cell(root, "g_alt_1", value="[session is null<br>or not owned]", style=STYLE_GUARD, x=120, y=1200, w=160, h=36)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 SessionNotFound", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 404 response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "Session not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[session is valid]", style=STYLE_GUARD, x=120, y=1450, w=160, h=36)
+    add_edge(root, "m12_2_1", value="12.2.1. Return session detail", style=STYLE_REPLY, sx=915, sy=1495, tx=715, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=1545, tx=505, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=1595, tx=305, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Display session info (device, IP address, login time)", style=STYLE_REPLY, sx=295, sy=1645, tx=105, ty=1645)
+
+    return mxfile
+
+# ==============================================================================
+# 9. UC-16.03 REVOKE SESSION
+# ==============================================================================
+def build_uc_16_03():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-16.03-revoke-session", "UC-16.03 Revoke Session", 1654, Y_BOTTOM + 100)
+
+    # Actor
+    add_cell(root, "lf_actor", value="Client / Freelancer", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1950) # 340 to 2290
+
+    # Lifelines - standard center coordinates: 300, 500, 710, 920, 1125, 1315, 1480
+    add_cell(root, "lf_view", value=":SessionView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1950) # 340 to 2290
+
+    add_cell(root, "lf_route", value=":SessionRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1790) # 450 to 2240
+
+    add_cell(root, "lf_controller", value=":SessionsController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=780, w=10, h=1410) # 780 to 2190
+
+    add_cell(root, "lf_service", value=":SessionsService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=830, w=10, h=1310) # 830 to 2140
+
+    add_cell(root, "lf_repo", value=":SessionsRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=880, w=10, h=230) # 880 to 1110
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1500, w=10, h=230) # 1500 to 1730
+
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=930, w=10, h=140) # 930 to 1070
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1550, w=10, h=140) # 1550 to 1690
+
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=980, w=10, h=50) # 980 to 1030
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1600, w=10, h=50) # 1600 to 1650
+
+    # Messages
+    add_edge(root, "m1", value='1. Click "Revoke" on a session', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Click "Confirm revoke"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. DELETE /api/backend/api/sessions/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+
+    # JWT Ref & Alt
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    # Controller & Service
+    add_edge(root, "m4", value="4. DELETE /api/sessions/:id", style=STYLE_MSG, sx=505, sy=780, tx=705, ty=780)
+    add_edge(root, "m5", value="5. revokeMySession(id, userId, sessionId)", style=STYLE_MSG, sx=715, sy=830, tx=915, ty=830)
+
+    # Step 1: Find session
+    add_edge(root, "m6", value="6. deleteActiveByIdForUser(id, userId)", style=STYLE_MSG, sx=925, sy=880, tx=1120, ty=880)
+    add_edge(root, "m7", value="7. prisma.session.findFirst({ where: { id, userId } })", style=STYLE_MSG, sx=1130, sy=930, tx=1310, ty=930)
+    add_edge(root, "m8", value="8. Execute SELECT query to find session", style=STYLE_MSG, sx=1320, sy=980, tx=1475, ty=980)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1030, tx=1320, ty=1030)
+    add_edge(root, "m10", value="10. Return session or null", style=STYLE_REPLY, sx=1310, sy=1070, tx=1130, ty=1070)
+    add_edge(root, "m11", value="11. Return session or null", style=STYLE_REPLY, sx=1120, sy=1110, tx=925, ty=1110)
+
+    # Self-call 1 on Service (Rule 1 & Rule 14)
+    add_rule14_self_call(root, "act_self_find_session", "m12", "12. Handle find session&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1170, main_right_x=925, sy=1150, ty=1170, mid_x=965)
+
+    # Outer Alt 1 (Session validity) (Rule 5 & 7)
+    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1210, w=1500, h=1180)
+    add_cell(root, "g_find_1", value="[session is null || expired]", style=STYLE_GUARD, x=120, y=1210, w=160, h=30)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404/400 error", style=STYLE_REPLY, sx=915, sy=1250, tx=715, ty=1250)
+    add_edge(root, "m12_1_2", value="12.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1300, tx=505, ty=1300)
+    add_edge(root, "m12_1_3", value="12.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1350, tx=305, ty=1350)
+    add_edge(root, "m12_1_4", value="12.1.4. Show error message", style=STYLE_REPLY, sx=295, sy=1400, tx=105, ty=1400)
+
+    add_edge(root, "div_alt_1", style=STYLE_DIVIDER, sx=40, sy=1450, tx=1540, ty=1450)
+    add_cell(root, "g_find_2", value="[session is valid]", style=STYLE_GUARD, x=120, y=1455, w=160, h=30)
+
+    # Step 2: Delete session
+    add_edge(root, "m12_2_1", value="12.2.1. prisma.session.delete({ where: { id } })", style=STYLE_MSG, sx=925, sy=1500, tx=1120, ty=1500)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.session.delete({ where: { id: session.id } })", style=STYLE_MSG, sx=1130, sy=1550, tx=1310, ty=1550)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute DELETE query to revoke session", style=STYLE_MSG, sx=1320, sy=1600, tx=1475, ty=1600)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1650, tx=1320, ty=1650)
+    add_edge(root, "m12_2_5", value="12.2.5. Return result", style=STYLE_REPLY, sx=1310, sy=1690, tx=1130, ty=1690)
+    add_edge(root, "m12_2_6", value="12.2.6. Return delete result", style=STYLE_REPLY, sx=1120, sy=1730, tx=925, ty=1730)
+
+    # Self-call 2 on Service (Rule 1 & Rule 14)
+    add_rule14_self_call(root, "act_self_delete_session", "m12_2_7", "12.2.7. Handle delete session&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1790, main_right_x=925, sy=1770, ty=1790, mid_x=965)
+
+    # Nested Alt 2 (Revoke Result check) (Rule 5 & 7)
+    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1830, w=1470, h=520)
+    add_cell(root, "g_rev_1", value="[revoke failed]", style=STYLE_GUARD, x=120, y=1830, w=160, h=30)
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw FailedToRevokeSessionException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return 500 response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return 500 response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Revoke session failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+
+    add_edge(root, "div_alt_2", style=STYLE_DIVIDER, sx=55, sy=2070, tx=1525, ty=2070)
+    add_cell(root, "g_rev_2", value="[revoke success]", style=STYLE_GUARD, x=120, y=2075, w=160, h=30)
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return { message, loggedOut }", style=STYLE_REPLY, sx=915, sy=2120, tx=715, ty=2120)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=2170, tx=505, ty=2170)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=2220, tx=305, ty=2220)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Device logged out remotely" &amp; refresh', style=STYLE_REPLY, sx=295, sy=2270, tx=105, ty=2270)
+
+    return mxfile
+
 if __name__ == "__main__":
     out_dir = "sequence-diagrams-remake"
     target_dir = "sequence-diagrams"
@@ -800,4 +1100,22 @@ if __name__ == "__main__":
     save_tree(f6, p6)
     shutil.copyfile(p6, os.path.join(target_dir, "UC-15.02-view-permission-detail.drawio"))
 
-    print("All 6 perfect diagrams generated and synchronized successfully!")
+    # 7. UC-16.01
+    f7 = build_uc_16_01()
+    p7 = os.path.join(out_dir, "UC-16.01-view-session-list.drawio")
+    save_tree(f7, p7)
+    shutil.copyfile(p7, os.path.join(target_dir, "UC-16.01-view-session-list.drawio"))
+
+    # 8. UC-16.02
+    f8 = build_uc_16_02()
+    p8 = os.path.join(out_dir, "UC-16.02-view-session-detail.drawio")
+    save_tree(f8, p8)
+    shutil.copyfile(p8, os.path.join(target_dir, "UC-16.02-view-session-detail.drawio"))
+
+    # 9. UC-16.03
+    f9 = build_uc_16_03()
+    p9 = os.path.join(out_dir, "UC-16.03-revoke-session.drawio")
+    save_tree(f9, p9)
+    shutil.copyfile(p9, os.path.join(target_dir, "UC-16.03-revoke-session.drawio"))
+
+    print("All 9 perfect diagrams generated and synchronized successfully!")
