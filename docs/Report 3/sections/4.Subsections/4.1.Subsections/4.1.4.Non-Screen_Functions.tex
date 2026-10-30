@@ -132,15 +132,17 @@ The Freelancer Portfolio feature enables freelancers to demonstrate their past w
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
 [POST] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
-[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
+[PUT] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
-[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}status \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}publish \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}close \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}reopen \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks \newline
 [POST] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks/\allowbreak{}\{slug\}
 &
-The Job Management feature is the core marketplace functionality that connects clients with freelancers. Guests and freelancers can browse and search the paginated job list, view a job detail by slug, and browse job categories. Clients can create a job posting with description, budget, required skills and timeline, list their own jobs, view a job detail, update or delete a job, and change its status (Open, In Progress, Closed, Cancelled); they can also look up skills while composing a job. Freelancers can list, add and remove bookmarked jobs and check whether a job is bookmarked.
+The Job Management feature is the core marketplace functionality that connects clients with freelancers. Guests and freelancers can browse and search the paginated job list, view a job detail by slug, and browse job categories. Clients can create a job posting with description, budget, required skills and timeline, list their own jobs, view a job detail, update or delete a job, and manage its lifecycle via dedicated transitions (publish drafts, close open/in-progress jobs, and reopen closed jobs); they can also look up skills while composing a job. Freelancers can list, add and remove bookmarked jobs and check whether a job is bookmarked.
 \\ \hline
 
 7

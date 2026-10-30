@@ -25,6 +25,7 @@ const prisma = new PrismaClient({
  * - IDENTITY-VERIFICATIONS: freelancer KYC docs
  * - SOCIAL-LINKS: both roles
  * - FAVORITES: client saved freelancers (`/api/favorites/freelancers`)
+ * - MANAGE-JOBS: Client manages jobs (Create, Publish, Update, Delete, Close, Reopen); Freelancer manages job bookmarks
  * - PROPOSALS: Freelancer submits proposals; Client reviews, accepts, or rejects
  *   proposals for jobs they own (`/api/proposals/...`, `/api/jobs/:jobId/proposals`)
  *
@@ -272,7 +273,11 @@ async function bootstrap() {
     .filter(
       (item) =>
         freelancerModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        !(
+          item.module === 'MANAGE-JOBS' &&
+          !item.path.includes('/bookmark')
+        ),
     )
     .map((item) => item.id);
 
@@ -280,7 +285,11 @@ async function bootstrap() {
     .filter(
       (item) =>
         clientModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        !(
+          item.module === 'MANAGE-JOBS' &&
+          item.path.includes('/bookmark')
+        ),
     )
     .map((item) => item.id);
 
