@@ -1,0 +1,401 @@
+\paragraph{Profile Update Review, Expert Profile \& CV Management}
+
+% =================================================================
+% UC-47.01 View Pending Profile Update Request List
+% =================================================================
+\subparagraph{UC-47.01 View Pending Profile Update Request List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.01 View Pending Profile Update Request List} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 23/10/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin opens the Profile Update Requests page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve profile update requests awaiting manual review.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated and authorized to review profiles. \newline \textbf{PRE-2} The system can access profile revision records.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{A paginated list of matching profile update requests is displayed.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. View Pending Requests} \newline 1. The Admin opens the review page. \newline 2. The system retrieves profile revisions with status \texttt{PENDING}. \newline 3. The Admin may filter by profile type, status, or search keyword. \newline 4. The system displays each request with the requester, profile type, submission time, and profile strength.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 No Pending Requests} \newline 1. The system finds no matching revisions. \newline 2. The system displays an empty-state message.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Unauthorized Access} \newline 1. A non-admin user requests the review list. \newline 2. The system denies access.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-PR-01: Only authorized administrators may access profile revision requests. \newline BR-PR-02: List results are paginated and may be filtered by revision status and profile type.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The list is served by \texttt{GET /admin/profile-revisions}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Profile update requests have been created by users.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-47.02 View Profile Update Request Detail
+% =================================================================
+\subparagraph{UC-47.02 View Profile Update Request Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.02 View Profile Update Request Detail} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 24/10/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin selects a profile update request from the review list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays the current profile snapshot and proposed changes for one update request.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authorized. \newline \textbf{PRE-2} The selected profile revision exists.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{The Admin can compare current and proposed values before making a decision.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. View Request Detail} \newline 1. The Admin selects a request. \newline 2. The system retrieves the revision by ID. \newline 3. The system displays requester details, current data, proposed data, profile strength, current status, and any review notes. \newline 4. For a pending request, the system presents Approve and Reject actions.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Request Not Found} \newline 1. The revision ID is invalid or unavailable. \newline 2. The system displays a not-found message.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-PR-03: The detail view must preserve both the current-data and proposed-data snapshots.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The detail is served by \texttt{GET /admin/profile-revisions/:id}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The revision data is valid JSON captured when the request was submitted.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-47.03 Approve Profile Update Request
+% =================================================================
+\subparagraph{UC-47.03 Approve Profile Update Request}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.03 Approve Profile Update Request} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 25/10/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin confirms approval of a pending update request.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Approves a request and applies its validated proposed data to the user's live profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authorized. \newline \textbf{PRE-2} The revision exists and has status \texttt{PENDING}.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The revision status becomes \texttt{APPROVED}. \newline \textbf{POST-2} The approved data is applied to the appropriate live profile. \newline \textbf{POST-3} The requester receives an approval notification.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Approve Request} \newline 1. The Admin reviews the current and proposed data. \newline 2. The Admin optionally enters review notes and selects Approve. \newline 3. The system validates the proposed data for the revision's profile type. \newline 4. The system updates the live profile and marks the revision \texttt{APPROVED}. \newline 5. The system records the reviewing Admin and review time. \newline 6. The system notifies the requester of approval.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Request Already Reviewed} \newline 1. The request is not pending. \newline 2. The system rejects the action without changing profile data. \newline \textbf{EX-02: Invalid Proposed Data} \newline 1. Validation fails. \newline 2. The system preserves the live profile and reports the error.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-PR-04: Only a pending revision may be approved. \newline BR-PR-05: Approval must apply the revision atomically and retain review metadata.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The action is served by \texttt{PATCH /admin/profile-revisions/:id/approve}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin has verified that the proposed information is acceptable.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-47.04 Reject Profile Update Request
+% =================================================================
+\subparagraph{UC-47.04 Reject Profile Update Request}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.04 Reject Profile Update Request} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 26/10/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & System \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin rejects a pending profile update request.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Rejects a request with a reason while leaving the live profile unchanged.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authorized. \newline \textbf{PRE-2} The revision exists and has status \texttt{PENDING}. \newline \textbf{PRE-3} A rejection reason is provided.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The revision status becomes \texttt{REJECTED}. \newline \textbf{POST-2} The live profile remains unchanged. \newline \textbf{POST-3} The requester is notified with the rejection reason.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Reject Request} \newline 1. The Admin opens a pending request. \newline 2. The Admin enters review notes explaining the rejection. \newline 3. The Admin confirms Reject. \newline 4. The system marks the revision \texttt{REJECTED} and records the notes, reviewer, and review time. \newline 5. The system keeps existing profile data unchanged and notifies the requester.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Cancel Rejection} \newline 1. The Admin cancels before confirmation. \newline 2. The request remains pending.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Missing Review Notes} \newline 1. The Admin submits no reason. \newline 2. The system requires review notes and does not reject the request. \newline \textbf{EX-02: Request Already Reviewed} \newline 1. The request is no longer pending. \newline 2. The system rejects the action.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-PR-06: Rejection notes are mandatory. \newline BR-PR-07: Rejecting a request must never update live profile data.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The action is served by \texttt{PATCH /admin/profile-revisions/:id/reject}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The requester can view the rejection result through the relevant profile experience.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-47.05 View Profile Update Request History
+% =================================================================
+\subparagraph{UC-47.05 View Profile Update Request History}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.05 View Profile Update Request History} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 27/10/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin searches or filters processed profile update requests.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view approved and rejected profile update requests.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated and authorized. \newline \textbf{PRE-2} Processed revision records are retained by the system.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{A paginated history showing status, review notes, reviewer, and review time is displayed.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. View Request History} \newline 1. The Admin chooses a processed-status filter. \newline 2. The system retrieves revisions with status \texttt{APPROVED} or \texttt{REJECTED}. \newline 3. The Admin may search by user or filter by profile type. \newline 4. The system displays the history and provides access to each detail view.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 No Matching History} \newline 1. No processed requests match the selected filters. \newline 2. The system displays an empty-state message.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Retrieval Error} \newline 1. The system cannot retrieve the history. \newline 2. The system displays an error and keeps the current filter state.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-PR-08: Approved and rejected revisions remain available for audit history.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The same list endpoint is used with processed-status filters.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Review metadata is stored for every processed request.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-47.06 Update Profile Expert
+% =================================================================
+\subparagraph{UC-47.06 Update Profile Expert}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-47.06 Update Profile Expert} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 28/10/2026 \\ \hline
+
+Primary Actor: & Expert & Secondary Actors: & Admin (when review is required) \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{An Expert edits the profile shown on the public expert experience.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an Expert to submit changes to display name, title, biography, expertise, experience, education, certifications, and website.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The user is authenticated and has the Expert role. \newline \textbf{PRE-2} The Expert has no existing pending profile revision.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{The changes are applied directly when permitted or recorded as a pending review request.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Update Expert Profile} \newline 1. The Expert opens profile settings. \newline 2. The system loads the current Expert profile. \newline 3. The Expert updates profile fields and submits the form. \newline 4. The system normalizes list values and calculates profile strength. \newline 5. The system either applies the update or creates a profile revision for Admin review. \newline 6. The system displays the update result.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Duplicate List Values} \newline 1. The Expert enters duplicate expertise, education, or certification values. \newline 2. The system removes duplicates before submission.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Pending Revision Exists} \newline 1. The Expert already has a pending revision. \newline 2. The system rejects the new submission. \newline \textbf{EX-02: Invalid Profile Data} \newline 1. Required or constrained fields fail validation. \newline 2. The system displays validation errors.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-EXP-01: Only users with the Expert role may edit an Expert profile. \newline BR-EXP-02: At most one pending Expert profile revision is allowed per user.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The Expert update endpoint is \texttt{PUT /expert-profiles/me}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The public expert page reads the approved live profile data.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-07.03 Upload CV
+% =================================================================
+\subparagraph{UC-07.03 Upload CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-07.03 Upload CV} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 29/10/2026 \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Freelancer selects a CV file from Account Profile settings.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to upload a supported CV file and associate it with the Freelancer profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Freelancer is authenticated and owns the profile. \newline \textbf{PRE-2} The selected file is a PDF no larger than 10 MB.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The CV is stored and its URL and file name are recorded on the Freelancer profile. \newline \textbf{POST-2} The CV becomes available for download.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Upload CV} \newline 1. The Freelancer selects a PDF file. \newline 2. The system validates the MIME type, PDF signature, and 10 MB size limit. \newline 3. The system uploads the file to configured cloud storage or local storage. \newline 4. The system stores the CV URL, file name, storage identifier, and upload time. \newline 5. The system displays the uploaded file name and success message.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Existing CV} \newline 1. The profile already has a CV. \newline 2. The system follows UC-07.05 Replace CV.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Missing File} \newline 1. No file is provided. \newline 2. The system requests a CV file. \newline \textbf{EX-02: Invalid File} \newline 1. The file is not a valid PDF or exceeds 10 MB. \newline 2. The system rejects the upload and leaves the existing CV unchanged.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-CV-01: Only PDF files of 10 MB or less are accepted. \newline BR-CV-02: A Freelancer may manage only the CV associated with their own profile.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The endpoint is \texttt{POST /profiles/:id/cv}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{File storage is available.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-07.04 View CV
+% =================================================================
+\subparagraph{UC-07.04 View CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-07.04 View CV} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 30/10/2026 \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Freelancer selects the displayed CV file name.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to view or download the CV currently associated with their profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Freelancer is authenticated and owns the profile. \newline \textbf{PRE-2} A CV exists for the profile.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{The browser opens or downloads the stored CV file.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. View CV} \newline 1. The Freelancer selects the current CV. \newline 2. The system verifies profile ownership and retrieves CV metadata. \newline 3. For a cloud-stored CV, the system redirects to the remote URL. \newline 4. For a locally stored CV, the system streams a PDF attachment using the original file name.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: CV Not Found} \newline 1. The profile has no CV or the stored file is unavailable. \newline 2. The system displays an error message. \newline \textbf{EX-02: Forbidden Access} \newline 1. The requester does not own the profile. \newline 2. The system denies access.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-CV-03: CV download access is limited to the profile owner.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The endpoint is \texttt{GET /profiles/:id/cv/file}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The stored file has not been removed outside the application.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-07.05 Replace CV
+% =================================================================
+\subparagraph{UC-07.05 Replace CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-07.05 Replace CV} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 30/10/2026 \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Freelancer selects Replace CV and chooses a new file.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Replaces the current CV with a newly uploaded supported file.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Freelancer is authenticated and owns the profile. \newline \textbf{PRE-2} The profile has an existing CV. \newline \textbf{PRE-3} The new file satisfies the PDF and size requirements.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The new CV becomes the profile's current CV. \newline \textbf{POST-2} The previous CV file is removed from storage when possible.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Replace CV} \newline 1. The Freelancer chooses a replacement PDF. \newline 2. The system validates and uploads the new file. \newline 3. The system updates the profile CV metadata to reference the new file. \newline 4. The system removes the previous cloud or local file. \newline 5. The system displays the new file name.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Previous File Cleanup Fails} \newline 1. The new CV is stored successfully. \newline 2. The system keeps the new CV as current and records no failure to the user for the old-file cleanup.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: New File Invalid} \newline 1. The replacement file fails validation. \newline 2. The system preserves the previous CV. \newline \textbf{EX-02: Upload Failure} \newline 1. The new file cannot be stored. \newline 2. The system preserves the previous CV and reports the error.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-CV-04: At most one current CV is associated with a Freelancer profile. \newline BR-CV-05: Replacement follows the same PDF and 10 MB validation as upload.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Replacement uses \texttt{POST /profiles/:id/cv}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The original CV storage reference is available for cleanup.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-07.06 Delete CV
+% =================================================================
+\subparagraph{UC-07.06 Delete CV}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-07.06 Delete CV} \\ \hline
+
+Created By: & Nguyen Lu Nhat Huy & Date Created: & 31/10/2026 \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Freelancer confirms Delete CV in profile settings.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Removes the CV associated with the Freelancer's profile.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Freelancer is authenticated and owns the profile. \newline \textbf{PRE-2} A CV exists for the profile.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The CV file is removed from storage when possible. \newline \textbf{POST-2} The profile CV URL, file name, storage identifier, and upload time are cleared.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Delete CV} \newline 1. The Freelancer selects Delete CV. \newline 2. The system displays a confirmation dialog. \newline 3. The Freelancer confirms deletion. \newline 4. The system verifies ownership, removes the stored file, and clears CV metadata from the profile. \newline 5. The system displays a success message and removes the CV link from settings.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Cancel Deletion} \newline 1. The Freelancer cancels the confirmation dialog. \newline 2. The current CV remains unchanged.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: CV Not Found} \newline 1. The profile has no stored CV. \newline 2. The system reports that no CV is available to delete. \newline \textbf{EX-02: Forbidden Access} \newline 1. The requester does not own the profile. \newline 2. The system denies deletion.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{BR-CV-06: Only the profile owner may delete a CV. \newline BR-CV-07: Deletion clears the profile's CV metadata even if storage cleanup is unavailable.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{The endpoint is \texttt{DELETE /profiles/:id/cv}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Freelancer understands that deleting the CV removes its availability from the profile.} \\ \hline
+
+\end{longtable}

@@ -1,0 +1,285 @@
+% =================================================================
+% FILE: sections/tthuan/4/sprint5.tex -- Sprint 5
+% Class specifications for Expert Profile and Job Category Management
+% =================================================================
+
+\subsection{AdminExpertProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AdminExpertProfileController(service: ExpertProfileService)} &
+A method to initialize the controller with the expert profile service.
+\newline -- \code{service}: \code{ExpertProfileService} -- service that owns expert profile use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{update(}\newline\code{userId: number, adminId: number,}\newline\code{body: AdminUpdateExpertProfileDto)} &
+A method for an administrator to update an expert profile directly.
+\newline -- \code{userId}: \code{number} -- expert account identifier.
+\newline -- \code{adminId}: \code{number} -- current administrator, recorded on superseded revisions.
+\newline -- \code{body}: \code{AdminUpdateExpertProfileDto} -- display name, bio, title, expertise, experience, education, certifications, website, and active state.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Route: \code{PATCH /users/:id/expert-profile}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ExpertProfileService} -- private readonly expert profile service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ExpertProfileService(}\newline\code{repository: ExpertProfileRepository,}\newline\code{revisions: ProfileRevisionService)} &
+A method to initialize the service with persistence and revision handling.
+\newline -- \code{repository}: \code{ExpertProfileRepository} -- expert profile persistence.
+\newline -- \code{revisions}: \code{ProfileRevisionService} -- self-service revision workflow.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{cleanList(values: string[])} &
+A private method to trim, de-duplicate, and preserve the first casing of a string list.
+\newline -- \code{values}: \code{string[]} -- raw list values.
+\newline -- \textit{Returns:} \code{string[]} -- the cleaned list. \\ \hline
+
+03 & \code{sanitize(input)} &
+A private method to clean list fields and normalize the website value.
+\newline -- \code{input}: \code{UpdateExpertProfileType} -- profile input.
+\newline -- \textit{Returns:} \code{UpdateExpertProfileType} -- the sanitized input. \\ \hline
+
+04 & \code{context(userId: number)} &
+A private method to load an expert account and verify its Expert role.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<user context>} -- account, profile, and roles.
+\newline -- Throws \code{ExpertProfileNotFoundException} or \code{NotAnExpertAccountException}. \\ \hline
+
+05 & \code{getMine(userId: number)} &
+A method to return the authenticated expert's profile.
+\newline -- \code{userId}: \code{number} -- current expert account.
+\newline -- \textit{Returns:} \code{Promise<ExpertProfileType>} -- profile and expert fields.
+\newline -- Used by the self-service profile page, not by the admin endpoint. \\ \hline
+
+06 & \code{submitUpdate(userId, input)} &
+A method to submit a self-service expert profile revision.
+\newline -- \code{userId}: \code{number} -- current expert account.
+\newline -- \code{input}: \code{UpdateExpertProfileType} -- requested profile changes.
+\newline -- \textit{Returns:} \code{Promise<revision result>} -- the pending revision.
+\newline -- Throws \code{ExpertProfilePendingRevisionException} when a revision is already pending. \\ \hline
+
+07 & \code{updateByAdmin(userId, adminId, input)} &
+A method to update an expert profile directly and supersede pending revisions.
+\newline -- \code{userId}: \code{number} -- target expert account.
+\newline -- \code{adminId}: \code{number} -- current administrator.
+\newline -- \code{input}: \code{AdminUpdateExpertProfileType} -- administrative profile changes.
+\newline -- \textit{Returns:} \code{Promise<MessageResType>} -- a success message.
+\newline -- Throws \code{ExpertProfileNotFoundException} or \code{NotAnExpertAccountException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ExpertProfileRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{revisions} & \code{ProfileRevisionService} -- private readonly revision workflow dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ExpertProfileRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findByUserId(userId: number)} &
+A method to load an expert account with its profile and roles.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<user context | null>} -- the account graph, or \code{null}. \\ \hline
+
+03 & \code{updateDirect(userId, adminId, input, profileCompletionPercent)} &
+A method to supersede pending revisions, update the profile, and upsert the expert row in one transaction.
+\newline -- \code{userId}: \code{number} -- target expert account.
+\newline -- \code{adminId}: \code{number} -- reviewing administrator.
+\newline -- \code{input}: \code{AdminUpdateExpertProfileType} -- sanitized profile changes.
+\newline -- \code{profileCompletionPercent}: \code{number} -- recalculated completeness.
+\newline -- \textit{Returns:} \code{Promise<void>} -- no value.
+\newline -- Creates a system notification when a pending revision was superseded. \\ \hline
+
+04 & \code{hasPendingRevision(userId: number)} &
+A method to check for a pending expert revision.
+\newline -- \code{userId}: \code{number} -- target account.
+\newline -- \textit{Returns:} \code{Promise<{ id: number } | null>} -- the pending revision, or \code{null}. \\ \hline
+
+05 & \code{findPublicMany(query: PublicExpertQueryType)} &
+A method to query active public expert profiles.
+\newline -- \code{query}: \code{PublicExpertQueryType} -- expertise, search, and pagination filters.
+\newline -- \textit{Returns:} \code{Promise<public expert page>} -- public expert cards. \\ \hline
+
+06 & \code{findPublicById(id: number)} &
+A method to load one active public expert profile.
+\newline -- \code{id}: \code{number} -- expert identifier.
+\newline -- \textit{Returns:} \code{Promise<public expert | null>} -- the public profile, or \code{null}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{JobCategoriesAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{JobCategoriesAdminController(service: JobCategoriesAdminService)} &
+A method to initialize the controller with the job category service.
+\newline -- \code{service}: \code{JobCategoriesAdminService} -- service that owns job category use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listJobCategories(query: JobCategoryAdminQueryDto)} &
+A method to return a filtered, paginated job category list.
+\newline -- \code{query}: \code{JobCategoryAdminQueryDto} -- page, limit, search, status, deleted, and sort options.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminListResponseType>} -- categories and pagination.
+\newline -- Route: \code{GET /admin/job-categories}. \\ \hline
+
+03 & \code{createJobCategory(body: CreateJobCategoryBodyDto)} &
+A method to create a job category.
+\newline -- \code{body}: \code{CreateJobCategoryBodyDto} -- name, description, icon, and status.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the created category.
+\newline -- Route: \code{POST /admin/job-categories}. \\ \hline
+
+04 & \code{updateJobCategory(id: number, body: UpdateJobCategoryBodyDto)} &
+A method to update a job category.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \code{body}: \code{UpdateJobCategoryBodyDto} -- optional category fields.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the updated category.
+\newline -- Route: \code{PATCH /admin/job-categories/:id}. \\ \hline
+
+05 & \code{restoreJobCategory(id: number)} &
+A method to restore a soft-deleted job category.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the restored category.
+\newline -- Route: \code{PATCH /admin/job-categories/:id/restore}. \\ \hline
+
+06 & \code{deleteJobCategory(id: number)} &
+A method to soft-delete a job category that has no active jobs.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDeleteResponseType>} -- a success message.
+\newline -- Route: \code{DELETE /admin/job-categories/:id}. \\ \hline
+
+07 & \code{getJobCategoryDetail(id: number)} &
+A method to return one job category.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the category detail.
+\newline -- Route: \code{GET /admin/job-categories/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{JobCategoriesAdminService} -- private readonly job category service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{JobCategoriesAdminService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{JobCategoriesAdminService(}\newline\code{repository: JobCategoriesAdminRepository)} &
+A method to initialize the service with the job category repository.
+\newline -- \code{repository}: \code{JobCategoriesAdminRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listJobCategories(query: JobCategoryAdminQueryType)} &
+A method to load a job category page.
+\newline -- \code{query}: \code{JobCategoryAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminListResponseType>} -- categories and pagination.
+\newline -- Failure is mapped to \code{FailedToLoadJobCategoryListException}. \\ \hline
+
+03 & \code{getJobCategoryDetail(id: number)} &
+A method to load one job category.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the category detail.
+\newline -- Throws \code{JobCategoryAdminNotFoundException} or \code{FailedToLoadJobCategoryDetailException}. \\ \hline
+
+04 & \code{createJobCategory(body: AdminCreateJobCategoryBodyType)} &
+A method to create a category and handle a concurrent duplicate.
+\newline -- \code{body}: \code{AdminCreateJobCategoryBodyType} -- category fields.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the created category.
+\newline -- Throws \code{JobCategoryNameAlreadyExistsException} or \code{FailedToCreateJobCategoryException}. \\ \hline
+
+05 & \code{updateJobCategory(id, body)} &
+A method to update a category and handle a concurrent duplicate.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \code{body}: \code{AdminUpdateJobCategoryBodyType} -- optional category fields.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the updated category.
+\newline -- Throws \code{JobCategoryAdminNotFoundException}, \code{JobCategoryNameAlreadyExistsException}, or \code{FailedToUpdateJobCategoryException}. \\ \hline
+
+06 & \code{deleteJobCategory(id: number)} &
+A method to soft-delete a category after checking active job references.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{JobCategoryAdminNotFoundException}, \code{JobCategoryHasJobsException}, or \code{FailedToDeleteJobCategoryException}. \\ \hline
+
+07 & \code{restoreJobCategory(id: number)} &
+A method to restore a soft-deleted category.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the restored category.
+\newline -- Throws \code{JobCategoryAdminNotFoundException}, \code{JobCategoryNameAlreadyExistsException}, or \code{FailedToRestoreJobCategoryException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{JobCategoriesAdminRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{JobCategoriesAdminRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{JobCategoriesAdminRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listJobCategories(query: JobCategoryAdminQueryType)} &
+A method to query categories with search, status, deleted-state, sorting, and pagination.
+\newline -- \code{query}: \code{JobCategoryAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminListResponseType>} -- categories and pagination.
+\newline -- Search matches name, slug, or description. \\ \hline
+
+03 & \code{getJobCategoryDetail(id: number)} &
+A method to load one category with its job count.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType | null>} -- the category, or \code{null}. \\ \hline
+
+04 & \code{createJobCategory(data)} &
+A method to generate a unique slug and insert a category.
+\newline -- \code{data}: \code{AdminCreateJobCategoryBodyType} -- category fields.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the created category.
+\newline -- Throws \code{JobCategoryNameAlreadyExistsException}. \\ \hline
+
+05 & \code{updateJobCategory(id, data)} &
+A method to update a category and regenerate its slug when the name changes.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \code{data}: \code{AdminUpdateJobCategoryBodyType} -- optional category fields.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the updated category.
+\newline -- Throws \code{JobCategoryAdminNotFoundException} or \code{JobCategoryNameAlreadyExistsException}. \\ \hline
+
+06 & \code{deleteJobCategory(id: number)} &
+A method to check active job references and set the delete timestamp.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{JobCategoryAdminNotFoundException} or \code{JobCategoryHasJobsException}. \\ \hline
+
+07 & \code{restoreJobCategory(id: number)} &
+A method to clear the delete timestamp after checking name conflicts.
+\newline -- \code{id}: \code{number} -- category identifier.
+\newline -- \textit{Returns:} \code{Promise<JobCategoryAdminDetailResponseType>} -- the restored category.
+\newline -- Throws \code{JobCategoryAdminNotFoundException} or \code{JobCategoryNameAlreadyExistsException}. \\ \hline
+
+08 & \code{generateUniqueSlug(name: string)} &
+A private method to derive a slug and append a numeric suffix on collision.
+\newline -- \code{name}: \code{string} -- category name.
+\newline -- \textit{Returns:} \code{Promise<string>} -- the unique slug. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}

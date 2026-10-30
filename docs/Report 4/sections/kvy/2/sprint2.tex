@@ -1,94 +1,45 @@
 % =================================================================
 % FILE: sections/kvy/2/sprint2.tex -- Sprint 2 (Conversation)
-% Features are listed in the approved feature order. PDF diagrams are
-% rendered from the .svg exports in images/sprint2/kvy/.
+% UC-27 Manage Conversation. Figures are the vector PDFs exported from
+% class-diagrams/UC-27_Manage_Conversation_Class_Diagram.drawio and
+% sequence-diagrams/UC-27.<nn>-*.drawio into images/sprint2/kvy/.
 % =================================================================
 
+% ================= Manage Conversation =================
+\subsection{Manage Conversation}
 
-% ================= View Conversation List =================
-\subsection{View Conversation List}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/View Conversation List}{Class diagram of View Conversation List}{fig:cls-view-conversation-list}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/ViewConversationList}{Sequence diagram of View Conversation List}{fig:seq-view-conversation-list}
-
-% ================= Start Conversation =================
-\subsection{Start Conversation}
+Manage Conversation covers the UC-27 private messaging module: listing and
+starting one-to-one conversations, opening a conversation, sending text
+messages and files, marking messages as read, recalling a message, and
+pinning or unpinning a conversation. Delivery is served both by the REST
+endpoints and by the realtime gateway in the same namespace.
 
 \textbf{a.~Class Diagram}
 
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Start Conversation}{Class diagram of Start Conversation}{fig:cls-start-conversation}
+\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/ManageConversation}{Class diagram of Manage Conversation}{fig:kvy-cls-manage-conversation}
 
 \textbf{b.~Sequence Diagram(s)}
 
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/StartConversation}{Sequence diagram of Start Conversation}{fig:seq-start-conversation}
+\subsubsection{UC-27.01 -- View Conversation List}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.01-view-conversation-list}{Sequence diagram of UC-27.01 View Conversation List}{fig:kvy-seq-uc-27-01}
 
-% ================= View Conversation Detail =================
-\subsection{View Conversation Detail}
+\subsubsection{UC-27.02 -- Start Conversation}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.02-start-conversation}{Sequence diagram of UC-27.02 Start Conversation}{fig:kvy-seq-uc-27-02}
 
-\textbf{a.~Class Diagram}
+\subsubsection{UC-27.03 -- View Conversation Detail}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail}{Sequence diagram of UC-27.03 View Conversation Detail}{fig:kvy-seq-uc-27-03}
 
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/View Conversation Detail}{Class diagram of View Conversation Detail}{fig:cls-view-conversation-detail}
+\subsubsection{UC-27.04 -- Send Message}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.04-send-message}{Sequence diagram of UC-27.04 Send Message}{fig:kvy-seq-uc-27-04}
 
-\textbf{b.~Sequence Diagram(s)}
+\subsubsection{UC-27.05 -- Mark Message as Read}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read}{Sequence diagram of UC-27.05 Mark Message as Read}{fig:kvy-seq-uc-27-05}
 
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/ConversationDetail}{Sequence diagram of View Conversation Detail}{fig:seq-view-conversation-detail}
+\subsubsection{UC-27.06 -- Delete/Recall Message}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.06-delete-recall-message}{Sequence diagram of UC-27.06 Delete/Recall Message}{fig:kvy-seq-uc-27-06}
 
-% ================= Send Message =================
-\subsection{Send Message}
+\subsubsection{UC-27.07 -- Pin/Unpin Conversation}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation}{Sequence diagram of UC-27.07 Pin/Unpin Conversation}{fig:kvy-seq-uc-27-07}
 
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Send Message}{Class diagram of Send Message}{fig:cls-send-message}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/SendMessage}{Sequence diagram of Send Message}{fig:seq-send-message}
-
-% ================= Mark Message as Read =================
-\subsection{Mark Message as Read}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Mark Message as Read}{Class diagram of Mark Message as Read}{fig:cls-mark-message-as-read}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/MarkConversationAsRead}{Sequence diagram of Mark Message as Read}{fig:seq-mark-message-as-read}
-
-% ================= Delete/Recall Message =================
-\subsection{Delete/Recall Message}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Delete-Recall Message}{Class diagram of Delete/Recall Message}{fig:cls-delete-recall-message}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/DeleteMessage}{Sequence diagram of Delete/Recall Message}{fig:seq-delete-recall-message}
-
-% ================= Pin/Unpin Conversation =================
-\subsection{Pin/Unpin Conversation}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Pin-Unpin Conversation}{Class diagram of Pin/Unpin Conversation}{fig:cls-pin-unpin-conversation}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/PinUnpinMessage}{Sequence diagram of Pin/Unpin Conversation}{fig:seq-pin-unpin-conversation}
-
-% ================= Send File =================
-\subsection{Send File}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint2/kvy/classDiagram/Send File}{Class diagram of Send File}{fig:cls-send-file}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/SendFile}{Sequence diagram of Send File}{fig:seq-send-file}
+\subsubsection{UC-27.08 -- Send File}
+\kfig{0.78\textwidth}{images/sprint2/kvy/sequences/UC-27.08-send-file}{Sequence diagram of UC-27.08 Send File}{fig:kvy-seq-uc-27-08}

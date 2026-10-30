@@ -1,6 +1,6 @@
-PWD D:\Year4\FA26\Capstone_Project\frevia-clone\docs\Report 4
+PWD d:\Year4\FA26\Capstone_Project\frevia-clone\docs\Report 4
 INPUT C:\Users\Lenovo\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT main.tex
+INPUT d:\Year4\FA26\Capstone_Project\frevia-clone\docs\Report 4\main.tex
 OUTPUT main.log
 INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
 INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
@@ -313,366 +313,526 @@ INPUT .\sections\kvy\2\sprint1.tex
 INPUT .\sections\kvy\2\sprint1.tex
 INPUT .\sections\kvy\2\sprint1.tex
 INPUT sections\kvy\2\sprint1.tex
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category List.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategories.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategories.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategories.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategories.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategories.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Forum Category Detail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategoryDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategoryDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategoryDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategoryDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewForumCategoryDetail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post List.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post List.pdf
-INPUT .\images\sprint1\kvy\sequences\PostList.pdf
-INPUT .\images\sprint1\kvy\sequences\PostList.pdf
-INPUT .\images\sprint1\kvy\sequences\PostList.pdf
-INPUT .\images\sprint1\kvy\sequences\PostList.pdf
-INPUT .\images\sprint1\kvy\sequences\PostList.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Detail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Detail.pdf
-INPUT .\images\sprint1\kvy\sequences\PostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\PostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\PostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\PostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\PostDetail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Post.pdf
-INPUT .\images\sprint1\kvy\sequences\CreatePost.pdf
-INPUT .\images\sprint1\kvy\sequences\CreatePost.pdf
-INPUT .\images\sprint1\kvy\sequences\CreatePost.pdf
-INPUT .\images\sprint1\kvy\sequences\CreatePost.pdf
-INPUT .\images\sprint1\kvy\sequences\CreatePost.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Post.pdf
-INPUT .\images\sprint1\kvy\sequences\EditPost.pdf
-INPUT .\images\sprint1\kvy\sequences\EditPost.pdf
-INPUT .\images\sprint1\kvy\sequences\EditPost.pdf
-INPUT .\images\sprint1\kvy\sequences\EditPost.pdf
-INPUT .\images\sprint1\kvy\sequences\EditPost.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Post.pdf
-INPUT .\images\sprint1\kvy\sequences\DeletePost.pdf
-INPUT .\images\sprint1\kvy\sequences\DeletePost.pdf
-INPUT .\images\sprint1\kvy\sequences\DeletePost.pdf
-INPUT .\images\sprint1\kvy\sequences\DeletePost.pdf
-INPUT .\images\sprint1\kvy\sequences\DeletePost.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Post.pdf
-INPUT .\images\sprint1\kvy\sequences\LikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\LikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\LikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\LikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\LikePost.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Post.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Post.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikePost.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikePost.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Likes.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Likes.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Likes.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Likes.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Likes.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewLikePostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewLikePostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewLikePostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewLikePostDetail.pdf
-INPUT .\images\sprint1\kvy\sequences\ViewLikePostDetail.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\View Post Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\PostComments.pdf
-INPUT .\images\sprint1\kvy\sequences\PostComments.pdf
-INPUT .\images\sprint1\kvy\sequences\PostComments.pdf
-INPUT .\images\sprint1\kvy\sequences\PostComments.pdf
-INPUT .\images\sprint1\kvy\sequences\PostComments.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Create Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\AddComment.pdf
-INPUT .\images\sprint1\kvy\sequences\AddComment.pdf
-INPUT .\images\sprint1\kvy\sequences\AddComment.pdf
-INPUT .\images\sprint1\kvy\sequences\AddComment.pdf
-INPUT .\images\sprint1\kvy\sequences\AddComment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Update Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\EditComment.pdf
-INPUT .\images\sprint1\kvy\sequences\EditComment.pdf
-INPUT .\images\sprint1\kvy\sequences\EditComment.pdf
-INPUT .\images\sprint1\kvy\sequences\EditComment.pdf
-INPUT .\images\sprint1\kvy\sequences\EditComment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Delete Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\DeleteComment.pdf
-INPUT .\images\sprint1\kvy\sequences\DeleteComment.pdf
-INPUT .\images\sprint1\kvy\sequences\DeleteComment.pdf
-INPUT .\images\sprint1\kvy\sequences\DeleteComment.pdf
-INPUT .\images\sprint1\kvy\sequences\DeleteComment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Like Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\LikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\LikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\LikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\LikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\LikeComment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Comment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Unlike Comment.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikeComment.pdf
-INPUT .\images\sprint1\kvy\sequences\UnlikeComment.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Report Content.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Report Content.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Report Content.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Report Content.pdf
-INPUT .\images\sprint1\kvy\classDiagram\Report Content.pdf
-INPUT .\images\sprint1\kvy\sequences\ReportContent.pdf
-INPUT .\images\sprint1\kvy\sequences\ReportContent.pdf
-INPUT .\images\sprint1\kvy\sequences\ReportContent.pdf
-INPUT .\images\sprint1\kvy\sequences\ReportContent.pdf
-INPUT .\images\sprint1\kvy\sequences\ReportContent.pdf
+INPUT .\images\sprint1\kvy\classDiagram\ForumManagement.pdf
+INPUT .\images\sprint1\kvy\classDiagram\ForumManagement.pdf
+INPUT .\images\sprint1\kvy\classDiagram\ForumManagement.pdf
+INPUT .\images\sprint1\kvy\classDiagram\ForumManagement.pdf
+INPUT .\images\sprint1\kvy\classDiagram\ForumManagement.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.01-view-forum-category-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.01-view-forum-category-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.01-view-forum-category-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.01-view-forum-category-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.01-view-forum-category-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.02-view-forum-category-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.02-view-forum-category-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.02-view-forum-category-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.02-view-forum-category-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.02-view-forum-category-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.03-view-post-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.03-view-post-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.03-view-post-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.03-view-post-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.03-view-post-list.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.04-view-post-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.04-view-post-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.04-view-post-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.04-view-post-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.04-view-post-detail.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.05-create-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.05-create-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.05-create-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.05-create-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.05-create-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.06-update-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.06-update-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.06-update-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.06-update-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.06-update-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.07-delete-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.07-delete-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.07-delete-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.07-delete-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.07-delete-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.08-like-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.08-like-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.08-like-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.08-like-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.08-like-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.09-unlike-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.09-unlike-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.09-unlike-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.09-unlike-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.09-unlike-post.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.10-view-post-likes.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.10-view-post-likes.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.10-view-post-likes.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.10-view-post-likes.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.10-view-post-likes.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.11-view-post-comments.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.11-view-post-comments.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.11-view-post-comments.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.11-view-post-comments.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.11-view-post-comments.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.12-create-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.12-create-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.12-create-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.12-create-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.12-create-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.13-update-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.13-update-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.13-update-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.13-update-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.13-update-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.14-delete-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.14-delete-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.14-delete-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.14-delete-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.14-delete-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.15-like-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.15-like-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.15-like-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.15-like-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.15-like-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.16-unlike-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.16-unlike-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.16-unlike-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.16-unlike-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.16-unlike-comment.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.17-report-content.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.17-report-content.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.17-report-content.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.17-report-content.pdf
+INPUT .\images\sprint1\kvy\sequences\UC-14.17-report-content.pdf
+INPUT .\sections\tthuan\2\sprint1.tex
+INPUT .\sections\tthuan\2\sprint1.tex
+INPUT .\sections\tthuan\2\sprint1.tex
+INPUT .\sections\tthuan\2\sprint1.tex
+INPUT sections\tthuan\2\sprint1.tex
+INPUT .\images\sprint1\tthuan\classDiagram\AuthClasses.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\AuthClasses.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\AuthClasses.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\AuthClasses.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\AuthClasses.pdf
+INPUT .\images\sprint1\tthuan\sequences\LoginWithGoogle.pdf
+INPUT .\images\sprint1\tthuan\sequences\LoginWithGoogle.pdf
+INPUT .\images\sprint1\tthuan\sequences\LoginWithGoogle.pdf
+INPUT .\images\sprint1\tthuan\sequences\LoginWithGoogle.pdf
+INPUT .\images\sprint1\tthuan\sequences\LoginWithGoogle.pdf
+INPUT .\images\sprint1\tthuan\sequences\Login.pdf
+INPUT .\images\sprint1\tthuan\sequences\Login.pdf
+INPUT .\images\sprint1\tthuan\sequences\Login.pdf
+INPUT .\images\sprint1\tthuan\sequences\Login.pdf
+INPUT .\images\sprint1\tthuan\sequences\Login.pdf
+INPUT .\images\sprint1\tthuan\sequences\Logout.pdf
+INPUT .\images\sprint1\tthuan\sequences\Logout.pdf
+INPUT .\images\sprint1\tthuan\sequences\Logout.pdf
+INPUT .\images\sprint1\tthuan\sequences\Logout.pdf
+INPUT .\images\sprint1\tthuan\sequences\Logout.pdf
+INPUT .\images\sprint1\tthuan\sequences\Register.pdf
+INPUT .\images\sprint1\tthuan\sequences\Register.pdf
+INPUT .\images\sprint1\tthuan\sequences\Register.pdf
+INPUT .\images\sprint1\tthuan\sequences\Register.pdf
+INPUT .\images\sprint1\tthuan\sequences\Register.pdf
+INPUT .\images\sprint1\tthuan\sequences\ForgotPassword.pdf
+INPUT .\images\sprint1\tthuan\sequences\ForgotPassword.pdf
+INPUT .\images\sprint1\tthuan\sequences\ForgotPassword.pdf
+INPUT .\images\sprint1\tthuan\sequences\ForgotPassword.pdf
+INPUT .\images\sprint1\tthuan\sequences\ForgotPassword.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\RoleManagement.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\RoleManagement.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\RoleManagement.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\RoleManagement.pdf
+INPUT .\images\sprint1\tthuan\classDiagram\RoleManagement.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleList.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleList.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleList.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleList.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleList.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleDetail.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleDetail.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleDetail.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleDetail.pdf
+INPUT .\images\sprint1\tthuan\sequences\ViewRoleDetail.pdf
+INPUT .\images\sprint1\tthuan\sequences\CreateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\CreateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\CreateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\CreateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\CreateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\DeleteRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\DeleteRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\DeleteRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\DeleteRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\DeleteRole.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRolePermissions.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRolePermissions.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRolePermissions.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRolePermissions.pdf
+INPUT .\images\sprint1\tthuan\sequences\UpdateRolePermissions.pdf
 INPUT .\sections\kvy\2\sprint2.tex
 INPUT .\sections\kvy\2\sprint2.tex
 INPUT .\sections\kvy\2\sprint2.tex
 INPUT .\sections\kvy\2\sprint2.tex
 INPUT sections\kvy\2\sprint2.tex
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation List.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation List.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation List.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation List.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation List.pdf
-INPUT .\images\sprint2\kvy\sequences\ViewConversationList.pdf
-INPUT .\images\sprint2\kvy\sequences\ViewConversationList.pdf
-INPUT .\images\sprint2\kvy\sequences\ViewConversationList.pdf
-INPUT .\images\sprint2\kvy\sequences\ViewConversationList.pdf
-INPUT .\images\sprint2\kvy\sequences\ViewConversationList.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Start Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Start Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Start Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Start Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Start Conversation.pdf
-INPUT .\images\sprint2\kvy\sequences\StartConversation.pdf
-INPUT .\images\sprint2\kvy\sequences\StartConversation.pdf
-INPUT .\images\sprint2\kvy\sequences\StartConversation.pdf
-INPUT .\images\sprint2\kvy\sequences\StartConversation.pdf
-INPUT .\images\sprint2\kvy\sequences\StartConversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation Detail.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation Detail.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation Detail.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation Detail.pdf
-INPUT .\images\sprint2\kvy\classDiagram\View Conversation Detail.pdf
-INPUT .\images\sprint2\kvy\sequences\ConversationDetail.pdf
-INPUT .\images\sprint2\kvy\sequences\ConversationDetail.pdf
-INPUT .\images\sprint2\kvy\sequences\ConversationDetail.pdf
-INPUT .\images\sprint2\kvy\sequences\ConversationDetail.pdf
-INPUT .\images\sprint2\kvy\sequences\ConversationDetail.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send Message.pdf
-INPUT .\images\sprint2\kvy\sequences\SendMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\SendMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\SendMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\SendMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\SendMessage.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Mark Message as Read.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Mark Message as Read.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Mark Message as Read.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Mark Message as Read.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Mark Message as Read.pdf
-INPUT .\images\sprint2\kvy\sequences\MarkConversationAsRead.pdf
-INPUT .\images\sprint2\kvy\sequences\MarkConversationAsRead.pdf
-INPUT .\images\sprint2\kvy\sequences\MarkConversationAsRead.pdf
-INPUT .\images\sprint2\kvy\sequences\MarkConversationAsRead.pdf
-INPUT .\images\sprint2\kvy\sequences\MarkConversationAsRead.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Delete-Recall Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Delete-Recall Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Delete-Recall Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Delete-Recall Message.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Delete-Recall Message.pdf
-INPUT .\images\sprint2\kvy\sequences\DeleteMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\DeleteMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\DeleteMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\DeleteMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\DeleteMessage.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Pin-Unpin Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Pin-Unpin Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Pin-Unpin Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Pin-Unpin Conversation.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Pin-Unpin Conversation.pdf
-INPUT .\images\sprint2\kvy\sequences\PinUnpinMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\PinUnpinMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\PinUnpinMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\PinUnpinMessage.pdf
-INPUT .\images\sprint2\kvy\sequences\PinUnpinMessage.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send File.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send File.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send File.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send File.pdf
-INPUT .\images\sprint2\kvy\classDiagram\Send File.pdf
-INPUT .\images\sprint2\kvy\sequences\SendFile.pdf
-INPUT .\images\sprint2\kvy\sequences\SendFile.pdf
-INPUT .\images\sprint2\kvy\sequences\SendFile.pdf
-INPUT .\images\sprint2\kvy\sequences\SendFile.pdf
-INPUT .\images\sprint2\kvy\sequences\SendFile.pdf
+INPUT .\images\sprint2\kvy\classDiagram\ManageConversation.pdf
+INPUT .\images\sprint2\kvy\classDiagram\ManageConversation.pdf
+INPUT .\images\sprint2\kvy\classDiagram\ManageConversation.pdf
+INPUT .\images\sprint2\kvy\classDiagram\ManageConversation.pdf
+INPUT .\images\sprint2\kvy\classDiagram\ManageConversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.01-view-conversation-list.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.01-view-conversation-list.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.01-view-conversation-list.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.01-view-conversation-list.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.01-view-conversation-list.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.02-start-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.02-start-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.02-start-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.02-start-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.02-start-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.03-view-conversation-detail.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.03-view-conversation-detail.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.03-view-conversation-detail.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.03-view-conversation-detail.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.03-view-conversation-detail.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.04-send-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.04-send-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.04-send-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.04-send-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.04-send-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.05-mark-message-as-read.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.05-mark-message-as-read.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.05-mark-message-as-read.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.05-mark-message-as-read.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.05-mark-message-as-read.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.06-delete-recall-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.06-delete-recall-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.06-delete-recall-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.06-delete-recall-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.06-delete-recall-message.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.07-pin-unpin-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.07-pin-unpin-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.07-pin-unpin-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.07-pin-unpin-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.07-pin-unpin-conversation.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.08-send-file.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.08-send-file.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.08-send-file.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.08-send-file.pdf
+INPUT .\images\sprint2\kvy\sequences\UC-27.08-send-file.pdf
+INPUT .\sections\tthuan\2\sprint2.tex
+INPUT .\sections\tthuan\2\sprint2.tex
+INPUT .\sections\tthuan\2\sprint2.tex
+INPUT .\sections\tthuan\2\sprint2.tex
+INPUT sections\tthuan\2\sprint2.tex
+INPUT .\images\sprint2\tthuan\classDiagram\PermissionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\PermissionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\PermissionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\PermissionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\PermissionManagement.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewPermissionDetail.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\SessionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\SessionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\SessionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\SessionManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\SessionManagement.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewSessionDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\RevokeSession.pdf
+INPUT .\images\sprint2\tthuan\sequences\RevokeSession.pdf
+INPUT .\images\sprint2\tthuan\sequences\RevokeSession.pdf
+INPUT .\images\sprint2\tthuan\sequences\RevokeSession.pdf
+INPUT .\images\sprint2\tthuan\sequences\RevokeSession.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\ForumCategoryManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\ForumCategoryManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\ForumCategoryManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\ForumCategoryManagement.pdf
+INPUT .\images\sprint2\tthuan\classDiagram\ForumCategoryManagement.pdf
+INPUT .\images\sprint2\tthuan\sequences\CreateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\CreateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\CreateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\CreateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\CreateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\UpdateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\UpdateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\UpdateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\UpdateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\UpdateForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\DeleteForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\DeleteForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\DeleteForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\DeleteForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\DeleteForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\RestoreForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\RestoreForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\RestoreForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\RestoreForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\RestoreForumCategory.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryList.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryDetail.pdf
+INPUT .\images\sprint2\tthuan\sequences\ViewForumCategoryDetail.pdf
 INPUT .\sections\kvy\2\sprint3.tex
 INPUT .\sections\kvy\2\sprint3.tex
 INPUT .\sections\kvy\2\sprint3.tex
 INPUT .\sections\kvy\2\sprint3.tex
 INPUT sections\kvy\2\sprint3.tex
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Queue.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Queue.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Queue.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Queue.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Queue.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewModerationQueue.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewModerationQueue.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewModerationQueue.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewModerationQueue.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewModerationQueue.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Item Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Item Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Item Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Item Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Moderation Item Detail.pdf
-INPUT .\images\sprint3\kvy\sequences\ModerationItemDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\ModerationItemDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\ModerationItemDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\ModerationItemDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\ModerationItemDetail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Resolve Moderation Item.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Resolve Moderation Item.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Resolve Moderation Item.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Resolve Moderation Item.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Resolve Moderation Item.pdf
-INPUT .\images\sprint3\kvy\sequences\ResolveModeration.pdf
-INPUT .\images\sprint3\kvy\sequences\ResolveModeration.pdf
-INPUT .\images\sprint3\kvy\sequences\ResolveModeration.pdf
-INPUT .\images\sprint3\kvy\sequences\ResolveModeration.pdf
-INPUT .\images\sprint3\kvy\sequences\ResolveModeration.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request List.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewIDVerification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View ID Verification Request Detail.pdf
-INPUT .\images\sprint3\kvy\sequences\IDVerificationDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\IDVerificationDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\IDVerificationDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\IDVerificationDetail.pdf
-INPUT .\images\sprint3\kvy\sequences\IDVerificationDetail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Approve ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Approve ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Approve ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Approve ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Approve ID Verification.pdf
-INPUT .\images\sprint3\kvy\sequences\ApprovedIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ApprovedIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ApprovedIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ApprovedIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\ApprovedIDVerification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Reject ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Reject ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Reject ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Reject ID Verification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Reject ID Verification.pdf
-INPUT .\images\sprint3\kvy\sequences\RejectIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\RejectIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\RejectIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\RejectIDVerification.pdf
-INPUT .\images\sprint3\kvy\sequences\RejectIDVerification.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments List.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments List.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrComment-Page-1.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrComment-Page-1.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrComment-Page-1.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrComment-Page-1.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrComment-Page-1.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments Detail.pdf
-INPUT .\images\sprint3\kvy\classDiagram\View Deleted Posts-Comments Detail.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrCOmmentDetai.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrCOmmentDetai.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrCOmmentDetai.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrCOmmentDetai.pdf
-INPUT .\images\sprint3\kvy\sequences\ViewDeletedPostOrCOmmentDetai.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Restore Deleted Posts-Comments.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Restore Deleted Posts-Comments.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Restore Deleted Posts-Comments.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Restore Deleted Posts-Comments.pdf
-INPUT .\images\sprint3\kvy\classDiagram\Restore Deleted Posts-Comments.pdf
-INPUT .\images\sprint3\kvy\sequences\RestorePostOrComment.pdf
-INPUT .\images\sprint3\kvy\sequences\RestorePostOrComment.pdf
-INPUT .\images\sprint3\kvy\sequences\RestorePostOrComment.pdf
-INPUT .\images\sprint3\kvy\sequences\RestorePostOrComment.pdf
-INPUT .\images\sprint3\kvy\sequences\RestorePostOrComment.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageModeration.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageModeration.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageModeration.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageModeration.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageModeration.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.01-view-moderation-queue.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.01-view-moderation-queue.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.01-view-moderation-queue.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.01-view-moderation-queue.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.01-view-moderation-queue.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.02-view-moderation-item-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.02-view-moderation-item-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.02-view-moderation-item-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.02-view-moderation-item-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.02-view-moderation-item-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.03-resolve-moderation-item.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.03-resolve-moderation-item.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.03-resolve-moderation-item.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.03-resolve-moderation-item.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-34.03-resolve-moderation-item.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageIDVerification.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageIDVerification.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageIDVerification.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageIDVerification.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageIDVerification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.01-view-id-verification-request-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.01-view-id-verification-request-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.01-view-id-verification-request-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.01-view-id-verification-request-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.01-view-id-verification-request-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.02-view-id-verification-request-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.02-view-id-verification-request-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.02-view-id-verification-request-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.02-view-id-verification-request-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.02-view-id-verification-request-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.03-approve-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.03-approve-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.03-approve-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.03-approve-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.03-approve-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.04-reject-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.04-reject-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.04-reject-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.04-reject-id-verification.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-35.04-reject-id-verification.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageForumTrash.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageForumTrash.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageForumTrash.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageForumTrash.pdf
+INPUT .\images\sprint3\kvy\classDiagram\ManageForumTrash.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.01-view-deleted-posts-comments-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.01-view-deleted-posts-comments-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.01-view-deleted-posts-comments-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.01-view-deleted-posts-comments-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.01-view-deleted-posts-comments-list.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.02-view-deleted-posts-comments-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.02-view-deleted-posts-comments-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.02-view-deleted-posts-comments-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.02-view-deleted-posts-comments-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.02-view-deleted-posts-comments-detail.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.03-restore-deleted-posts-comments.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.03-restore-deleted-posts-comments.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.03-restore-deleted-posts-comments.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.03-restore-deleted-posts-comments.pdf
+INPUT .\images\sprint3\kvy\sequences\UC-36.03-restore-deleted-posts-comments.pdf
+INPUT .\sections\tthuan\2\sprint3.tex
+INPUT .\sections\tthuan\2\sprint3.tex
+INPUT .\sections\tthuan\2\sprint3.tex
+INPUT .\sections\tthuan\2\sprint3.tex
+INPUT sections\tthuan\2\sprint3.tex
+INPUT .\images\sprint3\tthuan\classDiagram\UserManagement.pdf
+INPUT .\images\sprint3\tthuan\classDiagram\UserManagement.pdf
+INPUT .\images\sprint3\tthuan\classDiagram\UserManagement.pdf
+INPUT .\images\sprint3\tthuan\classDiagram\UserManagement.pdf
+INPUT .\images\sprint3\tthuan\classDiagram\UserManagement.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserList.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserList.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserList.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserList.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserList.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserDetail.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserDetail.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserDetail.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserDetail.pdf
+INPUT .\images\sprint3\tthuan\sequences\ViewUserDetail.pdf
+INPUT .\images\sprint3\tthuan\sequences\CreateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\CreateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\CreateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\CreateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\CreateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateUser.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateClientProfile.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateClientProfile.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateClientProfile.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateClientProfile.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateClientProfile.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerBasicInfo.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerBasicInfo.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerBasicInfo.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerBasicInfo.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerBasicInfo.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerSkills.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerSkills.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerSkills.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerSkills.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerSkills.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerPortfolio.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerPortfolio.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerPortfolio.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerPortfolio.pdf
+INPUT .\images\sprint3\tthuan\sequences\UpdateFreelancerPortfolio.pdf
+INPUT .\sections\tthuan\2\sprint4.tex
+INPUT .\sections\tthuan\2\sprint4.tex
+INPUT .\sections\tthuan\2\sprint4.tex
+INPUT .\sections\tthuan\2\sprint4.tex
+INPUT sections\tthuan\2\sprint4.tex
+INPUT .\images\sprint4\tthuan\classDiagram\BannerManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\BannerManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\BannerManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\BannerManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\BannerManagement.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewBannerDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteBanner.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteBanner.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\SkillManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\SkillManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\SkillManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\SkillManagement.pdf
+INPUT .\images\sprint4\tthuan\classDiagram\SkillManagement.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillList.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\ViewSkillDetail.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\CreateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\UpdateSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\DeleteSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\RestoreSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\RestoreSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\RestoreSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\RestoreSkill.pdf
+INPUT .\images\sprint4\tthuan\sequences\RestoreSkill.pdf
+INPUT .\sections\tthuan\2\sprint5.tex
+INPUT .\sections\tthuan\2\sprint5.tex
+INPUT .\sections\tthuan\2\sprint5.tex
+INPUT .\sections\tthuan\2\sprint5.tex
+INPUT sections\tthuan\2\sprint5.tex
+INPUT .\images\sprint5\tthuan\classDiagram\ExpertProfileManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\ExpertProfileManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\ExpertProfileManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\ExpertProfileManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\ExpertProfileManagement.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateExpertProfile.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateExpertProfile.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateExpertProfile.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateExpertProfile.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateExpertProfile.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\JobCategoryManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\JobCategoryManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\JobCategoryManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\JobCategoryManagement.pdf
+INPUT .\images\sprint5\tthuan\classDiagram\JobCategoryManagement.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryList.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryList.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryList.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryList.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryList.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryDetail.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryDetail.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryDetail.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryDetail.pdf
+INPUT .\images\sprint5\tthuan\sequences\ViewJobCategoryDetail.pdf
+INPUT .\images\sprint5\tthuan\sequences\CreateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\CreateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\CreateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\CreateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\CreateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\UpdateJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\DeleteJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\DeleteJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\DeleteJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\DeleteJobCategory.pdf
+INPUT .\images\sprint5\tthuan\sequences\DeleteJobCategory.pdf
 INPUT .\sections\4.Class_Specification.tex
 INPUT .\sections\4.Class_Specification.tex
 INPUT sections\4.Class_Specification.tex
@@ -691,16 +851,41 @@ INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmr8t.
 INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmr8r.tfm
 INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\fonts\vf\adobe\times\ptmri8t.vf
 INPUT C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\times\ptmri8r.tfm
+INPUT .\sections\tthuan\4\sprint1.tex
+INPUT .\sections\tthuan\4\sprint1.tex
+INPUT .\sections\tthuan\4\sprint1.tex
+INPUT .\sections\tthuan\4\sprint1.tex
+INPUT sections\tthuan\4\sprint1.tex
 INPUT .\sections\kvy\4\sprint2.tex
 INPUT .\sections\kvy\4\sprint2.tex
 INPUT .\sections\kvy\4\sprint2.tex
 INPUT .\sections\kvy\4\sprint2.tex
 INPUT sections\kvy\4\sprint2.tex
+INPUT .\sections\tthuan\4\sprint2.tex
+INPUT .\sections\tthuan\4\sprint2.tex
+INPUT .\sections\tthuan\4\sprint2.tex
+INPUT .\sections\tthuan\4\sprint2.tex
+INPUT sections\tthuan\4\sprint2.tex
 INPUT .\sections\kvy\4\sprint3.tex
 INPUT .\sections\kvy\4\sprint3.tex
 INPUT .\sections\kvy\4\sprint3.tex
 INPUT .\sections\kvy\4\sprint3.tex
 INPUT sections\kvy\4\sprint3.tex
+INPUT .\sections\tthuan\4\sprint3.tex
+INPUT .\sections\tthuan\4\sprint3.tex
+INPUT .\sections\tthuan\4\sprint3.tex
+INPUT .\sections\tthuan\4\sprint3.tex
+INPUT sections\tthuan\4\sprint3.tex
+INPUT .\sections\tthuan\4\sprint4.tex
+INPUT .\sections\tthuan\4\sprint4.tex
+INPUT .\sections\tthuan\4\sprint4.tex
+INPUT .\sections\tthuan\4\sprint4.tex
+INPUT sections\tthuan\4\sprint4.tex
+INPUT .\sections\tthuan\4\sprint5.tex
+INPUT .\sections\tthuan\4\sprint5.tex
+INPUT .\sections\tthuan\4\sprint5.tex
+INPUT .\sections\tthuan\4\sprint5.tex
+INPUT sections\tthuan\4\sprint5.tex
 INPUT main.aux
 INPUT .\main.out
 INPUT .\main.out

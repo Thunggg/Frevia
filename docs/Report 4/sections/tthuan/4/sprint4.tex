@@ -1,0 +1,314 @@
+% =================================================================
+% FILE: sections/tthuan/4/sprint4.tex -- Sprint 4
+% Class specifications for Banner and Skill Management
+% =================================================================
+
+\subsection{BannersAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{BannersAdminController(service: BannersAdminService)} &
+A method to initialize the controller with the banner administration service.
+\newline -- \code{service}: \code{BannersAdminService} -- service that owns banner use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listBanners(query: BannerAdminQueryDto)} &
+A method to return a filtered, paginated banner list.
+\newline -- \code{query}: \code{BannerAdminQueryDto} -- page, limit, search, position, active, and sort options.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminListResponseType>} -- banners and pagination.
+\newline -- Route: \code{GET /admin/banners}. \\ \hline
+
+03 & \code{createBanner(body: CreateBannerBodyDto)} &
+A method to create an advertisement banner.
+\newline -- \code{body}: \code{CreateBannerBodyDto} -- title, image URL, link, position, active state, and dates.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the created banner.
+\newline -- Route: \code{POST /admin/banners}. \\ \hline
+
+04 & \code{updateBanner(id: number, body: UpdateBannerBodyDto)} &
+A method to update a banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \code{body}: \code{UpdateBannerBodyDto} -- optional banner fields.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the updated banner.
+\newline -- Route: \code{PATCH /admin/banners/:id}. \\ \hline
+
+05 & \code{deleteBanner(id: number)} &
+A method to permanently delete a banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDeleteResponseType>} -- a success message.
+\newline -- Route: \code{DELETE /admin/banners/:id}. \\ \hline
+
+06 & \code{uploadImage(file?: Express.Multer.File)} &
+A method to upload a banner image and return its URL.
+\newline -- \code{file}: \code{Express.Multer.File | undefined} -- multipart image field named \code{file}.
+\newline -- \textit{Returns:} \code{Promise<{ imageUrl: string; publicId: string }>} -- the stored image reference.
+\newline -- Route: \code{POST /admin/banners/upload-image}; multipart field \code{file}; maximum 10 MB. \\ \hline
+
+07 & \code{getBannerDetail(id: number)} &
+A method to return one banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the banner detail.
+\newline -- Route: \code{GET /admin/banners/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{BannersAdminService} -- private readonly banner administration service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{BannersAdminService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{BannersAdminService(}\newline\code{repository: BannersAdminRepository,}\newline\code{cloudinaryService: CloudinaryService)} &
+A method to initialize the service with persistence and image storage.
+\newline -- \code{repository}: \code{BannersAdminRepository} -- banner persistence dependency.
+\newline -- \code{cloudinaryService}: \code{CloudinaryService} -- remote image storage.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{uploadImage(file?: Express.Multer.File)} &
+A method to validate an image and store it on Cloudinary or the local upload directory.
+\newline -- \code{file}: \code{Express.Multer.File | undefined} -- multipart image.
+\newline -- \textit{Returns:} \code{Promise<{ imageUrl: string; publicId: string }>} -- the stored image reference.
+\newline -- Throws \code{BannerImageRequiredException}, \code{BannerImageInvalidTypeException}, \code{BannerImageTooLargeException}, or \code{FailedToUploadBannerImageException}. \\ \hline
+
+03 & \code{listBanners(query: BannerAdminQueryType)} &
+A method to load a banner page.
+\newline -- \code{query}: \code{BannerAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminListResponseType>} -- banners and pagination.
+\newline -- Failure is mapped to \code{FailedToLoadBannerListException}. \\ \hline
+
+04 & \code{getBannerDetail(id: number)} &
+A method to load one banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the banner detail.
+\newline -- Throws \code{BannerAdminNotFoundException} or \code{FailedToLoadBannerDetailException}. \\ \hline
+
+05 & \code{createBanner(body: BannerCreateBodyType)} &
+A method to create a banner after validating its position.
+\newline -- \code{body}: \code{BannerCreateBodyType} -- banner fields.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the created banner.
+\newline -- Throws \code{BannerPositionTakenException} or \code{FailedToCreateBannerException}. \\ \hline
+
+06 & \code{updateBanner(id: number, body: BannerUpdateBodyType)} &
+A method to update a banner after validating its position.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \code{body}: \code{BannerUpdateBodyType} -- optional banner fields.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the updated banner.
+\newline -- Throws \code{BannerAdminNotFoundException}, \code{BannerPositionTakenException}, or \code{FailedToUpdateBannerException}. \\ \hline
+
+07 & \code{deleteBanner(id: number)} &
+A method to permanently delete a banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{BannerAdminNotFoundException} or \code{FailedToDeleteBannerException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{BannersAdminRepository} -- private readonly persistence dependency. \\ \hline
+02 & \code{cloudinaryService} & \code{CloudinaryService} -- private readonly image storage dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{BannersAdminRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{BannersAdminRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listBanners(query: BannerAdminQueryType)} &
+A method to query banners with search, position, active-state, and sorting filters.
+\newline -- \code{query}: \code{BannerAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminListResponseType>} -- banners and pagination. \\ \hline
+
+03 & \code{getBannerDetail(id: number)} &
+A method to load one banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType | null>} -- the banner, or \code{null}. \\ \hline
+
+04 & \code{createBanner(data: BannerCreateBodyType)} &
+A method to validate the position constraint and insert a banner.
+\newline -- \code{data}: \code{BannerCreateBodyType} -- banner fields.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the created banner.
+\newline -- Throws \code{BannerPositionTakenException}. \\ \hline
+
+05 & \code{updateBanner(id, data)} &
+A method to validate the position constraint and update a banner.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \code{data}: \code{BannerUpdateBodyType} -- optional banner fields.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDetailResponseType>} -- the updated banner.
+\newline -- Throws \code{BannerAdminNotFoundException} or \code{BannerPositionTakenException}. \\ \hline
+
+06 & \code{deleteBanner(id: number)} &
+A method to delete a banner and report whether a row was removed.
+\newline -- \code{id}: \code{number} -- banner identifier.
+\newline -- \textit{Returns:} \code{Promise<BannerAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{BannerAdminNotFoundException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SkillsAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SkillsAdminController(service: SkillsAdminService)} &
+A method to initialize the controller with the skill administration service.
+\newline -- \code{service}: \code{SkillsAdminService} -- service that owns skill use cases.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listSkills(query: SkillAdminQueryDto)} &
+A method to return a filtered, paginated skill list.
+\newline -- \code{query}: \code{SkillAdminQueryDto} -- page, limit, search, active, and sort options.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminListResponseType>} -- skills and pagination.
+\newline -- Route: \code{GET /admin/skills}. \\ \hline
+
+03 & \code{createSkill(body: CreateSkillBodyDto)} &
+A method to create a skill.
+\newline -- \code{body}: \code{CreateSkillBodyDto} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the created skill.
+\newline -- Route: \code{POST /admin/skills}. \\ \hline
+
+04 & \code{updateSkill(id: number, body: UpdateSkillBodyDto)} &
+A method to update a skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \code{body}: \code{UpdateSkillBodyDto} -- optional name, description, and active state.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the updated skill.
+\newline -- Route: \code{PATCH /admin/skills/:id}. \\ \hline
+
+05 & \code{restoreSkill(id: number)} &
+A method to restore a soft-deleted skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the restored skill.
+\newline -- Route: \code{PATCH /admin/skills/:id/restore}. \\ \hline
+
+06 & \code{deleteSkill(id: number)} &
+A method to soft-delete a skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDeleteResponseType>} -- a success message.
+\newline -- Route: \code{DELETE /admin/skills/:id}. \\ \hline
+
+07 & \code{getSkillDetail(id: number)} &
+A method to return one skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the skill detail.
+\newline -- Route: \code{GET /admin/skills/:id}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{SkillsAdminService} -- private readonly skill administration service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SkillsAdminService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SkillsAdminService(repository: SkillsAdminRepository)} &
+A method to initialize the service with the skill repository.
+\newline -- \code{repository}: \code{SkillsAdminRepository} -- persistence dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listSkills(query: SkillAdminQueryType)} &
+A method to load a skill page.
+\newline -- \code{query}: \code{SkillAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminListResponseType>} -- skills and pagination.
+\newline -- Failure is mapped to \code{FailedToLoadSkillListException}. \\ \hline
+
+03 & \code{getSkillDetail(id: number)} &
+A method to load one skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the skill detail.
+\newline -- Throws \code{SkillAdminNotFoundException} or \code{FailedToLoadSkillDetailException}. \\ \hline
+
+04 & \code{createSkill(body: AdminCreateSkillBodyType)} &
+A method to create a skill and handle a concurrent duplicate.
+\newline -- \code{body}: \code{AdminCreateSkillBodyType} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the created skill.
+\newline -- Throws \code{SkillNameAlreadyExistsException} or \code{FailedToCreateSkillException}. \\ \hline
+
+05 & \code{updateSkill(id, body)} &
+A method to update a skill and handle a concurrent duplicate.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \code{body}: \code{AdminUpdateSkillBodyType} -- optional name, description, and active state.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the updated skill.
+\newline -- Throws \code{SkillAdminNotFoundException}, \code{SkillNameAlreadyExistsException}, or \code{FailedToUpdateSkillException}. \\ \hline
+
+06 & \code{deleteSkill(id: number)} &
+A method to soft-delete a skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{SkillAdminNotFoundException} or \code{FailedToDeleteSkillException}. \\ \hline
+
+07 & \code{restoreSkill(id: number)} &
+A method to restore a soft-deleted skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the restored skill.
+\newline -- Throws \code{SkillAdminNotFoundException}, \code{SkillNameAlreadyExistsException}, or \code{FailedToRestoreSkillException}. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{SkillsAdminRepository} -- private readonly persistence dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SkillsAdminRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SkillsAdminRepository(prisma: PrismaService)} &
+A method to initialize the repository with the shared Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{listSkills(query: SkillAdminQueryType)} &
+A method to query skills with search, active-state, sorting, and pagination.
+\newline -- \code{query}: \code{SkillAdminQueryType} -- list filters.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminListResponseType>} -- skills and pagination.
+\newline -- Search matches name, slug, or description. \\ \hline
+
+03 & \code{getSkillDetail(id: number)} &
+A method to load one skill.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType | null>} -- the skill, or \code{null}. \\ \hline
+
+04 & \code{createSkill(data: AdminCreateSkillBodyType)} &
+A method to generate a unique slug and insert a skill.
+\newline -- \code{data}: \code{AdminCreateSkillBodyType} -- name and optional description.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the created skill.
+\newline -- Throws \code{SkillNameAlreadyExistsException}. \\ \hline
+
+05 & \code{updateSkill(id, data)} &
+A method to update a skill and regenerate its slug when the name changes.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \code{data}: \code{AdminUpdateSkillBodyType} -- optional name, description, and active state.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the updated skill.
+\newline -- Throws \code{SkillAdminNotFoundException} or \code{SkillNameAlreadyExistsException}. \\ \hline
+
+06 & \code{deleteSkill(id: number)} &
+A method to set the skill delete timestamp.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDeleteResponseType>} -- a success message.
+\newline -- Throws \code{SkillAdminNotFoundException}. \\ \hline
+
+07 & \code{restoreSkill(id: number)} &
+A method to clear the skill delete timestamp after checking name conflicts.
+\newline -- \code{id}: \code{number} -- skill identifier.
+\newline -- \textit{Returns:} \code{Promise<SkillAdminDetailResponseType>} -- the restored skill.
+\newline -- Throws \code{SkillAdminNotFoundException} or \code{SkillNameAlreadyExistsException}. \\ \hline
+
+08 & \code{generateUniqueSlug(name: string)} &
+A private method to derive a slug and append a numeric suffix on collision.
+\newline -- \code{name}: \code{string} -- skill name.
+\newline -- \textit{Returns:} \code{Promise<string>} -- the unique slug. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
+\end{ClassAttributeTable}
