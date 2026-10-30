@@ -4,9 +4,11 @@ import { ManageJobRepository } from './manage-job.repo';
 import { ManageJobService } from './manage-job.service';
 import {
   JobCannotBeClosedException,
+  JobCannotBeDeletedWithActiveContractException,
   JobCannotBePublishedException,
   JobCannotBeReopenedException,
   JobOnlyForClientException,
+  JobReopenPeriodExpiredException,
 } from './manage-job.error';
 
 describe('ManageJobService', () => {
@@ -14,6 +16,7 @@ describe('ManageJobService', () => {
   const publishJobMock = jest.fn();
   const closeJobMock = jest.fn();
   const reopenJobMock = jest.fn();
+  const deleteJobMock = jest.fn();
 
   const mockJob = {
     id: 1,
@@ -44,7 +47,7 @@ describe('ManageJobService', () => {
       reopenJob: reopenJobMock,
       createJob: jest.fn(),
       updateJob: jest.fn(),
-      deleteJob: jest.fn(),
+      deleteJob: deleteJobMock,
       getClientJobLists: jest.fn(),
       getClientJobDetail: jest.fn(),
       searchSkills: jest.fn(),
@@ -145,6 +148,33 @@ describe('ManageJobService', () => {
 
       await expect(service.reopenJob(10, RoleName.CLIENT, 1)).rejects.toThrow(
         JobCannotBeReopenedException(),
+      );
+    });
+
+    it('should rethrow error when reopen period expired (>60 days)', async () => {
+      reopenJobMock.mockRejectedValueOnce(JobReopenPeriodExpiredException());
+
+      await expect(service.reopenJob(10, RoleName.CLIENT, 1)).rejects.toThrow(
+        JobReopenPeriodExpiredException(),
+      );
+    });
+  });
+
+  describe('deleteJob', () => {
+    it('should successfully delete a job', async () => {
+      deleteJobMock.mockResolvedValueOnce(undefined);
+
+      await expect(service.deleteJob(10, 1)).resolves.toBeUndefined();
+      expect(deleteJobMock).toHaveBeenCalledWith(10, 1);
+    });
+
+    it('should throw error when deleting job with active contract', async () => {
+      deleteJobMock.mockRejectedValueOnce(
+        JobCannotBeDeletedWithActiveContractException(),
+      );
+
+      await expect(service.deleteJob(10, 1)).rejects.toThrow(
+        JobCannotBeDeletedWithActiveContractException(),
       );
     });
   });

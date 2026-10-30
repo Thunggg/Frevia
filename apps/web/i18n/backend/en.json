@@ -331,5 +331,10 @@
   "Error.FailedToCloseJob": "Failed to close the job",
   "Error.JobCannotBeReopened": "Job can only be reopened when it is closed",
   "Error.FailedToReopenJob": "Failed to reopen the job",
-  "Error.JobOnlyForClient": "This action is only available for client"
+  "Error.JobOnlyForClient": "This action is only available for client",
+  "Error.JobCannotBeDeletedWithActiveContract": "Cannot delete job with active contracts or ongoing disputes",
+  "Error.JobReopenPeriodExpired": "Jobs closed for more than 60 days cannot be reopened",
+  "Error.SkillsMaxExceeded": "Maximum 10 skills allowed",
+  "Error.BudgetMinTooLow": "Minimum budget must be at least 10",
+  "Error.BudgetMaxTooLow": "Maximum budget must be at least 10"
 }

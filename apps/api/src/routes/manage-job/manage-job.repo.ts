@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { JobCategoryStatus, JobStatus, Prisma } from '@prisma/client';
+import {
+  ContractStatus,
+  JobCategoryStatus,
+  JobStatus,
+  Prisma,
+  ProposalStatus,
+} from '@prisma/client';
 
 import {
   CreateJobBodyType,
@@ -16,6 +22,8 @@ import {
   JobCannotBeClosedException,
   JobCannotBePublishedException,
   JobCannotBeReopenedException,
+  JobCannotBeDeletedWithActiveContractException,
+  JobReopenPeriodExpiredException,
   JobCategoriesNotFoundException,
   JobNotFoundException,
   PositionsRequiredBelowFilledException,
@@ -107,10 +115,45 @@ export class ManageJobRepository {
     };
   }
 
+  private async autoCloseExpiredJobs(clientId?: number): Promise<void> {
+    const now = new Date();
+    const expiredJobs = await this.prisma.job.findMany({
+      where: {
+        ...(clientId ? { clientId } : {}),
+        status: JobStatus.OPEN,
+        deletedAt: null,
+        expiryDate: { lte: now },
+      },
+      select: { id: true },
+    });
+
+    if (expiredJobs.length > 0) {
+      const expiredJobIds = expiredJobs.map((j) => j.id);
+      await this.prisma.$transaction([
+        this.prisma.job.updateMany({
+          where: { id: { in: expiredJobIds } },
+          data: { status: JobStatus.CLOSED },
+        }),
+        this.prisma.proposal.updateMany({
+          where: {
+            jobId: { in: expiredJobIds },
+            status: {
+              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+            },
+          },
+          data: { status: ProposalStatus.EXPIRED },
+        }),
+      ]);
+    }
+  }
+
   async getClientJobLists(
     clientId: number,
     filter: ViewListJobParsedFilterType,
   ): Promise<{ jobs: JobType[]; total: number }> {
+    // BR-J40: Tự động đóng các job đã quá hạn đăng
+    await this.autoCloseExpiredJobs(clientId);
+
     const { page, limit, status, search, sortBy, order } = filter;
     const where = {
       clientId,
@@ -245,12 +288,18 @@ export class ManageJobRepository {
       // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
       const current = await tx.job.findUniqueOrThrow({
         where: { id: jobId },
-        select: { positionsFilled: true },
+        select: { positionsFilled: true, status: true, slug: true },
       });
 
       if (data.positionsRequired < current.positionsFilled) {
         throw PositionsRequiredBelowFilledException();
       }
+
+      // BR-J42: Tính bất biến của URL Slug sau khi Job đã Publish (chỉ cập nhật slug khi DRAFT)
+      const slug =
+        current.status === JobStatus.DRAFT
+          ? this.createJobSlug(data.title)
+          : current.slug;
 
       const job = await tx.job.update({
         where: {
@@ -259,6 +308,7 @@ export class ManageJobRepository {
 
         data: {
           title: data.title,
+          slug,
           description: data.description,
           budgetMin: data.budgetMin,
           budgetMax: data.budgetMax,
@@ -298,16 +348,56 @@ export class ManageJobRepository {
   }
 
   async deleteJob(userId: number, jobId: number): Promise<void> {
-    await this.checkJobOwner(userId, jobId);
+    const job = await this.checkJobOwner(userId, jobId);
 
-    await this.prisma.job.update({
+    // BR-J38: Chặn xóa Job khi đang có hợp đồng hoạt động hoặc đang có tranh chấp
+    if (job.status === JobStatus.IN_PROGRESS) {
+      throw JobCannotBeDeletedWithActiveContractException();
+    }
+
+    const activeContract = await this.prisma.contract.findFirst({
       where: {
-        id: jobId,
+        jobId,
+        status: {
+          in: [
+            ContractStatus.PENDING_SIGN,
+            ContractStatus.ACTIVE,
+            ContractStatus.DISPUTED,
+          ],
+        },
       },
+      select: { id: true },
+    });
 
-      data: {
-        deletedAt: new Date(),
-      },
+    if (activeContract) {
+      throw JobCannotBeDeletedWithActiveContractException();
+    }
+
+    // BR-J39: Tự động hủy/hết hạn Proposal khi Job OPEN bị xóa trong cùng transaction
+    await this.prisma.$transaction(async (tx) => {
+      await tx.job.update({
+        where: {
+          id: jobId,
+        },
+
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+
+      if (job.status === JobStatus.OPEN) {
+        await tx.proposal.updateMany({
+          where: {
+            jobId,
+            status: {
+              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+            },
+          },
+          data: {
+            status: ProposalStatus.EXPIRED,
+          },
+        });
+      }
     });
   }
 
@@ -366,6 +456,14 @@ export class ManageJobRepository {
       throw JobCannotBeReopenedException();
     }
 
+    // BR-J46: Thời hạn tối đa cho phép mở lại (Reopen) Job đã đóng là 60 ngày
+    const maxReopenDays = 60;
+    const diffDays =
+      (Date.now() - job.updatedAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (diffDays > maxReopenDays) {
+      throw JobReopenPeriodExpiredException();
+    }
+
     const updatedJob = await this.prisma.job.update({
       where: {
         id: jobId,
@@ -384,7 +482,12 @@ export class ManageJobRepository {
   private async checkJobOwner(
     userId: number,
     jobId: number,
-  ): Promise<{ id: number; status: JobStatus }> {
+  ): Promise<{
+    id: number;
+    status: JobStatus;
+    updatedAt: Date;
+    expiryDate: Date | null;
+  }> {
     const job = await this.prisma.job.findFirst({
       where: {
         id: jobId,
@@ -395,6 +498,8 @@ export class ManageJobRepository {
       select: {
         id: true,
         status: true,
+        updatedAt: true,
+        expiryDate: true,
       },
     });
 

@@ -331,5 +331,10 @@
   "Error.FailedToCloseJob": "Không thể đóng công việc",
   "Error.JobCannotBeReopened": "Chỉ có thể mở lại công việc đã đóng",
   "Error.FailedToReopenJob": "Không thể mở lại công việc",
-  "Error.JobOnlyForClient": "Hành động này chỉ dành cho khách hàng (Client)"
+  "Error.JobOnlyForClient": "Hành động này chỉ dành cho khách hàng (Client)",
+  "Error.JobCannotBeDeletedWithActiveContract": "Không thể xóa công việc đang có hợp đồng hoạt động hoặc tranh chấp",
+  "Error.JobReopenPeriodExpired": "Công việc đã đóng quá 60 ngày không thể mở lại",
+  "Error.SkillsMaxExceeded": "Tối đa 10 kỹ năng được phép chọn",
+  "Error.BudgetMinTooLow": "Ngân sách tối thiểu phải từ 10 trở lên",
+  "Error.BudgetMaxTooLow": "Ngân sách tối đa phải từ 10 trở lên"
 }

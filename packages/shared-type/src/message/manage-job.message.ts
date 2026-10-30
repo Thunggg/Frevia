@@ -42,8 +42,12 @@ export const ManageJobMessage = {
   EXPIRY_DATE_MUST_BE_BEFORE_DEADLINE: "Error.ExpiryDateMustBeBeforeDeadline",
 
   SKILLS_REQUIRED: "Error.SkillsRequired",
+  SKILLS_MAX_EXCEEDED: "Error.SkillsMaxExceeded",
   SKILL_NAME_REQUIRED: "Error.SkillNameRequired",
   SKILL_NAME_TOO_LONG: "Error.SkillNameTooLong",
+
+  BUDGET_MIN_TOO_LOW: "Error.BudgetMinTooLow",
+  BUDGET_MAX_TOO_LOW: "Error.BudgetMaxTooLow",
 
   JOB_CATEGORY_INVALID: "Error.JobCategoryInvalid",
   JOB_CATEGORIES_NOT_FOUND: "Error.JobCategoriesNotFound",
@@ -62,6 +66,8 @@ export const ManageJobMessage = {
   // Delete Job
   // =========================
   FAILED_TO_DELETE_JOB: "Error.FailedToDeleteJob",
+  JOB_CANNOT_BE_DELETED_WITH_ACTIVE_CONTRACT:
+    "Error.JobCannotBeDeletedWithActiveContract",
 
   // =========================
   // Publish Job
@@ -79,6 +85,7 @@ export const ManageJobMessage = {
   // Reopen Job
   // =========================
   JOB_CANNOT_BE_REOPENED: "Error.JobCannotBeReopened",
+  JOB_REOPEN_PERIOD_EXPIRED: "Error.JobReopenPeriodExpired",
   FAILED_TO_REOPEN_JOB: "Error.FailedToReopenJob",
 
   JOB_ONLY_FOR_CLIENT: "Error.JobOnlyForClient",

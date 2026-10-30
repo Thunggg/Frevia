@@ -92,7 +92,7 @@ export const CreateJobBodySchema = z
       .number({
         error: ManageJobMessage.BUDGET_MIN_INVALID,
       })
-      .min(0, ManageJobMessage.BUDGET_MIN_INVALID)
+      .min(10, ManageJobMessage.BUDGET_MIN_TOO_LOW)
       .nullable()
       .optional(),
 
@@ -100,7 +100,7 @@ export const CreateJobBodySchema = z
       .number({
         error: ManageJobMessage.BUDGET_MAX_INVALID,
       })
-      .min(0, ManageJobMessage.BUDGET_MAX_INVALID)
+      .min(10, ManageJobMessage.BUDGET_MAX_TOO_LOW)
       .nullable()
       .optional(),
 
@@ -122,7 +122,8 @@ export const CreateJobBodySchema = z
 
     skills: z
       .array(z.number().int().positive(ManageJobMessage.SKILL_NAME_REQUIRED))
-      .min(1, ManageJobMessage.SKILLS_REQUIRED),
+      .min(1, ManageJobMessage.SKILLS_REQUIRED)
+      .max(10, ManageJobMessage.SKILLS_MAX_EXCEEDED),
 
     // Danh mục công việc gắn vào job (BR-CAT-03): freelancer dùng danh mục để tìm/lọc job.
     // Có thể chọn nhiều danh mục; bỏ trống nghĩa là job không thuộc danh mục nào.

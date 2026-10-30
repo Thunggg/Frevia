@@ -70,6 +70,14 @@ export const FailedToDeleteJobException = () =>
 export const JobCannotBePublishedException = () =>
   new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_PUBLISHED);
 
+export const JobCannotBeDeletedWithActiveContractException = () =>
+  new BadRequestException(
+    ManageJobMessage.JOB_CANNOT_BE_DELETED_WITH_ACTIVE_CONTRACT,
+  );
+
+export const JobReopenPeriodExpiredException = () =>
+  new BadRequestException(ManageJobMessage.JOB_REOPEN_PERIOD_EXPIRED);
+
 export const FailedToPublishJobException = () =>
   new InternalServerErrorException({
     message: ManageJobMessage.FAILED_TO_PUBLISH_JOB,
