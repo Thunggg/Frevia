@@ -1,115 +1,78 @@
 % =================================================================
 % FILE: sections/kvy/2/sprint3.tex -- Sprint 3 (Administration)
-% Features are listed in the approved feature order. PDF diagrams are
-% rendered from the .svg exports in images/sprint3/kvy/.
+% UC-34 Manage Moderation, UC-35 Manage ID Verification and
+% UC-36 Manage Forum Trash. Figures are the vector PDFs exported from
+% class-diagrams/UC-3[456]_*.drawio and sequence-diagrams/UC-3[456].<nn>-*
+% into images/sprint3/kvy/.
 % =================================================================
 
-% ================= View Moderation Queue =================
-\subsection{View Moderation Queue}
+% ================= Manage Moderation =================
+\subsection{Manage Moderation}
+
+Manage Moderation covers the UC-34 review workflow of the administration
+console: listing the posts waiting for review, opening a flagged post and
+approving or rejecting it. A review writes the moderation status, score and
+reviewer back to the forum post.
 
 \textbf{a.~Class Diagram}
 
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View Moderation Queue}{Class diagram of View Moderation Queue}{fig:cls-view-moderation-queue}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageModeration}{Class diagram of Manage Moderation}{fig:kvy-cls-manage-moderation}
 
 \textbf{b.~Sequence Diagram(s)}
 
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ViewModerationQueue}{Sequence diagram of View Moderation Queue}{fig:seq-view-moderation-queue}
+\subsubsection{UC-34.01 -- View Moderation Queue}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue}{Sequence diagram of UC-34.01 View Moderation Queue}{fig:kvy-seq-uc-34-01}
 
-% ================= View Moderation Item Detail =================
-\subsection{View Moderation Item Detail}
+\subsubsection{UC-34.02 -- View Moderation Item Detail}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail}{Sequence diagram of UC-34.02 View Moderation Item Detail}{fig:kvy-seq-uc-34-02}
+
+\subsubsection{UC-34.03 -- Resolve Moderation Item}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item}{Sequence diagram of UC-34.03 Resolve Moderation Item}{fig:kvy-seq-uc-34-03}
+
+% ================= Manage ID Verification =================
+\subsection{Manage ID Verification}
+
+Manage ID Verification covers the UC-35 identity review workflow: listing the
+submitted identity documents, opening a request with its uploaded file, and
+approving or rejecting the request. A decision updates the verification status
+and the reviewer of the identity document.
 
 \textbf{a.~Class Diagram}
 
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View Moderation Item Detail}{Class diagram of View Moderation Item Detail}{fig:cls-view-moderation-item-detail}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of Manage ID Verification}{fig:kvy-cls-manage-id-verification}
 
 \textbf{b.~Sequence Diagram(s)}
 
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ModerationItemDetail}{Sequence diagram of View Moderation Item Detail}{fig:seq-view-moderation-item-detail}
+\subsubsection{UC-35.01 -- View ID Verification Request List}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list}{Sequence diagram of UC-35.01 View ID Verification Request List}{fig:kvy-seq-uc-35-01}
 
-% ================= Resolve Moderation Item =================
-\subsection{Resolve Moderation Item}
+\subsubsection{UC-35.02 -- View ID Verification Request Detail}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail}{Sequence diagram of UC-35.02 View ID Verification Request Detail}{fig:kvy-seq-uc-35-02}
+
+\subsubsection{UC-35.03 -- Approve ID Verification}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.03-approve-id-verification}{Sequence diagram of UC-35.03 Approve ID Verification}{fig:kvy-seq-uc-35-03}
+
+\subsubsection{UC-35.04 -- Reject ID Verification}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.04-reject-id-verification}{Sequence diagram of UC-35.04 Reject ID Verification}{fig:kvy-seq-uc-35-04}
+
+% ================= Manage Forum Trash =================
+\subsection{Manage Forum Trash}
+
+Manage Forum Trash covers the UC-36 recovery workflow: listing the soft-deleted
+posts and comments kept for review, opening one deleted item, and restoring it
+so that it becomes visible in the forum again.
 
 \textbf{a.~Class Diagram}
 
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/Resolve Moderation Item}{Class diagram of Resolve Moderation Item}{fig:cls-resolve-moderation-item}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageForumTrash}{Class diagram of Manage Forum Trash}{fig:kvy-cls-manage-forum-trash}
 
 \textbf{b.~Sequence Diagram(s)}
 
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ResolveModeration}{Sequence diagram of Resolve Moderation Item}{fig:seq-resolve-moderation-item}
+\subsubsection{UC-36.01 -- View Deleted Posts/Comments List}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list}{Sequence diagram of UC-36.01 View Deleted Posts/Comments List}{fig:kvy-seq-uc-36-01}
 
-% ================= View ID Verification Request List =================
-\subsection{View ID Verification Request List}
+\subsubsection{UC-36.02 -- View Deleted Posts/Comments Detail}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail}{Sequence diagram of UC-36.02 View Deleted Posts/Comments Detail}{fig:kvy-seq-uc-36-02}
 
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View ID Verification Request List}{Class diagram of View ID Verification Request List}{fig:cls-view-id-verification-list}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ViewIDVerification}{Sequence diagram of View ID Verification Request List}{fig:seq-view-id-verification-list}
-
-% ================= View ID Verification Request Detail =================
-\subsection{View ID Verification Request Detail}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View ID Verification Request Detail}{Class diagram of View ID Verification Request Detail}{fig:cls-view-id-verification-detail}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/IDVerificationDetail}{Sequence diagram of View ID Verification Request Detail}{fig:seq-view-id-verification-detail}
-
-% ================= Approve ID Verification =================
-\subsection{Approve ID Verification}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/Approve ID Verification}{Class diagram of Approve ID Verification}{fig:cls-approve-id-verification}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ApprovedIDVerification}{Sequence diagram of Approve ID Verification}{fig:seq-approve-id-verification}
-
-% ================= Reject ID Verification =================
-\subsection{Reject ID Verification}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/Reject ID Verification}{Class diagram of Reject ID Verification}{fig:cls-reject-id-verification}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/RejectIDVerification}{Sequence diagram of Reject ID Verification}{fig:seq-reject-id-verification}
-
-% ================= View Deleted Posts/Comments List =================
-\subsection{View Deleted Posts/Comments List}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View Deleted Posts-Comments List}{Class diagram of View Deleted Posts/Comments List}{fig:cls-view-deleted-posts-comments-list}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ViewDeletedPostOrComment-Page-1}{Sequence diagram of View Deleted Posts/Comments List}{fig:seq-view-deleted-posts-comments-list}
-
-% ================= View Deleted Posts/Comments Detail =================
-\subsection{View Deleted Posts/Comments Detail}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/View Deleted Posts-Comments Detail}{Class diagram of View Deleted Posts/Comments Detail}{fig:cls-view-deleted-posts-comments-detail}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/ViewDeletedPostOrCOmmentDetai}{Sequence diagram of View Deleted Posts/Comments Detail}{fig:seq-view-deleted-posts-comments-detail}
-
-% ================= Restore Deleted Posts/Comments =================
-\subsection{Restore Deleted Posts/Comments}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/Restore Deleted Posts-Comments}{Class diagram of Restore Deleted Posts/Comments}{fig:cls-restore-deleted-posts-comments}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/RestorePostOrComment}{Sequence diagram of Restore Deleted Posts/Comments}{fig:seq-restore-deleted-posts-comments}
+\subsubsection{UC-36.03 -- Restore Deleted Posts/Comments}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments}{Sequence diagram of UC-36.03 Restore Deleted Posts/Comments}{fig:kvy-seq-uc-36-03}

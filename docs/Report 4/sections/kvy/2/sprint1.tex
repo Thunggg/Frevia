@@ -1,193 +1,70 @@
 % =================================================================
-% FILE: sections/kvy/sprint1.tex -- Sprint 1 (Community Forum)
-% Features are listed in the approved feature order. PNG diagrams are
-% rendered next to the .svg exports in images/sprint1/kvy/.
+% FILE: sections/kvy/2/sprint1.tex -- Sprint 1 (Community Forum)
+% UC-14 Forum Management. Figures are the vector PDFs exported from
+% class-diagrams/UC-14_Forum_Management_Class_Diagram.drawio and
+% sequence-diagrams/UC-14.<nn>-*.drawio into images/sprint1/kvy/.
 % =================================================================
 
-% ================= View Forum Category List =================
-\subsection{View Forum Category List}
+% ================= Forum Management =================
+\subsection{Forum Management}
+
+Forum Management covers the UC-14 community forum: browsing forum categories
+and posts, publishing and maintaining posts and comments, toggling likes on
+posts and comments, and reporting content that breaks the forum rules.
 
 \textbf{a.~Class Diagram}
 
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Forum Category List}{Class diagram of View Forum Category List}{fig:cls-view-forum-category-list}
+\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/ForumManagement}{Class diagram of Forum Management}{fig:kvy-cls-forum-management}
 
 \textbf{b.~Sequence Diagram(s)}
 
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/ViewForumCategories}{Sequence diagram of View Forum Category List}{fig:seq-view-forum-category-list}
+\subsubsection{UC-14.01 -- View Forum Category List}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list}{Sequence diagram of UC-14.01 View Forum Category List}{fig:kvy-seq-uc-14-01}
 
-% ================= View Forum Category Detail =================
-\subsection{View Forum Category Detail}
+\subsubsection{UC-14.02 -- View Forum Category Detail}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail}{Sequence diagram of UC-14.02 View Forum Category Detail}{fig:kvy-seq-uc-14-02}
 
-\textbf{a.~Class Diagram}
+\subsubsection{UC-14.03 -- View Post List}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.03-view-post-list}{Sequence diagram of UC-14.03 View Post List}{fig:kvy-seq-uc-14-03}
 
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Forum Category Detail}{Class diagram of View Forum Category Detail}{fig:cls-view-forum-category-detail}
+\subsubsection{UC-14.04 -- View Post Detail}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.04-view-post-detail}{Sequence diagram of UC-14.04 View Post Detail}{fig:kvy-seq-uc-14-04}
 
-\textbf{b.~Sequence Diagram(s)}
+\subsubsection{UC-14.05 -- Create Post}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.05-create-post}{Sequence diagram of UC-14.05 Create Post}{fig:kvy-seq-uc-14-05}
 
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/ViewForumCategoryDetail}{Sequence diagram of View Forum Category Detail}{fig:seq-view-forum-category-detail}
+\subsubsection{UC-14.06 -- Update Post}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.06-update-post}{Sequence diagram of UC-14.06 Update Post}{fig:kvy-seq-uc-14-06}
 
-% ================= View Post List =================
-\subsection{View Post List}
+\subsubsection{UC-14.07 -- Delete Post}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.07-delete-post}{Sequence diagram of UC-14.07 Delete Post}{fig:kvy-seq-uc-14-07}
 
-\textbf{a.~Class Diagram}
+\subsubsection{UC-14.08 -- Like Post}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.08-like-post}{Sequence diagram of UC-14.08 Like Post}{fig:kvy-seq-uc-14-08}
 
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Post List}{Class diagram of View Post List}{fig:cls-view-post-list}
+\subsubsection{UC-14.09 -- Unlike Post}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.09-unlike-post}{Sequence diagram of UC-14.09 Unlike Post}{fig:kvy-seq-uc-14-09}
 
-\textbf{b.~Sequence Diagram(s)}
+\subsubsection{UC-14.10 -- View Post Likes}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.10-view-post-likes}{Sequence diagram of UC-14.10 View Post Likes}{fig:kvy-seq-uc-14-10}
 
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/PostList}{Sequence diagram of View Post List}{fig:seq-view-post-list}
+\subsubsection{UC-14.11 -- View Post Comments}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.11-view-post-comments}{Sequence diagram of UC-14.11 View Post Comments}{fig:kvy-seq-uc-14-11}
 
-% ================= View Post Detail =================
-\subsection{View Post Detail}
+\subsubsection{UC-14.12 -- Create Comment}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.12-create-comment}{Sequence diagram of UC-14.12 Create Comment}{fig:kvy-seq-uc-14-12}
 
-\textbf{a.~Class Diagram}
+\subsubsection{UC-14.13 -- Update Comment}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.13-update-comment}{Sequence diagram of UC-14.13 Update Comment}{fig:kvy-seq-uc-14-13}
 
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Post Detail}{Class diagram of View Post Detail}{fig:cls-view-post-detail}
+\subsubsection{UC-14.14 -- Delete Comment}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.14-delete-comment}{Sequence diagram of UC-14.14 Delete Comment}{fig:kvy-seq-uc-14-14}
 
-\textbf{b.~Sequence Diagram(s)}
+\subsubsection{UC-14.15 -- Like Comment}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.15-like-comment}{Sequence diagram of UC-14.15 Like Comment}{fig:kvy-seq-uc-14-15}
 
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/PostDetail}{Sequence diagram of View Post Detail}{fig:seq-view-post-detail}
+\subsubsection{UC-14.16 -- Unlike Comment}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.16-unlike-comment}{Sequence diagram of UC-14.16 Unlike Comment}{fig:kvy-seq-uc-14-16}
 
-% ================= Create Post =================
-\subsection{Create Post}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Create Post}{Class diagram of Create Post}{fig:cls-create-post}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/CreatePost}{Sequence diagram of Create Post}{fig:seq-create-post}
-
-% ================= Update Post =================
-\subsection{Update Post}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Update Post}{Class diagram of Update Post}{fig:cls-update-post}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/EditPost}{Sequence diagram of Update Post}{fig:seq-update-post}
-
-% ================= Delete Post =================
-\subsection{Delete Post}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Delete Post}{Class diagram of Delete Post}{fig:cls-delete-post}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/DeletePost}{Sequence diagram of Delete Post}{fig:seq-delete-post}
-
-% ================= Like Post =================
-\subsection{Like Post}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Like Post}{Class diagram of Like Post}{fig:cls-like-post}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/LikePost}{Sequence diagram of Like Post}{fig:seq-like-post}
-
-% ================= Unlike Post =================
-\subsection{Unlike Post}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Unlike Post}{Class diagram of Unlike Post}{fig:cls-unlike-post}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UnlikePost}{Sequence diagram of Unlike Post}{fig:seq-unlike-post}
-
-% ================= View Post Likes =================
-\subsection{View Post Likes}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Post Likes}{Class diagram of View Post Likes}{fig:cls-view-post-likes}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/ViewLikePostDetail}{Sequence diagram of View Post Likes}{fig:seq-view-post-likes}
-
-% ================= View Post Comments =================
-\subsection{View Post Comments}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/View Post Comment}{Class diagram of View Post Comments}{fig:cls-view-post-comments}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/PostComments}{Sequence diagram of View Post Comments}{fig:seq-view-post-comments}
-
-% ================= Create Comment =================
-\subsection{Create Comment}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Create Comment}{Class diagram of Create Comment}{fig:cls-create-comment}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/AddComment}{Sequence diagram of Create Comment}{fig:seq-create-comment}
-
-% ================= Update Comment =================
-\subsection{Update Comment}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Update Comment}{Class diagram of Update Comment}{fig:cls-update-comment}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/EditComment}{Sequence diagram of Update Comment}{fig:seq-update-comment}
-
-% ================= Delete Comment =================
-\subsection{Delete Comment}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Delete Comment}{Class diagram of Delete Comment}{fig:cls-delete-comment}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/DeleteComment}{Sequence diagram of Delete Comment}{fig:seq-delete-comment}
-
-% ================= Like Comment =================
-\subsection{Like Comment}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Like Comment}{Class diagram of Like Comment}{fig:cls-like-comment}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/LikeComment}{Sequence diagram of Like Comment}{fig:seq-like-comment}
-
-% ================= Unlike Comment =================
-\subsection{Unlike Comment}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Unlike Comment}{Class diagram of Unlike Comment}{fig:cls-unlike-comment}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UnlikeComment}{Sequence diagram of Unlike Comment}{fig:seq-unlike-comment}
-
-% ================= Report Content =================
-\subsection{Report Content}
-
-\textbf{a.~Class Diagram}
-
-\kfig{0.92\textwidth}{images/sprint1/kvy/classDiagram/Report Content}{Class diagram of Report Content}{fig:cls-report-content}
-
-\textbf{b.~Sequence Diagram(s)}
-
-\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/ReportContent}{Sequence diagram of Report Content}{fig:seq-report-content}
-
+\subsubsection{UC-14.17 -- Report Content}
+\kfig{0.78\textwidth}{images/sprint1/kvy/sequences/UC-14.17-report-content}{Sequence diagram of UC-14.17 Report Content}{fig:kvy-seq-uc-14-17}
