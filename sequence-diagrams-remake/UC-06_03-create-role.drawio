@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="UC-06_03-create-role">
-    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="719" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -497,7 +497,7 @@
           <mxGeometry x="395" y="346" width="10" height="2364" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry x="405" y="499" width="10" height="28" as="geometry" />
+          <mxGeometry x="401" y="499" width="10" height="28" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;span style=&quot;font-size: 11px;&quot;&gt;4. Check validate&amp;nbsp;&lt;/span&gt;&lt;div style=&quot;font-size: 11px;&quot;&gt;role data&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;" parent="1" target="zTKk2F94x-N6U4w28_5q-1" edge="1">
           <mxGeometry x="0.4133" y="55" width="80" relative="1" as="geometry">

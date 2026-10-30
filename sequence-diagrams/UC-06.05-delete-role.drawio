@@ -19,59 +19,50 @@
         <mxCell id="lf_view" value=":RoleView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
           <mxGeometry x="225" y="240" width="150" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_view" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_view" vertex="1">
-          <mxGeometry x="70" y="100" width="10" height="2540" as="geometry" />
+        <mxCell id="act_view" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="295" y="340" width="10" height="2540" as="geometry" />
         </mxCell>
         <mxCell id="lf_route" value=":RoleRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
           <mxGeometry x="440" y="240" width="120" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_route" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_route" vertex="1">
-          <mxGeometry x="55" y="210" width="10" height="2380" as="geometry" />
+        <mxCell id="act_route" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="495" y="450" width="10" height="2380" as="geometry" />
         </mxCell>
         <mxCell id="lf_controller" value=":RoleController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="640" y="240" width="140" height="2810" as="geometry" />
+          <mxGeometry x="635" y="240" width="150" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_controller" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_controller" vertex="1">
-          <mxGeometry x="65" y="540" width="10" height="2000" as="geometry" />
+        <mxCell id="act_controller" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="705" y="780" width="10" height="2000" as="geometry" />
         </mxCell>
         <mxCell id="lf_service" value=":RoleService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="850" y="240" width="140" height="2810" as="geometry" />
+          <mxGeometry x="845" y="240" width="150" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_service" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_service" vertex="1">
-          <mxGeometry x="65" y="590" width="10" height="1900" as="geometry" />
-        </mxCell>
-        <mxCell id="act_self_find_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="70" y="930" width="10" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="act_self_sys_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="70" y="1270" width="10" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="act_self_user_count" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="70" y="1890" width="10" height="20" as="geometry" />
+        <mxCell id="act_service" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="915" y="830" width="10" height="1900" as="geometry" />
         </mxCell>
         <mxCell id="lf_repo" value=":RoleRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="1060" y="240" width="130" height="2810" as="geometry" />
+          <mxGeometry x="1055" y="240" width="140" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_repo_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_repo" vertex="1">
-          <mxGeometry x="60" y="640" width="10" height="230" as="geometry" />
+        <mxCell id="act_repo_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1120" y="880" width="10" height="230" as="geometry" />
         </mxCell>
-        <mxCell id="act_repo_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_repo" vertex="1">
-          <mxGeometry x="60" y="1600" width="10" height="230" as="geometry" />
+        <mxCell id="act_repo_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1120" y="1840" width="10" height="230" as="geometry" />
         </mxCell>
-        <mxCell id="act_repo_3" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_repo" vertex="1">
-          <mxGeometry x="60" y="2210" width="10" height="230" as="geometry" />
+        <mxCell id="act_repo_3" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1120" y="2450" width="10" height="230" as="geometry" />
         </mxCell>
         <mxCell id="lf_prisma" value=":PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
           <mxGeometry x="1250" y="240" width="130" height="2810" as="geometry" />
         </mxCell>
-        <mxCell id="act_prisma_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_prisma" vertex="1">
-          <mxGeometry x="60" y="690" width="10" height="140" as="geometry" />
+        <mxCell id="act_prisma_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1310" y="930" width="10" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="act_prisma_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_prisma" vertex="1">
-          <mxGeometry x="60" y="1650" width="10" height="140" as="geometry" />
+        <mxCell id="act_prisma_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1310" y="1890" width="10" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="act_prisma_3" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="lf_prisma" vertex="1">
-          <mxGeometry x="60" y="2260" width="10" height="140" as="geometry" />
+        <mxCell id="act_prisma_3" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+          <mxGeometry x="1310" y="2500" width="10" height="140" as="geometry" />
         </mxCell>
         <mxCell id="node_db" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" parent="1" vertex="1">
           <mxGeometry x="1450" y="220" width="60" height="70" as="geometry" />
@@ -205,14 +196,18 @@
             <mxPoint x="925" y="1110" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12" value="12. Handle find role result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="act_self_find_role">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="act_self_find_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1170" width="10" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m12" value="12. Handle find role&amp;nbsp;&lt;div&gt;result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" edge="1" target="act_self_find_role" parent="1">
+          <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
             <mxPoint x="925" y="1150" as="sourcePoint" />
             <mxPoint x="930" y="1170" as="targetPoint" />
             <Array as="points">
               <mxPoint x="965" y="1150" />
-              <mxPoint x="965" y="1170" />
+              <mxPoint x="965" y="1175" />
             </Array>
+            <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="fr_alt_1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
@@ -254,14 +249,18 @@
         <mxCell id="g_find_2" value="[role found]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
           <mxGeometry x="120" y="1455" width="150" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="m12_2_1" value="12.2.1. Check role is not a system role" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="act_self_sys_role">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="act_self_sys_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1510" width="10" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m12_2_1" value="12.2.1. Check role is not&amp;nbsp;&lt;div&gt;a system role&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" edge="1" target="act_self_sys_role" parent="1">
+          <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
             <mxPoint x="925" y="1490" as="sourcePoint" />
             <mxPoint x="930" y="1510" as="targetPoint" />
             <Array as="points">
               <mxPoint x="965" y="1490" />
-              <mxPoint x="965" y="1510" />
+              <mxPoint x="965" y="1515" />
             </Array>
+            <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="fr_alt_2" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
@@ -339,14 +338,18 @@
             <mxPoint x="925" y="2070" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_2_1_2_7" value="12.2.1.2.7. Handle user count result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="act_self_user_count">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="act_self_user_count" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="920" y="2130" width="10" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m12_2_1_2_7" value="12.2.1.2.7. Handle user count&amp;nbsp;&lt;div&gt;result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" edge="1" target="act_self_user_count" parent="1">
+          <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
             <mxPoint x="925" y="2110" as="sourcePoint" />
             <mxPoint x="930" y="2130" as="targetPoint" />
             <Array as="points">
               <mxPoint x="965" y="2110" />
-              <mxPoint x="965" y="2130" />
+              <mxPoint x="965" y="2135" />
             </Array>
+            <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="fr_alt_3" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
