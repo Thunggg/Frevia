@@ -1,220 +1,220 @@
-UC id,Module,Module,Use case,Actor,Ghi chú
-UC-01,UC-01,Login with Google,Login with Google,Guest,Nhóm: User Authentication
-UC-02,UC-02,Login,Login,Guest,Nhóm: User Authentication
-UC-03,UC-03,Logout,Logout,"Client, Expert, Freelancer, Admin",Nhóm: User Authentication
-UC-04,UC-04,Register,Register,Guest,Nhóm: User Authentication
-UC-05,UC-05,Forgot Password,Forgot Password,Guest,Nhóm: User Authentication
-UC-06.01,UC-06,Role Management,View Role List,Admin,
-UC-06.02,UC-06,Role Management,View Role Detail,Admin,
-UC-06.03,UC-06,Role Management,Create Role,Admin,
-UC-06.04,UC-06,Role Management,Update Role,Admin,
-UC-06.05,UC-06,Role Management,Delete Role,Admin,
-UC-06.06,UC-06,Role Management,Update Role Permissions,Admin,
-UC-07.01,UC-07,Freelancer Profile Management,View Freelancer Profile,Freelancer,
-UC-07.02,UC-07,Freelancer Profile Management,Update Freelancer Profile,Freelancer,
-UC-07.03,UC-07,Freelancer Profile Management,Upload CV,Freelancer,Nhóm: CV
-UC-07.04,UC-07,Freelancer Profile Management,View CV,Freelancer,
-UC-07.05,UC-07,Freelancer Profile Management,Replace CV,Freelancer,
-UC-07.06,UC-07,Freelancer Profile Management,Delete CV,Freelancer,
-UC-08.01,UC-08,Freelancer Skill Management,View Freelancer Skill List,Freelancer,
-UC-08.02,UC-08,Freelancer Skill Management,Add Freelancer Skill,Freelancer,
-UC-08.03,UC-08,Freelancer Skill Management,Delete Freelancer Skill,Freelancer,
-UC-09.01,UC-09,Portfolio Management,View Portfolio List,Freelancer,
-UC-09.02,UC-09,Portfolio Management,Add Portfolio,Freelancer,
-UC-09.03,UC-09,Portfolio Management,View Portfolio Detail,Freelancer,
-UC-09.04,UC-09,Portfolio Management,Update Portfolio,Freelancer,
-UC-09.05,UC-09,Portfolio Management,Delete Portfolio,Freelancer,
-UC-10.01,UC-10,Job Browsing,View Job List,"Client, Guest, Freelancer",
-UC-10.02,UC-10,Job Browsing,View Job Detail,"Client, Guest, Freelancer",
-UC-11.01,UC-11,Job Management,View My Jobs,Client,
-UC-11.02,UC-11,Job Management,Create Job,Client,
-UC-11.03,UC-11,Job Management,Publish Job,Client,
-UC-11.04,UC-11,Job Management,Update Job,Client,
-UC-11.05,UC-11,Job Management,Delete Job,Client,
-UC-11.06,UC-11,Job Management,Change Job Status,Client,
-UC-12.01,UC-12,Job Bookmark Management,View Bookmarked Job List,Freelancer,
-UC-12.02,UC-12,Job Bookmark Management,Bookmark Job,Freelancer,
-UC-12.03,UC-12,Job Bookmark Management,Remove Bookmark,Freelancer,Nhóm: Client
-UC-13.01,UC-13,Contract Management,Create Contract,Client,
-UC-13.02,UC-13,Contract Management,Update Contract,Client,
-UC-13.03,UC-13,Contract Management,Complete Contract,Client,Nhóm: User
-UC-13.04,UC-13,Contract Management,View Contract List,"Client, Freelancer",
-UC-13.05,UC-13,Contract Management,View Contract Detail,"Client, Freelancer",
-UC-13.06,UC-13,Contract Management,Sign Contract,"Client, Freelancer",
-UC-13.07,UC-13,Contract Management,Cancel Contract,"Client, Freelancer",
-UC-13.08,UC-13,Contract Management,View Contract Files,"Client, Freelancer",
-UC-13.09,UC-13,Contract Management,Upload Contract File,"Client, Freelancer",
-UC-13.10,UC-13,Contract Management,Delete Contract File,"Client, Freelancer",Nhóm: Admin
-UC-13.11,UC-13,Contract Management,View All Contracts,Admin,
-UC-13.12,UC-13,Contract Management,View Contract Detail ,Admin,
-UC-13.13,UC-13,Contract Management,Admin Cancel Contract,Admin,
-UC-13.14,UC-13,Contract Management,Admin Update Contract Status,Admin,
-UC-13.15,UC-13,Contract Management,View Contract Disputes,Admin,Nhóm: View
-UC-14.01,UC-14,Forum Management,View Forum Category List,"Client, Freelancer",
-UC-14.02,UC-14,Forum Management,View Forum Category Detail,"Client, Freelancer",
-UC-14.03,UC-14,Forum Management,View Post List,"Client, Freelancer",
-UC-14.04,UC-14,Forum Management,View Post Detail,"Client, Freelancer",Nhóm: Post
-UC-14.05,UC-14,Forum Management,Create Post,"Client, Freelancer",
-UC-14.06,UC-14,Forum Management,Update Post,"Client, Freelancer",
-UC-14.07,UC-14,Forum Management,Delete Post,"Client, Freelancer",
-UC-14.08,UC-14,Forum Management,Like Post,"Client, Freelancer",
-UC-14.09,UC-14,Forum Management,Unlike Post,"Client, Freelancer",
-UC-14.10,UC-14,Forum Management,View Post Likes,"Client, Freelancer",
-UC-14.11,UC-14,Forum Management,View Post Comments,"Client, Freelancer",Nhóm: Comment
-UC-14.12,UC-14,Forum Management,Create Comment,"Client, Freelancer",
-UC-14.13,UC-14,Forum Management,Update Comment,"Client, Freelancer",
-UC-14.14,UC-14,Forum Management,Delete Comment,"Client, Freelancer",Nhóm: Like comment
-UC-14.15,UC-14,Forum Management,Like Comment,"Client, Freelancer",
-UC-14.16,UC-14,Forum Management,Unlike Comment,"Client, Freelancer",Nhóm: Report
-UC-14.17,UC-14,Forum Management,Report Content,"Client, Freelancer",
-UC-15.01,UC-15,Permission Management,View Permission List,Admin,
-UC-15.02,UC-15,Permission Management,View Permission Detail,Admin,
-UC-16.01,UC-16,Session Management,View Session List,"Client, Expert, Freelancer, Admin",
-UC-16.02,UC-16,Session Management,View Session Detail,"Client, Expert, Freelancer, Admin",
-UC-16.03,UC-16,Session Management,Revoke Session,"Client, Expert, Freelancer, Admin",
-UC-17.01,UC-17,Forum Category Management,Create Forum Category,Admin,
-UC-17.02,UC-17,Forum Category Management,Update Forum Category,Admin,
-UC-17.03,UC-17,Forum Category Management,Delete Forum Category,Admin,
-UC-17.04,UC-17,Forum Category Management,View Forum Category List,Admin,
-UC-17.05,UC-17,Forum Category Management,View Forum Category Detail,Admin,
-UC-17.06,UC-17,Forum Category Management,Restore Forum Category,Admin,
-UC-18.01,UC-18,Identity Verification,Upload Identity Documents,Freelancer,
-UC-18.02,UC-18,Identity Verification,View Verification Status,Freelancer,
-UC-19.01,UC-19,Client Profile Management,View Client Profile,"Client, Expert, Freelancer",Chuyển từ UC-07.07 (Freelancer Profile) sang module Client Profile
-UC-19.02,UC-19,Client Profile Management,Update Company Information,Client,
-UC-20.01,UC-20,Social Link Management,View Social Link List,"Client, Freelancer",
-UC-20.02,UC-20,Social Link Management,Add Social Link,"Client, Freelancer",
-UC-20.03,UC-20,Social Link Management,Delete Social Link,"Client, Freelancer",
-UC-21.01,UC-21,Favorite Freelancer Management,View Favorite Freelancer List,Client,
-UC-21.02,UC-21,Favorite Freelancer Management,Add Freelancer to Favorites,Client,
-UC-21.03,UC-21,Favorite Freelancer Management,Remove Freelancer from Favorites,Client,
-UC-22.01,UC-22,Saved Search Management,View Saved Search List,Freelancer,
-UC-22.02,UC-22,Saved Search Management,View Saved Search Detail,Freelancer,
-UC-22.03,UC-22,Saved Search Management,Create Saved Search,Freelancer,
-UC-22.04,UC-22,Saved Search Management,Update Saved Search,Freelancer,
-UC-22.05,UC-22,Saved Search Management,Delete Saved Search,Freelancer,
-UC-23.01,UC-23,Job Alert Management,View Job Alert List,Freelancer,
-UC-23.02,UC-23,Job Alert Management,View Job Alert Detail,Freelancer,
-UC-23.03,UC-23,Job Alert Management,Create Job Alert,Freelancer,
-UC-23.04,UC-23,Job Alert Management,Update Job Alert,Freelancer,
-UC-23.05,UC-23,Job Alert Management,Delete Job Alert,Freelancer,
-UC-24.01,UC-24,Milestone Management,View Milestone List,"Client, Freelancer",
-UC-24.02,UC-24,Milestone Management,View Milestone Detail,"Client, Freelancer",
-UC-24.03,UC-24,Milestone Management,Create Milestone,Client,
-UC-24.04,UC-24,Milestone Management,Update Milestone,Client,
-UC-24.05,UC-24,Milestone Management,Delete Milestone,Client,
-UC-24.06,UC-24,Milestone Management,Request Milestone Changes,Client,
-UC-24.07,UC-24,Milestone Management,Approve Milestone,Client,
-UC-24.08,UC-24,Milestone Management,Update Milestone Progress,Freelancer,
-UC-25.01,UC-25,Milestone File Management,View Milestone Files,"Client, Freelancer",
-UC-25.02,UC-25,Milestone File Management,Upload Milestone File,Freelancer,
-UC-25.03,UC-25,Milestone File Management,Delete Milestone File,Freelancer,
-UC-26.01,UC-26,Milestone Submission Management,Submit Milestone,Freelancer,
-UC-26.02,UC-26,Milestone Submission Management,Delete Milestone Submission,Freelancer,
-UC-26.03,UC-26,Milestone Submission Management,View Milestone Submission List,Client,
-UC-26.04,UC-26,Milestone Submission Management,View Milestone Submission Detail,Client,
-UC-27.01,UC-27,Conversation Management,View Conversation List,"Client, Freelancer",
-UC-27.02,UC-27,Conversation Management,Start Conversation,"Client, Freelancer",
-UC-27.03,UC-27,Conversation Management,View Conversation Detail,"Client, Freelancer",
-UC-27.04,UC-27,Conversation Management,Send Message,"Client, Freelancer",
-UC-27.05,UC-27,Conversation Management,Mark Message as Read,"Client, Freelancer","File gốc ghi Delete/Recall: gộp 2 thao tác, tách nếu nghiệp vụ khác nhau"
-UC-27.06,UC-27,Conversation Management,Delete/Recall Message,"Client, Freelancer",Gộp Pin và Unpin; tách nếu cần giống Like/Unlike
-UC-27.07,UC-27,Conversation Management,Pin/Unpin Conversation,"Client, Freelancer",
-UC-27.08,UC-27,Conversation Management,Send File,"Client, Freelancer",
-UC-28.01,UC-28,User Management,View User List,Admin,
-UC-28.02,UC-28,User Management,View User Detail,Admin,
-UC-28.03,UC-28,User Management,Create User,Admin,
-UC-28.04,UC-28,User Management,Update User,Admin,
-UC-28.05,UC-28,User Management,Update Client Profile,Admin,
-UC-28.06,UC-28,User Management,Update Freelancer Basic Info,Admin,
-UC-28.07,UC-28,User Management,Update Freelancer Skills,Admin,
-UC-28.08,UC-28,User Management,Update Freelancer Portfolio,Admin,
-UC-28.09,UC-28,User Management,Update Expert Profile,Admin,
-UC-29.01,UC-29,Following Management,View Following List,Client,
-UC-29.02,UC-29,Following Management,Follow Freelancer,Client,
-UC-29.03,UC-29,Following Management,Unfollow Freelancer,Client,
-UC-30.01,UC-30,Notification Management,View Notification List,"Client, Freelancer",
-UC-30.02,UC-30,Notification Management,Mark Notification as Read,"Client, Freelancer",
-UC-30.03,UC-30,Notification Management,Mark All Notifications as Read,"Client, Freelancer",
-UC-30.04,UC-30,Notification Management,Delete Notification,"Client, Freelancer",
-UC-31.01,UC-31,Account Role Management,Switch Role,"Client, Freelancer",
-UC-31.02,UC-31,Account Role Management,Join New Role,"Client, Freelancer",
-UC-32.01,UC-32,Proposal Management,View My Proposal List,Freelancer,
-UC-32.02,UC-32,Proposal Management,View My Proposal Detail,Freelancer,
-UC-32.03,UC-32,Proposal Management,Submit Proposal,Freelancer,
-UC-32.04,UC-32,Proposal Management,Update Proposal,Freelancer,
-UC-32.05,UC-32,Proposal Management,Withdraw Proposal,Freelancer,
-UC-32.06,UC-32,Proposal Management,Accept Proposal,Client,
-UC-32.07,UC-32,Proposal Management,Reject Proposal,Client,
-UC-32.08,UC-32,Proposal Management,View Job Proposal List,Client,
-UC-32.09,UC-32,Proposal Management,View Proposal Detail,Client,
-UC-33.01,UC-33,Dispute Management,Open Dispute,"Client, Freelancer",
-UC-33.02,UC-33,Dispute Management,View Dispute List,"Client, Freelancer",
-UC-33.03,UC-33,Dispute Management,View Dispute Detail,"Client, Freelancer",
-UC-33.04,UC-33,Dispute Management,Respond to Dispute,"Client, Freelancer",
-UC-33.05,UC-33,Dispute Management,Respond to Dispute Resolution,"Client, Freelancer",File gốc xếp nhầm dưới Admin Contract Management
-UC-33.06,UC-33,Dispute Management,Propose Dispute Resolution,Admin,
-UC-34.01,UC-34,Moderation Management,View Moderation Queue,Admin,
-UC-34.02,UC-34,Moderation Management,View Moderation Item Detail,Admin,
-UC-34.03,UC-34,Moderation Management,Resolve Moderation Item,Admin,
-UC-35.01,UC-35,ID Verification Review,View ID Verification Request List,Admin,
-UC-35.02,UC-35,ID Verification Review,View ID Verification Request Detail,Admin,
-UC-35.03,UC-35,ID Verification Review,Approve ID Verification,Admin,
-UC-35.04,UC-35,ID Verification Review,Reject ID Verification,Admin,
-UC-36.01,UC-36,Forum Trash Management,View Deleted Posts/Comments List,Admin,
-UC-36.02,UC-36,Forum Trash Management,View Deleted Posts/Comments Detail,Admin,
-UC-36.03,UC-36,Forum Trash Management,Restore Deleted Posts/Comments,Admin,
-UC-37.01,UC-37,Banner Management,View Banner List,Admin,
-UC-37.02,UC-37,Banner Management,View Banner Detail,Admin,
-UC-37.03,UC-37,Banner Management,Create Banner,Admin,
-UC-37.04,UC-37,Banner Management,Update Banner,Admin,
-UC-37.05,UC-37,Banner Management,Delete Banner,Admin,
-UC-38.01,UC-38,Skill Management,View Skill List,Admin,
-UC-38.02,UC-38,Skill Management,View Skill Detail,Admin,
-UC-38.03,UC-38,Skill Management,Create Skill,Admin,
-UC-38.04,UC-38,Skill Management,Update Skill,Admin,
-UC-38.05,UC-38,Skill Management,Delete Skill,Admin,
-UC-38.06,UC-38,Skill Management,Restore Skill,Admin,
-UC-39.01,UC-39,Review Management,View Review List,"Client, Freelancer",
-UC-39.02,UC-39,Review Management,View Review Detail,"Client, Freelancer",
-UC-39.03,UC-39,Review Management,Write Review,"Client, Freelancer",
-UC-39.04,UC-39,Review Management,Update Review,"Client, Freelancer",
-UC-39.05,UC-39,Review Management,Delete Review,"Client, Freelancer",
-UC-40.01,UC-40,Review Response Management,Respond to Review,"Client, Freelancer",
-UC-40.02,UC-40,Review Response Management,Update Review Response,"Client, Freelancer",
-UC-40.03,UC-40,Review Response Management,Delete Review Response,"Client, Freelancer",
-UC-41.01,UC-41,Account Profile Management,View Profile,"Client, Expert, Freelancer",
-UC-41.02,UC-41,Account Profile Management,Update Profile,"Client, Expert, Freelancer",
-UC-41.03,UC-41,Account Profile Management,Change Password,"Client, Expert, Freelancer",
-UC-41.04,UC-41,Account Profile Management,Upload Avatar,"Client, Expert, Freelancer",Gồm gợi ý Job và gợi ý Freelancer
-UC-42.01,UC-42,Job & Freelancer Recommendation,Recommend Jobs / Freelancers,AI,
-UC-43.01,UC-43,Payment Management,Connect Stripe Account,Freelancer,
-UC-43.02,UC-43,Payment Management,View Payout History,Freelancer,
-UC-43.03,UC-43,Payment Management,View Payout Detail,Freelancer,Stripe: Create Milestone Funding Payment Intent
-UC-43.04,UC-43,Payment Management,Fund Milestone,Client,
-UC-43.05,UC-43,Payment Management,Refund Payment,Client,Stripe: Create Platform Fee Payment Intent
-UC-43.06,UC-43,Payment Management,Pay Platform Fee,Client,
-UC-43.07,UC-43,Payment Management,Release Payment,Client,Stripe: Create Dispute Fee Payment Intent
-UC-43.08,UC-43,Payment Management,Pay Dispute Fee,"Client, Freelancer",
-UC-43.09,UC-43,Payment Management,View Payment History,"Client, Freelancer",
-UC-43.10,UC-43,Payment Management,View Payment Detail,"Client, Freelancer",
-UC-43.11,UC-43,Payment Management,Execute Dispute Resolution Payment,Admin,
-UC-43.12,UC-43,Payment Management,Handle Stripe Webhook Event,System,
-UC-43.13,UC-43,Payment Management,Sync Payment Intent Status,System,
-UC-44.01,UC-44,AI Content Moderation,Moderate Content by AI,AI,
-UC-45.01,UC-45,AI Face Scan & Duplicate Detection,Scan Face and Detect Duplicate Identity,AI,
-UC-46.01,UC-46,Job Category Management,View Job Category List,Admin,
-UC-46.02,UC-46,Job Category Management,View Job Category Detail,Admin,
-UC-46.03,UC-46,Job Category Management,Create Job Category,Admin,
-UC-46.04,UC-46,Job Category Management,Update Job Category,Admin,
-UC-46.05,UC-46,Job Category Management,Delete Job Category,Admin,"Trùng tên với UC-46.01, thêm hậu tố actor"
-UC-46.06,UC-46,Job Category Management,View Job Category List,Freelancer,
-UC-46.07,UC-46,Job Category Management,View Job Category Detail,Freelancer,
-UC-47.01,UC-47,Profile Update Review,View Pending Profile Update Request List,Admin,
-UC-47.02,UC-47,Profile Update Review,View Profile Update Request Detail,Admin,
-UC-47.03,UC-47,Profile Update Review,Approve Profile Update Request,Admin,
-UC-47.04,UC-47,Profile Update Review,Reject Profile Update Request,Admin,
-UC-47.05,UC-47,Profile Update Review,View Profile Update Request History,Admin,Actor Expert
-UC-47.06,UC-47,Profile Update Review,Update Profile Expert,Expert,Tách từ 'Create/Update'; xóa nếu hệ thống không có chức năng xem
-UC-48.01,UC-48,ID Document Retention Policy Management,View ID Document Retention Policy,Admin,
-UC-48.02,UC-48,ID Document Retention Policy Management,Configure ID Document Retention Policy,Admin,
+,M? module,Module,Thao t��c (Use case),M? t? (EN),M? t? (VI),Actor
+UC-01,UC-01,Login with Google,Login with Google,Allows users to login/register using Google OAuth.,Cho ph��p ng??i d��ng ??ng nh?p/??ng k? b?ng OAuth c?a Google.,Guest
+UC-02,UC-02,Login,Login,Allows users to log in using email/password and JWT authentication.,Cho ph��p ng??i d��ng ??ng nh?p b?ng email/m?t kh?u v�� x��c th?c JWT.,"Client, Expert, Freelancer, Admin"
+UC-03,UC-03,Logout,Logout,Allows users to logout and terminate authentication session.,Cho ph��p ng??i d��ng ??ng xu?t v�� k?t th��c phi��n x��c th?c.,"Client, Expert, Freelancer, Admin"
+UC-04,UC-04,Register,Register,Allows users to create new accounts using email and password.,Cho ph��p ng??i d��ng t?o t��i kho?n b?ng email v�� m?t kh?u.,Guest
+UC-05,UC-05,Forgot Password,Forgot Password,Allows users to request password reset via email verification link.,Cho ph��p ng??i d��ng y��u c?u ??t l?i m?t kh?u th?ng qua li��n k?t x��c minh email.,"Client, Expert, Freelancer"
+UC-06.01,UC-06,Role Management,View Role List,Retrieve list of all roles along with their assigned permissions.,Xem danh s��ch t?t c? role c��ng c��c permission ?? ???c g��n.,Admin
+UC-06.02,UC-06,Role Management,View Role Detail,View detailed information of a specific role including its permissions.,"Xem chi ti?t m?t role bao g?m t��n, m? t? v�� c��c permission.",Admin
+UC-06.03,UC-06,Role Management,Create Role,"Create a new role with name, description, and a list of permission IDs.","T?o role m?i v?i t��n, m? t? v�� danh s��ch permission.",Admin
+UC-06.04,UC-06,Role Management,Update Role,"Update a role's name, description, and replace all assigned permissions.","C?p nh?t t��n, m? t? v�� thay th? to��n b? permission ?? g��n c?a role.",Admin
+UC-06.05,UC-06,Role Management,Delete Role,Delete a role from the system.,Xo�� role kh?i h? th?ng.,Admin
+UC-06.06,UC-06,Role Management,Update Role Permissions,Assign route access rights to roles.,G��n quy?n truy c?p routes cho c��c role.,Admin
+UC-07.01,UC-07,Freelancer Profile Management,View Freelancer Profile,"Retrieve all profile information of a freelancer, including data from both profiles and freelancer_profiles tables.","L?y to��n b? th?ng tin h? s? c?a freelancer, bao g?m d? li?u t? c? b?ng profiles v�� freelancer_profiles.",Freelancer
+UC-07.02,UC-07,Freelancer Profile Management,Update Freelancer Profile,"Update fields such as display_name, bio, title, education, certifications, languages, availability_status, etc.","C?p nh?t c��c tr??ng: display_name, bio, title, education, certifications, languages, availability_status, v.v.",Freelancer
+UC-07.03,UC-07,Freelancer Profile Management,Upload CV,Freelancer uploads a CV file in a supported format and associates it with their profile.,Freelancer t?i l��n file CV theo ??nh d?ng ???c h? tr? v�� li��n k?t CV v?i h? s? c�� nh?n.,Freelancer
+UC-07.04,UC-07,Freelancer Profile Management,View CV,Freelancer views or downloads their uploaded CV.,Freelancer xem ho?c t?i xu?ng CV ?? t?i l��n.,Freelancer
+UC-07.05,UC-07,Freelancer Profile Management,Replace CV,Freelancer replaces the existing CV with a new file.,Freelancer thay th? CV hi?n t?i b?ng m?t file m?i.,Freelancer
+UC-07.06,UC-07,Freelancer Profile Management,Delete CV,Freelancer removes their uploaded CV from the profile.,Freelancer x��a CV ?? t?i l��n kh?i h? s?.,Freelancer
+UC-08.01,UC-08,Freelancer Skill Management,View Freelancer Skill List,Retrieve the list of skills added by the freelancer.,L?y danh s��ch k? n?ng m�� freelancer ?? th��m.,Freelancer
+UC-08.02,UC-08,Freelancer Skill Management,Add Freelancer Skill,Add a new skill to the freelancer's profile with proficiency level.,Th��m m?t k? n?ng m?i v��o h? s? freelancer k��m m?c ?? th��nh th?o.,Freelancer
+UC-08.03,UC-08,Freelancer Skill Management,Delete Freelancer Skill,Remove a skill from the freelancer's profile (hard delete).,Xo�� v?nh vi?n m?t k? n?ng kh?i h? s? freelancer.,Freelancer
+UC-09.01,UC-09,Portfolio Management,View Portfolio List,Retrieve the list of portfolios created by the freelancer.,L?y danh s��ch portfolio m�� freelancer ?? t?o.,Freelancer
+UC-09.02,UC-09,Portfolio Management,Add Portfolio,"Create a new portfolio entry, with optional media file uploads.","Th��m portfolio m?i, c�� th? k��m theo t?i l��n t?p media.",Freelancer
+UC-09.03,UC-09,Portfolio Management,View Portfolio Detail,View detailed information of a specific portfolio.,Xem th?ng tin chi ti?t c?a m?t portfolio c? th?.,Freelancer
+UC-09.04,UC-09,Portfolio Management,Update Portfolio,Update an existing portfolio's information and/or media.,C?p nh?t th?ng tin v��/ho?c media c?a portfolio.,Freelancer
+UC-09.05,UC-09,Portfolio Management,Delete Portfolio,Remove a portfolio from the freelancer's profile (soft delete).,Xo�� m?m m?t portfolio kh?i h? s? freelancer.,Freelancer
+UC-10.01,UC-10,Job Browsing,View Job List,"Retrieve paginated job list with filters (category, budget, skills, status, keywords) and sorting options.","L?y danh s��ch c?ng vi?c c�� ph?n trang, h? tr? l?c (danh m?c, ng?n s��ch, k? n?ng, tr?ng th��i, t? kh��a) v�� s?p x?p.","Client, Guest, Freelancer"
+UC-10.02,UC-10,Job Browsing,View Job Detail,"Get full job details: title, description, budget, skills, client info, proposals count, attachments, timeline.","Xem ??y ?? chi ti?t c?ng vi?c: ti��u ??, m? t?, ng?n s��ch, k? n?ng, th?ng tin kh��ch, s? ?? xu?t, file ?��nh k��m, m?c th?i gian.","Client, Guest, Freelancer"
+UC-11.01,UC-11,Job Management,View My Jobs,"Retrieve the client's own jobs with pagination, filtering by status, keywords, and sorting. Includes job status, budget, proposals count, and creation date.","Xem danh s��ch c��c c?ng vi?c do client t?o, c�� ph?n trang, l?c theo tr?ng th��i, t? kh��a v�� s?p x?p. Hi?n th? tr?ng th��i, ng?n s��ch, s? l??ng ?? xu?t v�� ng��y t?o.",Client
+UC-11.02,UC-11,Job Management,Create Job,"Create a new job as a draft. Required: title, description, budget, category, skills. Client/admin only.","T?o c?ng vi?c m?i ? tr?ng th��i b?n nh��p. Y��u c?u: ti��u ??, m? t?, ng?n s��ch, danh m?c, k? n?ng. Ch? client/admin.",Client
+UC-11.03,UC-11,Job Management,Publish Job,Publish a draft job and make it available for freelancers to view and submit proposals.,??ng c?ng vi?c ? tr?ng th��i b?n nh��p v�� c?ng khai ?? freelancer c�� th? xem v�� g?i ?? xu?t.,Client
+UC-11.04,UC-11,Job Management,Update Job,"Edit job fields (title, description, budget, skills, status). Owner/admin only; restricted if active contract exists.","S?a c��c tr??ng c?ng vi?c (ti��u ??, m? t?, ng?n s��ch, k? n?ng, tr?ng th��i). Ch? ch? s? h?u/admin; h?n ch? n?u c�� h?p ??ng ?ang ho?t ??ng.",Client
+UC-11.05,UC-11,Job Management,Delete Job,Delete a job after checking active proposals/contracts. Owner/admin only. May use soft delete.,X��a c?ng vi?c sau khi ki?m tra ?? xu?t/h?p ??ng ?ang ho?t ??ng. Ch? ch? s? h?u/admin. C�� th? d��ng x��a m?m.,Client
+UC-11.06,UC-11,Job Management,Close Job,Transition job status (draft �� published �� in progress �� completed �� cancelled) with valid transitions and access control.,Thay ??i tr?ng th��i c?ng vi?c theo lu?ng (nh��p �� ?? ??ng �� ?ang l��m �� ho��n th��nh �� h?y) v?i r��ng bu?c chuy?n ??i v�� quy?n.,Client
+UC-11.07,UC-11,Job Management,Reopen Job,,,Client
+UC-12.01,UC-12,Job Bookmark Management,View Bookmarked Job List,"List all jobs bookmarked by user, including job title, budget, client name, bookmark date.","Danh s��ch c?ng vi?c ?? bookmark, g?m ti��u ??, ng?n s��ch, t��n kh��ch, ng��y bookmark.",Freelancer
+UC-12.02,UC-12,Job Bookmark Management,Bookmark Job,Add job to bookmarks. Idempotent; duplicate requests ignored.,Th��m c?ng vi?c v��o bookmark. Y��u c?u tr��ng l?p ???c b? qua.,Freelancer
+UC-12.03,UC-12,Job Bookmark Management,Remove Bookmark,Remove bookmark from a job. Returns 404 if not bookmarked.,X��a bookmark kh?i c?ng vi?c. Tr? l?i 404 n?u ch?a bookmark.,Freelancer
+UC-13.01,UC-13,Contract Management,Create Contract,"Insert into contracts (job_id, client_id, freelancer_id, terms, total_amount, deposit_percent).",T?o h?p ??ng m?i t? job ?? ch?p nh?n.,Client
+UC-13.02,UC-13,Contract Management,Update Contract,"Update terms, total_amount, deposit_percent of a contract before signing.",C?p nh?t ?i?u kho?n h?p ??ng tr??c khi k?.,Client
+UC-13.03,UC-13,Contract Management,Complete Contract,Mark contract COMPLETED after all milestones done.,?��nh d?u h?p ??ng ho��n th��nh.,Client
+UC-13.04,UC-13,Contract Management,View Contract List,Get all contracts where user is client or freelancer (contracts table).,L?y danh s��ch h?p ??ng c?a ng??i d��ng (v?i vai tr�� client/freelancer).,"Client, Freelancer"
+UC-13.05,UC-13,Contract Management,View Contract Detail,"Get contract details: terms, total_amount, deposit_percent, status, signatures, milestones.","Xem chi ti?t h?p ??ng: ?i?u kho?n, t?ng ti?n, % c?c, tr?ng th��i, ch? k?, c?t m?c.","Client, Freelancer"
+UC-13.06,UC-13,Contract Management,Sign Contract,Set signed_by_client or signed_by_freelancer = true.,K? h?p ??ng (?��nh d?u ?? k? b?i client/freelancer).,"Client, Freelancer"
+UC-13.07,UC-13,Contract Management,Cancel Contract,Set contract status to CANCELLED.,H?y h?p ??ng (chuy?n sang CANCELLED).,"Client, Freelancer"
+UC-13.08,UC-13,Contract Management,View Contract Files,List files from shared_files for a contract.,Danh s��ch file chia s? trong h?p ??ng.,"Client, Freelancer"
+UC-13.09,UC-13,Contract Management,Upload Contract File,"Insert into shared_files (file_url, file_name).",T?i file l��n h?p ??ng.,"Client, Freelancer"
+UC-13.10,UC-13,Contract Management,Delete Contract File,Soft-delete file (set deleted_at).,X��a m?m file kh?i h?p ??ng (g��n deleted_at).,"Client, Freelancer"
+UC-13.11,UC-13,Contract Management,View All Contracts (Admin),"Admin retrieves a paginated list of all contracts in the system with advanced filters (status, client, freelancer, date range, job ID, etc.).","Admin xem danh s��ch t?t c? h?p ??ng c�� ph?n trang, h? tr? l?c n?ng cao (tr?ng th��i, client, freelancer, kho?ng th?i gian, m? job��).",Admin
+UC-13.12,UC-13,Contract Management,View Contract Detail (Admin),"Admin views full contract details including terms, amounts, signatures, milestones, activity log, and disputes.","Admin xem ??y ?? chi ti?t h?p ??ng (?i?u kho?n, s? ti?n, ch? k?, milestone, nh?t k? ho?t ??ng, tranh ch?p).",Admin
+UC-13.13,UC-13,Contract Management,Admin Cancel Contract,"Admin can force-cancel a contract, recording a mandatory reason and notifying both parties. Status becomes CANCELLED (admin override).","Admin h?y h?p ??ng (b?t bu?c ghi l? do), th?ng b��o cho hai b��n. Tr?ng th��i chuy?n th��nh CANCELLED.",Admin
+UC-13.14,UC-13,Contract Management,Admin Update Contract Status,"Admin can manually change the status of a contract (e.g., from IN_PROGRESS to COMPLETED, or reverse) with an internal note.","Admin thay ??i tr?ng th��i h?p ??ng m?t c��ch th? c?ng (k��m ghi ch�� n?i b?), v�� d? t? IN_PROGRESS sang COMPLETED.",Admin
+UC-13.15,UC-13,Contract Management,View Contract Disputes (Admin),"Admin retrieves all disputes related to a specific contract, with ability to review evidence, timeline and take final decision.","Admin xem t?t c? tranh ch?p c?a m?t h?p ??ng, xem b?ng ch?ng, d��ng th?i gian v�� ??a ra quy?t ??nh cu?i c��ng.",Admin
+UC-14.01,UC-14,Forum Management,View Forum Category List,"Retrieve all forum categories (forum_categories: name, description).","L?y danh s��ch danh m?c di?n ?��n (t��n, m? t?).","Guest, Client, Freelancer"
+UC-14.02,UC-14,Forum Management,View Forum Category Detail,Get a single category by ID.,Xem chi ti?t m?t danh m?c.,"Guest, Client, Freelancer"
+UC-14.03,UC-14,Forum Management,View Post List,Get paginated list of forum posts (forum_posts) with optional category filter.,"L?y danh s��ch b��i vi?t (c�� ph?n trang, l?c theo danh m?c).","Guest, Client, Freelancer"
+UC-14.04,UC-14,Forum Management,View Post Detail,"Get full post details: title, content, author, category, created_at.","Xem chi ti?t b��i vi?t: ti��u ??, n?i dung, t��c gi?, danh m?c, th?i gian.","Guest, Client, Freelancer"
+UC-14.05,UC-14,Forum Management,Create Post,"Insert new post into forum_posts (title, content, category_id).","T?o b��i vi?t m?i (ti��u ??, n?i dung, danh m?c).","Client, Freelancer"
+UC-14.06,UC-14,Forum Management,Update Post,"Update a post's title, content, or category. Only the author can edit.","Ch?nh s?a b��i vi?t (ti��u ??, n?i dung, danh m?c). Ch? t��c gi? m?i s?a ???c.","Client, Freelancer"
+UC-14.07,UC-14,Forum Management,Delete Post,Soft-delete a post (set deleted_at).,X��a m?m b��i vi?t (g��n deleted_at).,"Client, Freelancer"
+UC-14.08,UC-14,Forum Management,Like Post,"Insert a like record into forum_likes (user_id, post_id, reaction_type).",Th��ch b��i vi?t (l?u v��o forum_likes).,"Client, Freelancer"
+UC-14.09,UC-14,Forum Management,Unlike Post,Remove the like record from forum_likes for the user and post.,B? th��ch b��i vi?t.,"Client, Freelancer"
+UC-14.10,UC-14,Forum Management,View Post Likes,Get list of users who liked this post.,Xem c��c ng??i d��ng ?? th��ch b��i vi?t.,"Guest, Client, Freelancer"
+UC-14.11,UC-14,Forum Management,View Post Comments,"Get list of comments for a post (forum_comments: content, author, created_at).",L?y danh s��ch b��nh lu?n c?a m?t b��i vi?t.,"Guest, Client, Freelancer"
+UC-14.12,UC-14,Forum Management,Create Comment,"Insert a new comment into forum_comments (post_id, user_id, content).",Th��m b��nh lu?n m?i v��o b��i vi?t.,"Client, Freelancer"
+UC-14.13,UC-14,Forum Management,Update Comment,Update a comment's content. Only comment owner can edit.,Ch?nh s?a n?i dung b��nh lu?n (ch? ch? s? h?u).,"Client, Freelancer"
+UC-14.14,UC-14,Forum Management,Delete Comment,Soft-delete a comment (set deleted_at).,X��a m?m b��nh lu?n (g��n deleted_at).,"Client, Freelancer"
+UC-14.15,UC-14,Forum Management,Like Comment,"Insert a like record into forum_likes (user_id, comment_id, reaction_type).",Th��ch b��nh lu?n.,"Client, Freelancer"
+UC-14.16,UC-14,Forum Management,Unlike Comment,Remove the like record for that user and comment.,B? th��ch b��nh lu?n.,"Client, Freelancer"
+UC-14.17,UC-14,Forum Management,Report Content,"Insert a report into forum_reports (reporter_id, post_id/comment_id, reason). Status defaults to PENDING.",B��o c��o n?i dung vi ph?m (b��i vi?t ho?c b��nh lu?n). Tr?ng th��i m?c ??nh PENDING.,"Client, Freelancer"
+UC-15.01,UC-15,Permission Management,View Permission List,"Retrieve all permissions (id, name, path, method, module) for admin to assign to roles.","L?y danh s��ch t?t c? permission (id, name, path, method, module) ?? admin bi?t c��c quy?n c�� th? g��n.",Admin
+UC-15.02,UC-15,Permission Management,View Permission Detail,View detailed information of a specific permission.,Xem chi ti?t m?t permission.,Admin
+UC-16.01,UC-16,Session Management,View Session List,View a list of active login sessions.,Xem danh s��ch c��c phi��n ??ng nh?p ?ang ho?t ??ng.,"Client, Freelancer, Admin"
+UC-16.02,UC-16,Session Management,View Session Detail,"View login session information (device, IP address, login time, approximate location, etc.)","Xem th?ng tin phi��n ??ng nh?p (thi?t b?, IP, th?i gian ??ng nh?p, v? tr�� g?n ?��ng...)","Client, Freelancer, Admin"
+UC-16.03,UC-16,Session Management,Revoke Session,Log out of a specific device remotely.,??ng xu?t m?t thi?t b? c? th? t? xa.,"Client, Freelancer, Admin"
+UC-17.01,UC-17,Forum Category Management,Create Forum Category,Allows admins to create a new forum category.,Cho ph��p admin t?o m?i m?t danh m?c di?n ?��n.,Admin
+UC-17.02,UC-17,Forum Category Management,Update Forum Category,Allows admins to update an existing forum category.,Cho ph��p admin c?p nh?t m?t danh m?c di?n ?��n ?? c��.,Admin
+UC-17.03,UC-17,Forum Category Management,Delete Forum Category,Allows admins to soft-delete a forum category.,Cho ph��p admin x��a m?m m?t danh m?c di?n ?��n.,Admin
+UC-17.04,UC-17,Forum Category Management,View Forum Category List (Admin),Allows admins to view the list of forum categories.,Cho ph��p admin xem danh s��ch c��c danh m?c di?n ?��n.,Admin
+UC-17.05,UC-17,Forum Category Management,View Forum Category Detail (Admin),Allows admins to view the details of a specific forum category.,Cho ph��p admin xem th?ng tin chi ti?t c?a m?t danh m?c di?n ?��n.,Admin
+UC-17.06,UC-17,Forum Category Management,Restore Forum Category,Restore a deleted forum category by setting deletedAt back to null.,Kh?i ph?c danh m?c di?n ?��n ?? x��a b?ng c��ch ??t deletedAt = null.,Admin
+UC-18.01,UC-18,Identity Verification,Upload Identity Documents,"Upload identification documents (ID card, passport, etc.) for freelancer identity verification.","T?i l��n gi?y t? t��y th?n (CMND/CCCD, h? chi?u, v.v.) ?? x��c minh danh t��nh freelancer.",Freelancer
+UC-18.02,UC-18,Identity Verification,View Verification Status,"Get the current status of the identity verification process (pending, approved, rejected).","Xem tr?ng th��i x��t duy?t x��c minh danh t��nh hi?n t?i (?ang ch?, ?? duy?t, t? ch?i).",Freelancer
+UC-19.01,UC-19,Client Profile Management,View Client Profile,"Retrieve detailed client profile information (company name, description, website, etc.) by client user ID.","Xem h? s? chi ti?t c?a client bao g?m t��n c?ng ty, m? t?, website, v.v. theo ID ng??i d��ng.",Client
+UC-19.02,UC-19,Client Profile Management,Update Company Information,"Update company-related information (name, description, website) for the currently authenticated client.","C?p nh?t th?ng tin c?ng ty (t��n, m? t?, website) cho client ?ang ??ng nh?p.",Client
+UC-20.01,UC-20,Social Link Management,View Social Link List,Retrieve all social links of the authenticated user.,L?y danh s��ch li��n k?t m?ng x? h?i c?a ng??i d��ng hi?n t?i.,"Client, Freelancer"
+UC-20.02,UC-20,Social Link Management,Add Social Link,Add a new social link to the user's profile.,Th��m m?t li��n k?t m?ng x? h?i m?i v��o h? s?.,"Client, Freelancer"
+UC-20.03,UC-20,Social Link Management,Delete Social Link,Remove a social link from the user's profile.,X��a m?t li��n k?t m?ng x? h?i kh?i h? s?.,"Client, Freelancer"
+UC-21.01,UC-21,Favorite Freelancer Management,View Favorite Freelancer List,Get the list of freelancers marked as favorites by the user.,L?y danh s��ch freelancer ?? ???c ng??i d��ng y��u th��ch.,Client
+UC-21.02,UC-21,Favorite Freelancer Management,Add Freelancer to Favorites,Add a freelancer to the user's favorites list.,Th��m m?t freelancer v��o danh s��ch y��u th��ch.,Client
+UC-21.03,UC-21,Favorite Freelancer Management,Remove Freelancer from Favorites,Remove a freelancer from the user's favorites list.,X��a m?t freelancer kh?i danh s��ch y��u th��ch.,Client
+UC-22.01,UC-22,Saved Search Management,View Saved Search List,Retrieve all saved job search filters with labels and filter criteria.,L?y t?t c? b? l?c t��m ki?m ?? l?u k��m nh?n v�� ti��u ch�� l?c.,Freelancer
+UC-22.02,UC-22,Saved Search Management,View Saved Search Detail,"Get details of a saved search: label, filters (keywords, category, skills, budget).","Xem chi ti?t b? l?c: nh?n, ti��u ch�� (t? kh��a, danh m?c, k? n?ng, ng?n s��ch).",Freelancer
+UC-22.03,UC-22,Saved Search Management,Create Saved Search,Save current search parameters as a named filter for quick reuse.,L?u tham s? t��m ki?m hi?n t?i th��nh b? l?c c�� t��n ?? d��ng l?i.,Freelancer
+UC-22.04,UC-22,Saved Search Management,Update Saved Search,Modify name or filter criteria of a saved search. Only owner.,S?a t��n ho?c ti��u ch�� c?a b? l?c ?? l?u. Ch? ch? s? h?u.,Freelancer
+UC-22.05,UC-22,Saved Search Management,Delete Saved Search,Permanently delete a saved search.,X��a v?nh vi?n b? l?c ?? l?u.,Freelancer
+UC-23.01,UC-23,Job Alert Management,View Job Alert List,"List all job alerts with criteria, frequency (daily/weekly/instant), and notification channel.","Danh s��ch job alert k��m ti��u ch��, t?n su?t (h��ng ng��y/h��ng tu?n/t?c th��), k��nh nh?n.",Freelancer
+UC-23.02,UC-23,Job Alert Management,View Job Alert Detail,"View alert configuration: filters, frequency, active status, last triggered time.","Xem c?u h��nh job alert: b? l?c, t?n su?t, tr?ng th��i, l?n k��ch ho?t cu?i.",Freelancer
+UC-23.03,UC-23,Job Alert Management,Create Job Alert,"Create alert with criteria, frequency, and delivery channel. System auto-sends matching job notifications.","T?o job alert v?i ti��u ch��, t?n su?t, k��nh nh?n. H? th?ng t? ??ng g?i th?ng b��o c?ng vi?c ph�� h?p.",Freelancer
+UC-23.04,UC-23,Job Alert Management,Update Job Alert,"Update alert: criteria, frequency, channels, on/off. Only owner.","S?a job alert: ti��u ch��, t?n su?t, k��nh, b?t/t?t. Ch? ch? s? h?u.",Freelancer
+UC-23.05,UC-23,Job Alert Management,Delete Job Alert,Permanently delete alert. Stops all future notifications.,X��a v?nh vi?n job alert. Ng?ng m?i th?ng b��o trong t??ng lai.,Freelancer
+UC-24.01,UC-24,Milestone Management,View Milestone List,"Retrieve all milestones of a contract, including title, amount, due date, and current status.","L?y danh s��ch t?t c? milestone c?a h?p ??ng, bao g?m ti��u ??, s? ti?n, h?n ho��n th��nh v�� tr?ng th��i hi?n t?i.","Client, Freelancer"
+UC-24.02,UC-24,Milestone Management,View Milestone Detail,"Retrieve detailed information of a specific milestone, including its amount, due date, status, and related files and submissions.","Xem chi ti?t m?t milestone, bao g?m s? ti?n, h?n ho��n th��nh, tr?ng th��i, c��c file v�� submission li��n quan.","Client, Freelancer"
+UC-24.03,UC-24,Milestone Management,Create Milestone,"Create a new milestone for a contract with a title, description, amount, and due date.","T?o milestone m?i cho h?p ??ng v?i ti��u ??, m? t?, s? ti?n v�� h?n ho��n th��nh.",Client
+UC-24.04,UC-24,Milestone Management,Update Milestone,"Update milestone information such as title, description, amount, and due date before the milestone is accepted.","C?p nh?t th?ng tin milestone nh? ti��u ??, m? t?, s? ti?n v�� h?n ho��n th��nh tr??c khi freelancer ch?p nh?n milestone.",Client
+UC-24.05,UC-24,Milestone Management,Delete Milestone,Delete a milestone that has not yet been accepted by the freelancer.,X��a milestone khi freelancer ch?a ch?p nh?n milestone ?��.,Client
+UC-24.06,UC-24,Milestone Management,Request Milestone Changes,Allow the client to request changes to a submitted milestone and provide feedback or revision instructions.,Cho ph��p client y��u c?u freelancer ch?nh s?a milestone ?? submit v�� cung c?p ph?n h?i ho?c y��u c?u ch?nh s?a.,Client
+UC-24.07,UC-24,Milestone Management,Approve Milestone,Approve a submitted milestone after reviewing the deliverables and confirm that the milestone is completed successfully.,Ph�� duy?t milestone sau khi client ki?m tra deliverables v�� x��c nh?n milestone ?? ho��n th��nh.,Client
+UC-24.08,UC-24,Milestone Management,Update Milestone Progress,Allow the freelancer to accept a pending milestone and confirm their agreement to perform the work.,Cho ph��p freelancer ch?p nh?n milestone ?ang ch? v�� x��c nh?n ??ng ? th?c hi?n c?ng vi?c.,Freelancer
+UC-25.01,UC-25,Milestone File Management,View Milestone Files,Retrieve all files associated with a milestone and allow authorized users to view or download them.,L?y danh s��ch c��c file li��n quan ??n milestone v�� cho ph��p ng??i d��ng c�� quy?n xem ho?c t?i xu?ng.,"Client, Freelancer"
+UC-25.02,UC-25,Milestone File Management,Upload Milestone File,Allow the freelancer to upload deliverable files for a milestone before submitting the work.,Cho ph��p freelancer upload c��c file deliverable c?a milestone tr??c khi submit c?ng vi?c.,Freelancer
+UC-25.03,UC-25,Milestone File Management,Delete Milestone File,Allow the freelancer to delete an uploaded milestone file before it is submitted.,Cho ph��p freelancer x��a file milestone ?? upload tr??c khi submit.,Freelancer
+UC-26.01,UC-26,Milestone Submission Management,Submit Milestone,Allow the freelancer to submit a completed milestone with a note and selected deliverable files for client review.,Cho ph��p freelancer submit milestone ?? ho��n th��nh k��m ghi ch�� v�� c��c file deliverable ?? client review.,Freelancer
+UC-26.02,UC-26,Milestone Submission Management,Delete Milestone Submission,"Allows the freelancer to delete a pending submission before client review. Deleted submissions cannot be restored, and the freelancer can submit the milestone again.",Cho ph��p freelancer x��a submission ?ang ch? x? l? tr??c khi client xem x��t. Submission ?? x��a kh?ng th? kh?i ph?c v�� freelancer c�� th? submit l?i milestone.,Freelancer
+UC-26.03,UC-26,Milestone Submission Management,View Milestone Submission List,"Retrieve the latest milestone submission and submission history, including notes, files, status, and submission timestamps.","Xem submission m?i nh?t v�� l?ch s? submission c?a milestone, bao g?m ghi ch��, file, tr?ng th��i v�� th?i gian submit.",Client
+UC-26.04,UC-26,Milestone Submission Management,View Milestone Submission Detail,"Retrieve the latest milestone submission detail and submission history, including notes, files, status, and submission timestamps.","Xem chi ti?t submission m?i nh?t v�� l?ch s? submission c?a milestone, bao g?m ghi ch��, file, tr?ng th��i v�� th?i gian submit.",Client
+UC-27.01,UC-27,Conversation Management,View Conversation List,"Get all conversations for current user (conversations with participant_1, participant_2). Each includes last message preview and unread count.",L?y danh s��ch cu?c h?i tho?i c?a ng??i d��ng hi?n t?i (b?ng conversations). M?i cu?c k��m tin nh?n cu?i v�� s? ch?a ??c.,"Client, Freelancer"
+UC-27.02,UC-27,Conversation Management,Start Conversation,"Create new conversation between two users (participant_1, participant_2). Returns existing conversation if already exists (unique constraint).","T?o cu?c h?i tho?i m?i gi?a hai ng??i d��ng. N?u ?? c��, tr? v? cu?c hi?n t?i (r��ng bu?c unique).","Client, Freelancer"
+UC-27.03,UC-27,Conversation Management,View Conversation Detail,"Get a conversation's full message list (direct_messages ordered by created_at). Includes sender info, read status.","L?y danh s��ch tin nh?n c?a m?t cu?c h?i tho?i (s?p x?p theo th?i gian), k��m th?ng tin ng??i g?i, tr?ng th��i ??c.","Client, Freelancer"
+UC-27.04,UC-27,Conversation Management,Send Message,"Insert a new message into direct_messages (sender_id, message) for the conversation.",G?i tin nh?n m?i v��o cu?c h?i tho?i (l?u v��o direct_messages).,"Client, Freelancer"
+UC-27.05,UC-27,Conversation Management,Mark Message as Read,Set is_read = true for a specific message (direct_messages).,?��nh d?u m?t tin nh?n l�� ?? ??c (c?p nh?t is_read = true).,"Client, Freelancer"
+UC-27.06,UC-27,Conversation Management,Delete/Recall Message,Soft-delete a message (set deleted_at in direct_messages). The message becomes hidden in UI.,"X��a/thu h?i tin nh?n (g��n deleted_at, ?n kh?i giao di?n).","Client, Freelancer"
+UC-27.07,UC-27,Conversation Management,Pin/Unpin Conversation,Pin or Unpin the conversation.,Ghim ho?c b? ghim ?o?n chat.,"Client, Freelancer"
+UC-27.08,UC-27,Conversation Management,Send File,"Send a file to the other participant such as docx, excel, pdf, etc.","G?i t?p cho ng??i tham gia kh��c, ch?ng h?n nh? docx, excel, pdf, v.v.","Client, Freelancer"
+UC-28.01,UC-28,User Management,View User List,"Allows admin to view, search, filter and sort all user accounts, filterable by role (Client/Freelancer/Admin/Custom role).","Cho ph��p admin xem, t��m ki?m, l?c v�� s?p x?p danh s��ch to��n b? user, l?c theo role (Client/Freelancer/Admin/Custom role).",Admin
+UC-28.02,UC-28,User Management,View User Detail,Retrieve general account information plus separate tabs for each role profile the user currently holds.,"Xem th?ng tin chung c?a account, k��m c��c tab ri��ng cho t?ng h? s? role m�� user ?ang s? h?u.",Admin
+UC-28.03,UC-28,User Management,Create User,Allows admin to create a new account and select initial role(s) to activate (Client/Freelancer/Custom role).,"Cho ph��p admin t?o t��i kho?n m?i, ch?n role kh?i t?o (Client/Freelancer/Custom role).",Admin
+UC-28.04,UC-28,User Management,Update User,"Allows admin to edit general account information (email, status, etc.).","Cho ph��p admin ch?nh s?a th?ng tin chung c?a account (email, tr?ng th��i, v.v.).",Admin
+UC-28.05,UC-28,User Management,Update Client Profile,"Within the User Detail screen, allows admin to edit the Client profile tab (company name, description, website).","Trong m��n h��nh User Detail, cho ph��p admin ch?nh s?a tab h? s? Client (t��n c?ng ty, m? t?, website,...).",Admin
+UC-28.06,UC-28,User Management,Update Freelancer Basic Info,"Edit professional title, bio, languages/education/certifications (string list).","S?a professional title, bio, languages/education/certifications (string list).",Admin
+UC-28.07,UC-28,User Management,Update Freelancer Skills,Select a skill from the catalog (Select) + level 1�C10; save by replacing the list.,Ch?n k? n?ng t? catalog (Select) + level 1�C10; l?u b?ng thay th? danh s��ch.,Admin
+UC-28.08,UC-28,User Management,Update Freelancer Portfolio,Add/edit/delete (soft-delete) portfolio items (title/description/technologies/projectUrl).,Th��m/s?a/xo�� (soft-delete) portfolio items (title/description/technologies/projectUrl).,Admin
+UC-28.09,UC-28,User Management,Update Expert Profile,Edit expert profile on the admin page.,Ch?nh s?a profile c?a chuy��n gia ? trang admin.,Admin
+UC-29.01,UC-29,Following Management,View Following List,Get the list of freelancers the user is following.,L?y danh s��ch freelancer m�� ng??i d��ng ?ang theo d?i.,Client
+UC-29.02,UC-29,Following Management,Follow Freelancer,Start following a freelancer.,B?t ??u theo d?i m?t freelancer.,Client
+UC-29.03,UC-29,Following Management,Unfollow Freelancer,Stop following a freelancer.,B? theo d?i m?t freelancer.,Client
+UC-30.01,UC-30,Notification Management,View Notification List,"Get all notifications for current user (notifications table) with type, title, message, data, is_read, created_at.","L?y danh s��ch th?ng b��o c?a ng??i d��ng hi?n t?i (lo?i, ti��u ??, n?i dung, d? li?u, ?? ??c, th?i gian).","Client, Freelancer"
+UC-30.02,UC-30,Notification Management,Mark Notification as Read,Set is_read = true for a specific notification (notifications).,?��nh d?u m?t th?ng b��o l�� ?? ??c (c?p nh?t is_read = true).,"Client, Freelancer"
+UC-30.03,UC-30,Notification Management,Mark All Notifications as Read,Bulk update: set is_read = true for all unread notifications of the current user.,?��nh d?u t?t c? th?ng b��o l�� ?? ??c (c?p nh?t h��ng lo?t is_read = true).,"Client, Freelancer"
+UC-30.04,UC-30,Notification Management,Delete Notification,Soft-delete a notification (set deleted_at).,X��a m?m m?t th?ng b��o (g��n deleted_at).,"Client, Freelancer"
+UC-31.01,UC-31,Account Role Management,Switch Role,Allows users who have both Client and Freelancer roles to switch their working context between the two roles within the same account without logging out and logging back in.,Cho ph��p user c�� c? 2 role Client v�� Freelancer chuy?n ??i ng? c?nh l��m vi?c (context) gi?a 2 vai tr�� trong c��ng 1 t��i kho?n m�� kh?ng c?n ??ng xu?t/??ng nh?p l?i.,"Client, Freelancer"
+UC-31.02,UC-31,Account Role Management,Join New Role,"Allows users with one primary role to add the missing complementary role. The new role becomes primary, a new JWT is issued immediately, and role switching is enabled without re-login.","Cho ph��p ng??i d��ng ?ang c�� m?t vai tr�� ch��nh b? sung th��m vai tr�� b? tr? c��n thi?u. Vai tr�� m?i s? tr? th��nh vai tr�� ch��nh, m?t m? JWT m?i ???c c?p ngay l?p t?c v�� t��nh n?ng chuy?n ??i vai tr�� ???c k��ch ho?t m�� kh?ng c?n ??ng nh?p l?i.","Client, Freelancer"
+UC-32.01,UC-32,Proposal Management,View My Proposal List,"Freelancer retrieves list of all proposals they have submitted across jobs, with status (pending, accepted, rejected, withdrawn).","Freelancer xem danh s��ch t?t c? ?? xu?t h? ?? g?i, k��m tr?ng th��i (?ang ch?, ???c ch?p nh?n, b? t? ch?i, ?? r��t).",Freelancer
+UC-32.02,UC-32,Proposal Management,View My Proposal Detail,"Freelancer views the full details of their submitted proposal, including cover letter, bid amount, estimated duration, attachments, job information, and current status.","Freelancer xem ??y ?? chi ti?t ?? xu?t ?? g?i, g?m th? xin vi?c, gi�� ch��o, th?i gian d? ki?n, file ?��nh k��m, th?ng tin c?ng vi?c v�� tr?ng th��i hi?n t?i.",Freelancer
+UC-32.03,UC-32,Proposal Management,Submit Proposal,"Freelancer submits a proposal for a job: cover letter, bid amount, estimated duration, optional attachments.","Freelancer g?i ?? xu?t cho c?ng vi?c: th? xin vi?c, gi�� ch��o, th?i gian d? ki?n, c�� th? k��m file.",Freelancer
+UC-32.04,UC-32,Proposal Management,Update Proposal,"Freelancer updates proposal details (cover letter, bid, duration) only when status is PENDING.","Freelancer s?a n?i dung ?? xu?t (th?, gi��, th?i gian) khi ?? xu?t c��n ? tr?ng th��i PENDING.",Freelancer
+UC-32.05,UC-32,Proposal Management,Withdraw Proposal,Freelancer withdraws a submitted proposal (status becomes WITHDRAWN). Cannot withdraw if already accepted.,Freelancer r��t l?i ?? xu?t ?? g?i (tr?ng th��i th��nh WITHDRAWN). Kh?ng th? r��t n?u ?? ???c ch?p nh?n.,Freelancer
+UC-32.06,UC-32,Proposal Management,Accept Proposal,"Client accepts a freelancer's proposal, changing status to ACCEPTED. May trigger contract creation.","Client ch?p nh?n ?? xu?t c?a freelancer, tr?ng th��i th��nh ACCEPTED. C�� th? k��ch ho?t t?o h?p ??ng.",Client
+UC-32.07,UC-32,Proposal Management,Reject Proposal,"Client rejects a proposal, status becomes REJECTED. Optionally provide a reason.","Client t? ch?i ?? xu?t, tr?ng th��i th��nh REJECTED. C�� th? cung c?p l? do.",Client
+UC-32.08,UC-32,Proposal Management,View Job Proposal List,"Client retrieves all proposals submitted for a specific job, including freelancer info, bid amount, cover letter, status.","Client xem danh s��ch ?? xu?t ?? g?i cho m?t c?ng vi?c, g?m th?ng tin freelancer, gi�� ch��o, th? xin vi?c, tr?ng th��i.",Client
+UC-32.09,UC-32,Proposal Management,View Proposal Detail,"View full detail of a proposal: cover letter, bid amount, estimated duration, freelancer profile, attachments. Accessible by job owner or proposal owner.","Xem chi ti?t ?? xu?t: th? xin vi?c, gi�� ch��o, th?i gian d? ki?n, h? s? freelancer, file ?��nh k��m. Ch? job ho?c ch? ?? xu?t m?i xem ???c.",Client
+UC-33.01,UC-33,Dispute Management,Open Dispute,"Insert a new dispute (reason, contract_id, raised_by) into disputes. Status initially OPENED.","T?o tranh ch?p m?i (l? do, h?p ??ng, ng??i m?) v?i tr?ng th��i OPENED.","Client, Freelancer"
+UC-33.02,UC-33,Dispute Management,View Dispute List,Retrieve the list of disputes associated with the current user.,L?y danh s��ch c��c dispute li��n quan ??n ng??i d��ng hi?n t?i.,"Client, Freelancer"
+UC-33.03,UC-33,Dispute Management,View Dispute Detail,"Get full dispute info: reason, status (OPENED/EVIDENCE_SUBMITTED/UNDER_REVIEW/RESOLVED), outcome, admin notes, timestamps.","Xem chi ti?t tranh ch?p: l? do, tr?ng th��i, k?t qu?, ghi ch�� admin, m?c th?i gian.","Client, Freelancer"
+UC-33.04,UC-33,Dispute Management,Respond to Dispute,Allow the other party to provide their explanation and supporting evidence after a dispute has been submitted.,Cho ph��p b��n kia ??a ra l?i gi?i th��ch v�� b?ng ch?ng h? tr? sau khi tranh ch?p ???c g?i ?i.,"Client, Freelancer"
+UC-33.05,UC-33,Dispute Management,Respond to Dispute Resolution,Allow Client and Freelancer to accept or reject the resolution proposed by Admin. Payment will only be processed when both parties accept the resolution.,Cho ph��p Client v�� Freelancer ch?p nh?n ho?c t? ch?i gi?i ph��p do Admin ?? xu?t. Vi?c thanh to��n ch? ???c x? l? khi c? hai b��n ch?p nh?n gi?i ph��p.,"Client, Freelancer"
+UC-33.06,UC-33,Dispute Management,Propose Dispute Resolution,Allow Admin to propose a resolution for the dispute by specifying the amount to be released to the Freelancer. The remaining amount will be refunded to the Client.,Cho ph��p Admin ?? xu?t gi?i ph��p gi?i quy?t tranh ch?p b?ng c��ch ch? ??nh s? ti?n s? ???c gi?i ph��ng cho Freelancer. S? ti?n c��n l?i s? ???c ho��n tr? cho Client.,Admin
+UC-34.01,UC-34,Moderation Management,View Moderation Queue,"Get list of moderation items from moderation_queue (content_type, content_id, reporter, reason, status).","L?y h��ng ??i ki?m duy?t, g?m lo?i n?i dung, ID n?i dung, ng??i b��o c��o, l? do, tr?ng th��i.",Admin
+UC-34.02,UC-34,Moderation Management,View Moderation Item Detail,"View a single moderation queue item by ID, with full details and current status.",Xem chi ti?t m?t m?c ki?m duy?t (??y ?? th?ng tin v�� tr?ng th��i x? l?).,Admin
+UC-34.03,UC-34,Moderation Management,Resolve Moderation Item,"Approve or dismiss a moderation item (update status, set admin_id, action_taken).","X? l? m?c ki?m duy?t: duy?t ho?c t? ch?i (c?p nh?t tr?ng th��i, admin x? l?, h��nh ??ng).",Admin
+UC-35.01,UC-35,ID Verification Review,View ID Verification Request List,"Retrieve all identity verification requests (id_verification_documents: user, document_type, file_url, status).","L?y danh s��ch y��u c?u x��c th?c danh t��nh (ng??i d��ng, lo?i gi?y t?, file, tr?ng th��i).",Admin
+UC-35.02,UC-35,ID Verification Review,View ID Verification Request Detail,"Get one verification request detail (document image, user info, review notes).","Xem chi ti?t m?t y��u c?u x��c th?c (?nh gi?y t?, th?ng tin ng??i d��ng, ghi ch��).",Admin
+UC-35.03,UC-35,ID Verification Review,Approve ID Verification,"Approve a verification request: set status = APPROVED, fill admin_id and review_notes.","Ph�� duy?t y��u c?u x��c th?c: tr?ng th��i APPROVED, ghi nh?n admin v�� ghi ch��.",Admin
+UC-35.04,UC-35,ID Verification Review,Reject ID Verification,"Reject a verification request: set status = REJECTED, record reason in review_notes.","T? ch?i y��u c?u x��c th?c: tr?ng th��i REJECTED, ghi l? do v��o review_notes.",Admin
+UC-36.01,UC-36,Forum Trash Management,View Deleted Posts/Comments List,Retrieve all soft-deleted posts/comments (deletedAt not null) plus rejected posts (moderationStatus = REJECTED); paginated via GET /api/forums/admin/trash/posts and GET /api/forums/admin/trash/comments.,"L?y danh s��ch b��i vi?t/b��nh lu?n ?? x��a m?m (deletedAt) v�� b��i b? t? ch?i (REJECTED) qua 2 endpoint k? tr��n, c�� ph?n trang.",Admin
+UC-36.02,UC-36,Forum Trash Management,View Deleted Posts/Comments Detail,"View full detail of a deleted post/comment (title, content, author, moderation status, score, categories, deleted time) inside an item dialog.","Xem chi ti?t ??y ?? c?a post/comment ?? x��a (ti��u ??, n?i dung, t��c gi?, tr?ng th��i duy?t, ?i?m score, deletedAt) trong dialog (d? li?u t? danh s��ch).",Admin
+UC-36.03,UC-36,Forum Trash Management,Restore Deleted Posts/Comments,Restore an item back to the forum: rejected post -> moderationStatus = PENDING and clear reviewer fields; soft-deleted post/comment -> clear deletedAt -> back to public after approval; via PATCH /api/forums/admin/trash/posts/:id/restore and PATCH /api/forums/admin/trash/comments/:id/restore.,Kh?i ph?c l?i n?i dung: b��i REJECTED v? PENDING v�� x��a th?ng tin ng??i duy?t; post/comment x��a m?m b? deletedAt ?? quay l?i c?ng khai sau khi duy?t; d��ng 2 endpoint PATCH restore ? tr��n.,Admin
+UC-37.01,UC-37,Banner Management,View Banner List,Get all advertisement banners (advertisement_banners).,L?y danh s��ch banner qu?ng c��o.,Admin
+UC-37.02,UC-37,Banner Management,View Banner Detail,View a single banner by ID.,Xem chi ti?t m?t banner qu?ng c��o.,Admin
+UC-37.03,UC-37,Banner Management,Create Banner,"Insert a new advertisement banner (title, image_url, link_url, dates).",T?o banner qu?ng c��o m?i.,Admin
+UC-37.04,UC-37,Banner Management,Update Banner,Update an existing banner.,Ch?nh s?a banner qu?ng c��o.,Admin
+UC-37.05,UC-37,Banner Management,Delete Banner,Hard-delete a banner.,X��a c?ng banner qu?ng c��o.,Admin
+UC-38.01,UC-38,Skill Management,View Skill List,"Get all skills with search, filter by active status, and pagination.","L?y danh s��ch k? n?ng (skill), h? tr? t��m ki?m, l?c theo tr?ng th��i active, ph?n trang.",Admin
+UC-38.02,UC-38,Skill Management,View Skill Detail,View detailed information of a single skill by ID.,Xem chi ti?t m?t k? n?ng theo ID.,Admin
+UC-38.03,UC-38,Skill Management,Create Skill,"Insert a new skill (name, slug, description) into the master skill list.","T?o m?i m?t k? n?ng (t��n, slug, m? t?) v��o danh s��ch g?c.",Admin
+UC-38.04,UC-38,Skill Management,Update Skill,"Update an existing skill's name, slug, or description.","Ch?nh s?a t��n, slug ho?c m? t? c?a m?t k? n?ng ?? c��.",Admin
+UC-38.05,UC-38,Skill Management,Delete Skill,Soft delete a skill by setting deletedAt instead of permanently deleting it.,X��a m?m k? n?ng b?ng c��ch thi?t l?p deletedAt thay v�� x��a v?nh vi?n.,Admin
+UC-38.06,UC-38,Skill Management,Restore Skill,Restore a deleted skill by setting deletedAt back to null.,Kh?i ph?c k? n?ng ?? x��a b?ng c��ch ??t deletedAt = null.,Admin
+UC-39.01,UC-39,Review Management,View Review List,"Get all reviews for a contract from reviews (reviewer, reviewee, overall_rating, comment).","L?y danh s��ch ?��nh gi�� c?a h?p ??ng (ng??i ?��nh gi��, ng??i ???c ?��nh gi��, ?i?m, nh?n x��t).","Client, Freelancer"
+UC-39.02,UC-39,Review Management,View Review Detail,"Get a single review by ID, including breakdown (JSON) and timestamps.","Xem chi ti?t m?t ?��nh gi��, bao g?m ?i?m th��nh ph?n (JSON) v�� th?i gian.","Client, Freelancer"
+UC-39.03,UC-39,Review Management,Write Review,"Create a review for a contract. Reviewer must be contract participant; only one review per participant per contract (unique on contract_id, reviewer_id).",Vi?t ?��nh gi�� cho h?p ??ng. Ng??i ?��nh gi�� ph?i l�� th��nh vi��n h?p ??ng; m?i th��nh vi��n ch? ???c ?��nh gi�� m?t l?n.,"Client, Freelancer"
+UC-39.04,UC-39,Review Management,Update Review,"Update overall_rating, breakdown, or comment of an existing review (only by reviewer).",Ch?nh s?a ?i?m s? ho?c nh?n x��t (ch? ng??i vi?t).,"Client, Freelancer"
+UC-39.05,UC-39,Review Management,Delete Review,Soft-delete a review (set deleted_at).,X��a m?m m?t ?��nh gi�� (g��n deleted_at).,"Client, Freelancer"
+UC-40.01,UC-40,Review Response Management,Respond to Review,Owner of the reviewed profile posts a response to a review (review_responses). Only one response per review (unique).,Ch? h? s? ???c ?��nh gi�� vi?t ph?n h?i cho ?��nh gi��. M?i ?��nh gi�� ch? c�� m?t ph?n h?i (unique).,"Client, Freelancer"
+UC-40.02,UC-40,Review Response Management,Update Review Response,Update the response text of an existing review response. Only the response owner can edit.,Ch?nh s?a n?i dung ph?n h?i. Ch? ch? s? h?u ph?n h?i ???c s?a.,"Client, Freelancer"
+UC-40.03,UC-40,Review Response Management,Delete Review Response,Soft-delete a review response (set deleted_at).,X��a m?m ph?n h?i (g��n deleted_at).,"Client, Freelancer"
+UC-41.01,UC-41,Account Profile Management,View Profile,View user's general information.,Xem th?ng tin chung c?a user.,"Client, Freelancer"
+UC-41.02,UC-41,Account Profile Management,Update Profile,Update user's general information.,C?p nh?t th?ng tin chung c?a user.,"Client, Freelancer"
+UC-41.03,UC-41,Account Profile Management,Change Password,Allows authenticated users to change their current password securely.,Cho ph��p ng??i d��ng ?? ??ng nh?p thay ??i m?t kh?u hi?n t?i.,"Client, Freelancer"
+UC-41.04,UC-41,Account Profile Management,Upload Avatar,Allows users to upload and update avatar images.,Cho ph��p ng??i d��ng t?i l��n v�� c?p nh?t ?nh ??i di?n.,"Client, Freelancer"
+UC-42.01,UC-42,Job & Freelancer Recommendation,Recommend Jobs / Freelancers,"Suggest suitable jobs to freelancers based on their uploaded CVs, and conversely, suggest freelancers with matching CVs for jobs created by clients.","G?i ? cho freelancer nh?ng c?ng vi?c ph�� h?p v?i CV ?? upload, v�� ng??c l?i g?i ? c��c freelancer c�� CV ph�� h?p v?i c?ng vi?c m�� client ?? t?o.",AI
+UC-43.01,UC-43,Payment Management,Connect Stripe Account,Create Stripe Connect account for freelancer and save stripeAccountId.,T?o t��i kho?n Stripe Connect cho freelancer v�� l?u stripeAccountId.,Freelancer
+UC-43.02,UC-43,Payment Management,View Payout History,"List all payout records to freelancers (transfer ID, amount, status).",Danh s��ch c��c l?n chuy?n ti?n cho freelancer.,Freelancer
+UC-43.03,UC-43,Payment Management,View Payout Detail,View payout details by ID.,Xem chi ti?t m?t l?n chuy?n ti?n.,Freelancer
+UC-43.04,UC-43,Payment Management,Fund Milestone,Create a Stripe PaymentIntent for the client to deposit (escrow) funds for a milestone before work begins.,T?o PaymentIntent ?? client n?p ti?n (k? qu?) cho m?t milestone tr??c khi b?t ??u c?ng vi?c.,Client
+UC-43.05,UC-43,Payment Management,Refund Payment,Refund money to the client when a dispute or an issue occurs.,Chuy?n ti?n cho client khi c�� s? tranh ch?p ho?c s? c?.,Client
+UC-43.06,UC-43,Payment Management,Pay Platform Fee,Create a Stripe PaymentIntent for the platform fee charged when a client signs a contract.,T?o PaymentIntent ?? thu ph�� n?n t?ng khi client k? h?p ??ng.,Client
+UC-43.07,UC-43,Payment Management,Release Payment,Transfer money to freelancer after client approves the submission.,Chuy?n ti?n cho freelancer sau khi client ph�� duy?t.,Client
+UC-43.08,UC-43,Payment Management,Pay Dispute Fee,Create a Stripe PaymentIntent to charge the dispute resolution fee when a party opens a dispute.,T?o PaymentIntent ?? thu ph�� x? l? tranh ch?p khi m?t b��n m? tranh ch?p.,"Client, Freelancer"
+UC-43.09,UC-43,Payment Management,View Payment History,"List all contract payments (amount, currency, PaymentIntent ID, status).",Danh s��ch c��c kho?n thanh to��n c?a h?p ??ng.,"Client, Freelancer"
+UC-43.10,UC-43,Payment Management,View Payment Detail,View payment details by ID.,Xem chi ti?t m?t kho?n thanh to��n.,"Client, Freelancer"
+UC-43.11,UC-43,Payment Management,Execute Dispute Resolution Payment,Process the payment according to the accepted dispute resolution by releasing the specified amount to the Freelancer and refunding the remaining amount to the Client.,X? l? kho?n thanh to��n theo gi?i ph��p tranh ch?p ?? ???c ch?p nh?n: chuy?n s? ti?n ???c ch? ??nh cho Freelancer v�� ho��n tr? s? ti?n c��n l?i cho Client.,Admin
+UC-43.12,UC-43,Payment Management,Handle Stripe Webhook Event,"Receive and process Stripe webhook events (payment succeeded/failed, payout paid/failed, dispute updated) to keep payment and payout records in sync.","Nh?n v�� x? l? c��c s? ki?n webhook t? Stripe (thanh to��n th��nh c?ng/th?t b?i, chuy?n ti?n th��nh c?ng/th?t b?i, tranh ch?p c?p nh?t) ?? ??ng b? d? li?u thanh to��n v�� chuy?n ti?n trong h? th?ng.",System
+UC-43.13,UC-43,Payment Management,Sync Payment Intent Status,Manually re-fetch a PaymentIntent's status from Stripe and update the corresponding record when webhook events are delayed or missed.,??ng b? l?i tr?ng th��i c?a m?t PaymentIntent t? Stripe khi s? ki?n webhook b? tr? ho?c th?t l?c.,System
+UC-44.01,UC-44,AI Content Moderation,Moderate Content by AI,"Automatically score forum post content via AI before publishing: score >= 0.8 -> blocked (HTTP 400, no record); 0.3-0.8 -> PENDING for manual admin review; < 0.3 -> APPROVED and visible immediately. Rejected posts land in the admin trash for restore.","T? ??ng ch?m ?i?m n?i dung b��i vi?t di?n ?��n b?ng AI tr??c khi ??ng: ?i?m >= 0.8 -> ch?n ngay (HTTP 400, kh?ng l?u); 0.3-0.8 -> ch? admin duy?t (PENDING); < 0.3 -> t? duy?t v�� hi?n th? ngay (APPROVED). B��i b? t? ch?i ???c ??a v��o trash ?? admin xem/kh?i ph?c.",AI
+UC-45.01,UC-45,AI Face Scan & Duplicate Detection,Scan Face and Detect Duplicate Identity,"Scan the face from the uploaded image using AI, extract identity info (full name, DOB, ID number, document type, file_url) and store it in the database; then compare against existing verification records to detect duplicates (same ID number / same face) and flag repeated registrations.","Qu��t khu?n m?t t? ?nh t?i l��n b?ng AI, tr��ch xu?t th?ng tin nh?n th?n (h? t��n, ng��y sinh, s? gi?y t?, lo?i gi?y t?, file_url) v�� l?u v��o database; sau ?�� so s��nh v?i c��c b?n ghi x��c th?c ?? c�� ?? ph��t hi?n tr��ng l?p (c��ng s? gi?y t? / c��ng khu?n m?t) v�� c?nh b��o ??ng k? tr��ng.",AI
+UC-46.01,UC-46,Job Category Management,View Job Category List (Admin),Retrieve and manage the list of job categories in the system.,Xem v�� qu?n l? danh s��ch c��c danh m?c c?ng vi?c trong h? th?ng.,Admin
+UC-46.02,UC-46,Job Category Management,View Job Category Detail (Admin),"View category details, status, and associated jobs.","Xem chi ti?t danh m?c, tr?ng th��i v�� c��c c?ng vi?c li��n quan.",Admin
+UC-46.03,UC-46,Job Category Management,Create Job Category,"Create a new job category with name, description, and status.","T?o danh m?c c?ng vi?c m?i v?i t��n, m? t? v�� tr?ng th��i.",Admin
+UC-46.04,UC-46,Job Category Management,Update Job Category,Update job category information and status.,C?p nh?t th?ng tin v�� tr?ng th��i c?a danh m?c c?ng vi?c.,Admin
+UC-46.05,UC-46,Job Category Management,Delete Job Category,Delete or deactivate a job category after checking associated jobs.,X��a ho?c v? hi?u h��a danh m?c sau khi ki?m tra c��c c?ng vi?c li��n quan.,Admin
+UC-46.06,UC-46,Job Category Management,View Job Category List (Freelancer),Retrieve the list of available job categories for browsing and job creation.,Xem danh s��ch c��c danh m?c c?ng vi?c ???c s? d?ng khi t��m ki?m v�� t?o c?ng vi?c.,Freelancer
+UC-46.07,UC-46,Job Category Management,View Job Category Detail (Freelancer),View category details and associated jobs.,Xem th?ng tin chi ti?t c?a danh m?c v�� danh s��ch c��c c?ng vi?c thu?c danh m?c.,Freelancer
+UC-47.01,UC-47,Profile Update Review,View Pending Profile Update Request List,Admin retrieves the list of profile update requests awaiting manual review.,Admin xem danh s��ch c��c y��u c?u c?p nh?t h? s? ?ang ch? ki?m duy?t th? c?ng.,Admin
+UC-47.02,UC-47,Profile Update Review,View Profile Update Request Detail,"Admin views the detail of a request, comparing the current profile information with the proposed changes.","Admin xem chi ti?t m?t y��u c?u, so s��nh th?ng tin h? s? hi?n t?i v?i th?ng tin ?? ngh? thay ??i.",Admin
+UC-47.03,UC-47,Profile Update Review,Approve Profile Update Request,"Admin approves a request, applying the proposed changes to the user's live profile.","Admin duy?t y��u c?u, ��p d?ng c��c thay ??i v��o h? s? ch��nh th?c c?a ng??i d��ng.",Admin
+UC-47.04,UC-47,Profile Update Review,Reject Profile Update Request,Admin rejects a request and records a reason; the profile keeps its previous information.,Admin t? ch?i y��u c?u k��m l? do; h? s? gi? nguy��n th?ng tin tr??c ?��.,Admin
+UC-47.05,UC-47,Profile Update Review,View Profile Update Request History,Admin views the history of previously processed profile update requests (approved/rejected).,Admin xem l?i l?ch s? c��c y��u c?u c?p nh?t h? s? ?? x? l? (?? duy?t/?? t? ch?i).,Admin
+UC-47.06,UC-47,Profile Update Review,Update Profile Expert,Edit the expert profile on the homepage.,Ch?nh s?a profile c?a chuy��n gia ? trang Homepage.,Expert
+UC-48.02,UC-48,ID Document Retention Policy Management,Configure ID Document Retention Policy,Admin,,Admin

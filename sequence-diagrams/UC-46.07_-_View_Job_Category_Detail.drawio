@@ -1,11 +1,9 @@
-<?xml version='1.0' encoding='utf-8'?>
-<mxfile host="Electron" pages="2"><diagram name="UC-46.07 - View Job Category Detail" id="uc4607"><mxGraphModel dx="1226" dy="793" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1900" math="0" shadow="0">
+<mxfile host="Electron">
+  <diagram name="UC-46.07 - View Job Category Detail" id="uc4607">
+    <mxGraphModel dx="1226" dy="793" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="jc2-title" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" value="UC-46.07 - View Job Category Detail [Job Category]" vertex="1">
-          <mxGeometry x="40" y="100" width="700" height="30" as="geometry" />
-        </mxCell>
         <mxCell id="jc2-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Admin" vertex="1">
           <mxGeometry x="130" y="200" width="30" height="60" as="geometry" />
         </mxCell>
@@ -233,4 +231,5 @@
         </mxCell>
       </root>
     </mxGraphModel>
-  </diagram></mxfile>
+  </diagram>
+</mxfile>
