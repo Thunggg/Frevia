@@ -1,0 +1,355 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram id="milestone-sub-01-submit" name="Milestone-Sub-01-submit">
+    <mxGraphModel dx="2249" dy="358" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2900" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="opt_data_label" value="[invalid data: message empty]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="120" y="460" width="200" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_data_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="10" y="460" width="350" height="105" as="geometry"/>
+    </mxCell>
+    <mxCell id="ref_frame" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="420" y="640" width="280" height="56" as="geometry"/>
+    </mxCell>
+    <mxCell id="ref_label" value="3.1. Verify jwt" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="515" y="653" width="175" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_token_label" value="[invalid token]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="120" y="720" width="120" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_token_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="10" y="720" width="550" height="145" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="-10" y="1390" width="1530" height="1310" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_l1" value="[forbidden / not IN_PROGRESS /&lt;br&gt;not FUNDED]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="120" y="1390" width="240" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="20" y="1675" as="sourcePoint"/>
+        <mxPoint x="1520" y="1675" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt1_l2" value="[freelancer is valid and&lt;br&gt;milestone eligible to submit]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="120" y="1675" width="220" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="20" y="2110" width="1470" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_l1" value="[submit milestone failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="150" y="2110" width="180" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="50" y="2380" as="sourcePoint"/>
+        <mxPoint x="1490" y="2380" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt2_l2" value="[submit milestone success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="150" y="2380" width="180" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor" value="Freelancer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="85" y="200" width="30" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="100" y="282" as="sourcePoint"/>
+        <mxPoint x="100" y="2740" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="bar_actor_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="95" y="340" width="10" height="2300" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_view" value=":MilestoneSubmissionView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="225" y="240" width="150" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_view_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_view" vertex="1">
+      <mxGeometry x="70" y="100" width="10" height="2300" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_route" value=":MilestoneSubmissionRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="430" y="240" width="140" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_route_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_route" vertex="1">
+      <mxGeometry x="65" y="370" width="10" height="1970" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_controller" value=":MilestoneSubmissionController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="635" y="240" width="170" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_controller_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_controller" vertex="1">
+      <mxGeometry x="80" y="655" width="10" height="1630" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_service" value=":MilestoneSubmissionService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="850" y="240" width="150" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_service_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_service" vertex="1">
+      <mxGeometry x="70" y="710" width="10" height="1520" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_repo" value=":MilestoneSubmissionRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1065" y="240" width="140" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_model" value=":MilestoneSubmissionModel" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1250" y="240" width="140" height="2560" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_icon" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="220" width="60" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_label" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="292" width="60" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1480" y="322" as="sourcePoint"/>
+        <mxPoint x="1480" y="2740" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="bar_repo_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
+      <mxGeometry x="65" y="770" width="10" height="285" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_repo_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
+      <mxGeometry x="65" y="1490" width="10" height="285" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_model_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
+      <mxGeometry x="65" y="825" width="10" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_model_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
+      <mxGeometry x="65" y="1545" width="10" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_db_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="1475" y="1120" width="10" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_db_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="1475" y="1840" width="10" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="1. Fill in message, link, select files &amp; submit" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="105" y="340" as="sourcePoint"/>
+        <mxPoint x="295" y="340" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="val" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="365" y="400"/>
+          <mxPoint x="365" y="436"/>
+        </Array>
+        <mxPoint x="305" y="400" as="sourcePoint"/>
+        <mxPoint x="305" y="436" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="val_label" value="2. Check validate submission&lt;br&gt;message &amp; optional files" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="372" y="400" width="170" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="valmsg" value="2.1. Show validation error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="530" as="sourcePoint"/>
+        <mxPoint x="105" y="530" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="rt" value="3. POST /contracts/:contractId/&lt;br&gt;milestones/:milestoneId/submissions" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="305" y="610" as="sourcePoint"/>
+        <mxPoint x="495" y="610" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="inv1" value="3.1.1. Return error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;fontSize=12;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="780" as="sourcePoint"/>
+        <mxPoint x="305" y="780" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="inv2" value="3.1.2. Return&lt;br&gt;error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;fontSize=12;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="835" as="sourcePoint"/>
+        <mxPoint x="105" y="835" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c1" value="4. submitMilestone(req, res)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="505" y="895" as="sourcePoint"/>
+        <mxPoint x="715" y="895" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c2" value="5. submitMilestone(userId, roleName,&lt;br&gt;contractId, milestoneId, body)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="725" y="950" as="sourcePoint"/>
+        <mxPoint x="920" y="950" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c3" value="6. resolveAndGuardContext('freelancer')&lt;br&gt;findContractById &amp; findMilestoneById" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="930" y="1010" as="sourcePoint"/>
+        <mxPoint x="1130" y="1010" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c4" value="7. prisma.contract.findUnique(...) &amp;&lt;br&gt;prisma.milestone.findFirst(...)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1140" y="1065" as="sourcePoint"/>
+        <mxPoint x="1315" y="1065" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c5" value="8. Execute query to check contract,&lt;br&gt;milestone status, and paymentStatus" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1325" y="1120" as="sourcePoint"/>
+        <mxPoint x="1475" y="1120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r1" value="9. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1475" y="1175" as="sourcePoint"/>
+        <mxPoint x="1325" y="1175" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r2" value="10. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1315" y="1225" as="sourcePoint"/>
+        <mxPoint x="1140" y="1225" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r3" value="11. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1130" y="1275" as="sourcePoint"/>
+        <mxPoint x="930" y="1275" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="990" y="1325"/>
+          <mxPoint x="990" y="1361"/>
+        </Array>
+        <mxPoint x="930" y="1325" as="sourcePoint"/>
+        <mxPoint x="930" y="1361" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk_label" value="12. Check eligibility&lt;br&gt;(isFreelancer / IN_PROGRESS / FUNDED)" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="998" y="1325" width="230" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="b11" value="12.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="1445" as="sourcePoint"/>
+        <mxPoint x="725" y="1445" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b12" value="12.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="1500" as="sourcePoint"/>
+        <mxPoint x="505" y="1500" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b13" value="12.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="1555" as="sourcePoint"/>
+        <mxPoint x="305" y="1555" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b14" value="12.1.4. Show message&lt;br&gt;&amp;quot;Cannot submit milestone (must be&lt;br&gt;IN_PROGRESS and FUNDED)&amp;quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="1615" as="sourcePoint"/>
+        <mxPoint x="105" y="1615" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b21" value="12.2.1. createSubmission(milestoneId, userId, body)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="930" y="1730" as="sourcePoint"/>
+        <mxPoint x="1130" y="1730" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b22" value="12.2.2. prisma.$transaction([submission.create,&lt;br&gt;submissionFile.createMany, milestone.update(SUBMITTED)])" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1140" y="1785" as="sourcePoint"/>
+        <mxPoint x="1315" y="1785" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b23" value="12.2.3. Execute transaction to create submission&lt;br&gt;and update milestone status" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1325" y="1840" as="sourcePoint"/>
+        <mxPoint x="1475" y="1840" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b24" value="12.2.4. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1475" y="1895" as="sourcePoint"/>
+        <mxPoint x="1325" y="1895" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b25" value="12.2.5. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1315" y="1945" as="sourcePoint"/>
+        <mxPoint x="1140" y="1945" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b26" value="12.2.6. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1130" y="1995" as="sourcePoint"/>
+        <mxPoint x="930" y="1995" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk2" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="990" y="2045"/>
+          <mxPoint x="990" y="2081"/>
+        </Array>
+        <mxPoint x="930" y="2045" as="sourcePoint"/>
+        <mxPoint x="930" y="2081" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk2_label" value="12.2.7. Check&lt;br&gt;query database" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="998" y="2045" width="120" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="12.2.7.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="2165" as="sourcePoint"/>
+        <mxPoint x="725" y="2165" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n12" value="12.2.7.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="2220" as="sourcePoint"/>
+        <mxPoint x="505" y="2220" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n13" value="12.2.7.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="2275" as="sourcePoint"/>
+        <mxPoint x="305" y="2275" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n14" value="12.2.7.1.4. Show message&lt;br&gt;&amp;quot;Submit milestone failed&amp;quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="2335" as="sourcePoint"/>
+        <mxPoint x="105" y="2335" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n21" value="12.2.7.2.1. Return created submission" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="2445" as="sourcePoint"/>
+        <mxPoint x="725" y="2445" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n22" value="12.2.7.2.2. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="2500" as="sourcePoint"/>
+        <mxPoint x="505" y="2500" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n23" value="12.2.7.2.3. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="2555" as="sourcePoint"/>
+        <mxPoint x="305" y="2555" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n24" value="12.2.7.2.4. Show message &amp;quot;Milestone submitted&lt;br&gt;successfully&amp;quot; &amp; set status SUBMITTED" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="2620" as="sourcePoint"/>
+        <mxPoint x="105" y="2620" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>
+  </diagram>
+</mxfile>

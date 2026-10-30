@@ -45,3 +45,8 @@ uc-diagrams/
 data/
 
 backup/
+# Drawio temp files
+.~*.drawio*
+.*.drawio*
+*.drawio.bkp
+*.drawio.dtmp
