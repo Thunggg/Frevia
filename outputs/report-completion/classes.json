@@ -1,0 +1,3174 @@
+{
+  "1": [
+    {
+      "name": "ProfileController",
+      "file": "apps/api/src/routes/profiles/profile.controller.ts",
+      "deps": [
+        {
+          "name": "profileService",
+          "type": "ProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "viewProfile",
+          "params": [
+            "id: number"
+          ],
+          "returns": "FreelancerProfileDetailDto (serialized response)",
+          "private": false,
+          "calls": [
+            "profileService.viewProfile"
+          ],
+          "route": "Get(':id')"
+        },
+        {
+          "name": "updateProfile",
+          "params": [
+            "id: number",
+            "currentUserId: number",
+            "body: UpdateFreelancerProfileDto"
+          ],
+          "returns": "ProfileRevisionSubmissionDto (serialized response)",
+          "private": false,
+          "calls": [
+            "profileService.updateProfile"
+          ],
+          "route": "Put(':id')"
+        },
+        {
+          "name": "getSkills",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileService.getSkills"
+          ],
+          "route": "Get(':id/skills')"
+        },
+        {
+          "name": "searchSkillSuggestions",
+          "params": [
+            "search?: string"
+          ],
+          "returns": "Promise<{ id: number; name: string; }[]>",
+          "private": false,
+          "calls": [
+            "profileService.searchSkillSuggestions"
+          ],
+          "route": "Get('skills/suggestions')"
+        },
+        {
+          "name": "addSkill",
+          "params": [
+            "id: number",
+            "currentUserId: number",
+            "body: AddFreelancerSkillDto"
+          ],
+          "returns": "AddFreelancerSkillResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "profileService.addSkill"
+          ],
+          "route": "Post(':id/skills')"
+        },
+        {
+          "name": "deleteSkill",
+          "params": [
+            "id: number",
+            "currentUserId: number"
+          ],
+          "returns": "Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>",
+          "private": false,
+          "calls": [
+            "profileService.deleteSkill"
+          ],
+          "route": "Delete('skills/:id')"
+        }
+      ]
+    },
+    {
+      "name": "ProfileService",
+      "file": "apps/api/src/routes/profiles/profile.service.ts",
+      "deps": [
+        {
+          "name": "profileRepository",
+          "type": "ProfileRepository"
+        },
+        {
+          "name": "cloudinary",
+          "type": "CloudinaryService"
+        },
+        {
+          "name": "aiCvAnalyzer",
+          "type": "AiCvAnalyzerService"
+        },
+        {
+          "name": "skillResolver",
+          "type": "SkillResolverService"
+        },
+        {
+          "name": "profileRevisionService",
+          "type": "ProfileRevisionService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getOwnedFreelancerProfile",
+          "params": [
+            "profileId: number",
+            "userId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "profileRepository.findFreelancerProfileById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "viewProfile",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileRepository.findFreelancerProfileById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "updateProfile",
+          "params": [
+            "profileId: number",
+            "currentUserId: number",
+            "dto: UpdateFreelancerProfileType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileRepository.findFreelancerProfileById",
+            "profileRevisionService.requiresManualReview",
+            "profileRevisionService.submitFreelancer",
+            "profileRepository.updateFreelancerProfile",
+            "profileRevisionService.directUpdateResult"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getSkills",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileRepository.findFreelancerProfileById",
+            "profileRepository.findSkillsByProfileId"
+          ],
+          "route": ""
+        },
+        {
+          "name": "searchSkillSuggestions",
+          "params": [
+            "search?: string"
+          ],
+          "returns": "Promise<{ id: number; name: string; }[]>",
+          "private": false,
+          "calls": [
+            "profileRepository.searchActiveCatalogSkills"
+          ],
+          "route": ""
+        },
+        {
+          "name": "addSkill",
+          "params": [
+            "profileId: number",
+            "currentUserId: number",
+            "dto: AddFreelancerSkillType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileRepository.findFreelancerProfileById",
+            "profileRepository.findOrCreateCatalogSkill",
+            "profileRepository.findSkillByProfileIdAndSkillId",
+            "profileRepository.addSkillToProfile"
+          ],
+          "route": ""
+        },
+        {
+          "name": "deleteSkill",
+          "params": [
+            "skillId: number",
+            "currentUserId: number"
+          ],
+          "returns": "Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>",
+          "private": false,
+          "calls": [
+            "profileRepository.findSkillById",
+            "profileRepository.deleteSkill"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ProfileRepository",
+      "file": "apps/api/src/routes/profiles/profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findFreelancerProfileById",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateFreelancerProfile",
+          "params": [
+            "profileId: number",
+            "data: {\r\n      displayName: string;\r\n      title: string;\r\n      bio?: string | null;\r\n      availabilityStatus?: AvailabilityStatus;\r\n      education?: string[] | null;\r\n      certifications?: string[] | null;\r\n      languages?: string[] | null;\r\n      experience?: string[] | null;\r\n    }"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSkillsByProfileId",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "searchActiveCatalogSkills",
+          "params": [
+            "search?: string"
+          ],
+          "returns": "Promise<{ id: number; name: string; }[]>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findOrCreateCatalogSkill",
+          "params": [
+            "name: string"
+          ],
+          "returns": "Promise<{ id: number; createdAt: Date; updatedAt: Date; deletedAt: Date | null; name: string; description: string | null; slug: string; }>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSkillByProfileIdAndSkillId",
+          "params": [
+            "profileId: number",
+            "skillId: number"
+          ],
+          "returns": "Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; } | null>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "addSkillToProfile",
+          "params": [
+            "profileId: number",
+            "skillId: number",
+            "proficiencyLevel: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "slugify",
+          "params": [
+            "value: string"
+          ],
+          "returns": "string",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "generateUniqueSlug",
+          "params": [
+            "name: string"
+          ],
+          "returns": "Promise<string>",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSkillById",
+          "params": [
+            "skillId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "deleteSkill",
+          "params": [
+            "skillId: number"
+          ],
+          "returns": "Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "PortfolioController",
+      "file": "apps/api/src/routes/portfolios/portfolio.controller.ts",
+      "deps": [
+        {
+          "name": "portfolioService",
+          "type": "PortfolioService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getPortfolios",
+          "params": [
+            "id: number"
+          ],
+          "returns": "PortfolioItemListResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "portfolioService.getPortfolios"
+          ],
+          "route": "Get(':id/portfolios')"
+        },
+        {
+          "name": "addPortfolio",
+          "params": [
+            "currentUserId: number",
+            "id: number",
+            "body: AddPortfolioDto"
+          ],
+          "returns": "AddPortfolioResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "portfolioService.addPortfolio"
+          ],
+          "route": "Post(':id/portfolios')"
+        },
+        {
+          "name": "getPortfolioDetail",
+          "params": [
+            "id: number"
+          ],
+          "returns": "PortfolioItemResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "portfolioService.getPortfolioDetail"
+          ],
+          "route": "Get('portfolios/:id')"
+        },
+        {
+          "name": "updatePortfolio",
+          "params": [
+            "currentUserId: number",
+            "id: number",
+            "body: UpdatePortfolioDto"
+          ],
+          "returns": "UpdatePortfolioResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "portfolioService.updatePortfolio"
+          ],
+          "route": "Put('portfolios/:id')"
+        },
+        {
+          "name": "deletePortfolio",
+          "params": [
+            "currentUserId: number",
+            "id: number"
+          ],
+          "returns": "Promise<{ message: \"Success.PortfolioDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "portfolioService.deletePortfolio"
+          ],
+          "route": "Delete('portfolios/:id')"
+        }
+      ]
+    },
+    {
+      "name": "PortfolioService",
+      "file": "apps/api/src/routes/portfolios/portfolio.service.ts",
+      "deps": [
+        {
+          "name": "portfolioRepository",
+          "type": "PortfolioRepository"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getPortfolios",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "portfolioRepository.findFreelancerProfileById",
+            "portfolioRepository.findPortfoliosByFreelancerProfileId"
+          ],
+          "route": ""
+        },
+        {
+          "name": "addPortfolio",
+          "params": [
+            "profileId: number",
+            "currentUserId: number",
+            "data: AddPortfolioType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "portfolioRepository.findFreelancerProfileById",
+            "portfolioRepository.addPortfolioToProfile"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getPortfolioDetail",
+          "params": [
+            "portfolioId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "portfolioRepository.findPortfolioById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "updatePortfolio",
+          "params": [
+            "portfolioId: number",
+            "currentUserId: number",
+            "data: UpdatePortfolioType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "portfolioRepository.findPortfolioWithProfile",
+            "portfolioRepository.updatePortfolio"
+          ],
+          "route": ""
+        },
+        {
+          "name": "deletePortfolio",
+          "params": [
+            "portfolioId: number",
+            "currentUserId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.PortfolioDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "portfolioRepository.findPortfolioWithProfile",
+            "portfolioRepository.deletePortfolio"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "PortfolioRepository",
+      "file": "apps/api/src/routes/portfolios/portfolio.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findFreelancerProfileById",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findPortfoliosByFreelancerProfileId",
+          "params": [
+            "freelancerProfileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "addPortfolioToProfile",
+          "params": [
+            "profileId: number",
+            "data: AddPortfolioType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findPortfolioById",
+          "params": [
+            "portfolioId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findPortfolioWithProfile",
+          "params": [
+            "portfolioId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updatePortfolio",
+          "params": [
+            "portfolioId: number",
+            "data: UpdatePortfolioType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "deletePortfolio",
+          "params": [
+            "portfolioId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    }
+  ],
+  "2": [
+    {
+      "name": "IdentityVerificationController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "upload",
+          "params": [
+            "userId: number",
+            "body: UploadIdentityDocumentDto",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "IdentityVerificationDocumentDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.uploadIdentityDocument"
+          ],
+          "route": "Post('documents')"
+        },
+        {
+          "name": "aiCheck",
+          "params": [
+            "userId: number",
+            "body: UploadIdentityDocumentDto",
+            "files?: Express.Multer.File[]"
+          ],
+          "returns": "IdentityVerificationDocumentDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.submitIdentityAiCheck"
+          ],
+          "route": "Post('ai-check')"
+        },
+        {
+          "name": "livenessPose",
+          "params": [
+            "userId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "Promise<IdentityAiPoseResult>",
+          "private": false,
+          "calls": [
+            "service.livenessPose"
+          ],
+          "route": "Post('liveness-pose')"
+        },
+        {
+          "name": "getStatus",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "IdentityVerificationStatusDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getIdentityStatus"
+          ],
+          "route": "Get('status')"
+        },
+        {
+          "name": "getFile",
+          "params": [
+            "userId: number",
+            "id: number",
+            "side: string | undefined",
+            "response: Response"
+          ],
+          "returns": "Promise<StreamableFile>",
+          "private": false,
+          "calls": [
+            "service.getIdentityDocumentFile"
+          ],
+          "route": "Get('documents/:id/file')"
+        }
+      ]
+    },
+    {
+      "name": "ClientProfileController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getDetail",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "ClientProfileDetailDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getClientProfile"
+          ],
+          "route": "Get(':userId')"
+        },
+        {
+          "name": "update",
+          "params": [
+            "userId: number",
+            "body: UpdateClientProfileDto"
+          ],
+          "returns": "ProfileRevisionSubmissionDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.updateClientProfile"
+          ],
+          "route": "Put('me/profile')"
+        }
+      ]
+    },
+    {
+      "name": "SocialLinkController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getAll",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "SocialLinkListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getSocialLinks"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "add",
+          "params": [
+            "userId: number",
+            "body: AddSocialLinkDto"
+          ],
+          "returns": "SocialLinkDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.addSocialLink"
+          ],
+          "route": "Post()"
+        },
+        {
+          "name": "remove",
+          "params": [
+            "userId: number",
+            "id: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.deleteSocialLink"
+          ],
+          "route": "Delete(':id')"
+        }
+      ]
+    },
+    {
+      "name": "FavoriteFreelancerController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getAll",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "FavoriteFreelancerListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getFavorites"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "add",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.addFavorite"
+          ],
+          "route": "Post(':freelancerId')"
+        },
+        {
+          "name": "remove",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.removeFavorite"
+          ],
+          "route": "Delete(':freelancerId')"
+        }
+      ]
+    },
+    {
+      "name": "FollowingFreelancerController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "followFreelancer",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.followFreelancer"
+          ],
+          "route": "Post(':freelancerId')"
+        },
+        {
+          "name": "unfollowFreelancer",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.unfollowFreelancer"
+          ],
+          "route": "Delete(':freelancerId')"
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileService",
+      "file": "apps/api/src/routes/account-profile/account-profile.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "AccountProfileRepository"
+        },
+        {
+          "name": "profileRevisionService",
+          "type": "ProfileRevisionService"
+        },
+        {
+          "name": "cloudinary",
+          "type": "CloudinaryService"
+        },
+        {
+          "name": "hashing",
+          "type": "HashingService"
+        },
+        {
+          "name": "identityAi",
+          "type": "IdentityAiService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "requireRole",
+          "params": [
+            "userId: number",
+            "roleName: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findUserWithRoles"
+          ],
+          "route": ""
+        },
+        {
+          "name": "normalizeIdentityNumber",
+          "params": [
+            "value: unknown"
+          ],
+          "returns": "string | null",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "presentQrConsistency",
+          "params": [
+            "summary: unknown"
+          ],
+          "returns": "{ status: string; score: number | null; matchedFields: string[]; mismatchedFields: string[]; notCheckedFields: string[]; } | null",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "presentIdentityDocument",
+          "params": [
+            "document: T"
+          ],
+          "returns": "Selected database projection / response object",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "persistIdentityFile",
+          "params": [
+            "userId: number",
+            "file: Express.Multer.File"
+          ],
+          "returns": "Promise<string>",
+          "private": true,
+          "calls": [
+            "cloudinary.isConfigured",
+            "cloudinary.uploadFile"
+          ],
+          "route": ""
+        },
+        {
+          "name": "uploadIdentityDocument",
+          "params": [
+            "userId: number",
+            "documentType: DocumentTypeType",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.createIdentityDocument"
+          ],
+          "route": ""
+        },
+        {
+          "name": "assertAiImage",
+          "params": [
+            "file: Express.Multer.File",
+            "path: string"
+          ],
+          "returns": "void",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submitIdentityAiCheck",
+          "params": [
+            "userId: number",
+            "documentType: DocumentTypeType",
+            "files: {\r\n      front?: Express.Multer.File;\r\n      back?: Express.Multer.File;\r\n      selfie?: Express.Multer.File;\r\n      liveness: Express.Multer.File[];\r\n    }"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findIdentityDocuments",
+            "identityAi.verify",
+            "repository.findApprovedIdentityDocumentByIdentityNumber",
+            "repository.createIdentityAiDocument"
+          ],
+          "route": ""
+        },
+        {
+          "name": "livenessPose",
+          "params": [
+            "userId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "Promise<IdentityAiPoseResult>",
+          "private": false,
+          "calls": [
+            "identityAi.livenessPose"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getIdentityStatus",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findIdentityDocuments"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getIdentityDocumentFile",
+          "params": [
+            "userId: number",
+            "id: number",
+            "side: 'front' | 'back'"
+          ],
+          "returns": "Promise<{ absolutePath: string; fileName: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findIdentityDocumentById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getClientProfile",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findClientProfile"
+          ],
+          "route": ""
+        },
+        {
+          "name": "updateClientProfile",
+          "params": [
+            "userId: number",
+            "input: UpdateClientProfileType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "profileRevisionService.requiresManualReview",
+            "profileRevisionService.submitClient",
+            "repository.updateClientProfile",
+            "profileRevisionService.directUpdateResult"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getSocialLinks",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }[]>",
+          "private": false,
+          "calls": [
+            "repository.findSocialLinks"
+          ],
+          "route": ""
+        },
+        {
+          "name": "addSocialLink",
+          "params": [
+            "userId: number",
+            "input: AddSocialLinkType"
+          ],
+          "returns": "Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }>",
+          "private": false,
+          "calls": [
+            "repository.findSocialLinks",
+            "repository.findSocialLinkByPlatform",
+            "repository.createSocialLink"
+          ],
+          "route": ""
+        },
+        {
+          "name": "deleteSocialLink",
+          "params": [
+            "userId: number",
+            "id: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findSocialLinkById",
+            "repository.deleteSocialLink"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getFavorites",
+          "params": [
+            "clientId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findFavorites"
+          ],
+          "route": ""
+        },
+        {
+          "name": "addFavorite",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findUserWithRoles",
+            "repository.findFavorite",
+            "repository.createFavorite"
+          ],
+          "route": ""
+        },
+        {
+          "name": "removeFavorite",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findFavorite",
+            "repository.deleteFavorite"
+          ],
+          "route": ""
+        },
+        {
+          "name": "followFreelancer",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findFollow",
+            "repository.createFollowWithNotification"
+          ],
+          "route": ""
+        },
+        {
+          "name": "unfollowFreelancer",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findFollow",
+            "repository.deleteFollow"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileRepository",
+      "file": "apps/api/src/routes/account-profile/account-profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findUserWithRoles",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findClientProfile",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateClientProfile",
+          "params": [
+            "userId: number",
+            "input: UpdateClientProfileType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createIdentityDocument",
+          "params": [
+            "userId: number",
+            "documentType: DocumentTypeType",
+            "fileUrl: string"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createIdentityAiDocument",
+          "params": [
+            "data: {\r\n    userId: number;\r\n    documentType: DocumentTypeType;\r\n    fileUrl: string;\r\n    backFileUrl: string | null;\r\n    status: VerificationStatus;\r\n    reviewNotes: string | null;\r\n    duplicateOfId: number | null;\r\n    aiStatus: string;\r\n    aiScore: number | null;\r\n    aiError: string | null;\r\n    aiSummary: Prisma.InputJsonValue;\r\n    aiSelfieSummary: Prisma.InputJsonValue;\r\n    aiScannedAt: Date;\r\n  }"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findApprovedIdentityDocumentByIdentityNumber",
+          "params": [
+            "userId: number",
+            "identityNumber: string"
+          ],
+          "returns": "Promise<{ id: number; }>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findIdentityDocuments",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findIdentityDocumentById",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSocialLinks",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }[] | null>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSocialLinkByPlatform",
+          "params": [
+            "userId: number",
+            "platform: AddSocialLinkType['platform']"
+          ],
+          "returns": "Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; } | null>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createSocialLink",
+          "params": [
+            "userId: number",
+            "input: AddSocialLinkType"
+          ],
+          "returns": "Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findSocialLinkById",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "deleteSocialLink",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Prisma__SocialLinkClient<{ id: number; profileId: number; url: string; platform: SocialPlatform; }, never, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findFavorite",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createFavorite",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; }, never, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "deleteFavorite",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; }, never, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findFavorites",
+          "params": [
+            "clientId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findDiscoverableFreelancers",
+          "params": [
+            "clientId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    }
+  ],
+  "3": [
+    {
+      "name": "FollowingFreelancerController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getFollowing",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "FollowingFreelancerListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getFollowing"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "followFreelancer",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.followFreelancer"
+          ],
+          "route": "Post(':freelancerId')"
+        },
+        {
+          "name": "unfollowFreelancer",
+          "params": [
+            "userId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.unfollowFreelancer"
+          ],
+          "route": "Delete(':freelancerId')"
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileService",
+      "file": "apps/api/src/routes/account-profile/account-profile.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "AccountProfileRepository"
+        },
+        {
+          "name": "profileRevisionService",
+          "type": "ProfileRevisionService"
+        },
+        {
+          "name": "cloudinary",
+          "type": "CloudinaryService"
+        },
+        {
+          "name": "hashing",
+          "type": "HashingService"
+        },
+        {
+          "name": "identityAi",
+          "type": "IdentityAiService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "requireRole",
+          "params": [
+            "userId: number",
+            "roleName: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findUserWithRoles"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getFollowing",
+          "params": [
+            "clientId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findFollowing"
+          ],
+          "route": ""
+        },
+        {
+          "name": "followFreelancer",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findFollow",
+            "repository.createFollowWithNotification"
+          ],
+          "route": ""
+        },
+        {
+          "name": "unfollowFreelancer",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findFollow",
+            "repository.deleteFollow"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileRepository",
+      "file": "apps/api/src/routes/account-profile/account-profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findUserWithRoles",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findFollow",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Prisma__FollowFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createFollowWithNotification",
+          "params": [
+            "clientId: number",
+            "freelancerId: number",
+            "followerName: string"
+          ],
+          "returns": "Promise<{ createdAt: Date; clientId: number; freelancerId: number; }>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "deleteFollow",
+          "params": [
+            "clientId: number",
+            "freelancerId: number"
+          ],
+          "returns": "Prisma__FollowFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; }, never, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findFollowing",
+          "params": [
+            "clientId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "NotificationController",
+      "file": "apps/api/src/routes/notifications/notification.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "NotificationService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getAll",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "NotificationListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getAll"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "markAllRead",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.NotificationsMarkedAsRead\"; count: number; }>",
+          "private": false,
+          "calls": [
+            "service.markAllRead"
+          ],
+          "route": "Patch('read-all')"
+        },
+        {
+          "name": "markRead",
+          "params": [
+            "userId: number",
+            "id: number"
+          ],
+          "returns": "NotificationDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.markRead"
+          ],
+          "route": "Patch(':id/read')"
+        },
+        {
+          "name": "delete",
+          "params": [
+            "userId: number",
+            "id: number"
+          ],
+          "returns": "Promise<{ message: \"Success.NotificationDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "service.delete"
+          ],
+          "route": "Delete(':id')"
+        }
+      ]
+    },
+    {
+      "name": "NotificationService",
+      "file": "apps/api/src/routes/notifications/notification.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "NotificationRepository"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getAll",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [
+            "repository.findAll"
+          ],
+          "route": ""
+        },
+        {
+          "name": "markRead",
+          "params": [
+            "userId: number",
+            "notificationId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findById",
+            "repository.markRead"
+          ],
+          "route": ""
+        },
+        {
+          "name": "markAllRead",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.NotificationsMarkedAsRead\"; count: number; }>",
+          "private": false,
+          "calls": [
+            "repository.markAllRead"
+          ],
+          "route": ""
+        },
+        {
+          "name": "delete",
+          "params": [
+            "userId: number",
+            "notificationId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.NotificationDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "repository.findById",
+            "repository.softDelete"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "NotificationRepository",
+      "file": "apps/api/src/routes/notifications/notification.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findAll",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findById",
+          "params": [
+            "userId: number",
+            "notificationId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "markRead",
+          "params": [
+            "notificationId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "markAllRead",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "PrismaPromise<BatchPayload>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "softDelete",
+          "params": [
+            "notificationId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "AuthController",
+      "file": "apps/api/src/routes/auth/auth.controller.ts",
+      "deps": [
+        {
+          "name": "authService",
+          "type": "AuthService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "switchRole",
+          "params": [
+            "userId: number",
+            "sessionId: number",
+            "body: SwitchRoleBodyDto"
+          ],
+          "returns": "SwitchRoleResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "authService.switchRole"
+          ],
+          "route": "Post('switch-role')"
+        },
+        {
+          "name": "joinRole",
+          "params": [
+            "userId: number",
+            "sessionId: number",
+            "body: JoinRoleBodyDto"
+          ],
+          "returns": "JoinRoleResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "authService.joinRole"
+          ],
+          "route": "Post('join-role')"
+        }
+      ]
+    },
+    {
+      "name": "AuthService",
+      "file": "apps/api/src/routes/auth/auth.service.ts",
+      "deps": [
+        {
+          "name": "hashingService",
+          "type": "HashingService"
+        },
+        {
+          "name": "emailService",
+          "type": "EmailService"
+        },
+        {
+          "name": "sharedRoleRepository",
+          "type": "SharedRoleRepository"
+        },
+        {
+          "name": "authRepository",
+          "type": "AuthRepository"
+        },
+        {
+          "name": "tokenService",
+          "type": "TokenService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "switchRole",
+          "params": [
+            "userId: number",
+            "sessionId: number",
+            "body: SwitchRoleBodyType"
+          ],
+          "returns": "Promise<{ accessToken: string; }>",
+          "private": false,
+          "calls": [
+            "authRepository.switchPrimaryRole",
+            "tokenService.signAccessToken"
+          ],
+          "route": ""
+        },
+        {
+          "name": "joinRole",
+          "params": [
+            "userId: number",
+            "sessionId: number",
+            "body: JoinRoleBodyType"
+          ],
+          "returns": "Promise<{ accessToken: string; }>",
+          "private": false,
+          "calls": [
+            "authRepository.joinRole",
+            "tokenService.signAccessToken"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "AuthRepository",
+      "file": "apps/api/src/routes/auth/auth.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "switchPrimaryRole",
+          "params": [
+            "userId: number",
+            "roleName: string"
+          ],
+          "returns": "Promise<{ id: number; createdAt: Date; deletedAt: Date | null; name: string; description: string | null; } | null>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "joinRole",
+          "params": [
+            "userId: number",
+            "roleName: JoinRoleBodyType['role']"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    }
+  ],
+  "4": [
+    {
+      "name": "ReviewController",
+      "file": "apps/api/src/routes/reviews/review.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "ReviewService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "list",
+          "params": [
+            "userId: number",
+            "contractId: number"
+          ],
+          "returns": "ReviewListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.list"
+          ],
+          "route": "Get('contracts/:contractId')"
+        },
+        {
+          "name": "create",
+          "params": [
+            "userId: number",
+            "contractId: number",
+            "body: CreateReviewDto"
+          ],
+          "returns": "ReviewDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.create"
+          ],
+          "route": "Post('contracts/:contractId')"
+        },
+        {
+          "name": "detail",
+          "params": [
+            "userId: number",
+            "reviewId: number"
+          ],
+          "returns": "ReviewDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.detail"
+          ],
+          "route": "Get(':reviewId')"
+        },
+        {
+          "name": "update",
+          "params": [
+            "userId: number",
+            "reviewId: number",
+            "body: UpdateReviewDto"
+          ],
+          "returns": "ReviewDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.update"
+          ],
+          "route": "Patch(':reviewId')"
+        },
+        {
+          "name": "remove",
+          "params": [
+            "userId: number",
+            "reviewId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.ReviewDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "service.remove"
+          ],
+          "route": "Delete(':reviewId')"
+        },
+        {
+          "name": "respond",
+          "params": [
+            "userId: number",
+            "reviewId: number",
+            "body: CreateReviewResponseDto"
+          ],
+          "returns": "ReviewResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.respond"
+          ],
+          "route": "Post(':reviewId/response')"
+        },
+        {
+          "name": "updateResponse",
+          "params": [
+            "userId: number",
+            "responseId: number",
+            "body: UpdateReviewResponseDto"
+          ],
+          "returns": "ReviewResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.updateResponse"
+          ],
+          "route": "Patch('responses/:responseId')"
+        },
+        {
+          "name": "removeResponse",
+          "params": [
+            "userId: number",
+            "responseId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.ReviewResponseDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "service.removeResponse"
+          ],
+          "route": "Delete('responses/:responseId')"
+        }
+      ]
+    },
+    {
+      "name": "ReviewService",
+      "file": "apps/api/src/routes/reviews/review.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "ReviewRepository"
+        }
+      ],
+      "methods": [
+        {
+          "name": "requireContractParticipant",
+          "params": [
+            "userId: number",
+            "contractId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findContract"
+          ],
+          "route": ""
+        },
+        {
+          "name": "present",
+          "params": [
+            "review: T"
+          ],
+          "returns": "T & { response?: null | undefined; overallRating: number; }",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "list",
+          "params": [
+            "userId: number",
+            "contractId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findManyByContract"
+          ],
+          "route": ""
+        },
+        {
+          "name": "detail",
+          "params": [
+            "userId: number",
+            "reviewId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "create",
+          "params": [
+            "userId: number",
+            "contractId: number",
+            "input: CreateReviewType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findByContractAndReviewer",
+            "repository.create"
+          ],
+          "route": ""
+        },
+        {
+          "name": "update",
+          "params": [
+            "userId: number",
+            "reviewId: number",
+            "input: UpdateReviewType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findById",
+            "repository.update"
+          ],
+          "route": ""
+        },
+        {
+          "name": "remove",
+          "params": [
+            "userId: number",
+            "reviewId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.ReviewDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "repository.findById",
+            "repository.softDelete"
+          ],
+          "route": ""
+        },
+        {
+          "name": "respond",
+          "params": [
+            "userId: number",
+            "reviewId: number",
+            "responseText: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findById",
+            "repository.findResponseByReview",
+            "repository.createResponse"
+          ],
+          "route": ""
+        },
+        {
+          "name": "updateResponse",
+          "params": [
+            "userId: number",
+            "responseId: number",
+            "responseText: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findResponseById",
+            "repository.updateResponse"
+          ],
+          "route": ""
+        },
+        {
+          "name": "removeResponse",
+          "params": [
+            "userId: number",
+            "responseId: number"
+          ],
+          "returns": "Promise<{ message: \"Success.ReviewResponseDeleted\"; }>",
+          "private": false,
+          "calls": [
+            "repository.findResponseById",
+            "repository.softDeleteResponse"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ReviewRepository",
+      "file": "apps/api/src/routes/reviews/review.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findContract",
+          "params": [
+            "contractId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findById",
+          "params": [
+            "reviewId: number",
+            "includeDeleted: boolean"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findByContractAndReviewer",
+          "params": [
+            "contractId: number",
+            "reviewerId: number"
+          ],
+          "returns": "Prisma__ReviewClient<{ id: number; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findManyByContract",
+          "params": [
+            "contractId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "create",
+          "params": [
+            "contractId: number",
+            "reviewerId: number",
+            "revieweeId: number",
+            "reviewerName: string",
+            "input: CreateReviewType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "update",
+          "params": [
+            "reviewId: number",
+            "input: UpdateReviewType"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "softDelete",
+          "params": [
+            "reviewId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findResponseByReview",
+          "params": [
+            "reviewId: number"
+          ],
+          "returns": "Prisma__ReviewResponseClient<{ id: number; deletedAt: Date | null; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findResponseById",
+          "params": [
+            "responseId: number"
+          ],
+          "returns": "Prisma__ReviewResponseClient<{ id: number; userId: number; reviewId: number; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "createResponse",
+          "params": [
+            "reviewId: number",
+            "userId: number",
+            "reviewerId: number",
+            "contractId: number",
+            "responderName: string",
+            "responseText: string",
+            "deletedResponseId?: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateResponse",
+          "params": [
+            "responseId: number",
+            "responseText: string"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "softDeleteResponse",
+          "params": [
+            "responseId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "GeneralAccountProfileController",
+      "file": "apps/api/src/routes/account-profile/account-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "AccountProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "get",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "GeneralProfileDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.getGeneralProfile"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "update",
+          "params": [
+            "userId: number",
+            "body: UpdateGeneralProfileDto"
+          ],
+          "returns": "ProfileRevisionSubmissionDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.updateGeneralProfile"
+          ],
+          "route": "Put()"
+        },
+        {
+          "name": "changePassword",
+          "params": [
+            "userId: number",
+            "body: ChangePasswordDto"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "service.changePassword"
+          ],
+          "route": "Put('password')"
+        },
+        {
+          "name": "uploadAvatar",
+          "params": [
+            "userId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "AvatarUploadResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.uploadAvatar"
+          ],
+          "route": "Post('avatar')"
+        },
+        {
+          "name": "getAvatarFile",
+          "params": [
+            "userId: number",
+            "response: Response"
+          ],
+          "returns": "Promise<StreamableFile>",
+          "private": false,
+          "calls": [
+            "service.getAvatarFile"
+          ],
+          "route": "Get('avatar/:userId/file')"
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileService",
+      "file": "apps/api/src/routes/account-profile/account-profile.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "AccountProfileRepository"
+        },
+        {
+          "name": "profileRevisionService",
+          "type": "ProfileRevisionService"
+        },
+        {
+          "name": "cloudinary",
+          "type": "CloudinaryService"
+        },
+        {
+          "name": "hashing",
+          "type": "HashingService"
+        },
+        {
+          "name": "identityAi",
+          "type": "IdentityAiService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "presentAvatarUrl",
+          "params": [
+            "userId: number",
+            "avatarUrl: string | null",
+            "updatedAt?: Date"
+          ],
+          "returns": "string | null",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "detectAvatarType",
+          "params": [
+            "buffer: Buffer"
+          ],
+          "returns": "{ mimeType: string; extension: string; } | null",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "presentGeneralProfile",
+          "params": [
+            "user: NonNullable<\r\n      Awaited<ReturnType<AccountProfileRepository['findGeneralProfile']>>\r\n    >"
+          ],
+          "returns": "Selected database projection / response object",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "getGeneralProfile",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findGeneralProfile"
+          ],
+          "route": ""
+        },
+        {
+          "name": "updateGeneralProfile",
+          "params": [
+            "userId: number",
+            "input: UpdateGeneralProfileType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findGeneralProfile",
+            "profileRevisionService.requiresManualReview",
+            "profileRevisionService.submitGeneral",
+            "repository.updateGeneralProfile",
+            "profileRevisionService.directUpdateResult"
+          ],
+          "route": ""
+        },
+        {
+          "name": "changePassword",
+          "params": [
+            "userId: number",
+            "input: ChangePasswordType"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findPasswordCredential",
+            "hashing.verify",
+            "repository.updatePassword",
+            "hashing.hash"
+          ],
+          "route": ""
+        },
+        {
+          "name": "uploadAvatar",
+          "params": [
+            "userId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "Promise<{ avatarUrl: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findGeneralProfile",
+            "cloudinary.isConfigured",
+            "cloudinary.uploadFile",
+            "repository.updateAvatar"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getAvatarFile",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise<{ absolutePath: string; fileName: string; contentType: string; }>",
+          "private": false,
+          "calls": [
+            "repository.findGeneralProfile"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "AccountProfileRepository",
+      "file": "apps/api/src/routes/account-profile/account-profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findGeneralProfile",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findPasswordCredential",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Prisma__UserClient<{ profile: { id: number; } | null; password: string | null; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateGeneralProfile",
+          "params": [
+            "userId: number",
+            "input: UpdateGeneralProfileType",
+            "primaryRole?: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updatePassword",
+          "params": [
+            "userId: number",
+            "password: string"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateAvatar",
+          "params": [
+            "userId: number",
+            "avatarUrl: string"
+          ],
+          "returns": "Prisma__ProfileClient<{ avatarUrl: string | null; updatedAt: Date; }, never, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    }
+  ],
+  "5": [
+    {
+      "name": "ProfileRevisionController",
+      "file": "apps/api/src/routes/profile-revisions/profile-revision.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "ProfileRevisionService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "latest",
+          "params": [
+            "userId: number",
+            "profileType: ProfileRevisionType"
+          ],
+          "returns": "MyProfileRevisionDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.latestForUser"
+          ],
+          "route": "Get('me')"
+        }
+      ]
+    },
+    {
+      "name": "ProfileRevisionAdminController",
+      "file": "apps/api/src/routes/profile-revisions/profile-revision.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "ProfileRevisionService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "list",
+          "params": [
+            "query: ProfileRevisionAdminFilterDto"
+          ],
+          "returns": "ProfileRevisionAdminListDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.list"
+          ],
+          "route": "Get()"
+        },
+        {
+          "name": "detail",
+          "params": [
+            "id: number"
+          ],
+          "returns": "ProfileRevisionDetailDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.detail"
+          ],
+          "route": "Get(':id')"
+        },
+        {
+          "name": "approve",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "body: ApproveProfileRevisionDto"
+          ],
+          "returns": "ProfileRevisionDetailDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.approve"
+          ],
+          "route": "Patch(':id/approve')"
+        },
+        {
+          "name": "reject",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "body: RejectProfileRevisionDto"
+          ],
+          "returns": "ProfileRevisionDetailDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.reject"
+          ],
+          "route": "Patch(':id/reject')"
+        }
+      ]
+    },
+    {
+      "name": "ProfileRevisionService",
+      "file": "apps/api/src/routes/profile-revisions/profile-revision.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "ProfileRevisionRepository"
+        }
+      ],
+      "methods": [
+        {
+          "name": "requiresManualReview",
+          "params": [
+            "profileStrength: number"
+          ],
+          "returns": "boolean",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "directUpdateResult",
+          "params": [
+            "profileStrength: number"
+          ],
+          "returns": "{ message: \"Success.ProfileUpdated\"; reviewRequired: boolean; profileStrength: number; revision: null; }",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submitFreelancer",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "proposedData: UpdateFreelancerProfileType",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submitClient",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "proposedData: UpdateClientProfileType",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submitExpert",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "proposedData: UpdateExpertProfileType",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submitGeneral",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "primaryRole: string",
+            "proposedData: UpdateGeneralProfileType",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submit",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "profileType: ProfileRevisionType",
+            "proposedData: | UpdateFreelancerProfileType\r\n      | UpdateClientProfileType\r\n      | UpdateExpertProfileType\r\n      | UpdateGeneralProfileType",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findProfileForSnapshot",
+            "repository.submit"
+          ],
+          "route": ""
+        },
+        {
+          "name": "latestForUser",
+          "params": [
+            "userId: number",
+            "profileType: ProfileRevisionType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findLatestForUser"
+          ],
+          "route": ""
+        },
+        {
+          "name": "list",
+          "params": [
+            "filter: ProfileRevisionAdminFilterType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.syncLowStrengthProfiles",
+            "repository.findMany"
+          ],
+          "route": ""
+        },
+        {
+          "name": "detail",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.findById"
+          ],
+          "route": ""
+        },
+        {
+          "name": "approve",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "reviewNotes?: string | null"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "reject",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "reviewNotes: string"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "review",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED",
+            "reviewNotes: string | null"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findById",
+            "repository.review"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ProfileRevisionRepository",
+      "file": "apps/api/src/routes/profile-revisions/profile-revision.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findProfileForSnapshot",
+          "params": [
+            "userId: number",
+            "profileId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "submit",
+          "params": [
+            "userId: number",
+            "profileId: number",
+            "profileType: ProfileRevisionType",
+            "currentData: Prisma.InputJsonValue",
+            "proposedData: Prisma.InputJsonValue",
+            "profileStrength: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findLatestForUser",
+          "params": [
+            "userId: number",
+            "profileType: ProfileRevisionType"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "syncLowStrengthProfiles",
+          "params": [
+            "threshold: number"
+          ],
+          "returns": "Promise<void>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findMany",
+          "params": [
+            "params: {\r\n    page: number;\r\n    limit: number;\r\n    status?: RevisionStatus;\r\n    profileType?: ProfileRevisionType;\r\n    search?: string;\r\n  }"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "findById",
+          "params": [
+            "id: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "review",
+          "params": [
+            "id: number",
+            "adminId: number",
+            "status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED",
+            "reviewNotes: string | null",
+            "proposedData: FreelancerProposal | ClientProposal | ExpertProposal",
+            "profileType: ProfileRevisionType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ExpertProfileController",
+      "file": "apps/api/src/routes/expert-profile/expert-profile.controller.ts",
+      "deps": [
+        {
+          "name": "service",
+          "type": "ExpertProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "updateMine",
+          "params": [
+            "userId: number",
+            "body: UpdateExpertProfileDto"
+          ],
+          "returns": "ExpertProfileUpdateResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "service.submitUpdate"
+          ],
+          "route": "Put('me')"
+        }
+      ]
+    },
+    {
+      "name": "ExpertProfileService",
+      "file": "apps/api/src/routes/expert-profile/expert-profile.service.ts",
+      "deps": [
+        {
+          "name": "repository",
+          "type": "ExpertProfileRepository"
+        },
+        {
+          "name": "revisions",
+          "type": "ProfileRevisionService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "cleanList",
+          "params": [
+            "values: string[]"
+          ],
+          "returns": "string[]",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "sanitize",
+          "params": [
+            "input: T"
+          ],
+          "returns": "T",
+          "private": true,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "context",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": true,
+          "calls": [
+            "repository.findByUserId"
+          ],
+          "route": ""
+        },
+        {
+          "name": "submitUpdate",
+          "params": [
+            "userId: number",
+            "input: UpdateExpertProfileType"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [
+            "repository.hasPendingRevision",
+            "revisions.submitExpert"
+          ],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ExpertProfileRepository",
+      "file": "apps/api/src/routes/expert-profile/expert-profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findByUserId",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "hasPendingRevision",
+          "params": [
+            "userId: number"
+          ],
+          "returns": "Prisma__ProfileRevisionClient<{ id: number; } | null, null, DefaultArgs, PrismaClientOptions>",
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ProfileController",
+      "file": "apps/api/src/routes/profiles/profile.controller.ts",
+      "deps": [
+        {
+          "name": "profileService",
+          "type": "ProfileService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "uploadCv",
+          "params": [
+            "id: number",
+            "currentUserId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "CvUploadResponseDto (serialized response)",
+          "private": false,
+          "calls": [
+            "profileService.uploadCv"
+          ],
+          "route": "Post(':id/cv')"
+        },
+        {
+          "name": "getCvFile",
+          "params": [
+            "id: number",
+            "currentUserId: number",
+            "response: Response"
+          ],
+          "returns": "Promise<void | StreamableFile>",
+          "private": false,
+          "calls": [
+            "profileService.getCvFile"
+          ],
+          "route": "Get(':id/cv/file')"
+        },
+        {
+          "name": "deleteCv",
+          "params": [
+            "id: number",
+            "currentUserId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "profileService.deleteCv"
+          ],
+          "route": "Delete(':id/cv')"
+        }
+      ]
+    },
+    {
+      "name": "ProfileService",
+      "file": "apps/api/src/routes/profiles/profile.service.ts",
+      "deps": [
+        {
+          "name": "profileRepository",
+          "type": "ProfileRepository"
+        },
+        {
+          "name": "cloudinary",
+          "type": "CloudinaryService"
+        },
+        {
+          "name": "aiCvAnalyzer",
+          "type": "AiCvAnalyzerService"
+        },
+        {
+          "name": "skillResolver",
+          "type": "SkillResolverService"
+        },
+        {
+          "name": "profileRevisionService",
+          "type": "ProfileRevisionService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "uploadCv",
+          "params": [
+            "profileId: number",
+            "userId: number",
+            "file?: Express.Multer.File"
+          ],
+          "returns": "Promise<{ cvUrl: string | null; cvFileName: string | null; }>",
+          "private": false,
+          "calls": [
+            "cloudinary.isConfigured",
+            "cloudinary.uploadFile",
+            "profileRepository.updateCv"
+          ],
+          "route": ""
+        },
+        {
+          "name": "deleteCv",
+          "params": [
+            "profileId: number",
+            "userId: number"
+          ],
+          "returns": "Promise<{ message: string; }>",
+          "private": false,
+          "calls": [
+            "cloudinary.deleteFile",
+            "profileRepository.clearCv"
+          ],
+          "route": ""
+        },
+        {
+          "name": "getCvFile",
+          "params": [
+            "profileId: number",
+            "userId: number"
+          ],
+          "returns": "Promise<{ remoteUrl: string; fileName: string; absolutePath?: undefined; } | { absolutePath: string; fileName: string; remoteUrl?: undefined; }>",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "resolveLocalCvPath",
+          "params": [
+            "cvUrl: string"
+          ],
+          "returns": "string | null",
+          "private": true,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    },
+    {
+      "name": "ProfileRepository",
+      "file": "apps/api/src/routes/profiles/profile.repo.ts",
+      "deps": [
+        {
+          "name": "prisma",
+          "type": "PrismaService"
+        }
+      ],
+      "methods": [
+        {
+          "name": "findFreelancerProfileById",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "updateCv",
+          "params": [
+            "profileId: number",
+            "data: { cvUrl: string; cvFileName: string; cvPublicId: string | null }"
+          ],
+          "returns": "Selected database projection / response object",
+          "calls": [],
+          "route": ""
+        },
+        {
+          "name": "clearCv",
+          "params": [
+            "profileId: number"
+          ],
+          "returns": "Promise of the selected database projection / response object",
+          "private": false,
+          "calls": [],
+          "route": ""
+        }
+      ]
+    }
+  ]
+}

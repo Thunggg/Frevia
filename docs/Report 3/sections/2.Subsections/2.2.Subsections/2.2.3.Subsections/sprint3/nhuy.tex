@@ -1,0 +1,254 @@
+\begingroup\sloppy\emergencystretch=3em\relax
+% Canonical scope: Nguyen Lu Nhat Huy, Sprint 3.
+\paragraph{Sprint 3: Following, Notifications and Account Roles}
+
+\subparagraph{UC-29.01 -- View Following List}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-29.01 -- View Following List \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Open following list \\ \hline
+Description & The actor performs view following list. Display following freelancers or empty list. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display following freelancers or empty list \\ \hline
+Normal Flow & 1. Open following list \newline
+2. The system receives GET /\allowbreak{}following/\allowbreak{}freelancers. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Retrieve followed freelancers, excluding deleted or banned target accounts. \newline
+5. Filter records without freelancer\allowbreak{}Profile; map freelancer\allowbreak{}Id, created\allowbreak{}At and profile \newline
+6. Display following freelancers or empty list \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & GET /\allowbreak{}following/\allowbreak{}freelancers \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-29.02 -- Follow Freelancer}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-29.02 -- Follow Freelancer \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Click Follow \\ \hline
+Description & The actor performs follow freelancer. Set local is\allowbreak{}Following=\allowbreak{}true; show success. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Set local is\allowbreak{}Following=\allowbreak{}true; show success \\ \hline
+Normal Flow & 1. Click Follow \newline
+2. The system receives POST /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Retrieve the active account, profile and assigned roles for authorization. \newline
+5. Check the follow relationship using the client/\allowbreak{}freelancer composite key. \newline
+6. follower\allowbreak{}Name =\allowbreak{} trimmed client display\allowbreak{}Name or A client \newline
+7. Save the follow relationship and notify the freelancer in one transaction. \newline
+8. Set local is\allowbreak{}Following=\allowbreak{}true; show success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [client\allowbreak{}Id =\allowbreak{}=\allowbreak{} freelancer\allowbreak{}Id]: 404 Freelancer\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+5. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+6. [user lacks FREELANCER role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+7. [follow already exists]: 409 Follow\allowbreak{}Duplicate\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-29.03 -- Unfollow Freelancer}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-29.03 -- Unfollow Freelancer \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Click Unfollow \\ \hline
+Description & The actor performs unfollow freelancer. Set local is\allowbreak{}Following=\allowbreak{}false; show success. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Set local is\allowbreak{}Following=\allowbreak{}false; show success \\ \hline
+Normal Flow & 1. Click Unfollow \newline
+2. The system receives DELETE /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Check the follow relationship using the client/\allowbreak{}freelancer composite key. \newline
+5. Remove the follow relationship. \newline
+6. Set local is\allowbreak{}Following=\allowbreak{}false; show success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [follow missing]: 404 Follow\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & DELETE /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-30.01 -- View Notification List}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-30.01 -- View Notification List \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Open notifications \\ \hline
+Description & The actor performs view notification list. Display notifications and unread state; empty list if none. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display notifications and unread state; empty list if none \\ \hline
+Normal Flow & 1. Open notifications \newline
+2. The system receives GET /\allowbreak{}notifications. \newline
+3. find\allowbreak{}All(user\allowbreak{}Id) \newline
+4. Display notifications and unread state; empty list if none \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & GET /\allowbreak{}notifications \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-30.02 -- Mark Notification as Read}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-30.02 -- Mark Notification as Read \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Mark notification as read \\ \hline
+Description & The actor performs mark notification as read. Invalidate notifications query; refetch list and unread state. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Invalidate notifications query; refetch list and unread state \\ \hline
+Normal Flow & 1. Mark notification as read \newline
+2. The system receives PATCH /\allowbreak{}notifications/\allowbreak{}:id/\allowbreak{}read. \newline
+3. find\allowbreak{}By\allowbreak{}Id(user\allowbreak{}Id, notification\allowbreak{}Id) \newline
+4. Use existing notification; no update needed \newline
+5. mark\allowbreak{}Read(notification\allowbreak{}Id) \newline
+6. Invalidate notifications query; refetch list and unread state \\ \hline
+Alternative Flows & 1. [else: notification is unread] \newline
+2. [notification.is\allowbreak{}Read =\allowbreak{}=\allowbreak{} true] \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [notification missing, deleted or belongs to another user]: 404 Notification\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & PATCH /\allowbreak{}notifications/\allowbreak{}:id/\allowbreak{}read \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-30.03 -- Mark All Notifications as Read}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-30.03 -- Mark All Notifications as Read \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Click Mark all as read \\ \hline
+Description & The actor performs mark all notifications as read. Invalidate notifications query; refetch list; count may be zero. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Invalidate notifications query; refetch list; count may be zero \\ \hline
+Normal Flow & 1. Click Mark all as read \newline
+2. The system receives PATCH /\allowbreak{}notifications/\allowbreak{}read-all. \newline
+3. mark\allowbreak{}All\allowbreak{}Read(user\allowbreak{}Id) \newline
+4. Invalidate notifications query; refetch list; count may be zero \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & PATCH /\allowbreak{}notifications/\allowbreak{}read-all \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-30.04 -- Delete Notification}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-30.04 -- Delete Notification \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Click Delete notification \\ \hline
+Description & The actor performs delete notification. Invalidate notifications query; refetch active list. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Invalidate notifications query; refetch active list \\ \hline
+Normal Flow & 1. Click Delete notification \newline
+2. The system receives DELETE /\allowbreak{}notifications/\allowbreak{}:id. \newline
+3. find\allowbreak{}By\allowbreak{}Id(user\allowbreak{}Id, notification\allowbreak{}Id) \newline
+4. soft\allowbreak{}Delete(notification\allowbreak{}Id) \newline
+5. Invalidate notifications query; refetch active list \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [notification missing, deleted or belongs to another user]: 404 Notification\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & DELETE /\allowbreak{}notifications/\allowbreak{}:id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-31.01 -- Switch Role}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-31.01 -- Switch Role \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Choose an assigned CLIENT or FREELANCER role \\ \hline
+Description & The actor performs switch role. Use new role and navigate to its workspace. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Use new role and navigate to its workspace \\ \hline
+Normal Flow & 1. Choose an assigned CLIENT or FREELANCER role \newline
+2. The system receives POST /\allowbreak{}auth/\allowbreak{}switch-role. \newline
+3. Verify the existing target role assignment and make it primary atomically. \newline
+4. switch\allowbreak{}Primary\allowbreak{}Role: persist primary role \newline
+5. Use new role and navigate to its workspace \\ \hline
+Alternative Flows & 1. Token\allowbreak{}Service.sign\allowbreak{}Access\allowbreak{}Token(\{ user\allowbreak{}Id, role\allowbreak{}Id: role.id, role\allowbreak{}Name: role.name, session\allowbreak{}Id \}): sign JWT for the existing session \newline
+2. Next.js /\allowbreak{}api/\allowbreak{}auth proxy sets access\allowbreak{}Token cookie and returns \{ role\allowbreak{}Name: body.role \}; on initial backend 401, refresh tokens and retry once if refresh succeeds \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [request DTO /\allowbreak{} id validation fails]: 400 validation error. The interaction ends without continuing the success path. \newline
+3. [assignment missing]: 404 Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}auth/\allowbreak{}switch-role \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-31.02 -- Join New Role}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-31.02 -- Join New Role \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Choose new CLIENT or FREELANCER role; Join \\ \hline
+Description & The actor performs join new role. Use new role and navigate to its workspace. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Use new role and navigate to its workspace \\ \hline
+Normal Flow & 1. Choose new CLIENT or FREELANCER role; Join \newline
+2. The system receives POST /\allowbreak{}auth/\allowbreak{}join-role. \newline
+3. join\allowbreak{}Role: find target role \newline
+4. join\allowbreak{}Role: check existing assignment \newline
+5. join\allowbreak{}Role: ensure profile \newline
+6. join\allowbreak{}Role: ensure freelancer profile \newline
+7. join\allowbreak{}Role: ensure client profile \newline
+8. join\allowbreak{}Role: assign and activate new role \newline
+9. Use new role and navigate to its workspace \\ \hline
+Alternative Flows & 1. Auth\allowbreak{}Repository.join\allowbreak{}Role executes the following database operations in one Prisma interactive transaction; early missing-role /\allowbreak{} already-assigned result has no writes \newline
+2. [else: body.role =\allowbreak{}=\allowbreak{} CLIENT] \newline
+3. [body.role =\allowbreak{}=\allowbreak{} FREELANCER] \newline
+4. If Prisma P2002 occurs anywhere in join\allowbreak{}Role: rollback transaction; Auth\allowbreak{}Service maps the unique constraint error to 409 Role\allowbreak{}Already\allowbreak{}Assigned\allowbreak{}Exception \newline
+5. Token\allowbreak{}Service.sign\allowbreak{}Access\allowbreak{}Token(\{ user\allowbreak{}Id, role\allowbreak{}Id: result.role.id, role\allowbreak{}Name: result.role.name, session\allowbreak{}Id \}): sign JWT for the existing session \newline
+6. Next.js /\allowbreak{}api/\allowbreak{}auth proxy sets access\allowbreak{}Token cookie and returns \{ role\allowbreak{}Name: body.role \}; on initial backend 401, refresh tokens and retry once if refresh succeeds \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [request DTO /\allowbreak{} id validation fails]: 400 validation error. The interaction ends without continuing the success path. \newline
+3. [target role missing: repository returns null]: 404 Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [assignment exists: repository returns already-assigned]: 409 Role\allowbreak{}Already\allowbreak{}Assigned\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}auth/\allowbreak{}join-role \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\endgroup

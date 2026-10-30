@@ -1,0 +1,542 @@
+% =================================================================
+% FILE: sections/nhuy/4/sprint2.tex -- Sprint 2
+% Class specifications follow the shared Report 4 table conventions.
+% =================================================================
+
+\subsection{IdentityVerificationController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{IdentityVerificationController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{upload(}\newline\code{userId: number},\newline\code{body: UploadIdentityDocumentDto},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload. The implementation delegates to \code{service.uploadIdentityDocument}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{UploadIdentityDocumentDto} -- validated HTTP request body.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{IdentityVerificationDocumentDto} -- serialized controller response.
+\newline -- Route: \code{POST /identity-verifications/documents}.
+ \\ \hline
+
+03 & \code{aiCheck(}\newline\code{userId: number},\newline\code{body: UploadIdentityDocumentDto},\newline\code{files?: Express.Multer.File[]}\code{)} &
+A method to ai check. The implementation delegates to \code{service.submitIdentityAiCheck}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{UploadIdentityDocumentDto} -- validated HTTP request body.
+\newline -- \code{files}: \code{Express.Multer.File[]} -- multipart identity-verification images and liveness frames.
+\newline -- \textit{Returns:} \code{IdentityVerificationDocumentDto} -- serialized controller response.
+\newline -- Route: \code{POST /identity-verifications/ai-check}.
+ \\ \hline
+
+04 & \code{livenessPose(}\newline\code{userId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to liveness pose. The implementation delegates to \code{service.livenessPose}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise<IdentityAiPoseResult>} -- operation result.
+\newline -- Route: \code{POST /identity-verifications/liveness-pose}.
+ \\ \hline
+
+05 & \code{getStatus(}\newline\code{userId: number}\code{)} &
+A method to get status. The implementation delegates to \code{service.getIdentityStatus}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{IdentityVerificationStatusDto} -- serialized controller response.
+\newline -- Route: \code{GET /identity-verifications/status}.
+ \\ \hline
+
+06 & \code{getFile(}\newline\code{userId: number},\newline\code{id: number},\newline\code{side: string | undefined},\newline\code{response: Response}\code{)} &
+A method to get file. The implementation delegates to \code{service.getIdentityDocumentFile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{side}: \code{string | undefined} -- operation parameter used by the implementation.
+\newline -- \code{response}: \code{Response} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<StreamableFile>} -- operation result.
+\newline -- Route: \code{GET /identity-verifications/documents/:id/file}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ClientProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ClientProfileController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getDetail(}\newline\code{userId: number}\code{)} &
+A method to get detail. The implementation delegates to \code{service.getClientProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{ClientProfileDetailDto} -- serialized controller response.
+\newline -- Route: \code{GET /clients/:userId}.
+ \\ \hline
+
+03 & \code{update(}\newline\code{userId: number},\newline\code{body: UpdateClientProfileDto}\code{)} &
+A method to update. The implementation delegates to \code{service.updateClientProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{UpdateClientProfileDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ProfileRevisionSubmissionDto} -- serialized controller response.
+\newline -- Route: \code{PUT /clients/me/profile}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SocialLinkController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SocialLinkController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(}\newline\code{userId: number}\code{)} &
+A method to get all. The implementation delegates to \code{service.getSocialLinks}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{SocialLinkListDto} -- serialized controller response.
+\newline -- Route: \code{GET /social-links}.
+ \\ \hline
+
+03 & \code{add(}\newline\code{userId: number},\newline\code{body: AddSocialLinkDto}\code{)} &
+A method to add. The implementation delegates to \code{service.addSocialLink}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{AddSocialLinkDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{SocialLinkDto} -- serialized controller response.
+\newline -- Route: \code{POST /social-links}.
+ \\ \hline
+
+04 & \code{remove(}\newline\code{userId: number},\newline\code{id: number}\code{)} &
+A method to remove. The implementation delegates to \code{service.deleteSocialLink}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{DELETE /social-links/:id}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{FavoriteFreelancerController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{FavoriteFreelancerController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(}\newline\code{userId: number}\code{)} &
+A method to get all. The implementation delegates to \code{service.getFavorites}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{FavoriteFreelancerListDto} -- serialized controller response.
+\newline -- Route: \code{GET /favorites/freelancers}.
+ \\ \hline
+
+03 & \code{add(}\newline\code{userId: number},\newline\code{freelancerId: number}\code{)} &
+A method to add. The implementation delegates to \code{service.addFavorite}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{POST /favorites/freelancers/:freelancerId}.
+ \\ \hline
+
+04 & \code{remove(}\newline\code{userId: number},\newline\code{freelancerId: number}\code{)} &
+A method to remove. The implementation delegates to \code{service.removeFavorite}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{DELETE /favorites/freelancers/:freelancerId}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{FollowingFreelancerController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{FollowingFreelancerController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{followFreelancer(}\newline\code{userId: number},\newline\code{freelancerId: number}\code{)} &
+A method to follow freelancer. The implementation delegates to \code{service.followFreelancer}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{POST /following/freelancers/:freelancerId}.
+ \\ \hline
+
+03 & \code{unfollowFreelancer(}\newline\code{userId: number},\newline\code{freelancerId: number}\code{)} &
+A method to unfollow freelancer. The implementation delegates to \code{service.unfollowFreelancer}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{DELETE /following/freelancers/:freelancerId}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AccountProfileService(}\newline\code{repository: AccountProfileRepository},\newline\code{profileRevisionService: ProfileRevisionService},\newline\code{cloudinary: CloudinaryService},\newline\code{hashing: HashingService},\newline\code{identityAi: IdentityAiService}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{repository}: \code{AccountProfileRepository} -- constructor-injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- constructor-injected dependency.
+\newline -- \code{hashing}: \code{HashingService} -- constructor-injected dependency.
+\newline -- \code{identityAi}: \code{IdentityAiService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{requireRole(}\newline\code{userId: number},\newline\code{roleName: string}\code{)} &
+A method to require role as an internal helper. The implementation delegates to \code{repository.findUserWithRoles}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{roleName}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{normalizeIdentityNumber(}\newline\code{value: unknown}\code{)} &
+A method to normalize identity number as an internal helper.
+\newline -- \code{value}: \code{unknown} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{string | null} -- operation result.
+ \\ \hline
+
+04 & \code{presentQrConsistency(}\newline\code{summary: unknown}\code{)} &
+A method to present qr consistency as an internal helper.
+\newline -- \code{summary}: \code{unknown} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{{ status: string; score: number | null; matchedFields: string[]; mismatchedFields: string[]; notCheckedFields: string[]; } | null} -- operation result.
+ \\ \hline
+
+05 & \code{presentIdentityDocument(}\newline\code{document: T}\code{)} &
+A method to present identity document as an internal helper.
+\newline -- \code{document}: \code{T} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{persistIdentityFile(}\newline\code{userId: number},\newline\code{file: Express.Multer.File}\code{)} &
+A method to persist identity file as an internal helper. The implementation delegates to \code{cloudinary.isConfigured}, \code{cloudinary.uploadFile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise<string>} -- operation result.
+ \\ \hline
+
+07 & \code{uploadIdentityDocument(}\newline\code{userId: number},\newline\code{documentType: DocumentTypeType},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload identity document. The implementation delegates to \code{repository.createIdentityDocument}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- operation parameter used by the implementation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{assertAiImage(}\newline\code{file: Express.Multer.File},\newline\code{path: string}\code{)} &
+A method to assert ai image as an internal helper.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \code{path}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{void} -- operation result.
+ \\ \hline
+
+09 & \code{submitIdentityAiCheck(}\newline\code{userId: number},\newline\code{documentType: DocumentTypeType},\newline\code{files: {
+      front?: Express.Multer.File;
+      back?: Express.Multer.File;
+      selfie?: Express.Multer.File;
+      liveness: Express.Multer.File[];
+    }}\code{)} &
+A method to submit identity ai check. The implementation delegates to \code{repository.findIdentityDocuments}, \code{identityAi.verify}, \code{repository.findApprovedIdentityDocumentByIdentityNumber}, \code{repository.createIdentityAiDocument}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- operation parameter used by the implementation.
+\newline -- \code{files}: \code{{
+      front?: Express.Multer.File;
+      back?: Express.Multer.File;
+      selfie?: Express.Multer.File;
+      liveness: Express.Multer.File[];
+    }} -- multipart identity-verification images and liveness frames.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+10 & \code{livenessPose(}\newline\code{userId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to liveness pose. The implementation delegates to \code{identityAi.livenessPose}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise<IdentityAiPoseResult>} -- operation result.
+ \\ \hline
+
+11 & \code{getIdentityStatus(}\newline\code{userId: number}\code{)} &
+A method to get identity status. The implementation delegates to \code{repository.findIdentityDocuments}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+12 & \code{getIdentityDocumentFile(}\newline\code{userId: number},\newline\code{id: number},\newline\code{side: 'front' | 'back'}\code{)} &
+A method to get identity document file. The implementation delegates to \code{repository.findIdentityDocumentById}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{side}: \code{'front' | 'back'} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<{ absolutePath: string; fileName: string; }>} -- operation result.
+ \\ \hline
+
+13 & \code{getClientProfile(}\newline\code{userId: number}\code{)} &
+A method to get client profile. The implementation delegates to \code{repository.findClientProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+14 & \code{updateClientProfile(}\newline\code{userId: number},\newline\code{input: UpdateClientProfileType}\code{)} &
+A method to update client profile. The implementation delegates to \code{profileRevisionService.requiresManualReview}, \code{profileRevisionService.submitClient}, \code{repository.updateClientProfile}, \code{profileRevisionService.directUpdateResult}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{UpdateClientProfileType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+15 & \code{getSocialLinks(}\newline\code{userId: number}\code{)} &
+A method to get social links. The implementation delegates to \code{repository.findSocialLinks}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }[]>} -- operation result.
+ \\ \hline
+
+16 & \code{addSocialLink(}\newline\code{userId: number},\newline\code{input: AddSocialLinkType}\code{)} &
+A method to add social link. The implementation delegates to \code{repository.findSocialLinks}, \code{repository.findSocialLinkByPlatform}, \code{repository.createSocialLink}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{AddSocialLinkType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }>} -- operation result.
+ \\ \hline
+
+17 & \code{deleteSocialLink(}\newline\code{userId: number},\newline\code{id: number}\code{)} &
+A method to delete social link. The implementation delegates to \code{repository.findSocialLinkById}, \code{repository.deleteSocialLink}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+18 & \code{getFavorites(}\newline\code{clientId: number}\code{)} &
+A method to get favorites. The implementation delegates to \code{repository.findFavorites}.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+19 & \code{addFavorite(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to add favorite. The implementation delegates to \code{repository.findUserWithRoles}, \code{repository.findFavorite}, \code{repository.createFavorite}.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+20 & \code{removeFavorite(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to remove favorite. The implementation delegates to \code{repository.findFavorite}, \code{repository.deleteFavorite}.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+21 & \code{followFreelancer(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to follow freelancer. The implementation delegates to \code{repository.findFollow}, \code{repository.createFollowWithNotification}.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+22 & \code{unfollowFreelancer(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to unfollow freelancer. The implementation delegates to \code{repository.findFollow}, \code{repository.deleteFollow}.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected persistence gateway. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected application dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected application dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AccountProfileRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findUserWithRoles(}\newline\code{userId: number}\code{)} &
+A method to find user with roles.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{findClientProfile(}\newline\code{userId: number}\code{)} &
+A method to find client profile.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{updateClientProfile(}\newline\code{userId: number},\newline\code{input: UpdateClientProfileType}\code{)} &
+A method to update client profile.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{UpdateClientProfileType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{createIdentityDocument(}\newline\code{userId: number},\newline\code{documentType: DocumentTypeType},\newline\code{fileUrl: string}\code{)} &
+A method to create identity document.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- operation parameter used by the implementation.
+\newline -- \code{fileUrl}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{createIdentityAiDocument(}\newline\code{data: {
+    userId: number;
+    documentType: DocumentTypeType;
+    fileUrl: string;
+    backFileUrl: string | null;
+    status: VerificationStatus;
+    reviewNotes: string | null;
+    duplicateOfId: number | null;
+    aiStatus: string;
+    aiScore: number | null;
+    aiError: string | null;
+    aiSummary: Prisma.InputJsonValue;
+    aiSelfieSummary: Prisma.InputJsonValue;
+    aiScannedAt: Date;
+  }}\code{)} &
+A method to create identity ai document.
+\newline -- \code{data}: \code{{
+    userId: number;
+    documentType: DocumentTypeType;
+    fileUrl: string;
+    backFileUrl: string | null;
+    status: VerificationStatus;
+    reviewNotes: string | null;
+    duplicateOfId: number | null;
+    aiStatus: string;
+    aiScore: number | null;
+    aiError: string | null;
+    aiSummary: Prisma.InputJsonValue;
+    aiSelfieSummary: Prisma.InputJsonValue;
+    aiScannedAt: Date;
+  }} -- values to persist.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{findApprovedIdentityDocumentByIdentityNumber(}\newline\code{userId: number},\newline\code{identityNumber: string}\code{)} &
+A method to find approved identity document by identity number.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{identityNumber}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; }>} -- operation result.
+ \\ \hline
+
+08 & \code{findIdentityDocuments(}\newline\code{userId: number}\code{)} &
+A method to find identity documents.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+09 & \code{findIdentityDocumentById(}\newline\code{id: number}\code{)} &
+A method to find identity document by id.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+10 & \code{findSocialLinks(}\newline\code{userId: number}\code{)} &
+A method to find social links.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }[] | null>} -- operation result.
+ \\ \hline
+
+11 & \code{findSocialLinkByPlatform(}\newline\code{userId: number},\newline\code{platform: AddSocialLinkType['platform']}\code{)} &
+A method to find social link by platform.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{platform}: \code{AddSocialLinkType['platform']} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; } | null>} -- operation result.
+ \\ \hline
+
+12 & \code{createSocialLink(}\newline\code{userId: number},\newline\code{input: AddSocialLinkType}\code{)} &
+A method to create social link.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{AddSocialLinkType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; profileId: number; url: string; platform: SocialPlatform; }>} -- operation result.
+ \\ \hline
+
+13 & \code{findSocialLinkById(}\newline\code{id: number}\code{)} &
+A method to find social link by id.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+14 & \code{deleteSocialLink(}\newline\code{id: number}\code{)} &
+A method to delete social link.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Prisma__SocialLinkClient<{ id: number; profileId: number; url: string; platform: SocialPlatform; }, never, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+15 & \code{findFavorite(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to find favorite.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+16 & \code{createFavorite(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to create favorite.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; }, never, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+17 & \code{deleteFavorite(}\newline\code{clientId: number},\newline\code{freelancerId: number}\code{)} &
+A method to delete favorite.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- target freelancer account identifier.
+\newline -- \textit{Returns:} \code{Prisma__FavoriteFreelancerClient<{ createdAt: Date; clientId: number; freelancerId: number; }, never, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+18 & \code{findFavorites(}\newline\code{clientId: number}\code{)} &
+A method to find favorites.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+19 & \code{findDiscoverableFreelancers(}\newline\code{clientId: number}\code{)} &
+A method to find discoverable freelancers.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}

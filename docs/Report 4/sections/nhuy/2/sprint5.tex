@@ -1,0 +1,67 @@
+% =================================================================
+% FILE: sections/nhuy/2/sprint5.tex -- Sprint 5
+% Structure follows the feature-group template used by tthuan.
+% =================================================================
+
+% ================= Profile Update Request Management =================
+\subsection{Profile Update Request Management}
+
+Administrators inspect pending requests, compare proposed changes, approve or reject a pending request and inspect request history.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint5/nhuy/classDiagram/ProfileUpdateRequestManagement}{Class diagram of Profile Update Request Management}{fig:nhuy-cls-profile-update-request-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-47.01 -- View Pending Profile Update Request List}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.01-view-pending-profile-update-request-list}{Sequence diagram of UC-47.01 View Pending Profile Update Request List}{fig:nhuy-seq-view-pending-profile-update-request-list}
+
+\subsubsection{UC-47.02 -- View Profile Update Request Detail}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.02-view-profile-update-request-detail}{Sequence diagram of UC-47.02 View Profile Update Request Detail}{fig:nhuy-seq-view-profile-update-request-detail}
+
+\subsubsection{UC-47.03 -- Approve Profile Update Request}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.03-approve-profile-update-request}{Sequence diagram of UC-47.03 Approve Profile Update Request}{fig:nhuy-seq-approve-profile-update-request}
+
+\subsubsection{UC-47.04 -- Reject Profile Update Request}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.04-reject-profile-update-request}{Sequence diagram of UC-47.04 Reject Profile Update Request}{fig:nhuy-seq-reject-profile-update-request}
+
+\subsubsection{UC-47.05 -- View Profile Update Request History}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.05-view-profile-update-request-history}{Sequence diagram of UC-47.05 View Profile Update Request History}{fig:nhuy-seq-view-profile-update-request-history}
+
+% ================= Expert Profile Management =================
+\subsection{Expert Profile Management}
+
+Experts submit sanitized profile changes for administrative review. An existing pending expert revision prevents another submission.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint5/nhuy/classDiagram/ExpertProfileManagement}{Class diagram of Expert Profile Management}{fig:nhuy-cls-expert-profile-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-47.06 -- Update Profile Expert}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-47.06-update-profile-expert}{Sequence diagram of UC-47.06 Update Profile Expert}{fig:nhuy-seq-update-profile-expert}
+
+% ================= Freelancer CV Management =================
+\subsection{Freelancer CV Management}
+
+Freelancers upload, retrieve, replace and delete their own PDF CV. Upload and replacement use the same endpoint.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint5/nhuy/classDiagram/FreelancerCVManagement}{Class diagram of Freelancer CV Management}{fig:nhuy-cls-freelancer-cv-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-07.03 -- Upload CV}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-07.03-upload-cv}{Sequence diagram of UC-07.03 Upload CV}{fig:nhuy-seq-upload-cv}
+
+\subsubsection{UC-07.04 -- View CV}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-07.04-view-cv}{Sequence diagram of UC-07.04 View CV}{fig:nhuy-seq-view-cv}
+
+\subsubsection{UC-07.05 -- Replace CV}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-07.05-replace-cv}{Sequence diagram of UC-07.05 Replace CV}{fig:nhuy-seq-replace-cv}
+
+\subsubsection{UC-07.06 -- Delete CV}
+\kfig{0.78\textwidth}{images/sprint5/nhuy/sequences/UC-07.06-delete-cv}{Sequence diagram of UC-07.06 Delete CV}{fig:nhuy-seq-delete-cv}

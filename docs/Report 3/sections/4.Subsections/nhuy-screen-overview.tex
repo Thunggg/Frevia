@@ -1,0 +1,20 @@
+\subsubsection{Account and Profile Screen Requirements -- Nguyen Lu Nhat Huy}
+\begin{longtable}{|L{2.3cm}|L{3.2cm}|L{8.4cm}|}\hline
+Scope & Actor / Access & Screen information and controls \\ \hline
+Freelancer public profile and edit dialog & Public read & Display name, title, biography, availability, education, certifications and languages; Save and request-review state. \\ \hline
+Freelancer skills section & Public read & Skill catalog picker, proficiency selector, skill list and delete confirmation. \\ \hline
+Freelancer portfolio section & Public read & Portfolio cards/detail, title, description, technologies, project URL and create/edit/delete controls. \\ \hline
+Identity verification settings & Freelancer; JWT and endpoint permission & Document type, document images/PDF; AI flow has front/back, selfie and liveness capture; latest status and review notes. \\ \hline
+Client profile / company settings & Public read & Company name, description and website; profile display and update confirmation. \\ \hline
+Account social-link settings & Authenticated User; JWT and endpoint permission & Platform selector, URL input, existing links and remove action. \\ \hline
+Favorite freelancers list / freelancer profile & Client; JWT and endpoint permission & Freelancer cards, favorite state and remove action; empty list and error state. \\ \hline
+Following freelancers list / freelancer profile & Client; JWT and endpoint permission & Freelancer cards, Follow/Unfollow actions and following state. \\ \hline
+Notification page and notification menu & Authenticated User; JWT and endpoint permission & Notification title/message/time, read state, mark one/all read and delete controls. \\ \hline
+Account role selector & Authenticated User; JWT and endpoint permission & Assigned CLIENT/FREELANCER roles, Join New Role action, pending/error state and destination workspace. \\ \hline
+Contract reviews panel & Authenticated User; JWT and endpoint permission & Rating, breakdown, comment, reviewer/reviewee information and response text; author-dependent edit/delete controls. \\ \hline
+General account settings & Authenticated User; JWT and endpoint permission & Display name, biography, email, role summary, avatar upload and current/new password fields. \\ \hline
+Freelancer CV settings & Freelancer; JWT and endpoint permission & PDF selector, current CV filename/link, Replace and Delete actions; upload progress and error message. \\ \hline
+Administrator profile request list/detail & Administrator; JWT and endpoint permission & Search, status/type filters, pagination, current/proposed values, profile strength, review notes and Approve/Reject controls. \\ \hline
+Expert profile editor & Expert; JWT and endpoint permission & Display name, title, biography, expertise, years of experience, education, certifications, website and pending-review state. \\ \hline
+\end{longtable}
+Profile ownership, contract participation and review authorship remain server-side checks even when UI controls are hidden. Expert is an additional authenticated actor for expert profile editing. Administrators need permission for the administrative revision endpoints.

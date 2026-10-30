@@ -1,0 +1,183 @@
+\begingroup\sloppy\emergencystretch=3em\relax
+\subsection{Sprint 3: Following, Notifications and Account Roles}
+
+\subsubsection{UC-29.01 -- View Following List}
+\textbf{Function Trigger:} Open following list.
+
+\textbf{Function description:} Display following freelancers or empty list.
+
+\textbf{Precondition:} Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the active account, profile and assigned roles for authorization.
+\item Retrieve followed freelancers, excluding deleted or banned target accounts.
+\item Filter records without freelancer\allowbreak{}Profile; map freelancer\allowbreak{}Id, created\allowbreak{}At and profile
+\item Display following freelancers or empty list
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Following freelancers list /\allowbreak{} freelancer profile. Freelancer cards, Follow/\allowbreak{}Unfollow actions and following state. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}following/\allowbreak{}freelancers. The UI displays the returned state or error.
+
+\subsubsection{UC-29.02 -- Follow Freelancer}
+\textbf{Function Trigger:} Click Follow.
+
+\textbf{Function description:} Set local is\allowbreak{}Following=\allowbreak{}true; show success.
+
+\textbf{Precondition:} Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the active account, profile and assigned roles for authorization.
+\item Retrieve the active account, profile and assigned roles for authorization.
+\item Check the follow relationship using the client/\allowbreak{}freelancer composite key.
+\item follower\allowbreak{}Name =\allowbreak{} trimmed client display\allowbreak{}Name or A client
+\item Save the follow relationship and notify the freelancer in one transaction.
+\item Set local is\allowbreak{}Following=\allowbreak{}true; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception; [client\allowbreak{}Id =\allowbreak{}=\allowbreak{} freelancer\allowbreak{}Id]: 404 Freelancer\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user lacks FREELANCER role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception; [follow already exists]: 409 Follow\allowbreak{}Duplicate\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Following freelancers list /\allowbreak{} freelancer profile. Freelancer cards, Follow/\allowbreak{}Unfollow actions and following state. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-29.03 -- Unfollow Freelancer}
+\textbf{Function Trigger:} Click Unfollow.
+
+\textbf{Function description:} Set local is\allowbreak{}Following=\allowbreak{}false; show success.
+
+\textbf{Precondition:} Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the active account, profile and assigned roles for authorization.
+\item Check the follow relationship using the client/\allowbreak{}freelancer composite key.
+\item Remove the follow relationship.
+\item Set local is\allowbreak{}Following=\allowbreak{}false; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception; [follow missing]: 404 Follow\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Following freelancers list /\allowbreak{} freelancer profile. Freelancer cards, Follow/\allowbreak{}Unfollow actions and following state. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-30.01 -- View Notification List}
+\textbf{Function Trigger:} Open notifications.
+
+\textbf{Function description:} Display notifications and unread state; empty list if none.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}All(user\allowbreak{}Id)
+\item Display notifications and unread state; empty list if none
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response
+
+\textbf{Screen layout and controls:} Notification page and notification menu. Notification title/\allowbreak{}message/\allowbreak{}time, read state, mark one/\allowbreak{}all read and delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}notifications. The UI displays the returned state or error.
+
+\subsubsection{UC-30.02 -- Mark Notification as Read}
+\textbf{Function Trigger:} Mark notification as read.
+
+\textbf{Function description:} Invalidate notifications query; refetch list and unread state.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(user\allowbreak{}Id, notification\allowbreak{}Id)
+\item Use existing notification; no update needed
+\item mark\allowbreak{}Read(notification\allowbreak{}Id)
+\item Invalidate notifications query; refetch list and unread state
+\end{enumerate}
+\textbf{Alternative and exception handling:} [else: notification is unread]; [notification.is\allowbreak{}Read =\allowbreak{}=\allowbreak{} true]; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [notification missing, deleted or belongs to another user]: 404 Notification\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Notification page and notification menu. Notification title/\allowbreak{}message/\allowbreak{}time, read state, mark one/\allowbreak{}all read and delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PATCH /\allowbreak{}notifications/\allowbreak{}:id/\allowbreak{}read. The UI displays the returned state or error.
+
+\subsubsection{UC-30.03 -- Mark All Notifications as Read}
+\textbf{Function Trigger:} Click Mark all as read.
+
+\textbf{Function description:} Invalidate notifications query; refetch list; count may be zero.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item mark\allowbreak{}All\allowbreak{}Read(user\allowbreak{}Id)
+\item Invalidate notifications query; refetch list; count may be zero
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response
+
+\textbf{Screen layout and controls:} Notification page and notification menu. Notification title/\allowbreak{}message/\allowbreak{}time, read state, mark one/\allowbreak{}all read and delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PATCH /\allowbreak{}notifications/\allowbreak{}read-all. The UI displays the returned state or error.
+
+\subsubsection{UC-30.04 -- Delete Notification}
+\textbf{Function Trigger:} Click Delete notification.
+
+\textbf{Function description:} Invalidate notifications query; refetch active list.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(user\allowbreak{}Id, notification\allowbreak{}Id)
+\item soft\allowbreak{}Delete(notification\allowbreak{}Id)
+\item Invalidate notifications query; refetch active list
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [notification missing, deleted or belongs to another user]: 404 Notification\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Notification page and notification menu. Notification title/\allowbreak{}message/\allowbreak{}time, read state, mark one/\allowbreak{}all read and delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}notifications/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-31.01 -- Switch Role}
+\textbf{Function Trigger:} Choose an assigned CLIENT or FREELANCER role.
+
+\textbf{Function description:} Use new role and navigate to its workspace.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Verify the existing target role assignment and make it primary atomically.
+\item switch\allowbreak{}Primary\allowbreak{}Role: persist primary role
+\item Use new role and navigate to its workspace
+\end{enumerate}
+\textbf{Alternative and exception handling:} Token\allowbreak{}Service.sign\allowbreak{}Access\allowbreak{}Token(\{ user\allowbreak{}Id, role\allowbreak{}Id: role.id, role\allowbreak{}Name: role.name, session\allowbreak{}Id \}): sign JWT for the existing session; Next.js /\allowbreak{}api/\allowbreak{}auth proxy sets access\allowbreak{}Token cookie and returns \{ role\allowbreak{}Name: body.role \}; on initial backend 401, refresh tokens and retry once if refresh succeeds; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [assignment missing]: 404 Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Account role selector. Assigned CLIENT/\allowbreak{}FREELANCER roles, Join New Role action, pending/\allowbreak{}error state and destination workspace. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}auth/\allowbreak{}switch-role. The UI displays the returned state or error.
+
+\subsubsection{UC-31.02 -- Join New Role}
+\textbf{Function Trigger:} Choose new CLIENT or FREELANCER role; Join.
+
+\textbf{Function description:} Use new role and navigate to its workspace.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item join\allowbreak{}Role: find target role
+\item join\allowbreak{}Role: check existing assignment
+\item join\allowbreak{}Role: ensure profile
+\item join\allowbreak{}Role: ensure freelancer profile
+\item join\allowbreak{}Role: ensure client profile
+\item join\allowbreak{}Role: assign and activate new role
+\item Use new role and navigate to its workspace
+\end{enumerate}
+\textbf{Alternative and exception handling:} Auth\allowbreak{}Repository.join\allowbreak{}Role executes the following database operations in one Prisma interactive transaction; early missing-role /\allowbreak{} already-assigned result has no writes; [else: body.role =\allowbreak{}=\allowbreak{} CLIENT]; [body.role =\allowbreak{}=\allowbreak{} FREELANCER]; If Prisma P2002 occurs anywhere in join\allowbreak{}Role: rollback transaction; Auth\allowbreak{}Service maps the unique constraint error to 409 Role\allowbreak{}Already\allowbreak{}Assigned\allowbreak{}Exception; Token\allowbreak{}Service.sign\allowbreak{}Access\allowbreak{}Token(\{ user\allowbreak{}Id, role\allowbreak{}Id: result.role.id, role\allowbreak{}Name: result.role.name, session\allowbreak{}Id \}): sign JWT for the existing session; Next.js /\allowbreak{}api/\allowbreak{}auth proxy sets access\allowbreak{}Token cookie and returns \{ role\allowbreak{}Name: body.role \}; on initial backend 401, refresh tokens and retry once if refresh succeeds; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [target role missing: repository returns null]: 404 Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [assignment exists: repository returns already-assigned]: 409 Role\allowbreak{}Already\allowbreak{}Assigned\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Account role selector. Assigned CLIENT/\allowbreak{}FREELANCER roles, Join New Role action, pending/\allowbreak{}error state and destination workspace. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}auth/\allowbreak{}join-role. The UI displays the returned state or error.
+
+\endgroup

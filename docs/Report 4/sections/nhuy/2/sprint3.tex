@@ -1,0 +1,64 @@
+% =================================================================
+% FILE: sections/nhuy/2/sprint3.tex -- Sprint 3
+% Structure follows the feature-group template used by tthuan.
+% =================================================================
+
+% ================= Following Freelancer Management =================
+\subsection{Following Freelancer Management}
+
+Clients view followed freelancers, follow a freelancer and remove an existing follow relationship. A new follow creates a notification in the same transaction.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/FollowingFreelancerManagement}{Class diagram of Following Freelancer Management}{fig:nhuy-cls-following-freelancer-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-29.01 -- View Following List}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-29.01-view-following-list}{Sequence diagram of UC-29.01 View Following List}{fig:nhuy-seq-view-following-list}
+
+\subsubsection{UC-29.02 -- Follow Freelancer}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-29.02-follow-freelancer}{Sequence diagram of UC-29.02 Follow Freelancer}{fig:nhuy-seq-follow-freelancer}
+
+\subsubsection{UC-29.03 -- Unfollow Freelancer}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-29.03-unfollow-freelancer}{Sequence diagram of UC-29.03 Unfollow Freelancer}{fig:nhuy-seq-unfollow-freelancer}
+
+% ================= Notification Management =================
+\subsection{Notification Management}
+
+Users view their notifications, mark one or all as read and soft-delete an owned notification.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/NotificationManagement}{Class diagram of Notification Management}{fig:nhuy-cls-notification-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-30.01 -- View Notification List}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-30.01-view-notification-list}{Sequence diagram of UC-30.01 View Notification List}{fig:nhuy-seq-view-notification-list}
+
+\subsubsection{UC-30.02 -- Mark Notification as Read}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-30.02-mark-notification-as-read}{Sequence diagram of UC-30.02 Mark Notification as Read}{fig:nhuy-seq-mark-notification-as-read}
+
+\subsubsection{UC-30.03 -- Mark All Notifications as Read}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-30.03-mark-all-notifications-as-read}{Sequence diagram of UC-30.03 Mark All Notifications as Read}{fig:nhuy-seq-mark-all-notifications-as-read}
+
+\subsubsection{UC-30.04 -- Delete Notification}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-30.04-delete-notification}{Sequence diagram of UC-30.04 Delete Notification}{fig:nhuy-seq-delete-notification}
+
+% ================= Account Role Management =================
+\subsection{Account Role Management}
+
+Users activate an assigned role or join a new client/freelancer role. Both operations issue a new access token for the current session.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/AccountRoleManagement}{Class diagram of Account Role Management}{fig:nhuy-cls-account-role-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-31.01 -- Switch Role}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-31.01-switch-role}{Sequence diagram of UC-31.01 Switch Role}{fig:nhuy-seq-switch-role}
+
+\subsubsection{UC-31.02 -- Join New Role}
+\kfig{0.78\textwidth}{images/sprint3/nhuy/sequences/UC-31.02-join-new-role}{Sequence diagram of UC-31.02 Join New Role}{fig:nhuy-seq-join-new-role}

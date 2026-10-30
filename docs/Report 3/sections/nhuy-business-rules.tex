@@ -1,0 +1,18 @@
+\subsection{Account, Profile and Review Business Rules}
+\begin{longtable}{|L{2.4cm}|L{11.8cm}|}\hline
+ID & Rule Definition \\ \hline
+BR-NH-01 & Protected account actions require a valid active session and permission for the HTTP method/path; user identity comes from the token. Public freelancer/client profile reads are exempt. \\ \hline
+BR-NH-02 & Freelancer profile, skill, portfolio and CV writes require ownership; a user cannot mutate another profile through a supplied identifier. \\ \hline
+BR-NH-03 & Freelancer and client profile changes below 20 percent strength are submitted as revisions; changes at or above the threshold may update directly. Expert self-updates always require review and cannot be submitted while an expert revision is pending. \\ \hline
+BR-NH-04 & Social links are unique per profile/platform; deletion requires ownership. Favorite and following relationships use the client/freelancer composite key and reject duplicates. \\ \hline
+BR-NH-05 & Identity documents support validated upload and AI submission. AI VERIFIED leads to PENDING administrative review, not automatic approval. A document already approved for another user forces rejection. \\ \hline
+BR-NH-06 & Following a freelancer creates the relationship and NEW_FOLLOWER notification in one transaction. Following lists exclude deleted or banned target users. \\ \hline
+BR-NH-07 & Notifications are read or deleted only within the current user account. Delete is soft deletion. Mark-all-read affects only active unread records belonging to that user. \\ \hline
+BR-NH-08 & Switch Role requires an existing active target assignment; Join New Role only accepts CLIENT/FREELANCER, ensures the role profile and makes the new assignment primary atomically. A new access token uses the existing session. \\ \hline
+BR-NH-09 & Only contract participants may list/detail contract reviews. A new review requires COMPLETED and is unique per contract/reviewer even after soft deletion. Only the reviewer may update/delete that review. \\ \hline
+BR-NH-10 & Only the reviewee may respond. A deleted response is restored instead of inserting a second response. Only its author may update/delete it. Create/restore includes the reviewer notification in the transaction. \\ \hline
+BR-NH-11 & Password change requires an existing password credential and successful current-password verification. Only the newly hashed password is persisted. \\ \hline
+BR-NH-12 & Avatar uploads require JPEG/PNG/WEBP signatures matching the declared MIME type and a maximum of 5 MB. CV uploads require PDF signature and MIME, maximum 10 MB. \\ \hline
+BR-NH-13 & A revision may be reviewed only while PENDING. Conditional claim, approved profile application, strength recalculation and notification are atomic; rejection leaves the live profile unchanged. \\ \hline
+BR-NH-14 & Upload and Replace CV use the same endpoint. New metadata is saved before old-file cleanup; Delete clears metadata after cleanup. Cleanup errors are ignored as implemented. File access checks ownership and local path containment. \\ \hline
+\end{longtable}

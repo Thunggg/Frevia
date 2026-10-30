@@ -1,0 +1,247 @@
+\begingroup\sloppy\emergencystretch=3em\relax
+\subsection{Sprint 4: Reviews, Review Responses and Account Settings}
+
+\subsubsection{UC-39.01 -- View Review List}
+\textbf{Function Trigger:} Open reviews for a contract.
+
+\textbf{Function description:} Display contract reviews or empty list.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the non-deleted contract and its participants.
+\item Retrieve non-deleted reviews for the contract in descending creation order.
+\item present(review): convert Decimal overall\allowbreak{}Rating to number; hide soft-deleted response as null
+\item Display contract reviews or empty list
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [contract missing]: 404 Review\allowbreak{}Contract\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user\allowbreak{}Id is neither client\allowbreak{}Id nor freelancer\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contract\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-39.02 -- View Review Detail}
+\textbf{Function Trigger:} Open review detail.
+
+\textbf{Function description:} Display rating, breakdown, comment and active response.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(review\allowbreak{}Id)
+\item Retrieve the non-deleted contract and its participants.
+\item present(review): convert Decimal overall\allowbreak{}Rating to number; hide soft-deleted response as null
+\item Display rating, breakdown, comment and active response
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [review missing or soft-deleted]: 404 Review\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [contract missing]: 404 Review\allowbreak{}Contract\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user\allowbreak{}Id is neither client\allowbreak{}Id nor freelancer\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}reviews/\allowbreak{}:review\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-39.03 -- Write Review}
+\textbf{Function Trigger:} Enter overall\allowbreak{}Rating, optional breakdown and comment; Submit.
+
+\textbf{Function description:} Display created review.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the non-deleted contract and its participants.
+\item Check whether the current participant has already reviewed this contract, including a previously deleted review.
+\item Choose the other participant as reviewee; use reviewer display\allowbreak{}Name or fallback
+\item create(contract\allowbreak{}Id, user\allowbreak{}Id, reviewee\allowbreak{}Id, reviewer\allowbreak{}Name, input)
+\item present(review): convert Decimal overall\allowbreak{}Rating to number; hide soft-deleted response as null
+\item Display created review
+\end{enumerate}
+\textbf{Alternative and exception handling:} On Prisma P2002 in create: transaction rolls back; return 409 Review\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [contract missing]: 404 Review\allowbreak{}Contract\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user\allowbreak{}Id is neither client\allowbreak{}Id nor freelancer\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception; [contract.status !=\allowbreak{} COMPLETED]: 400 Review\allowbreak{}Contract\allowbreak{}Not\allowbreak{}Completed\allowbreak{}Exception; [review already exists, including soft-deleted]: 409 Review\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contract\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-39.04 -- Update Review}
+\textbf{Function Trigger:} Edit review; Save.
+
+\textbf{Function description:} Display updated review.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(review\allowbreak{}Id)
+\item update(review\allowbreak{}Id, input)
+\item present(review): convert Decimal overall\allowbreak{}Rating to number; hide soft-deleted response as null
+\item Display updated review
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [review missing or soft-deleted]: 404 Review\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [review.reviewer\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PATCH /\allowbreak{}reviews/\allowbreak{}:review\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-39.05 -- Delete Review}
+\textbf{Function Trigger:} Delete review.
+
+\textbf{Function description:} Remove review from visible list.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(review\allowbreak{}Id)
+\item soft\allowbreak{}Delete(review\allowbreak{}Id)
+\item Remove review from visible list
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [review missing or soft-deleted]: 404 Review\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [review.reviewer\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}reviews/\allowbreak{}:review\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-40.01 -- Respond to Review}
+\textbf{Function Trigger:} Enter response text; Submit.
+
+\textbf{Function description:} Display response to review.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item find\allowbreak{}By\allowbreak{}Id(review\allowbreak{}Id)
+\item Check the response record, including a previously soft-deleted response.
+\item Resolve responder display\allowbreak{}Name or CONTRACT\_PARTICIPANT fallback
+\item Create or restore the response and notify the reviewer in the same transaction.
+\item Create or restore the response and notify the reviewer in the same transaction.
+\item Display response to review
+\end{enumerate}
+\textbf{Alternative and exception handling:} [else: no existing response]; [existing response is soft-deleted]; On Prisma P2002 in create\allowbreak{}Response: rollback; return 409 Review\allowbreak{}Response\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception; other errors propagate; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [review missing or soft-deleted]: 404 Review\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [review.reviewee\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception; [existing response is not soft-deleted]: 409 Review\allowbreak{}Response\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}reviews/\allowbreak{}:review\allowbreak{}Id/\allowbreak{}response. The UI displays the returned state or error.
+
+\subsubsection{UC-40.02 -- Update Review Response}
+\textbf{Function Trigger:} Edit response; Save.
+
+\textbf{Function description:} Display updated response.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the non-deleted response and its author.
+\item Save the response author changes.
+\item Display updated response
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [response missing or soft-deleted]: 404 Review\allowbreak{}Response\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [response.user\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PATCH /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:response\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-40.03 -- Delete Review Response}
+\textbf{Function Trigger:} Delete response.
+
+\textbf{Function description:} Hide deleted response.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the non-deleted response and its author.
+\item Mark the response deleted.
+\item Hide deleted response
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [response missing or soft-deleted]: 404 Review\allowbreak{}Response\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [response.user\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Review\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Contract reviews panel. Rating, breakdown, comment, reviewer/\allowbreak{}reviewee information and response text; author-dependent edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:response\allowbreak{}Id. The UI displays the returned state or error.
+
+\subsubsection{UC-41.01 -- View Profile}
+\textbf{Function Trigger:} Open account profile settings.
+
+\textbf{Function description:} Display current user profile, email, avatar and roles.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the current account profile, email and assigned roles.
+\item present\allowbreak{}General\allowbreak{}Profile: include email and roles; present local avatar URL with updated\allowbreak{}At version
+\item Display current user profile, email, avatar and roles
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} General account settings. Display name, biography, email, role summary, avatar upload and current/\allowbreak{}new password fields. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}account-profile. The UI displays the returned state or error.
+
+\subsubsection{UC-41.02 -- Update Profile}
+\textbf{Function Trigger:} Edit display\allowbreak{}Name and bio; Save.
+
+\textbf{Function description:} Show submitted /\allowbreak{} updated message.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the current account profile, email and assigned roles.
+\item Find primary\allowbreak{}Role from assigned user\allowbreak{}Roles
+\item Result: review\allowbreak{}Required true, pending revision, original profile\allowbreak{}Strength
+\item Save display name and biography, recalculating completion strength for supported primary roles.
+\item Retrieve the current account profile, email and assigned roles.
+\item Profile\allowbreak{}Revision\allowbreak{}Service.direct\allowbreak{}Update\allowbreak{}Result: review\allowbreak{}Required false, revision null, profile\allowbreak{}Strength
+\item Show submitted /\allowbreak{} updated message
+\end{enumerate}
+\textbf{Alternative and exception handling:} Profile\allowbreak{}Revision\allowbreak{}Service.submit\allowbreak{}General: choose CLIENT/\allowbreak{}FREELANCER revision; Profile\allowbreak{}Revision\allowbreak{}Repository reads snapshot and creates/\allowbreak{}updates PENDING revision in transaction; live profile unchanged; [else: direct update]; [primary role is neither CLIENT nor FREELANCER]; [primary CLIENT/\allowbreak{}FREELANCER AND profile\allowbreak{}Completion\allowbreak{}Percent < 20]; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} General account settings. Display name, biography, email, role summary, avatar upload and current/\allowbreak{}new password fields. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PUT /\allowbreak{}account-profile. The UI displays the returned state or error.
+
+\subsubsection{UC-41.03 -- Change Password}
+\textbf{Function Trigger:} Enter current password and new password; Submit.
+
+\textbf{Function description:} Clear password inputs; show success.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the current password hash and confirm that the profile exists.
+\item Replace the stored credential with the newly hashed password.
+\item Clear password inputs; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} Hashing\allowbreak{}Service.verify(input.current\allowbreak{}Password, user.password); Hashing\allowbreak{}Service.hash(input.new\allowbreak{}Password): produce new password hash; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [user has no password credential]: 400 Password\allowbreak{}Unavailable\allowbreak{}Exception; [current password does not match]: 400 Current\allowbreak{}Password\allowbreak{}Incorrect\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} General account settings. Display name, biography, email, role summary, avatar upload and current/\allowbreak{}new password fields. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PUT /\allowbreak{}account-profile/\allowbreak{}password. The UI displays the returned state or error.
+
+\subsubsection{UC-41.04 -- Upload Avatar}
+\textbf{Function Trigger:} Select avatar image; Upload multipart file.
+
+\textbf{Function description:} Display new avatar; invalidate me query; show success.
+
+\textbf{Precondition:} Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the current account profile, email and assigned roles.
+\item detect\allowbreak{}Avatar\allowbreak{}Type(file.buffer): recognize JPEG /\allowbreak{} PNG /\allowbreak{} WEBP magic bytes
+\item Save the avatar URL and return the updated profile timestamp.
+\item present\allowbreak{}Avatar\allowbreak{}Url: use remote URL or local proxy /\allowbreak{}account-profile/\allowbreak{}avatar/\allowbreak{}:user\allowbreak{}Id/\allowbreak{}file?v=\allowbreak{}updated\allowbreak{}At
+\item Display new avatar; invalidate me query; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} Cloudinary\allowbreak{}Service.upload\allowbreak{}File(file, frevia/\allowbreak{}avatars/\allowbreak{}user\allowbreak{}Id): return secure\_url; [else: local storage]; mkdir/\allowbreak{}write\allowbreak{}File: uploads/\allowbreak{}avatars/\allowbreak{}user\allowbreak{}Id/\allowbreak{}UUID + detected extension; build local:/\allowbreak{}/\allowbreak{} URL; [Cloudinary\allowbreak{}Service.is\allowbreak{}Configured()]; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [file missing]: 400 Avatar\allowbreak{}File\allowbreak{}Required\allowbreak{}Exception; [unrecognized format OR detected MIME !=\allowbreak{} declared MIME OR size > 5 MB]: 400 Avatar\allowbreak{}File\allowbreak{}Invalid\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} General account settings. Display name, biography, email, role summary, avatar upload and current/\allowbreak{}new password fields. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}account-profile/\allowbreak{}avatar. The UI displays the returned state or error.
+
+\endgroup

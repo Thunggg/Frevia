@@ -1,0 +1,465 @@
+% =================================================================
+% FILE: sections/nhuy/4/sprint4.tex -- Sprint 4
+% Class specifications follow the shared Report 4 table conventions.
+% =================================================================
+
+\subsection{ReviewController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ReviewController(}\newline\code{service: ReviewService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{ReviewService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(}\newline\code{userId: number},\newline\code{contractId: number}\code{)} &
+A method to list. The implementation delegates to \code{service.list}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{ReviewListDto} -- serialized controller response.
+\newline -- Route: \code{GET /reviews/contracts/:contractId}.
+ \\ \hline
+
+03 & \code{create(}\newline\code{userId: number},\newline\code{contractId: number},\newline\code{body: CreateReviewDto}\code{)} &
+A method to create. The implementation delegates to \code{service.create}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{body}: \code{CreateReviewDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ReviewDto} -- serialized controller response.
+\newline -- Route: \code{POST /reviews/contracts/:contractId}.
+ \\ \hline
+
+04 & \code{detail(}\newline\code{userId: number},\newline\code{reviewId: number}\code{)} &
+A method to detail. The implementation delegates to \code{service.detail}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{ReviewDto} -- serialized controller response.
+\newline -- Route: \code{GET /reviews/:reviewId}.
+ \\ \hline
+
+05 & \code{update(}\newline\code{userId: number},\newline\code{reviewId: number},\newline\code{body: UpdateReviewDto}\code{)} &
+A method to update. The implementation delegates to \code{service.update}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{body}: \code{UpdateReviewDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ReviewDto} -- serialized controller response.
+\newline -- Route: \code{PATCH /reviews/:reviewId}.
+ \\ \hline
+
+06 & \code{remove(}\newline\code{userId: number},\newline\code{reviewId: number}\code{)} &
+A method to remove. The implementation delegates to \code{service.remove}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewDeleted"; }>} -- operation result.
+\newline -- Route: \code{DELETE /reviews/:reviewId}.
+ \\ \hline
+
+07 & \code{respond(}\newline\code{userId: number},\newline\code{reviewId: number},\newline\code{body: CreateReviewResponseDto}\code{)} &
+A method to respond. The implementation delegates to \code{service.respond}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{body}: \code{CreateReviewResponseDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ReviewResponseDto} -- serialized controller response.
+\newline -- Route: \code{POST /reviews/:reviewId/response}.
+ \\ \hline
+
+08 & \code{updateResponse(}\newline\code{userId: number},\newline\code{responseId: number},\newline\code{body: UpdateReviewResponseDto}\code{)} &
+A method to update response. The implementation delegates to \code{service.updateResponse}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{body}: \code{UpdateReviewResponseDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ReviewResponseDto} -- serialized controller response.
+\newline -- Route: \code{PATCH /reviews/responses/:responseId}.
+ \\ \hline
+
+09 & \code{removeResponse(}\newline\code{userId: number},\newline\code{responseId: number}\code{)} &
+A method to remove response. The implementation delegates to \code{service.removeResponse}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewResponseDeleted"; }>} -- operation result.
+\newline -- Route: \code{DELETE /reviews/responses/:responseId}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ReviewService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ReviewService(}\newline\code{repository: ReviewRepository}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{repository}: \code{ReviewRepository} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{requireContractParticipant(}\newline\code{userId: number},\newline\code{contractId: number}\code{)} &
+A method to require contract participant as an internal helper. The implementation delegates to \code{repository.findContract}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{present(}\newline\code{review: T}\code{)} &
+A method to present as an internal helper.
+\newline -- \code{review}: \code{T} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{T & { response?: null | undefined; overallRating: number; }} -- operation result.
+ \\ \hline
+
+04 & \code{list(}\newline\code{userId: number},\newline\code{contractId: number}\code{)} &
+A method to list. The implementation delegates to \code{repository.findManyByContract}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{detail(}\newline\code{userId: number},\newline\code{reviewId: number}\code{)} &
+A method to detail. The implementation delegates to \code{repository.findById}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{create(}\newline\code{userId: number},\newline\code{contractId: number},\newline\code{input: CreateReviewType}\code{)} &
+A method to create. The implementation delegates to \code{repository.findByContractAndReviewer}, \code{repository.create}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{input}: \code{CreateReviewType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{update(}\newline\code{userId: number},\newline\code{reviewId: number},\newline\code{input: UpdateReviewType}\code{)} &
+A method to update. The implementation delegates to \code{repository.findById}, \code{repository.update}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{input}: \code{UpdateReviewType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{remove(}\newline\code{userId: number},\newline\code{reviewId: number}\code{)} &
+A method to remove. The implementation delegates to \code{repository.findById}, \code{repository.softDelete}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewDeleted"; }>} -- operation result.
+ \\ \hline
+
+09 & \code{respond(}\newline\code{userId: number},\newline\code{reviewId: number},\newline\code{responseText: string}\code{)} &
+A method to respond. The implementation delegates to \code{repository.findById}, \code{repository.findResponseByReview}, \code{repository.createResponse}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{responseText}: \code{string} -- response content.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+10 & \code{updateResponse(}\newline\code{userId: number},\newline\code{responseId: number},\newline\code{responseText: string}\code{)} &
+A method to update response. The implementation delegates to \code{repository.findResponseById}, \code{repository.updateResponse}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{responseText}: \code{string} -- response content.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+11 & \code{removeResponse(}\newline\code{userId: number},\newline\code{responseId: number}\code{)} &
+A method to remove response. The implementation delegates to \code{repository.findResponseById}, \code{repository.softDeleteResponse}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewResponseDeleted"; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ReviewRepository} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ReviewRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findContract(}\newline\code{contractId: number}\code{)} &
+A method to find contract.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{findById(}\newline\code{reviewId: number},\newline\code{includeDeleted: boolean}\code{)} &
+A method to find by id.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{includeDeleted}: \code{boolean} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{findByContractAndReviewer(}\newline\code{contractId: number},\newline\code{reviewerId: number}\code{)} &
+A method to find by contract and reviewer.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{reviewerId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Prisma__ReviewClient<{ id: number; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+05 & \code{findManyByContract(}\newline\code{contractId: number}\code{)} &
+A method to find many by contract.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{create(}\newline\code{contractId: number},\newline\code{reviewerId: number},\newline\code{revieweeId: number},\newline\code{reviewerName: string},\newline\code{input: CreateReviewType}\code{)} &
+A method to create.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{reviewerId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{revieweeId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{reviewerName}: \code{string} -- operation parameter used by the implementation.
+\newline -- \code{input}: \code{CreateReviewType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{update(}\newline\code{reviewId: number},\newline\code{input: UpdateReviewType}\code{)} &
+A method to update.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{input}: \code{UpdateReviewType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{softDelete(}\newline\code{reviewId: number}\code{)} &
+A method to soft delete.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+09 & \code{findResponseByReview(}\newline\code{reviewId: number}\code{)} &
+A method to find response by review.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Prisma__ReviewResponseClient<{ id: number; deletedAt: Date | null; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+10 & \code{findResponseById(}\newline\code{responseId: number}\code{)} &
+A method to find response by id.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Prisma__ReviewResponseClient<{ id: number; userId: number; reviewId: number; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+11 & \code{createResponse(}\newline\code{reviewId: number},\newline\code{userId: number},\newline\code{reviewerId: number},\newline\code{contractId: number},\newline\code{responderName: string},\newline\code{responseText: string},\newline\code{deletedResponseId?: number}\code{)} &
+A method to create response.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{reviewerId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{responderName}: \code{string} -- operation parameter used by the implementation.
+\newline -- \code{responseText}: \code{string} -- response content.
+\newline -- \code{deletedResponseId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+12 & \code{updateResponse(}\newline\code{responseId: number},\newline\code{responseText: string}\code{)} &
+A method to update response.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{responseText}: \code{string} -- response content.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+13 & \code{softDeleteResponse(}\newline\code{responseId: number}\code{)} &
+A method to soft delete response.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{GeneralAccountProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{GeneralAccountProfileController(}\newline\code{service: AccountProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{get(}\newline\code{userId: number}\code{)} &
+A method to get. The implementation delegates to \code{service.getGeneralProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{GeneralProfileDto} -- serialized controller response.
+\newline -- Route: \code{GET /account-profile}.
+ \\ \hline
+
+03 & \code{update(}\newline\code{userId: number},\newline\code{body: UpdateGeneralProfileDto}\code{)} &
+A method to update. The implementation delegates to \code{service.updateGeneralProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{UpdateGeneralProfileDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ProfileRevisionSubmissionDto} -- serialized controller response.
+\newline -- Route: \code{PUT /account-profile}.
+ \\ \hline
+
+04 & \code{changePassword(}\newline\code{userId: number},\newline\code{body: ChangePasswordDto}\code{)} &
+A method to change password. The implementation delegates to \code{service.changePassword}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{ChangePasswordDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{PUT /account-profile/password}.
+ \\ \hline
+
+05 & \code{uploadAvatar(}\newline\code{userId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload avatar. The implementation delegates to \code{service.uploadAvatar}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{AvatarUploadResponseDto} -- serialized controller response.
+\newline -- Route: \code{POST /account-profile/avatar}.
+ \\ \hline
+
+06 & \code{getAvatarFile(}\newline\code{userId: number},\newline\code{response: Response}\code{)} &
+A method to get avatar file. The implementation delegates to \code{service.getAvatarFile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{response}: \code{Response} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<StreamableFile>} -- operation result.
+\newline -- Route: \code{GET /account-profile/avatar/:userId/file}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AccountProfileService(}\newline\code{repository: AccountProfileRepository},\newline\code{profileRevisionService: ProfileRevisionService},\newline\code{cloudinary: CloudinaryService},\newline\code{hashing: HashingService},\newline\code{identityAi: IdentityAiService}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{repository}: \code{AccountProfileRepository} -- constructor-injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- constructor-injected dependency.
+\newline -- \code{hashing}: \code{HashingService} -- constructor-injected dependency.
+\newline -- \code{identityAi}: \code{IdentityAiService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{presentAvatarUrl(}\newline\code{userId: number},\newline\code{avatarUrl: string | null},\newline\code{updatedAt?: Date}\code{)} &
+A method to present avatar url as an internal helper.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{avatarUrl}: \code{string | null} -- operation parameter used by the implementation.
+\newline -- \code{updatedAt}: \code{Date} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{string | null} -- operation result.
+ \\ \hline
+
+03 & \code{detectAvatarType(}\newline\code{buffer: Buffer}\code{)} &
+A method to detect avatar type as an internal helper.
+\newline -- \code{buffer}: \code{Buffer} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{{ mimeType: string; extension: string; } | null} -- operation result.
+ \\ \hline
+
+04 & \code{presentGeneralProfile(}\newline\code{user: NonNullable<
+      Awaited<ReturnType<AccountProfileRepository['findGeneralProfile']>>
+    >}\code{)} &
+A method to present general profile as an internal helper.
+\newline -- \code{user}: \code{NonNullable<
+      Awaited<ReturnType<AccountProfileRepository['findGeneralProfile']>>
+    >} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{getGeneralProfile(}\newline\code{userId: number}\code{)} &
+A method to get general profile. The implementation delegates to \code{repository.findGeneralProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{updateGeneralProfile(}\newline\code{userId: number},\newline\code{input: UpdateGeneralProfileType}\code{)} &
+A method to update general profile. The implementation delegates to \code{repository.findGeneralProfile}, \code{profileRevisionService.requiresManualReview}, \code{profileRevisionService.submitGeneral}, \code{repository.updateGeneralProfile}, \code{profileRevisionService.directUpdateResult}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{UpdateGeneralProfileType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{changePassword(}\newline\code{userId: number},\newline\code{input: ChangePasswordType}\code{)} &
+A method to change password. The implementation delegates to \code{repository.findPasswordCredential}, \code{hashing.verify}, \code{repository.updatePassword}, \code{hashing.hash}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{ChangePasswordType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+08 & \code{uploadAvatar(}\newline\code{userId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload avatar. The implementation delegates to \code{repository.findGeneralProfile}, \code{cloudinary.isConfigured}, \code{cloudinary.uploadFile}, \code{repository.updateAvatar}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise<{ avatarUrl: string; }>} -- operation result.
+ \\ \hline
+
+09 & \code{getAvatarFile(}\newline\code{userId: number}\code{)} &
+A method to get avatar file. The implementation delegates to \code{repository.findGeneralProfile}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ absolutePath: string; fileName: string; contentType: string; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected persistence gateway. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected application dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected application dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AccountProfileRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findGeneralProfile(}\newline\code{userId: number}\code{)} &
+A method to find general profile.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{findPasswordCredential(}\newline\code{userId: number}\code{)} &
+A method to find password credential.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Prisma__UserClient<{ profile: { id: number; } | null; password: string | null; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+04 & \code{updateGeneralProfile(}\newline\code{userId: number},\newline\code{input: UpdateGeneralProfileType},\newline\code{primaryRole?: string}\code{)} &
+A method to update general profile.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{UpdateGeneralProfileType} -- validated operation input.
+\newline -- \code{primaryRole}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{updatePassword(}\newline\code{userId: number},\newline\code{password: string}\code{)} &
+A method to update password.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{password}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{updateAvatar(}\newline\code{userId: number},\newline\code{avatarUrl: string}\code{)} &
+A method to update avatar.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{avatarUrl}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Prisma__ProfileClient<{ avatarUrl: string | null; updatedAt: Date; }, never, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}

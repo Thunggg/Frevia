@@ -1,0 +1,294 @@
+\begingroup\sloppy\emergencystretch=3em\relax
+% Canonical scope: Nguyen Lu Nhat Huy, Sprint 2.
+\paragraph{Sprint 2: Identity Verification, Client Profile, Social Links and Favorites}
+
+\subparagraph{UC-18.01 -- Upload Identity Documents}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-18.01 -- Upload Identity Documents \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Freelancer \\ \hline
+Trigger & Select document type and files; submit multipart request \\ \hline
+Description & The actor performs upload identity documents. Display submitted /\allowbreak{} rejected result; refresh verification state. \\ \hline
+Preconditions & Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display submitted /\allowbreak{} rejected result; refresh verification state \\ \hline
+Normal Flow & 1. Select document type and files; submit multipart request \newline
+2. The system receives POST /\allowbreak{}identity-verifications/\allowbreak{}documents OR /\allowbreak{}identity-verifications/\allowbreak{}ai-check. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Store the document metadata with initial PENDING status. \newline
+5. Retrieve the user identity documents in descending creation order. \newline
+6. Normalize document number; AI VERIFIED =\allowbreak{}> PENDING, otherwise REJECTED with reason \newline
+7. Check whether another user already has an approved document with the same normalized identity number. \newline
+8. If duplicate: override status to REJECTED; set duplicate\allowbreak{}Of\allowbreak{}Id and review\allowbreak{}Notes \newline
+9. Store the AI verification result, document metadata, review notes and diagnostic summaries. \newline
+10. present\allowbreak{}Identity\allowbreak{}Document: convert local URLs to protected file endpoints; present safe QR consistency \newline
+11. Display submitted /\allowbreak{} rejected result; refresh verification state \\ \hline
+Alternative Flows & 1. persist\allowbreak{}Identity\allowbreak{}File: Cloudinary\allowbreak{}Service.upload\allowbreak{}File if configured; otherwise mkdir/\allowbreak{}write\allowbreak{}File under uploads; return secure URL or local:/\allowbreak{}/\allowbreak{} path \newline
+2. [AI flow used by current UI: POST /\allowbreak{}ai-check] \newline
+3. Identity\allowbreak{}Ai\allowbreak{}Service.verify(front, back?, selfie, liveness): OCR, QR, face match and liveness. AI transport failure propagates; no document is inserted. \newline
+4. [normalized identity number exists] \newline
+5. persist\allowbreak{}Identity\allowbreak{}File for front, optional back, selfie: Cloudinary if configured, otherwise local filesystem \newline
+6. [standard upload: POST /\allowbreak{}documents] \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [request DTO /\allowbreak{} id validation fails]: 400 validation error. The interaction ends without continuing the success path. \newline
+3. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [user lacks FREELANCER role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+5. [file missing]: 400 Identity\allowbreak{}File\allowbreak{}Required\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+6. [not PDF /\allowbreak{} JPEG /\allowbreak{} PNG OR size > 10 MB]: 400 Identity\allowbreak{}File\allowbreak{}Invalid\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+7. [front /\allowbreak{} selfie missing OR liveness count outside 1..40]: 400 Identity\allowbreak{}Ai\allowbreak{}Front\allowbreak{}Required /\allowbreak{} Selfie\allowbreak{}Required /\allowbreak{} Liveness\allowbreak{}Required\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+8. [invalid image type or size: document/\allowbreak{}selfie <=\allowbreak{}10 MB; liveness frame <=\allowbreak{}2 MB]: 400 Identity\allowbreak{}Ai\allowbreak{}Image\allowbreak{}Invalid /\allowbreak{} Frames\allowbreak{}Invalid\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+9. [latest document status is APPROVED]: 409 Identity\allowbreak{}Already\allowbreak{}Verified\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}identity-verifications/\allowbreak{}documents OR /\allowbreak{}identity-verifications/\allowbreak{}ai-check \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-18.02 -- View Verification Status}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-18.02 -- View Verification Status \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Freelancer \\ \hline
+Trigger & Open identity verification section \\ \hline
+Description & The actor performs view verification status. Display latest status, history and review notes; empty history has null status. \\ \hline
+Preconditions & Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display latest status, history and review notes; empty history has null status \\ \hline
+Normal Flow & 1. Open identity verification section \newline
+2. The system receives GET /\allowbreak{}identity-verifications/\allowbreak{}status. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Retrieve the user identity documents in descending creation order. \newline
+5. status =\allowbreak{} documents[0]?.status ?? null; map present\allowbreak{}Identity\allowbreak{}Document over all documents \newline
+6. Display latest status, history and review notes; empty history has null status \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks FREELANCER role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & GET /\allowbreak{}identity-verifications/\allowbreak{}status \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-19.01 -- View Client Profile}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-19.01 -- View Client Profile \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Visitor /\allowbreak{} User \\ \hline
+Trigger & Open client profile \\ \hline
+Description & The actor performs view client profile. Display client profile and company information. \\ \hline
+Preconditions & The target freelancer/\allowbreak{}client resource exists. This read endpoint is public and does not require a JWT. \\ \hline
+Post-conditions & Display client profile and company information \\ \hline
+Normal Flow & 1. Open client profile \newline
+2. The system receives GET /\allowbreak{}clients/\allowbreak{}:user\allowbreak{}Id. \newline
+3. Retrieve the public client profile and social links. \newline
+4. Display client profile and company information \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [client\allowbreak{}Profile missing OR user lacks CLIENT role]: 404 Client\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is public. \\ \hline
+Other Information & GET /\allowbreak{}clients/\allowbreak{}:user\allowbreak{}Id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-19.02 -- Update Company Information}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-19.02 -- Update Company Information \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Edit company\allowbreak{}Name, company\allowbreak{}Description and website; Save \\ \hline
+Description & The actor performs update company information. Show server submitted /\allowbreak{} updated message. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Show server submitted /\allowbreak{} updated message \\ \hline
+Normal Flow & 1. Edit company\allowbreak{}Name, company\allowbreak{}Description and website; Save \newline
+2. The system receives PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Read profile\allowbreak{}Completion\allowbreak{}Percent; Profile\allowbreak{}Revision\allowbreak{}Service.requires\allowbreak{}Manual\allowbreak{}Review(strength) \newline
+5. Build result: review\allowbreak{}Required true, revision, original profile\allowbreak{}Strength \newline
+6. Update company information and recalculate profile strength in a transaction. \newline
+7. Profile\allowbreak{}Revision\allowbreak{}Service.direct\allowbreak{}Update\allowbreak{}Result: review\allowbreak{}Required false, revision null, updated profile\allowbreak{}Strength \newline
+8. Show server submitted /\allowbreak{} updated message \\ \hline
+Alternative Flows & 1. Profile\allowbreak{}Revision\allowbreak{}Service.submit\allowbreak{}Client: Profile\allowbreak{}Revision\allowbreak{}Repository reads snapshot and creates /\allowbreak{} updates latest PENDING CLIENT revision in transaction; live company information unchanged \newline
+2. [else: profile strength >=\allowbreak{} 20] \newline
+3. [profile strength < 20] \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [request DTO /\allowbreak{} id validation fails]: 400 validation error. The interaction ends without continuing the success path. \newline
+3. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-20.01 -- View Social Link List}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-20.01 -- View Social Link List \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Open social links settings \\ \hline
+Description & The actor performs view social link list. Display social links or empty list. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display social links or empty list \\ \hline
+Normal Flow & 1. Open social links settings \newline
+2. The system receives GET /\allowbreak{}social-links. \newline
+3. Retrieve the current profile social links ordered by platform. \newline
+4. Display social links or empty list \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [profile missing: result is null]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & GET /\allowbreak{}social-links \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-20.02 -- Add Social Link}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-20.02 -- Add Social Link \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Select platform, enter URL; Add \\ \hline
+Description & The actor performs add social link. Append link to local list; clear URL; show success. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Append link to local list; clear URL; show success \\ \hline
+Normal Flow & 1. Select platform, enter URL; Add \newline
+2. The system receives POST /\allowbreak{}social-links. \newline
+3. Retrieve the current profile social links ordered by platform. \newline
+4. Check for an existing social link using the selected platform. \newline
+5. Create the social link on the current user profile. \newline
+6. Append link to local list; clear URL; show success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [request DTO /\allowbreak{} id validation fails]: 400 validation error. The interaction ends without continuing the success path. \newline
+3. [profile missing: result is null]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [platform already linked]: 409 Social\allowbreak{}Link\allowbreak{}Duplicate\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}social-links \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-20.03 -- Delete Social Link}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-20.03 -- Delete Social Link \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Authenticated User \\ \hline
+Trigger & Click remove social link \\ \hline
+Description & The actor performs delete social link. Remove link from local list; show success. \\ \hline
+Preconditions & Authenticated User is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Remove link from local list; show success \\ \hline
+Normal Flow & 1. Click remove social link \newline
+2. The system receives DELETE /\allowbreak{}social-links/\allowbreak{}:id. \newline
+3. Retrieve the social link and profile owner. \newline
+4. Delete the authorized social link. \newline
+5. Remove link from local list; show success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [link missing]: 404 Social\allowbreak{}Link\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [link.profile.user\allowbreak{}Id !=\allowbreak{} user\allowbreak{}Id]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & DELETE /\allowbreak{}social-links/\allowbreak{}:id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-21.01 -- View Favorite Freelancer List}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-21.01 -- View Favorite Freelancer List \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Open favorite freelancers \\ \hline
+Description & The actor performs view favorite freelancer list. Display favorite freelancers or empty list. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display favorite freelancers or empty list \\ \hline
+Normal Flow & 1. Open favorite freelancers \newline
+2. The system receives GET /\allowbreak{}favorites/\allowbreak{}freelancers. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Retrieve favorite freelancers and their profiles, newest favorites first. \newline
+5. Filter records without freelancer\allowbreak{}Profile; map freelancer\allowbreak{}Id, created\allowbreak{}At, profile \newline
+6. Display favorite freelancers or empty list \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor opens the relevant page. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & GET /\allowbreak{}favorites/\allowbreak{}freelancers \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-21.02 -- Add Freelancer to Favorites}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-21.02 -- Add Freelancer to Favorites \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Click favorite freelancer \\ \hline
+Description & The actor performs add freelancer to favorites. Display favorite state and success. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Display favorite state and success \\ \hline
+Normal Flow & 1. Click favorite freelancer \newline
+2. The system receives POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Retrieve the active account, profile and assigned roles for authorization. \newline
+5. Check the favorite relationship using the client/\allowbreak{}freelancer composite key. \newline
+6. Save the favorite relationship. \newline
+7. Display favorite state and success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [client\allowbreak{}Id =\allowbreak{}=\allowbreak{} freelancer\allowbreak{}Id]: 404 Freelancer\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+5. [target profile missing OR target lacks FREELANCER role]: 404 Freelancer\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+6. [favorite already exists]: 409 Favorite\allowbreak{}Duplicate\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\subparagraph{UC-21.03 -- Remove Freelancer from Favorites}
+{\singlespacing\small
+\begin{longtable}{|L{3.2cm}|L{11.1cm}|}\hline
+UC ID and Name & UC-21.03 -- Remove Freelancer from Favorites \\ \hline
+Created By & Nguyen Lu Nhat Huy \\ \hline
+Primary Actor & Client \\ \hline
+Trigger & Click remove favorite \\ \hline
+Description & The actor performs remove freelancer from favorites. Remove freelancer from local favorites list; show success. \\ \hline
+Preconditions & Client is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path. \\ \hline
+Post-conditions & Remove freelancer from local favorites list; show success \\ \hline
+Normal Flow & 1. Click remove favorite \newline
+2. The system receives DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id. \newline
+3. Retrieve the active account, profile and assigned roles for authorization. \newline
+4. Check the favorite relationship using the client/\allowbreak{}freelancer composite key. \newline
+5. Remove only the selected favorite relationship. \newline
+6. Remove freelancer from local favorites list; show success \\ \hline
+Alternative Flows & None. \\ \hline
+Exceptions & 1. [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response. The interaction ends without continuing the success path. \newline
+2. [user or profile missing]: 404 Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+3. [user lacks CLIENT role]: 403 Account\allowbreak{}Profile\allowbreak{}Forbidden\allowbreak{}Exception. The interaction ends without continuing the success path. \newline
+4. [favorite missing]: 404 Favorite\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception. The interaction ends without continuing the success path. \\ \hline
+Priority & High \\ \hline
+Frequency of Use & On demand when the actor submits the action. \\ \hline
+Business Rules & Authorization, ownership and state constraints are listed in Exceptions and Alternative Flows; the endpoint is protected. \\ \hline
+Other Information & DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancer\allowbreak{}Id \\ \hline
+Assumptions & Storage/\allowbreak{}database services are available for the normal path. Infrastructure failures must not be reported as a successful operation. \\ \hline
+\end{longtable}}
+
+\endgroup

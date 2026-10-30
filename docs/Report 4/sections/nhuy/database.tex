@@ -1,0 +1,245 @@
+\subsection{Profile, Account and Review Persistence -- Nguyen Lu Nhat Huy}
+The following model fields and constraints support the five sprint modules; names are taken from the Prisma schema. Related global database diagrams remain in the preceding sections.
+\subsubsection{Profile}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+userId & Int @unique \\ \hline
+displayName & String? @db.VarChar(255) \\ \hline
+avatarUrl & String? @db.VarChar(500) \\ \hline
+coverUrl & String? @db.VarChar(500) \\ \hline
+bio & String? \\ \hline
+onlineStatus & Boolean @default(false) \\ \hline
+availabilityStatus & AvailabilityStatus @default(OFFLINE) \\ \hline
+profileCompletionPercent & Int @default(0) \\ \hline
+walletAddress & String? @db.VarChar(42) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+user & User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+freelancerProfile & FreelancerProfile? \\ \hline
+clientProfile & ClientProfile? \\ \hline
+expertProfile & Expert? \\ \hline
+socialLinks & SocialLink[] \\ \hline
+revisions & ProfileRevision[] \\ \hline
+\end{longtable}
+\subsubsection{FreelancerProfile}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+profileId & Int @unique \\ \hline
+title & String? @db.VarChar(255) \\ \hline
+education & String[] @default([]) \\ \hline
+certifications & String[] @default([]) \\ \hline
+languages & String[] @default([]) \\ \hline
+cvUrl & String? @db.VarChar(500) \\ \hline
+cvFileName & String? @db.VarChar(255) \\ \hline
+cvPublicId & String? @db.VarChar(255) \\ \hline
+cvUploadedAt & DateTime? \\ \hline
+experience & String[] @default([]) \\ \hline
+idVerified & Boolean @default(false) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+profile & Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+skills & FreelancerSkill[] \\ \hline
+portfolioItems & PortfolioItem[] \\ \hline
+\end{longtable}
+\subsubsection{FreelancerSkill}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+freelancerProfileId & Int \\ \hline
+skillId & Int \\ \hline
+proficiencyLevel & Int @db.SmallInt // Range 1-10. \\ \hline
+freelancerProfile & FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+skill & Skill @relation(fields: [skillId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+@@unique([freelancerProfileId, & skillId]) \\ \hline
+@@index([freelancerProfileId]) &  \\ \hline
+@@index([skillId]) &  \\ \hline
+\end{longtable}
+\subsubsection{PortfolioItem}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+freelancerProfileId & Int \\ \hline
+title & String @db.VarChar(255) \\ \hline
+description & String? \\ \hline
+technologies & String[] @default([]) \\ \hline
+projectUrl & String? @db.VarChar(500) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+deletedAt & DateTime? \\ \hline
+freelancerProfile & FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+likes & PortfolioLike[] \\ \hline
+\end{longtable}
+\subsubsection{ClientProfile}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+profileId & Int @unique \\ \hline
+companyName & String? @db.VarChar(255) \\ \hline
+companyDescription & String? \\ \hline
+website & String? @db.VarChar(255) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+profile & Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+\end{longtable}
+\subsubsection{Expert}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+profileId & Int @unique \\ \hline
+title & String? @db.VarChar(255) \\ \hline
+expertise & String[] @default([]) \\ \hline
+yearsOfExperience & Int @default(0) \\ \hline
+education & String[] @default([]) \\ \hline
+certifications & String[] @default([]) \\ \hline
+website & String? @db.VarChar(500) \\ \hline
+isActive & Boolean @default(false) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+profile & Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+@@index([isActive]) &  \\ \hline
+\end{longtable}
+\subsubsection{SocialLink}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+profileId & Int \\ \hline
+platform & SocialPlatform \\ \hline
+url & String @db.VarChar(500) \\ \hline
+profile & Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+\end{longtable}
+\subsubsection{FavoriteFreelancer}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+clientId & Int \\ \hline
+freelancerId & Int \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+client & User @relation("FavoriteClient", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+freelancer & User @relation("FavoriteTargetFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+@@id([clientId, & freelancerId]) \\ \hline
+@@index([freelancerId]) &  \\ \hline
+\end{longtable}
+\subsubsection{FollowFreelancer}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+clientId & Int \\ \hline
+freelancerId & Int \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+client & User @relation("FollowClient", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+freelancer & User @relation("FollowTargetFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+@@id([clientId, & freelancerId]) \\ \hline
+@@index([freelancerId]) &  \\ \hline
+\end{longtable}
+\subsubsection{Notification}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+userId & Int \\ \hline
+type & NotificationType \\ \hline
+title & String? @db.VarChar(255) \\ \hline
+message & String? \\ \hline
+data & Json? \\ \hline
+isRead & Boolean @default(false) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+deletedAt & DateTime? \\ \hline
+user & User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+@@index([userId, & isRead]) \\ \hline
+@@index([createdAt]) &  \\ \hline
+\end{longtable}
+\subsubsection{Review}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+contractId & Int \\ \hline
+reviewerId & Int \\ \hline
+revieweeId & Int \\ \hline
+overallRating & Decimal @db.Decimal(2, 1) \\ \hline
+breakdown & Json? \\ \hline
+comment & String? \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+deletedAt & DateTime? \\ \hline
+contract & Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+reviewer & User @relation("ReviewReviewer", fields: [reviewerId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+reviewee & User @relation("ReviewReviewee", fields: [revieweeId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+response & ReviewResponse? \\ \hline
+@@unique([contractId, & reviewerId]) \\ \hline
+@@index([revieweeId]) &  \\ \hline
+@@index([reviewerId]) &  \\ \hline
+\end{longtable}
+\subsubsection{ReviewResponse}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+reviewId & Int @unique \\ \hline
+userId & Int \\ \hline
+responseText & String \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+deletedAt & DateTime? \\ \hline
+review & Review @relation(fields: [reviewId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+user & User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+\end{longtable}
+\subsubsection{ProfileRevision}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+userId & Int \\ \hline
+profileId & Int \\ \hline
+profileType & ProfileRevisionType \\ \hline
+status & RevisionStatus @default(PENDING) \\ \hline
+currentData & Json \\ \hline
+proposedData & Json \\ \hline
+profileStrength & Int \\ \hline
+adminId & Int? \\ \hline
+reviewNotes & String? \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+updatedAt & DateTime @updatedAt \\ \hline
+reviewedAt & DateTime? \\ \hline
+user & User @relation("ProfileRevisionUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+admin & User? @relation("ProfileRevisionAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction) \\ \hline
+profile & Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+@@index([userId, & profileType, status]) \\ \hline
+@@index([status, & createdAt]) \\ \hline
+@@index([profileId]) &  \\ \hline
+\end{longtable}
+\subsubsection{IdVerificationDocument}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+id & Int @id @default(autoincrement()) \\ \hline
+userId & Int \\ \hline
+documentType & DocumentType \\ \hline
+fileUrl & String @db.VarChar(500) \\ \hline
+status & VerificationStatus @default(PENDING) \\ \hline
+adminId & Int? \\ \hline
+reviewNotes & String? \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+reviewedAt & DateTime? \\ \hline
+deletedAt & DateTime? \\ \hline
+aiStatus & String? @db.VarChar(20) \\ \hline
+aiScore & Float? \\ \hline
+aiSummary & Json? \\ \hline
+aiSelfieSummary & Json? \\ \hline
+aiError & String? \\ \hline
+aiScannedAt & DateTime? \\ \hline
+backFileUrl & String? @db.VarChar(500) \\ \hline
+identityNumber & String? @db.VarChar(50) \\ \hline
+duplicateOfId & Int? \\ \hline
+user & User @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction) \\ \hline
+admin & User? @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction) \\ \hline
+duplicateOf & IdVerificationDocument? @relation("IdVerificationDuplicate", fields: [duplicateOfId], references: [id], onDelete: SetNull, onUpdate: NoAction) \\ \hline
+duplicates & IdVerificationDocument[] @relation("IdVerificationDuplicate") \\ \hline
+@@index([identityNumber]) &  \\ \hline
+\end{longtable}
+\subsubsection{UserRole}
+\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Field / constraint & Type and mapping \\ \hline
+userId & Int \\ \hline
+roleId & Int \\ \hline
+isPrimary & Boolean @default(false) \\ \hline
+createdAt & DateTime @default(now()) \\ \hline
+user & User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+role & Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: NoAction) \\ \hline
+@@id([userId, & roleId]) \\ \hline
+\end{longtable}

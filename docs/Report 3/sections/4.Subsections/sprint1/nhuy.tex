@@ -1,0 +1,199 @@
+\begingroup\sloppy\emergencystretch=3em\relax
+\subsection{Sprint 1: Freelancer Profile, Skills and Portfolio}
+
+\subsubsection{UC-07.01 -- View Freelancer Profile}
+\textbf{Function Trigger:} Open freelancer profile.
+
+\textbf{Function description:} Display profile information.
+
+\textbf{Precondition:} The target freelancer/\allowbreak{}client resource exists. This read endpoint is public and does not require a JWT.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item Display profile information
+\end{enumerate}
+\textbf{Alternative and exception handling:} [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer public profile and edit dialog. Display name, title, biography, availability, education, certifications and languages; Save and request-review state. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}profiles/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-07.02 -- Update Freelancer Profile}
+\textbf{Function Trigger:} Edit profile; validate required fields; Save.
+
+\textbf{Function description:} Close editor; show submitted /\allowbreak{} updated message; update local profile only if review\allowbreak{}Required=\allowbreak{}false.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item requires\allowbreak{}Manual\allowbreak{}Review(profile\allowbreak{}Completion\allowbreak{}Percent) via Profile\allowbreak{}Revision\allowbreak{}Service
+\item Profile\allowbreak{}Revision\allowbreak{}Service delegates to Profile\allowbreak{}Revision\allowbreak{}Repository
+\item Update the owned profile and its professional fields; recalculate completion strength in the transaction.
+\item Profile\allowbreak{}Revision\allowbreak{}Service.direct\allowbreak{}Update\allowbreak{}Result(strength): review\allowbreak{}Required false, revision null
+\item Close editor; show submitted /\allowbreak{} updated message; update local profile only if review\allowbreak{}Required=\allowbreak{}false
+\end{enumerate}
+\textbf{Alternative and exception handling:} 14.1. submit\allowbreak{}Freelancer(user\allowbreak{}Id, profile.id, update, strength) -- Profile\allowbreak{}Revision\allowbreak{}Service; [else: profile\allowbreak{}Completion\allowbreak{}Percent >=\allowbreak{} 20]; [profile\allowbreak{}Completion\allowbreak{}Percent < 20]; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Profile\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer public profile and edit dialog. Display name, title, biography, availability, education, certifications and languages; Save and request-review state. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PUT /\allowbreak{}profiles/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-08.01 -- View Freelancer Skill List}
+\textbf{Function Trigger:} Open profile skills section.
+
+\textbf{Function description:} Display skill list or empty state.
+
+\textbf{Precondition:} The target freelancer/\allowbreak{}client resource exists. This read endpoint is public and does not require a JWT.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item Load active catalog skills attached to the freelancer, sorted by name.
+\item Continue Load active catalog skills attached to the freelancer, sorted by name.
+\item Display skill list or empty state
+\end{enumerate}
+\textbf{Alternative and exception handling:} [Freelancer\allowbreak{}Profile exists]; [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer skills section. Skill catalog picker, proficiency selector, skill list and delete confirmation. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}skills. The UI displays the returned state or error.
+
+\subsubsection{UC-08.02 -- Add Freelancer Skill}
+\textbf{Function Trigger:} Choose catalog skill and proficiency; Add.
+
+\textbf{Function description:} Insert skill into local list sorted by name; close editor.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item Find the active catalog skill by trimmed name, ignoring case; create a unique catalog entry if absent.
+\item generate\allowbreak{}Unique\allowbreak{}Slug(trimmed); create catalog skill
+\item Check whether this freelancer already has the selected catalog skill.
+\item Create the freelancer-skill association with its proficiency level.
+\item Insert skill into local list sorted by name; close editor
+\end{enumerate}
+\textbf{Alternative and exception handling:} UI preflight: search\allowbreak{}Skill\allowbreak{}Suggestions(name); require catalog match, integer proficiency, no local duplicate. API independently supports new catalog names.; [catalog skill does not exist -- direct API request]; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Profile\allowbreak{}Forbidden\allowbreak{}Exception; [freelancer skill already exists]: 400 Freelancer\allowbreak{}Skill\allowbreak{}Duplicate\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer skills section. Skill catalog picker, proficiency selector, skill list and delete confirmation. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}skills. The UI displays the returned state or error.
+
+\subsubsection{UC-08.03 -- Delete Freelancer Skill}
+\textbf{Function Trigger:} Choose skill; confirm Delete.
+
+\textbf{Function description:} Remove skill from local list; show success.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the skill association and its owner.
+\item Delete the freelancer-skill association while retaining the catalog skill.
+\item Remove skill from local list; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [freelancer skill missing]: 404 Freelancer\allowbreak{}Skill\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Skill\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer skills section. Skill catalog picker, proficiency selector, skill list and delete confirmation. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}profiles/\allowbreak{}skills/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-09.01 -- View Portfolio List}
+\textbf{Function Trigger:} Open profile portfolio section.
+
+\textbf{Function description:} Display portfolio cards or empty state.
+
+\textbf{Precondition:} The target freelancer/\allowbreak{}client resource exists. This read endpoint is public and does not require a JWT.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item Retrieve non-deleted portfolio items, newest first.
+\item Display portfolio cards or empty state
+\end{enumerate}
+\textbf{Alternative and exception handling:} [profile.freelancer\allowbreak{}Profile exists; otherwise return []]; On non-Http\allowbreak{}Exception in Portfolio\allowbreak{}Service: 500 Unable\allowbreak{}To\allowbreak{}Load\allowbreak{}Portfolios\allowbreak{}Exception; existing Http\allowbreak{}Exception is rethrown; [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer portfolio section. Portfolio cards/\allowbreak{}detail, title, description, technologies, project URL and create/\allowbreak{}edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}portfolios. The UI displays the returned state or error.
+
+\subsubsection{UC-09.02 -- Add Portfolio}
+\textbf{Function Trigger:} Open Add Portfolio; enter title, description, technologies, URL; Save.
+
+\textbf{Function description:} Prepend portfolio to local list; close editor; show success.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the freelancer profile and account roles; reject a missing or non-freelancer account.
+\item Create the portfolio item and create the role profile if required within the transaction.
+\item Prepend portfolio to local list; close editor; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} On non-Http\allowbreak{}Exception in Portfolio\allowbreak{}Service: 500 Unable\allowbreak{}To\allowbreak{}Load\allowbreak{}Portfolios\allowbreak{}Exception; existing Http\allowbreak{}Exception is rethrown; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [profile missing OR user has no FREELANCER role]: 404 Freelancer\allowbreak{}Profile\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Portfolio\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer portfolio section. Portfolio cards/\allowbreak{}detail, title, description, technologies, project URL and create/\allowbreak{}edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}portfolios. The UI displays the returned state or error.
+
+\subsubsection{UC-09.03 -- View Portfolio Detail}
+\textbf{Function Trigger:} Open portfolio card; display cached card while loading detail.
+
+\textbf{Function description:} Display title, description, technologies and project link.
+
+\textbf{Precondition:} The target freelancer/\allowbreak{}client resource exists. This read endpoint is public and does not require a JWT.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve a non-deleted portfolio item.
+\item Display title, description, technologies and project link
+\end{enumerate}
+\textbf{Alternative and exception handling:} On non-Http\allowbreak{}Exception in Portfolio\allowbreak{}Service: 500 Unable\allowbreak{}To\allowbreak{}Load\allowbreak{}Portfolios\allowbreak{}Exception; existing Http\allowbreak{}Exception is rethrown; [portfolio not found or soft-deleted]: 404 Portfolio\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer portfolio section. Portfolio cards/\allowbreak{}detail, title, description, technologies, project URL and create/\allowbreak{}edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} GET /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-09.04 -- Update Portfolio}
+\textbf{Function Trigger:} Edit existing portfolio; validate title; Save.
+
+\textbf{Function description:} Replace item in local list and open detail; close editor; show success.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the portfolio item and its owning profile.
+\item Update the provided portfolio fields.
+\item Replace item in local list and open detail; close editor; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} On non-Http\allowbreak{}Exception in Portfolio\allowbreak{}Service: 500 Unable\allowbreak{}To\allowbreak{}Update\allowbreak{}Portfolio\allowbreak{}Exception; existing Http\allowbreak{}Exception is rethrown; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [request DTO /\allowbreak{} id validation fails]: 400 validation error; [portfolio not found or soft-deleted]: 404 Portfolio\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Portfolio\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer portfolio section. Portfolio cards/\allowbreak{}detail, title, description, technologies, project URL and create/\allowbreak{}edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} PUT /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id. The UI displays the returned state or error.
+
+\subsubsection{UC-09.05 -- Delete Portfolio}
+\textbf{Function Trigger:} Choose portfolio; confirm Delete.
+
+\textbf{Function description:} Remove local item; close matching detail and confirmation; show success.
+
+\textbf{Precondition:} Freelancer is authenticated with an active session and permission for the endpoint. Required records and valid input are prepared for the success path.
+
+\textbf{Process and validation:}
+\begin{enumerate}
+\item Retrieve the portfolio item and its owning profile.
+\item Mark the portfolio item deleted without physically removing it.
+\item Remove local item; close matching detail and confirmation; show success
+\end{enumerate}
+\textbf{Alternative and exception handling:} On non-Http\allowbreak{}Exception in Portfolio\allowbreak{}Service: 500 Unable\allowbreak{}To\allowbreak{}Delete\allowbreak{}Portfolio\allowbreak{}Exception; existing Http\allowbreak{}Exception is rethrown; [invalid token /\allowbreak{} session /\allowbreak{} role permission]: 401 /\allowbreak{} 403 error response; [portfolio not found or soft-deleted]: 404 Portfolio\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception; [stored owner user\allowbreak{}Id !=\allowbreak{} current\allowbreak{}User\allowbreak{}Id]: 403 Portfolio\allowbreak{}Forbidden\allowbreak{}Exception
+
+\textbf{Screen layout and controls:} Freelancer portfolio section. Portfolio cards/\allowbreak{}detail, title, description, technologies, project URL and create/\allowbreak{}edit/\allowbreak{}delete controls. These controls describe the implemented screen structure; they are not a captured execution screenshot.
+
+\textbf{Interface/\allowbreak{}API mapping:} DELETE /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id. The UI displays the returned state or error.
+
+\endgroup

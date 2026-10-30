@@ -1,0 +1,410 @@
+% =================================================================
+% FILE: sections/nhuy/4/sprint1.tex -- Sprint 1
+% Class specifications follow the shared Report 4 table conventions.
+% =================================================================
+
+\subsection{ProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileController(}\newline\code{profileService: ProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{profileService}: \code{ProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{viewProfile(}\newline\code{id: number}\code{)} &
+A method to view profile. The implementation delegates to \code{profileService.viewProfile}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{FreelancerProfileDetailDto} -- serialized controller response.
+\newline -- Route: \code{GET /profiles/:id}.
+ \\ \hline
+
+03 & \code{updateProfile(}\newline\code{id: number},\newline\code{currentUserId: number},\newline\code{body: UpdateFreelancerProfileDto}\code{)} &
+A method to update profile. The implementation delegates to \code{profileService.updateProfile}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{body}: \code{UpdateFreelancerProfileDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ProfileRevisionSubmissionDto} -- serialized controller response.
+\newline -- Route: \code{PUT /profiles/:id}.
+ \\ \hline
+
+04 & \code{getSkills(}\newline\code{id: number}\code{)} &
+A method to get skills. The implementation delegates to \code{profileService.getSkills}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+\newline -- Route: \code{GET /profiles/:id/skills}.
+ \\ \hline
+
+05 & \code{searchSkillSuggestions(}\newline\code{search?: string}\code{)} &
+A method to search skill suggestions. The implementation delegates to \code{profileService.searchSkillSuggestions}.
+\newline -- \code{search}: \code{string} -- optional search text.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>} -- operation result.
+\newline -- Route: \code{GET /profiles/skills/suggestions}.
+ \\ \hline
+
+06 & \code{addSkill(}\newline\code{id: number},\newline\code{currentUserId: number},\newline\code{body: AddFreelancerSkillDto}\code{)} &
+A method to add skill. The implementation delegates to \code{profileService.addSkill}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{body}: \code{AddFreelancerSkillDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{AddFreelancerSkillResponseDto} -- serialized controller response.
+\newline -- Route: \code{POST /profiles/:id/skills}.
+ \\ \hline
+
+07 & \code{deleteSkill(}\newline\code{id: number},\newline\code{currentUserId: number}\code{)} &
+A method to delete skill. The implementation delegates to \code{profileService.deleteSkill}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>} -- operation result.
+\newline -- Route: \code{DELETE /profiles/skills/:id}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileService} & \code{ProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileService(}\newline\code{profileRepository: ProfileRepository},\newline\code{cloudinary: CloudinaryService},\newline\code{aiCvAnalyzer: AiCvAnalyzerService},\newline\code{skillResolver: SkillResolverService},\newline\code{profileRevisionService: ProfileRevisionService}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{profileRepository}: \code{ProfileRepository} -- constructor-injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- constructor-injected dependency.
+\newline -- \code{aiCvAnalyzer}: \code{AiCvAnalyzerService} -- constructor-injected dependency.
+\newline -- \code{skillResolver}: \code{SkillResolverService} -- constructor-injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getOwnedFreelancerProfile(}\newline\code{profileId: number},\newline\code{userId: number}\code{)} &
+A method to get owned freelancer profile as an internal helper. The implementation delegates to \code{profileRepository.findFreelancerProfileById}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{viewProfile(}\newline\code{profileId: number}\code{)} &
+A method to view profile. The implementation delegates to \code{profileRepository.findFreelancerProfileById}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{updateProfile(}\newline\code{profileId: number},\newline\code{currentUserId: number},\newline\code{dto: UpdateFreelancerProfileType}\code{)} &
+A method to update profile. The implementation delegates to \code{profileRepository.findFreelancerProfileById}, \code{profileRevisionService.requiresManualReview}, \code{profileRevisionService.submitFreelancer}, \code{profileRepository.updateFreelancerProfile}, \code{profileRevisionService.directUpdateResult}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{dto}: \code{UpdateFreelancerProfileType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{getSkills(}\newline\code{profileId: number}\code{)} &
+A method to get skills. The implementation delegates to \code{profileRepository.findFreelancerProfileById}, \code{profileRepository.findSkillsByProfileId}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{searchSkillSuggestions(}\newline\code{search?: string}\code{)} &
+A method to search skill suggestions. The implementation delegates to \code{profileRepository.searchActiveCatalogSkills}.
+\newline -- \code{search}: \code{string} -- optional search text.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>} -- operation result.
+ \\ \hline
+
+07 & \code{addSkill(}\newline\code{profileId: number},\newline\code{currentUserId: number},\newline\code{dto: AddFreelancerSkillType}\code{)} &
+A method to add skill. The implementation delegates to \code{profileRepository.findFreelancerProfileById}, \code{profileRepository.findOrCreateCatalogSkill}, \code{profileRepository.findSkillByProfileIdAndSkillId}, \code{profileRepository.addSkillToProfile}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{dto}: \code{AddFreelancerSkillType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{deleteSkill(}\newline\code{skillId: number},\newline\code{currentUserId: number}\code{)} &
+A method to delete skill. The implementation delegates to \code{profileRepository.findSkillById}, \code{profileRepository.deleteSkill}.
+\newline -- \code{skillId}: \code{number} -- catalog or freelancer-skill identifier as required by the method.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileRepository} & \code{ProfileRepository} -- injected persistence gateway. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- injected application dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected application dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- injected application dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findFreelancerProfileById(}\newline\code{profileId: number}\code{)} &
+A method to find freelancer profile by id.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{updateFreelancerProfile(}\newline\code{profileId: number},\newline\code{data: {
+      displayName: string;
+      title: string;
+      bio?: string | null;
+      availabilityStatus?: AvailabilityStatus;
+      education?: string[] | null;
+      certifications?: string[] | null;
+      languages?: string[] | null;
+      experience?: string[] | null;
+    }}\code{)} &
+A method to update freelancer profile.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{data}: \code{{
+      displayName: string;
+      title: string;
+      bio?: string | null;
+      availabilityStatus?: AvailabilityStatus;
+      education?: string[] | null;
+      certifications?: string[] | null;
+      languages?: string[] | null;
+      experience?: string[] | null;
+    }} -- values to persist.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{findSkillsByProfileId(}\newline\code{profileId: number}\code{)} &
+A method to find skills by profile id.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{searchActiveCatalogSkills(}\newline\code{search?: string}\code{)} &
+A method to search active catalog skills.
+\newline -- \code{search}: \code{string} -- optional search text.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>} -- operation result.
+ \\ \hline
+
+06 & \code{findOrCreateCatalogSkill(}\newline\code{name: string}\code{)} &
+A method to find or create catalog skill.
+\newline -- \code{name}: \code{string} -- catalog name to resolve.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; createdAt: Date; updatedAt: Date; deletedAt: Date | null; name: string; description: string | null; slug: string; }>} -- operation result.
+ \\ \hline
+
+07 & \code{findSkillByProfileIdAndSkillId(}\newline\code{profileId: number},\newline\code{skillId: number}\code{)} &
+A method to find skill by profile id and skill id.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{skillId}: \code{number} -- catalog or freelancer-skill identifier as required by the method.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; } | null>} -- operation result.
+ \\ \hline
+
+08 & \code{addSkillToProfile(}\newline\code{profileId: number},\newline\code{skillId: number},\newline\code{proficiencyLevel: number}\code{)} &
+A method to add skill to profile.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{skillId}: \code{number} -- catalog or freelancer-skill identifier as required by the method.
+\newline -- \code{proficiencyLevel}: \code{number} -- freelancer proficiency level.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+09 & \code{slugify(}\newline\code{value: string}\code{)} &
+A method to slugify as an internal helper.
+\newline -- \code{value}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{string} -- operation result.
+ \\ \hline
+
+10 & \code{generateUniqueSlug(}\newline\code{name: string}\code{)} &
+A method to generate unique slug as an internal helper.
+\newline -- \code{name}: \code{string} -- catalog name to resolve.
+\newline -- \textit{Returns:} \code{Promise<string>} -- operation result.
+ \\ \hline
+
+11 & \code{findSkillById(}\newline\code{skillId: number}\code{)} &
+A method to find skill by id.
+\newline -- \code{skillId}: \code{number} -- catalog or freelancer-skill identifier as required by the method.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+12 & \code{deleteSkill(}\newline\code{skillId: number}\code{)} &
+A method to delete skill.
+\newline -- \code{skillId}: \code{number} -- catalog or freelancer-skill identifier as required by the method.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; freelancerProfileId: number; skillId: number; proficiencyLevel: number; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PortfolioController(}\newline\code{portfolioService: PortfolioService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{portfolioService}: \code{PortfolioService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPortfolios(}\newline\code{id: number}\code{)} &
+A method to get portfolios. The implementation delegates to \code{portfolioService.getPortfolios}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{PortfolioItemListResponseDto} -- serialized controller response.
+\newline -- Route: \code{GET /profiles/:id/portfolios}.
+ \\ \hline
+
+03 & \code{addPortfolio(}\newline\code{currentUserId: number},\newline\code{id: number},\newline\code{body: AddPortfolioDto}\code{)} &
+A method to add portfolio. The implementation delegates to \code{portfolioService.addPortfolio}.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{body}: \code{AddPortfolioDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{AddPortfolioResponseDto} -- serialized controller response.
+\newline -- Route: \code{POST /profiles/:id/portfolios}.
+ \\ \hline
+
+04 & \code{getPortfolioDetail(}\newline\code{id: number}\code{)} &
+A method to get portfolio detail. The implementation delegates to \code{portfolioService.getPortfolioDetail}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{PortfolioItemResponseDto} -- serialized controller response.
+\newline -- Route: \code{GET /profiles/portfolios/:id}.
+ \\ \hline
+
+05 & \code{updatePortfolio(}\newline\code{currentUserId: number},\newline\code{id: number},\newline\code{body: UpdatePortfolioDto}\code{)} &
+A method to update portfolio. The implementation delegates to \code{portfolioService.updatePortfolio}.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{body}: \code{UpdatePortfolioDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{UpdatePortfolioResponseDto} -- serialized controller response.
+\newline -- Route: \code{PUT /profiles/portfolios/:id}.
+ \\ \hline
+
+06 & \code{deletePortfolio(}\newline\code{currentUserId: number},\newline\code{id: number}\code{)} &
+A method to delete portfolio. The implementation delegates to \code{portfolioService.deletePortfolio}.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.PortfolioDeleted"; }>} -- operation result.
+\newline -- Route: \code{DELETE /profiles/portfolios/:id}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{portfolioService} & \code{PortfolioService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PortfolioService(}\newline\code{portfolioRepository: PortfolioRepository}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{portfolioRepository}: \code{PortfolioRepository} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPortfolios(}\newline\code{profileId: number}\code{)} &
+A method to get portfolios. The implementation delegates to \code{portfolioRepository.findFreelancerProfileById}, \code{portfolioRepository.findPortfoliosByFreelancerProfileId}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{addPortfolio(}\newline\code{profileId: number},\newline\code{currentUserId: number},\newline\code{data: AddPortfolioType}\code{)} &
+A method to add portfolio. The implementation delegates to \code{portfolioRepository.findFreelancerProfileById}, \code{portfolioRepository.addPortfolioToProfile}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{data}: \code{AddPortfolioType} -- values to persist.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{getPortfolioDetail(}\newline\code{portfolioId: number}\code{)} &
+A method to get portfolio detail. The implementation delegates to \code{portfolioRepository.findPortfolioById}.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{updatePortfolio(}\newline\code{portfolioId: number},\newline\code{currentUserId: number},\newline\code{data: UpdatePortfolioType}\code{)} &
+A method to update portfolio. The implementation delegates to \code{portfolioRepository.findPortfolioWithProfile}, \code{portfolioRepository.updatePortfolio}.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{data}: \code{UpdatePortfolioType} -- values to persist.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{deletePortfolio(}\newline\code{portfolioId: number},\newline\code{currentUserId: number}\code{)} &
+A method to delete portfolio. The implementation delegates to \code{portfolioRepository.findPortfolioWithProfile}, \code{portfolioRepository.deletePortfolio}.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.PortfolioDeleted"; }>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{portfolioRepository} & \code{PortfolioRepository} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PortfolioRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findFreelancerProfileById(}\newline\code{profileId: number}\code{)} &
+A method to find freelancer profile by id.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{findPortfoliosByFreelancerProfileId(}\newline\code{freelancerProfileId: number}\code{)} &
+A method to find portfolios by freelancer profile id.
+\newline -- \code{freelancerProfileId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{addPortfolioToProfile(}\newline\code{profileId: number},\newline\code{data: AddPortfolioType}\code{)} &
+A method to add portfolio to profile.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{data}: \code{AddPortfolioType} -- values to persist.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{findPortfolioById(}\newline\code{portfolioId: number}\code{)} &
+A method to find portfolio by id.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{findPortfolioWithProfile(}\newline\code{portfolioId: number}\code{)} &
+A method to find portfolio with profile.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{updatePortfolio(}\newline\code{portfolioId: number},\newline\code{data: UpdatePortfolioType}\code{)} &
+A method to update portfolio.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \code{data}: \code{UpdatePortfolioType} -- values to persist.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{deletePortfolio(}\newline\code{portfolioId: number}\code{)} &
+A method to delete portfolio.
+\newline -- \code{portfolioId}: \code{number} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}

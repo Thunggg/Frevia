@@ -1,0 +1,507 @@
+% =================================================================
+% FILE: sections/nhuy/4/sprint5.tex -- Sprint 5
+% Class specifications follow the shared Report 4 table conventions.
+% =================================================================
+
+\subsection{ProfileRevisionController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRevisionController(}\newline\code{service: ProfileRevisionService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{latest(}\newline\code{userId: number},\newline\code{profileType: ProfileRevisionType}\code{)} &
+A method to latest. The implementation delegates to \code{service.latestForUser}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \textit{Returns:} \code{MyProfileRevisionDto} -- serialized controller response.
+\newline -- Route: \code{GET /profile-revisions/me}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionAdminController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRevisionAdminController(}\newline\code{service: ProfileRevisionService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(}\newline\code{query: ProfileRevisionAdminFilterDto}\code{)} &
+A method to list. The implementation delegates to \code{service.list}.
+\newline -- \code{query}: \code{ProfileRevisionAdminFilterDto} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{ProfileRevisionAdminListDto} -- serialized controller response.
+\newline -- Route: \code{GET /admin/profile-revisions}.
+ \\ \hline
+
+03 & \code{detail(}\newline\code{id: number}\code{)} &
+A method to detail. The implementation delegates to \code{service.detail}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{ProfileRevisionDetailDto} -- serialized controller response.
+\newline -- Route: \code{GET /admin/profile-revisions/:id}.
+ \\ \hline
+
+04 & \code{approve(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{body: ApproveProfileRevisionDto}\code{)} &
+A method to approve. The implementation delegates to \code{service.approve}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{body}: \code{ApproveProfileRevisionDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ProfileRevisionDetailDto} -- serialized controller response.
+\newline -- Route: \code{PATCH /admin/profile-revisions/:id/approve}.
+ \\ \hline
+
+05 & \code{reject(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{body: RejectProfileRevisionDto}\code{)} &
+A method to reject. The implementation delegates to \code{service.reject}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{body}: \code{RejectProfileRevisionDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ProfileRevisionDetailDto} -- serialized controller response.
+\newline -- Route: \code{PATCH /admin/profile-revisions/:id/reject}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRevisionService(}\newline\code{repository: ProfileRevisionRepository}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{repository}: \code{ProfileRevisionRepository} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{requiresManualReview(}\newline\code{profileStrength: number}\code{)} &
+A method to requires manual review.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{boolean} -- operation result.
+ \\ \hline
+
+03 & \code{directUpdateResult(}\newline\code{profileStrength: number}\code{)} &
+A method to direct update result.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{{ message: "Success.ProfileUpdated"; reviewRequired: boolean; profileStrength: number; revision: null; }} -- operation result.
+ \\ \hline
+
+04 & \code{submitFreelancer(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{proposedData: UpdateFreelancerProfileType},\newline\code{profileStrength: number}\code{)} &
+A method to submit freelancer.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{proposedData}: \code{UpdateFreelancerProfileType} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{submitClient(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{proposedData: UpdateClientProfileType},\newline\code{profileStrength: number}\code{)} &
+A method to submit client.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{proposedData}: \code{UpdateClientProfileType} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+06 & \code{submitExpert(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{proposedData: UpdateExpertProfileType},\newline\code{profileStrength: number}\code{)} &
+A method to submit expert.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{proposedData}: \code{UpdateExpertProfileType} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{submitGeneral(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{primaryRole: string},\newline\code{proposedData: UpdateGeneralProfileType},\newline\code{profileStrength: number}\code{)} &
+A method to submit general.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{primaryRole}: \code{string} -- operation parameter used by the implementation.
+\newline -- \code{proposedData}: \code{UpdateGeneralProfileType} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{submit(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{profileType: ProfileRevisionType},\newline\code{proposedData: | UpdateFreelancerProfileType
+      | UpdateClientProfileType
+      | UpdateExpertProfileType
+      | UpdateGeneralProfileType},\newline\code{profileStrength: number}\code{)} &
+A method to submit as an internal helper. The implementation delegates to \code{repository.findProfileForSnapshot}, \code{repository.submit}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \code{proposedData}: \code{| UpdateFreelancerProfileType
+      | UpdateClientProfileType
+      | UpdateExpertProfileType
+      | UpdateGeneralProfileType} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+09 & \code{latestForUser(}\newline\code{userId: number},\newline\code{profileType: ProfileRevisionType}\code{)} &
+A method to latest for user. The implementation delegates to \code{repository.findLatestForUser}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+10 & \code{list(}\newline\code{filter: ProfileRevisionAdminFilterType}\code{)} &
+A method to list. The implementation delegates to \code{repository.syncLowStrengthProfiles}, \code{repository.findMany}.
+\newline -- \code{filter}: \code{ProfileRevisionAdminFilterType} -- validated list filters and pagination.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+11 & \code{detail(}\newline\code{id: number}\code{)} &
+A method to detail. The implementation delegates to \code{repository.findById}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+12 & \code{approve(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{reviewNotes?: string | null}\code{)} &
+A method to approve.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{reviewNotes}: \code{string | null} -- administrator review notes or rejection reason.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+13 & \code{reject(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{reviewNotes: string}\code{)} &
+A method to reject.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{reviewNotes}: \code{string} -- administrator review notes or rejection reason.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+14 & \code{review(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED},\newline\code{reviewNotes: string | null}\code{)} &
+A method to review as an internal helper. The implementation delegates to \code{repository.findById}, \code{repository.review}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{status}: \code{typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED} -- operation parameter used by the implementation.
+\newline -- \code{reviewNotes}: \code{string | null} -- administrator review notes or rejection reason.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ProfileRevisionRepository} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRevisionRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findProfileForSnapshot(}\newline\code{userId: number},\newline\code{profileId: number}\code{)} &
+A method to find profile for snapshot.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{submit(}\newline\code{userId: number},\newline\code{profileId: number},\newline\code{profileType: ProfileRevisionType},\newline\code{currentData: Prisma.InputJsonValue},\newline\code{proposedData: Prisma.InputJsonValue},\newline\code{profileStrength: number}\code{)} &
+A method to submit.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \code{currentData}: \code{Prisma.InputJsonValue} -- operation parameter used by the implementation.
+\newline -- \code{proposedData}: \code{Prisma.InputJsonValue} -- operation parameter used by the implementation.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion strength.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{findLatestForUser(}\newline\code{userId: number},\newline\code{profileType: ProfileRevisionType}\code{)} &
+A method to find latest for user.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{syncLowStrengthProfiles(}\newline\code{threshold: number}\code{)} &
+A method to sync low strength profiles.
+\newline -- \code{threshold}: \code{number} -- profile strength threshold.
+\newline -- \textit{Returns:} \code{Promise<void>} -- operation result.
+ \\ \hline
+
+06 & \code{findMany(}\newline\code{params: {
+    page: number;
+    limit: number;
+    status?: RevisionStatus;
+    profileType?: ProfileRevisionType;
+    search?: string;
+  }}\code{)} &
+A method to find many.
+\newline -- \code{params}: \code{{
+    page: number;
+    limit: number;
+    status?: RevisionStatus;
+    profileType?: ProfileRevisionType;
+    search?: string;
+  }} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+07 & \code{findById(}\newline\code{id: number}\code{)} &
+A method to find by id.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+08 & \code{review(}\newline\code{id: number},\newline\code{adminId: number},\newline\code{status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED},\newline\code{reviewNotes: string | null},\newline\code{proposedData: FreelancerProposal | ClientProposal | ExpertProposal},\newline\code{profileType: ProfileRevisionType}\code{)} &
+A method to review.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded with the review decision.
+\newline -- \code{status}: \code{typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED} -- operation parameter used by the implementation.
+\newline -- \code{reviewNotes}: \code{string | null} -- administrator review notes or rejection reason.
+\newline -- \code{proposedData}: \code{FreelancerProposal | ClientProposal | ExpertProposal} -- operation parameter used by the implementation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- profile role type.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ExpertProfileController(}\newline\code{service: ExpertProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{service}: \code{ExpertProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{updateMine(}\newline\code{userId: number},\newline\code{body: UpdateExpertProfileDto}\code{)} &
+A method to update mine. The implementation delegates to \code{service.submitUpdate}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{body}: \code{UpdateExpertProfileDto} -- validated HTTP request body.
+\newline -- \textit{Returns:} \code{ExpertProfileUpdateResponseDto} -- serialized controller response.
+\newline -- Route: \code{PUT /expert-profile/me}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ExpertProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ExpertProfileService(}\newline\code{repository: ExpertProfileRepository},\newline\code{revisions: ProfileRevisionService}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{repository}: \code{ExpertProfileRepository} -- constructor-injected dependency.
+\newline -- \code{revisions}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{cleanList(}\newline\code{values: string[]}\code{)} &
+A method to clean list as an internal helper.
+\newline -- \code{values}: \code{string[]} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{string[]} -- operation result.
+ \\ \hline
+
+03 & \code{sanitize(}\newline\code{input: T}\code{)} &
+A method to sanitize as an internal helper.
+\newline -- \code{input}: \code{T} -- validated operation input.
+\newline -- \textit{Returns:} \code{T} -- operation result.
+ \\ \hline
+
+04 & \code{context(}\newline\code{userId: number}\code{)} &
+A method to context as an internal helper. The implementation delegates to \code{repository.findByUserId}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+05 & \code{submitUpdate(}\newline\code{userId: number},\newline\code{input: UpdateExpertProfileType}\code{)} &
+A method to submit update. The implementation delegates to \code{repository.hasPendingRevision}, \code{revisions.submitExpert}.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{input}: \code{UpdateExpertProfileType} -- validated operation input.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ExpertProfileRepository} -- injected persistence gateway. \\ \hline
+02 & \code{revisions} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ExpertProfileRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findByUserId(}\newline\code{userId: number}\code{)} &
+A method to find by user id.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{hasPendingRevision(}\newline\code{userId: number}\code{)} &
+A method to has pending revision.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Prisma__ProfileRevisionClient<{ id: number; } | null, null, DefaultArgs, PrismaClientOptions>} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileController(}\newline\code{profileService: ProfileService}\code{)} &
+A method to initialize the controller with its dependencies.
+\newline -- \code{profileService}: \code{ProfileService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{uploadCv(}\newline\code{id: number},\newline\code{currentUserId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload cv. The implementation delegates to \code{profileService.uploadCv}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{CvUploadResponseDto} -- serialized controller response.
+\newline -- Route: \code{POST /profiles/:id/cv}.
+ \\ \hline
+
+03 & \code{getCvFile(}\newline\code{id: number},\newline\code{currentUserId: number},\newline\code{response: Response}\code{)} &
+A method to get cv file. The implementation delegates to \code{profileService.getCvFile}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \code{response}: \code{Response} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{Promise<void | StreamableFile>} -- operation result.
+\newline -- Route: \code{GET /profiles/:id/cv/file}.
+ \\ \hline
+
+04 & \code{deleteCv(}\newline\code{id: number},\newline\code{currentUserId: number}\code{)} &
+A method to delete cv. The implementation delegates to \code{profileService.deleteCv}.
+\newline -- \code{id}: \code{number} -- target resource identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated user identifier used for ownership checks.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+\newline -- Route: \code{DELETE /profiles/:id/cv}.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileService} & \code{ProfileService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileService(}\newline\code{profileRepository: ProfileRepository},\newline\code{cloudinary: CloudinaryService},\newline\code{aiCvAnalyzer: AiCvAnalyzerService},\newline\code{skillResolver: SkillResolverService},\newline\code{profileRevisionService: ProfileRevisionService}\code{)} &
+A method to initialize the service with its dependencies.
+\newline -- \code{profileRepository}: \code{ProfileRepository} -- constructor-injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- constructor-injected dependency.
+\newline -- \code{aiCvAnalyzer}: \code{AiCvAnalyzerService} -- constructor-injected dependency.
+\newline -- \code{skillResolver}: \code{SkillResolverService} -- constructor-injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{uploadCv(}\newline\code{profileId: number},\newline\code{userId: number},\newline\code{file?: Express.Multer.File}\code{)} &
+A method to upload cv. The implementation delegates to \code{cloudinary.isConfigured}, \code{cloudinary.uploadFile}, \code{profileRepository.updateCv}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- optional multipart file provided by the upload interceptor.
+\newline -- \textit{Returns:} \code{Promise<{ cvUrl: string | null; cvFileName: string | null; }>} -- operation result.
+ \\ \hline
+
+03 & \code{deleteCv(}\newline\code{profileId: number},\newline\code{userId: number}\code{)} &
+A method to delete cv. The implementation delegates to \code{cloudinary.deleteFile}, \code{profileRepository.clearCv}.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>} -- operation result.
+ \\ \hline
+
+04 & \code{getCvFile(}\newline\code{profileId: number},\newline\code{userId: number}\code{)} &
+A method to get cv file.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ remoteUrl: string; fileName: string; absolutePath?: undefined; } | { absolutePath: string; fileName: string; remoteUrl?: undefined; }>} -- operation result.
+ \\ \hline
+
+05 & \code{resolveLocalCvPath(}\newline\code{cvUrl: string}\code{)} &
+A method to resolve local cv path as an internal helper.
+\newline -- \code{cvUrl}: \code{string} -- operation parameter used by the implementation.
+\newline -- \textit{Returns:} \code{string | null} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileRepository} & \code{ProfileRepository} -- injected persistence gateway. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- injected application dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected application dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- injected application dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected application dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{ProfileRepository(}\newline\code{prisma: PrismaService}\code{)} &
+A method to initialize the repository with its dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- constructor-injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findFreelancerProfileById(}\newline\code{profileId: number}\code{)} &
+A method to find freelancer profile by id.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+03 & \code{updateCv(}\newline\code{profileId: number},\newline\code{data: { cvUrl: string; cvFileName: string; cvPublicId: string | null }}\code{)} &
+A method to update cv.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \code{data}: \code{{ cvUrl: string; cvFileName: string; cvPublicId: string | null }} -- values to persist.
+\newline -- \textit{Returns:} \code{Selected database projection / response object} -- operation result.
+ \\ \hline
+
+04 & \code{clearCv(}\newline\code{profileId: number}\code{)} &
+A method to clear cv.
+\newline -- \code{profileId}: \code{number} -- target profile identifier.
+\newline -- \textit{Returns:} \code{Promise of the selected database projection / response object} -- operation result.
+ \\ \hline
+
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected persistence gateway. \\ \hline
+\end{ClassAttributeTable}

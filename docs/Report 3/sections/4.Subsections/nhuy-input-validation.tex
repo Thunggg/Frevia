@@ -1,0 +1,29 @@
+\subsubsection{Account and Profile Input Validation}
+The following field limits come from the shared Zod request schemas. Required,
+nullable and optional fields are distinguished; server-side authorization and
+state validation still apply after a request passes these input checks.
+
+{\small\begin{longtable}{|L{3.3cm}|L{10.8cm}|}\hline
+Input group & Validation and boundary values \\ \hline
+Freelancer profile & Display name and title are trimmed, required, 1--255 characters. Biography is optional/nullable, maximum 5000 characters. Availability must be a supported enum value. Education, certifications, languages and experience are optional/nullable lists: at most 20 entries, each trimmed and 1--255 characters. \\ \hline
+Freelancer skill & Skill name is required and trimmed, maximum 100 characters. Proficiency is an integer from 1 to 10. The UI additionally requires a catalog match; the backend can resolve/create a catalog entry. \\ \hline
+Portfolio & Title is trimmed and required, 1--255 characters for both create and update. Description is optional/nullable, maximum 5000 characters. Technologies: at most 20 entries, each trimmed and 1--100 characters. Project URL is optional/nullable and must be a valid URL when supplied. \\ \hline
+Identity upload & Document type must be a supported enum value. Standard upload permits PDF/JPEG/PNG up to 10 MB. AI images permit JPEG/PNG/WEBP up to 10 MB; front and selfie are required, with 1--40 liveness frames, each up to 2 MB. \\ \hline
+Company information & Company name is trimmed and required, 1--255 characters. Description is optional/nullable, maximum 5000 characters. Website is optional/nullable and must be a valid URL when supplied. \\ \hline
+Social link & Platform must be a supported social-platform enum value; URL must be valid. Unknown request keys are rejected by the strict request schema. \\ \hline
+Role selection & Only CLIENT and FREELANCER are accepted for Switch Role and Join New Role. Assignment and duplicate checks are separate service/repository validations. \\ \hline
+Review & Rating is numeric/coerced and between 1 and 5. Breakdown has at most 10 criteria; each criterion name is trimmed and 1--50 characters and each rating is 1--5. Comment is optional/nullable, trimmed, maximum 3000 characters. Review update must provide at least one field. \\ \hline
+Review response & Response text is trimmed, required, 1--3000 characters for create and update. \\ \hline
+General profile & Display name is trimmed and required, 1--255 characters. Biography is optional/nullable, maximum 5000 characters. \\ \hline
+Password change & Current password must be non-empty. New password is 8--32 characters, contains an uppercase letter and a number, differs from the current password and matches the confirmation. Verification against the saved hash is performed separately. \\ \hline
+Avatar & JPEG/PNG/WEBP magic bytes must match the declared MIME type. Maximum file size is 5 MB; a file is required. \\ \hline
+Revision filters & Page is an integer at least 1 (default 1). Limit is 1--100 (default 10). Search is trimmed and at most 255 characters. Status and profile type must be supported enum values. \\ \hline
+Review notes & Approval notes are optional/nullable, trimmed, at most 1000 characters. Rejection notes are required, trimmed, 1--1000 characters. \\ \hline
+Expert profile & Display name is required, trimmed, 1--255 characters. Title and biography are optional/nullable, at most 255 and 5000 characters. Input lists allow at most 100 raw entries, normalize whitespace and duplicates, then allow at most 20 entries: expertise items up to 100 characters, education/certification items up to 500. Experience is optional/nullable, an integer from 0 to 80. Website permits a valid URL of at most 500 characters, an empty string or null. \\ \hline
+CV & File is required, MIME must be application/pdf, first bytes must equal the PDF signature and size must not exceed 10 MB. Upload and Replace share these rules. \\ \hline
+\end{longtable}}
+
+Boundary tests should exercise each exact limit and the immediately invalid
+neighbor, as well as missing, null, empty, malformed and unauthorized inputs
+where applicable. Designed test cases are recorded in Report 5; their presence
+does not imply that all of these boundary combinations have already been executed.
