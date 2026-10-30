@@ -25,9 +25,49 @@
 \endlastfoot
 
 
-UC-01 & Register & Guest, Client, Freelancer & Allows users to create new accounts using email and password. \\
+UC-01 & Login with Google & Guest & Allows users to login/register using Google OAuth. \\
 \hline
-UC-02 & Google Login & Guest, Client, Freelancer & Allows users to login/register using Google OAuth. \\
+UC-02 & Login & Guest & Allows users to log in using email/password and JWT authentication. \\
+\hline
+UC-03 & Logout & Client, Expert, Freelancer, Admin & Allows users to logout and terminate authentication session. \\
+\hline
+UC-04 & Register & Guest & Allows users to create new accounts using email and password. \\
+\hline
+UC-05 & Forgot Password & Guest & Allows users to request password reset via email verification link. \\
+\hline
+UC-06.01 & View Role List & Admin & Retrieve list of all roles along with their assigned permissions. \\
+\hline
+UC-06.02 & View Role Detail & Admin & View detailed information of a specific role including its permissions. \\
+\hline
+UC-06.03 & Create Role & Admin & Create a new role with name, description, and a list of permission IDs. \\
+\hline
+UC-06.04 & Update Role & Admin & Update a role's name, description, and replace all assigned permissions. \\
+\hline
+UC-06.05 & Delete Role & Admin & Delete a role from the system. \\
+\hline
+UC-06.06 & Update Role Permissions & Admin & Assign route access rights to roles. \\
+\hline
+UC-15.01 & View Permission List & Admin & Retrieve all permissions (id, name, path, method, module) for admin to assign to roles. \\
+\hline
+UC-15.02 & View Permission Detail & Admin & View detailed information of a specific permission. \\
+\hline
+UC-16.01 & View Session List & Client, Expert, Freelancer, Admin & View a list of active login sessions. \\
+\hline
+UC-16.02 & View Session Detail & Client, Expert, Freelancer, Admin & View login session information (device, IP address, login time, approximate location, etc.). \\
+\hline
+UC-16.03 & Revoke Session & Client, Expert, Freelancer, Admin & Log out of a specific device remotely. \\
+\hline
+UC-17.01 & Create Forum Category & Admin & Allows admins to create a new forum category. \\
+\hline
+UC-17.02 & Update Forum Category & Admin & Allows admins to update an existing forum category. \\
+\hline
+UC-17.03 & Delete Forum Category & Admin & Allows admins to soft-delete a forum category. \\
+\hline
+UC-14.01 & View Forum Category List & Admin & Allows admins to view the list of forum categories. \\
+\hline
+UC-14.02 & View Forum Category Detail & Admin & Allows admins to view the details of a specific forum category. \\
+\hline
+UC-17.06 & Restore Forum Category & Admin & Restore a deleted Category forum by setting deletedAt back to null. \\
 \hline
 UC-03 & Job Browsing & Guest, Client, Freelancer & Enables guests to browse and search for available job listings. \\
 \hline
@@ -71,8 +111,6 @@ UC-04.16 & Unlike Comment & Client, Freelancer & Allows freelancers to remove th
 \hline
 UC-04.17 & Report Content & Client, Freelancer & Allows freelancers to report inappropriate content in forum posts or comments. \\
 \hline
-UC-05 & Forgot Password & Client, Freelancer & Allows users to reset their password via email verification. \\
-\hline
 UC-06 & Manage Job & Client, Freelancer & Manages job postings including creation, editing, deletion, and status changes. \\
 \hline
 UC-06.1 & View List Job & Guest, Client, Freelancer & Retrieve paginated job list with filters and sorting options. \\
@@ -90,10 +128,6 @@ UC-06.6 & View List Bookmarked Job & Freelancer & Retrieves list of jobs bookmar
 UC-06.7 & Bookmark Job & Freelancer & Allows freelancers to save/bookmark a job for later reference. \\
 \hline
 UC-06.8 & Remove Bookmark & Freelancer & Allows freelancers to remove a bookmarked job from their list. \\
-\hline
-UC-07 & Login & Client, Freelancer, Admin & Allows users to authenticate using email and password. \\
-\hline
-UC-08 & Logout & Client, Freelancer, Admin & Allows users to securely log out of the system. \\
 \hline
 UC-13 & Manage Contract & Client, Freelancer, Admin & Manages contractual agreements, milestones, deliverables, and file exchanges. \\
 \hline
@@ -142,20 +176,6 @@ UC-12.3 & View Portfolio Detail & Freelancer & Displays full details of a portfo
 UC-12.4 & Update Portfolio & Freelancer & Allows freelancers to edit and update their portfolio items. \\
 \hline
 UC-12.5 & Delete Portfolio & Freelancer & Allows freelancers to remove portfolio items. \\
-\hline
-UC-13 & Manage Role & Admin & Manages user roles and permissions within the system. \\
-\hline
-UC-13.1 & View Role List & Admin & Retrieves list of all roles in the system. \\
-\hline
-UC-13.2 & View Role Detail & Admin & Displays detailed information of a specific role and its permissions. \\
-\hline
-UC-13.3 & Create New Role & Admin & Allows admins to create new custom roles with a name and description. \\
-\hline
-UC-13.4 & Update Role & Admin & Allows admins to update a role's name and description. \\
-\hline
-UC-13.5 & Delete Role & Admin & Allows admins to delete roles from the system. \\
-\hline
-UC-13.6 & Update Role Permissions & Admin & Assigns route access rights to roles by granting or revoking permissions. \\
 \hline
 UC-15 & Identity Verification & Freelancer & Manages freelancer identity verification document submission and review. \\
 \hline

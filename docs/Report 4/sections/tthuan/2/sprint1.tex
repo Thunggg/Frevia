@@ -3,6 +3,22 @@
 % Authentication and Role Management
 % =================================================================
 
+% ================= Verify JWT =================
+\subsection{Verify jwt}
+
+Verify JWT is the shared security guard protecting API endpoints across all modules.
+Every incoming HTTP request with a Bearer token is intercepted, validated for cryptographic
+signature and expiration time, and verified against the database to guarantee the associated
+session remains active and has not been revoked.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/VerifyJwt}{Class diagram of Verify JWT}{fig:tthuan-cls-verify-jwt}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/VerifyJwt}{Sequence diagram of Verify JWT}{fig:tthuan-seq-verify-jwt}
+
 % ================= Authentication =================
 \subsection{Authentication}
 

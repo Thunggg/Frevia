@@ -1,13 +1,15 @@
 \paragraph{Authentication}
 
 % =================================================================
-\subparagraph{UC-01 Register}
+% UC-01 Login with Google
+% =================================================================
+\subparagraph{UC-01 Login with Google}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-01 Register} \\ \hline
+UC ID and Name & \multicolumn{3}{l|}{UC-01 Login with Google} \\ \hline
 \endfirsthead
 \hline
 \endhead
@@ -15,10 +17,227 @@ UC ID and Name & \multicolumn{3}{l|}{UC-01 Register} \\ \hline
 \endfoot
 \endlastfoot
 
-Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
+Primary Actor: & Guest & Secondary Actors: & Google OAuth Server \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Login with Google'' button on the login or registration page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to login/register using Google OAuth.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is not currently authenticated. \newline
+\textbf{PRE-2} The system is connected to the Google OAuth Server.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The user is authenticated and a JWT is issued and stored in an httpOnly cookie. \newline
+\textbf{POST-2} If the Google account is new to the system, a user account is automatically created with the Client role by default. \newline
+\textbf{POST-3} The user is redirected to their role-appropriate dashboard.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Successful Google Login} \newline
+1. Guest clicks the ``Login with Google'' button. \newline
+2. The system redirects the Guest to the Google OAuth consent screen. \newline
+3. Guest grants permission on the Google consent screen. \newline
+4. Google redirects back to the system with an authorization code. \newline
+5. The system exchanges the authorization code for a Google access token. \newline
+6. The system retrieves the user's profile information (email, name) from Google. \newline
+7. The system checks whether an account with the returned email already exists. \newline
+8. The system loads the existing user record (or creates a new user if not found). \newline
+9. The system issues a JWT and stores it in an httpOnly cookie. \newline
+10. The system redirects the Guest to the role-appropriate dashboard.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.3 Google Permission Denied} \newline
+1. Guest denies permission on the Google consent screen. \newline
+2. The system displays the message ``Google login was cancelled. Please try again.'' \newline
+3. Return to step A.1.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 New Google Account} \newline
+1. The system detects that no account exists for the retrieved Google email. \newline
+2. The system creates a new user account with the email and name from Google, assigned the Client role. \newline
+3. Proceed to step A.9.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 Account Suspended} \newline
+1. The system detects that the matched account is suspended or banned. \newline
+2. The system displays the message ``Your account has been suspended. Please contact support.'' \newline
+3. The use case ends.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Google OAuth Failure} \newline
+1. Communication with the Google OAuth Server fails during code exchange or profile retrieval. \newline
+2. The system displays the message ``Authentication with Google failed. Please try again.'' \newline
+3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02: Database Connection Failure} \newline
+1. The system fails to query or persist user session data in the database. \newline
+2. The system displays the message ``Login failed. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-UA-01: Google OAuth shall use the standard OAuth 2.0 authorization code flow. \newline
+BR-UA-02: A Google account not previously registered in the system shall be automatically registered with the Client role. \newline
+BR-UA-03: Suspended or banned accounts shall not be permitted to authenticate. \newline
+BR-UA-04: JWT tokens shall be stored in secure httpOnly cookies.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Auto-registered accounts via Google OAuth do not require email verification, as Google has already verified the email address. The redirect destination after login is determined by the user's role (Client or Freelancer dashboard).
+} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{
+Google OAuth 2.0 credentials are configured in the system. The Google OAuth Server is accessible at the time of login.
+} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-02 Login
+% =================================================================
+\subparagraph{UC-02 Login}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-02 Login} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
+Primary Actor: & Guest & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user submits their email and password on the login page.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to log in using email/password and JWT authentication.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is not currently authenticated. \newline
+\textbf{PRE-2} The user has a registered account with email and password.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The user is authenticated and a JWT is issued and stored in an httpOnly cookie. \newline
+\textbf{POST-2} An active session record is created in the database. \newline
+\textbf{POST-3} The user is redirected to their role-appropriate dashboard.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Successful Login} \newline
+1. Guest navigates to the login page. \newline
+2. Guest enters their email and password. \newline
+3. Guest clicks the ``Login'' button. \newline
+4. The system validates that both fields are not empty. \newline
+5. The system looks up the account by email. \newline
+6. The system verifies the provided password against the stored hash. \newline
+7. The system checks that the account's email has been verified and the account is active. \newline
+8. The system creates a session record, issues a JWT, and stores it in an httpOnly cookie. \newline
+9. The system redirects the Guest to the role-appropriate dashboard.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Required Fields Missing} \newline
+1. The system detects that the email or password field is empty. \newline
+2. The system displays the message ``Email and password are required.'' \newline
+3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Account Not Found} \newline
+1. The system finds no account associated with the provided email. \newline
+2. The system displays the message ``Invalid email or password.'' \newline
+3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Account Suspended} \newline
+1. The system finds that the matched account has been suspended or banned. \newline
+2. The system displays the message ``Your account has been suspended. Please contact support.'' \newline
+3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Incorrect Password} \newline
+1. The system detects that the provided password does not match the stored hash. \newline
+2. The system displays the message ``Invalid email or password.'' \newline
+3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
+& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 Email Not Verified} \newline
+1. The system detects that the account's email has not been verified. \newline
+2. The system displays the message ``Please verify your email before logging in. Resend verification email?'' \newline
+3. Return to step A.2.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Database Connection Failure} \newline
+1. The system fails to connect to the database to verify credentials or create a session. \newline
+2. The system displays the message ``Login failed. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-UA-05: JWT shall be stored exclusively in an httpOnly cookie. \newline
+BR-UA-06: The system shall not distinguish between ``account not found'' and ``incorrect password'' in error messages to prevent account enumeration. \newline
+BR-UA-07: Accounts with unverified emails shall not be permitted to log in. \newline
+BR-UA-08: Suspended accounts shall not be permitted to authenticate.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+The redirect destination after login is determined by the user's role (Client, Freelancer, or Admin dashboard).
+} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Passwords are stored as hashed values in the database.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-03 Logout
+% =================================================================
+\subparagraph{UC-03 Logout}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-03 Logout} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
+Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user clicks the ``Logout'' button.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to logout and terminate authentication session.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is currently authenticated with a valid JWT stored in an httpOnly cookie.
+} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The session record is deleted from the database and the token is invalidated. \newline
+\textbf{POST-2} The httpOnly cookie is cleared on the client side. \newline
+\textbf{POST-3} The user is redirected to the login page.
+} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Successful Logout} \newline
+1. Authenticated user clicks the ``Logout'' button. \newline
+2. The system sends a logout request to the server with the session credentials. \newline
+3. The server validates the JWT and identifies the active session. \newline
+4. The server deletes the session from the database. \newline
+5. The server clears the httpOnly cookie. \newline
+6. The system redirects the user to the login page.
+} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Database Connection Failure} \newline
+1. The server fails to delete the session in the database. \newline
+2. The system displays the message ``Logout failed. Please try again later.'' \newline
+3. The use case ends.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-UA-09: Logout must invalidate the session on the server side before clearing the cookie to prevent token reuse. \newline
+BR-UA-10: Terminated sessions shall be rejected on all subsequent authenticated requests.
+} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{
+Terminating the server-side session ensures that any refresh tokens or access tokens derived from the session can no longer access protected endpoints.
+} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The database is accessible to process session deletion.} \\ \hline
+\end{longtable}
+}
+
+% =================================================================
+% UC-04 Register
+% =================================================================
+\subparagraph{UC-04 Register}
+
+{\singlespacing
+\setlength{\extrarowheight}{4pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-04 Register} \\ \hline
+\endfirsthead
+\hline
+\endhead
+\hline
+\endfoot
+\endlastfoot
+
+Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & Email Server \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a guest submits the registration form on the registration page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows guests to create a new account by providing their full name, email, password, and selecting a role (Client or Freelancer). The system sends a one-time password (OTP) to the provided email for inline verification. Upon successful OTP verification and form submission, the account is created and activated immediately.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to create new accounts using email and password.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The system is connected to the email server.
@@ -75,23 +294,23 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Required Fields Mis
 1. Guest clicks ``Continue to Profile'' without checking the Terms of Service checkbox. \newline
 2. The system displays the message ``You must agree to the Terms of Service and Privacy Policy to continue.'' \newline
 3. Return to step A.9.} \\ \hline
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Email Server Failure} \newline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Email Server Failure} \newline
 1. The system fails to send the OTP email. \newline
 2. The system displays the message ``Unable to send OTP. Please try again later.'' \newline
 3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
-1. The system fails to create the user account. \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02: Database Connection Failure} \newline
+1. The system fails to create the user account in the database. \newline
 2. The system displays the message ``Registration failed. Please try again later.'' \newline
 3. The use case ends.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-UA-10: Only Guest users may register a new account. \newline
-BR-UA-11: Email must be unique across all accounts in the system. \newline
-BR-UA-12: The user must select either the Client or Freelancer role at registration; no default role is assigned. \newline
-BR-UA-13: Passwords must be stored as hashed values; plain-text passwords shall never be stored. \newline
-BR-UA-14: The guest must accept the Terms of Service and Privacy Policy before the account is created. \newline
-BR-UA-15: Email verification is performed inline via OTP during registration; the account is activated upon successful OTP validation.
+BR-UA-11: Only Guest users may register a new account. \newline
+BR-UA-12: Email must be unique across all accounts in the system. \newline
+BR-UA-13: The user must select either the Client or Freelancer role at registration; no default role is assigned. \newline
+BR-UA-14: Passwords must be stored as hashed values; plain-text passwords shall never be stored. \newline
+BR-UA-15: The guest must accept the Terms of Service and Privacy Policy before the account is created. \newline
+BR-UA-16: Email verification is performed inline via OTP during registration; the account is activated upon successful OTP validation.
 } \\ \hline
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
 The OTP sent via email shall expire after 10 minutes. If expired, the guest may click ``Send OTP'' again to receive a new code. Each OTP is single-use and is invalidated immediately after successful verification.
@@ -103,82 +322,7 @@ The email server is configured and accessible at the time of registration. Passw
 }
 
 % =================================================================
-\subparagraph{UC-02 Google Login}
-
-{\singlespacing
-\setlength{\extrarowheight}{4pt}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-02 Google Login} \\ \hline
-\endfirsthead
-\hline
-\endhead
-\hline
-\endfoot
-\endlastfoot
-
-Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
-Primary Actor: & Guest & Secondary Actors: & Google OAuth Server \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Login with Google'' button on the login or registration page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows guests to authenticate or register using their Google account via OAuth 2.0. Upon success, the system issues a JWT stored in an httpOnly cookie and redirects the user to the appropriate dashboard based on their role.} \\ \hline
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is not currently authenticated. \newline
-\textbf{PRE-2} The system is connected to the Google OAuth Server.
-} \\ \hline
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The user is authenticated and a JWT is issued and stored in an httpOnly cookie. \newline
-\textbf{POST-2} If the Google account is new to the system, a user account is automatically created with the Client role by default. \newline
-\textbf{POST-3} The user is redirected to their role-appropriate dashboard.
-} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Successful Google Login} \newline
-1. Guest clicks the ``Login with Google'' button. \newline
-2. The system redirects the Guest to the Google OAuth consent screen. \newline
-3. Guest grants permission on the Google consent screen. \newline
-4. Google redirects back to the system with an authorization code. \newline
-5. The system exchanges the authorization code for a Google access token. \newline
-6. The system retrieves the user's profile information (email, name) from Google. \newline
-7. The system checks whether an account with the returned email already exists. \newline
-8. The system loads the existing user record. \newline
-9. The system issues a JWT and stores it in an httpOnly cookie. \newline
-10. The system redirects the Guest to the role-appropriate dashboard.
-} \\ \hline
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.3 Google Permission Denied} \newline
-1. Guest denies permission on the Google consent screen. \newline
-2. The system displays the message ``Google login was cancelled. Please try again.'' \newline
-3. Return to step A.1.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 New Google Account} \newline
-1. The system determines that no account exists for the returned email. \newline
-2. The system automatically creates a new account using the Google profile data, assigning the Client role by default. \newline
-3. Proceed to step A.9.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.8 Account Suspended} \newline
-1. The system finds that the matched account has been suspended. \newline
-2. The system displays the message ``Your account has been suspended. Please contact support.'' \newline
-3. The use case ends.} \\ \hline
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Google Token Exchange Failure} \newline
-1. The system fails to exchange the authorization code for a Google access token. \newline
-2. The system displays the message ``Unable to connect to Google. Please try again later.'' \newline
-3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Database Connection Failure} \newline
-1. The system fails to issue or store the JWT. \newline
-2. The system displays the message ``Authentication failed. Please try again later.'' \newline
-3. The use case ends.} \\ \hline
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-UA-01: JWT shall be stored exclusively in an httpOnly cookie to prevent client-side script access. \newline
-BR-UA-02: A Google account not previously registered in the system shall be automatically registered with the Client role. \newline
-BR-UA-03: Suspended accounts shall not be permitted to authenticate.
-} \\ \hline
-Other Information: & \multicolumn{3}{L{11.1cm}|}{
-Auto-registered accounts via Google OAuth do not require email verification, as Google has already verified the email address. The redirect destination after login is determined by the user's role (Client or Freelancer dashboard).
-} \\ \hline
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{
-Google OAuth 2.0 credentials are configured in the system. The Google OAuth Server is accessible at the time of login.
-} \\ \hline
-\end{longtable}
-}
-
+% UC-05 Forgot Password
 % =================================================================
 \subparagraph{UC-05 Forgot Password}
 
@@ -194,10 +338,10 @@ UC ID and Name & \multicolumn{3}{l|}{UC-05 Forgot Password} \\ \hline
 \endfoot
 \endlastfoot
 
-Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & Email Server \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Forgot Password'' link on the login page and submits their email address.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users who have forgotten their password to request a password reset link via email. The user receives a time-limited link to set a new password.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to request password reset via email verification link.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The system is connected to the email server.
@@ -205,7 +349,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A password reset link is sent to the provided email address if an account exists. \newline
 \textbf{POST-2} The user is informed to check their email regardless of whether the account exists (to prevent email enumeration). \newline
-\textbf{POST-3} Upon visiting the reset link and submitting a new password, the account password is updated and all existing JWTs are invalidated.
+\textbf{POST-3} Upon visiting the reset link and submitting a new password, the account password is updated and all existing JWT sessions are invalidated.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Successful Password Reset} \newline
@@ -224,7 +368,7 @@ Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 13. Guest enters and confirms the new password. \newline
 14. Guest clicks the ``Reset Password'' button. \newline
 15. The system validates the new password and updates the account password. \newline
-16. The system invalidates all existing JWTs associated with the account. \newline
+16. The system invalidates all existing sessions associated with the account. \newline
 17. The system displays the message ``Password reset successful. You may now log in with your new password.''
 } \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Invalid Email Format} \newline
@@ -247,21 +391,21 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Invalid Email Forma
 1. The system detects that the new password does not meet the strength requirements or the confirmation does not match. \newline
 2. The system displays the message ``Passwords do not match or do not meet the requirements.'' \newline
 3. Return to step A.13.} \\ \hline
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Database Connection Failure} \newline
 1. The system fails to generate or store the reset token. \newline
 2. The system displays the message ``An error occurred. Please try again later.'' \newline
 3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02 Email Server Failure} \newline
+& \multicolumn{3}{L{11.1cm}|}{\textbf{EX-02: Email Server Failure} \newline
 1. The system fails to send the reset email. \newline
 2. The system displays the message ``Unable to send reset email. Please try again later.'' \newline
 3. The use case ends.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-UA-15: The system shall return the same response message regardless of whether the submitted email is registered, to prevent email enumeration. \newline
-BR-UA-16: Password reset tokens shall expire after 1 hour. \newline
-BR-UA-17: Each reset token is single-use; it is invalidated immediately after the password is successfully reset. \newline
-BR-UA-18: Upon successful password reset, all active JWTs for the account shall be invalidated to terminate any existing sessions.
+BR-UA-17: The system shall return the same response message regardless of whether the submitted email is registered, to prevent email enumeration. \newline
+BR-UA-18: Password reset tokens shall expire after 1 hour. \newline
+BR-UA-19: Each reset token is single-use; it is invalidated immediately after the password is successfully reset. \newline
+BR-UA-20: Upon successful password reset, all active JWTs and sessions for the account shall be invalidated to terminate any existing sessions.
 } \\ \hline
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
 This use case applies only to accounts registered via email and password. Accounts authenticated exclusively via Google OAuth do not have a stored password and shall be directed to use Google Login instead.
@@ -269,136 +413,5 @@ This use case applies only to accounts registered via email and password. Accoun
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{
 The email server is configured and accessible. A token storage mechanism is available to persist and validate reset tokens.
 } \\ \hline
-\end{longtable}
-}
-
-% =================================================================
-\subparagraph{UC-07 Login}
-
-{\singlespacing
-\setlength{\extrarowheight}{4pt}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-07 Login} \\ \hline
-\endfirsthead
-\hline
-\endhead
-\hline
-\endfoot
-\endlastfoot
-
-Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
-Primary Actor: & Guest & Secondary Actors: & N/A \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user submits their email and password on the login page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows guests to authenticate using their registered email and password. Upon success, the system issues a JWT stored in an httpOnly cookie and redirects the user to their role-appropriate dashboard.} \\ \hline
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is not currently authenticated. \newline
-\textbf{PRE-2} The user has a registered account with email and password.
-} \\ \hline
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The user is authenticated and a JWT is issued and stored in an httpOnly cookie. \newline
-\textbf{POST-2} The user is redirected to their role-appropriate dashboard.
-} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Successful Login} \newline
-1. Guest navigates to the login page. \newline
-2. Guest enters their email and password. \newline
-3. Guest clicks the ``Login'' button. \newline
-4. The system validates that both fields are not empty. \newline
-5. The system looks up the account by email. \newline
-6. The system verifies the provided password against the stored hash. \newline
-7. The system checks that the account's email has been verified. \newline
-8. The system issues a JWT and stores it in an httpOnly cookie. \newline
-9. The system redirects the Guest to the role-appropriate dashboard.
-} \\ \hline
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.4 Required Fields Missing} \newline
-1. The system detects that the email or password field is empty. \newline
-2. The system displays the message ``Email and password are required.'' \newline
-3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Account Not Found} \newline
-1. The system finds no account associated with the provided email. \newline
-2. The system displays the message ``Invalid email or password.'' \newline
-3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.5 Account Suspended} \newline
-1. The system finds that the matched account has been suspended. \newline
-2. The system displays the message ``Your account has been suspended. Please contact support.'' \newline
-3. The use case ends.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.6 Incorrect Password} \newline
-1. The system detects that the provided password does not match the stored hash. \newline
-2. The system displays the message ``Invalid email or password.'' \newline
-3. Return to step A.2.} \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
-& \multicolumn{3}{L{11.1cm}|}{\textbf{A.7 Email Not Verified} \newline
-1. The system detects that the account's email has not been verified. \newline
-2. The system displays the message ``Please verify your email before logging in. Resend verification email?'' \newline
-3. Return to step A.2.} \\ \hline
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
-1. The system fails to issue or store the JWT. \newline
-2. The system displays the message ``Login failed. Please try again later.'' \newline
-3. The use case ends.} \\ \hline
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-UA-04: JWT shall be stored exclusively in an httpOnly cookie. \newline
-BR-UA-05: The system shall not distinguish between ``account not found'' and ``incorrect password'' in error messages to prevent account enumeration. \newline
-BR-UA-06: Accounts with unverified emails shall not be permitted to log in. \newline
-BR-UA-07: Suspended accounts shall not be permitted to authenticate.
-} \\ \hline
-Other Information: & \multicolumn{3}{L{11.1cm}|}{
-The redirect destination after login is determined by the user's role (Client, Freelancer, or Admin dashboard).
-} \\ \hline
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Passwords are stored as hashed values in the database.} \\ \hline
-\end{longtable}
-}
-
-% =================================================================
-\subparagraph{UC-08 Logout}
-
-{\singlespacing
-\setlength{\extrarowheight}{4pt}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-08 Logout} \\ \hline
-\endfirsthead
-\hline
-\endhead
-\hline
-\endfoot
-\endlastfoot
-
-Created By: & Nguyen Tien Thuan & Date Created: & 10/09/2026 \\ \hline
-Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user clicks the ``Logout'' button.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to terminate their session by invalidating the JWT on the server side and clearing the httpOnly cookie on the client side.} \\ \hline
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is currently authenticated with a valid JWT stored in an httpOnly cookie.
-} \\ \hline
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The JWT is blacklisted on the server and can no longer be used for authentication. \newline
-\textbf{POST-2} The httpOnly cookie is cleared on the client side. \newline
-\textbf{POST-3} The user is redirected to the login page.
-} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Successful Logout} \newline
-1. Authenticated user clicks the ``Logout'' button. \newline
-2. The system sends a logout request to the server, including the current JWT. \newline
-3. The server validates the JWT and adds it to the blacklist. \newline
-4. The server clears the httpOnly cookie. \newline
-5. The system redirects the user to the login page.
-} \\ \hline
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01 Database Connection Failure} \newline
-1. The server fails to blacklist the token. \newline
-2. The system displays the message ``Logout failed. Please try again later.'' \newline
-3. The use case ends.} \\ \hline
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-UA-08: Logout must invalidate the JWT on the server side before clearing the cookie to prevent token reuse. \newline
-BR-UA-09: Blacklisted tokens shall be rejected on all subsequent authenticated requests.
-} \\ \hline
-Other Information: & \multicolumn{3}{L{11.1cm}|}{
-Blacklisted tokens should be purged from storage after their natural expiry time to prevent indefinite growth of the blacklist.
-} \\ \hline
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{A token blacklist mechanism (e.g., Redis or database table) is available in the system.} \\ \hline
 \end{longtable}
 }

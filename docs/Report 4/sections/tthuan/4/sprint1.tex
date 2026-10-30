@@ -3,6 +3,35 @@
 % Class specifications for Authentication and Role Management
 % =================================================================
 
+\subsection{AuthGuard Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AuthGuard(}\newline\code{reflector: Reflector,}\newline\code{tokenService: TokenService,}\newline\code{sessionRepo: SessionRepository)} &
+A method to initialize the authentication guard with dependency services.
+\newline -- \code{reflector}: \code{Reflector} -- metadata reflector to check if a route is marked public.
+\newline -- \code{tokenService}: \code{TokenService} -- token decoding and verification utility.
+\newline -- \code{sessionRepo}: \code{SessionRepository} -- repository to query session active status.
+\newline -- \textit{Returns:} \code{void} -- constructor. \\ \hline
+
+02 & \code{canActivate(context: ExecutionContext)} &
+A method to inspect the execution context, extract the Bearer token, verify its validity and expiration, and verify that the session has not been revoked.
+\newline -- \code{context}: \code{ExecutionContext} -- execution context containing HTTP request/response.
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- \code{true} if authentication succeeds, throws \code{UnauthorizedException (401)} otherwise. \\ \hline
+
+03 & \code{extractTokenFromHeader(request: Request)} &
+A helper method to extract the Bearer token from the incoming HTTP Authorization header.
+\newline -- \code{request}: \code{Request} -- current Express request object.
+\newline -- \textit{Returns:} \code{string | null} -- extracted raw token string, or \code{null} if not found. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{reflector} & \code{Reflector} \\ \hline
+02 & \code{tokenService} & \code{TokenService} \\ \hline
+03 & \code{sessionRepo} & \code{SessionRepository} \\ \hline
+\end{ClassAttributeTable}
+
 \subsection{AuthController Class}
 
 \paragraph{ClassMethod}
