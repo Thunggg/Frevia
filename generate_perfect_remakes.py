@@ -216,43 +216,42 @@ def build_uc_06_05():
     return mxfile
 
 # ==============================================================================
-# 2. UC-06.06 UPDATE ROLE PERMISSIONS (Full Logic with Alt on Every DB Query)
+# 2. UC-06.06 UPDATE ROLE PERMISSIONS (Full Logic)
 # ==============================================================================
 def build_uc_06_06():
-    Y_BOTTOM = 3150
+    Y_BOTTOM = 3050
     mxfile, root = create_base_diagram("UC-06_06-update-role-permissions", "UC-06.06 Update Role Permissions", 1654, Y_BOTTOM + 100)
 
     # Actor
     add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
     add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
-    add_cell(root, "act_actor", style=STYLE_ACT_BAR, x=95, y=340, w=10, h=2655) # 340 to 2995
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, x=95, y=340, w=10, h=2585) # 340 to 2925
 
     # Lifelines
     add_cell(root, "lf_view", value=":RoleView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="lf_view", x=70, y=100, w=10, h=2655) # 340 to 2995
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="lf_view", x=70, y=100, w=10, h=2585) # 340 to 2925
     add_cell(root, "act_self_validate", style=STYLE_SELF_BAR, parent="lf_view", x=75, y=170, w=10, h=20) # 410 to 430
 
     add_cell(root, "lf_route", value=":RoleRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
-    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="lf_route", x=55, y=330, w=10, h=2375) # 570 to 2945
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="lf_route", x=55, y=330, w=10, h=2305) # 570 to 2875
 
     add_cell(root, "lf_controller", value=":RoleController", style=STYLE_LIFELINE, x=640, y=240, w=140, h=Y_BOTTOM - 240)
-    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="lf_controller", x=65, y=650, w=10, h=2005) # 890 to 2895
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="lf_controller", x=65, y=650, w=10, h=1935) # 890 to 2825
 
     add_cell(root, "lf_service", value=":RoleService", style=STYLE_LIFELINE, x=850, y=240, w=140, h=Y_BOTTOM - 240)
-    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="lf_service", x=65, y=700, w=10, h=1905) # 940 to 2845
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="lf_service", x=65, y=700, w=10, h=1835) # 940 to 2775
     add_cell(root, "act_self_find_role", style=STYLE_SELF_BAR, parent="lf_service", x=70, y=1040, w=10, h=20) # 1280 to 1300
     add_cell(root, "act_self_val_perm", style=STYLE_SELF_BAR, parent="lf_service", x=70, y=1650, w=10, h=20) # 1890 to 1910
-    add_cell(root, "act_self_update_perm", style=STYLE_SELF_BAR, parent="lf_service", x=70, y=2275, w=10, h=20) # 2515 to 2535
 
     add_cell(root, "lf_repo", value=":RoleRepo", style=STYLE_LIFELINE, x=1060, y=240, w=130, h=Y_BOTTOM - 240)
     add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="lf_repo", x=60, y=750, w=10, h=230) # 990 to 1220
     add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="lf_repo", x=60, y=1360, w=10, h=230) # 1600 to 1830
-    add_cell(root, "act_repo_3", style=STYLE_ACT_BAR, parent="lf_repo", x=60, y=1985, w=10, h=230) # 2225 to 2455
+    add_cell(root, "act_repo_3", style=STYLE_ACT_BAR, parent="lf_repo", x=60, y=1985, w=10, h=500) # 2225 to 2725
 
     add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
     add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="lf_prisma", x=60, y=800, w=10, h=140) # 1040 to 1180
     add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="lf_prisma", x=60, y=1410, w=10, h=140) # 1650 to 1790
-    add_cell(root, "act_prisma_3", style=STYLE_ACT_BAR, parent="lf_prisma", x=60, y=2035, w=10, h=140) # 2275 to 2415
+    add_cell(root, "act_prisma_3", style=STYLE_ACT_BAR, parent="lf_prisma", x=60, y=2035, w=10, h=410) # 2275 to 2685
 
     add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
     add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
@@ -260,6 +259,7 @@ def build_uc_06_06():
     add_cell(root, "act_db_1", style=STYLE_ACT_BAR, x=1475, y=1090, w=10, h=50) # 1090 to 1140
     add_cell(root, "act_db_2", style=STYLE_ACT_BAR, x=1475, y=1700, w=10, h=50) # 1700 to 1750
     add_cell(root, "act_db_3", style=STYLE_ACT_BAR, x=1475, y=2325, w=10, h=50) # 2325 to 2375
+    add_cell(root, "act_db_4", style=STYLE_ACT_BAR, x=1475, y=2595, w=10, h=50) # 2595 to 2645
 
     # Messages
     add_edge(root, "m1", value="1. Select permissions for role", style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
@@ -300,7 +300,7 @@ def build_uc_06_06():
              points=[(965, 1260), (965, 1280)], target="act_self_find_role")
 
     # Outer Alt 1 (Role Existence)
-    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1320, w=1500, h=1755)
+    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1320, w=1500, h=1665)
     add_cell(root, "g_find_1", value="[role not found]", style=STYLE_GUARD, x=120, y=1320, w=150, h=30)
     add_edge(root, "m12_1_1", value="12.1.1. throw 404 RoleNotFound", style=STYLE_REPLY, sx=915, sy=1360, tx=715, ty=1360)
     add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1410, tx=505, ty=1410)
@@ -321,7 +321,7 @@ def build_uc_06_06():
              points=[(965, 1870), (965, 1890)], target="act_self_val_perm")
 
     # Nested Alt 2 (Permission validation)
-    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1930, w=1470, h=1125)
+    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1930, w=1470, h=1035)
     add_cell(root, "g_perm_1", value="[activeIds.length !==&lt;br&gt;permissionIds.length]", style=STYLE_GUARD, x=120, y=1930, w=160, h=36)
     add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 400 InvalidPermissionIds", style=STYLE_REPLY, sx=915, sy=1975, tx=715, ty=1975)
     add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return 400 response", style=STYLE_REPLY, sx=705, sy=2025, tx=505, ty=2025)
@@ -331,30 +331,24 @@ def build_uc_06_06():
     add_edge(root, "div_alt_2", style=STYLE_DIVIDER, sx=55, sy=2175, tx=1525, ty=2175)
     add_cell(root, "g_perm_2", value="[activeIds.length ===&lt;br&gt;permissionIds.length]", style=STYLE_GUARD, x=120, y=2180, w=160, h=36)
 
-    # Step 3: Replace permissions & Handle update permissions result
+    # Step 3: Replace permissions & reload role
     add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. replaceRolePermissions(id, permissionIds)", style=STYLE_MSG, sx=925, sy=2225, tx=1120, ty=2225)
     add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. prisma.$transaction([deleteMany, createMany])", style=STYLE_MSG, sx=1130, sy=2275, tx=1310, ty=2275)
     add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Execute DELETE &amp; INSERT queries", style=STYLE_MSG, sx=1320, sy=2325, tx=1475, ty=2325)
-    add_edge(root, "m12_2_7_2_4", value="12.2.7.2.4. Return result or error", style=STYLE_REPLY, sx=1475, sy=2375, tx=1320, ty=2375)
-    add_edge(root, "m12_2_7_2_5", value="12.2.7.2.5. Return result or propagate error", style=STYLE_REPLY, sx=1310, sy=2415, tx=1130, ty=2415)
-    add_edge(root, "m12_2_7_2_6", value="12.2.7.2.6. Return result or propagate error", style=STYLE_REPLY, sx=1120, sy=2455, tx=925, ty=2455)
-    add_edge(root, "m12_2_7_2_7", value="12.2.7.2.7. Handle update permissions result", style=STYLE_MSG, sx=925, sy=2495, tx=930, ty=2515,
-             points=[(965, 2495), (965, 2515)], target="act_self_update_perm")
+    add_edge(root, "m12_2_7_2_4", value="12.2.7.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=2375, tx=1320, ty=2375)
+    add_edge(root, "m12_2_7_2_5", value="12.2.7.2.5. Return result", style=STYLE_REPLY, sx=1310, sy=2415, tx=1130, ty=2415)
+    add_edge(root, "m12_2_7_2_6", value="12.2.7.2.6. Return result", style=STYLE_REPLY, sx=1120, sy=2455, tx=925, ty=2455)
 
-    # Nested Alt 3 (Update permissions check)
-    add_cell(root, "fr_alt_3", value="alt", style=STYLE_FRAME, x=70, y=2550, w=1440, h=485)
-    add_cell(root, "g_update_1", value="[update permissions&lt;br&gt;failed]", style=STYLE_GUARD, x=120, y=2550, w=160, h=36)
-    add_edge(root, "m12_2_7_2_7_1_1", value="12.2.7.2.7.1.1. throw 500 FailedToSetRolePermissions", style=STYLE_REPLY, sx=915, sy=2595, tx=715, ty=2595)
-    add_edge(root, "m12_2_7_2_7_1_2", value="12.2.7.2.7.1.2. Return 500 response", style=STYLE_REPLY, sx=705, sy=2645, tx=505, ty=2645)
-    add_edge(root, "m12_2_7_2_7_1_3", value="12.2.7.2.7.1.3. Return 500 response", style=STYLE_REPLY, sx=495, sy=2695, tx=305, ty=2695)
-    add_edge(root, "m12_2_7_2_7_1_4", value='12.2.7.2.7.1.4. Show message "Failed to update role permissions"', style=STYLE_REPLY, sx=295, sy=2745, tx=105, ty=2745)
-
-    add_edge(root, "div_alt_3", style=STYLE_DIVIDER, sx=70, sy=2795, tx=1510, ty=2795)
-    add_cell(root, "g_update_2", value="[update permissions&lt;br&gt;successfully]", style=STYLE_GUARD, x=120, y=2800, w=160, h=36)
-    add_edge(root, "m12_2_7_2_7_2_1", value="12.2.7.2.7.2.1. Return updated role", style=STYLE_REPLY, sx=915, sy=2845, tx=715, ty=2845)
-    add_edge(root, "m12_2_7_2_7_2_2", value="12.2.7.2.7.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=2895, tx=505, ty=2895)
-    add_edge(root, "m12_2_7_2_7_2_3", value="12.2.7.2.7.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=2945, tx=305, ty=2945)
-    add_edge(root, "m12_2_7_2_7_2_4", value='12.2.7.2.7.2.4. Show message "Permissions updated successfully"', style=STYLE_REPLY, sx=295, sy=2995, tx=105, ty=2995)
+    add_edge(root, "m12_2_7_2_7", value="12.2.7.2.7. findById(id)", style=STYLE_MSG, sx=925, sy=2495, tx=1120, ty=2495)
+    add_edge(root, "m12_2_7_2_8", value="12.2.7.2.8. prisma.role.findFirst({ where: { id }, include: { permissions } })", style=STYLE_MSG, sx=1130, sy=2545, tx=1310, ty=2545)
+    add_edge(root, "m12_2_7_2_9", value="12.2.7.2.9. Execute SELECT query", style=STYLE_MSG, sx=1320, sy=2595, tx=1475, ty=2595)
+    add_edge(root, "m12_2_7_2_10", value="12.2.7.2.10. Return updated role", style=STYLE_REPLY, sx=1475, sy=2645, tx=1320, ty=2645)
+    add_edge(root, "m12_2_7_2_11", value="12.2.7.2.11. Return updated role", style=STYLE_REPLY, sx=1310, sy=2685, tx=1130, ty=2685)
+    add_edge(root, "m12_2_7_2_12", value="12.2.7.2.12. Return updated role", style=STYLE_REPLY, sx=1120, sy=2725, tx=925, ty=2725)
+    add_edge(root, "m12_2_7_2_13", value="12.2.7.2.13. Return updated role", style=STYLE_REPLY, sx=915, sy=2775, tx=715, ty=2775)
+    add_edge(root, "m12_2_7_2_14", value="12.2.7.2.14. Return 200 response", style=STYLE_REPLY, sx=705, sy=2825, tx=505, ty=2825)
+    add_edge(root, "m12_2_7_2_15", value="12.2.7.2.15. Return 200 response", style=STYLE_REPLY, sx=495, sy=2875, tx=305, ty=2875)
+    add_edge(root, "m12_2_7_2_16", value='12.2.7.2.16. Show message "Permissions updated successfully"', style=STYLE_REPLY, sx=295, sy=2925, tx=105, ty=2925)
 
     return mxfile
 
