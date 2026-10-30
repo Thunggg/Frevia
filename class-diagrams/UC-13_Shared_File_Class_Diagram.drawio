@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="719" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ==================== COLUMN 1: ROUTES (x=60, w=560) ==================== -->
+    <mxCell id="sf_route" value="&lt;&lt;route&gt;&gt;&#xa;SharedFileRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="60" y="280" width="560" height="158" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_route_r0" value="+GET /contracts/:contractId/files (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
+      <mxGeometry y="56" width="560" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_route_r1" value="+POST /contracts/:contractId/files (AuthGuard, PermissionGuard, FileInterceptor)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
+      <mxGeometry y="90" width="560" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_route_r2" value="+DELETE /contracts/:contractId/files/:fileId (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
+      <mxGeometry y="124" width="560" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 2: CONTROLLER & GUARDS (x=700, w=500) ==================== -->
+    <mxCell id="sf_ctrl" value="SharedFileController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="700" y="80" width="500" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_ctrl_a0" value="-sharedFileService: SharedFileService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
+      <mxGeometry y="32" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
+      <mxGeometry y="62" width="500" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_ctrl_m0" value="+getSharedFiles(userId, roleName, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
+      <mxGeometry y="70" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_ctrl_m1" value="+uploadSharedFile(userId, roleName, contractId: number, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
+      <mxGeometry y="100" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_ctrl_m2" value="+deleteSharedFile(userId, roleName, contractId: number, fileId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
+      <mxGeometry y="130" width="500" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="700" y="280" width="500" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_a0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="32" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_a1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="62" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_a2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="92" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="122" width="500" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="130" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gAuth" vertex="1">
+      <mxGeometry y="160" width="500" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="700" y="510" width="500" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gPerm_a0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gPerm" vertex="1">
+      <mxGeometry y="32" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gPerm_a1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gPerm" vertex="1">
+      <mxGeometry y="62" width="500" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_gPerm" vertex="1">
+      <mxGeometry y="92" width="500" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_gPerm_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_gPerm" vertex="1">
+      <mxGeometry y="100" width="500" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 3: DTOS & TYPES (x=1280, w=420) ==================== -->
+    <mxCell id="sf_dtoUpload" value="&lt;&lt;dto&gt;&gt;&#xa;UploadSharedFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1280" y="60" width="420" height="222" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="112" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="146" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_r4" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="180" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoUpload_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
+      <mxGeometry y="214" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_dtoGet" value="&lt;&lt;dto&gt;&gt;&#xa;GetSharedFilesResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1280" y="312" width="420" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoGet_r0" value="+files: SharedFileType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoGet_r1" value="+length: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoGet_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
+      <mxGeometry y="112" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_dtoDelete" value="&lt;&lt;dto&gt;&gt;&#xa;DeleteSharedFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1280" y="462" width="420" height="154" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoDelete_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoDelete_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoDelete_r2" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
+      <mxGeometry y="112" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_dtoDelete_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
+      <mxGeometry y="146" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_typeShared" value="&lt;&lt;type&gt;&gt;&#xa;SharedFileType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1280" y="646" width="420" height="250" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="44" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="72" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="100" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="128" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="156" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="184" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="212" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_typeShared_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
+      <mxGeometry y="240" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 4: SERVICES & REPOSITORY (x=1780, w=520) ==================== -->
+    <mxCell id="sf_svc" value="SharedFileService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1780" y="60" width="520" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_a0" value="-sharedFileRepository: SharedFileRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_a1" value="-cloudinaryService: CloudinaryService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="92" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_m0" value="+getSharedFiles(userId, roleName, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_m1" value="+uploadSharedFile(userId, roleName, contractId, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_svc_m2" value="+deleteSharedFile(userId, roleName, contractId, fileId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
+      <mxGeometry y="160" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_uCloudinary" value="&lt;&lt;utility&gt;&gt;&#xa;CloudinaryService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1780" y="280" width="520" height="152" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_uCloudinary_m0" value="+isConfigured(): boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
+      <mxGeometry y="44" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_uCloudinary_m1" value="+uploadFile(file: Express.Multer.File, folder?: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
+      <mxGeometry y="74" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_uCloudinary_m2" value="+deleteFile(publicId: string): Promise&lt;any&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
+      <mxGeometry y="104" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_uCloudinary_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
+      <mxGeometry y="134" width="520" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_repo" value="SharedFileRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1780" y="462" width="520" height="220" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="62" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_m0" value="+create(data: { contractId, uploaderId, fileUrl, publicId, fileName? })" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="70" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_m1" value="+findById(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_m2" value="+findByContractId(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_m3" value="+softDelete(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="160" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_repo_m4" value="+findContractById(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
+      <mxGeometry y="190" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 5: DATABASE SCHEMAS (x=2380, w=320) ==================== -->
+    <mxCell id="sf_schemaFile" value="&lt;&lt;schema&gt;&gt;&#xa;SharedFile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2380" y="60" width="320" height="274" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="154" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="182" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="210" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_r7" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="238" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaFile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
+      <mxGeometry y="266" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_schemaContract" value="&lt;&lt;schema&gt;&gt;&#xa;Contract" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2380" y="374" width="320" height="162" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaContract_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaContract" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaContract_r1" value="+clientId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaContract" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaContract_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaContract" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaContract_r3" value="+status: ContractStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaContract" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaContract_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaContract" vertex="1">
+      <mxGeometry y="154" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_schemaUser" value="&lt;&lt;schema&gt;&gt;&#xa;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2380" y="576" width="320" height="162" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaUser_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaUser" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaUser_r1" value="+email: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaUser" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaUser_r2" value="+roleId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaUser" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaUser_r3" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaUser" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="sf_schemaUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaUser" vertex="1">
+      <mxGeometry y="154" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== EDGES / RELATIONSHIPS ==================== -->
+    <!-- Routes -> Controller & Guards -->
+    <mxCell id="sf_e_route_ctrl" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="sf_ctrl" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="660" y="320" />
+          <mxPoint x="660" y="160" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_route_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.42;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="sf_gAuth" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_e_route_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="sf_gPerm" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="660" y="399" />
+          <mxPoint x="660" y="575" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Controller -> Service (calls over top) -->
+    <mxCell id="sf_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_svc" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="950" y="20" />
+          <mxPoint x="2040" y="20" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Controller & Service -> DTOs & Types -->
+    <mxCell id="sf_e_ctrl_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.31;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoUpload" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_e_svc_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.36;exitDx=0;exitDy=0;entryX=1;entryY=0.31;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoUpload" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_e_ctrl_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoGet" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1240" y="176" />
+          <mxPoint x="1240" y="348" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_svc_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.55;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoGet" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1745" y="165" />
+          <mxPoint x="1745" y="348" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_ctrl_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoDelete" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1250" y="224" />
+          <mxPoint x="1250" y="508" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_svc_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoDelete" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1755" y="212" />
+          <mxPoint x="1755" y="508" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_svc_typeShared" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.95;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_typeShared" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1765" y="241" />
+          <mxPoint x="1765" y="721" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Service -> CloudinaryService (calls straight vertical) -->
+    <mxCell id="sf_e_svc_cloudinary" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.4;exitY=1;exitDx=0;exitDy=0;entryX=0.4;entryY=0;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_uCloudinary" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Service -> Repository (calls along left side corridor x=1725) -->
+    <mxCell id="sf_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_repo" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1725" y="193" />
+          <mxPoint x="1725" y="528" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Repository -> Schemas (maps to along right side corridor) -->
+    <mxCell id="sf_e_repo_file" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" parent="1" source="sf_repo" target="sf_schemaFile" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2335" y="506" />
+          <mxPoint x="2335" y="252" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="sf_e_repo_contract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.6;entryDx=0;entryDy=0;" parent="1" source="sf_repo" target="sf_schemaContract" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2355" y="561" />
+          <mxPoint x="2355" y="471" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Schemas Relationships (1) -->
+    <mxCell id="sf_rel_file_contract" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="sf_schemaFile" target="sf_schemaContract" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="sf_rel_contract_user" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="sf_schemaContract" target="sf_schemaUser" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

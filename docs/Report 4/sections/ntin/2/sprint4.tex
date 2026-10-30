@@ -1,0 +1,65 @@
+% =================================================================
+% FILE: sections/ntin/2/sprint4.tex -- Sprint 4 (Payment Management)
+% UC-43 Manage Payment. Figures are the vector PDFs exported from
+% class-diagrams/UC-43_Payment_Management_Class_Diagram.drawio and
+% sequence-diagrams/UC-43.<nn>-*.drawio into images/sprint4/ntin/.
+% =================================================================
+
+% ================= Payment Management =================
+\subsection{Payment Management}
+
+Payment Management covers the UC-43 financial transaction and payment
+infrastructure integrated with Stripe: connecting freelancer payout bank
+accounts via Stripe Connect Express, inspecting payout transfer histories and
+breakdowns, funding milestone escrow deposits, issuing milestone refunds,
+processing contract platform fees, authorizing milestone releases to
+freelancers, paying dispute arbitration fees, inspecting comprehensive account
+payment history and receipts, executing multi-party dispute settlement
+payouts, processing asynchronous Stripe webhook events, and synchronizing
+payment intent statuses with the payment gateway.
+
+\textbf{a.~Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of Payment Management}{fig:ntin-cls-payment-management}
+
+\textbf{b.~Sequence Diagram(s)}
+
+\subsubsection{UC-43.01 -- Connect Stripe Account}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Connect Stripe Account}{Sequence diagram of UC-43.01 Connect Stripe Account}{fig:ntin-seq-uc-43-01}
+
+\subsubsection{UC-43.02 -- View Payout History}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-View Payout History}{Sequence diagram of UC-43.02 View Payout History}{fig:ntin-seq-uc-43-02}
+
+\subsubsection{UC-43.03 -- View Payout Detail}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-View Payout Detail}{Sequence diagram of UC-43.03 View Payout Detail}{fig:ntin-seq-uc-43-03}
+
+\subsubsection{UC-43.04 -- Fund Milestone}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Fund Milestone}{Sequence diagram of UC-43.04 Fund Milestone}{fig:ntin-seq-uc-43-04}
+
+\subsubsection{UC-43.05 -- Refund Payment}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Refund Payment}{Sequence diagram of UC-43.05 Refund Payment}{fig:ntin-seq-uc-43-05}
+
+\subsubsection{UC-43.06 -- Pay Platform Fee}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Pay Platform Fee}{Sequence diagram of UC-43.06 Pay Platform Fee}{fig:ntin-seq-uc-43-06}
+
+\subsubsection{UC-43.07 -- Release Payment}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Release Payment}{Sequence diagram of UC-43.07 Release Payment}{fig:ntin-seq-uc-43-07}
+
+\subsubsection{UC-43.08 -- Pay Dispute Fee}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Pay Dispute Fee}{Sequence diagram of UC-43.08 Pay Dispute Fee}{fig:ntin-seq-uc-43-08}
+
+\subsubsection{UC-43.09 -- View Payment History}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-View Payment History}{Sequence diagram of UC-43.09 View Payment History}{fig:ntin-seq-uc-43-09}
+
+\subsubsection{UC-43.10 -- View Payment Detail}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-View Payment Detail}{Sequence diagram of UC-43.10 View Payment Detail}{fig:ntin-seq-uc-43-10}
+
+\subsubsection{UC-43.11 -- Execute Dispute Resolution Payment}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Execute Dispute Resolution Payment}{Sequence diagram of UC-43.11 Execute Dispute Resolution Payment}{fig:ntin-seq-uc-43-11}
+
+\subsubsection{UC-43.12 -- Handle Stripe Webhook Event}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Handle Stripe Webhook Event}{Sequence diagram of UC-43.12 Handle Stripe Webhook Event}{fig:ntin-seq-uc-43-12}
+
+\subsubsection{UC-43.13 -- Sync Payment Intent Status}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/sequence_sprint4-Sync Payment Intent Status}{Sequence diagram of UC-43.13 Sync Payment Intent Status}{fig:ntin-seq-uc-43-13}
+

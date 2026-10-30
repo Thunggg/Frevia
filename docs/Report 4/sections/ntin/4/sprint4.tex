@@ -1,0 +1,510 @@
+% =================================================================
+% FILE: sections/ntin/4/sprint4.tex -- Sprint 4 (Payment Management)
+% Class specifications for Payment Gateway, Escrow, and Stripe Integration
+% =================================================================
+
+\subsection{PaymentController Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PaymentController(}\newline\code{paymentService: PaymentService)} &
+A method to initialize the controller with the payment service dependency.
+\newline -- \code{paymentService}: \code{PaymentService} -- service encapsulating escrow and Stripe gateway logic.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createOnboardingLink(}\newline\code{userId: number,}\newline\code{body?: CreateOnboardingLinkBodyDTO)} &
+A method to generate a Stripe Connect Express onboarding URL for freelancer payout setup.
+\newline -- \code{userId}: \code{number} -- user identifier injected by \code{@UserActive('userId')}.
+\newline -- \code{body}: \code{CreateOnboardingLinkBodyDTO | undefined} -- optional custom returnUrl.
+\newline -- \textit{Returns:} \code{Promise<StripeOnboardingLinkResponseDTO>} -- onboarding redirect URL.
+\newline -- Route: \code{POST /payments/connect/onboarding-link}; authenticated endpoint. \\ \hline
+
+03 & \code{getConnectStatus(userId: number)} &
+A method to inspect the connected payout account status, onboarding completion, and payoutsEnabled flag.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \textit{Returns:} \code{Promise<StripeConnectStatusResponseDTO>} -- connect capability state.
+\newline -- Route: \code{GET /payments/connect/status}; authenticated endpoint. \\ \hline
+
+04 & \code{getSavedPaymentMethods(userId: number)} &
+A method to retrieve customer saved credit cards from Stripe for off-session 1-click payments.
+\newline -- \code{userId}: \code{number} -- customer user identifier.
+\newline -- \textit{Returns:} \code{Promise<GetSavedPaymentMethodsResponseDTO>} -- list of saved payment cards.
+\newline -- Route: \code{GET /payments/payment-methods}; authenticated endpoint. \\ \hline
+
+05 & \code{createCustomerPortalSession(}\newline\code{userId: number, returnUrl?: string)} &
+A method to create a Stripe Billing Customer Portal session for managing billing details.
+\newline -- \code{userId}: \code{number} -- customer user identifier.
+\newline -- \code{returnUrl}: \code{string | undefined} -- redirect URL upon exiting portal.
+\newline -- \textit{Returns:} \code{Promise<CreateCustomerPortalSessionResponseDTO>} -- portal session URL.
+\newline -- Route: \code{POST /payments/customer-portal}; authenticated endpoint. \\ \hline
+
+06 & \code{createPlatformFeeIntent(}\newline\code{userId: number, contractId: number)} &
+A method to initialize a Stripe PaymentIntent for paying contract activation platform fees.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier parsed by \code{ParseIntPipe}.
+\newline -- \textit{Returns:} \code{Promise<CreatePaymentIntentResponseDTO>} -- clientSecret and paymentIntentId.
+\newline -- Route: \code{POST /payments/contracts/:contractId/platform-fee/intent}; authenticated endpoint. \\ \hline
+
+07 & \code{createPlatformFeeCheckoutSession(}\newline\code{userId: number, contractId: number)} &
+A method to create a hosted Stripe Checkout session for paying contract platform fees.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<CreateCheckoutSessionResponseDTO>} -- checkout session URL.
+\newline -- Route: \code{POST /payments/contracts/:contractId/platform-fee/checkout-session}; authenticated endpoint. \\ \hline
+
+08 & \code{chargeSavedCardForPlatformFee(}\newline\code{userId: number, contractId: number,}\newline\code{body?: ChargeSavedCardBodyDTO)} &
+A method to execute off-session platform fee charging using a pre-saved credit card.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{body}: \code{ChargeSavedCardBodyDTO | undefined} -- optional paymentMethodId.
+\newline -- \textit{Returns:} \code{Promise<ChargeSavedCardResponseDTO>} -- payment status and transaction record.
+\newline -- Route: \code{POST /payments/contracts/:contractId/platform-fee/saved-card}; authenticated endpoint. \\ \hline
+
+09 & \code{createMilestoneFundIntent(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to initialize a Stripe PaymentIntent for depositing milestone escrow funds.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<CreatePaymentIntentResponseDTO>} -- clientSecret and intent ID.
+\newline -- Route: \code{POST .../milestones/:milestoneId/fund/intent}; authenticated endpoint. \\ \hline
+
+10 & \code{createMilestoneFundCheckoutSession(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to create a hosted Stripe Checkout session for depositing milestone escrow funds.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<CreateCheckoutSessionResponseDTO>} -- checkout session URL.
+\newline -- Route: \code{POST .../milestones/:milestoneId/fund/checkout-session}; authenticated endpoint. \\ \hline
+
+11 & \code{chargeSavedCardForMilestoneFund(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number,}\newline\code{body?: ChargeSavedCardBodyDTO)} &
+A method to fund a milestone escrow using an existing saved payment card off-session.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{body}: \code{ChargeSavedCardBodyDTO | undefined} -- optional specific paymentMethodId.
+\newline -- \textit{Returns:} \code{Promise<ChargeSavedCardResponseDTO>} -- funding confirmation and transaction record.
+\newline -- Route: \code{POST .../milestones/:milestoneId/fund/saved-card}; authenticated endpoint. \\ \hline
+
+12 & \code{releaseMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method for the client to release deposited escrow funds to the freelancer's connected Stripe account.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- target milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<ReleaseMilestoneResponseDTO>} -- payout transfer result and milestone status.
+\newline -- Route: \code{POST .../milestones/:milestoneId/release}; authenticated endpoint. \\ \hline
+
+13 & \code{refundMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to refund deposited milestone escrow funds back to the client's original payment source.
+\newline -- \code{userId}: \code{number} -- client or admin user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<RefundMilestoneResponseDTO>} -- refund transaction confirmation.
+\newline -- Route: \code{POST .../milestones/:milestoneId/refund}; authenticated endpoint. \\ \hline
+
+14 & \code{createDisputeFeeIntent(}\newline\code{userId: number, disputeId: number)} &
+A method to initialize a Stripe PaymentIntent for paying arbitration filing fees.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<CreatePaymentIntentResponseDTO>} -- fee payment client secret.
+\newline -- Route: \code{POST /payments/disputes/:disputeId/fee/intent}; authenticated endpoint. \\ \hline
+
+15 & \code{createDisputeFeeCheckoutSession(}\newline\code{userId: number, disputeId: number)} &
+A method to create a hosted Stripe Checkout session for paying dispute arbitration fees.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<CreateCheckoutSessionResponseDTO>} -- checkout session URL.
+\newline -- Route: \code{POST /payments/disputes/:disputeId/fee/checkout-session}; authenticated endpoint. \\ \hline
+
+16 & \code{settleDispute(}\newline\code{userId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: DisputeSettlementBodyDTO)} &
+A method for administrators to execute multi-party financial settlement payouts following dispute resolution.
+\newline -- \code{userId}: \code{number} -- administrator user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{DisputeSettlementBodyDTO} -- freelancerAmount, clientAmount, and winningParty.
+\newline -- \textit{Returns:} \code{Promise<DisputeSettlementResponseDTO>} -- transfer IDs, refund IDs, and status.
+\newline -- Route: \code{POST /payments/disputes/:disputeId/settle}; administrator-only endpoint. \\ \hline
+
+17 & \code{getTransactions(}\newline\code{userId: number, roleName: string,}\newline\code{query: GetTransactionListQueryDTO)} &
+A method to retrieve audit logs of financial transactions, escrow events, and fee charges.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- caller role name.
+\newline -- \code{query}: \code{GetTransactionListQueryDTO} -- pagination and filtering criteria.
+\newline -- \textit{Returns:} \code{Promise<GetTransactionListResponseDTO>} -- paginated transaction items.
+\newline -- Route: \code{GET /payments/transactions}; authenticated endpoint. \\ \hline
+
+18 & \code{syncPaymentIntent(}\newline\code{userId: number, paymentIntentId: string)} &
+A method to synchronize local database state with the actual status of a Stripe PaymentIntent.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{paymentIntentId}: \code{string} -- Stripe payment intent ID.
+\newline -- \textit{Returns:} \code{Promise<SyncStatusResponse>} -- synced transaction entity.
+\newline -- Route: \code{POST /payments/intents/:paymentIntentId/sync}; authenticated endpoint. \\ \hline
+
+19 & \code{syncCheckoutSession(}\newline\code{userId: number, sessionId: string)} &
+A method to synchronize local escrow records upon client return from a hosted Stripe Checkout page.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{sessionId}: \code{string} -- Stripe checkout session ID.
+\newline -- \textit{Returns:} \code{Promise<SyncCheckoutSessionResponseDTO>} -- synchronization outcome.
+\newline -- Route: \code{POST /payments/checkout-sessions/:sessionId/sync}; authenticated endpoint. \\ \hline
+
+20 & \code{handleWebhook(}\newline\code{req: Request, signature: string)} &
+A public endpoint to process cryptographically verified asynchronous webhook events dispatched by Stripe.
+\newline -- \code{req}: \code{Request & {rawBody?: Buffer}} -- incoming raw HTTP request with signature.
+\newline -- \code{signature}: \code{string} -- cryptographic signature header \code{stripe-signature}.
+\newline -- \textit{Returns:} \code{Promise<{received: boolean}>} -- acknowledgement receipt.
+\newline -- Route: \code{POST /payments/webhook}; public webhook endpoint. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{paymentService} & \code{PaymentService} -- private readonly payment service dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PaymentService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PaymentService(}\newline\code{paymentRepo: PaymentRepo,}\newline\code{stripeService: StripeService)} &
+A method to initialize the service with repository and Stripe payment gateway client.
+\newline -- \code{paymentRepo}: \code{PaymentRepo} -- financial ledger data access layer.
+\newline -- \code{stripeService}: \code{StripeService} -- Stripe API integration service.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getOnboardingLink(}\newline\code{userId: number, returnUrl?: string)} &
+A method to create or retrieve a Stripe Express account and produce an onboarding link for account verification.
+\newline -- \code{userId}: \code{number} -- freelancer user identifier.
+\newline -- \code{returnUrl}: \code{string | undefined} -- destination URL upon onboarding completion.
+\newline -- \textit{Returns:} \code{Promise<{url: string}>} -- account onboarding link. \\ \hline
+
+03 & \code{getConnectStatus(userId: number)} &
+A method to check whether the freelancer has fully completed Stripe Connect Express KYC verification and can receive payouts.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \textit{Returns:} \code{Promise<ConnectStatusType>} -- status with payout readiness flags. \\ \hline
+
+04 & \code{getCustomerPortalLink(}\newline\code{userId: number, returnUrl?: string)} &
+A method to generate a self-service Stripe billing portal link for managing saved payment cards.
+\newline -- \code{userId}: \code{number} -- customer user identifier.
+\newline -- \code{returnUrl}: \code{string | undefined} -- exit redirect URL.
+\newline -- \textit{Returns:} \code{Promise<{url: string}>} -- billing portal URL. \\ \hline
+
+05 & \code{getSavedPaymentMethods(userId: number)} &
+A method to query Stripe for card payment methods attached to the customer's Stripe Customer ID.
+\newline -- \code{userId}: \code{number} -- customer user identifier.
+\newline -- \textit{Returns:} \code{Promise<{paymentMethods: object[]}>} -- list of card tokens and brands. \\ \hline
+
+06 & \code{chargeSavedCardForPlatformFee(}\newline\code{userId: number, contractId: number,}\newline\code{paymentMethodId?: string)} &
+A method to execute an off-session charge on a saved card for contract activation fees.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{paymentMethodId}: \code{string | undefined} -- specific payment method ID.
+\newline -- \textit{Returns:} \code{Promise<ChargeSavedCardResponseType>} -- charge transaction status. \\ \hline
+
+07 & \code{chargeSavedCardForMilestoneFund(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number,}\newline\code{paymentMethodId?: string)} &
+A method to charge a customer's stored card to fund a milestone into escrow.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{paymentMethodId}: \code{string | undefined} -- card payment method ID.
+\newline -- \textit{Returns:} \code{Promise<ChargeSavedCardResponseType>} -- escrow deposit confirmation. \\ \hline
+
+08 & \code{createPlatformFeeIntent(}\newline\code{userId: number, contractId: number)} &
+A method to validate signed contract terms and create a Stripe PaymentIntent for platform fees.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<PaymentIntentResponseType>} -- client secret and intent ID. \\ \hline
+
+09 & \code{createPlatformFeeCheckoutSession(}\newline\code{userId: number, contractId: number)} &
+A method to construct a hosted Stripe Checkout session for payment of platform fees.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<{url: string, sessionId: string}>} -- checkout session metadata. \\ \hline
+
+10 & \code{createMilestoneFundIntent(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to initialize a PaymentIntent for milestone escrow funding.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<PaymentIntentResponseType>} -- client secret and intent identifier. \\ \hline
+
+11 & \code{createMilestoneFundCheckoutSession(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to construct a hosted Stripe Checkout session for funding a milestone.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<{url: string, sessionId: string}>} -- checkout session parameters. \\ \hline
+
+12 & \code{releaseMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to execute a Stripe transfer of escrowed funds to the freelancer's connected Stripe account.
+\newline -- \code{userId}: \code{number} -- client user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<ReleaseMilestoneResponseType>} -- release transfer ID and completion status. \\ \hline
+
+13 & \code{refundMilestone(}\newline\code{userId: number, contractId: number,}\newline\code{milestoneId: number)} &
+A method to issue a Stripe refund for an escrowed milestone back to the client's original card.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<RefundMilestoneResponseType>} -- refund record and status. \\ \hline
+
+14 & \code{createDisputeFeeIntent(}\newline\code{userId: number, disputeId: number)} &
+A method to initialize a Stripe PaymentIntent for paying an assessed dispute fee.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<PaymentIntentResponseType>} -- fee payment client secret. \\ \hline
+
+15 & \code{createDisputeFeeCheckoutSession(}\newline\code{userId: number, disputeId: number)} &
+A method to construct a hosted Stripe Checkout session for paying dispute fees.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<{url: string, sessionId: string}>} -- checkout session URL. \\ \hline
+
+16 & \code{settleDispute(}\newline\code{userId: number, roleName: string,}\newline\code{disputeId: number,}\newline\code{body: DisputeSettlementBodyType)} &
+A method to disburse resolved funds: transfers freelancer portion via Stripe Connect, refunds client portion, and refunds prevailing party's fee.
+\newline -- \code{userId}: \code{number} -- administrator user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{body}: \code{DisputeSettlementBodyType} -- split amounts and winner.
+\newline -- \textit{Returns:} \code{Promise<DisputeSettlementResponseType>} -- settlement disbursement breakdown. \\ \hline
+
+17 & \code{getTransactions(}\newline\code{userId: number, roleName: string,}\newline\code{query: GetTransactionListQueryType)} &
+A method to query transaction audit records with role-based scoping and pagination.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{roleName}: \code{string} -- role name.
+\newline -- \code{query}: \code{GetTransactionListQueryType} -- pagination and filter options.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Transaction>>} -- list of transaction records. \\ \hline
+
+18 & \code{syncPaymentIntent(}\newline\code{userId: number, paymentIntentId: string)} &
+A method to verify payment status with Stripe and transition corresponding local escrow records if succeeded.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{paymentIntentId}: \code{string} -- Stripe payment intent ID.
+\newline -- \textit{Returns:} \code{Promise<SyncResponseType>} -- updated transaction and entity state. \\ \hline
+
+19 & \code{syncCheckoutSession(}\newline\code{userId: number, sessionId: string)} &
+A method to retrieve checkout session details from Stripe and update database records.
+\newline -- \code{userId}: \code{number} -- caller user identifier.
+\newline -- \code{sessionId}: \code{string} -- Stripe checkout session ID.
+\newline -- \textit{Returns:} \code{Promise<SyncCheckoutSessionResponseType>} -- updated records. \\ \hline
+
+20 & \code{handleWebhook(}\newline\code{payload: Buffer | string, signature: string)} &
+A method to cryptographically verify incoming Stripe events and trigger idempotent ledger transitions.
+\newline -- \code{payload}: \code{Buffer | string} -- raw event payload.
+\newline -- \code{signature}: \code{string} -- cryptographic signature header.
+\newline -- \textit{Returns:} \code{Promise<{received: boolean}>} -- acknowledgement receipt. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{paymentRepo} & \code{PaymentRepo} -- private readonly repository dependency. \\ \hline
+02 & \code{stripeService} & \code{StripeService} -- private readonly Stripe API integration service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PaymentRepo Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PaymentRepo(prisma: PrismaService)} &
+A method to initialize the repository with the Prisma client.
+\newline -- \code{prisma}: \code{PrismaService} -- Prisma database service instance.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findUserById(userId: number)} &
+A method to query user account details and Stripe customer/connect metadata.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \textit{Returns:} \code{Promise<User | null>} -- user entity or null. \\ \hline
+
+03 & \code{updateUserStripe(}\newline\code{userId: number, data: UpdateUserStripeData)} &
+A method to record Stripe customer IDs, connected account IDs, and onboarding completion flags.
+\newline -- \code{userId}: \code{number} -- user identifier.
+\newline -- \code{data}: \code{UpdateUserStripeData} -- stripeCustomerId, stripeAccountId, stripeOnboardingCompleted.
+\newline -- \textit{Returns:} \code{Promise<User>} -- updated user entity. \\ \hline
+
+04 & \code{findContractById(contractId: number)} &
+A method to load contract participant identities, budget, and fee status.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} \code{Promise<Contract | null>} -- contract record or null. \\ \hline
+
+05 & \code{updateContractPlatformFee(}\newline\code{contractId: number, status: PlatformFeeStatus)} &
+A method to update contract platform fee payment state (PAID/UNPAID).
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{status}: \code{PlatformFeeStatus} -- target platform fee status.
+\newline -- \textit{Returns:} \code{Promise<Contract>} -- updated contract record. \\ \hline
+
+06 & \code{findMilestoneById(milestoneId: number)} &
+A method to load milestone data, parent contract details, and participant Stripe accounts.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Milestone | null>} -- milestone record with relations. \\ \hline
+
+07 & \code{updateMilestonePaymentStatus(}\newline\code{milestoneId: number, status: MilestonePaymentStatus)} &
+A method to update milestone payment state (FUNDED, RELEASED, REFUNDED).
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \code{status}: \code{MilestonePaymentStatus} -- target payment status.
+\newline -- \textit{Returns:} \code{Promise<Milestone>} -- updated milestone entity. \\ \hline
+
+08 & \code{findDisputeById(disputeId: number)} &
+A method to load dispute arbitration details, fees, and related milestone escrow.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \textit{Returns:} \code{Promise<Dispute | null>} -- dispute entity or null. \\ \hline
+
+09 & \code{updateDisputeStatus(}\newline\code{disputeId: number, status: DisputeStatus)} &
+A method to update dispute lifecycle status.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{status}: \code{DisputeStatus} -- target dispute status.
+\newline -- \textit{Returns:} \code{Promise<Dispute>} -- updated dispute record. \\ \hline
+
+10 & \code{findDisputeFee(disputeId: number, userId: number)} &
+A method to query arbitration fee record for a specific participant in a dispute.
+\newline -- \code{disputeId}: \code{number} -- dispute identifier.
+\newline -- \code{userId}: \code{number} -- party user identifier.
+\newline -- \textit{Returns:} \code{Promise<DisputeFee | null>} -- dispute fee record or null. \\ \hline
+
+11 & \code{updateDisputeFeeStatus(}\newline\code{feeId: number, status: DisputeFeeStatus,}\newline\code{paymentReference?: string, paidAt?: Date)} &
+A method to mark dispute fee as paid and link transaction gateway references.
+\newline -- \code{feeId}: \code{number} -- fee identifier.
+\newline -- \code{status}: \code{DisputeFeeStatus} -- new fee status.
+\newline -- \code{paymentReference}: \code{string | undefined} -- reference string.
+\newline -- \code{paidAt}: \code{Date | undefined} -- payment timestamp.
+\newline -- \textit{Returns:} \code{Promise<DisputeFee>} -- updated fee entity. \\ \hline
+
+12 & \code{createTransaction(data: CreateTransactionData)} &
+A method to persist an immutable financial transaction entry in the system ledger.
+\newline -- \code{data}: \code{CreateTransactionData} -- amount, type, status, userId, contractId, milestoneId, stripePaymentIntentId.
+\newline -- \textit{Returns:} \code{Promise<Transaction>} -- created transaction record. \\ \hline
+
+13 & \code{updateTransactionStatus(}\newline\code{id: number, status: TransactionStatus)} &
+A method to update transaction lifecycle state (PENDING, COMPLETED, FAILED).
+\newline -- \code{id}: \code{number} -- transaction primary key.
+\newline -- \code{status}: \code{TransactionStatus} -- new transaction status.
+\newline -- \textit{Returns:} \code{Promise<Transaction>} -- updated transaction entity. \\ \hline
+
+14 & \code{findTransactionByPaymentIntentId(}\newline\code{paymentIntentId: string)} &
+A method to query a transaction record matching a Stripe PaymentIntent ID.
+\newline -- \code{paymentIntentId}: \code{string} -- Stripe payment intent ID.
+\newline -- \textit{Returns:} \code{Promise<Transaction | null>} -- transaction record or null. \\ \hline
+
+15 & \code{findTransactionBySessionId(sessionId: string)} &
+A method to query a transaction record matching a Stripe Checkout Session ID.
+\newline -- \code{sessionId}: \code{string} -- Stripe session ID.
+\newline -- \textit{Returns:} \code{Promise<Transaction | null>} -- transaction record or null. \\ \hline
+
+16 & \code{findEscrowDepositTransaction(milestoneId: number)} &
+A method to locate the original completed escrow deposit transaction for a milestone.
+\newline -- \code{milestoneId}: \code{number} -- milestone identifier.
+\newline -- \textit{Returns:} \code{Promise<Transaction | null>} -- escrow deposit transaction. \\ \hline
+
+17 & \code{getTransactions(}\newline\code{query: GetTransactionListQueryType, userId?: number)} &
+A method to retrieve paginated ledger transactions with user and type filters.
+\newline -- \code{query}: \code{GetTransactionListQueryType} -- pagination parameters.
+\newline -- \code{userId}: \code{number | undefined} -- optional user ID filter.
+\newline -- \textit{Returns:} \code{Promise<PaginatedResult<Transaction>>} -- paginated transactions. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- private readonly Prisma connection instance. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{StripeService Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{StripeService()} &
+A method to initialize the Stripe SDK client using configured secret key and API version.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{createCustomer(}\newline\code{email: string, name?: string)} &
+A method to create a new Customer resource in Stripe.
+\newline -- \code{email}: \code{string} -- customer email address.
+\newline -- \code{name}: \code{string | undefined} -- customer name.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Customer>} -- Stripe customer object. \\ \hline
+
+03 & \code{createExpressAccount(}\newline\code{email: string, country?: string)} &
+A method to create a Stripe Connect Express account with transfer capabilities.
+\newline -- \code{email}: \code{string} -- freelancer email.
+\newline -- \code{country}: \code{string} -- country code (defaults from config).
+\newline -- \textit{Returns:} \code{Promise<Stripe.Account>} -- created Stripe connected account. \\ \hline
+
+04 & \code{createAccountLink(}\newline\code{stripeAccountId: string, returnUrl: string,}\newline\code{refreshUrl: string)} &
+A method to generate an onboarding URL for Stripe Express account setup.
+\newline -- \code{stripeAccountId}: \code{string} -- Stripe account ID.
+\newline -- \code{returnUrl}: \code{string} -- return redirect URL.
+\newline -- \code{refreshUrl}: \code{string} -- refresh redirect URL.
+\newline -- \textit{Returns:} \code{Promise<Stripe.AccountLink>} -- account onboarding link. \\ \hline
+
+05 & \code{getAccount(stripeAccountId: string)} &
+A method to retrieve connected account capabilities and verification status.
+\newline -- \code{stripeAccountId}: \code{string} -- Stripe account ID.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Account>} -- Stripe account details. \\ \hline
+
+06 & \code{createPaymentIntent(params: CreatePaymentIntentParams)} &
+A method to create a Stripe PaymentIntent with automatic payment methods.
+\newline -- \code{params}: \code{CreatePaymentIntentParams} -- amountInCents, currency, customerId, metadata.
+\newline -- \textit{Returns:} \code{Promise<Stripe.PaymentIntent>} -- Stripe payment intent object. \\ \hline
+
+07 & \code{createTransfer(params: CreateTransferParams)} &
+A method to transfer funds from the platform balance to a connected Express account.
+\newline -- \code{params}: \code{CreateTransferParams} -- amountInCents, currency, destination, transferGroup, metadata.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Transfer>} -- Stripe transfer object. \\ \hline
+
+08 & \code{createRefund(params: CreateRefundParams)} &
+A method to issue a full or partial refund on a PaymentIntent back to the payer.
+\newline -- \code{params}: \code{CreateRefundParams} -- paymentIntentId, amountInCents, metadata.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Refund>} -- Stripe refund object. \\ \hline
+
+09 & \code{retrievePaymentIntent(paymentIntentId: string)} &
+A method to query current status and charges of a Stripe PaymentIntent.
+\newline -- \code{paymentIntentId}: \code{string} -- Stripe payment intent ID.
+\newline -- \textit{Returns:} \code{Promise<Stripe.PaymentIntent>} -- retrieved payment intent. \\ \hline
+
+10 & \code{createCheckoutSession(params: CreateCheckoutSessionParams)} &
+A method to create a hosted Stripe Checkout page session.
+\newline -- \code{params}: \code{CreateCheckoutSessionParams} -- amountInCents, currency, customerId, title, successUrl, cancelUrl.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Checkout.Session>} -- Stripe checkout session. \\ \hline
+
+11 & \code{retrieveCheckoutSession(sessionId: string)} &
+A method to inspect payment status of a completed checkout session.
+\newline -- \code{sessionId}: \code{string} -- Stripe session ID.
+\newline -- \textit{Returns:} \code{Promise<Stripe.Checkout.Session>} -- retrieved session. \\ \hline
+
+12 & \code{createBillingPortalSession(}\newline\code{customerId: string, returnUrl: string)} &
+A method to initialize a Stripe customer portal session for card management.
+\newline -- \code{customerId}: \code{string} -- Stripe customer ID.
+\newline -- \code{returnUrl}: \code{string} -- redirect URL upon exiting portal.
+\newline -- \textit{Returns:} \code{Promise<Stripe.BillingPortal.Session>} -- portal session object. \\ \hline
+
+13 & \code{listPaymentMethods(customerId: string)} &
+A method to query all saved card payment methods for a customer.
+\newline -- \code{customerId}: \code{string} -- Stripe customer ID.
+\newline -- \textit{Returns:} \code{Promise<Stripe.ApiList<Stripe.PaymentMethod>>} -- payment method list. \\ \hline
+
+14 & \code{chargeOffSession(params: ChargeOffSessionParams)} &
+A method to execute an automatic off-session charge using an existing saved payment method.
+\newline -- \code{params}: \code{ChargeOffSessionParams} -- amountInCents, customerId, paymentMethodId, metadata.
+\newline -- \textit{Returns:} \code{Promise<Stripe.PaymentIntent>} -- confirmed payment intent. \\ \hline
+
+15 & \code{constructWebhookEvent(}\newline\code{payload: Buffer | string, signature: string)} &
+A method to cryptographically verify and parse an incoming Stripe webhook payload.
+\newline -- \code{payload}: \code{Buffer | string} -- raw request payload.
+\newline -- \code{signature}: \code{string} -- value of \code{stripe-signature} header.
+\newline -- \textit{Returns:} \code{Stripe.Event} -- validated Stripe webhook event. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{stripe} & \code{Stripe} -- private readonly Stripe official SDK client instance. \\ \hline
+02 & \code{logger} & \code{Logger} -- private readonly NestJS system logger. \\ \hline
+\end{ClassAttributeTable}
+
+\subsubsection*{Supporting DTO classes for payment and Stripe integration}
+\begin{SupportingTable}{4.5cm}{5.5cm}{4.0cm}
+\code{CreateOnboardingLinkBodyDTO} & \code{returnUrl?: string} & Validates custom return URL for Stripe Connect Express onboarding. \\ \hline
+\code{StripeConnectStatusResponseDTO} & \code{connected: boolean, onboardingCompleted: boolean, payoutsEnabled: boolean} & Serializes freelancer Stripe Connect verification and payout capability state. \\ \hline
+\code{CreatePaymentIntentResponseDTO} & \code{clientSecret: string, paymentIntentId: string} & Serializes Stripe PaymentIntent client credentials for frontend SDK. \\ \hline
+\code{CreateCheckoutSessionResponseDTO} & \code{url: string, sessionId: string} & Serializes hosted Stripe Checkout redirect URL and session identifier. \\ \hline
+\code{ChargeSavedCardBodyDTO} & \code{paymentMethodId?: string} & Validates stored payment method identifier for off-session card charges. \\ \hline
+\code{ReleaseMilestoneResponseDTO} & \code{milestoneId: number, status: string, transferId?: string} & Serializes milestone escrow payout release confirmation. \\ \hline
+\code{RefundMilestoneResponseDTO} & \code{milestoneId: number, status: string, refundId?: string} & Serializes milestone escrow refund execution result. \\ \hline
+\code{DisputeSettlementBodyDTO} & \code{freelancerAmount: number, clientAmount: number, winningParty: string} & Validates multi-party dispute resolution financial disbursement instructions. \\ \hline
+\code{GetTransactionListQueryDTO} & \code{page: number, limit: number, type?: TransactionType, status?: TransactionStatus} & Validates financial ledger audit query and pagination filters. \\ \hline
+\code{SyncCheckoutSessionResponseDTO} & \code{success: boolean, status: string, transactionId?: number} & Serializes status reconciliation result following Stripe Checkout completion. \\ \hline
+\end{SupportingTable}
+
