@@ -1054,56 +1054,52 @@ def build_uc_16_03():
 
     return mxfile
 
-# ==============================================================================
-# 10. UC-17.02 UPDATE FORUM CATEGORY
-# ==============================================================================
-def build_uc_17_02():
-    Y_BOTTOM = 2450
-    mxfile, root = create_base_diagram("UC-17.02-update-forum-category", "UC-17.02 Update Forum Category", 1654, Y_BOTTOM + 100)
+def build_uc_28_01():
+    Y_BOTTOM = 1750
+    mxfile, root = create_base_diagram("UC-28.01-view-user-list", "UC-28.01 View User List", 1654, Y_BOTTOM + 100)
 
     # Actor
     add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
     add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
-    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1930) # 340 to 2270
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1305) # 340 to 1645
 
-    # Lifelines - standard center coordinates: 300, 500, 710, 920, 1125, 1315, 1480
-    add_cell(root, "lf_view", value=":ForumCategoryView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1930) # 340 to 2270
+    # Lifelines
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1305) # 340 to 1645
 
-    add_cell(root, "lf_route", value=":ForumCategoryRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
-    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1770) # 450 to 2220
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1145) # 450 to 1595
 
-    add_cell(root, "lf_controller", value=":ForumCategoryController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=780, w=10, h=1390) # 780 to 2170
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=775) # 770 to 1545
 
-    add_cell(root, "lf_service", value=":ForumCategoryService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=830, w=10, h=1290) # 830 to 2120
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=675) # 820 to 1495
 
-    add_cell(root, "lf_repo", value=":ForumCategoryRepo", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
-    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=880, w=10, h=230) # 880 to 1110
-    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1500, w=10, h=230) # 1500 to 1730
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230) # 870 to 1100
 
     add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
-    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=930, w=10, h=140) # 930 to 1070
-    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1550, w=10, h=140) # 1550 to 1690
+    add_cell(root, "act_prisma", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140) # 920 to 1060
 
     add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
     add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
     add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
-    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=980, w=10, h=50) # 980 to 1030
-    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1600, w=10, h=50) # 1600 to 1650
+    add_cell(root, "act_db", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50) # 970 to 1020
 
     # Messages
-    add_edge(root, "m1", value='1. Click "Edit" on a category', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
-    add_edge(root, "m2", value='2. Input updated data &amp; Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
-    add_edge(root, "m3", value="3. PATCH /api/backend/api/forums/admin/categories/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "m1", value='1. Click "User management"', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_rule14_self_call(root, "act_self_param", "m2", "2. Check query&nbsp;<div>parameters</div>",
+                         bar_x=300, bar_y=410, main_right_x=305, sy=390, ty=410, mid_x=345)
+
+    add_edge(root, "m3", value="3. GET /api/users?search=&role=&status=&page=&limit=", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
 
     # JWT Ref & Alt
     add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
     add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
 
     add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
-    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed&lt;br&gt;|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
     add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
     add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
     add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
@@ -1112,111 +1108,283 @@ def build_uc_17_02():
     add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
 
     # Controller & Service
-    add_edge(root, "m4", value="4. PATCH /api/forums/admin/categories/:id", style=STYLE_MSG, sx=505, sy=780, tx=705, ty=780)
-    add_edge(root, "m5", value="5. updateAdminCategory(roleName, id, body)", style=STYLE_MSG, sx=715, sy=830, tx=915, ty=830)
+    add_edge(root, "m4", value="4. GET /api/users?search=&role=&status=&page=&limit=", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. getUsers(query)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. getUsers(query)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.$transaction([user.findMany, user.count])", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute query to find users and count", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return [users, total]", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return [users, total]", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return { data, meta }", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
 
-    # Step 1: Find existing category
-    add_edge(root, "m6", value="6. updateAdminCategory(id, body)", style=STYLE_MSG, sx=925, sy=880, tx=1120, ty=880)
-    add_edge(root, "m7", value="7. prisma.forumCategory.findFirst({ where: { id, deletedAt: null } })", style=STYLE_MSG, sx=1130, sy=930, tx=1310, ty=930)
-    add_edge(root, "m8", value="8. Execute SELECT query to find category", style=STYLE_MSG, sx=1320, sy=980, tx=1475, ty=980)
-    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1030, tx=1320, ty=1030)
-    add_edge(root, "m10", value="10. Return category or null", style=STYLE_REPLY, sx=1310, sy=1070, tx=1130, ty=1070)
-    add_edge(root, "m11", value="11. Return category or null", style=STYLE_REPLY, sx=1120, sy=1110, tx=925, ty=1110)
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_query", "m12", "12. Handle get users&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
 
-    # Self-call 1 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_find_cat", "m12", "12. Handle find category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1170, main_right_x=925, sy=1150, ty=1170, mid_x=965)
+    # Alt query result
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=485)
+    add_cell(root, "g_alt_1", value="[users list&lt;br&gt;is empty]", style=STYLE_GUARD, x=120, y=1200, w=160, h=36)
+    add_edge(root, "m12_1_1", value="12.1.1. Return empty list (data: [], meta)", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 200 OK (empty list)", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 200 OK (empty list)", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "No users found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
 
-    # Outer Alt 1 (Category existence check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1210, w=1500, h=1180)
-    add_cell(root, "g_find_1", value="[category is null]", style=STYLE_GUARD, x=120, y=1210, w=160, h=30)
-    add_edge(root, "m12_1_1", value="12.1.1. throw 404 ForumCategoryNotFound", style=STYLE_REPLY, sx=915, sy=1250, tx=715, ty=1250)
-    add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1300, tx=505, ty=1300)
-    add_edge(root, "m12_1_3", value="12.1.3. Return 404 response", style=STYLE_REPLY, sx=495, sy=1350, tx=305, ty=1350)
-    add_edge(root, "m12_1_4", value='12.1.4. Show message "Category not found"', style=STYLE_REPLY, sx=295, sy=1400, tx=105, ty=1400)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[users found]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+    add_edge(root, "m12_2_1", value="12.2.1. Return AdminUserListResponseDto", style=STYLE_REPLY, sx=915, sy=1495, tx=715, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. Return 200 OK (data, meta)", style=STYLE_REPLY, sx=705, sy=1545, tx=505, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Return 200 OK (data, meta)", style=STYLE_REPLY, sx=495, sy=1595, tx=305, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Display user list (name, email,&lt;br&gt;role, status) with search, filter, sort", style=STYLE_REPLY, sx=295, sy=1645, tx=105, ty=1645)
 
-    add_edge(root, "div_alt_1", style=STYLE_DIVIDER, sx=40, sy=1450, tx=1540, ty=1450)
-    add_cell(root, "g_find_2", value="[category is valid]", style=STYLE_GUARD, x=120, y=1455, w=160, h=30)
+    return mxfile
 
-    # Step 2: Update category
-    add_edge(root, "m12_2_1", value="12.2.1. prisma.forumCategory.update({ where: { id }, data: ... })", style=STYLE_MSG, sx=925, sy=1500, tx=1120, ty=1500)
-    add_edge(root, "m12_2_2", value="12.2.2. prisma.forumCategory.update({ where: { id }, data: ... })", style=STYLE_MSG, sx=1130, sy=1550, tx=1310, ty=1550)
-    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to update category", style=STYLE_MSG, sx=1320, sy=1600, tx=1475, ty=1600)
-    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1650, tx=1320, ty=1650)
-    add_edge(root, "m12_2_5", value="12.2.5. Return updated category", style=STYLE_REPLY, sx=1310, sy=1690, tx=1130, ty=1690)
-    add_edge(root, "m12_2_6", value="12.2.6. Return updated category", style=STYLE_REPLY, sx=1120, sy=1730, tx=925, ty=1730)
+# ==============================================================================
+# UC-28.02: View User Detail
+# ==============================================================================
+def build_uc_28_02():
+    Y_BOTTOM = 1750
+    mxfile, root = create_base_diagram("UC-28.02-view-user-detail", "UC-28.02 View User Detail", 1654, Y_BOTTOM + 100)
 
-    # Self-call 2 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_update_cat", "m12_2_7", "12.2.7. Handle update category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1790, main_right_x=925, sy=1770, ty=1790, mid_x=965)
+    # Actor
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1305) # 340 to 1645
 
-    # Nested Alt 2 (Update Result check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1830, w=1470, h=520)
-    add_cell(root, "g_upd_1", value="[update category failed]", style=STYLE_GUARD, x=120, y=1830, w=160, h=30)
-    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 400/500 error", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    # Lifelines
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1305) # 340 to 1645
+
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1145) # 450 to 1595
+
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=775) # 770 to 1545
+
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=675) # 820 to 1495
+
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230) # 870 to 1100
+
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "act_prisma", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140) # 920 to 1060
+
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+    add_cell(root, "act_db", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50) # 970 to 1020
+
+    # Messages
+    add_edge(root, "m1", value='1. Click "View detail" on a user', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_rule14_self_call(root, "act_self_param", "m2", "2. Check user id&nbsp;<div>parameter</div>",
+                         bar_x=300, bar_y=410, main_right_x=305, sy=390, ty=410, mid_x=345)
+
+    add_edge(root, "m3", value="3. GET /api/users/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+
+    # JWT Ref & Alt
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed&lt;br&gt;|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    # Controller & Service
+    add_edge(root, "m4", value="4. GET /api/users/:id", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. getUserById(id)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. getUserById(id)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({ where: { id, deletedAt: null }, include: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute query to find user detail by id", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return user or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return user or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_query", "m12", "12. Handle find user&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Alt query result
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=485)
+    add_cell(root, "g_alt_1", value="[user is null]", style=STYLE_GUARD, x=120, y=1200, w=150, h=30)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFoundException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 404 response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "User not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[user exists]", style=STYLE_GUARD, x=120, y=1455, w=150, h=25)
+    add_edge(root, "m12_2_1", value="12.2.1. Return AdminUserDetailResponseDto", style=STYLE_REPLY, sx=915, sy=1495, tx=715, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. Return 200 OK (user detail)", style=STYLE_REPLY, sx=705, sy=1545, tx=505, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Return 200 OK (user detail)", style=STYLE_REPLY, sx=495, sy=1595, tx=305, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Display general account info and role&lt;br&gt;profile tabs (Client/Freelancer/Custom role)", style=STYLE_REPLY, sx=295, sy=1645, tx=105, ty=1645)
+
+    return mxfile
+
+# ==============================================================================
+# UC-28.03: Create User
+# ==============================================================================
+def build_uc_28_03():
+    Y_BOTTOM = 2450
+    mxfile, root = create_base_diagram("UC-28.03-create-user", "UC-28.03 Create User", 1654, Y_BOTTOM + 100)
+
+    # Actor
+    add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
+    add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1945)
+
+    # Lifelines
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1945)
+
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1785)
+
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1415)
+
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1315)
+
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
+
+    add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
+
+    add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
+    add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
+    add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
+
+    # Messages
+    add_edge(root, "m1", value='1. Click "Create user"', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Input email, password, fullName, roleId & Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. POST /api/users", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+
+    # JWT Ref & Alt
+    add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
+    add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
+
+    add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed&lt;br&gt;|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
+    add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
+    add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
+    add_cell(root, "g_jwt_2", value="[user is banned or deleted]", style=STYLE_GUARD, x=120, y=660, w=160, h=25)
+    add_edge(root, "msg_jwt_403", value="3.2.1. Return 403 response", style=STYLE_REPLY, sx=495, sy=685, tx=305, ty=685)
+    add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
+
+    # Controller & Service
+    add_edge(root, "m4", value="4. POST /api/users", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. createUser(body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findUserByEmail(body.email)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({ where: { email, deletedAt: null } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to check email", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return existing user or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return existing user or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
+
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find user&nbsp;<div>email result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
+
+    # Outer Alt
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[email already exists]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 409 EmailAlreadyExistsException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 409 Conflict response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 409 Conflict response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "User email already exists"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
+
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[email available]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
+
+    # Step 2: create user in DB
+    add_edge(root, "m12_2_1", value="12.2.1. createUserByAdmin(data)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.user.create({ data: { email, password, profile, userRoles } })", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute INSERT query to create user", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return created user", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return created user", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
+
+    add_rule14_self_call(root, "act_self_create", "m12_2_7", "12.2.7. Handle creation&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
+
+    # Nested Alt
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[creation failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500 FailedToCreateUserException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
     add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
     add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
-    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Update category failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Create user failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
 
-    add_edge(root, "div_alt_2", style=STYLE_DIVIDER, sx=55, sy=2070, tx=1525, ty=2070)
-    add_cell(root, "g_upd_2", value="[update category success]", style=STYLE_GUARD, x=120, y=2075, w=160, h=30)
-    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return updated category", style=STYLE_REPLY, sx=915, sy=2120, tx=715, ty=2120)
-    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=2170, tx=505, ty=2170)
-    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=2220, tx=305, ty=2220)
-    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Update category success" &amp; refresh list', style=STYLE_REPLY, sx=295, sy=2270, tx=105, ty=2270)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return AdminCreateUserResponseDto", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 201 Created response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 201 Created response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Create user success" & refresh list', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
 
     return mxfile
 
 # ==============================================================================
-# 11. UC-17.03 DELETE FORUM CATEGORY
+# UC-28.04: Update User
 # ==============================================================================
-def build_uc_17_03():
+def build_uc_28_04():
     Y_BOTTOM = 2450
-    mxfile, root = create_base_diagram("UC-17.03-delete-forum-category", "UC-17.03 Delete Forum Category", 1654, Y_BOTTOM + 100)
+    mxfile, root = create_base_diagram("UC-28.04-update-user", "UC-28.04 Update User", 1654, Y_BOTTOM + 100)
 
     # Actor
     add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
     add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
-    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1930) # 340 to 2270
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1945)
 
     # Lifelines
-    add_cell(root, "lf_view", value=":ForumCategoryView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1930) # 340 to 2270
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1945)
 
-    add_cell(root, "lf_route", value=":ForumCategoryRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
-    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1770) # 450 to 2220
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1785)
 
-    add_cell(root, "lf_controller", value=":ForumCategoryController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=780, w=10, h=1390) # 780 to 2170
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1415)
 
-    add_cell(root, "lf_service", value=":ForumCategoryService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=830, w=10, h=1290) # 830 to 2120
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1315)
 
-    add_cell(root, "lf_repo", value=":ForumCategoryRepo", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
-    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=880, w=10, h=230) # 880 to 1110
-    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1500, w=10, h=230) # 1500 to 1730
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
 
     add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
-    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=930, w=10, h=140) # 930 to 1070
-    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1550, w=10, h=140) # 1550 to 1690
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
 
     add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
     add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
     add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
-    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=980, w=10, h=50) # 980 to 1030
-    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1600, w=10, h=50) # 1600 to 1650
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
 
     # Messages
-    add_edge(root, "m1", value='1. Click "Delete" on a category', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
-    add_edge(root, "m2", value='2. Click "Confirm delete"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
-    add_edge(root, "m3", value="3. DELETE /api/backend/api/forums/admin/categories/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "m1", value='1. Click "Edit" on a user', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Edit general account info (email, fullName, isBanned) & Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PATCH /api/users/:id", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
 
     # JWT Ref & Alt
     add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
     add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
 
     add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
-    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed&lt;br&gt;|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
     add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
     add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
     add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
@@ -1225,111 +1393,108 @@ def build_uc_17_03():
     add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
 
     # Controller & Service
-    add_edge(root, "m4", value="4. DELETE /api/forums/admin/categories/:id", style=STYLE_MSG, sx=505, sy=780, tx=705, ty=780)
-    add_edge(root, "m5", value="5. deleteAdminCategory(roleName, id)", style=STYLE_MSG, sx=715, sy=830, tx=915, ty=830)
+    add_edge(root, "m4", value="4. PATCH /api/users/:id", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. updateUser(id, actorId, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. updateUserByAdmin(id, data)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({ where: { id, deletedAt: null } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find existing user", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return existing user or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return existing user or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
 
-    # Step 1: Find category
-    add_edge(root, "m6", value="6. deleteAdminCategory(id)", style=STYLE_MSG, sx=925, sy=880, tx=1120, ty=880)
-    add_edge(root, "m7", value="7. prisma.forumCategory.findFirst({ where: { id, deletedAt: null } })", style=STYLE_MSG, sx=1130, sy=930, tx=1310, ty=930)
-    add_edge(root, "m8", value="8. Execute SELECT query to find category", style=STYLE_MSG, sx=1320, sy=980, tx=1475, ty=980)
-    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1030, tx=1320, ty=1030)
-    add_edge(root, "m10", value="10. Return category or null", style=STYLE_REPLY, sx=1310, sy=1070, tx=1130, ty=1070)
-    add_edge(root, "m11", value="11. Return category or null", style=STYLE_REPLY, sx=1120, sy=1110, tx=925, ty=1110)
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find user&nbsp;<div>result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
 
-    # Self-call 1 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_find_cat", "m12", "12. Handle find category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1170, main_right_x=925, sy=1150, ty=1170, mid_x=965)
+    # Outer Alt
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[user is null]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFoundException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 404 Not Found response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 404 Not Found response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "User not found"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
 
-    # Outer Alt 1 (Category existence check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1210, w=1500, h=1180)
-    add_cell(root, "g_find_1", value="[category is null]", style=STYLE_GUARD, x=120, y=1210, w=160, h=30)
-    add_edge(root, "m12_1_1", value="12.1.1. throw 404 ForumCategoryNotFound", style=STYLE_REPLY, sx=915, sy=1250, tx=715, ty=1250)
-    add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1300, tx=505, ty=1300)
-    add_edge(root, "m12_1_3", value="12.1.3. Return 404 response", style=STYLE_REPLY, sx=495, sy=1350, tx=305, ty=1350)
-    add_edge(root, "m12_1_4", value='12.1.4. Show message "Category not found"', style=STYLE_REPLY, sx=295, sy=1400, tx=105, ty=1400)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[user exists]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
 
-    add_edge(root, "div_alt_1", style=STYLE_DIVIDER, sx=40, sy=1450, tx=1540, ty=1450)
-    add_cell(root, "g_find_2", value="[category is valid]", style=STYLE_GUARD, x=120, y=1455, w=160, h=30)
+    # Step 2: update user in DB
+    add_edge(root, "m12_2_1", value="12.2.1. prisma.$transaction(update user & delete sessions if banned)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. tx.user.update({ where: { id }, data: { ... } })", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to update user info", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated user", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated user", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
 
-    # Step 2: Soft delete with transaction (detach posts & set deletedAt)
-    add_edge(root, "m12_2_1", value="12.2.1. prisma.$transaction([forumPost.updateMany, forumCategory.update])", style=STYLE_MSG, sx=925, sy=1500, tx=1120, ty=1500)
-    add_edge(root, "m12_2_2", value="12.2.2. prisma.$transaction([forumPost.updateMany, forumCategory.update])", style=STYLE_MSG, sx=1130, sy=1550, tx=1310, ty=1550)
-    add_edge(root, "m12_2_3", value="12.2.3. Execute TRANSACTION query to soft delete category", style=STYLE_MSG, sx=1320, sy=1600, tx=1475, ty=1600)
-    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1650, tx=1320, ty=1650)
-    add_edge(root, "m12_2_5", value="12.2.5. Return delete result", style=STYLE_REPLY, sx=1310, sy=1690, tx=1130, ty=1690)
-    add_edge(root, "m12_2_6", value="12.2.6. Return delete result", style=STYLE_REPLY, sx=1120, sy=1730, tx=925, ty=1730)
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update&nbsp;<div>user result</div>",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
 
-    # Self-call 2 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_delete_cat", "m12_2_7", "12.2.7. Handle delete category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1790, main_right_x=925, sy=1770, ty=1790, mid_x=965)
+    # Nested Alt
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500 FailedToUpdateUserException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Update user failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
 
-    # Nested Alt 2 (Delete Result check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1830, w=1470, h=520)
-    add_cell(root, "g_del_1", value="[delete category failed]", style=STYLE_GUARD, x=120, y=1830, w=160, h=30)
-    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw FailedToDeleteForumCategoryException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
-    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return 500 response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
-    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return 500 response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
-    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Delete category failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
-
-    add_edge(root, "div_alt_2", style=STYLE_DIVIDER, sx=55, sy=2070, tx=1525, ty=2070)
-    add_cell(root, "g_del_2", value="[delete category success]", style=STYLE_GUARD, x=120, y=2075, w=160, h=30)
-    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return { message }", style=STYLE_REPLY, sx=915, sy=2120, tx=715, ty=2120)
-    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=2170, tx=505, ty=2170)
-    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=2220, tx=305, ty=2220)
-    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Category deleted (soft delete)" &amp; refresh list', style=STYLE_REPLY, sx=295, sy=2270, tx=105, ty=2270)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return AdminUpdateUserResponseDto", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Update user success" & refresh list', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
 
     return mxfile
 
 # ==============================================================================
-# 12. UC-17.06 RESTORE FORUM CATEGORY
+# UC-28.05: Update Client Profile
 # ==============================================================================
-def build_uc_17_06():
+def build_uc_28_05():
     Y_BOTTOM = 2450
-    mxfile, root = create_base_diagram("UC-17.06-restore-forum-category", "UC-17.06 Restore Forum Category", 1654, Y_BOTTOM + 100)
+    mxfile, root = create_base_diagram("UC-28.05-update-client-profile", "UC-28.05 Update Client Profile", 1654, Y_BOTTOM + 100)
 
     # Actor
     add_cell(root, "lf_actor", value="Admin", style=STYLE_ACTOR, x=85, y=200, w=30, h=60)
     add_edge(root, "dash_actor", style=STYLE_DASH_LINE, sx=100, sy=282, tx=100, ty=Y_BOTTOM)
-    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1930) # 340 to 2270
+    add_cell(root, "act_actor", style=STYLE_ACT_BAR, parent="1", x=95, y=340, w=10, h=1945)
 
     # Lifelines
-    add_cell(root, "lf_view", value=":ForumCategoryView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1930) # 340 to 2270
+    add_cell(root, "lf_view", value=":UserView", style=STYLE_LIFELINE, x=225, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_view", style=STYLE_ACT_BAR, parent="1", x=295, y=340, w=10, h=1945)
 
-    add_cell(root, "lf_route", value=":ForumCategoryRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
-    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1770) # 450 to 2220
+    add_cell(root, "lf_route", value=":UserRoute", style=STYLE_LIFELINE, x=440, y=240, w=120, h=Y_BOTTOM - 240)
+    add_cell(root, "act_route", style=STYLE_ACT_BAR, parent="1", x=495, y=450, w=10, h=1785)
 
-    add_cell(root, "lf_controller", value=":ForumCategoryController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=780, w=10, h=1390) # 780 to 2170
+    add_cell(root, "lf_controller", value=":UsersController", style=STYLE_LIFELINE, x=635, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_controller", style=STYLE_ACT_BAR, parent="1", x=705, y=770, w=10, h=1415)
 
-    add_cell(root, "lf_service", value=":ForumCategoryService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
-    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=830, w=10, h=1290) # 830 to 2120
+    add_cell(root, "lf_service", value=":UsersService", style=STYLE_LIFELINE, x=845, y=240, w=150, h=Y_BOTTOM - 240)
+    add_cell(root, "act_service", style=STYLE_ACT_BAR, parent="1", x=915, y=820, w=10, h=1315)
 
-    add_cell(root, "lf_repo", value=":ForumCategoryRepo", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
-    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=880, w=10, h=230) # 880 to 1110
-    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1500, w=10, h=230) # 1500 to 1730
+    add_cell(root, "lf_repo", value=":UsersRepository", style=STYLE_LIFELINE, x=1055, y=240, w=140, h=Y_BOTTOM - 240)
+    add_cell(root, "act_repo_1", style=STYLE_ACT_BAR, parent="1", x=1120, y=870, w=10, h=230)
+    add_cell(root, "act_repo_2", style=STYLE_ACT_BAR, parent="1", x=1120, y=1495, w=10, h=230)
 
     add_cell(root, "lf_prisma", value=":PrismaService", style=STYLE_LIFELINE, x=1250, y=240, w=130, h=Y_BOTTOM - 240)
-    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=930, w=10, h=140) # 930 to 1070
-    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1550, w=10, h=140) # 1550 to 1690
+    add_cell(root, "act_prisma_1", style=STYLE_ACT_BAR, parent="1", x=1310, y=920, w=10, h=140)
+    add_cell(root, "act_prisma_2", style=STYLE_ACT_BAR, parent="1", x=1310, y=1545, w=10, h=140)
 
     add_cell(root, "node_db", style=STYLE_DB_ICON, x=1450, y=220, w=60, h=70)
     add_cell(root, "node_db_lbl", value="Database", style=STYLE_DB_LABEL, x=1450, y=292, w=60, h=30)
     add_edge(root, "dash_db", style=STYLE_DASH_LINE, sx=1480, sy=322, tx=1480, ty=Y_BOTTOM)
-    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=980, w=10, h=50) # 980 to 1030
-    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1600, w=10, h=50) # 1600 to 1650
+    add_cell(root, "act_db_1", style=STYLE_ACT_BAR, parent="1", x=1475, y=970, w=10, h=50)
+    add_cell(root, "act_db_2", style=STYLE_ACT_BAR, parent="1", x=1475, y=1595, w=10, h=50)
 
     # Messages
-    add_edge(root, "m1", value='1. Click "Restore" on a deleted category', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
-    add_edge(root, "m2", value='2. Click "Confirm restore"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
-    add_edge(root, "m3", value="3. PATCH /api/backend/api/forums/admin/categories/:id/restore", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
+    add_edge(root, "m1", value='1. Click "Edit" on Client profile tab', style=STYLE_MSG, sx=105, sy=340, tx=295, ty=340)
+    add_edge(root, "m2", value='2. Edit companyName, companyDescription, website & Click "Save"', style=STYLE_MSG, sx=105, sy=390, tx=295, ty=390)
+    add_edge(root, "m3", value="3. PATCH /api/users/:id/client-profile", style=STYLE_MSG, sx=305, sy=450, tx=495, ty=450)
 
     # JWT Ref & Alt
     add_cell(root, "fr_ref", value="ref", style=STYLE_REF_FRAME, x=450, y=490, w=260, h=50)
     add_cell(root, "fr_ref_lbl", value="3.1. Verify jwt", style=STYLE_GUARD, x=525, y=505, w=160, h=20)
 
     add_cell(root, "fr_jwt_alt", value="alt", style=STYLE_FRAME, x=40, y=560, w=540, h=180)
-    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed<br>|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
+    add_cell(root, "g_jwt_1", value="[no Bearer token || verify failed&lt;br&gt;|| session is null]", style=STYLE_GUARD, x=120, y=560, w=160, h=36)
     add_edge(root, "msg_jwt_401", value="3.1.1. Return 401 response", style=STYLE_REPLY, sx=495, sy=605, tx=305, ty=605)
     add_edge(root, "msg_jwt_401_ui", value="3.1.2. Return error message", style=STYLE_REPLY, sx=295, sy=635, tx=105, ty=635)
     add_edge(root, "div_jwt", style=STYLE_DIVIDER, sx=40, sy=655, tx=580, ty=655)
@@ -1338,58 +1503,55 @@ def build_uc_17_06():
     add_edge(root, "msg_jwt_403_ui", value="3.2.2. Return error message", style=STYLE_REPLY, sx=295, sy=715, tx=105, ty=715)
 
     # Controller & Service
-    add_edge(root, "m4", value="4. PATCH /api/forums/admin/categories/:id/restore", style=STYLE_MSG, sx=505, sy=780, tx=705, ty=780)
-    add_edge(root, "m5", value="5. restoreAdminCategory(roleName, id)", style=STYLE_MSG, sx=715, sy=830, tx=915, ty=830)
+    add_edge(root, "m4", value="4. PATCH /api/users/:id/client-profile", style=STYLE_MSG, sx=505, sy=770, tx=705, ty=770)
+    add_edge(root, "m5", value="5. updateClientProfile(id, body)", style=STYLE_MSG, sx=715, sy=820, tx=915, ty=820)
+    add_edge(root, "m6", value="6. findClientProfileEditContext(userId)", style=STYLE_MSG, sx=925, sy=870, tx=1120, ty=870)
+    add_edge(root, "m7", value="7. prisma.user.findUnique({ where: { id: userId, deletedAt: null }, select: { ... } })", style=STYLE_MSG, sx=1130, sy=920, tx=1310, ty=920)
+    add_edge(root, "m8", value="8. Execute SELECT query to find client profile context", style=STYLE_MSG, sx=1320, sy=970, tx=1475, ty=970)
+    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1020, tx=1320, ty=1020)
+    add_edge(root, "m10", value="10. Return context or null", style=STYLE_REPLY, sx=1310, sy=1060, tx=1130, ty=1060)
+    add_edge(root, "m11", value="11. Return context or null", style=STYLE_REPLY, sx=1120, sy=1100, tx=925, ty=1100)
 
-    # Step 1: Find category in trash
-    add_edge(root, "m6", value="6. restoreAdminCategory(id)", style=STYLE_MSG, sx=925, sy=880, tx=1120, ty=880)
-    add_edge(root, "m7", value="7. prisma.forumCategory.findFirst({ where: { id, deletedAt: { not: null } } })", style=STYLE_MSG, sx=1130, sy=930, tx=1310, ty=930)
-    add_edge(root, "m8", value="8. Execute SELECT query to find deleted category", style=STYLE_MSG, sx=1320, sy=980, tx=1475, ty=980)
-    add_edge(root, "m9", value="9. Return result", style=STYLE_REPLY, sx=1475, sy=1030, tx=1320, ty=1030)
-    add_edge(root, "m10", value="10. Return category or null", style=STYLE_REPLY, sx=1310, sy=1070, tx=1130, ty=1070)
-    add_edge(root, "m11", value="11. Return category or null", style=STYLE_REPLY, sx=1120, sy=1110, tx=925, ty=1110)
+    # Self-call on Service (Rule 14)
+    add_rule14_self_call(root, "act_self_check", "m12", "12. Handle find client profile&nbsp;<div>context result</div>",
+                         bar_x=920, bar_y=1160, main_right_x=925, sy=1140, ty=1160, mid_x=965)
 
-    # Self-call 1 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_find_cat", "m12", "12. Handle find deleted category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1170, main_right_x=925, sy=1150, ty=1170, mid_x=965)
+    # Outer Alt
+    add_cell(root, "fr_alt", value="alt", style=STYLE_FRAME, x=40, y=1200, w=1500, h=1180)
+    add_cell(root, "g_alt_1", value="[!context || !canEdit]", style=STYLE_GUARD, x=120, y=1200, w=160, h=30)
+    add_edge(root, "m12_1_1", value="12.1.1. throw 404 UserNotFound / 403 NoClientRoleException", style=STYLE_REPLY, sx=915, sy=1245, tx=715, ty=1245)
+    add_edge(root, "m12_1_2", value="12.1.2. Return 403/404 error response", style=STYLE_REPLY, sx=705, sy=1295, tx=505, ty=1295)
+    add_edge(root, "m12_1_3", value="12.1.3. Return 403/404 error response", style=STYLE_REPLY, sx=495, sy=1345, tx=305, ty=1345)
+    add_edge(root, "m12_1_4", value='12.1.4. Show message "Client profile not found or permission denied"', style=STYLE_REPLY, sx=295, sy=1395, tx=105, ty=1395)
 
-    # Outer Alt 1 (Deleted Category existence check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_1", value="alt", style=STYLE_FRAME, x=40, y=1210, w=1500, h=1180)
-    add_cell(root, "g_find_1", value="[category is null or not deleted]", style=STYLE_GUARD, x=120, y=1210, w=160, h=30)
-    add_edge(root, "m12_1_1", value="12.1.1. throw 404 ForumCategoryNotFound", style=STYLE_REPLY, sx=915, sy=1250, tx=715, ty=1250)
-    add_edge(root, "m12_1_2", value="12.1.2. Return 404 response", style=STYLE_REPLY, sx=705, sy=1300, tx=505, ty=1300)
-    add_edge(root, "m12_1_3", value="12.1.3. Return 404 response", style=STYLE_REPLY, sx=495, sy=1350, tx=305, ty=1350)
-    add_edge(root, "m12_1_4", value='12.1.4. Show message "Category not found or not deleted"', style=STYLE_REPLY, sx=295, sy=1400, tx=105, ty=1400)
+    add_edge(root, "div_alt", style=STYLE_DIVIDER, sx=40, sy=1445, tx=1540, ty=1445)
+    add_cell(root, "g_alt_2", value="[canEdit]", style=STYLE_GUARD, x=120, y=1455, w=160, h=25)
 
-    add_edge(root, "div_alt_1", style=STYLE_DIVIDER, sx=40, sy=1450, tx=1540, ty=1450)
-    add_cell(root, "g_find_2", value="[deleted category found]", style=STYLE_GUARD, x=120, y=1455, w=160, h=30)
+    # Step 2: update client profile in DB
+    add_edge(root, "m12_2_1", value="12.2.1. upsertClientProfileByAdmin(userId, data)", style=STYLE_MSG, sx=925, sy=1495, tx=1120, ty=1495)
+    add_edge(root, "m12_2_2", value="12.2.2. prisma.user.update({ where: { id: userId }, data: { profile: { ... } } })", style=STYLE_MSG, sx=1130, sy=1545, tx=1310, ty=1545)
+    add_edge(root, "m12_2_3", value="12.2.3. Execute UPSERT query to update client profile", style=STYLE_MSG, sx=1320, sy=1595, tx=1475, ty=1595)
+    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1645, tx=1320, ty=1645)
+    add_edge(root, "m12_2_5", value="12.2.5. Return updated clientProfile", style=STYLE_REPLY, sx=1310, sy=1685, tx=1130, ty=1685)
+    add_edge(root, "m12_2_6", value="12.2.6. Return updated clientProfile", style=STYLE_REPLY, sx=1120, sy=1725, tx=925, ty=1725)
 
-    # Step 2: Restore category (set deletedAt: null)
-    add_edge(root, "m12_2_1", value="12.2.1. prisma.forumCategory.updateMany({ where: { id }, data: { deletedAt: null } })", style=STYLE_MSG, sx=925, sy=1500, tx=1120, ty=1500)
-    add_edge(root, "m12_2_2", value="12.2.2. prisma.forumCategory.updateMany({ where: { id }, data: { deletedAt: null } })", style=STYLE_MSG, sx=1130, sy=1550, tx=1310, ty=1550)
-    add_edge(root, "m12_2_3", value="12.2.3. Execute UPDATE query to set deletedAt: null", style=STYLE_MSG, sx=1320, sy=1600, tx=1475, ty=1600)
-    add_edge(root, "m12_2_4", value="12.2.4. Return result", style=STYLE_REPLY, sx=1475, sy=1650, tx=1320, ty=1650)
-    add_edge(root, "m12_2_5", value="12.2.5. Return restored category", style=STYLE_REPLY, sx=1310, sy=1690, tx=1130, ty=1690)
-    add_edge(root, "m12_2_6", value="12.2.6. Return restored category", style=STYLE_REPLY, sx=1120, sy=1730, tx=925, ty=1730)
+    add_rule14_self_call(root, "act_self_update", "m12_2_7", "12.2.7. Handle update client&nbsp;<div>profile result</div>",
+                         bar_x=920, bar_y=1785, main_right_x=925, sy=1765, ty=1785, mid_x=965)
 
-    # Self-call 2 on Service (Rule 1 & Rule 14)
-    add_rule14_self_call(root, "act_self_restore_cat", "m12_2_7", "12.2.7. Handle restore category&nbsp;<div>result</div>",
-                         bar_x=920, bar_y=1790, main_right_x=925, sy=1770, ty=1790, mid_x=965)
+    # Nested Alt
+    add_cell(root, "fr_nested_alt", value="alt", style=STYLE_FRAME, x=60, y=1825, w=1460, h=515)
+    add_cell(root, "g_nested_1", value="[update failed / error]", style=STYLE_GUARD, x=140, y=1825, w=170, h=30)
+    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw 500 FailedToUpdateClientProfileException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
+    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return error response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
+    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return error response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
+    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Update client profile failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
 
-    # Nested Alt 2 (Restore Result check) (Rule 5 & 7)
-    add_cell(root, "fr_alt_2", value="alt", style=STYLE_FRAME, x=55, y=1830, w=1470, h=520)
-    add_cell(root, "g_res_1", value="[restore category failed]", style=STYLE_GUARD, x=120, y=1830, w=160, h=30)
-    add_edge(root, "m12_2_7_1_1", value="12.2.7.1.1. throw FailedToRestoreForumCategoryException", style=STYLE_REPLY, sx=915, sy=1870, tx=715, ty=1870)
-    add_edge(root, "m12_2_7_1_2", value="12.2.7.1.2. Return 500 response", style=STYLE_REPLY, sx=705, sy=1920, tx=505, ty=1920)
-    add_edge(root, "m12_2_7_1_3", value="12.2.7.1.3. Return 500 response", style=STYLE_REPLY, sx=495, sy=1970, tx=305, ty=1970)
-    add_edge(root, "m12_2_7_1_4", value='12.2.7.1.4. Show message "Restore category failed"', style=STYLE_REPLY, sx=295, sy=2020, tx=105, ty=2020)
-
-    add_edge(root, "div_alt_2", style=STYLE_DIVIDER, sx=55, sy=2070, tx=1525, ty=2070)
-    add_cell(root, "g_res_2", value="[restore category success]", style=STYLE_GUARD, x=120, y=2075, w=160, h=30)
-    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return restored category", style=STYLE_REPLY, sx=915, sy=2120, tx=715, ty=2120)
-    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 response", style=STYLE_REPLY, sx=705, sy=2170, tx=505, ty=2170)
-    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 response", style=STYLE_REPLY, sx=495, sy=2220, tx=305, ty=2220)
-    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Category restored successfully" &amp; refresh list', style=STYLE_REPLY, sx=295, sy=2270, tx=105, ty=2270)
+    add_edge(root, "div_nested_alt", style=STYLE_DIVIDER, sx=60, sy=2070, tx=1520, ty=2070)
+    add_cell(root, "g_nested_2", value="[success]", style=STYLE_GUARD, x=140, y=2080, w=150, h=25)
+    add_edge(root, "m12_2_7_2_1", value="12.2.7.2.1. Return AdminClientProfileResponseDto", style=STYLE_REPLY, sx=915, sy=2125, tx=715, ty=2125)
+    add_edge(root, "m12_2_7_2_2", value="12.2.7.2.2. Return 200 OK response", style=STYLE_REPLY, sx=705, sy=2175, tx=505, ty=2175)
+    add_edge(root, "m12_2_7_2_3", value="12.2.7.2.3. Return 200 OK response", style=STYLE_REPLY, sx=495, sy=2225, tx=305, ty=2225)
+    add_edge(root, "m12_2_7_2_4", value='12.2.7.2.4. Show message "Update client profile success" & refresh tab', style=STYLE_REPLY, sx=295, sy=2275, tx=105, ty=2275)
 
     return mxfile
 
@@ -1457,22 +1619,19 @@ if __name__ == "__main__":
     save_tree(f9, p9)
     shutil.copyfile(p9, os.path.join(target_dir, "UC-16.03-revoke-session.drawio"))
 
-    # 10. UC-17.02
-    f10 = build_uc_17_02()
-    p10 = os.path.join(out_dir, "UC-17.02-update-forum-category.drawio")
-    save_tree(f10, p10)
-    shutil.copyfile(p10, os.path.join(target_dir, "UC-17.02-update-forum-category.drawio"))
+    
+    # UC-28.01 - UC-28.05
+    for fname, builder in [
+        ("UC-28.01-view-user-list.drawio", build_uc_28_01),
+        ("UC-28.02-view-user-detail.drawio", build_uc_28_02),
+        ("UC-28.03-create-user.drawio", build_uc_28_03),
+        ("UC-28.04-update-user.drawio", build_uc_28_04),
+        ("UC-28.05-update-client-profile.drawio", build_uc_28_05),
+    ]:
+        mx = builder()
+        p = os.path.join(out_dir, fname)
+        save_tree(mx, p)
+        shutil.copyfile(p, os.path.join(target_dir, fname))
 
-    # 11. UC-17.03
-    f11 = build_uc_17_03()
-    p11 = os.path.join(out_dir, "UC-17.03-delete-forum-category.drawio")
-    save_tree(f11, p11)
-    shutil.copyfile(p11, os.path.join(target_dir, "UC-17.03-delete-forum-category.drawio"))
+    print("All perfect diagrams generated and synchronized successfully!")
 
-    # 12. UC-17.06
-    f12 = build_uc_17_06()
-    p12 = os.path.join(out_dir, "UC-17.06-restore-forum-category.drawio")
-    save_tree(f12, p12)
-    shutil.copyfile(p12, os.path.join(target_dir, "UC-17.06-restore-forum-category.drawio"))
-
-    print("All 12 perfect diagrams generated and synchronized successfully!")
