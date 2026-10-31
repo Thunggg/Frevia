@@ -1,18 +1,36 @@
 \subsection{Actors}
-\begin{table}[H]
-\centering
-\caption{Actors of the Frevia Platform}
+
+\begingroup
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|c|p{2.5cm}|p{10cm}|}
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{10.5cm}|}
+\caption{Actors of the Frevia Platform} \label{tab:actors} \\
 \hline
 \rowcolor{headerbg}
 \multicolumn{1}{|c|}{\textbf{No}} &
 \multicolumn{1}{c|}{\textbf{Actor}} &
 \multicolumn{1}{c|}{\textbf{Description}} \\
 \hline
+\endfirsthead
+
+\multicolumn{3}{c}%
+{{\bfseries Table \thetable\ continued from previous page}} \\
+\hline
+\rowcolor{headerbg}
+\multicolumn{1}{|c|}{\textbf{No}} &
+\multicolumn{1}{c|}{\textbf{Actor}} &
+\multicolumn{1}{c|}{\textbf{Description}} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{3}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\hline
+\endlastfoot
 
 1 & Guest &
-Guests are unregistered visitors who have not yet created an account on the platform. They can browse publicly available information such as job listings, freelancer profiles, forum content, and platform features. Guests may also register a new account or authenticate using supported login methods to access platform services.
+Guests are unregistered visitors who have not yet created an account on the platform. They can browse publicly available information such as job listings, freelancer profiles, forum content, and platform features. Guests may also register a new account (via email/password or Google OAuth) or authenticate using supported login methods to access platform services.
 \\
 \hline
 
@@ -31,6 +49,40 @@ Administrators are responsible for managing and maintaining the platform's opera
 \\
 \hline
 
-\end{tabular}
-\label{tab:actors}
-\end{table}
+5 & Expert &
+Experts are verified, high-ranking domain specialists featured in the platform's public expert showcase. They possess verified credentials, manage specialized public showcase profiles, consult on high-value client projects, and manage their security sessions and credentials.
+\\
+\hline
+
+6 & System &
+The internal automated execution engine and background scheduler of the platform. The System autonomously executes scheduled background jobs, manages deadline expirations, triggers automatic state transitions for contracts and proposals, processes automated dispute resolution payouts upon administrative decisions, and dispatches automated notifications.
+\\
+\hline
+
+7 & AI Service &
+The artificial intelligence and machine learning microservice providing automated cognitive capabilities. It analyzes resumes to compute CV-to-job matching scores, evaluates forum posts and comments for toxicity and spam to assist content moderation, and performs optical character recognition (OCR) and face-matching validation on identity verification documents.
+\\
+\hline
+
+8 & Payment Gateway (Stripe) &
+The third-party financial processor (Stripe Checkout and Stripe Connect) powering platform monetary operations. It securely processes client escrow funding, holds funds in escrow during project execution, handles automated payouts to freelancer bank accounts, processes refunds and dispute arbitration fees, and transmits asynchronous webhook events to synchronize payment statuses.
+\\
+\hline
+
+9 & Email Service (Gmail / SMTP) &
+The external transactional email delivery provider (SMTP / Nodemailer). It delivers transactional and security communications to users, including email verification links, multi-factor authentication one-time passwords (OTP), password reset instructions, contract status updates, and dispute notifications.
+\\
+\hline
+
+10 & Google OAuth 2.0 &
+Third-party federated identity provider. Enables seamless and secure single sign-on (SSO) authentication, allowing guests to register and log in to the Frevia platform using their Google accounts without requiring separate password management.
+\\
+\hline
+
+11 & Cloud Storage (Cloudinary) &
+Third-party media storage and content delivery network (CDN) service. Securely stores, optimizes, and delivers user-uploaded digital assets, including user avatars, portfolio media, project deliverable files, and identity verification documents.
+\\
+\hline
+
+\end{longtable}
+\endgroup
