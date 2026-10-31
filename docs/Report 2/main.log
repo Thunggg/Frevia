@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  30 OCT 2026 23:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  31 OCT 2026 22:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -115,7 +115,14 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\helvet.sty
+Package: helvet 2020/03/25 PSNFSS-v9.3 (WaS) 
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+))
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip51
 
@@ -125,7 +132,7 @@ Package: amstext 2024/11/17 v2.01 AMS text
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks19
+\@emptytoks=\toks20
 \ex@=\dimen150
 ))
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
@@ -165,21 +172,21 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \dotsspace@=\muskip17
 \c@parentequation=\count292
 \dspbrk@lvl=\count293
-\tag@help=\toks20
+\tag@help=\toks21
 \row@=\count294
 \column@=\count295
 \maxfields@=\count296
-\andhelp@=\toks21
+\andhelp@=\toks22
 \eqnshift@=\dimen153
 \alignsep@=\dimen154
 \tagshift@=\dimen155
 \tagwidth@=\dimen156
 \totwidth@=\dimen157
 \lineht@=\dimen158
-\@envbody=\toks22
+\@envbody=\toks23
 \multlinegap=\skip52
 \multlinetaggap=\skip53
-\mathdisplay@stack=\toks23
+\mathdisplay@stack=\toks24
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
 )
@@ -196,10 +203,6 @@ Package: amssymb 2013/01/14 v3.01 AMS font symbols
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
-\KV@toks@=\toks24
-)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
 
@@ -316,23 +319,29 @@ Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@dima=\skip62
 \bigstrutjot=\dimen182
 )
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen183
+\c@nlinenum=\count310
+\TeXr@lab=\toks31
+)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen183
-\captionmargin=\dimen184
-\caption@leftmargin=\dimen185
-\caption@rightmargin=\dimen186
-\caption@width=\dimen187
-\caption@indent=\dimen188
-\caption@parindent=\dimen189
-\caption@hangindent=\dimen190
+\caption@tempdima=\dimen184
+\captionmargin=\dimen185
+\caption@leftmargin=\dimen186
+\caption@rightmargin=\dimen187
+\caption@width=\dimen188
+\caption@indent=\dimen189
+\caption@parindent=\dimen190
+\caption@hangindent=\dimen191
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count310
-\c@continuedfloat=\count311
+\c@caption@flags=\count311
+\c@continuedfloat=\count312
 Package caption Info: float package is loaded.
 Package caption Info: longtable package is loaded.
 
@@ -342,11 +351,11 @@ Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip63
-\enit@outerparindent=\dimen191
-\enit@toks=\toks31
+\enit@outerparindent=\dimen192
+\enit@toks=\toks32
 \enit@inbox=\box64
-\enit@count@id=\count312
-\enitdp@description=\count313
+\enit@count@id=\count313
+\enitdp@description=\count314
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
@@ -357,18 +366,18 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
-\Gm@cnth=\count314
-\Gm@cntv=\count315
-\c@Gm@tempcnt=\count316
-\Gm@bindingoffset=\dimen192
-\Gm@wd@mp=\dimen193
-\Gm@odd@mp=\dimen194
-\Gm@even@mp=\dimen195
-\Gm@layoutwidth=\dimen196
-\Gm@layoutheight=\dimen197
-\Gm@layouthoffset=\dimen198
-\Gm@layoutvoffset=\dimen199
-\Gm@dimlist=\toks32
+\Gm@cnth=\count315
+\Gm@cntv=\count316
+\c@Gm@tempcnt=\count317
+\Gm@bindingoffset=\dimen193
+\Gm@wd@mp=\dimen194
+\Gm@odd@mp=\dimen195
+\Gm@even@mp=\dimen196
+\Gm@layoutwidth=\dimen197
+\Gm@layoutheight=\dimen198
+\Gm@layouthoffset=\dimen199
+\Gm@layoutvoffset=\dimen256
+\Gm@dimlist=\toks33
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
@@ -382,12 +391,12 @@ Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box65
 \beforetitleunit=\skip64
 \aftertitleunit=\skip65
-\ttl@plus=\dimen256
-\ttl@minus=\dimen257
-\ttl@toksa=\toks33
-\titlewidth=\dimen258
-\titlewidthlast=\dimen259
-\titlewidthfirst=\dimen260
+\ttl@plus=\dimen257
+\ttl@minus=\dimen258
+\ttl@toksa=\toks34
+\titlewidth=\dimen259
+\titlewidthlast=\dimen260
+\titlewidthfirst=\dimen261
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
@@ -406,14 +415,14 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthL=\skip77
 \f@nch@widthC=\skip78
 \f@nch@widthR=\skip79
-\@temptokenb=\toks34
+\@temptokenb=\toks35
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
 Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count317
+\etb@tempcnta=\count318
 )
 Package tocloft Info: The document has section divisions on input line 64.
 \cftparskip=\skip80
@@ -442,8 +451,8 @@ Package tocloft Info: The document has section divisions on input line 64.
 \cftbeforefigskip=\skip103
 \cftfigindent=\skip104
 \cftfignumwidth=\skip105
-\c@lofdepth=\count318
-\c@lotdepth=\count319
+\c@lofdepth=\count319
+\c@lotdepth=\count320
 \cftbeforelottitleskip=\skip106
 \cftafterlottitleskip=\skip107
 \cftbeforetabskip=\skip108
@@ -493,16 +502,16 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count320
+\c@section@level=\count321
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
 y
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen261
-\Hy@linkcounter=\count321
-\Hy@pagecounter=\count322
+\@linkdim=\dimen262
+\Hy@linkcounter=\count322
+\Hy@pagecounter=\count323
  (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -511,7 +520,7 @@ Now handling font encoding PD1 ...
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count323
+\Hy@SavedSpaceFactor=\count324
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
@@ -525,14 +534,14 @@ Package hyperref Info: Plain pages OFF on input line 4210.
 Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count324
+\c@Hy@tempcnt=\count325
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4801.
-\XeTeXLinkMargin=\dimen262
+\XeTeXLinkMargin=\dimen263
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -542,9 +551,9 @@ sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count325
-\Field@Width=\dimen263
-\Fld@charsize=\dimen264
+\Fld@menulength=\count326
+\Field@Width=\dimen264
+\Fld@charsize=\dimen265
 Package hyperref Info: Hyper figures OFF on input line 6078.
 Package hyperref Info: Link nesting OFF on input line 6083.
 Package hyperref Info: Hyper index ON on input line 6086.
@@ -552,16 +561,16 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring OFF on input line 6098.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count326
-\c@Item=\count327
-\c@Hfootnote=\count328
+\Hy@abspage=\count327
+\c@Item=\count328
+\c@Hfootnote=\count329
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count329
-\c@bookmark@seq@number=\count330
+\Fld@listcount=\count330
+\c@bookmark@seq@number=\count331
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
 check.sty
@@ -576,9 +585,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip111
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 154.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 16
-6.
+Package hyperref Info: Option `colorlinks' set `true' on input line 182.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 19
+4.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
@@ -586,43 +595,43 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count331
+\l__color_backend_stack_int=\count332
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 166.
-LaTeX Font Info:    ... okay on input line 166.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count332
-\scratchdimen=\dimen265
+\scratchcounter=\count333
+\scratchdimen=\dimen266
 \scratchbox=\box66
-\nofMPsegments=\count333
-\nofMParguments=\count334
-\everyMPshowfont=\toks35
-\MPscratchCnt=\count335
-\MPscratchDim=\dimen266
-\MPnumerator=\count336
-\makeMPintoPDFobject=\count337
-\everyMPtoPDFconversion=\toks36
+\nofMPsegments=\count334
+\nofMParguments=\count335
+\everyMPshowfont=\toks36
+\MPscratchCnt=\count336
+\MPscratchDim=\dimen267
+\MPnumerator=\count337
+\makeMPintoPDFobject=\count338
+\everyMPtoPDFconversion=\toks37
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
 se.sty
@@ -646,15 +655,15 @@ Package caption Info: End \AtBeginDocument code.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(85.35826pt, 455.24411pt, 56.9055pt)
-* v-part:(T,H,B)=(71.13188pt, 702.78308pt, 71.13188pt)
+* h-part:(L,W,R)=(72.2698pt, 452.96826pt, 72.2698pt)
+* v-part:(T,H,B)=(72.2698pt, 700.50723pt, 72.2698pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=455.24411pt
-* \textheight=702.78308pt
-* \oddsidemargin=13.08827pt
-* \evensidemargin=13.08827pt
-* \topmargin=-40.1381pt
+* \textwidth=452.96826pt
+* \textheight=700.50723pt
+* \oddsidemargin=-0.00018pt
+* \evensidemargin=-0.00018pt
+* \topmargin=-39.00018pt
 * \headheight=14.0pt
 * \headsep=25.0pt
 * \topskip=12.0pt
@@ -672,215 +681,112 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 166.
+Package hyperref Info: Link coloring ON on input line 194.
 (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
  (introduction.tex
 Package hyperref Info: Option `pageanchor' set `false' on input line 4.
-<image/school_logo.png, id=83, 1284.8pt x 500.87125pt>
+<image/school_logo.png, id=91, 1284.8pt x 500.87125pt>
 File: image/school_logo.png Graphic file (type png)
 <use image/school_logo.png>
-Package pdftex.def Info: image/school_logo.png  used on input line 6.
-(pdftex.def)             Requested size: 182.09486pt x 70.9851pt.
-<image/line.png, id=85, 457.71pt x 4.51688pt>
-File: image/line.png Graphic file (type png)
-<use image/line.png>
-Package pdftex.def Info: image/line.png  used on input line 12.
-(pdftex.def)             Requested size: 318.66948pt x 3.14488pt.
+Package pdftex.def Info: image/school_logo.png  used on input line 7.
+(pdftex.def)             Requested size: 213.39566pt x 83.19046pt.
+Package hyperref Info: Option `pageanchor' set `true' on input line 20.
+ [1
+
+{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./image/school_logo
+.png>]) (table_of_contents.tex
+(main.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 19.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 19.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 19.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 19.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
-9.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
+.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
-Package hyperref Info: Option `pageanchor' set `true' on input line 40.
-
-[1
-
-{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
-AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./image/school_logo
-.png> <./image/line.png>]) (main.toc)
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+)
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
 
-pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.180 \newpage
-               [1] (sections/1.1-scope-and-estimation.tex
-Overfull \hbox (10.95789pt too wide) in paragraph at lines 14--14
- []|\T1/ptm/b/n/12 Complexity| 
- []
+[2]) (sections/record_of_changes.tex
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 8.
 
 
-Underfull \hbox (badness 10000) in alignment at lines 11--16
-[] [] [] [] [] []
- []
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1phv.fd
+File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 12.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 16.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 16.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 16.
 
-
-Overfull \hbox (10.95789pt too wide) in paragraph at lines 19--19
- []|\T1/ptm/b/n/12 Complexity| 
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 16--21
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 21--24
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 24--27
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 27--301
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 301--379
-[] [] [] [] [] []
- []
-
-ignored error: Infinite glue shrinkage found in box being split [1]
-ignored error: Infinite glue shrinkage found in box being split [2]
-ignored error: Infinite glue shrinkage found in box being split [3]
+[3]) (sections/1.1-scope-and-estimation.tex
 ignored error: Infinite glue shrinkage found in box being split [4]
 ignored error: Infinite glue shrinkage found in box being split [5]
 ignored error: Infinite glue shrinkage found in box being split [6]
 ignored error: Infinite glue shrinkage found in box being split [7]
 ignored error: Infinite glue shrinkage found in box being split [8]
 ignored error: Infinite glue shrinkage found in box being split [9]
-ignored error: Infinite glue shrinkage found in box being split [10])
-(sections/1-2-objective.tex [11]
+ignored error: Infinite glue shrinkage found in box being split [10]
+ignored error: Infinite glue shrinkage found in box being split [11]
+ignored error: Infinite glue shrinkage found in box being split [12]
+ignored error: Infinite glue shrinkage found in box being split [13])
+(sections/1.2-project-objectives.tex [14]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 9
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-[12]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 31.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 31.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 31.
 
-Overfull \hbox (11.89275pt too wide) in paragraph at lines 31--47
- [][] 
- []
-
-) (sections/1.3-project-risk.tex [13]
-Overfull \hbox (4.0696pt too wide) in paragraph at lines 8--8
- []|\T1/ptm/b/n/12 Possibility| 
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 6--10
-[] [] [] []
- []
-
-
-Overfull \hbox (4.0696pt too wide) in paragraph at lines 12--12
- []|\T1/ptm/b/n/12 Possibility| 
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 10--14
-[] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 14--16
-[] [] [] []
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 39--39
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 49--49
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 54--54
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 59--59
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 64--64
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 69--69
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Overfull \hbox (3.6789pt too wide) in paragraph at lines 79--79
- []|\T1/ptm/m/n/12 Medium| 
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 16--82
-[] [] [] []
- []
-
-ignored error: Infinite glue shrinkage found in box being split [14]
-ignored error: Infinite glue shrinkage found in box being split [15]
-ignored error: Infinite glue shrinkage found in box being split [16]
-ignored error: Infinite glue shrinkage found in box being split [17])
-(sections/2-management-approach.tex [18]) (sections/2.1-project-process.tex
-[19] [20]) (sections/2.2-quality-management.tex [21] [22] [23])
+[15]) (sections/1.3-project-risk.tex [16]
+ignored error: Infinite glue shrinkage found in box being split [17]
+ignored error: Infinite glue shrinkage found in box being split [18]
+ignored error: Infinite glue shrinkage found in box being split [19]
+ignored error: Infinite glue shrinkage found in box being split [20])
+(sections/2-management-approach.tex [21]) (sections/2.1-project-process.tex
+[22] [23]) (sections/2.2-quality-management.tex [24] [25] [26])
 (sections/2.3-training-plan.tex
 Underfull \hbox (badness 10000) in alignment at lines 6--10
 [] [] [] []
@@ -906,251 +812,314 @@ Underfull \hbox (badness 10000) in alignment at lines 22--51
 [] [] [] []
  []
 
-[24]
-ignored error: Infinite glue shrinkage found in box being split [25])
-(sections/3.1-team-structures.tex [26]
-<./image/team-structure.jpg, id=237, 5629.03pt x 1694.33pt>
+ignored error: Infinite glue shrinkage found in box being split [27]
+ignored error: Infinite glue shrinkage found in box being split [28])
+(sections/3-project-deliverables.tex
+ignored error: Infinite glue shrinkage found in box being split [29])
+(sections/4-responsibility-assignments.tex) (sections/4.1-team-structures.tex
+[30]
+<./image/team-structure.jpg, id=257, 5629.03pt x 1694.33pt>
 File: ./image/team-structure.jpg Graphic file (type jpg)
 <use ./image/team-structure.jpg>
 Package pdftex.def Info: ./image/team-structure.jpg  used on input line 9.
-(pdftex.def)             Requested size: 364.19667pt x 109.61824pt.
-) (sections/3.2-role-responsibilities.tex
-Underfull \hbox (badness 10000) in paragraph at lines 39--39
-[]|\T1/ptm/m/n/12 Payment In-te-gra-tion
- []
-
-) [27 <./image/team-structure.jpg>] [28]
-Overfull \vbox (179.32437pt too high) has occurred while \output is active []
-
-
-[29] (sections/4-project-deliverables.tex
-Underfull \hbox (badness 10000) in alignment at lines 5--14
-[] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 14--24
-[] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 24--27
-[] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 27--29
-[] [] [] [] []
- []
-
-
-Overfull \hbox (455.24411pt too wide) detected at line 61
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 29--63
-[] [] [] [] []
- []
-
-ignored error: Infinite glue shrinkage found in box being split [30])
-(sections/5-responsibility-assignments.tex
-Underfull \hbox (badness 10000) in alignment at lines 12--27
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 27--43
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 43--46
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 46--48
-[] [] [] [] [] []
- []
-
-
-Underfull \hbox (badness 1681) in paragraph at lines 50--51
+(pdftex.def)             Requested size: 362.37598pt x 109.04947pt.
+) (sections/4.2-role-responsibilities.tex
+ignored error: Infinite glue shrinkage found in box being split [31 <./image/te
+am-structure.jpg>]
+ignored error: Infinite glue shrinkage found in box being split [32])
+(sections/4.3-responsibility-matrix.tex
+Underfull \hbox (badness 1681) in paragraph at lines 49--50
 []|\T1/ptm/m/n/10.95 Project ini-ti-a-tion, scope and risk
  []
 
 
-Underfull \hbox (badness 2781) in paragraph at lines 59--60
+Underfull \hbox (badness 2781) in paragraph at lines 58--59
 []|\T1/ptm/m/n/10.95 Requirements gath-er-ing and user
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
+Underfull \hbox (badness 10000) in paragraph at lines 64--65
 []|\T1/ptm/m/n/10.95 Software ar-chi-tec-ture and data
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 68--69
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
 []|\T1/ptm/m/n/10.95 Authentication, per-mis-sions and
  []
 
 
-Underfull \hbox (badness 2351) in paragraph at lines 74--75
+Underfull \hbox (badness 2351) in paragraph at lines 73--74
 []|\T1/ptm/m/n/10.95 Job mar-ket-place, book-marks and
  []
 
 
-Underfull \hbox (badness 2573) in paragraph at lines 80--81
+Underfull \hbox (badness 2573) in paragraph at lines 79--80
 []|\T1/ptm/m/n/10.95 Contract sign-ing, mile-stones and
  []
 
-
-Overfull \hbox (455.24411pt too wide) detected at line 131
-[]
+ignored error: Infinite glue shrinkage found in box being split [33])
+(sections/5-project-communications.tex [34]
+Underfull \hbox (badness 10000) in paragraph at lines 11--11
+[]|\T1/ptm/b/n/10.95 Communication
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 48--133
-[] [] [] [] [] []
- []
-
-ignored error: Infinite glue shrinkage found in box being split [31]) [32]
-(sections/6-project-communications.tex
-Underfull \hbox (badness 10000) in paragraph at lines 8--8
-[]|\T1/ptm/b/n/12 Communication
+Underfull \hbox (badness 3058) in paragraph at lines 14--14
+[]|\T1/ptm/b/n/10.95 When, Fre-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 15--15
-[]|\T1/ptm/m/n/12 Development
+Underfull \hbox (badness 10000) in paragraph at lines 15--16
+[]|\T1/ptm/b/n/10.95 Type, Tool,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\T1/ptm/m/n/12 Daily, 15
- []
-
-
-Underfull \hbox (badness 2111) in paragraph at lines 17--18
-[]|\T1/ptm/m/n/12 Report progress since the
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
+[]|\T1/ptm/m/n/10.95 Development
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 21--21
-[]|\T1/ptm/m/n/12 Development
+[]|\T1/ptm/m/n/10.95 Daily, 15
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--24
-[]|\T1/ptm/m/n/12 Re-estimate can-di-date
+Underfull \hbox (badness 10000) in paragraph at lines 22--23
+[]|\T1/ptm/m/n/10.95 Discord voice
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 22--23
+\T1/ptm/m/n/10.95 chan-nel, short
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 26--26
+[]|\T1/ptm/m/n/10.95 Development
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 27--27
-[]|\T1/ptm/m/n/12 Team mem-bers,
+[]|\T1/ptm/m/n/10.95 Re-estimate can-di-date
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 33--33
-[]|\T1/ptm/m/n/12 Team mem-bers,
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+\T1/ptm/m/n/10.95 items, split over-sized
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 33--33
-\T1/ptm/m/n/12 su-per-vi-sor, in-
+Underfull \hbox (badness 1259) in paragraph at lines 27--27
+\T1/ptm/m/n/10.95 items, and con-firm de-
  []
 
 
-Underfull \hbox (badness 1308) in paragraph at lines 35--36
-\T1/ptm/m/n/12 on a run-ning en-vi-ron-ment
+Underfull \hbox (badness 10000) in paragraph at lines 29--30
+[]|\T1/ptm/m/n/10.95 GitHub project
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 39--39
-[]|\T1/ptm/m/n/12 Development
+Underfull \hbox (badness 8132) in paragraph at lines 29--30
+\T1/ptm/m/n/10.95 board, Dis-cord
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 45--45
-[]|\T1/ptm/m/n/12 Team mem-bers,
+Underfull \hbox (badness 7851) in paragraph at lines 33--33
+[]|\T1/ptm/m/n/10.95 Team mem-bers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
+[]|\T1/ptm/m/n/10.95 Google Meet,
+ []
+
+
+Underfull \hbox (badness 7851) in paragraph at lines 40--40
+[]|\T1/ptm/m/n/10.95 Team mem-bers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 40--40
+\T1/ptm/m/n/10.95 su-per-vi-sor, in-
+ []
+
+
+Underfull \hbox (badness 3375) in paragraph at lines 41--41
+[]|\T1/ptm/m/n/10.95 Demonstrate the in-cre-
+ []
+
+
+Underfull \hbox (badness 1163) in paragraph at lines 42--42
+[]|\T1/ptm/m/n/10.95 End of each
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 43--44
+[]|\T1/ptm/m/n/10.95 Google Meet,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 43--44
+\T1/ptm/m/n/10.95 live demon-
+ []
+
+
+Underfull \hbox (badness 4084) in paragraph at lines 43--44
+\T1/ptm/m/n/10.95 stra-tion on the
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 46--46
-[]|\T1/ptm/m/n/12 Before
+[]|\T1/ptm/m/n/10.95 Sprint Ret-ro-spec-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 46--46
-\T1/ptm/m/n/12 each high-
+Underfull \hbox (badness 10000) in paragraph at lines 47--47
+[]|\T1/ptm/m/n/10.95 Development
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 46--46
-\T1/ptm/m/n/12 complexity
+Underfull \hbox (badness 3536) in paragraph at lines 48--48
+\T1/ptm/m/n/10.95 cess changes and ver-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 51--51
-[]|\T1/ptm/m/n/12 Author and at
+Underfull \hbox (badness 1163) in paragraph at lines 49--49
+[]|\T1/ptm/m/n/10.95 End of each
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 51--51
-\T1/ptm/m/n/12 least one re-
+Underfull \hbox (badness 10000) in paragraph at lines 50--51
+[]|\T1/ptm/m/n/10.95 Discord, ret-ro-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 58--58
-[]|\T1/ptm/m/n/12 Twice per
+Underfull \hbox (badness 5274) in paragraph at lines 50--51
+\T1/ptm/m/n/10.95 the doc-u-men-ta-
  []
 
 
-Underfull \hbox (badness 4328) in paragraph at lines 65--66
-[]|\T1/ptm/m/n/12 Report sta-tus against the
+Underfull \hbox (badness 7851) in paragraph at lines 54--54
+[]|\T1/ptm/m/n/10.95 Team mem-bers,
  []
 
-[33]) (sections/7.1-document-management.tex [34])
-(sections/7.2-source-code-management.tex [35])
-Underfull \hbox (badness 1454) in paragraph at lines 20--229
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--56
+[]|\T1/ptm/m/n/10.95 Before
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--56
+\T1/ptm/m/n/10.95 each high-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--56
+\T1/ptm/m/n/10.95 complexity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--58
+[]|\T1/ptm/m/n/10.95 Google Meet,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--58
+\T1/ptm/m/n/10.95 de-sign note
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--61
+[]|\T1/ptm/m/n/10.95 Author and at
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--61
+\T1/ptm/m/n/10.95 least one re-
+ []
+
+
+Underfull \hbox (badness 2205) in paragraph at lines 62--62
+[]|\T1/ptm/m/n/10.95 Check be-haviour, er-ror
+ []
+
+
+Underfull \hbox (badness 4391) in paragraph at lines 62--62
+\T1/ptm/m/n/10.95 han-dling, au-tho-ri-sa-tion,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--70
+[]|\T1/ptm/m/n/10.95 Twice per
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--72
+[]|\T1/ptm/m/n/10.95 GitHub is-sues
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--72
+\T1/ptm/m/n/10.95 with sever-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\T1/ptm/m/n/10.95 Written re-port
+ []
+
+
+Underfull \hbox (badness 5970) in paragraph at lines 78--79
+\T1/ptm/m/n/10.95 sent by email,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+\T1/ptm/m/n/10.95 Google Meet
+ []
+
+
+Underfull \hbox (badness 1983) in paragraph at lines 78--79
+\T1/ptm/m/n/10.95 when a dis-cus-
+ []
+
+[35]) (sections/6.1-document-management.tex [36])
+(sections/6.2-source-code-management.tex [37])
+Underfull \hbox (badness 1237) in paragraph at lines 20--262
 \T1/cmtt/m/n/12 packages/shared-type \T1/ptm/m/n/12 con-tains the Zod schemas a
 nd the types de-rived from them,
  []
 
-(sections/7.3-tools-infrastructures.tex
-Underfull \hbox (badness 10000) in paragraph at lines 18--18
-[]|\T1/ptm/m/n/12 Runtime and
- []
-
-[36] [37]
-Overfull \vbox (150.62517pt too high) has occurred while \output is active []
-
-
-[38]) [39] (main.aux)
+(sections/6.3-tools-infrastructures.tex
+ignored error: Infinite glue shrinkage found in box being split [38]
+ignored error: Infinite glue shrinkage found in box being split [39]) [40]
+(main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 99099DB31D4D4232285B274F3286E5D8;3147.
+(rerunfilecheck)             Checksum: D145CE9F19BE08D5692FBF98367B1E91;3595.
  ) 
 Here is how much of TeX's memory you used:
- 15590 strings out of 467871
- 251078 string characters out of 5418860
- 926453 words of memory out of 5000000
- 44101 multiletter control sequences out of 15000+600000
- 687285 words of font info for 122 fonts, out of 8000000 for 9000
+ 15890 strings out of 467871
+ 255505 string characters out of 5418860
+ 972901 words of memory out of 5000000
+ 44374 multiletter control sequences out of 15000+600000
+ 707756 words of font info for 153 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,83p,1025b,679s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1034b,682s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
 200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/tim
-es/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/time
-s/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times
-/utmri8a.pfb>
-Output written on main.pdf (41 pages, 448326 bytes).
+/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/hel
+vetic/uhvb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/t
+imes/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/ti
+mes/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/ti
+mes/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/tim
+es/utmri8a.pfb>
+Output written on main.pdf (40 pages, 466528 bytes).
 PDF statistics:
- 370 PDF objects out of 1000 (max. 8388607)
- 72 named destinations out of 1000 (max. 500000)
- 176 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 387 PDF objects out of 1000 (max. 8388607)
+ 74 named destinations out of 1000 (max. 500000)
+ 187 words of extra memory for PDF output out of 10000 (max. 10000000)
 

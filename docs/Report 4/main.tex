@@ -109,6 +109,40 @@
 %====================================================
 \usepackage{titlesec}
 
+% Level 1 (I. Record of Changes / II. Software Design Document) -- 16 pt bold,
+% dark red, matching Heading 1 of the template.
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
+
+% Level 2 (1., 2., ...) -- 13 pt bold black, matching Heading 2 of the template.
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries}
+  {\thesection}{0.8em}{}
+
+% Level 3 (1.1, 1.2, ...) -- 12 pt bold black, matching Heading 3 of the template.
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}
+  {\thesubsection}{0.8em}{}
+
+% Level 4 (1.1.1, ...) -- 12 pt bold black, matching Heading 4 of the template.
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}
+  {\thesubsubsection}{0.8em}{}
+
+% Numbering of the template: "II." for parts, "1." for sections, then "1.1"
+% and "1.1.1". The subsection counter is written out explicitly because
+% \thesection now carries a trailing dot.
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titlespacing*{\part}{0pt}{0pt}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+
 %====================================================
 % PARAGRAPH NUMBERING
 %====================================================
@@ -299,18 +333,30 @@
 %====================================================
 \input{cover}
 
+% The cover is page 1 of the template, so the table of contents starts on page 2.
+\setcounter{page}{2}
+
 %====================================================
 % TABLE OF CONTENTS
 %====================================================
 \input{table_of_contents}
 
 %====================================================
-% MAIN CONTENT
+% FRONT MATTER AND MAIN CONTENT
 %====================================================
 
-\input{sections/1.Overall_Description}
-\input{sections/2.System_Architecture_Design}
-\input{sections/3.System_Detailed_Design}
+% I. Record of Changes
+\input{sections/record_of_changes}
+
+% II. Software Design Document
+\part{Software Design Document}
+
+% Chapter order follows the sample: 1 System Design (1.1 System Architecture,
+% 1.2 Package Diagram), 2 Database Design (Table Descriptions), 3 Detailed Design
+% (class + sequence diagrams per feature), 4 Class Specification (extra chapter).
+\input{sections/1.System_Design}
+\input{sections/2.Database_Design}
+\input{sections/3.Detailed_Design}
 \input{sections/4.Class_Specification}
 
 \end{document}

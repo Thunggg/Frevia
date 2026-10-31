@@ -1,0 +1,53 @@
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+
+\begin{longtable}{|L{3.1cm}|L{6.3cm}|L{4.9cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Category} & \textbf{Tools / Infrastructure} & \textbf{Technology} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{fptHeader}
+\textbf{Category} & \textbf{Tools / Infrastructure} & \textbf{Technology} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+Project tracking & Issue list, milestones, and the project board kept in the same repository as the code & GitHub \\ \hline
+Version control & Two long-lived branches and short-lived use-case branches merged by pull request & Git, GitHub \\ \hline
+Communication & Daily coordination, sprint reviews, and supervisor meetings & Discord, Google Meet \\ \hline
+Documentation & LaTeX sources in the repository, shared material, and required forms & LaTeX, Google Drive, Microsoft Word \\ \hline
+UI/UX design & User flows, wireframes, and the shared component library & Figma \\ \hline
+Runtime and workspace & Workspace management and task orchestration for both applications & Node.js, pnpm, Turborepo \\ \hline
+Frontend & Next.js App Router application with the shared component library, server state, and the forum editor & Next.js 16, React 19, Tailwind CSS 4, next-intl, TanStack Query, Tiptap \\ \hline
+Backend & NestJS API with a global prefix, request validation, a permission guard, and the messaging gateway & NestJS 11, nestjs-zod, Socket.IO \\ \hline
+Data access & Client and migration tool generating every schema change from the data model & Prisma 7 \\ \hline
+Database & Relational database supporting the transactional workflows and their indexes & PostgreSQL \\ \hline
+Shared contracts & Shared package containing the validation schemas and the types used by both applications & TypeScript, Zod \\ \hline
+Payments & Escrow funding, release, refunds, dispute settlement, and a signature-verified webhook, all in test mode & Stripe (Connect Express, PaymentIntent, Checkout Session) \\ \hline
+Media storage & Profile and portfolio images; identity documents stored on the application's own storage & Cloudinary \\ \hline
+Email & One-time verification and password reset codes & SMTP, Nodemailer \\ \hline
+External AI services & Curriculum vitae analysis and identity verification, called only from the backend over HTTP with an explicit timeout & External AI APIs \\ \hline
+Testing & Unit, integration, and end-to-end tests, plus exploratory API checks & Jest 30, Postman \\ \hline
+Quality tooling & Linting, formatting, and strict type checking & ESLint 9, Prettier, TypeScript strict mode \\ \hline
+Secret management & Environment variables injected at start-up; no secret stored in the repository & Infisical \\ \hline
+Containerisation & API and web client containers, with a health check before the client starts & Docker, Docker Compose \\ \hline
+API documentation & Maintained reference describing each endpoint, its permission, and its request and response schemas & Markdown in the repository \\ \hline
+
+\caption{Tools and Infrastructures}
+\label{tab:tools}
+\end{longtable}
+
+\endgroup
+
+The tool selection follows a single constraint: a member must be able to reproduce the whole system from a fresh clone with one command. That is why the runtime, the database, the task pipeline, and the container definition are all pinned in the repository rather than installed manually per machine. It is also why the configuration is injected through a secret manager instead of being copied between members, and why the API reference is kept in the repository rather than in a separately hosted portal.
+
+Two capabilities are deliberately not part of the toolchain. There is no automated continuous integration service: the same quality gate is executed locally and inside the container build, and the reviewer confirms the result before approving a pull request. There is no hosted API documentation portal; the reference is a maintained document, which is sufficient for a team of five and avoids a second source of truth that can fall out of date.

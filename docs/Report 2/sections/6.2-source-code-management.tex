@@ -1,0 +1,20 @@
+Source code is managed in a single monorepo versioned with Git and hosted on GitHub. The repository contains the API application, the web application, the shared packages, the database schema, and the documentation, which allows a change that spans the frontend, the backend, and a shared validation schema to be reviewed and merged atomically.
+
+The following branching strategy is applied:
+
+\begin{itemize}
+    \item \texttt{main}: the stable branch. It is updated only at the end of a sprint, from \texttt{develop}, after the increment has been demonstrated at the Sprint Review.
+    \item \texttt{develop}: the integration branch. Every member integrates into this branch, and it is expected to build and pass the test suite at all times.
+    \item \texttt{uc-[id]-[action-name]}: short-lived feature branches created from \texttt{develop} for a single use case, for example \texttt{uc-09-sign-contract}.
+    \item \texttt{hotfix/[short-description]}: urgent corrections created from \texttt{main}, merged back into both \texttt{main} and \texttt{develop} so that the fix is not lost at the next integration.
+\end{itemize}
+
+A change is merged only through a pull request. The pull request must reference the SMAR identifier it implements, describe the behaviour that changed, and state how it was verified. At least one other member must approve it, and the author may not approve their own change. The project's Definition of Done is applied at review time: the lint, type-check, and test commands pass, the container build succeeds, the new endpoint is registered in the permission model, and the user-facing text exists in both language catalogues.
+
+Commit messages are written in the imperative mood with a short scoped summary, so that the history of a module can be read without opening the diff. A commit that changes the database schema is separated from the commit that changes application behaviour, which makes a migration easy to identify and to revert independently.
+
+Direct pushes to \texttt{develop} and to \texttt{main} are not permitted, and neither branch may receive a force push after it has been shared. Branches are deleted after merge so that the branch list reflects only work that is in progress.
+
+Generated artefacts are excluded from version control: build output, dependency directories, uploaded files, coverage reports, and environment files. Secrets are never committed; configuration is supplied through environment variables loaded from the secret manager described in Section 6.3, and the committed environment template contains only the names of the variables and placeholder values.
+
+The repository layout mirrors the architecture: \texttt{apps/api} contains the NestJS application with its Prisma schema and migrations, \texttt{apps/web} contains the Next.js application, \texttt{packages/shared-type} contains the Zod schemas and the types derived from them, \texttt{packages/ui} contains the shared interface components, and \texttt{docs} contains the reports and the specifications. The deployment definition, the workspace configuration, and the task pipeline live at the repository root so that a fresh clone can be started with a single command.

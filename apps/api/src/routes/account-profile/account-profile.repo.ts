@@ -31,6 +31,7 @@ export class AccountProfileRepository {
         id: true,
         email: true,
         profile: true,
+
         userRoles: {
           select: { isPrimary: true, role: { select: { name: true } } },
           orderBy: { createdAt: 'asc' },

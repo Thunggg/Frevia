@@ -1,29 +1,6 @@
 \documentclass[12pt,a4paper]{article}
 
 %====================================================
-% BASIC PACKAGES
-%====================================================
-\usepackage[table]{xcolor}
-\usepackage{float}
-\usepackage{tabularx}
-\usepackage{enumitem}
-
-
-\setcounter{secnumdepth}{5}
-\setcounter{tocdepth}{5}
-
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage{makecell}
-\usepackage{longtable}
-
-\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
-\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
-\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
-
-\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-
-%====================================================
 % ENCODING & LANGUAGE
 %====================================================
 \usepackage[T1]{fontenc}
@@ -34,6 +11,7 @@
 % FONT
 %====================================================
 \usepackage{mathptmx}
+\usepackage{helvet} % sans-serif face used by the template's Record of Changes table
 
 %====================================================
 % MATH
@@ -50,24 +28,30 @@
 %====================================================
 % TABLES
 %====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{multirow}
+\usepackage{makecell}
 \usepackage{caption}
+\usepackage{enumitem}
 
 %====================================================
 % PAGE LAYOUT
 %====================================================
 \usepackage{geometry}
-
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
-    left=3.0cm,
-    right=2.0cm
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
+    headheight=14pt
 }
+
+\setlength{\emergencystretch}{3em}
 
 %====================================================
 % SPACING
@@ -80,32 +64,80 @@
 \setlength{\parskip}{6pt}
 
 %====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{fptHeader}{RGB}{255,232,225}
+\definecolor{fptHeaderText}{RGB}{110,37,0}
+\definecolor{fptTocBlue}{RGB}{46,116,181}
+% Table headers of this report use one shared name.
+\definecolor{headerbg}{RGB}{255,232,225}
+
+%====================================================
 % SECTION FORMAT
 %====================================================
 \usepackage{titlesec}
 
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{3}
+
+% Level 1 (I., II.) -- 16 pt bold, dark red, matching Heading 1 of the template
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
+
+% Level 2 (1., 2., ...) -- 13 pt bold, black, matching Heading 2 of the template
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\thesection}{0.8em}{}
+
+% Level 3 (2.1, 2.2, ...) -- 12 pt bold, black, matching Heading 3 of the template
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
+  {\thesubsection}{0.8em}{}
+
+% Level 4 (2.2.1, ...) -- 12 pt bold, black, matching Heading 4 of the template
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
+  {\thesubsubsection}{0.8em}{}
+
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titlespacing*{\part}{0pt}{0pt}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+
 %====================================================
 % PARAGRAPH NUMBERING
 %====================================================
-
+% Paragraphs are used for the function groups inside the features of section 3
+% (3.2, 3.3, ...) and for the diagrams inside 3.1.5 Entity Relationship
+% Diagram (3.1.5.1, 3.1.5.2, ...), so they are numbered below their
+% subsubsection.
 \makeatletter
 
 \renewcommand{\theparagraph}
-{\thesubsection.\arabic{paragraph}}
+{\thesubsubsection.\arabic{paragraph}}
 
-\@addtoreset{paragraph}{subsection}
+\@addtoreset{paragraph}{subsubsection}
 
-\def\toclevel@paragraph{3}
+\def\toclevel@paragraph{4}
 
-% Subparagraphs are used for the small ERDs inside
-% 4.1.5 Entity Relationship Diagram, so they are numbered like
-% 4.1.5.1, 4.1.5.2, ... and sit one level below the subsubsection.
+% The subparagraph is only used for a single use case, whose identifier is
+% already part of the title (UC-01 Register), so it is left unnumbered.
 \renewcommand{\thesubparagraph}
-{\thesubsubsection.\arabic{subparagraph}}
+{\theparagraph.\arabic{subparagraph}}
 
-\@addtoreset{subparagraph}{subsubsection}
+\@addtoreset{subparagraph}{paragraph}
 
-\def\toclevel@subparagraph{4}
+\def\toclevel@subparagraph{5}
 
 \makeatother
 
@@ -122,8 +154,8 @@
 
 \titleformat{\subparagraph}[runin]
 {\normalfont\normalsize\bfseries}
-{\thesubparagraph}
-{1em}
+{}
+{0pt}
 {}
 
 \titlespacing*{\subparagraph}
@@ -132,24 +164,198 @@
 {1em}
 
 %====================================================
+% HEADER & FOOTER
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%====================================================
+% CAPTIONS
+%====================================================
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    skip=6pt
+}
+
+% longtable captions use this width; the default 4 in is narrower than the tables
+\setlength{\LTcapwidth}{\textwidth}
+
+%====================================================
+% FUNCTION DESCRIPTION FORM
+%====================================================
+% The template describes every function of section 3 with the same four
+% fields (function trigger, function description, screen layout, function
+% details). The fields are set as small tinted labels, the screen layout is
+% framed and always kept together with its label, and the sub-headings inside
+% the details use the brown of the template table headers.
+
+\newcommand{\functionchip}[1]{%
+  {\setlength{\fboxsep}{3.5pt}%
+   \colorbox{headerbg}{\textcolor{fptHeaderText}{\small\bfseries #1}}}}
+
+% A field label followed by its text; the label is moved to the next page when
+% fewer than five lines are left, so it is never stranded alone at the bottom
+% of a page.
+\newcommand{\functionfield}[1]{%
+  \par\addvspace{10pt plus 2pt}%
+  \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
+  \ifdim\dimen0<5\baselineskip \newpage\fi
+  \noindent\functionchip{#1}%
+  \par\addvspace{2pt}\penalty10000\noindent\ignorespaces}
+
+% Screen layout: the label belongs to the float, so it can never be stranded
+% at the bottom of a page while the mock-up moves to the next one.
+\newlength{\ringwidth}
+\setlength{\ringwidth}{\fboxrule}
+
+\newcommand{\screenshotframe}[2][0.88]{%
+  \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
+  \fcolorbox{black!20}{white}{\includegraphics[width=#1\linewidth]{#2}}%
+  \setlength{\fboxrule}{\ringwidth}}
+
+\newcommand{\screenfield}[3][0.88]{%
+  \begin{figure}[H]
+    \centering
+    \makebox[\linewidth][l]{\functionchip{Screen layout}}\par\vspace{5pt}%
+    \screenshotframe[#1]{#2}%
+    \caption{#3}
+  \end{figure}}
+
+\newcommand{\screenfieldpair}[3]{%
+  \begin{figure}[H]
+    \centering
+    \makebox[\linewidth][l]{\functionchip{Screen layout}}\par\vspace{5pt}%
+    \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#1}}\hfill
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#2}}%
+    \setlength{\fboxrule}{\ringwidth}%
+    \caption{#3}
+  \end{figure}}
+
+% Sub-headings inside one function description (Actors / Roles, Purpose,
+% Input Data, Validation Rules, ..., Post-Conditions) are plain black bold
+% text, like every other heading of the report.
+\newcommand{\detailhead}[1]{\textbf{#1}}
+
+% Screen layout used by the detailed form: the numbered field heading already
+% carries the label, so these variants only frame the mock-up.
+\newcommand{\screenfigure}[3][0.88]{%
+  \begin{figure}[H]
+    \centering
+    \screenshotframe[#1]{#2}%
+    \caption{#3}
+  \end{figure}}
+
+\newcommand{\screenfigurepair}[3]{%
+  \begin{figure}[H]
+    \centering
+    \setlength{\fboxrule}{0.4pt}\setlength{\fboxsep}{2pt}%
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#1}}\hfill
+    \fcolorbox{black!20}{white}{\includegraphics[width=0.455\linewidth]{#2}}%
+    \setlength{\fboxrule}{\ringwidth}%
+    \caption{#3}
+  \end{figure}}
+
+%====================================================
+% DETAILED FUNCTION DESCRIPTION
+%====================================================
+% The detailed form describes each function through four numbered fields
+% (3.2.1.1 Function trigger, 3.2.1.2 Function description, 3.2.1.3 Screen
+% layout, 3.2.1.4 Function details). \fnhead prints the numbered field heading
+% and moves it to the next page when fewer than six lines are left, so a
+% heading is never stranded at the bottom of a page.
+
+\newcommand{\fnhead}[1]{%
+  \par
+  \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
+  \ifdim\dimen0<6\baselineskip \newpage\fi
+  \paragraph{#1}}
+
+% Sub-label inside one field (Actors / Roles, Purpose, Input Data, ...).
+\newcommand{\sublabel}[1]{%
+  \par\addvspace{5pt}\noindent\detailhead{#1}%
+  \par\nopagebreak}
+
+% Business-rule lists. The identifier of every rule (BR-FORUM-01, ...) is set
+% in bold. \brrulelist is issued right after the itemize starts: it captures
+% the current \item and makes every following \item print its text up to the
+% first colon in bold, so the identifiers are not marked up one by one and the
+% source of the report keeps "BR-FORUM-01: ..." readable.
+\let\brsaveitem\relax
+
+\newcommand{\brrulelist}{%
+  \let\brsaveitem\item
+  \def\item{\brsaveitem\brgrabref}}
+
+\def\brgrabref#1:{\textbf{#1}:}
+
+% Two-column tables of the Function details field: input data, output data.
+% The tables are short, so they are moved to the next page instead of being
+% split with a single row left over.
+\newenvironment{specdatatable}[2]{%
+  \par\addvspace{3pt}%
+  \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
+  \ifdim\dimen0<11\baselineskip \newpage\fi
+  \renewcommand{\arraystretch}{1.22}%
+  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.26\linewidth}|p{0.62\linewidth}|}
+  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \endfirsthead
+  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \endhead
+  \hline\endfoot
+  }{%
+  \hline
+  \end{longtable}}
+
+% Two-column table of the abnormal flow: case identifier and description.
+\newenvironment{flowtable}[2]{%
+  \par\addvspace{3pt}%
+  \renewcommand{\arraystretch}{1.22}%
+  \begin{longtable}{|>{\centering\arraybackslash}p{0.09\linewidth}|p{0.79\linewidth}|}
+  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \endfirsthead
+  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \endhead
+  \hline\endfoot
+  }{%
+  \hline
+  \end{longtable}}
+
+%====================================================
 % TABLE OF CONTENTS
 %====================================================
 \usepackage{tocloft}
 
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
 
-\renewcommand{\cftsecfont}{\bfseries}
-\renewcommand{\cftsecpagefont}{\bfseries}
+\renewcommand{\cftpartfont}{\normalfont\normalsize}
+\renewcommand{\cftpartpagefont}{\normalfont\normalsize}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
 
-\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforepartskip}{8pt}
+\setlength{\cftbeforesecskip}{4pt}
 \setlength{\cftbeforesubsecskip}{2pt}
 
-% Paragraph entries are numbered like subsubsections (e.g. 4.2.1), so they
-% must be indented at the same level in the table of contents.
-\setlength{\cftparaindent}{\cftsubsubsecindent}
-\setlength{\cftparanumwidth}{\cftsubsubsecnumwidth}
+\setlength{\cftsecindent}{0.4cm}
+\setlength{\cftsubsecindent}{0.8cm}
+\setlength{\cftsubsubsecindent}{1.2cm}
 
 %====================================================
 % HYPERLINKS
@@ -161,24 +367,20 @@
     linkcolor=black,
     citecolor=black,
     filecolor=black,
-    urlcolor=blue,
-    hypertexnames=false
+    urlcolor=fptBlue,
+    hypertexnames=false,
+    pdftitle={FREVIA Software Requirement Specification},
+    pdfauthor={Group Frevia}
 }
-
-%====================================================
-% COLORS
-%====================================================
-\definecolor{fptred}{RGB}{192,0,0}
-\definecolor{fptBlue}{RGB}{0,0,139}
-\definecolor{fptOrange}{RGB}{255,140,0}
-\definecolor{headerbg}{RGB}{242,226,204}
 
 %====================================================
 % CUSTOM COLUMN TYPES
 %====================================================
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 %====================================================
 % DOCUMENT
@@ -190,6 +392,9 @@
 %====================================================
 \input{cover}
 
+% The cover is page 1 of the template, so the table of contents starts on page 2.
+\setcounter{page}{2}
+
 %====================================================
 % TABLE OF CONTENTS
 %====================================================
@@ -198,11 +403,14 @@
 %====================================================
 % MAIN CONTENT
 %====================================================
+\input{sections/record_of_changes}
+
+\part{Software Requirement Specification}
 
 \input{sections/1.Product_Overview}
-\input{sections/2.User_Requirement}
-\input{sections/3.Business_Rule}
-\input{sections/4.Functional_Requirement}
-\input{sections/5.Non-Functional_Requirements}
+\input{sections/2.User_Requirements}
+\input{sections/3.Functional_Requirements}
+\input{sections/4.Non-Functional_Requirements}
+\input{sections/5.Requirement_Appendix}
 
 \end{document}

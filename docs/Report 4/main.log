@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  31 OCT 2026 12:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  31 OCT 2026 22:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -747,9 +747,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip97
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 185.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 29
-5.
+Package hyperref Info: Option `colorlinks' set `true' on input line 219.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 32
+9.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
@@ -761,32 +761,32 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 295.
-LaTeX Font Info:    Trying to load font information for T5+cmr on input line 29
-5.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 329.
+LaTeX Font Info:    Trying to load font information for T5+cmr on input line 32
+9.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5cmr.fd
 File: t5cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 295.
-LaTeX Font Info:    ... okay on input line 295.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 329.
+LaTeX Font Info:    ... okay on input line 329.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
@@ -851,452 +851,772 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 295.
+Package hyperref Info: Link coloring ON on input line 329.
 (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
  (cover.tex
-<images/school_logo.png, id=423, 1284.8pt x 500.87125pt>
+Package hyperref Info: Option `pageanchor' set `false' on input line 11.
+<images/school_logo.png, id=823, 1284.8pt x 500.87125pt>
 File: images/school_logo.png Graphic file (type png)
 <use images/school_logo.png>
-Package pdftex.def Info: images/school_logo.png  used on input line 6.
-(pdftex.def)             Requested size: 182.09486pt x 70.9851pt.
-<images/line.png, id=425, 457.71pt x 4.51688pt>
-File: images/line.png Graphic file (type png)
-<use images/line.png>
-Package pdftex.def Info: images/line.png  used on input line 12.
-(pdftex.def)             Requested size: 318.66948pt x 3.14488pt.
+Package pdftex.def Info: images/school_logo.png  used on input line 14.
+(pdftex.def)             Requested size: 213.39566pt x 83.19046pt.
+Package hyperref Info: Option `pageanchor' set `true' on input line 27.
+ [1
+
+{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./images/school_log
+o.png>]) (table_of_contents.tex (main.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 18.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 18.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 18.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 18.
+ 2.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
-8.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
+.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 18.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
 
-Underfull \hbox (badness 10000) in paragraph at lines 35--35
-[]|\T1/ptm/b/n/12 Capstone Project
- []
-
-[1
-
-{C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
-AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./images/school_log
-o.png> <./images/line.png>]) (table_of_contents.tex (main.toc
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.38 ...w Session Detail}{32}{subsubsection.3.5.2}
-                                                  % [1] [2])
+[2] [3] [4] [5] [6])
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
- [3])
-(sections/1.Overall_Description.tex
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 9
-.
+ [7]) (sections/record_of_changes.tex
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 13.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 17.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 17.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 17.
+ [8])
+(sections/1.System_Design.tex
+<images/architecture/overall-architecture.pdf, id=1070, 752.8125pt x 519.86218p
+t>
+File: images/architecture/overall-architecture.pdf Graphic file (type pdf)
+<use images/architecture/overall-architecture.pdf>
+Package pdftex.def Info: images/architecture/overall-architecture.pdf  used on 
+input line 17.
+(pdftex.def)             Requested size: 432.49623pt x 298.66458pt.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 2
+1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-[4]
-Overfull \hbox (0.94278pt too wide) in paragraph at lines 42--43
-\T1/ptm/m/n/12 time fea-tures (mes-sag-ing, no-ti-fi-ca-tions) must prop-a-gate
- events with min-i-mal de-lay via Socket.io.
- []
+[9 <./images/architecture/overall-architecture.pdf>] [10]
+<images/architecture/system-architecture.pdf, id=1108, 752.8125pt x 557.20169pt
+>
+File: images/architecture/system-architecture.pdf Graphic file (type pdf)
+<use images/architecture/system-architecture.pdf>
+Package pdftex.def Info: images/architecture/system-architecture.pdf  used on i
+nput line 55.
+(pdftex.def)             Requested size: 432.49623pt x 320.11641pt.
 
-[5] [6]
-Overfull \hbox (12.12244pt too wide) in paragraph at lines 62--63
-[]\T1/ptm/m/n/12 Rich dependency-injection and mod-ule ecosys-tem, match-ing th
-e Controller--Service--Repository
- []
-
-) (sections/2.System_Architecture_Design.tex [7] [8]
-Overfull \hbox (54.73093pt too wide) in paragraph at lines 26--27
-\T1/ptm/m/n/12 typed HTTP ex-cep-tions (\T1/cmtt/m/n/12 NotFoundException 404\T
-1/ptm/m/n/12 , \T1/cmtt/m/n/12 ForbiddenException 403\T1/ptm/m/n/12 , \T1/cmtt/
-m/n/12 ConflictException
- []
-
-
-Overfull \hbox (2.43765pt too wide) in alignment at lines 39--45
+Overfull \hbox (2.43765pt too wide) in alignment at lines 61--67
  [] [] 
  []
 
 
-Overfull \hbox (2.43765pt too wide) in alignment at lines 45--48
+Overfull \hbox (2.43765pt too wide) in alignment at lines 67--70
  [] [] 
  []
 
 
-Overfull \hbox (2.43765pt too wide) in alignment at lines 48--79
+Overfull \hbox (2.43765pt too wide) in alignment at lines 70--101
  [] [] 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [9] [10]
+ignored error: Infinite glue shrinkage found in box being split [11 <./images/a
+rchitecture/system-architecture.pdf>]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 88.
-
-Overfull \hbox (3.06493pt too wide) in paragraph at lines 90--91
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 109.
+ [12]
+Overfull \hbox (3.06493pt too wide) in paragraph at lines 111--112
 []\T1/cmtt/m/n/12 packages/shared-type \T1/ptm/m/n/12 --- the sin-gle source of
  truth for API con-tracts: Zod re-quest/response
  []
 
-) (sections/3.System_Detailed_Design.tex [11] (sections/ptai/2/sprint1.tex
-<images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png, id=59
-6, 4441.59375pt x 3771.08875pt>
+<images/architecture/package-diagram.pdf, id=1140, 752.8125pt x 436.5108pt>
+File: images/architecture/package-diagram.pdf Graphic file (type pdf)
+<use images/architecture/package-diagram.pdf>
+Package pdftex.def Info: images/architecture/package-diagram.pdf  used on input
+ line 116.
+(pdftex.def)             Requested size: 432.49623pt x 250.77861pt.
+
+Overfull \hbox (0.61084pt too wide) in alignment at lines 123--129
+ [] [] [] 
+ []
+
+
+Overfull \hbox (0.61084pt too wide) in alignment at lines 129--132
+ [] [] [] 
+ []
+
+
+Overfull \hbox (0.61084pt too wide) in alignment at lines 132--140
+ [] [] [] 
+ []
+
+[13 <./images/architecture/package-diagram.pdf>] [14] [15]
+Overfull \hbox (0.94278pt too wide) in paragraph at lines 179--180
+\T1/ptm/m/n/12 time fea-tures (mes-sag-ing, no-ti-fi-ca-tions) must prop-a-gate
+ events with min-i-mal de-lay via Socket.io.
+ []
+
+[16]
+<images/architecture/restful-api.pdf, id=1179, 752.8125pt x 354.36388pt>
+File: images/architecture/restful-api.pdf Graphic file (type pdf)
+<use images/architecture/restful-api.pdf>
+Package pdftex.def Info: images/architecture/restful-api.pdf  used on input lin
+e 193.
+(pdftex.def)             Requested size: 432.49623pt x 203.5846pt.
+
+Overfull \hbox (12.12244pt too wide) in paragraph at lines 199--200
+[]\T1/ptm/m/n/12 Rich dependency-injection and mod-ule ecosys-tem, match-ing th
+e Controller--Service--Repository
+ []
+
+[17 <./images/architecture/restful-api.pdf>]) (sections/2.Database_Design.tex
+<images/database/erd.pdf, id=1201, 3810.31514pt x 1433.355pt>
+File: images/database/erd.pdf Graphic file (type pdf)
+<use images/database/erd.pdf>
+Package pdftex.def Info: images/database/erd.pdf  used on input line 28.
+(pdftex.def)             Requested size: 432.45018pt x 162.67804pt.
+
+[18] [19 <./images/database/erd.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
+\T1/ptm/m/n/12 platform-wide con-fig-u-ra-tion lives in \T1/cmtt/m/n/12 SystemS
+etting\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 AnnouncementBanner \T1/ptm/m/n/12 and
+ []
+
+
+Overfull \hbox (0.61128pt too wide) in alignment at lines 54--60
+ [] [] [] 
+ []
+
+
+Overfull \hbox (0.61128pt too wide) in alignment at lines 60--63
+ [] [] [] 
+ []
+
+
+Overfull \hbox (0.61128pt too wide) in alignment at lines 63--256
+ [] [] [] 
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [20]
+ignored error: Infinite glue shrinkage found in box being split [21]
+ignored error: Infinite glue shrinkage found in box being split [22]
+ignored error: Infinite glue shrinkage found in box being split [23]
+ignored error: Infinite glue shrinkage found in box being split [24]
+ignored error: Infinite glue shrinkage found in box being split [25]
+ignored error: Infinite glue shrinkage found in box being split [26]
+ignored error: Infinite glue shrinkage found in box being split [27])
+(sections/3.Detailed_Design.tex (sections/kvy/2/sprint1.tex
+<images/sprint1/kvy/classDiagram/ForumManagement.pdf, id=1258, 2832.50212pt x 1
+916.11856pt>
+File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
+f)
+<use images/sprint1/kvy/classDiagram/ForumManagement.pdf>
+Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
+sed on input line 17.
+(pdftex.def)             Requested size: 418.80612pt x 283.31212pt.
+ [28]
+<images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf, id=1263, 1
+139.21606pt x 1218.47212pt>
+File: images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf Graphi
+c file (type pdf)
+<use images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.01-view-forum-categ
+ory-list.pdf  used on input line 20.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [29 <./images/sprint1/kvy/classDiagram/ForumManagement.pdf>]
+<images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf, id=1282,
+ 1139.21606pt x 1466.5992pt>
+File: images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf Grap
+hic file (type pdf)
+<use images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.02-view-forum-categ
+ory-detail.pdf  used on input line 23.
+(pdftex.def)             Requested size: 355.08286pt x 457.12506pt.
+ [30 <./images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf>]
+<images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf, id=1298, 1139.21606p
+t x 1218.47212pt>
+File: images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.03-view-post-list.p
+df  used on input line 26.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [31 <./images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf>]
+<images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf, id=1315, 1139.2160
+6pt x 1466.5992pt>
+File: images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf Graphic file (
+type pdf)
+<use images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.04-view-post-detail
+.pdf  used on input line 29.
+(pdftex.def)             Requested size: 355.08286pt x 457.12506pt.
+ [32 <./images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf>]
+<images/sprint1/kvy/sequences/UC-14.05-create-post.pdf, id=1331, 1139.21606pt x
+ 2034.64131pt>
+File: images/sprint1/kvy/sequences/UC-14.05-create-post.pdf Graphic file (type 
+pdf)
+<use images/sprint1/kvy/sequences/UC-14.05-create-post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.05-create-post.pdf 
+ used on input line 32.
+(pdftex.def)             Requested size: 354.14417pt x 632.50192pt.
+ [33 <./images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf>]
+<images/sprint1/kvy/sequences/UC-14.06-update-post.pdf, id=1347, 1139.21606pt x
+ 1903.11pt>
+File: images/sprint1/kvy/sequences/UC-14.06-update-post.pdf Graphic file (type 
+pdf)
+<use images/sprint1/kvy/sequences/UC-14.06-update-post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.06-update-post.pdf 
+ used on input line 35.
+(pdftex.def)             Requested size: 355.08286pt x 593.18135pt.
+ [34 <./images/sprint1/kvy/sequences/UC-14.05-create-post.pdf>]
+<images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf, id=1363, 1139.21606pt x
+ 1741.46606pt>
+File: images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf Graphic file (type 
+pdf)
+<use images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf 
+ used on input line 38.
+(pdftex.def)             Requested size: 355.08286pt x 542.79846pt.
+ [35 <./images/sprint1/kvy/sequences/UC-14.06-update-post.pdf>]
+<images/sprint1/kvy/sequences/UC-14.08-like-post.pdf, id=1379, 1139.21606pt x 2
+287.58644pt>
+File: images/sprint1/kvy/sequences/UC-14.08-like-post.pdf Graphic file (type pd
+f)
+<use images/sprint1/kvy/sequences/UC-14.08-like-post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.08-like-post.pdf  u
+sed on input line 41.
+(pdftex.def)             Requested size: 314.98024pt x 632.49153pt.
+ [36 <./images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf>]
+<images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf, id=1395, 1139.21606pt x
+ 2287.58644pt>
+File: images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf Graphic file (type 
+pdf)
+<use images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf 
+ used on input line 44.
+(pdftex.def)             Requested size: 314.98024pt x 632.49153pt.
+ [37 <./images/sprint1/kvy/sequences/UC-14.08-like-post.pdf>]
+<images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf, id=1412, 1139.21606
+pt x 1218.47212pt>
+File: images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf Graphic file (t
+ype pdf)
+<use images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.10-view-post-likes.
+pdf  used on input line 47.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [38 <./images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf>]
+<images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf, id=1428, 1139.21
+606pt x 1218.47212pt>
+File: images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf Graphic file
+ (type pdf)
+<use images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.11-view-post-commen
+ts.pdf  used on input line 50.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [39 <./images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf>]
+<images/sprint1/kvy/sequences/UC-14.12-create-comment.pdf, id=1444, 1139.21606p
+t x 1711.35356pt>
+File: images/sprint1/kvy/sequences/UC-14.12-create-comment.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.12-create-comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.12-create-comment.p
+df  used on input line 53.
+(pdftex.def)             Requested size: 355.08286pt x 533.41269pt.
+ [40 <./images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf>]
+<images/sprint1/kvy/sequences/UC-14.13-update-comment.pdf, id=1460, 1139.21606p
+t x 1903.11pt>
+File: images/sprint1/kvy/sequences/UC-14.13-update-comment.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.13-update-comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.13-update-comment.p
+df  used on input line 56.
+(pdftex.def)             Requested size: 355.08286pt x 593.18135pt.
+
+[41 <./images/sprint1/kvy/sequences/UC-14.12-create-comment.pdf>]
+<images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf, id=1476, 1139.21606p
+t x 1741.46606pt>
+File: images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.14-delete-comment.p
+df  used on input line 59.
+(pdftex.def)             Requested size: 355.08286pt x 542.79846pt.
+ [42 <./images/sprint1/kvy/sequences/UC-14.13-update-comment.pdf>]
+<images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf, id=1492, 1139.21606pt 
+x 2287.58644pt>
+File: images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf Graphic file (type
+ pdf)
+<use images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf
+  used on input line 62.
+(pdftex.def)             Requested size: 314.98024pt x 632.49153pt.
+ [43 <./images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf>]
+<images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf, id=1509, 1139.21606p
+t x 2287.58644pt>
+File: images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.16-unlike-comment.p
+df  used on input line 65.
+(pdftex.def)             Requested size: 314.98024pt x 632.49153pt.
+ [44 <./images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf>]
+<images/sprint1/kvy/sequences/UC-14.17-report-content.pdf, id=1525, 1139.21606p
+t x 2283.49106pt>
+File: images/sprint1/kvy/sequences/UC-14.17-report-content.pdf Graphic file (ty
+pe pdf)
+<use images/sprint1/kvy/sequences/UC-14.17-report-content.pdf>
+Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.17-report-content.p
+df  used on input line 68.
+(pdftex.def)             Requested size: 315.55388pt x 632.50903pt.
+) (sections/ptai/2/sprint1.tex [45 <./images/sprint1/kvy/sequences/UC-14.16-unl
+ike-comment.pdf>] [46 <./images/sprint1/kvy/sequences/UC-14.17-report-content.p
+df>]
+<images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png, id=15
+56, 4441.59375pt x 3771.08875pt>
 File: images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png G
 raphic file (type png)
 <use images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png>
 Package pdftex.def Info: images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_
 Class_Diagram.png  used on input line 13.
 (pdftex.def)             Requested size: 418.77046pt x 355.55267pt.
-
-[12]
-<images/sprint1/ptai/UC-10.01_-_View_Job_List.png, id=602, 3949.75626pt x 5077.
-97125pt>
+<images/sprint1/ptai/UC-10.01_-_View_Job_List.png, id=1557, 3949.75626pt x 5077
+.97125pt>
 File: images/sprint1/ptai/UC-10.01_-_View_Job_List.png Graphic file (type png)
 <use images/sprint1/ptai/UC-10.01_-_View_Job_List.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-10.01_-_View_Job_List.png  used
- on input line 18.
+ on input line 16.
 (pdftex.def)             Requested size: 355.04085pt x 456.45532pt.
- [13 <./images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png
+ [47 <./images/sprint1/ptai/class-diagrams/UC-10_Job_Browsing_Class_Diagram.png
  (PNG copy)>]
-<images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png, id=608, 3949.75626pt x 472
-0.63625pt>
+<images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png, id=1563, 3949.75626pt x 47
+20.63625pt>
 File: images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png Graphic file (type png
 )
 <use images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png  us
-ed on input line 21.
+ed on input line 19.
 (pdftex.def)             Requested size: 355.04085pt x 424.33472pt.
- [14 <./images/sprint1/ptai/UC-10.01_-_View_Job_List.png (PNG copy)>]
+ [48 <./images/sprint1/ptai/UC-10.01_-_View_Job_List.png (PNG copy)>]
 <images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram.png, id=
-615, 8458.60126pt x 5203.44pt>
+1569, 8458.60126pt x 5203.44pt>
 File: images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram.png
  Graphic file (type png)
 <use images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram.png>
 
 Package pdftex.def Info: images/sprint1/ptai/class-diagrams/UC-11_Job_Managemen
-t_Class_Diagram.png  used on input line 30.
+t_Class_Diagram.png  used on input line 28.
 (pdftex.def)             Requested size: 418.6956pt x 257.56711pt.
- [15 <./images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png (PNG copy)>]
-<images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png, id=622, 3841.35126pt x 5519.6
-2125pt>
+ [49 <./images/sprint1/ptai/UC-10.02_-_View_Job_Detail.png (PNG copy)>]
+<images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png, id=1576, 3841.35126pt x 5519.
+62125pt>
 File: images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png Graphic file (type png)
 <use images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png  used 
-on input line 35.
+on input line 31.
 (pdftex.def)             Requested size: 355.08498pt x 510.2201pt.
-
-[16 <./images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram.pn
-g (PNG copy)>]
-<images/sprint1/ptai/UC-11.02_-_Create_Job.png, id=628, 3841.35126pt x 5009.716
-25pt>
+ [50 <./images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram.p
+ng (PNG copy)>]
+<images/sprint1/ptai/UC-11.02_-_Create_Job.png, id=1582, 3841.35126pt x 5009.71
+625pt>
 File: images/sprint1/ptai/UC-11.02_-_Create_Job.png Graphic file (type png)
 <use images/sprint1/ptai/UC-11.02_-_Create_Job.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.02_-_Create_Job.png  used on
- input line 38.
+ input line 34.
 (pdftex.def)             Requested size: 355.08498pt x 463.08574pt.
- [17 <./images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png (PNG copy)>]
-<images/sprint1/ptai/UC-11.03_-_Publish_Job.png, id=634, 3841.35126pt x 5314.85
-625pt>
+ [51 <./images/sprint1/ptai/UC-11.01_-_View_My_Jobs.png (PNG copy)>]
+<images/sprint1/ptai/UC-11.03_-_Publish_Job.png, id=1588, 3841.35126pt x 5314.8
+5625pt>
 File: images/sprint1/ptai/UC-11.03_-_Publish_Job.png Graphic file (type png)
 <use images/sprint1/ptai/UC-11.03_-_Publish_Job.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.03_-_Publish_Job.png  used o
-n input line 41.
+n input line 37.
 (pdftex.def)             Requested size: 355.08498pt x 491.29213pt.
- [18 <./images/sprint1/ptai/UC-11.02_-_Create_Job.png (PNG copy)>]
-<images/sprint1/ptai/UC-11.04_-_Update_Job.png, id=641, 3841.35126pt x 6282.471
-25pt>
+ [52 <./images/sprint1/ptai/UC-11.02_-_Create_Job.png (PNG copy)>]
+<images/sprint1/ptai/UC-11.04_-_Update_Job.png, id=1594, 3841.35126pt x 6282.47
+125pt>
 File: images/sprint1/ptai/UC-11.04_-_Update_Job.png Graphic file (type png)
 <use images/sprint1/ptai/UC-11.04_-_Update_Job.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.04_-_Update_Job.png  used on
- input line 44.
+ input line 40.
 (pdftex.def)             Requested size: 355.08498pt x 580.73605pt.
- [19 <./images/sprint1/ptai/UC-11.03_-_Publish_Job.png (PNG copy)>]
-<images/sprint1/ptai/UC-11.05_-_Delete_Job.png, id=647, 3841.35126pt x 5403.186
-25pt>
+ [53 <./images/sprint1/ptai/UC-11.03_-_Publish_Job.png (PNG copy)>]
+<images/sprint1/ptai/UC-11.05_-_Delete_Job.png, id=1600, 3841.35126pt x 5403.18
+625pt>
 File: images/sprint1/ptai/UC-11.05_-_Delete_Job.png Graphic file (type png)
 <use images/sprint1/ptai/UC-11.05_-_Delete_Job.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.05_-_Delete_Job.png  used on
- input line 47.
+ input line 43.
 (pdftex.def)             Requested size: 355.08498pt x 499.45712pt.
- [20 <./images/sprint1/ptai/UC-11.04_-_Update_Job.png (PNG copy)>]
-<images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png, id=653, 3841.35126pt x 5
-403.18625pt>
+ [54 <./images/sprint1/ptai/UC-11.04_-_Update_Job.png (PNG copy)>]
+<images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png, id=1606, 3841.35126pt x 
+5403.18625pt>
 File: images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png Graphic file (type p
 ng)
 <use images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png  
-used on input line 50.
+used on input line 46.
 (pdftex.def)             Requested size: 355.08498pt x 499.45712pt.
- [21 <./images/sprint1/ptai/UC-11.05_-_Delete_Job.png (PNG copy)>]
+ [55 <./images/sprint1/ptai/UC-11.05_-_Delete_Job.png (PNG copy)>]
 <images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jobs_Management_Class_Diag
-ram.png, id=659, 5915.09875pt x 3156.79375pt>
+ram.png, id=1613, 5915.09875pt x 3156.79375pt>
 File: images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jobs_Management_Class
 _Diagram.png Graphic file (type png)
 <use images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jobs_Management_Class_
 Diagram.png>
 Package pdftex.def Info: images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jo
-bs_Management_Class_Diagram.png  used on input line 59.
+bs_Management_Class_Diagram.png  used on input line 55.
 (pdftex.def)             Requested size: 418.79259pt x 223.50291pt.
- [22 <./images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png (PNG copy)>]
-<images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png, id=666, 3841.3512
-6pt x 5519.62125pt>
+ [56 <./images/sprint1/ptai/UC-11.06_-_Change_Job_Status.png (PNG copy)>]
+<images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png, id=1619, 3841.351
+26pt x 5519.62125pt>
 File: images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png Graphic file 
 (type png)
 <use images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_Lis
-t.png  used on input line 64.
+t.png  used on input line 58.
 (pdftex.def)             Requested size: 355.08498pt x 510.2201pt.
- [23 <./images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jobs_Management_Cla
+ [57 <./images/sprint1/ptai/class-diagrams/UC-12_Bookmarked_Jobs_Management_Cla
 ss_Diagram.png (PNG copy)>]
-<images/sprint1/ptai/UC-12.02_-_Bookmark_Job.png, id=672, 3841.35126pt x 5314.8
-5625pt>
+<images/sprint1/ptai/UC-12.02_-_Bookmark_Job.png, id=1625, 3841.35126pt x 5314.
+85625pt>
 File: images/sprint1/ptai/UC-12.02_-_Bookmark_Job.png Graphic file (type png)
 <use images/sprint1/ptai/UC-12.02_-_Bookmark_Job.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-12.02_-_Bookmark_Job.png  used 
-on input line 67.
+on input line 61.
 (pdftex.def)             Requested size: 355.08498pt x 491.29213pt.
- [24 <./images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png (PNG copy)>
-]
-<images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png, id=679, 3841.35126pt x 540
-3.18625pt>
+
+[58 <./images/sprint1/ptai/UC-12.01_-_View_Bookmarked_Job_List.png (PNG copy)>]
+<images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png, id=1631, 3841.35126pt x 54
+03.18625pt>
 File: images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png Graphic file (type png
 )
 <use images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png>
 Package pdftex.def Info: images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png  us
-ed on input line 70.
+ed on input line 64.
 (pdftex.def)             Requested size: 355.08498pt x 499.45712pt.
-)
-(sections/tthuan/2/sprint1.tex [25 <./images/sprint1/ptai/UC-12.02_-_Bookmark_J
-ob.png (PNG copy)>]
+) (sections/tthuan/2/sprint1.tex [59 <./images/sprint1/ptai/UC-12.02_-_Bookmark
+_Job.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/classDiagram/VerifyJ
 wt.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint1/tthuan/classDiagram/VerifyJwt.pdf, id=685, 883.38025pt x 321.11
-969pt>
+<images/sprint1/tthuan/classDiagram/VerifyJwt.pdf, id=1637, 883.38025pt x 321.1
+1969pt>
 File: images/sprint1/tthuan/classDiagram/VerifyJwt.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/classDiagram/VerifyJwt.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/classDiagram/VerifyJwt.pdf  used
  on input line 16.
 (pdftex.def)             Requested size: 418.8147pt x 152.24434pt.
-[26 <./images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png (PNG copy)>]
+[60 <./images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/VerifyJwt.
 pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
 
-<images/sprint1/tthuan/sequences/VerifyJwt.pdf, id=691, 905.30219pt x 1152.2246
-2pt>
+<images/sprint1/tthuan/sequences/VerifyJwt.pdf, id=1643, 905.30219pt x 1152.224
+62pt>
 File: images/sprint1/tthuan/sequences/VerifyJwt.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/VerifyJwt.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/VerifyJwt.pdf  used on
  input line 20.
 (pdftex.def)             Requested size: 355.09706pt x 451.95029pt.
-[27 <./images/sprint1/tthuan/classDiagram/VerifyJwt.pdf>]
+
 Overfull \hbox (10.06725pt too wide) in paragraph at lines 25--28
 []\T1/ptm/m/n/12 The au-then-ti-ca-tion mod-ule cov-ers ac-count reg-is-tra-tio
 n, email/password and Google OAuth
  []
 
-
+[61 <./images/sprint1/tthuan/classDiagram/VerifyJwt.pdf> <./images/sprint1/tthu
+an/sequences/VerifyJwt.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/classDiagram/AuthCla
 sses.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> al
 lowed
-<images/sprint1/tthuan/classDiagram/AuthClasses.pdf, id=710, 2783.35857pt x 155
-2.84132pt>
+<images/sprint1/tthuan/classDiagram/AuthClasses.pdf, id=1674, 2783.35857pt x 15
+52.84132pt>
 File: images/sprint1/tthuan/classDiagram/AuthClasses.pdf Graphic file (type pdf
 )
 <use images/sprint1/tthuan/classDiagram/AuthClasses.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/classDiagram/AuthClasses.pdf  us
 ed on input line 31.
 (pdftex.def)             Requested size: 418.80237pt x 233.65067pt.
-[28 <./images/sprint1/tthuan/sequences/VerifyJwt.pdf>]
+
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/LoginWithG
 oogle.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> a
 llowed
-<images/sprint1/tthuan/sequences/LoginWithGoogle.pdf, id=726, 1685.33632pt x 38
-80.41711pt>
+<images/sprint1/tthuan/sequences/LoginWithGoogle.pdf, id=1675, 1685.33632pt x 3
+880.41711pt>
 File: images/sprint1/tthuan/sequences/LoginWithGoogle.pdf Graphic file (type pd
 f)
 <use images/sprint1/tthuan/sequences/LoginWithGoogle.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/LoginWithGoogle.pdf  u
-sed on input line 36.
+sed on input line 34.
 (pdftex.def)             Requested size: 274.69968pt x 632.48466pt.
-[29 <./images/sprint1/tthuan/classDiagram/AuthClasses.pdf>]
+[62 <./images/sprint1/tthuan/classDiagram/AuthClasses.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/Login.pdf)
 : PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/sprint1/tthuan/sequences/Login.pdf, id=745, 1358.1942pt x 2886.70462pt>
-
+<images/sprint1/tthuan/sequences/Login.pdf, id=1694, 1358.1942pt x 2886.70462pt
+>
 File: images/sprint1/tthuan/sequences/Login.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/Login.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/Login.pdf  used on inp
-ut line 39.
+ut line 37.
 (pdftex.def)             Requested size: 297.5809pt x 632.4782pt.
-[30 <./images/sprint1/tthuan/sequences/LoginWithGoogle.pdf>]
+[63 <./images/sprint1/tthuan/sequences/LoginWithGoogle.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/Logout.pdf
 ): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/sprint1/tthuan/sequences/Logout.pdf, id=762, 1183.5417pt x 863.14468pt>
-
+<images/sprint1/tthuan/sequences/Logout.pdf, id=1710, 1183.5417pt x 863.14468pt
+>
 File: images/sprint1/tthuan/sequences/Logout.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/Logout.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/Logout.pdf  used on in
-put line 42.
+put line 40.
 (pdftex.def)             Requested size: 355.08331pt x 258.95857pt.
-[31 <./images/sprint1/tthuan/sequences/Login.pdf>]
+[64 <./images/sprint1/tthuan/sequences/Login.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/Register.p
 df): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/sprint1/tthuan/sequences/Register.pdf, id=778, 1317.96382pt x 3359.5914
-5pt>
+<images/sprint1/tthuan/sequences/Register.pdf, id=1726, 1317.96382pt x 3359.591
+45pt>
 File: images/sprint1/tthuan/sequences/Register.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/Register.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/Register.pdf  used on 
-input line 45.
+input line 43.
 (pdftex.def)             Requested size: 248.12312pt x 632.48502pt.
-[32 <./images/sprint1/tthuan/sequences/Logout.pdf>]
+[65 <./images/sprint1/tthuan/sequences/Logout.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/ForgotPass
 word.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> al
 lowed
-<images/sprint1/tthuan/sequences/ForgotPassword.pdf, id=794, 1090.0725pt x 3268
-.29013pt>
+<images/sprint1/tthuan/sequences/ForgotPassword.pdf, id=1742, 1090.0725pt x 326
+8.29013pt>
 File: images/sprint1/tthuan/sequences/ForgotPassword.pdf Graphic file (type pdf
 )
 <use images/sprint1/tthuan/sequences/ForgotPassword.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/ForgotPassword.pdf  us
-ed on input line 48.
+ed on input line 46.
 (pdftex.def)             Requested size: 210.95818pt x 632.50157pt.
-[33 <./images/sprint1/tthuan/sequences/Register.pdf>] [34 <./images/sprint1/tth
+[66 <./images/sprint1/tthuan/sequences/Register.pdf>] [67 <./images/sprint1/tth
 uan/sequences/ForgotPassword.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/classDiagram/RoleMan
 agement.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint1/tthuan/classDiagram/RoleManagement.pdf, id=827, 2006.45605pt x 
-992.74887pt>
+<images/sprint1/tthuan/classDiagram/RoleManagement.pdf, id=1774, 2006.45605pt x
+ 992.74887pt>
 File: images/sprint1/tthuan/classDiagram/RoleManagement.pdf Graphic file (type 
 pdf)
 <use images/sprint1/tthuan/classDiagram/RoleManagement.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/classDiagram/RoleManagement.pdf 
- used on input line 58.
+ used on input line 56.
 (pdftex.def)             Requested size: 418.79646pt x 207.21097pt.
 
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/ViewRoleLi
 st.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint1/tthuan/sequences/ViewRoleList.pdf, id=828, 876.1533pt x 872.298
-87pt>
+<images/sprint1/tthuan/sequences/ViewRoleList.pdf, id=1775, 876.1533pt x 872.29
+887pt>
 File: images/sprint1/tthuan/sequences/ViewRoleList.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/ViewRoleList.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/ViewRoleList.pdf  used
- on input line 63.
+ on input line 59.
 (pdftex.def)             Requested size: 355.09416pt x 353.532pt.
-[35 <./images/sprint1/tthuan/classDiagram/RoleManagement.pdf>]
+[68 <./images/sprint1/tthuan/classDiagram/RoleManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/ViewRoleDe
 tail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> al
 lowed
-<images/sprint1/tthuan/sequences/ViewRoleDetail.pdf, id=847, 898.31606pt x 872.
-29887pt>
+<images/sprint1/tthuan/sequences/ViewRoleDetail.pdf, id=1794, 898.31606pt x 872
+.29887pt>
 File: images/sprint1/tthuan/sequences/ViewRoleDetail.pdf Graphic file (type pdf
 )
 <use images/sprint1/tthuan/sequences/ViewRoleDetail.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/ViewRoleDetail.pdf  us
-ed on input line 66.
+ed on input line 62.
 (pdftex.def)             Requested size: 355.08453pt x 344.8005pt.
-[36 <./images/sprint1/tthuan/sequences/ViewRoleList.pdf>]
+[69 <./images/sprint1/tthuan/sequences/ViewRoleList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/CreateRole
 .pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowe
 d
-<images/sprint1/tthuan/sequences/CreateRole.pdf, id=864, 1498.63881pt x 1903.11
-pt>
+<images/sprint1/tthuan/sequences/CreateRole.pdf, id=1810, 1498.63881pt x 1903.1
+1pt>
 File: images/sprint1/tthuan/sequences/CreateRole.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/CreateRole.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/CreateRole.pdf  used o
-n input line 69.
+n input line 65.
 (pdftex.def)             Requested size: 355.08432pt x 450.91888pt.
-[37 <./images/sprint1/tthuan/sequences/ViewRoleDetail.pdf>]
+[70 <./images/sprint1/tthuan/sequences/ViewRoleDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/UpdateRole
 .pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowe
 d
-<images/sprint1/tthuan/sequences/UpdateRole.pdf, id=880, 1498.63881pt x 2553.54
-pt>
+<images/sprint1/tthuan/sequences/UpdateRole.pdf, id=1826, 1498.63881pt x 2553.5
+4pt>
 File: images/sprint1/tthuan/sequences/UpdateRole.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/UpdateRole.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/UpdateRole.pdf  used o
-n input line 72.
+n input line 68.
 (pdftex.def)             Requested size: 355.08432pt x 605.0304pt.
-[38 <./images/sprint1/tthuan/sequences/CreateRole.pdf>]
+[71 <./images/sprint1/tthuan/sequences/CreateRole.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/DeleteRole
 .pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowe
 d
-<images/sprint1/tthuan/sequences/DeleteRole.pdf, id=896, 1152.22462pt x 2372.86
-5pt>
+<images/sprint1/tthuan/sequences/DeleteRole.pdf, id=1842, 1152.22462pt x 2372.8
+65pt>
 File: images/sprint1/tthuan/sequences/DeleteRole.pdf Graphic file (type pdf)
 <use images/sprint1/tthuan/sequences/DeleteRole.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/DeleteRole.pdf  used o
-n input line 75.
+n input line 71.
 (pdftex.def)             Requested size: 307.13138pt x 632.49936pt.
-[39 <./images/sprint1/tthuan/sequences/UpdateRole.pdf>]
+[72 <./images/sprint1/tthuan/sequences/UpdateRole.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint1/tthuan/sequences/UpdateRole
 Permissions.pdf): PDF inclusion: found PDF version <1.7>, but at most version <
 1.5> allowed
-<images/sprint1/tthuan/sequences/UpdateRolePermissions.pdf, id=912, 1137.28882p
-t x 2135.09657pt>
+<images/sprint1/tthuan/sequences/UpdateRolePermissions.pdf, id=1858, 1137.28882
+pt x 2135.09657pt>
 File: images/sprint1/tthuan/sequences/UpdateRolePermissions.pdf Graphic file (t
 ype pdf)
 <use images/sprint1/tthuan/sequences/UpdateRolePermissions.pdf>
 Package pdftex.def Info: images/sprint1/tthuan/sequences/UpdateRolePermissions.
-pdf  used on input line 78.
+pdf  used on input line 74.
 (pdftex.def)             Requested size: 336.90294pt x 632.48694pt.
-) [40 <./images/sprint1/tthuan/sequences/DeleteRole.pdf>]
-(sections/ptai/2/sprint2.tex [41 <./images/sprint1/tthuan/sequences/UpdateRoleP
-ermissions.pdf>]
+) [73 <./images/sprint1/tthuan/sequences/DeleteRole.pdf>]
+(sections/kvy/2/sprint2.tex [74 <./images/sprint1/tthuan/sequences/UpdateRolePe
+rmissions.pdf>]
+<images/sprint2/kvy/classDiagram/ManageConversation.pdf, id=1890, 2546.55394pt 
+x 1287.85132pt>
+File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
+ pdf)
+<use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
+  used on input line 19.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
+<images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf, id=1891, 113
+9.21606pt x 1218.47212pt>
+File: images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf Graphic 
+file (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.01-view-conversatio
+n-list.pdf  used on input line 22.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [75 <./images/sprint2/kvy/classDiagram/ManageConversation.pdf>]
+<images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf, id=1910, 1139.21
+606pt x 1715.44882pt>
+File: images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf Graphic file
+ (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.02-start-conversati
+on.pdf  used on input line 25.
+(pdftex.def)             Requested size: 355.08286pt x 534.68913pt.
+[76 <./images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf>]
+<images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf, id=1926, 1
+139.21606pt x 1466.5992pt>
+File: images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf Graphi
+c file (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.03-view-conversatio
+n-detail.pdf  used on input line 28.
+(pdftex.def)             Requested size: 355.08286pt x 457.12506pt.
+
+[77 <./images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf>]
+<images/sprint2/kvy/sequences/UC-27.04-send-message.pdf, id=1942, 1139.21606pt 
+x 1959.23962pt>
+File: images/sprint2/kvy/sequences/UC-27.04-send-message.pdf Graphic file (type
+ pdf)
+<use images/sprint2/kvy/sequences/UC-27.04-send-message.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.04-send-message.pdf
+  used on input line 31.
+(pdftex.def)             Requested size: 355.08286pt x 610.67642pt.
+ [78 <./images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf>]
+<images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf, id=1958, 1139.
+21606pt x 1466.5992pt>
+File: images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf Graphic fi
+le (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.05-mark-message-as-
+read.pdf  used on input line 34.
+(pdftex.def)             Requested size: 355.08286pt x 457.12506pt.
+ [79 <./images/sprint2/kvy/sequences/UC-27.04-send-message.pdf>]
+<images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf, id=1975, 1139
+.21606pt x 1872.9975pt>
+File: images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf Graphic f
+ile (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.06-delete-recall-me
+ssage.pdf  used on input line 37.
+(pdftex.def)             Requested size: 355.08286pt x 583.79556pt.
+ [80 <./images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf>]
+<images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf, id=1991, 113
+9.21606pt x 1907.20526pt>
+File: images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf Graphic 
+file (type pdf)
+<use images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conver
+sation.pdf  used on input line 40.
+(pdftex.def)             Requested size: 355.08286pt x 594.45781pt.
+ [81 <./images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf>]
+<images/sprint2/kvy/sequences/UC-27.08-send-file.pdf, id=2007, 1139.21606pt x 1
+270.7475pt>
+File: images/sprint2/kvy/sequences/UC-27.08-send-file.pdf Graphic file (type pd
+f)
+<use images/sprint2/kvy/sequences/UC-27.08-send-file.pdf>
+Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.08-send-file.pdf  u
+sed on input line 43.
+(pdftex.def)             Requested size: 355.08286pt x 396.07994pt.
+) (sections/ptai/2/sprint2.tex [82 <./images/sprint2/kvy/sequences/UC-27.07-pin
+-unpin-conversation.pdf>]
 <images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_Management_Class_Diagram
-.png, id=943, 3979.86874pt x 2358.8125pt>
+.png, id=2023, 3979.86874pt x 2358.8125pt>
 File: images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_Management_Class_Di
 agram.png Graphic file (type png)
 <use images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_Management_Class_Dia
@@ -1304,115 +1624,120 @@ gram.png>
 Package pdftex.def Info: images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_
 Management_Class_Diagram.png  used on input line 13.
 (pdftex.def)             Requested size: 418.77911pt x 248.20451pt.
-<images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png, id=944, 3339.47626p
-t x 3819.26875pt>
+ [83 <./images/sprint2/kvy/sequences/UC-27.08-send-file.pdf>]
+<images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png, id=2039, 3339.47626
+pt x 3819.26875pt>
 File: images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png Graphic file (t
 ype png)
 <use images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.
-png  used on input line 18.
+png  used on input line 16.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [42 <./images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_Management_Class_
+ [84 <./images/sprint2/ptai/class-diagrams/UC-22_Saved_Search_Management_Class_
 Diagram.png (PNG copy)>]
-<images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png, id=951, 3339.4762
-6pt x 3819.26875pt>
+<images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png, id=2045, 3339.476
+26pt x 3819.26875pt>
 File: images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png Graphic file 
 (type png)
 <use images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detai
-l.png  used on input line 21.
+l.png  used on input line 19.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [43 <./images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png (PNG copy)>]
-<images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png, id=957, 3413.75375pt x
- 3819.26875pt>
+ [85 <./images/sprint2/ptai/UC-22.01_-_View_Saved_Search_List.png (PNG copy)>]
+<images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png, id=2052, 3413.75375pt 
+x 3819.26875pt>
 File: images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png Graphic file (type
  png)
 <use images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png
-  used on input line 24.
+  used on input line 22.
 (pdftex.def)             Requested size: 355.04286pt x 397.2179pt.
- [44 <./images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png (PNG copy)>
+ [86 <./images/sprint2/ptai/UC-22.02_-_View_Saved_Search_Detail.png (PNG copy)>
 ]
-<images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png, id=963, 3339.47626pt x
- 3819.26875pt>
+<images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png, id=2058, 3339.47626pt 
+x 3819.26875pt>
 File: images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png Graphic file (type
  png)
 <use images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png
-  used on input line 27.
+  used on input line 25.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [45 <./images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png (PNG copy)>]
-<images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png, id=969, 3339.47626pt x
- 3819.26875pt>
+ [87 <./images/sprint2/ptai/UC-22.03_-_Create_Saved_Search.png (PNG copy)>]
+<images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png, id=2064, 3339.47626pt 
+x 3819.26875pt>
 File: images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png Graphic file (type
  png)
 <use images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png
-  used on input line 30.
+  used on input line 28.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [46 <./images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png (PNG copy)>]
+ [88 <./images/sprint2/ptai/UC-22.04_-_Update_Saved_Search.png (PNG copy)>]
 <images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Management_Class_Diagram.pn
-g, id=975, 4957.52126pt x 2511.3825pt>
+g, id=2070, 4957.52126pt x 2511.3825pt>
 File: images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Management_Class_Diagr
 am.png Graphic file (type png)
 <use images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Management_Class_Diagra
 m.png>
 Package pdftex.def Info: images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Man
-agement_Class_Diagram.png  used on input line 39.
+agement_Class_Diagram.png  used on input line 37.
 (pdftex.def)             Requested size: 418.77397pt x 212.14262pt.
- [47 <./images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png (PNG copy)>]
-<images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png, id=981, 3385.64874pt x
- 3819.26875pt>
+ [89 <./images/sprint2/ptai/UC-22.05_-_Delete_Saved_Search.png (PNG copy)>]
+<images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png, id=2076, 3385.64874pt 
+x 3819.26875pt>
 File: images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png Graphic file (type
  png)
 <use images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png
-  used on input line 44.
+  used on input line 40.
 (pdftex.def)             Requested size: 355.0645pt x 400.5397pt.
- [48 <./images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Management_Class_Dia
+ [90 <./images/sprint2/ptai/class-diagrams/UC-23_Job_Alert_Management_Class_Dia
 gram.png (PNG copy)>]
-<images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png, id=988, 3361.55875pt
- x 3819.26875pt>
+<images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png, id=2082, 3361.55875p
+t x 3819.26875pt>
 File: images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png Graphic file (ty
 pe png)
 <use images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.p
-ng  used on input line 47.
+ng  used on input line 43.
 (pdftex.def)             Requested size: 355.05147pt x 403.3953pt.
- [49 <./images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png (PNG copy)>]
-<images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png, id=994, 3401.70876pt x 38
-19.26875pt>
+
+[91 <./images/sprint2/ptai/UC-23.01_-_View_Job_Alert_List.png (PNG copy)>]
+<images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png, id=2089, 3401.70876pt x 3
+819.26875pt>
 File: images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png Graphic file (type pn
 g)
 <use images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png  u
-sed on input line 50.
+sed on input line 46.
 (pdftex.def)             Requested size: 355.08778pt x 398.67484pt.
- [50 <./images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png (PNG copy)>]
-<images/sprint2/ptai/UC-23.04_-_Update_Job_Alert.png, id=1000, 3339.47626pt x 3
+
+[92 <./images/sprint2/ptai/UC-23.02_-_View_Job_Alert_Detail.png (PNG copy)>]
+<images/sprint2/ptai/UC-23.04_-_Update_Job_Alert.png, id=2095, 3339.47626pt x 3
 819.26875pt>
 File: images/sprint2/ptai/UC-23.04_-_Update_Job_Alert.png Graphic file (type pn
 g)
 <use images/sprint2/ptai/UC-23.04_-_Update_Job_Alert.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-23.04_-_Update_Job_Alert.png  u
-sed on input line 53.
+sed on input line 49.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [51 <./images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png (PNG copy)>]
-<images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png, id=1006, 3339.47626pt x 3
+
+[93 <./images/sprint2/ptai/UC-23.03_-_Create_Job_Alert.png (PNG copy)>]
+<images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png, id=2101, 3339.47626pt x 3
 819.26875pt>
 File: images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png Graphic file (type pn
 g)
 <use images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png>
 Package pdftex.def Info: images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png  u
-sed on input line 56.
+sed on input line 52.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
-) (sections/tthuan/2/sprint2.tex [52 <./images/sprint2/ptai/UC-23.04_-_Update_J
-ob_Alert.png (PNG copy)>]
+)
+(sections/tthuan/2/sprint2.tex [94 <./images/sprint2/ptai/UC-23.04_-_Update_Job
+_Alert.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/classDiagram/Permiss
 ionManagement.pdf): PDF inclusion: found PDF version <1.7>, but at most version
  <1.5> allowed
-<images/sprint2/tthuan/classDiagram/PermissionManagement.pdf, id=1012, 1607.043
+<images/sprint2/tthuan/classDiagram/PermissionManagement.pdf, id=2107, 1607.043
 82pt x 505.89pt>
 File: images/sprint2/tthuan/classDiagram/PermissionManagement.pdf Graphic file 
 (type pdf)
@@ -1420,186 +1745,318 @@ File: images/sprint2/tthuan/classDiagram/PermissionManagement.pdf Graphic file
 Package pdftex.def Info: images/sprint2/tthuan/classDiagram/PermissionManagemen
 t.pdf  used on input line 14.
 (pdftex.def)             Requested size: 418.8024pt x 131.83705pt.
-[53 <./images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png (PNG copy)>]
+[95 <./images/sprint2/ptai/UC-23.05_-_Delete_Job_Alert.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewPermis
 sionList.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5
 > allowed
-<images/sprint2/tthuan/sequences/ViewPermissionList.pdf, id=1018, 1108.14pt x 1
+<images/sprint2/tthuan/sequences/ViewPermissionList.pdf, id=2113, 1108.14pt x 1
 123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewPermissionList.pdf Graphic file (type
  pdf)
 <use images/sprint2/tthuan/sequences/ViewPermissionList.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewPermissionList.pdf
-  used on input line 19.
+  used on input line 17.
 (pdftex.def)             Requested size: 355.0855pt x 359.94862pt.
 
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewPermis
 sionDetail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1
 .5> allowed
-<images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf, id=1019, 1108.14pt x
+<images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf, id=2114, 1108.14pt x
  1123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf Graphic file (ty
 pe pdf)
 <use images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewPermissionDetail.p
-df  used on input line 22.
+df  used on input line 20.
 (pdftex.def)             Requested size: 355.0855pt x 359.94862pt.
-[54 <./images/sprint2/tthuan/classDiagram/PermissionManagement.pdf> <./images/s
+[96 <./images/sprint2/tthuan/classDiagram/PermissionManagement.pdf> <./images/s
 print2/tthuan/sequences/ViewPermissionList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/classDiagram/Session
 Management.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1
 .5> allowed
-<images/sprint2/tthuan/classDiagram/SessionManagement.pdf, id=1050, 1281.82881p
+<images/sprint2/tthuan/classDiagram/SessionManagement.pdf, id=2144, 1281.82881p
 t x 623.44919pt>
 File: images/sprint2/tthuan/classDiagram/SessionManagement.pdf Graphic file (ty
 pe pdf)
 <use images/sprint2/tthuan/classDiagram/SessionManagement.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/classDiagram/SessionManagement.p
-df  used on input line 33.
+df  used on input line 31.
 (pdftex.def)             Requested size: 418.81917pt x 203.70306pt.
-[55 <./images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf>]
+[97 <./images/sprint2/tthuan/sequences/ViewPermissionDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewSessio
 nList.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> a
 llowed
-<images/sprint2/tthuan/sequences/ViewSessionList.pdf, id=1066, 1101.15382pt x 1
+<images/sprint2/tthuan/sequences/ViewSessionList.pdf, id=2161, 1101.15382pt x 1
 123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewSessionList.pdf Graphic file (type pd
 f)
 <use images/sprint2/tthuan/sequences/ViewSessionList.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewSessionList.pdf  u
-sed on input line 38.
+sed on input line 34.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[56 <./images/sprint2/tthuan/classDiagram/SessionManagement.pdf>]
+
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewSessio
 nDetail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint2/tthuan/sequences/ViewSessionDetail.pdf, id=1085, 1116.08961pt x
+<images/sprint2/tthuan/sequences/ViewSessionDetail.pdf, id=2162, 1116.08961pt x
  1123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewSessionDetail.pdf Graphic file (type 
 pdf)
 <use images/sprint2/tthuan/sequences/ViewSessionDetail.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewSessionDetail.pdf 
- used on input line 41.
+ used on input line 37.
 (pdftex.def)             Requested size: 355.09532pt x 357.3947pt.
-[57 <./images/sprint2/tthuan/sequences/ViewSessionList.pdf>]
+[98 <./images/sprint2/tthuan/classDiagram/SessionManagement.pdf> <./images/spri
+nt2/tthuan/sequences/ViewSessionList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/RevokeSess
 ion.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> all
 owed
-<images/sprint2/tthuan/sequences/RevokeSession.pdf, id=1101, 1108.14pt x 1715.4
+<images/sprint2/tthuan/sequences/RevokeSession.pdf, id=2192, 1108.14pt x 1715.4
 4882pt>
 File: images/sprint2/tthuan/sequences/RevokeSession.pdf Graphic file (type pdf)
 
 <use images/sprint2/tthuan/sequences/RevokeSession.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/RevokeSession.pdf  use
-d on input line 44.
+d on input line 40.
 (pdftex.def)             Requested size: 355.0855pt x 549.68776pt.
-[58 <./images/sprint2/tthuan/sequences/ViewSessionDetail.pdf>] [59 <./images/sp
-rint2/tthuan/sequences/RevokeSession.pdf>]
+[99 <./images/sprint2/tthuan/sequences/ViewSessionDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/classDiagram/ForumCa
 tegoryManagement.pdf): PDF inclusion: found PDF version <1.7>, but at most vers
 ion <1.5> allowed
-<images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf, id=1134, 2213.
+<images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf, id=2208, 2213.
 38907pt x 1003.83026pt>
 File: images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf Graphic fi
 le (type pdf)
 <use images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/classDiagram/ForumCategoryManage
-ment.pdf  used on input line 55.
+ment.pdf  used on input line 51.
 (pdftex.def)             Requested size: 418.79207pt x 189.93323pt.
-
+[100 <./images/sprint2/tthuan/sequences/RevokeSession.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/CreateForu
 mCategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint2/tthuan/sequences/CreateForumCategory.pdf, id=1135, 1101.15382pt
+<images/sprint2/tthuan/sequences/CreateForumCategory.pdf, id=2224, 1101.15382pt
  x 1925.27275pt>
 File: images/sprint2/tthuan/sequences/CreateForumCategory.pdf Graphic file (typ
 e pdf)
 <use images/sprint2/tthuan/sequences/CreateForumCategory.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/CreateForumCategory.pd
-f  used on input line 60.
+f  used on input line 54.
 (pdftex.def)             Requested size: 355.08159pt x 620.82962pt.
-[60 <./images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf>]
+[101 <./images/sprint2/tthuan/classDiagram/ForumCategoryManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/UpdateForu
 mCategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint2/tthuan/sequences/UpdateForumCategory.pdf, id=1155, 1123.3167pt 
+<images/sprint2/tthuan/sequences/UpdateForumCategory.pdf, id=2243, 1123.3167pt 
 x 1715.44882pt>
 File: images/sprint2/tthuan/sequences/UpdateForumCategory.pdf Graphic file (typ
 e pdf)
 <use images/sprint2/tthuan/sequences/UpdateForumCategory.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/UpdateForumCategory.pd
-f  used on input line 63.
+f  used on input line 57.
 (pdftex.def)             Requested size: 355.08075pt x 542.25389pt.
-[61 <./images/sprint2/tthuan/sequences/CreateForumCategory.pdf>]
+[102 <./images/sprint2/tthuan/sequences/CreateForumCategory.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/DeleteForu
 mCategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint2/tthuan/sequences/DeleteForumCategory.pdf, id=1171, 1144.275pt x
+<images/sprint2/tthuan/sequences/DeleteForumCategory.pdf, id=2259, 1144.275pt x
  1715.44882pt>
 File: images/sprint2/tthuan/sequences/DeleteForumCategory.pdf Graphic file (typ
 e pdf)
 <use images/sprint2/tthuan/sequences/DeleteForumCategory.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/DeleteForumCategory.pd
-f  used on input line 66.
+f  used on input line 60.
 (pdftex.def)             Requested size: 355.08824pt x 532.33333pt.
-[62 <./images/sprint2/tthuan/sequences/UpdateForumCategory.pdf>]
+[103 <./images/sprint2/tthuan/sequences/UpdateForumCategory.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/RestoreFor
 umCategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1
 .5> allowed
-<images/sprint2/tthuan/sequences/RestoreForumCategory.pdf, id=1187, 1129.33919p
+<images/sprint2/tthuan/sequences/RestoreForumCategory.pdf, id=2276, 1129.33919p
 t x 1715.44882pt>
 File: images/sprint2/tthuan/sequences/RestoreForumCategory.pdf Graphic file (ty
 pe pdf)
 <use images/sprint2/tthuan/sequences/RestoreForumCategory.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/RestoreForumCategory.p
-df  used on input line 69.
+df  used on input line 63.
 (pdftex.def)             Requested size: 355.0889pt x 539.37457pt.
-[63 <./images/sprint2/tthuan/sequences/DeleteForumCategory.pdf>]
+[104 <./images/sprint2/tthuan/sequences/DeleteForumCategory.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewForumC
 ategoryList.pdf): PDF inclusion: found PDF version <1.7>, but at most version <
 1.5> allowed
-<images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf, id=1203, 1108.14pt 
+<images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf, id=2292, 1108.14pt 
 x 1123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf Graphic file (t
 ype pdf)
 <use images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewForumCategoryList.
-pdf  used on input line 72.
+pdf  used on input line 66.
 (pdftex.def)             Requested size: 355.0855pt x 359.94862pt.
-[64 <./images/sprint2/tthuan/sequences/RestoreForumCategory.pdf>]
+[105 <./images/sprint2/tthuan/sequences/RestoreForumCategory.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint2/tthuan/sequences/ViewForumC
 ategoryDetail.pdf): PDF inclusion: found PDF version <1.7>, but at most version
  <1.5> allowed
-<images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf, id=1219, 1116.089
+<images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf, id=2308, 1116.089
 61pt x 1123.3167pt>
 File: images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf Graphic file 
 (type pdf)
 <use images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf>
 Package pdftex.def Info: images/sprint2/tthuan/sequences/ViewForumCategoryDetai
-l.pdf  used on input line 75.
+l.pdf  used on input line 69.
 (pdftex.def)             Requested size: 355.09532pt x 357.3947pt.
-) [65 <./images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf>]
-(sections/ptai/2/sprint3.tex
+) [106 <./images/sprint2/tthuan/sequences/ViewForumCategoryList.pdf>]
+(sections/kvy/2/sprint3.tex
+<images/sprint3/kvy/classDiagram/ManageModeration.pdf, id=2324, 2832.50212pt x 
+649.46638pt>
+File: images/sprint3/kvy/classDiagram/ManageModeration.pdf Graphic file (type p
+df)
+<use images/sprint3/kvy/classDiagram/ManageModeration.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageModeration.pdf  
+used on input line 19.
+(pdftex.def)             Requested size: 418.80612pt x 96.02834pt.
+<images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf, id=2325, 1139
+.21606pt x 1218.47212pt>
+File: images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf Graphic f
+ile (type pdf)
+<use images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.01-view-moderation-
+queue.pdf  used on input line 22.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+ [107 <./images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf> <./images
+/sprint3/kvy/classDiagram/ManageModeration.pdf>]
+<images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf, id=2355
+, 1139.21606pt x 1255.81169pt>
+File: images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf Gra
+phic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.02-view-moderation-
+item-detail.pdf  used on input line 25.
+(pdftex.def)             Requested size: 355.08286pt x 391.4246pt.
+
+[108 <./images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf>]
+<images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf, id=2371, 11
+39.21606pt x 1989.35213pt>
+File: images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf Graphic
+ file (type pdf)
+<use images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.03-resolve-moderati
+on-item.pdf  used on input line 28.
+(pdftex.def)             Requested size: 355.08286pt x 620.06221pt.
+
+[109 <./images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf>]
+[110 <./images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf>]
+<images/sprint3/kvy/classDiagram/ManageIDVerification.pdf, id=2403, 2832.50212p
+t x 691.62387pt>
+File: images/sprint3/kvy/classDiagram/ManageIDVerification.pdf Graphic file (ty
+pe pdf)
+<use images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageIDVerification.p
+df  used on input line 40.
+(pdftex.def)             Requested size: 418.80612pt x 102.26164pt.
+<images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.pdf, i
+d=2404, 1139.21606pt x 1218.47212pt>
+File: images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.p
+df Graphic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.pd
+f>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.01-view-id-verifica
+tion-request-list.pdf  used on input line 43.
+(pdftex.def)             Requested size: 355.08286pt x 379.78621pt.
+
+[111 <./images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>]
+<images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail.pdf,
+ id=2423, 1139.21606pt x 1255.81169pt>
+File: images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail
+.pdf Graphic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail.
+pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.02-view-id-verifica
+tion-request-detail.pdf  used on input line 46.
+(pdftex.def)             Requested size: 355.08286pt x 391.4246pt.
+ [112 <./images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-lis
+t.pdf>]
+<images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf, id=2439, 11
+42.34776pt x 1974.41632pt>
+File: images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf Graphic
+ file (type pdf)
+<use images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.03-approve-id-verif
+ication.pdf  used on input line 49.
+(pdftex.def)             Requested size: 355.08284pt x 613.71974pt.
+
+[113 <./images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-deta
+il.pdf>]
+<images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf, id=2455, 114
+2.34776pt x 1974.41632pt>
+File: images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf Graphic 
+file (type pdf)
+<use images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.04-reject-id-verifi
+cation.pdf  used on input line 52.
+(pdftex.def)             Requested size: 355.08284pt x 613.71974pt.
+ [114 <./images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf>] [1
+15 <./images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf>]
+<images/sprint3/kvy/classDiagram/ManageForumTrash.pdf, id=2487, 2546.55394pt x 
+607.30888pt>
+File: images/sprint3/kvy/classDiagram/ManageForumTrash.pdf Graphic file (type p
+df)
+<use images/sprint3/kvy/classDiagram/ManageForumTrash.pdf>
+Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageForumTrash.pdf  
+used on input line 63.
+(pdftex.def)             Requested size: 418.80327pt x 99.8773pt.
+<images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pdf, id
+=2488, 1139.21606pt x 1771.57857pt>
+File: images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pd
+f Graphic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pdf
+>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.01-view-deleted-pos
+ts-comments-list.pdf  used on input line 66.
+(pdftex.def)             Requested size: 355.08286pt x 552.18425pt.
+ [116 <./images/sprint3/kvy/classDiagram/ManageForumTrash.pdf>]
+<images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.pdf, 
+id=2507, 1139.21606pt x 1255.81169pt>
+File: images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.
+pdf Graphic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.p
+df>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.02-view-deleted-pos
+ts-comments-detail.pdf  used on input line 69.
+(pdftex.def)             Requested size: 355.08286pt x 391.4246pt.
+ [117 <./images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list
+.pdf>]
+<images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf, id=2
+523, 1139.21606pt x 2245.42894pt>
+File: images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf 
+Graphic file (type pdf)
+<use images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf>
+Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.03-restore-deleted-
+posts-comments.pdf  used on input line 72.
+(pdftex.def)             Requested size: 320.89046pt x 632.4847pt.
+)
+(sections/ptai/2/sprint3.tex [118 <./images/sprint3/kvy/sequences/UC-36.02-view
+-deleted-posts-comments-detail.pdf>]
 Overfull \hbox (1.81122pt too wide) in paragraph at lines 9--10
 []\T1/ptm/m/n/12 Proposal Man-age-ment cov-ers the full pro-posal work-flow be-
 tween free-lancers and clients.
  []
 
+[119 <./images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pd
+f>]
 <images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_
-Diagram.png, id=1235, 8031.00375pt x 4351.25626pt>
+Diagram.png, id=2554, 8031.00375pt x 4351.25626pt>
 File: images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_C
 lass_Diagram.png Graphic file (type png)
 <use images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Cl
@@ -1607,9 +2064,8 @@ ass_Diagram.png>
 Package pdftex.def Info: images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Pr
 oposal_Management_Class_Diagram.png  used on input line 13.
 (pdftex.def)             Requested size: 418.72975pt x 226.87082pt.
-[66 <./images/sprint2/tthuan/sequences/ViewForumCategoryDetail.pdf>]
 <images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diag
-ram.png, id=1254, 5069.94125pt x 5718.36375pt>
+ram.png, id=2555, 5069.94125pt x 5718.36375pt>
 File: images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class
 _Diagram.png Graphic file (type png)
 <use images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_
@@ -1617,96 +2073,97 @@ Diagram.png>
 Package pdftex.def Info: images/sprint3/ptai/class-diagrams/UC-32_Client_Propos
 al_Management_Class_Diagram.png  used on input line 15.
 (pdftex.def)             Requested size: 418.75496pt x 472.31181pt.
- [67 <./images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management
-_Class_Diagram.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png, id=1260, 3463.94125p
+ [120 <./images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Managemen
+t_Class_Diagram.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png, id=2561, 3463.94125p
 t x 3819.26875pt>
 File: images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png Graphic file (ty
 pe png)
 <use images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.p
-ng  used on input line 20.
+ng  used on input line 18.
 (pdftex.def)             Requested size: 355.0827pt x 391.50673pt.
- [68 <./images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Cla
-ss_Diagram.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png, id=1266, 3496.0612
+ [121 <./images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Cl
+ass_Diagram.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png, id=2568, 3496.0612
 5pt x 3819.26875pt>
 File: images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png Graphic file (
 type png)
 <use images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail
-.png  used on input line 23.
+.png  used on input line 21.
 (pdftex.def)             Requested size: 355.06786pt x 387.89354pt.
- [69 <./images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png, id=1273, 3419.77625pt x 38
+ [122 <./images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png, id=2574, 3419.77625pt x 38
 19.26875pt>
 File: images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png Graphic file (type png
 )
 <use images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png  us
-ed on input line 26.
+ed on input line 24.
 (pdftex.def)             Requested size: 355.04305pt x 396.51857pt.
- [70 <./images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.04_-_Update_Proposal.png, id=1280, 3339.47626pt x 38
+ [123 <./images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.png (PNG copy)>
+]
+<images/sprint3/ptai/UC-32.04_-_Update_Proposal.png, id=2580, 3339.47626pt x 38
 19.26875pt>
 File: images/sprint3/ptai/UC-32.04_-_Update_Proposal.png Graphic file (type png
 )
 <use images/sprint3/ptai/UC-32.04_-_Update_Proposal.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.04_-_Update_Proposal.png  us
-ed on input line 29.
+ed on input line 27.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [71 <./images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png, id=1287, 3339.47626pt x 
+ [124 <./images/sprint3/ptai/UC-32.03_-_Submit_Proposal.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png, id=2586, 3339.47626pt x 
 3819.26875pt>
 File: images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png Graphic file (type p
 ng)
 <use images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png  
-used on input line 32.
+used on input line 30.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [72 <./images/sprint3/ptai/UC-32.04_-_Update_Proposal.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png, id=1295, 3339.47626pt x 38
+ [125 <./images/sprint3/ptai/UC-32.04_-_Update_Proposal.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png, id=2592, 3339.47626pt x 38
 19.26875pt>
 File: images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png Graphic file (type png
 )
 <use images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png  us
-ed on input line 35.
+ed on input line 33.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [73 <./images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png, id=1302, 3339.47626pt x 38
+ [126 <./images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png, id=2598, 3339.47626pt x 38
 19.26875pt>
 File: images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png Graphic file (type png
 )
 <use images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png  us
-ed on input line 38.
+ed on input line 36.
 (pdftex.def)             Requested size: 355.06308pt x 406.07605pt.
- [74 <./images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.png, id=1309, 3379.62625
+ [127 <./images/sprint3/ptai/UC-32.06_-_Accept_Proposal.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.png, id=2605, 3379.62625
 pt x 3819.26875pt>
 File: images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.png Graphic file (t
 ype png)
 <use images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.
-png  used on input line 41.
+png  used on input line 39.
 (pdftex.def)             Requested size: 355.05173pt x 401.23903pt.
- [75 <./images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png (PNG copy)>]
-<images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png, id=1316, 3508.10625pt
+ [128 <./images/sprint3/ptai/UC-32.07_-_Reject_Proposal.png (PNG copy)>]
+<images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png, id=2611, 3508.10625pt
  x 3819.26875pt>
 File: images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png Graphic file (typ
 e png)
 <use images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png>
 Package pdftex.def Info: images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.pn
-g  used on input line 44.
+g  used on input line 42.
 (pdftex.def)             Requested size: 355.06pt x 386.55316pt.
-) (sections/tthuan/2/sprint3.tex [76 <./images/sprint3/ptai/UC-32.08_-_View_Job
-_Proposal_List.png (PNG copy)>]
+) (sections/tthuan/2/sprint3.tex [129 <./images/sprint3/ptai/UC-32.08_-_View_Jo
+b_Proposal_List.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/classDiagram/UserMan
 agement.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint3/tthuan/classDiagram/UserManagement.pdf, id=1323, 2667.00394pt x
+<images/sprint3/tthuan/classDiagram/UserManagement.pdf, id=2617, 2667.00394pt x
  2308.54462pt>
 File: images/sprint3/tthuan/classDiagram/UserManagement.pdf Graphic file (type 
 pdf)
@@ -1714,114 +2171,114 @@ pdf)
 Package pdftex.def Info: images/sprint3/tthuan/classDiagram/UserManagement.pdf 
  used on input line 15.
 (pdftex.def)             Requested size: 418.7938pt x 362.5057pt.
-[77 <./images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png (PNG copy)>]
+[130 <./images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.png (PNG copy)>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/ViewUserLi
 st.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint3/tthuan/sequences/ViewUserList.pdf, id=1331, 1101.15382pt x 1123
+<images/sprint3/tthuan/sequences/ViewUserList.pdf, id=2623, 1101.15382pt x 1123
 .3167pt>
 File: images/sprint3/tthuan/sequences/ViewUserList.pdf Graphic file (type pdf)
 <use images/sprint3/tthuan/sequences/ViewUserList.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/ViewUserList.pdf  used
- on input line 20.
+ on input line 18.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[78 <./images/sprint3/tthuan/classDiagram/UserManagement.pdf>]
+[131 <./images/sprint3/tthuan/classDiagram/UserManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/ViewUserDe
 tail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> al
 lowed
-<images/sprint3/tthuan/sequences/ViewUserDetail.pdf, id=1351, 1101.15382pt x 11
+<images/sprint3/tthuan/sequences/ViewUserDetail.pdf, id=2642, 1101.15382pt x 11
 23.3167pt>
 File: images/sprint3/tthuan/sequences/ViewUserDetail.pdf Graphic file (type pdf
 )
 <use images/sprint3/tthuan/sequences/ViewUserDetail.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/ViewUserDetail.pdf  us
-ed on input line 23.
+ed on input line 21.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[79 <./images/sprint3/tthuan/sequences/ViewUserList.pdf>]
+[132 <./images/sprint3/tthuan/sequences/ViewUserList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/CreateUser
 .pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowe
 d
-<images/sprint3/tthuan/sequences/CreateUser.pdf, id=1368, 1144.275pt x 1715.448
+<images/sprint3/tthuan/sequences/CreateUser.pdf, id=2658, 1144.275pt x 1715.448
 82pt>
 File: images/sprint3/tthuan/sequences/CreateUser.pdf Graphic file (type pdf)
 <use images/sprint3/tthuan/sequences/CreateUser.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/CreateUser.pdf  used o
-n input line 26.
+n input line 24.
 (pdftex.def)             Requested size: 355.08824pt x 532.33333pt.
-[80 <./images/sprint3/tthuan/sequences/ViewUserDetail.pdf>]
+[133 <./images/sprint3/tthuan/sequences/ViewUserDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/UpdateUser
 .pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowe
 d
-<images/sprint3/tthuan/sequences/UpdateUser.pdf, id=1385, 1129.33919pt x 1715.4
+<images/sprint3/tthuan/sequences/UpdateUser.pdf, id=2675, 1129.33919pt x 1715.4
 4882pt>
 File: images/sprint3/tthuan/sequences/UpdateUser.pdf Graphic file (type pdf)
 <use images/sprint3/tthuan/sequences/UpdateUser.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/UpdateUser.pdf  used o
-n input line 29.
+n input line 27.
 (pdftex.def)             Requested size: 355.0889pt x 539.37457pt.
-[81 <./images/sprint3/tthuan/sequences/CreateUser.pdf>]
+[134 <./images/sprint3/tthuan/sequences/CreateUser.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/UpdateClie
 ntProfile.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint3/tthuan/sequences/UpdateClientProfile.pdf, id=1402, 1137.28882pt
+<images/sprint3/tthuan/sequences/UpdateClientProfile.pdf, id=2691, 1137.28882pt
  x 1715.44882pt>
 File: images/sprint3/tthuan/sequences/UpdateClientProfile.pdf Graphic file (typ
 e pdf)
 <use images/sprint3/tthuan/sequences/UpdateClientProfile.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/UpdateClientProfile.pd
-f  used on input line 32.
+f  used on input line 30.
 (pdftex.def)             Requested size: 355.08952pt x 535.60529pt.
-[82 <./images/sprint3/tthuan/sequences/UpdateUser.pdf>]
+[135 <./images/sprint3/tthuan/sequences/UpdateUser.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/UpdateFree
 lancerBasicInfo.pdf): PDF inclusion: found PDF version <1.7>, but at most versi
 on <1.5> allowed
-<images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf, id=1419, 1123.3
+<images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf, id=2707, 1123.3
 167pt x 1715.44882pt>
 File: images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf Graphic fil
 e (type pdf)
 <use images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/UpdateFreelancerBasicI
-nfo.pdf  used on input line 35.
+nfo.pdf  used on input line 33.
 (pdftex.def)             Requested size: 355.08075pt x 542.25389pt.
-[83 <./images/sprint3/tthuan/sequences/UpdateClientProfile.pdf>]
+[136 <./images/sprint3/tthuan/sequences/UpdateClientProfile.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/UpdateFree
 lancerSkills.pdf): PDF inclusion: found PDF version <1.7>, but at most version 
 <1.5> allowed
-<images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf, id=1436, 1129.3391
+<images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf, id=2723, 1129.3391
 9pt x 1715.44882pt>
 File: images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf Graphic file (
 type pdf)
 <use images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/UpdateFreelancerSkills
-.pdf  used on input line 38.
+.pdf  used on input line 36.
 (pdftex.def)             Requested size: 355.0889pt x 539.37457pt.
-[84 <./images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf>]
+[137 <./images/sprint3/tthuan/sequences/UpdateFreelancerBasicInfo.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint3/tthuan/sequences/UpdateFree
 lancerPortfolio.pdf): PDF inclusion: found PDF version <1.7>, but at most versi
 on <1.5> allowed
-<images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf, id=1454, 1123.3
+<images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf, id=2739, 1123.3
 167pt x 1715.44882pt>
 File: images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf Graphic fil
 e (type pdf)
 <use images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf>
 Package pdftex.def Info: images/sprint3/tthuan/sequences/UpdateFreelancerPortfo
-lio.pdf  used on input line 41.
+lio.pdf  used on input line 39.
 (pdftex.def)             Requested size: 355.08075pt x 542.25389pt.
-) [85 <./images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf>]
+) [138 <./images/sprint3/tthuan/sequences/UpdateFreelancerSkills.pdf>]
 (sections/tthuan/2/sprint4.tex
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/classDiagram/BannerM
 anagement.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint4/tthuan/classDiagram/BannerManagement.pdf, id=1471, 1982.36606pt
+<images/sprint4/tthuan/classDiagram/BannerManagement.pdf, id=2755, 1982.36606pt
  x 1336.03131pt>
 File: images/sprint4/tthuan/classDiagram/BannerManagement.pdf Graphic file (typ
 e pdf)
@@ -1829,163 +2286,162 @@ e pdf)
 Package pdftex.def Info: images/sprint4/tthuan/classDiagram/BannerManagement.pd
 f  used on input line 15.
 (pdftex.def)             Requested size: 418.81978pt x 282.2669pt.
-[86 <./images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf>]
+[139 <./images/sprint3/tthuan/sequences/UpdateFreelancerPortfolio.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/ViewBanner
 List.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> al
 lowed
-<images/sprint4/tthuan/sequences/ViewBannerList.pdf, id=1489, 1101.15382pt x 11
+<images/sprint4/tthuan/sequences/ViewBannerList.pdf, id=2772, 1101.15382pt x 11
 23.3167pt>
 File: images/sprint4/tthuan/sequences/ViewBannerList.pdf Graphic file (type pdf
 )
 <use images/sprint4/tthuan/sequences/ViewBannerList.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/ViewBannerList.pdf  us
-ed on input line 20.
+ed on input line 18.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[87 <./images/sprint4/tthuan/classDiagram/BannerManagement.pdf>]
+[140 <./images/sprint4/tthuan/classDiagram/BannerManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/ViewBanner
 Detail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> 
 allowed
-<images/sprint4/tthuan/sequences/ViewBannerDetail.pdf, id=1508, 1101.15382pt x 
+<images/sprint4/tthuan/sequences/ViewBannerDetail.pdf, id=2791, 1101.15382pt x 
 1123.3167pt>
 File: images/sprint4/tthuan/sequences/ViewBannerDetail.pdf Graphic file (type p
 df)
 <use images/sprint4/tthuan/sequences/ViewBannerDetail.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/ViewBannerDetail.pdf  
-used on input line 23.
+used on input line 21.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[88 <./images/sprint4/tthuan/sequences/ViewBannerList.pdf>]
+[141 <./images/sprint4/tthuan/sequences/ViewBannerList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/CreateBann
 er.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint4/tthuan/sequences/CreateBanner.pdf, id=1525, 1144.275pt x 1701.2
+<images/sprint4/tthuan/sequences/CreateBanner.pdf, id=2807, 1144.275pt x 1701.2
 3581pt>
 File: images/sprint4/tthuan/sequences/CreateBanner.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/CreateBanner.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/CreateBanner.pdf  used
- on input line 26.
+ on input line 24.
 (pdftex.def)             Requested size: 355.08824pt x 527.92279pt.
-[89 <./images/sprint4/tthuan/sequences/ViewBannerDetail.pdf>]
+[142 <./images/sprint4/tthuan/sequences/ViewBannerDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/UpdateBann
 er.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint4/tthuan/sequences/UpdateBanner.pdf, id=1542, 1129.33919pt x 1701
+<images/sprint4/tthuan/sequences/UpdateBanner.pdf, id=2823, 1129.33919pt x 1701
 .23581pt>
 File: images/sprint4/tthuan/sequences/UpdateBanner.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/UpdateBanner.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/UpdateBanner.pdf  used
- on input line 29.
+ on input line 27.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-[90 <./images/sprint4/tthuan/sequences/CreateBanner.pdf>]
+[143 <./images/sprint4/tthuan/sequences/CreateBanner.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/DeleteBann
 er.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint4/tthuan/sequences/DeleteBanner.pdf, id=1560, 1129.33919pt x 1701
+<images/sprint4/tthuan/sequences/DeleteBanner.pdf, id=2839, 1129.33919pt x 1701
 .23581pt>
 File: images/sprint4/tthuan/sequences/DeleteBanner.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/DeleteBanner.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/DeleteBanner.pdf  used
- on input line 32.
+ on input line 30.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-[91 <./images/sprint4/tthuan/sequences/UpdateBanner.pdf>]
+[144 <./images/sprint4/tthuan/sequences/UpdateBanner.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/classDiagram/SkillMa
 nagement.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5
 > allowed
-<images/sprint4/tthuan/classDiagram/SkillManagement.pdf, id=1577, 1281.82881pt 
+<images/sprint4/tthuan/classDiagram/SkillManagement.pdf, id=2855, 1281.82881pt 
 x 780.99776pt>
 File: images/sprint4/tthuan/classDiagram/SkillManagement.pdf Graphic file (type
  pdf)
 <use images/sprint4/tthuan/classDiagram/SkillManagement.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/classDiagram/SkillManagement.pdf
-  used on input line 43.
+  used on input line 41.
 (pdftex.def)             Requested size: 418.81917pt x 255.17981pt.
-[92 <./images/sprint4/tthuan/sequences/DeleteBanner.pdf>]
+[145 <./images/sprint4/tthuan/sequences/DeleteBanner.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/ViewSkillL
 ist.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> all
 owed
-<images/sprint4/tthuan/sequences/ViewSkillList.pdf, id=1595, 1101.15382pt x 112
+<images/sprint4/tthuan/sequences/ViewSkillList.pdf, id=2872, 1101.15382pt x 112
 3.3167pt>
 File: images/sprint4/tthuan/sequences/ViewSkillList.pdf Graphic file (type pdf)
 
 <use images/sprint4/tthuan/sequences/ViewSkillList.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/ViewSkillList.pdf  use
-d on input line 48.
+d on input line 44.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[93 <./images/sprint4/tthuan/classDiagram/SkillManagement.pdf>]
+[146 <./images/sprint4/tthuan/classDiagram/SkillManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/ViewSkillD
 etail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> a
 llowed
-<images/sprint4/tthuan/sequences/ViewSkillDetail.pdf, id=1614, 1101.15382pt x 1
+<images/sprint4/tthuan/sequences/ViewSkillDetail.pdf, id=2891, 1101.15382pt x 1
 123.3167pt>
 File: images/sprint4/tthuan/sequences/ViewSkillDetail.pdf Graphic file (type pd
 f)
 <use images/sprint4/tthuan/sequences/ViewSkillDetail.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/ViewSkillDetail.pdf  u
-sed on input line 51.
+sed on input line 47.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[94 <./images/sprint4/tthuan/sequences/ViewSkillList.pdf>]
+[147 <./images/sprint4/tthuan/sequences/ViewSkillList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/CreateSkil
 l.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allow
 ed
-<images/sprint4/tthuan/sequences/CreateSkill.pdf, id=1631, 1144.275pt x 1701.23
+<images/sprint4/tthuan/sequences/CreateSkill.pdf, id=2907, 1144.275pt x 1701.23
 581pt>
 File: images/sprint4/tthuan/sequences/CreateSkill.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/CreateSkill.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/CreateSkill.pdf  used 
-on input line 54.
+on input line 50.
 (pdftex.def)             Requested size: 355.08824pt x 527.92279pt.
-[95 <./images/sprint4/tthuan/sequences/ViewSkillDetail.pdf>]
+[148 <./images/sprint4/tthuan/sequences/ViewSkillDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/UpdateSkil
 l.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allow
 ed
-<images/sprint4/tthuan/sequences/UpdateSkill.pdf, id=1648, 1129.33919pt x 1701.
+<images/sprint4/tthuan/sequences/UpdateSkill.pdf, id=2923, 1129.33919pt x 1701.
 23581pt>
 File: images/sprint4/tthuan/sequences/UpdateSkill.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/UpdateSkill.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/UpdateSkill.pdf  used 
-on input line 57.
+on input line 53.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-[96 <./images/sprint4/tthuan/sequences/CreateSkill.pdf>]
+[149 <./images/sprint4/tthuan/sequences/CreateSkill.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/DeleteSkil
 l.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allow
 ed
-<images/sprint4/tthuan/sequences/DeleteSkill.pdf, id=1666, 1129.33919pt x 1701.
+<images/sprint4/tthuan/sequences/DeleteSkill.pdf, id=2939, 1129.33919pt x 1701.
 23581pt>
 File: images/sprint4/tthuan/sequences/DeleteSkill.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/DeleteSkill.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/DeleteSkill.pdf  used 
-on input line 60.
+on input line 56.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-[97 <./images/sprint4/tthuan/sequences/UpdateSkill.pdf>]
+[150 <./images/sprint4/tthuan/sequences/UpdateSkill.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint4/tthuan/sequences/RestoreSki
 ll.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
 wed
-<images/sprint4/tthuan/sequences/RestoreSkill.pdf, id=1683, 1123.3167pt x 1701.
+<images/sprint4/tthuan/sequences/RestoreSkill.pdf, id=2955, 1123.3167pt x 1701.
 23581pt>
 File: images/sprint4/tthuan/sequences/RestoreSkill.pdf Graphic file (type pdf)
 <use images/sprint4/tthuan/sequences/RestoreSkill.pdf>
 Package pdftex.def Info: images/sprint4/tthuan/sequences/RestoreSkill.pdf  used
- on input line 63.
+ on input line 59.
 (pdftex.def)             Requested size: 355.08075pt x 537.76115pt.
-) [98 <./images/sprint4/tthuan/sequences/DeleteSkill.pdf>]
-(sections/tthuan/2/sprint5.tex [99 <./images/sprint4/tthuan/sequences/RestoreSk
-ill.pdf>]
+) [151 <./images/sprint4/tthuan/sequences/DeleteSkill.pdf>]
+(sections/tthuan/2/sprint5.tex
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/classDiagram/ExpertP
 rofileManagement.pdf): PDF inclusion: found PDF version <1.7>, but at most vers
 ion <1.5> allowed
-<images/sprint5/tthuan/classDiagram/ExpertProfileManagement.pdf, id=1717, 2667.
+<images/sprint5/tthuan/classDiagram/ExpertProfileManagement.pdf, id=2972, 2667.
 00394pt x 2308.54462pt>
 File: images/sprint5/tthuan/classDiagram/ExpertProfileManagement.pdf Graphic fi
 le (type pdf)
@@ -1993,147 +2449,145 @@ le (type pdf)
 Package pdftex.def Info: images/sprint5/tthuan/classDiagram/ExpertProfileManage
 ment.pdf  used on input line 15.
 (pdftex.def)             Requested size: 418.7938pt x 362.5057pt.
-
+[152 <./images/sprint4/tthuan/sequences/RestoreSkill.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/UpdateExpe
 rtProfile.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf, id=1718, 1123.3167pt 
+<images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf, id=2988, 1123.3167pt 
 x 1715.44882pt>
 File: images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf Graphic file (typ
 e pdf)
 <use images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/UpdateExpertProfile.pd
-f  used on input line 20.
+f  used on input line 18.
 (pdftex.def)             Requested size: 355.08075pt x 542.25389pt.
-[100 <./images/sprint5/tthuan/classDiagram/ExpertProfileManagement.pdf>]
-[101 <./images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf>]
+[153 <./images/sprint5/tthuan/classDiagram/ExpertProfileManagement.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/classDiagram/JobCate
 goryManagement.pdf): PDF inclusion: found PDF version <1.7>, but at most versio
 n <1.5> allowed
-<images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf, id=1754, 2871.76
+<images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf, id=3007, 2871.76
 894pt x 1192.455pt>
 File: images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf Graphic file
  (type pdf)
 <use images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/classDiagram/JobCategoryManageme
-nt.pdf  used on input line 31.
+nt.pdf  used on input line 29.
 (pdftex.def)             Requested size: 418.78401pt x 173.89319pt.
-
+[154 <./images/sprint5/tthuan/sequences/UpdateExpertProfile.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/ViewJobCat
 egoryList.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.
 5> allowed
-<images/sprint5/tthuan/sequences/ViewJobCategoryList.pdf, id=1755, 1101.15382pt
+<images/sprint5/tthuan/sequences/ViewJobCategoryList.pdf, id=3023, 1101.15382pt
  x 1123.3167pt>
 File: images/sprint5/tthuan/sequences/ViewJobCategoryList.pdf Graphic file (typ
 e pdf)
 <use images/sprint5/tthuan/sequences/ViewJobCategoryList.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/ViewJobCategoryList.pd
-f  used on input line 36.
+f  used on input line 32.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[102 <./images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf>]
+
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/ViewJobCat
 egoryDetail.pdf): PDF inclusion: found PDF version <1.7>, but at most version <
 1.5> allowed
-<images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf, id=1775, 1101.15382
+<images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf, id=3024, 1101.15382
 pt x 1123.3167pt>
 File: images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf Graphic file (t
 ype pdf)
 <use images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/ViewJobCategoryDetail.
-pdf  used on input line 39.
+pdf  used on input line 35.
 (pdftex.def)             Requested size: 355.08159pt x 362.2283pt.
-[103 <./images/sprint5/tthuan/sequences/ViewJobCategoryList.pdf>]
+[155 <./images/sprint5/tthuan/classDiagram/JobCategoryManagement.pdf> <./images
+/sprint5/tthuan/sequences/ViewJobCategoryList.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/CreateJobC
 ategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint5/tthuan/sequences/CreateJobCategory.pdf, id=1792, 1129.33919pt x
+<images/sprint5/tthuan/sequences/CreateJobCategory.pdf, id=3054, 1129.33919pt x
  1701.23581pt>
 File: images/sprint5/tthuan/sequences/CreateJobCategory.pdf Graphic file (type 
 pdf)
 <use images/sprint5/tthuan/sequences/CreateJobCategory.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/CreateJobCategory.pdf 
- used on input line 42.
+ used on input line 38.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-[104 <./images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf>]
+[156 <./images/sprint5/tthuan/sequences/ViewJobCategoryDetail.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/UpdateJobC
 ategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint5/tthuan/sequences/UpdateJobCategory.pdf, id=1809, 1123.3167pt x 
+<images/sprint5/tthuan/sequences/UpdateJobCategory.pdf, id=3070, 1123.3167pt x 
 1701.23581pt>
 File: images/sprint5/tthuan/sequences/UpdateJobCategory.pdf Graphic file (type 
 pdf)
 <use images/sprint5/tthuan/sequences/UpdateJobCategory.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/UpdateJobCategory.pdf 
- used on input line 45.
+ used on input line 41.
 (pdftex.def)             Requested size: 355.08075pt x 537.76115pt.
-[105 <./images/sprint5/tthuan/sequences/CreateJobCategory.pdf>]
+[157 <./images/sprint5/tthuan/sequences/CreateJobCategory.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./images/sprint5/tthuan/sequences/DeleteJobC
 ategory.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5>
  allowed
-<images/sprint5/tthuan/sequences/DeleteJobCategory.pdf, id=1826, 1129.33919pt x
+<images/sprint5/tthuan/sequences/DeleteJobCategory.pdf, id=3087, 1129.33919pt x
  1701.23581pt>
 File: images/sprint5/tthuan/sequences/DeleteJobCategory.pdf Graphic file (type 
 pdf)
 <use images/sprint5/tthuan/sequences/DeleteJobCategory.pdf>
 Package pdftex.def Info: images/sprint5/tthuan/sequences/DeleteJobCategory.pdf 
- used on input line 48.
+ used on input line 44.
 (pdftex.def)             Requested size: 355.0889pt x 534.90569pt.
-)) (sections/4.Class_Specification.tex [106 <./images/sprint5/tthuan/sequences/
-UpdateJobCategory.pdf>] (sections/tthuan/4/sprint1.tex [107 <./images/sprint5/t
-thuan/sequences/DeleteJobCategory.pdf>] [108]
-ignored error: Infinite glue shrinkage found in box being split [109]
-ignored error: Infinite glue shrinkage found in box being split [110] [111]
-ignored error: Infinite glue shrinkage found in box being split [112]
-ignored error: Infinite glue shrinkage found in box being split [113]
-ignored error: Infinite glue shrinkage found in box being split [114]
-ignored error: Infinite glue shrinkage found in box being split [115]
-ignored error: Infinite glue shrinkage found in box being split [116]
-ignored error: Infinite glue shrinkage found in box being split [117] [118]
-ignored error: Infinite glue shrinkage found in box being split [119]
-ignored error: Infinite glue shrinkage found in box being split [120]
-ignored error: Infinite glue shrinkage found in box being split [121]
-ignored error: Infinite glue shrinkage found in box being split [122] [123])
-(sections/tthuan/4/sprint2.tex [124] [125]
-ignored error: Infinite glue shrinkage found in box being split [126] [127]
-[128]
-ignored error: Infinite glue shrinkage found in box being split [129])
-Overfull \hbox (72.04929pt too wide) in paragraph at lines 209--17
+)) (sections/4.Class_Specification.tex [158 <./images/sprint5/tthuan/sequences/
+UpdateJobCategory.pdf>] (sections/tthuan/4/sprint1.tex [159 <./images/sprint5/t
+thuan/sequences/DeleteJobCategory.pdf>] [160]
+ignored error: Infinite glue shrinkage found in box being split [161]
+ignored error: Infinite glue shrinkage found in box being split [162] [163]
+ignored error: Infinite glue shrinkage found in box being split [164]
+ignored error: Infinite glue shrinkage found in box being split [165] [166]
+ignored error: Infinite glue shrinkage found in box being split [167]
+ignored error: Infinite glue shrinkage found in box being split [168]
+ignored error: Infinite glue shrinkage found in box being split [169]
+ignored error: Infinite glue shrinkage found in box being split [170]
+ignored error: Infinite glue shrinkage found in box being split [171]
+ignored error: Infinite glue shrinkage found in box being split [172]
+ignored error: Infinite glue shrinkage found in box being split [173] [174])
+(sections/tthuan/4/sprint2.tex [175] [176]
+ignored error: Infinite glue shrinkage found in box being split [177] [178]
+[179]
+ignored error: Infinite glue shrinkage found in box being split [180])
+Overfull \hbox (72.04929pt too wide) in paragraph at lines 209--18
 []\T1/ptm/m/n/12 UC-14.01--14.02 and UC-17.01--17.06 use the shared \T1/cmtt/m/
 n/12 ForumAdminController\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 ForumAdminService\T1/
 ptm/m/n/12 ,
  []
 
 (sections/tthuan/4/sprint3.tex
-ignored error: Infinite glue shrinkage found in box being split [130]
-ignored error: Infinite glue shrinkage found in box being split [131]
-ignored error: Infinite glue shrinkage found in box being split [132]
-ignored error: Infinite glue shrinkage found in box being split [133]
-ignored error: Infinite glue shrinkage found in box being split [134]
-ignored error: Infinite glue shrinkage found in box being split [135] [136]
-ignored error: Infinite glue shrinkage found in box being split [137]
-ignored error: Infinite glue shrinkage found in box being split [138])
-(sections/tthuan/4/sprint4.tex [139]
-ignored error: Infinite glue shrinkage found in box being split [140]
-ignored error: Infinite glue shrinkage found in box being split [141] [142]
-ignored error: Infinite glue shrinkage found in box being split [143]
-ignored error: Infinite glue shrinkage found in box being split [144] [145]
-ignored error: Infinite glue shrinkage found in box being split [146] [147]
-ignored error: Infinite glue shrinkage found in box being split [148])
-(sections/tthuan/4/sprint5.tex
-ignored error: Infinite glue shrinkage found in box being split [149]
-ignored error: Infinite glue shrinkage found in box being split [150] [151]
-ignored error: Infinite glue shrinkage found in box being split [152]
-ignored error: Infinite glue shrinkage found in box being split [153] [154]
-ignored error: Infinite glue shrinkage found in box being split [155] [156]
-ignored error: Infinite glue shrinkage found in box being split [157]))
-[158] (main.aux)
+ignored error: Infinite glue shrinkage found in box being split [181]
+ignored error: Infinite glue shrinkage found in box being split [182]
+ignored error: Infinite glue shrinkage found in box being split [183]
+ignored error: Infinite glue shrinkage found in box being split [184]
+ignored error: Infinite glue shrinkage found in box being split [185]
+ignored error: Infinite glue shrinkage found in box being split [186] [187]
+ignored error: Infinite glue shrinkage found in box being split [188]
+ignored error: Infinite glue shrinkage found in box being split [189])
+(sections/tthuan/4/sprint4.tex [190]
+ignored error: Infinite glue shrinkage found in box being split [191]
+ignored error: Infinite glue shrinkage found in box being split [192] [193]
+ignored error: Infinite glue shrinkage found in box being split [194]
+ignored error: Infinite glue shrinkage found in box being split [195] [196]
+ignored error: Infinite glue shrinkage found in box being split [197]
+ignored error: Infinite glue shrinkage found in box being split [198] [199])
+(sections/tthuan/4/sprint5.tex [200]
+ignored error: Infinite glue shrinkage found in box being split [201]
+ignored error: Infinite glue shrinkage found in box being split [202] [203]
+ignored error: Infinite glue shrinkage found in box being split [204]
+ignored error: Infinite glue shrinkage found in box being split [205] [206]
+ignored error: Infinite glue shrinkage found in box being split [207]))
+[208] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -2142,81 +2596,28 @@ L3 programming layer <2025-12-24>
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: E19C6BEF694A878371E92EDA61705B52;20566
-(rerunfilecheck)             After:  82ED33B234562ADF20FE35CFCCECD661;28168.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 98371BFAC4FE42A29090FDC899BBB743;40561.
  ) 
 Here is how much of TeX's memory you used:
- 17480 strings out of 467871
- 320100 string characters out of 5418860
- 722362 words of memory out of 5000000
- 45519 multiletter control sequences out of 15000+600000
- 672720 words of font info for 95 fonts, out of 8000000 for 9000
+ 18233 strings out of 467871
+ 351225 string characters out of 5418860
+ 791998 words of memory out of 5000000
+ 46106 multiletter control sequences out of 15000+600000
+ 713627 words of font info for 169 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,83p,962b,680s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{subsubsection.3.9.6} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.9.5} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.9.4} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.9.3} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.7.8} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.7.7} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.7.6} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.4.2} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.4.1} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.3.6} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.3.5} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.3.4} has been referenced but does n
-ot exist, replaced by a fixed one
-
- <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt109
-5.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ec
-tt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
-nts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/
-times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/t
-imes/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/ti
-mes/utmri8a.pfb>
-Output written on main.pdf (159 pages, 47245533 bytes).
+ 75i,17n,83p,956b,680s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
+095.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
+ectt1200.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
+i600\ecsx1000.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type
+1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1
+/urw/times/utmri8a.pfb>
+Output written on main.pdf (208 pages, 50441048 bytes).
 PDF statistics:
- 2437 PDF objects out of 2487 (max. 8388607)
- 525 named destinations out of 1000 (max. 500000)
- 1331 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3757 PDF objects out of 4296 (max. 8388607)
+ 670 named destinations out of 1000 (max. 500000)
+ 2351 words of extra memory for PDF output out of 10000 (max. 10000000)
 

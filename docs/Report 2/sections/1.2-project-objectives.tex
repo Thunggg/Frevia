@@ -1,0 +1,55 @@
+The \textbf{Frevia} project (project code SEP490\_04) develops a web-based freelance marketplace that connects Clients and Freelancers in software, design, content, and consulting work. A Client publishes a job with a fixed-price budget, a deadline, required skills, categories, and the number of positions to fill; Freelancers submit proposals, either as drafts or as submitted applications with attachments and an expiry date; the Client compares proposals and hires a candidate, which generates a contract that both parties must sign. The contract carries a total amount and a fixed platform fee recorded on the contract, and the work is divided into milestones that are funded into escrow, submitted with files and links, optionally returned for changes with a due date, and, after approval, released as a Stripe payout. Completed contracts can be reviewed with an overall rating and a category breakdown, and each review can receive a response.
+
+Beyond the core transaction, the platform provides electronic identity verification with an AI document and liveness pipeline, an administrative review queue for identity documents and profile revisions, a milestone-level dispute procedure with an arbitration fee, evidence, deadlines, an administrative decision, and a review step, one-to-one real-time messaging over an authenticated WebSocket, a persistent notification record, a community forum with categories, comments, likes, reporting, and AI-assisted moderation, saved searches and job bookmarks, an expert directory, advertisement banners, and a data-driven permission model that lets an administrator change what each role may do without a redeployment. Artificial intelligence is applied only to curriculum vitae skill extraction, identity verification, and forum content moderation; no recommendation, ranking, or automatic matching engine is part of the scope.
+
+Based on the established backlog of \textbf{214 SMAR items} distributed across five sprints, the total estimated effort is \textbf{372 man-days}, as detailed in the \textit{Scope and Estimation} table and summarised in Table \ref{tab:estimation-summary}.
+
+\subsubsection{Key Performance Objectives}
+\begin{itemize}
+    \item \textbf{Timeliness (\%):} Deliver all sprints and milestones on schedule.\\
+    \textit{Target:} 95\% of the tasks (i.e., 203 out of 214) must be completed within the sprint in which they are planned. Delayed tasks shall not exceed 5\% of the total.
+    \item \textbf{Allocated Effort (man-days):} Optimise development resources, aligning effort with task complexity, rated low, medium, or high.\\
+    \textit{Target:} Actual total effort shall not exceed 372 $\pm$ 5\% (max. 391 man-days). High-complexity tasks (the identity verification pipeline, Stripe escrow funding and webhooks, dispute arbitration, and the real-time messaging gateway) are assigned to experienced team members and scheduled early in their sprint.
+    \item \textbf{Defect Distribution:} Maintain high software quality throughout development, testing, and acceptance.\\
+    \textit{Target:}
+    \begin{itemize}
+        \item No critical defects remain open at the acceptance milestone.
+        \item 95\% of high-priority defects fixed within 48 hours of detection.
+        \item Medium-priority defects not exceeding 5\% of the total system defects.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Testing Strategy \& Quality Gates}
+All 214 items must pass through the following testing stages. Table \ref{tab:testing-targets} summarises the test coverage targets and the defect resolution key performance indicators.
+
+\begin{table}[H]
+\centering
+\caption{Testing Stages and Quality Targets}
+\label{tab:testing-targets}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|>{\raggedright\arraybackslash}p{4.7cm}|c|c|c|}
+\hline
+\rowcolor{fptHeader}
+\textbf{\#} & \textbf{Testing Stage} & \textbf{Test Coverage (\%)} & \textbf{No. of Defects} & \textbf{\% of Defects Solved} \\
+\hline
+1 & Reviewing (code review and design review) & 100 & 0 & 100 \\
+\hline
+2 & Unit Test & 80 & 0 & 100 \\
+\hline
+3 & Integration Test & 100 & 0 & 100 \\
+\hline
+4 & System Test & 100 & 0 & 100 \\
+\hline
+5 & Acceptance Test & 95 & 0 & 100 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Reviewing includes peer review and static analysis with ESLint for both the NestJS API and the Next.js web client, together with explicit review of every Stripe call site and webhook handler.
+    \item Unit Test requires at least 80\% coverage for critical modules: authentication, access-token validation, job and proposal handling, contract and milestone state transitions, payment services, and the dispute service.
+    \item Integration Test verifies the main flow: create job $\rightarrow$ submit proposal $\rightarrow$ accept proposal $\rightarrow$ generate and sign contract $\rightarrow$ create milestone $\rightarrow$ fund the milestone into escrow $\rightarrow$ submit work $\rightarrow$ approve the submission $\rightarrow$ release the payment.
+    \item System Test executes end-to-end scenarios on a staging environment using Stripe test mode with simulated webhook events, a test identity document set for the verification pipeline, and a sample curriculum vitae for skill extraction.
+    \item Acceptance Test is performed with at least 3 Clients and 5 Freelancers, ensuring that 95\% of the key business workflows function correctly.
+\end{itemize}

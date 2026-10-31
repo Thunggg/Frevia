@@ -11,6 +11,7 @@
 % FONT
 %====================================================
 \usepackage{mathptmx}
+\usepackage{helvet} % sans-serif face used by the template's Record of Changes table
 
 %====================================================
 % MATH
@@ -35,6 +36,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{multirow}
+\usepackage{makecell}
 \usepackage{caption}
 \usepackage{enumitem}
 
@@ -43,10 +45,10 @@
 %====================================================
 \usepackage{geometry}
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
-    left=3.0cm,
-    right=2.0cm,
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
     headheight=14pt
 }
 
@@ -69,6 +71,9 @@
 \definecolor{fptBlue}{RGB}{0,0,139}
 \definecolor{fptOrange}{RGB}{255,140,0}
 \definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{fptHeader}{RGB}{255,232,225}
+\definecolor{fptHeaderText}{RGB}{110,37,0}
+\definecolor{fptTocBlue}{RGB}{46,116,181}
 
 %====================================================
 % SECTION FORMAT
@@ -78,22 +83,35 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
-\titleformat{\section}
-  {\normalfont\Large\bfseries\color{fptred}}
-  {\thesection}{0.8em}{}
-  [\vspace{-0.35em}{\color{fptOrange}\rule{\textwidth}{1pt}}]
+% Level 1 (I., II.) -- 16 pt bold, dark red, matching Heading 1 of the template
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
 
+% Level 2 (1., 2., ...) -- 13 pt bold, black, matching Heading 2 of the template
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\thesection}{0.8em}{}
+
+% Level 3 (1.1, 1.2, ...) -- 12 pt bold, black, matching Heading 3 of the template
 \titleformat{\subsection}
-  {\normalfont\large\bfseries\color{fptBlue}}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
   {\thesubsection}{0.8em}{}
 
+% Level 4 (1.1.1, ...) -- 12 pt bold italic, matching Heading 4 of the template
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries\color{black}}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\itshape\color{black}}
   {\thesubsubsection}{0.8em}{}
 
-\titlespacing*{\section}{0pt}{2.4ex plus 1ex minus .2ex}{1.2ex plus .2ex}
-\titlespacing*{\subsection}{0pt}{1.8ex plus .8ex minus .2ex}{0.8ex plus .2ex}
-\titlespacing*{\subsubsection}{0pt}{1.4ex plus .6ex minus .2ex}{0.6ex plus .2ex}
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titlespacing*{\part}{0pt}{0pt}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
 
 %====================================================
 % HEADER & FOOTER
@@ -102,10 +120,8 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{FREVIA --- Project Management Plan}}
-\fancyhead[R]{\small\leftmark}
 \fancyfoot[C]{\small\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
 \fancypagestyle{plain}{
@@ -124,20 +140,31 @@
     skip=6pt
 }
 
+% longtable captions use this width; the default 4 in is narrower than the tables
+\setlength{\LTcapwidth}{\textwidth}
+
 %====================================================
 % TABLE OF CONTENTS
 %====================================================
 \usepackage{tocloft}
 
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
 
-\renewcommand{\cftsecfont}{\bfseries}
-\renewcommand{\cftsecpagefont}{\bfseries}
+\renewcommand{\cftpartfont}{\normalfont\normalsize}
+\renewcommand{\cftpartpagefont}{\normalfont\normalsize}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
 
-\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforepartskip}{8pt}
+\setlength{\cftbeforesecskip}{4pt}
 \setlength{\cftbeforesubsecskip}{2pt}
+
+\setlength{\cftsecindent}{0.4cm}
+\setlength{\cftsubsecindent}{0.8cm}
+\setlength{\cftsubsubsecindent}{1.2cm}
 
 %====================================================
 % HYPERLINKS
@@ -169,33 +196,36 @@
 %====================================================
 % COVER PAGE
 %====================================================
-\pagenumbering{roman}
 \input{introduction}
+
+% The cover is page 1 of the template, so the table of contents starts on page 2.
+\setcounter{page}{2}
 
 %====================================================
 % TABLE OF CONTENTS
 %====================================================
-\newpage
-\renewcommand{\contentsname}{\fontsize{20}{24}\selectfont\bfseries\color{fptred} Table of Contents}
-\tableofcontents
-\newpage
-\pagenumbering{arabic}
+\input{table_of_contents}
 
 %====================================================
 % MAIN CONTENT
 %====================================================
+\input{sections/record_of_changes}
+
+\part{Project Management Plan}
+
 \section{Overview}
     \subsection{Scope \& Estimation}
     \input{sections/1.1-scope-and-estimation}
 
     \subsection{Project Objectives}
-    \input{sections/1-2-objective}
+    \input{sections/1.2-project-objectives}
 
     \subsection{Project Risks}
     \input{sections/1.3-project-risk}
 
 \section{Management Approach}
     \input{sections/2-management-approach}
+
     \subsection{Project Process}
     \input{sections/2.1-project-process}
 
@@ -205,30 +235,32 @@
     \subsection{Training Plan}
     \input{sections/2.3-training-plan}
 
-\section{Project Organization}
-    \subsection{Team \& Structure}
-    \input{sections/3.1-team-structures}
-
-    \subsection{Role \& Responsibilities}
-    \input{sections/3.2-role-responsibilities}
-
 \section{Project Deliverables}
-\input{sections/4-project-deliverables}
+    \input{sections/3-project-deliverables}
 
 \section{Responsibility Assignments}
-\input{sections/5-responsibility-assignments}
+    \input{sections/4-responsibility-assignments}
+
+    \subsection{Team \& Structure}
+    \input{sections/4.1-team-structures}
+
+    \subsection{Role \& Responsibilities}
+    \input{sections/4.2-role-responsibilities}
+
+    \subsection{Responsibility Assignment Matrix}
+    \input{sections/4.3-responsibility-matrix}
 
 \section{Project Communications}
-\input{sections/6-project-communications}
+    \input{sections/5-project-communications}
 
 \section{Configuration Management}
     \subsection{Document Management}
-    \input{sections/7.1-document-management}
+    \input{sections/6.1-document-management}
 
     \subsection{Source Code Management}
-    \input{sections/7.2-source-code-management}
+    \input{sections/6.2-source-code-management}
 
     \subsection{Tools \& Infrastructures}
-    \input{sections/7.3-tools-infrastructures}
+    \input{sections/6.3-tools-infrastructures}
 
 \end{document}

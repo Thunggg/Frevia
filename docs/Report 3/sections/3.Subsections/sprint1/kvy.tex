@@ -1,0 +1,1978 @@
+% =================================================================
+% Sprint 1 - Manage Forum
+% The functions below follow the detailed form of the report template:
+% function trigger, function description, screen layout and function details.
+% They are written against the implementation in
+%   apps/api/src/routes/forums/forums-post, forums-comment, forums-like,
+%   forums-reports and apps/web/app/forum, including the BFF proxy
+%   (apps/web/app/api/backend) that sends post creation through the
+%   SensitiveAI moderation proxy.
+% =================================================================
+
+\subsection{Manage Forum}
+
+\subsubsection{Function: View Forum Category List}
+
+\fnhead{Function Trigger}
+Any visitor opens the Community Forum area from the main navigation, or follows a direct
+link to the forum landing page. The function is public, therefore it runs on every visit of
+the page, whether or not the visitor is signed in.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum (\texttt{/forum}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, Client and Administrator. The screen is
+          readable by every role, including visitors without an account.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy
+          (\texttt{/api/backend}), Frevia REST API (NestJS) and PostgreSQL accessed through
+          Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function is the entry point of the community area. It presents the active forum
+categories together with the number of published posts that each one contains, and it
+highlights both the categories and the members with the highest activity, so a visitor can
+reach an ongoing discussion in one click and can immediately see which topics are alive.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Community Forum page at \texttt{/forum}, opened from the main navigation.
+    \item Grid of category cards; each card shows the category name, its description and the
+          number of approved posts.
+    \item ``Most Active'' panel listing the three categories with the largest number of posts.
+    \item ``Top Contributors'' panel listing the five members with the largest number of posts,
+          with their post and comment counters.
+    \item Empty-state panel displayed when no category has been created yet.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The page requests \texttt{GET /api/forums/categories}.
+    \item The API keeps only the categories whose \texttt{deletedAt} is null and orders the
+          result by \texttt{name} in ascending order.
+    \item For every category the API counts the posts that are not soft deleted and whose
+          \texttt{moderationStatus} is \texttt{APPROVED}; the count is returned as
+          \texttt{postCount}, so posts awaiting moderation or rejected by it are never counted.
+    \item The ``Most Active'' panel requests \texttt{GET /api/forums/categories/top?limit=3};
+          the API sorts the same projection by post count in descending order.
+    \item The ``Top Contributors'' panel requests \texttt{GET /api/forums/users/top?limit=5};
+          the API selects the users that are neither deleted nor banned, counts their posts and
+          comments with \texttt{deletedAt} null and orders them by post count in descending order.
+    \item The category list is cached by the client for thirty minutes and is re-used while the
+          visitor moves between forum screens, so returning to the list does not repeat the call.
+    \item A category without a description is rendered with the fallback text ``No description
+          provided.''; an empty result set is rendered as ``No categories yet''.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/kvy/ViewCategoriesList.png}{Forum category list screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The page header states the title ``Community Forum'' and a short description of the
+          area, which introduces the forum to first-time visitors.
+    \item Each category card is a link to the category detail screen and displays the category
+          name, the description and the number of published posts.
+    \item The ``Most Active'' panel ranks categories by post volume and gives a shortcut to the
+          busiest discussions.
+    \item The ``Top Contributors'' panel shows the avatar, the display name, the post count and
+          the comment count of the most active members.
+    \item When the list is empty, a placeholder explains that categories will appear once they
+          are created, which happens after an administrator creates them.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Page route & \texttt{/forum}. No parameter is required to display the list.\\ \hline
+\texttt{limit} & Number of records returned by the two ranking panels; integer between 1 and
+10, default 3. It is only used by the ``Most Active'' and ``Top Contributors'' calls.\\ \hline
+Visitor session & Optional access token forwarded by the BFF proxy. A guest receives the same
+list; the ranking panels do not expose any personal action.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The list endpoint takes no parameter, therefore it cannot be malformed; it always
+          returns the complete list of visible categories.
+    \item The \texttt{limit} of both ranking endpoints is coerced to an integer, must be at
+          least 1 and at most 10, and defaults to 3 when it is absent.
+    \item A category is visible only when its \texttt{deletedAt} column is null; a category moved
+          to the trash is excluded from the list and from both rankings.
+    \item A post contributes to a counter only when it is not soft deleted and its
+          \texttt{moderationStatus} is \texttt{APPROVED}.
+    \item A user appears in ``Top Contributors'' only when the account is not deleted and is not
+          banned.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-01: Only categories with \texttt{deletedAt = NULL} shall be displayed.
+    \item BR-FORUM-02: Categories shall be ordered by \texttt{name} in ascending order.
+    \item BR-FORUM-03: \texttt{postCount} shall count only posts with \texttt{deletedAt = NULL}
+          and \texttt{moderationStatus = APPROVED}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The visitor opens the Forum area from the navigation menu.
+    \item The web application renders the page shell and issues the category request.
+    \item The BFF proxy forwards the request to the REST API, adding the access token when the
+          visitor is signed in.
+    \item The API queries the categories that are not soft deleted and counts their approved
+          posts.
+    \item The API returns the ordered list of categories with \texttt{postCount}.
+    \item The client renders the category grid, applying the description fallback where needed.
+    \item The client issues the two ranking requests for the side panels.
+    \item The API returns the three most active categories and the five most active members.
+    \item The client renders both panels; the page is now fully displayed.
+    \item The visitor selects a category card and is routed to the category detail screen.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The database cannot be queried. The API returns a server error carrying
+\texttt{Error.FailedToLoadForumCategories} and the page shows a generic error instead of the
+grid.\\ \hline
+A2 & No category exists or every category has been soft deleted. The page renders the empty
+state ``No categories yet''; the ranking panels are hidden.\\ \hline
+A3 & A category has no description. The card shows ``No description provided.'' instead of an
+empty area.\\ \hline
+A4 & The ranking call fails while the list succeeds. The grid remains usable and only the
+affected panel is omitted, so navigation is never blocked.\\ \hline
+A5 & The visitor loses the network connection. The client displays the generic error message
+and offers a retry by reloading the page.\\ \hline
+A6 & The access token has expired. The BFF proxy refreshes the token once and repeats the call;
+if the refresh fails the visitor continues as a guest.\\ \hline
+A7 & The account was banned while the page was open. The BFF proxy detects the ban response,
+clears the authentication cookies and the client redirects to the sign-in page.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{categories[]} & Visible categories ordered by name, each with \texttt{id},
+\texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt} and
+\texttt{postCount}.\\ \hline
+\texttt{categories} (top) & Up to three categories ordered by post count in descending order,
+with the same fields as the list.\\ \hline
+\texttt{users} (top) & Up to five members with \texttt{id}, \texttt{displayName},
+\texttt{avatarUrl}, \texttt{postCount} and \texttt{commentCount}.\\ \hline
+Empty collection & An empty array when no category is visible; the client renders the empty
+state described above.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The visitor sees every active category with the number of published posts it holds.
+    \item No data is modified: the function is read-only.
+    \item Deleted categories, deleted posts, rejected posts and pending posts are never exposed
+          through this screen.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: View Forum Category Detail and Post List}
+
+\fnhead{Function Trigger}
+The visitor selects a category card on the forum landing page, follows a shared category link,
+or searches for a post from the category screen.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category}
+(\texttt{/forum/\{category-slug\}-\{category-id\}}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, Client and Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function lists the published posts of one category so that members can read,
+search and filter the discussions of a topic. It also gives signed-in members the entry point
+to create a post, to restrict the list to their own posts, and to reach the most discussed
+posts of the week.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Breadcrumb Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} and the category
+          header with its name, description and post count.
+    \item Search box with the placeholder ``Search posts\ldots'' and a clear-search button.
+    \item ``My Posts'' toggle, displayed only to signed-in members.
+    \item ``New Post'' button, which opens the post creation dialog; a guest is routed to the
+          sign-in page instead.
+    \item List of post cards with the title, an excerpt of the content, the author, the
+          creation date, the like count and the comment count.
+    \item Page-size selector, page numbers with ellipsis, and the ``Showing x of y'' summary.
+    \item ``Trending in \{category\}'' panel listing the three most discussed posts of the last
+          seven days.
+    \item Empty states for no post, no search result and no personal post.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The page resolves the category from the slug in the URL and requests
+          \texttt{GET /api/forums/posts?page=\ldots\&limit=\ldots\&categoryId=\ldots}.
+    \item When the visitor submits the search box, the client navigates to the same route with a
+          \texttt{search} parameter and resets the page to 1.
+    \item When ``My Posts'' is active, the client adds the identifier of the signed-in member as
+          the \texttt{userId} parameter.
+    \item The API filters the posts whose \texttt{deletedAt} is null and whose
+          \texttt{moderationStatus} is \texttt{APPROVED}, applies the category, author and title
+          filters, and sorts the result by \texttt{createdAt} in descending order.
+    \item Lists and counts are read in one database transaction, then the API returns the page
+          together with the pagination block.
+    \item The trending panel requests the top posts of the category for the last seven days,
+          ordered by like count and then by comment count.
+    \item Changing the page, the page size, the search term or the ``My Posts'' filter rewrites
+          the query string, so the state of the list can be shared and restored by reloading.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/kvy/ViewCategoryDetail+ViewPostList.png}{Category detail screen with the list of its posts}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The breadcrumb keeps the visitor oriented between the forum landing page, the current
+          category and the post that will be opened.
+    \item The category header repeats the name and the description, which are maintained by the
+          administrator who created the category.
+    \item The toolbar groups the search box, the ``My Posts'' toggle and the ``New Post''
+          button; the search box submits on Enter and can be cleared with the cross icon.
+    \item Every card shows the post title, the beginning of its content without the rich-text
+          markup, the author avatar and name, the date, and the like and comment counters.
+    \item Own posts are tagged with ``(yours)'' so a member can recognise them in the list.
+    \item The footer of the list shows the pagination and the range of records currently
+          displayed.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{categoryId} & Identifier of the category taken from the URL; it restricts the list to
+one category.\\ \hline
+\texttt{page} & Page number, integer greater than or equal to 1, default 1.\\ \hline
+\texttt{limit} & Page size, integer greater than or equal to 1, default 10; the client offers a
+selector and re-sends the request when it changes.\\ \hline
+\texttt{search} & Optional search term applied to the post title, case insensitive.\\ \hline
+\texttt{userId} & Optional author filter sent when ``My Posts'' is active; it always carries the
+identifier of the signed-in member.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{page} and \texttt{limit} are coerced to integers and must be at least 1;
+          the default values are applied by the API when the parameters are absent.
+    \item \texttt{categoryId} and \texttt{userId} must be positive integers when they are sent.
+    \item \texttt{search} is optional and is compared with the title only, without case
+          sensitivity; leading and trailing spaces are trimmed by the client.
+    \item A requested page beyond the last page returns an empty list while the pagination block
+          still reports the real total, so the client can render an empty state.
+    \item Only approved and non-deleted posts are counted and displayed, therefore the totals
+          never include posts that are pending, rejected or deleted.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-06: Only posts with \texttt{deletedAt = NULL} and
+          \texttt{moderationStatus = APPROVED} shall be displayed.
+    \item BR-FORUM-07: Posts shall be sorted by \texttt{createdAt} in descending order.
+    \item BR-FORUM-08: The system shall support pagination and configurable page sizes.
+    \item BR-FORUM-09: \texttt{commentCount} shall count only comments with
+          \texttt{deletedAt = NULL}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The visitor selects a category card on the forum landing page.
+    \item The client routes to the category screen and reads the page, the page size and the
+          optional filters from the query string.
+    \item The client requests the posts of the category from the API.
+    \item The API validates the filter, resolves the pagination offset and runs the list and
+          count queries in one transaction.
+    \item The API applies the visibility rules and orders the posts by creation date from the
+          newest to the oldest.
+    \item The API returns the page of posts with their like and comment counters plus the
+          pagination block.
+    \item The client renders the cards, strips the rich-text markup for the excerpt and applies
+          the empty states when no card is returned.
+    \item The client requests the trending posts of the category and renders the side panel.
+    \item The visitor optionally searches, changes the page size, moves to another page or
+          activates ``My Posts''; each action re-issues the request with the new parameters.
+    \item The visitor selects a post card and is routed to the post detail screen.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The category does not exist or was soft deleted. The API returns
+\texttt{Error.ForumCategoryNotFound} and the client displays the not-found state with a link
+back to the forum.\\ \hline
+A2 & The database query fails. The API returns \texttt{Error.FailedToLoadForumPosts} and the
+list area shows a generic error instead of the cards.\\ \hline
+A3 & The requested page is larger than the last page. The API returns an empty list and the
+client renders ``No posts found'' with the pagination intact.\\ \hline
+A4 & The search term matches no approved post. The client reports ``No results for
+``\{query\}''. Try a different search.'' and keeps the clear-search action available.\\ \hline
+A5 & ``My Posts'' is activated by a guest. The toggle is not rendered; if the parameter is
+forced in the URL the API answers with its validation error and the list is not displayed.\\ \hline
+A6 & The page size or page number is not a positive integer. The validation pipe rejects the
+request before the query is executed and the client falls back to the first page.\\ \hline
+A7 & The trending request fails. The list remains fully usable and only the side panel is
+omitted.\\ \hline
+A8 & The visitor loses the connection. The client shows the generic error message and the
+visitor can retry by reloading the current URL.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{posts[]} & Visible posts of the requested page with \texttt{id}, \texttt{categoryId},
+\texttt{userId}, \texttt{title}, \texttt{slug}, \texttt{content}, \texttt{moderationStatus},
+\texttt{createdAt}, \texttt{updatedAt}, \texttt{likeCount}, \texttt{commentCount} and the author
+identity.\\ \hline
+\texttt{pagination} & \texttt{page}, \texttt{limit}, \texttt{total} and \texttt{totalPages}
+computed from the filtered count.\\ \hline
+\texttt{posts[]} (top) & Trending posts of the category with the interaction score used for the
+ranking.\\ \hline
+Empty collection & An empty array when the page, the filter or the search matches no approved
+post.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The visitor sees one page of approved posts of the selected category, newest first.
+    \item The search, the page size and the author filter are reflected in the URL and can be
+          restored by reloading the page.
+    \item No data is modified: the function is read-only.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: View Post Detail}
+
+\fnhead{Function Trigger}
+The visitor selects a post card, follows a shared post link, or opens a related post from the
+side panel of another discussion.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} (\texttt{/forum/\{category\}/\{post-slug\}-\{post-id\}}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, Client and Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function displays a complete discussion: the post with its formatted content and
+its author, the engagement counters, the list of members who liked it and the comment thread.
+It is the screen from which every write action on the discussion is started, and it shows the
+author-specific actions only to the author.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Breadcrumb Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+          \textit{Post title} and the line ``Discussion in \textit{Category}''.
+    \item Post title, author avatar, display name, creation date and the ``Edited \{date\}''
+          marker when the post was modified after its creation.
+    \item Rich-text body rendered with headings, lists and links.
+    \item Action bar with the like button and its counter, the comment counter, the ``Report''
+          action and, for the author, the ``Edit'' and ``Delete'' actions.
+    \item Likes dialog and comment section described by the next functions.
+    \item ``Related Posts'' side panel with other discussions of the same category.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client resolves the post from the slug and requests
+          \texttt{GET /api/forums/posts/by-slug/\{slug\}}.
+    \item The API resolves the identifier of the post and returns the detail projection with the
+          category summary and the author identity.
+    \item Only a post that is not soft deleted and whose status is \texttt{APPROVED} can be
+          resolved; a pending or rejected post answers with a not-found error.
+    \item The client requests the likes of the post to compute the counter and to derive whether
+          the signed-in member already liked it.
+    \item The client requests the first fifty comments of the post to render the thread and the
+          comment counter.
+    \item The client requests the related posts of the category for the side panel.
+    \item The page compares \texttt{updatedAt} with \texttt{createdAt} to decide whether the
+          ``Edited'' marker is displayed, and compares the author identifier with the session
+          identifier to decide whether the edit and delete actions are rendered.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/kvy/ViewPostDetail.png}{Post detail screen with the comment section}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The title block gives the discussion context and the path back to its category.
+    \item The author block shows the avatar, the display name and the publication date; when the
+          post was edited, the edition date is added next to the creation date.
+    \item The body is rendered as formatted content, so headings, bullet lists and links written
+          in the editor keep their appearance.
+    \item The action bar holds the heart button with the like counter, the comment counter and
+          the ``Report'' action; the heart is filled once the member liked the post.
+    \item The edit and delete actions appear only for the author of the post.
+    \item The comment section below the action bar lists the thread and gives the signed-in
+          member the comment editor.
+    \item The right side panel proposes related posts of the same category.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{slug} & Post slug taken from the URL; it uniquely identifies the discussion.\\ \hline
+\texttt{postId} & Identifier resolved from the slug and used by the likes, comments and report
+calls of the same screen.\\ \hline
+\texttt{page}, \texttt{limit} & Pagination of the comment thread; the detail screen requests the
+first page with a size of 50.\\ \hline
+Session identity & Identifier of the signed-in member, used to compute the liked state and to
+decide whether the author actions are displayed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The slug must resolve to a post that is not soft deleted and whose
+          \texttt{moderationStatus} is \texttt{APPROVED}; otherwise the API answers with
+          \texttt{Error.ForumPostNotFound}.
+    \item The detail projection must contain a title and a content, which are required fields of
+          the post model.
+    \item The comment pagination follows the same rules as the post list: integers greater than
+          or equal to 1, default page 1 and default size 10.
+    \item The liked state is derived only from the likes that belong to the post and match the
+          session identifier; a guest always sees the unliked state.
+    \item The author actions are rendered only when the session identifier equals the post
+          author identifier, never from a value supplied by the client.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-10: Only posts with \texttt{deletedAt = NULL} and
+          \texttt{moderationStatus = APPROVED} shall be displayed.
+    \item BR-FORUM-11: Post details shall include title, content, author, category and created
+          date.
+    \item BR-FORUM-09: \texttt{commentCount} shall count only comments with
+          \texttt{deletedAt = NULL}.
+    \item BR-FORUM-28: The like detail shall include the user identifier and the profile of each
+          member who liked the post.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The visitor selects a post card in the category screen.
+    \item The client extracts the slug from the URL and requests the post detail.
+    \item The API resolves the slug to a post that is visible and returns the detail projection.
+    \item The client renders the breadcrumb, the title, the author block and the formatted body.
+    \item The client requests the likes of the post and the first page of comments.
+    \item The API returns both collections with the profile of their authors.
+    \item The client computes the like counter, the liked state and the comment counter.
+    \item The client renders the action bar and exposes the author actions only to the author.
+    \item The client requests the related posts of the category and renders the side panel.
+    \item The visitor reads the discussion and can like the post, open the likes list, write a
+          comment, report the content or, as the author, edit or delete the post.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The slug does not resolve to any post. The client displays the not-found screen with the
+message ``This post may have been deleted or the link is incorrect.'' and the action ``Back to
+category''.\\ \hline
+A2 & The post is still pending moderation or was rejected. The API hides it, therefore the same
+not-found screen is displayed and the post is never exposed before approval.\\ \hline
+A3 & The post was soft deleted by its author or by an administrator. The detail call answers with
+\texttt{Error.ForumPostNotFound} and the not-found screen is displayed.\\ \hline
+A4 & The likes request fails. The post body remains readable, the like counter falls back to
+zero and the action is disabled.\\ \hline
+A5 & The comments request fails. The thread area shows an error message while the post body and
+the action bar remain usable.\\ \hline
+A6 & The session expires while the page is open. The BFF proxy refreshes the token once; when
+the refresh fails the visitor continues as a guest without author actions.\\ \hline
+A7 & The visitor follows a link of a deleted category. The category is not found, so the client
+shows the not-found screen instead of a broken layout.\\ \hline
+A8 & The connection drops while the page loads. The client shows the generic error message and
+the visitor can retry by reloading.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Post detail & \texttt{id}, \texttt{categoryId}, \texttt{userId}, \texttt{title},
+\texttt{slug}, \texttt{content}, \texttt{moderationStatus}, \texttt{moderationScore},
+\texttt{createdAt} and \texttt{updatedAt}.\\ \hline
+\texttt{category} & Identifier, name and slug of the category the post belongs to, or null when
+the post has no category.\\ \hline
+\texttt{user} & Identifier and profile of the author, with the display name and the avatar.\\ \hline
+\texttt{likes[]} & Members who liked the post, with their identifier, reaction type, creation date
+and profile.\\ \hline
+\texttt{comments[]} & First page of the thread with the content, the author, the dates, the like
+counter and the liked state of the current member.\\ \hline
+\texttt{pagination} & Total number of visible comments and the pagination of the requested page.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The visitor reads the complete discussion with its engagement counters.
+    \item The action bar exposes only the actions allowed by the role and the ownership of the
+          post.
+    \item No data is modified by the read itself; the counters reflect only visible rows.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Create Post}
+
+\fnhead{Function Trigger}
+A signed-in member selects the ``New Post'' button in the toolbar of a category screen, writes
+the post and confirms with the ``Post'' action. The button is rendered for Clients, Freelancers
+and Administrators; a guest who follows the button is routed to the sign-in page instead.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+New Post.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Client. An Administrator uses the same dialog
+          when browsing the forum.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, SensitiveAI
+          moderation proxy, Frevia REST API and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function lets a member start a new discussion inside a category. Because the
+content is user generated, every submission is screened by the moderation proxy before it
+reaches the forum, and the resulting post is stored with the moderation verdict so that only
+approved discussions become visible to the community.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Create Post in \textit{Category}'' with the description
+          ``Share your thoughts with the community.''
+    \item ``Title'' input with the placeholder ``What's on your mind?''.
+    \item ``Content'' rich-text editor with the placeholder ``Write your post content here\ldots''
+          and the usual formatting tools.
+    \item ``Cancel'' action, which discards the draft, and ``Post'' action, which submits it and
+          shows a spinner while the request is running.
+    \item Toast notification after the submission, either the confirmation of publication or the
+          message that the post awaits moderator review.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The dialog trims the title and the content and blocks the submission while either of
+          them is empty.
+    \item The client posts the form to \texttt{/api/backend/forums/posts}.
+    \item The BFF proxy recognises this exact route as the only forum route that must be screened
+          and forwards it to the SensitiveAI moderation proxy instead of the REST API.
+    \item The moderation proxy scans the text, attaches the verdict (status, score and categories)
+          to the request body and forwards the request to the REST API.
+    \item The API validates the body, verifies that the category exists and is not soft deleted,
+          and creates the post.
+    \item The slug is generated from the title, normalised to lower case without accents, and
+          completed with a timestamp and a random suffix to keep it unique.
+    \item The moderation status is taken from the verdict; when the proxy returns no verdict the
+          post is stored as \texttt{PENDING}, which means it is invisible until an administrator
+          approves it.
+    \item The API returns the created post and the client invalidates the post lists of the
+          category so the next visit shows the new discussion.
+    \item When the returned status is \texttt{PENDING}, the client shows the moderation message and
+          does not navigate, because the post detail would not be reachable yet; otherwise it
+          navigates to the new post.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.85]{image/screenshot/sprint1/kvy/CreatePost.png}{Create post dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The dialog title names the category in which the post will be created, so the member
+          cannot post in the wrong place by mistake.
+    \item The title field is a single-line input; the content field is a rich-text editor that
+          stores formatted HTML.
+    \item The ``Post'' action stays disabled until both fields contain text, which prevents the
+          most common validation error before the request is sent.
+    \item The spinner replaces the icon of the action while the moderation proxy and the API are
+          working, preventing a duplicate submission.
+    \item The dialog closes only after a successful response; on failure it stays open with the
+          draft intact.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{categoryId} & Identifier of the category in which the post is created; a positive
+integer sent by the dialog from the current category screen.\\ \hline
+\texttt{title} & Post title, required, at most 255 characters in the database.\\ \hline
+\texttt{content} & Post body, required; it is rich-text HTML produced by the editor.\\ \hline
+\texttt{moderation} & Verdict attached by the moderation proxy: \texttt{status},
+\texttt{score} between 0 and 1 and \texttt{categories}. It is an internal field, never typed by
+the member.\\ \hline
+Access token & Bearer token forwarded by the BFF proxy; the API resolves the author from it, so
+the client cannot choose the author.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The title and the content are required and must contain at least one character after
+          trimming.
+    \item \texttt{categoryId} is optional for the API but must be a positive integer when it is
+          present; the dialog always sends the category of the current screen.
+    \item The category must exist and must not be soft deleted, otherwise the request fails with
+          \texttt{Error.ForumCategoryNotFound}.
+    \item The author is taken from the access token, never from the request body, so a member
+          cannot create a post on behalf of somebody else.
+    \item The moderation verdict must respect its own contract: a status among
+          \texttt{PENDING}, \texttt{APPROVED} and \texttt{REJECTED}, and an optional score between
+          0 and 1.
+    \item The generated slug must remain unique; the timestamp and random suffix guarantee that two
+          posts with the same title never collide.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-12: Only authenticated users can create posts.
+    \item BR-FORUM-13: Every post must belong to exactly one user and may belong to a category.
+    \item BR-FORUM-14: Title and content are required fields.
+    \item BR-FORUM-15: A new post shall default to \texttt{moderationStatus = PENDING} unless
+          moderation data is provided.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The member opens a category screen and selects ``New Post''.
+    \item The client opens the dialog with the title of the target category.
+    \item The member writes a title and a content; the ``Post'' action becomes available.
+    \item The client trims both fields and sends the request through the BFF proxy.
+    \item The proxy routes the request to the moderation proxy, which scans the text.
+    \item The moderation proxy attaches its verdict and forwards the request to the REST API.
+    \item The API validates the body and checks that the category exists.
+    \item The API generates the slug, resolves the moderation status and inserts the post.
+    \item The API returns the created post to the client.
+    \item The client invalidates the cached lists of the category.
+    \item When the status is \texttt{APPROVED}, the client closes the dialog and navigates to the
+          new post.
+    \item When the status is \texttt{PENDING}, the client closes the dialog, shows the message
+          ``Your post has been saved and is awaiting moderator review.'' and returns the member to
+          the list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The title or the content is empty after trimming. The action is disabled, and a forced
+request is rejected by the validation pipe with \texttt{Error.ForumPostTitleRequired} or
+\texttt{Error.ForumPostContentRequired}.\\ \hline
+A2 & The category was deleted while the dialog was open. The API answers
+\texttt{Error.ForumCategoryNotFound} and the dialog stays open with the draft so the member can
+choose another category.\\ \hline
+A3 & The member is not signed in or the session expired. The BFF proxy refreshes the token once;
+if the refresh fails the API rejects the request with an authentication error and the client
+redirects to the sign-in page.\\ \hline
+A4 & The moderation proxy is unavailable. The request fails before reaching the API, no post is
+created, and the client shows the generic error message.\\ \hline
+A5 & The moderation proxy flags the content. The post is stored with status \texttt{PENDING} or
+\texttt{REJECTED}, is not publicly visible, and the member is informed that the post awaits
+review.\\ \hline
+A6 & The moderation proxy answers that the request must be reviewed asynchronously. The client
+treats the response as a failure notification, shows the returned message and keeps the list
+unchanged.\\ \hline
+A7 & The insert fails at database level. The API returns \texttt{Error.FailedToCreateForumPost}
+and the client keeps the dialog open so nothing written by the member is lost.\\ \hline
+A8 & The member double clicks the action. The action is disabled while the mutation is pending,
+therefore only one request is sent.\\ \hline
+A9 & The member chooses ``Cancel''. The dialog closes, the draft is cleared and no request is
+sent.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the created post, used by the client to build the detail route.\\ \hline
+\texttt{slug} & Generated slug, unique for every post.\\ \hline
+\texttt{categoryId}, \texttt{userId} & Category and author of the post.\\ \hline
+\texttt{title}, \texttt{content} & Stored title and stored rich-text content.\\ \hline
+\texttt{moderationStatus} & \texttt{APPROVED}, \texttt{PENDING} or \texttt{REJECTED}; it decides
+whether the post is immediately reachable.\\ \hline
+\texttt{moderationScore}, \texttt{moderationCategories} & Verdict details kept for the moderation
+queue; the score may be null when the proxy did not compute one.\\ \hline
+\texttt{createdAt}, \texttt{updatedAt} & Timestamps of the insert.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item One post is inserted and belongs to the signed-in member and to the selected category.
+    \item The post carries a moderation status and a unique slug.
+    \item An approved post becomes visible in the category list immediately after the cache is
+          invalidated; a pending or rejected post stays hidden until an administrator resolves it.
+    \item The post appears in the moderation queue of the administrator.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Edit Post}
+
+\fnhead{Function Trigger}
+The author of a post opens the post detail screen and selects the ``Edit'' action placed next to
+the title. The action is rendered only for the author, therefore other members never see it.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Edit.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer or Client who authored the post.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function allows the author to correct the title or the body of a discussion without
+losing the discussion itself, its comments and its likes. The post keeps its identity, its
+creation date and its engagement, and the screen marks it as edited so readers know that the
+content changed after publication.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit Post'' with the description ``Update your post title and
+          content.''
+    \item Title input and rich-text editor pre-filled with the current values of the post.
+    \item ``Cancel'' action, which leaves the post unchanged, and ``Save Changes'' action, which
+          submits the new values.
+    \item The post detail screen refreshes the title and the body in place after a successful
+          save, and the author line starts showing ``Edited \{date\}''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client pre-fills the dialog from the post already loaded in the detail screen, so
+          no additional read is required to open it.
+    \item The client sends \texttt{PATCH /api/forums/posts/\{id\}} with the new title and content.
+    \item The BFF proxy forwards the request directly to the REST API; only post creation goes
+          through the moderation proxy, therefore an edition is not re-screened.
+    \item The API loads the post with \texttt{deletedAt} null and rejects the request when the
+          post does not exist.
+    \item The API compares the author of the post with the identifier carried by the access token
+          and rejects the request when they differ.
+    \item The API updates the title, the content and the slug, then returns the updated post.
+    \item The client updates the cached detail and the post lists of the category so the new title
+          appears everywhere without a reload.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.85]{image/screenshot/sprint1/kvy/EditPost.png}{Edit post dialog with the current values}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The dialog reuses the layout of the creation dialog, which keeps the editing experience
+          consistent with publishing.
+    \item Both fields are pre-filled, so the member edits the existing text instead of rewriting
+          it.
+    \item The ``Save Changes'' action stays disabled while a field is empty, mirroring the
+          requirement that both fields remain mandatory.
+    \item A spinner is shown during the request; the dialog closes only on success.
+    \item After the save, the detail screen shows the new title, the new body and the edition
+          marker next to the publication date.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the post taken from the current route.\\ \hline
+\texttt{title} & New title, required, at most 255 characters in the database.\\ \hline
+\texttt{content} & New body, required; rich-text HTML produced by the editor.\\ \hline
+Access token & Identifies the requester; the API compares its identifier with the author of the
+post.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post must exist and must not be soft deleted; otherwise the request fails with
+          \texttt{Error.ForumPostNotFound}.
+    \item The requester must be the author of the post; otherwise the request fails with
+          \texttt{Error.ForumPostNotOwned}. The check is performed on the server, so hiding the
+          action in the interface is only a convenience.
+    \item The title and the content are required; an empty value is rejected by the validation
+          pipe before the update is executed.
+    \item The slug is regenerated from the new title on every update, which keeps the URL
+          readable and unique while the post identifier stays unchanged.
+    \item The category of the post is preserved unless a new category identifier is supplied; the
+          dialog never changes it.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-16: Only the author of a post can edit that post.
+    \item BR-FORUM-17: Title and content are required fields.
+    \item BR-FORUM-18: The original post identifier remains unchanged after editing; the slug is
+          regenerated when the title changes.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The author opens the detail of a post they wrote.
+    \item The client renders the ``Edit'' and ``Delete'' actions next to the title.
+    \item The author selects ``Edit'' and the dialog opens with the current title and content.
+    \item The author changes one or both fields.
+    \item The client sends the update request with the access token.
+    \item The API loads the post and confirms that it exists and is not deleted.
+    \item The API confirms that the requester is the author.
+    \item The API updates the title, the content and the slug.
+    \item The API returns the updated post.
+    \item The client closes the dialog, refreshes the detail and invalidates the category lists.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The post no longer exists or was deleted in the meantime. The API returns
+\texttt{Error.ForumPostNotFound} and the client shows the error and closes the dialog.\\ \hline
+A2 & The requester is not the author. The API returns \texttt{Error.ForumPostNotOwned}, the update
+is refused and the client displays the returned message.\\ \hline
+A3 & The title or the content is cleared before saving. The action is disabled, and a forced
+request is rejected by the validation pipe.\\ \hline
+A4 & The update fails at database level. The API returns
+\texttt{Error.FailedToUpdateForumPost} and the dialog stays open with the edited values.\\ \hline
+A5 & The author cancels the dialog. No request is sent and the post keeps its previous values.\\ \hline
+A6 & The session expires while the dialog is open. The BFF proxy refreshes the token once; when
+the refresh fails the request is rejected and the member is redirected to sign in.\\ \hline
+A7 & Two editions are submitted in a row. The action is disabled while the mutation is pending,
+so the last saved values are the ones returned by the server.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the post, which never changes.\\ \hline
+\texttt{title}, \texttt{content} & New values stored in the post.\\ \hline
+\texttt{slug} & Slug regenerated from the new title.\\ \hline
+\texttt{updatedAt} & New edition timestamp, used by the detail screen to display the ``Edited''
+marker.\\ \hline
+\texttt{createdAt} & Original publication timestamp, preserved.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post contains the new title and the new content and keeps its author, category,
+          comments and likes.
+    \item The detail screen and the category list display the new values.
+    \item The post is marked as edited because \texttt{updatedAt} differs from \texttt{createdAt}.
+    \item No other post and no comment is modified.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Delete Post}
+
+\fnhead{Function Trigger}
+The author of a post, or an Administrator, selects the ``Delete'' action on the post detail screen
+and confirms the operation in the confirmation dialog.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Delete.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} the author of the post, or an Administrator acting on any post.
+          The web interface renders the action for the author; the API also accepts an
+          Administrator, who removes posts through the moderation and trash tools.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function removes a discussion from the public forum while preserving its record.
+Deletion is soft: the row receives a deletion timestamp and is filtered out of every public
+query, which keeps the data available for moderation, for the trash screen of the administrator
+and for any later audit.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Delete'' action with a bin icon, rendered for the author and for the Administrator.
+    \item Confirmation dialog titled ``Delete Post'' with the warning ``Are you sure you want to
+          delete this post? This action cannot be undone.''.
+    \item ``Cancel'' action, which closes the dialog, and destructive ``Delete'' action, which
+          performs the deletion.
+    \item Redirect to the category screen after a successful deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{DELETE /api/forums/posts/\{id\}} with the access token.
+    \item The API loads the post with \texttt{deletedAt} null to confirm that it exists and is
+          still visible.
+    \item The API compares the author with the requester and also reads the role of the requester
+          from the token.
+    \item When the requester is neither the author nor an Administrator, the deletion is refused.
+    \item When the check succeeds, the API writes the current date and time in the
+          \texttt{deletedAt} column of the post.
+    \item The client invalidates the post lists and navigates back to the category, where the post
+          is no longer listed.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.75]{image/screenshot/sprint1/kvy/DeletePost.png}{Delete post confirmation}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The confirmation dialog repeats the name of the object being deleted, which prevents
+          deleting the wrong discussion.
+    \item The warning states that the action cannot be undone from the member point of view,
+          because the post disappears from the forum immediately.
+    \item The destructive style of the confirmation action distinguishes it from the cancel
+          action.
+    \item After confirmation the screen returns to the category list, so the member sees the post
+          removed from the discussion list.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the post to delete, taken from the confirmation dialog.\\ \hline
+Access token & Identifies the requester and carries the role used to authorize an
+Administrator.\\ \hline
+\texttt{deletedAt} & Deletion timestamp written by the API; it is internal, not supplied by the
+client.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post must exist and must not be already deleted; otherwise the API returns
+          \texttt{Error.ForumPostNotFound}.
+    \item The requester must be the author of the post or must hold the Administrator role;
+          otherwise the API returns \texttt{Error.ForumPostNotOwned}.
+    \item The deletion timestamp is produced by the server, so the client cannot backdate or
+          falsify it.
+    \item Only one row is affected per request; the comments and the likes of the post are
+          preserved in the database and simply stop being reachable through the post.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-19: Only the author of a post or an Admin can delete that post.
+    \item BR-FORUM-20: Post deletion shall be implemented as a soft delete using the
+          \texttt{deletedAt} field.
+    \item BR-FORUM-21: Soft-deleted posts shall not appear in public forum listings.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The author or the Administrator opens the post detail screen.
+    \item The client renders the ``Delete'' action, which is available for this role.
+    \item The member selects the action and the confirmation dialog is displayed.
+    \item The member confirms the deletion.
+    \item The client sends the delete request with the access token.
+    \item The API loads the post and confirms that it exists and is not deleted.
+    \item The API confirms that the requester is the author or an Administrator.
+    \item The API writes the deletion timestamp in the post row.
+    \item The API returns the deleted post.
+    \item The client invalidates the lists, closes the dialog and routes back to the category.
+    \item The category list no longer contains the post and its counters are recomputed without
+          it.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The post does not exist or was already deleted. The API returns
+\texttt{Error.ForumPostNotFound} and the client shows the error message.\\ \hline
+A2 & A member tries to delete a post written by somebody else. The API returns
+\texttt{Error.ForumPostNotOwned} and nothing is deleted.\\ \hline
+A3 & An Administrator deletes the post of another member. The operation is allowed and the post
+leaves the public forum immediately.\\ \hline
+A4 & The database update fails. The API returns \texttt{Error.FailedToDeleteForumPost} and the
+post remains visible, so the member can retry.\\ \hline
+A5 & The member cancels the confirmation. No request is sent and the post is unchanged.\\ \hline
+A6 & The session expires before the confirmation. The request is rejected after the single token
+refresh attempt and the member is redirected to sign in.\\ \hline
+A7 & Another member opens the same post while it is being deleted. The next request returns
+\texttt{Error.ForumPostNotFound} and their screen shows the not-found state.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the deleted post.\\ \hline
+\texttt{userId}, \texttt{categoryId} & Author and category of the deleted post, returned for
+confirmation.\\ \hline
+\texttt{title}, \texttt{slug} & Title and slug of the deleted post.\\ \hline
+\texttt{deletedAt} & Server timestamp recorded in the row; the post is soft deleted from this
+moment.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post is excluded from the category list, from the post detail and from the landing
+          page counters.
+    \item The row and its related comments and likes are retained for moderation and for the trash
+          screen of the Administrator.
+    \item The member is returned to the category screen, which reflects the new totals.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Like a Post}
+
+\fnhead{Function Trigger}
+A signed-in member selects the heart button in the action bar of a post. A guest who selects the
+button is routed to the sign-in page instead of producing a request.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Like.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Client. An Administrator can also react while
+          browsing.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function lets a member express appreciation for a discussion and lets the community
+measure which posts are relevant. It is implemented as a toggle: the same action adds the
+reaction when the member has not liked the post yet and removes it when the member already liked
+it, so a member can never like the same post twice.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Heart button with the like counter, placed in the action bar under the post body.
+    \item Outline heart for a post that the member has not liked, filled heart for a post that the
+          member liked.
+    \item The button is disabled while the request is running, which prevents repeated toggles
+          from a single intention.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{POST /api/forums/posts/\{id\}/like} to the BFF proxy, which
+          forwards it to the REST API.
+    \item The API loads the post with \texttt{deletedAt} null and answers with
+          \texttt{Error.ForumPostNotFound} when it is missing.
+    \item The API looks for a like row that matches the member and the post.
+    \item When the row exists, the API removes the reaction and answers with
+          \texttt{liked: false}.
+    \item When the row does not exist, the API inserts a like row with the reaction type
+          \texttt{like} and answers with \texttt{liked: true}.
+    \item The client invalidates the likes query of the post, which refreshes the counter and the
+          filled state of the heart.
+    \item The unique constraint of the like table on the pair member and post guarantees that a
+          duplicate reaction cannot be stored, even if two requests are issued at the same time.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigurepair{image/screenshot/sprint1/kvy/BeforeLikePost.png}{image/screenshot/sprint1/kvy/AfterLikePost.png}{Post before and after being liked}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Before the reaction the heart is outlined and the counter shows the current number of
+          likes.
+    \item After the reaction the heart is filled, coloured with the accent of the application and
+          slightly enlarged, and the counter is incremented by one.
+    \item The counter is the single source of truth for the likes list: the same number is shown
+          on the detail screen, in the likes dialog and on the post cards of the category.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the post taken from the current route.\\ \hline
+Access token & Identifies the member who reacts; the API derives the like owner from it.\\ \hline
+Reaction type & Constant value \texttt{like} stored in the reactivity row; the interface does not
+offer another reaction for the moment.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The requester must be authenticated; a request without a valid token is rejected with an
+          authentication error.
+    \item The post must exist and must not be soft deleted.
+    \item A member can hold only one reaction per post, enforced by the unique constraint on the
+          pair member and post.
+    \item The reaction is always attached to the member of the token; the client cannot send a
+          different member identifier.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-22: Only authenticated users can like posts.
+    \item BR-FORUM-23: A user can have only one active like reaction per post.
+    \item BR-FORUM-24: The reaction shall be stored in the \texttt{ForumLike} table.
+    \item BR-FORUM-25 to BR-FORUM-27: removing a reaction is allowed only when the corresponding
+          like record exists, and it deletes that record.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The signed-in member opens a post they have not liked yet.
+    \item The client displays an outlined heart next to the current counter.
+    \item The member selects the heart and the client sends the toggle request.
+    \item The API confirms that the post is visible.
+    \item The API finds no reaction of this member on this post.
+    \item The API inserts the like row.
+    \item The API answers with \texttt{liked: true}.
+    \item The client refetches the likes, fills the heart and increments the counter.
+    \item When the member selects the heart again, the same sequence removes the row and the
+          interface returns to the outlined heart with the previous counter.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The post does not exist or was deleted. The API returns
+\texttt{Error.ForumPostNotFound} and the counter is left unchanged.\\ \hline
+A2 & The member is not signed in. The client routes to the sign-in page before any request is
+sent, and a direct request is rejected with an authentication error.\\ \hline
+A3 & The member already liked the post. The request removes the reaction instead of adding a
+second one, which is the intended toggle behaviour.\\ \hline
+A4 & The insert fails at database level. The API returns
+\texttt{Error.FailedToLikeForumPost} and the interface keeps the previous state.\\ \hline
+A5 & The member double clicks the heart. The button is disabled while the request runs, so only
+one reaction is created.\\ \hline
+A6 & The likes query cannot be refreshed after a successful toggle. The heart keeps the state
+returned by the action and the counter is refreshed on the next visit.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{liked} & \texttt{true} when the reaction was added, \texttt{false} when it was
+removed.\\ \hline
+Like row & Member, post, reaction type and creation date of the stored reaction.\\ \hline
+Updated counter & The like counter of the post, recomputed by the client from the refreshed likes
+list.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post holds exactly one reaction of the member, or none when the action removed it.
+    \item The counter displayed on the post matches the number of likes stored for that post.
+    \item The member appears in, or disappears from, the likes list of the post.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: View Post Likes}
+
+\fnhead{Function Trigger}
+A visitor selects the likes counter under the post body, which opens the list of the members who
+liked the post. The function is public, therefore it works for guests as well.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Likes.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, Client and Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function answers the question ``who liked this post''. It also feeds the state of
+the like button, because the detail screen derives both the counter and the liked state of the
+current member from the same list.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog titled ``Likes'' with the description ``People who liked this post.''.
+    \item Row per member with the avatar, the display name and, when the profile is incomplete, a
+          fallback name built from the member identifier.
+    \item Empty message ``No likes yet.'' when the post has not been liked.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client calls \texttt{GET /api/forums/posts/\{id\}/like} and caches the result under a
+          key that contains the post identifier.
+    \item The API reads every like row of the post and joins the profile of the member.
+    \item The payload contains the identifier, the member, the reaction type and the creation date
+          of the reaction.
+    \item The detail screen uses the same payload to count the likes and to detect the reaction of
+          the signed-in member by comparing identifiers.
+    \item The dialog renders the rows in the order returned by the query, which follows the
+          insertion order of the reactions.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.6]{image/screenshot/sprint1/kvy/ViewPostLike.png}{Likes dialog listing the members who liked the post}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The likes counter placed under the post body opens the dialog and states how many
+          members liked the discussion.
+    \item Each row shows the avatar and the display name of a member, which links the reaction to
+          a visible identity of the community.
+    \item When nobody liked the post, the dialog states ``No likes yet.'' instead of showing an
+          empty panel.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the post whose reactions are listed.\\ \hline
+Session identity & Optional; used by the detail screen to highlight the role of the current member
+in the list, and not needed by the endpoint itself.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The post identifier must be a positive integer accepted by the route parameter pipe.
+    \item The endpoint is public, so no token is required and no authorization rule applies.
+    \item A post without reaction returns an empty array, which is a valid answer and not an
+          error.
+    \item Profile fields may be null; the interface then substitutes the fallback name and the
+          initial of the display name for the avatar.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-28: The like detail shall include the user identifier and the user profile
+          information for each liker.
+    \item BR-FORUM-23: A user can have only one active like reaction per post, therefore a member
+          never appears twice in the list.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The visitor opens a post detail screen.
+    \item The client requests the likes of the post to compute the counter.
+    \item The API returns every reaction of the post with the profile of the member.
+    \item The client shows the counter under the post body.
+    \item The visitor selects the counter and the dialog opens with the list of members.
+    \item The visitor closes the dialog and returns to the discussion.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The post has no reaction. The dialog shows ``No likes yet.'' and the counter stays at
+zero.\\ \hline
+A2 & A member has no profile record. The row shows the fallback name ``User \#\{id\}'' and the
+initial letter in place of the avatar.\\ \hline
+A3 & The request fails. The API returns \texttt{Error.FailedToViewForumLikeDetail}, the dialog
+shows an error message and the counter keeps its last known value.\\ \hline
+A4 & The post was deleted while the dialog was open. The list refresh returns no row and the
+dialog shows the empty state.\\ \hline
+A5 & The visitor is offline. The dialog shows the generic error message and can be closed, which
+leaves the rest of the screen usable.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{likes[]} & One entry per reaction with \texttt{id}, \texttt{userId}, \texttt{postId},
+\texttt{commentId}, \texttt{reactionType} and \texttt{createdAt}.\\ \hline
+\texttt{user} & Identifier, display name and avatar of the member who reacted.\\ \hline
+Derived count & Length of the list, displayed as the likes counter of the post.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The visitor sees every member who liked the post, without duplicates.
+    \item The like counter of the post matches the number of rows returned.
+    \item No data is modified: the function is read-only.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Create Comment}
+
+\fnhead{Function Trigger}
+A signed-in member writes in the comment box placed under the post body and submits it with the
+``Comment'' action or with the \texttt{Ctrl+Enter} shortcut. A guest sees an invitation to sign in
+instead of the editor.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Comments.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Client. An Administrator can also comment while
+          browsing the forum.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function lets a member answer a discussion, ask a question or share an experience
+inside the thread of a post. Comments are attached to one post and one author, can be edited and
+deleted by their owner, and carry their own like counter.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Comment card between the post body and the thread, with the avatar of the member and a
+          text area using the placeholder ``Write a comment\ldots''.
+    \item Hint ``Press \texttt{Ctrl+Enter} to submit'' below the text area.
+    \item ``Comment'' action with a send icon, disabled while the field is empty or a request is
+          running.
+    \item Guest state: the editor is replaced by the sentence ``Log in to join the discussion.''
+          with a link to the sign-in page.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client trims the text and sends \texttt{POST /api/forums/posts/\{postId\}/comments}
+          with the content.
+    \item The BFF proxy forwards the request to the REST API, which validates the body.
+    \item The API verifies that the post exists and is not soft deleted.
+    \item The API inserts the comment with the author taken from the access token.
+    \item The response contains the new comment with its author profile, a like counter of zero and
+          an unliked state, because a comment cannot be liked before it exists.
+    \item The client clears the editor and invalidates the comment queries of the post, which
+          refreshes the thread and the comment counter.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.85]{image/screenshot/sprint1/kvy/CreateComment.png}{Comment editor under the post body}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The editor sits directly under the action bar, so the member writes without leaving the
+          discussion.
+    \item The counter next to the ``Comments'' heading shows how many comments the post currently
+          holds.
+    \item The ``Comment'' action stays disabled while the field is empty, which prevents empty
+          submissions.
+    \item The hint about \texttt{Ctrl+Enter} makes the keyboard shortcut discoverable.
+    \item Every submitted comment appears at the top of the thread, with the avatar, the display
+          name, the date and the like and edit actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{postId} & Identifier of the post taken from the route; the comment is attached to it.\\ \hline
+\texttt{content} & Comment text, required, at least one character after trimming.\\ \hline
+Access token & Identifies the author of the comment; it is read by the API and never sent in the
+body.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The requester must be authenticated; the API rejects a request without a valid token.
+    \item The content must not be empty; the validation pipe rejects an empty or whitespace-only
+          body.
+    \item The post must exist and must not be soft deleted, otherwise the request fails with
+          \texttt{Error.ForumPostNotFound}.
+    \item The author of the comment is always the member of the token, so a member cannot post a
+          comment on behalf of somebody else.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-32: Only authenticated users can create comments.
+    \item BR-FORUM-33: Comment content cannot be empty.
+    \item BR-FORUM-34: Each comment shall be associated with a valid post and user.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The signed-in member opens a post and scrolls to the comment section.
+    \item The client renders the editor with the placeholder and the hint.
+    \item The member writes the comment and submits it with the action or the shortcut.
+    \item The client trims the text and sends the request.
+    \item The API validates the content and loads the post.
+    \item The API inserts the comment with the author of the session.
+    \item The API returns the created comment with an empty like state.
+    \item The client clears the editor and refreshes the thread.
+    \item The new comment is displayed at the top of the list and the counter is incremented.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The content is empty. The action is disabled, and a forced request is rejected by the
+validation pipe without touching the database.\\ \hline
+A2 & The post does not exist or was deleted. The API returns \texttt{Error.ForumPostNotFound} and
+the client displays the error message while keeping the draft.\\ \hline
+A3 & The member is not signed in. The editor is replaced by the sign-in invitation, and a direct
+request is rejected with an authentication error.\\ \hline
+A4 & The insert fails at database level. The API returns
+\texttt{Error.FailedToCreateForumComment} and the editor keeps the text so it is not lost.\\ \hline
+A5 & The member submits twice in a row. The action is disabled while the request runs, which
+prevents duplicated comments.\\ \hline
+A6 & The session expires during the submission. The BFF proxy attempts one refresh; when it fails
+the request is rejected and the member is redirected to sign in.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the created comment.\\ \hline
+\texttt{postId} & Post the comment belongs to.\\ \hline
+\texttt{content} & Stored comment text.\\ \hline
+\texttt{user} & Identifier, display name and avatar of the author.\\ \hline
+\texttt{likeCount}, \texttt{likedByMe} & Zero and false for a new comment.\\ \hline
+\texttt{createdAt}, \texttt{updatedAt} & Timestamps of the insert.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item One comment is stored and belongs to the signed-in member and to the post.
+    \item The thread and the comment counter of the post reflect the new comment.
+    \item The comment is immediately visible to every visitor of the post.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Update Comment}
+
+\fnhead{Function Trigger}
+The author of a comment selects the pencil action next to their comment, edits the text and
+confirms the change. The action is rendered only for the author of the comment.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Comments $\rightarrow$ Edit.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer or Client who authored the comment.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function lets a member correct a comment after publication, for example to fix a
+typo or to add a clarification, without deleting the reply and losing its position in the
+thread. The comment keeps its identifier, its author and its likes, and the new text replaces the
+previous one.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Pencil action on the header row of the comment, next to the author and the date.
+    \item Inline editor pre-filled with the current text of the comment.
+    \item ``Save'' action to confirm and ``Cancel'' action to discard the change.
+    \item The thread is refreshed after the save, and the updated comment is displayed with its
+          new text.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{PATCH /api/forums/posts/\{postId\}/comments/\{commentId\}} with
+          the new content.
+    \item The API loads the comment with \texttt{deletedAt} null and rejects the request when it
+          does not exist.
+    \item The API verifies that the comment belongs to the post of the route, so a comment cannot
+          be edited through the route of another post.
+    \item The API compares the author of the comment with the member of the token and refuses the
+          request when they differ.
+    \item The API updates the content and returns the comment with its author profile.
+    \item The client invalidates the comment queries of the post and re-renders the thread.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.85]{image/screenshot/sprint1/kvy/UpdateComment.png}{Inline editor of an existing comment}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The editor replaces the comment body in place, so the member keeps the context of the
+          thread while editing.
+    \item The existing text is pre-filled, which makes small corrections fast.
+    \item The save action is disabled while the text is empty, because the content stays a
+          required field.
+    \item After the save the comment shows the edited text and the thread keeps the same order.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{postId} & Identifier of the post from the route; it scopes the comment.\\ \hline
+\texttt{commentId} & Identifier of the comment to update.\\ \hline
+\texttt{content} & New comment text, required, at least one character.\\ \hline
+Access token & Identifies the requester; the API compares it with the comment author.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The comment must exist and must not be soft deleted; otherwise the request fails with
+          \texttt{Error.ForumCommentNotFound}.
+    \item The comment must belong to the post of the route; a mismatch is reported as a missing
+          comment, which hides the existence of the comment through another route.
+    \item The requester must be the author of the comment; otherwise the request fails with
+          \texttt{Error.ForumCommentNotOwner}.
+    \item The content is required and must not be empty after trimming.
+    \item The update touches the content only: the author, the post, the creation date and the
+          likes of the comment are preserved.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-35: Only the owner of a comment can edit it.
+    \item BR-FORUM-36: Comment content cannot be empty.
+    \item BR-FORUM-37: A comment must belong to the specified post to be edited.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The author of a comment selects the pencil action on their own comment.
+    \item The client opens the inline editor with the current text.
+    \item The author modifies the text and confirms.
+    \item The client sends the update request with the access token.
+    \item The API loads the comment and confirms that it exists.
+    \item The API confirms that the comment belongs to the post of the route.
+    \item The API confirms that the requester is the author.
+    \item The API stores the new content.
+    \item The API returns the updated comment.
+    \item The client refreshes the thread and displays the new text.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The comment does not exist or was deleted. The API returns
+\texttt{Error.ForumCommentNotFound} and the editor closes with an error message.\\ \hline
+A2 & The comment belongs to another post. The request is refused with the same not-found error,
+which prevents editing a comment through a foreign route.\\ \hline
+A3 & The requester is not the author. The API returns \texttt{Error.ForumCommentNotOwner} and the
+text is not changed.\\ \hline
+A4 & The new text is empty. The save action is disabled, and a forced request is rejected by the
+validation pipe.\\ \hline
+A5 & The update fails at database level. The API returns
+\texttt{Error.FailedToUpdateForumComment} and the editor keeps the text.\\ \hline
+A6 & The author cancels the edition. No request is sent and the previous text is restored.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the updated comment.\\ \hline
+\texttt{postId} & Post the comment belongs to, unchanged.\\ \hline
+\texttt{content} & New comment text.\\ \hline
+\texttt{user} & Identifier and profile of the author, unchanged.\\ \hline
+\texttt{updatedAt} & New edition timestamp.\\ \hline
+\texttt{createdAt} & Original creation timestamp, preserved.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The comment holds the new text and keeps its position, its author and its likes.
+    \item The thread displays the updated comment after the refresh.
+    \item No other comment and no post is modified.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Delete Comment}
+
+\fnhead{Function Trigger}
+The author of a comment, or an Administrator, selects the bin action next to a comment and
+confirms the deletion in the confirmation dialog.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Comments $\rightarrow$ Delete.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} the author of the comment, or an Administrator acting on any
+          comment. The web interface exposes the action to the author of the comment; the API also
+          accepts an Administrator, who deletes comments through the moderation tools.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function removes a reply from the thread. As for posts, the deletion is soft: the
+comment receives a deletion timestamp and is filtered out of every public query, so the record
+remains available for moderation and for the trash screen of the Administrator while the
+discussion stays coherent for the readers.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Bin action on the header row of the comment, next to the edit action.
+    \item Confirmation dialog titled ``Delete Comment'' with the warning ``Are you sure you want
+          to delete this comment? This action cannot be undone.''.
+    \item ``Cancel'' action and destructive ``Delete'' action.
+    \item The thread is refreshed after the deletion and the comment counter decreases.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{DELETE /api/forums/posts/\{postId\}/comments/\{commentId\}}.
+    \item The API loads the comment with \texttt{deletedAt} null and rejects the request when it is
+          missing.
+    \item The API verifies that the comment belongs to the post of the route.
+    \item The API accepts the requester when it is the author or when the token carries the
+          Administrator role.
+    \item The API writes the deletion timestamp in the comment row.
+    \item The client invalidates the comment queries and refreshes the thread and the counter.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.8]{image/screenshot/sprint1/kvy/DeleteComment.png}{Delete comment confirmation}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The confirmation dialog names the object, so a member who owns several comments cannot
+          delete the wrong one.
+    \item The destructive style of the confirm action separates it from the cancel action and
+          warns about the consequence.
+    \item After the confirmation the comment disappears from the thread and the comment counter of
+          the post is updated.
+    \item The remaining comments keep their order, because the thread is sorted by creation date.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{postId} & Identifier of the post from the route; it scopes the comment.\\ \hline
+\texttt{commentId} & Identifier of the comment to delete.\\ \hline
+Access token & Identifies the requester and carries the role used to authorize an
+Administrator.\\ \hline
+\texttt{deletedAt} & Deletion timestamp written by the server, not supplied by the client.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The comment must exist and must not be already deleted; otherwise the request fails with
+          \texttt{Error.ForumCommentNotFound}.
+    \item The comment must belong to the post of the route; a mismatch is reported as a missing
+          comment.
+    \item The requester must be the author of the comment or must hold the Administrator role;
+          otherwise the request fails with \texttt{Error.ForumCommentNotOwner}.
+    \item The deletion timestamp is produced by the server.
+    \item The post itself is not deleted, and the likes of the comment are kept in the database.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-38: Only the owner of a comment or an Admin can delete it.
+    \item BR-FORUM-39: Comment deletion shall be implemented as a soft delete using the
+          \texttt{deletedAt} field.
+    \item BR-FORUM-40: Soft-deleted comments shall not be displayed in normal comment listings.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The author or the Administrator opens the post detail screen.
+    \item The client renders the bin action on the comments the member may delete.
+    \item The member selects the action and the confirmation dialog appears.
+    \item The member confirms the deletion.
+    \item The client sends the delete request with the access token.
+    \item The API loads the comment and confirms that it exists.
+    \item The API confirms that the comment belongs to the post of the route.
+    \item The API confirms that the requester is the author or an Administrator.
+    \item The API writes the deletion timestamp.
+    \item The API returns the deleted comment.
+    \item The client refreshes the thread, where the comment is no longer present.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The comment does not exist or was already deleted. The API returns
+\texttt{Error.ForumCommentNotFound} and the client shows the error message.\\ \hline
+A2 & A member tries to delete a comment written by somebody else. The API returns
+\texttt{Error.ForumCommentNotOwner} and nothing is deleted.\\ \hline
+A3 & An Administrator deletes a comment of another member. The operation is allowed and the
+comment disappears from the thread.\\ \hline
+A4 & The comment belongs to another post. The request is refused with the not-found error, which
+prevents deleting through a foreign route.\\ \hline
+A5 & The delete fails at database level. The API returns
+\texttt{Error.FailedToDeleteForumComment} and the comment remains visible.\\ \hline
+A6 & The member cancels the confirmation. No request is sent and the comment is unchanged.\\ \hline
+A7 & The session expires before the confirmation. The single refresh attempt decides between a
+successful retry and a redirect to the sign-in page.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the deleted comment.\\ \hline
+\texttt{postId} & Post the comment belonged to.\\ \hline
+\texttt{content} & Text of the deleted comment, returned for confirmation.\\ \hline
+\texttt{deletedAt} & Server timestamp recorded in the row.\\ \hline
+Updated counter & The comment counter of the post, recomputed without the deleted comment.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The comment is excluded from the thread and from every comment count.
+    \item The row is retained for moderation and for the trash screen of the Administrator.
+    \item The post remains published with its remaining comments.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Like a Comment}
+
+\fnhead{Function Trigger}
+A signed-in member selects the heart action on a comment of the thread. A guest is routed to the
+sign-in page, because the reaction requires an account.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Comments $\rightarrow$ Like.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Client. An Administrator can also react while
+          browsing.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function allows members to acknowledge a useful reply without writing another
+comment. It is a toggle, exactly like the post reaction: the first activation likes the comment
+and the second one removes the reaction, so one member can never like the same comment twice.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Heart action in the footer of each comment, followed by the like counter of the
+          comment.
+    \item Outlined heart when the member has not liked the comment, filled heart when the member
+          liked it.
+    \item The action is disabled while the request runs.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{POST /api/forums/posts/\{postId\}/comments/\{commentId\}/like}.
+    \item The API loads the comment with \texttt{deletedAt} null and rejects the request when it is
+          missing.
+    \item The API verifies that the comment belongs to the post of the route.
+    \item The API looks for a reaction of the member on the comment.
+    \item When the reaction exists, the API removes it and answers with \texttt{liked: false}.
+    \item When the reaction does not exist, the API inserts it and answers with
+          \texttt{liked: true}.
+    \item The client invalidates the comment queries of the post, which refreshes the counter and
+          the state of the heart of that comment only.
+    \item The comment list computes the liked state per comment by matching the reactions of the
+          signed-in member, so the states of the other comments are unaffected.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigurepair{image/screenshot/sprint1/kvy/BeforeLikeComment.png}{image/screenshot/sprint1/kvy/AfterLikeComment.png}{Comment before and after being liked}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Before the reaction the heart is outlined and the counter shows the current number of
+          likes of the comment.
+    \item After the reaction the heart is filled with the accent colour and the counter is
+          incremented by one.
+    \item Only the selected comment changes; the reactions of the other comments and the likes of
+          the post remain untouched.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{postId} & Identifier of the post from the route; it scopes the comment.\\ \hline
+\texttt{commentId} & Identifier of the comment to react to.\\ \hline
+Access token & Identifies the member who reacts.\\ \hline
+Reaction type & Constant value \texttt{like}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The requester must be authenticated.
+    \item The comment must exist, must not be soft deleted and must belong to the post of the
+          route.
+    \item A member can hold only one reaction per comment, enforced by the unique constraint of the
+          like table on the pair member and comment.
+    \item The reaction is attached to the member of the token, never to an identifier sent by the
+          client.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-41: Only authenticated users can like comments.
+    \item BR-FORUM-42: A user can have only one active like reaction per comment.
+    \item BR-FORUM-43: The reaction shall be stored in the \texttt{ForumLike} table.
+    \item BR-FORUM-44 to BR-FORUM-46: removing a reaction is allowed only when the record exists,
+          and it deletes that record.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The signed-in member finds a useful comment in the thread.
+    \item The client renders an outlined heart with the like counter of that comment.
+    \item The member selects the heart and the client sends the toggle request.
+    \item The API confirms that the comment exists and belongs to the post.
+    \item The API finds no reaction of this member on this comment.
+    \item The API inserts the reaction row.
+    \item The API answers with \texttt{liked: true}.
+    \item The client refreshes the comment list, fills the heart and increments the counter.
+    \item Selecting the heart again removes the reaction and restores the previous counter.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The comment does not exist or was deleted. The API returns
+\texttt{Error.ForumCommentNotFound} and the counter is unchanged.\\ \hline
+A2 & The comment belongs to another post. The request is refused with the same not-found error.\\ \hline
+A3 & The member is not signed in. The client routes to the sign-in page and no request is sent.\\ \hline
+A4 & The reaction already exists. The request removes it, which is the intended toggle
+behaviour.\\ \hline
+A5 & The insert fails at database level. The API returns
+\texttt{Error.FailedToLikeForumComment} and the interface keeps the previous state.\\ \hline
+A6 & The member clicks the heart twice quickly. The action is disabled while the request runs, so
+only one reaction is created.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{liked} & \texttt{true} when the reaction was added, \texttt{false} when it was removed.\\ \hline
+Like row & Member, post, comment, reaction type and creation date of the stored reaction.\\ \hline
+Updated counter & The like counter of the comment, recomputed by the client.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The comment holds exactly one reaction of the member, or none after the second
+          activation.
+    \item The counter of the comment matches the number of stored reactions on that comment.
+    \item The reactions of the post and of the other comments are unchanged.
+\end{itemize}
+
+% =================================================================
+
+\subsubsection{Function: Report Content}
+
+\fnhead{Function Trigger}
+A signed-in member who is not the author selects the ``Report'' action under a post or next to a
+comment, writes a reason and submits the report. The action is hidden from the author of the
+content, because a member cannot report their own post or comment.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
+\textit{Post} $\rightarrow$ Report.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia BFF proxy, Frevia REST API
+          and PostgreSQL through Prisma ORM; the report is later handled by an Administrator in
+          the moderation screen.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent The function gives the community a way to flag content that violates the rules, either
+a discussion or a single reply. A report never changes the visibility of the content by itself:
+it creates a pending moderation entry that the Administrator reviews through the moderation
+module.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Report'' action with a flag icon under the post body, and the same action in the
+          header of each comment.
+    \item Dialog titled ``Report Content'' with the prompt ``Please provide a reason for reporting
+          this content.''.
+    \item ``Reason'' text area with the placeholder ``Why are you reporting this content?''.
+    \item ``Cancel'' action and destructive ``Report'' action, which stays disabled while the
+          reason is empty.
+    \item ``Reported'' badge with a check icon replacing the action once the content has been
+          reported by the member.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item When the dialog is opened, the client checks whether the member already reported the
+          content through \texttt{GET /api/forums/posts/\{postId\}/is-reported} or
+          \texttt{GET /api/forums/posts/\{postId\}/comments/\{commentId\}/is-reported}.
+    \item The client sends \texttt{POST /api/forums/posts/\{postId\}/reports} for a post, or
+          \texttt{POST /api/forums/posts/\{postId\}/comments/\{commentId\}/reports} for a comment,
+          with the reason.
+    \item The API verifies that the reported target exists and is not soft deleted.
+    \item For a comment, the API also verifies that the comment belongs to the post of the route.
+    \item The API looks for an existing report of the same member on the same target and refuses a
+          duplicate.
+    \item The API inserts the report with the reporter of the token, the target and the reason; the
+          status defaults to \texttt{PENDING} and no administrator is assigned yet.
+    \item The client shows the confirmation toast, marks the report as done in its cache and closes
+          the dialog after a short delay.
+    \item From then on the action is replaced by the ``Reported'' badge, and reopening the dialog
+          explains that the content is already under review.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.8]{image/screenshot/sprint1/kvy/ReportContent.png}{Report dialog with the reason field}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The action is available on the post and on every comment, so a member can flag the
+          exact item that is problematic.
+    \item The dialog explains what is expected and gives a free-text reason, which the moderator
+          reads before making a decision.
+    \item The confirm action is destructive styled and disabled without a reason, which prevents
+          empty reports.
+    \item After a successful submission the toast ``Report submitted successfully'' confirms the
+          action and the badge ``Reported'' prevents a second submission.
+    \item When the content was already reported, the dialog displays a confirmation panel with
+          ``You have already reported this content. Our team will review it.''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{postId} & Identifier of the reported post, or of the post that holds the reported
+comment.\\ \hline
+\texttt{commentId} & Optional identifier of the reported comment; absent when the post itself is
+reported.\\ \hline
+\texttt{reason} & Free-text justification of the report, required.\\ \hline
+Access token & Identifies the reporter; it becomes \texttt{reporterId} in the stored report.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The requester must be authenticated.
+    \item The reason is required and must contain at least one character.
+    \item The reported post must exist and must not be soft deleted, otherwise the request fails
+          with \texttt{Error.ForumPostNotFound}.
+    \item The reported comment must exist, must not be soft deleted and must belong to the post of
+          the route, otherwise the request fails with \texttt{Error.ForumCommentNotFound}.
+    \item Exactly one member may report a given target once; a second attempt fails with
+          \texttt{Error.ForumReportAlreadyExists}.
+    \item The status of a new report is \texttt{PENDING} and the administrator field stays empty
+          until a moderator handles it.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FORUM-47: Only authenticated users can submit reports.
+    \item BR-FORUM-48: Reports must be associated with either a post or a comment.
+    \item BR-FORUM-49: New reports shall be created with status PENDING.
+    \item BR-FORUM-50: A user may submit only one report for the same content item.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The signed-in member reads a post or a comment that violates the community rules.
+    \item The member selects the ``Report'' action of that item.
+    \item The client opens the dialog and checks whether the item was already reported.
+    \item The member writes a reason and confirms.
+    \item The client sends the report request with the access token.
+    \item The API validates the reason and loads the reported target.
+    \item The API confirms that the target exists and, for a comment, that it belongs to the
+          post.
+    \item The API confirms that the member has not reported the same target yet.
+    \item The API inserts the report with status \texttt{PENDING}.
+    \item The API returns the created report.
+    \item The client shows the success toast, marks the cache as reported and closes the dialog.
+    \item The ``Reported'' badge replaces the action for this member.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The reason is empty. The confirm action is disabled, and a forced request is rejected by the
+validation pipe.\\ \hline
+A2 & The post was deleted before the submission. The API returns
+\texttt{Error.ForumPostNotFound} and no report is stored.\\ \hline
+A3 & The comment was deleted before the submission, or does not belong to the post. The API returns
+\texttt{Error.ForumCommentNotFound}.\\ \hline
+A4 & The member already reported the same item. The API returns
+\texttt{Error.ForumReportAlreadyExists} and the client displays the message and switches to the
+reported state.\\ \hline
+A5 & An Administrator opens the moderation screen. Listing and updating reports require the
+Administrator role, otherwise the API returns \texttt{Error.ForumReportForbidden}.\\ \hline
+A6 & The insert fails at database level. The API returns
+\texttt{Error.FailedToCreateForumReport} and the dialog stays open with the reason.\\ \hline
+A7 & The member is not signed in. The action is not rendered for guests, and a direct request is
+rejected with an authentication error.\\ \hline
+A8 & The member reports their own content through a crafted request. The record can be created,
+but the action is never offered in the interface, and the moderation screen treats it like any
+other report.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Identifier of the created report.\\ \hline
+\texttt{reporterId} & Member who submitted the report.\\ \hline
+\texttt{postId}, \texttt{commentId} & Reported targets; exactly one of them identifies the item,
+the other may be null for a comment report.\\ \hline
+\texttt{reason} & Reason written by the reporter.\\ \hline
+\texttt{status} & \texttt{PENDING} for a new report; later \texttt{REVIEWED},
+\texttt{RESOLVED} or \texttt{DISMISSED} after the moderator decision.\\ \hline
+\texttt{adminId}, \texttt{createdAt} & Administrator who handled the report, null at creation, and
+the creation timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item One pending report exists for the reported item and the reporter.
+    \item The reported content is not modified and stays visible until a moderator decides.
+    \item The report appears in the moderation queue of the Administrator, where it can be reviewed,
+          resolved or dismissed.
+    \item The reporter sees the ``Reported'' state and cannot submit the same report again.
+\end{itemize}

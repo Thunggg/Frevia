@@ -1,0 +1,216 @@
+% ========================================================
+% FILE: sections/1.System_Design.tex
+% Chapter 1 follows the chapter structure of the sample Report 4:
+%   1.1 System Architecture
+%   1.2 Package Diagram (+ Package Descriptions table)
+% The assumptions, the design constraints and the technology stack that used to
+% form the separate "Overall Description" chapter are kept at the end of this
+% chapter as 1.3 - 1.5, so no paragraph of the report was dropped.
+% ========================================================
+\section{System Design}
+
+\subsection{System Architecture}
+
+Frevia follows a three-tier, deployment-separated architecture
+(Figure~\ref{fig:arch:overall}).
+
+\kfig{0.95\textwidth}{images/architecture/overall-architecture}{Overall architecture of the Frevia system}{fig:arch:overall}
+
+The three tiers are:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Presentation tier --- Next.js 16 web application:} server components render public pages (job board, job detail, community forum, expert directory) and private dashboards; client components handle interactivity such as forms, likes, and chat. All server access goes through a single typed HTTP client that attaches the JWT access token and refreshes it transparently when it expires.
+    \item \textbf{Application tier --- NestJS REST API:} a modular monolith organized into 31 route modules. Every module is internally layered as Controller $\rightarrow$ Service $\rightarrow$ Repository. Controllers validate and serialize with shared Zod DTOs; services hold business rules and authorization checks; repositories encapsulate all Prisma queries.
+    \item \textbf{Data tier --- PostgreSQL via Prisma 7:} the relational store for 64 domain models. Binary files are never stored in the database but in Cloudinary; real-time transport for chat and notifications is handled by a Socket.io gateway beside the REST API.
+\end{itemize}
+
+The two applications are deployed independently (the web app on Vercel, the API on a Node.js host) and communicate only through the documented REST contract validated by the shared Zod schemas package.
+
+Beside the three tiers, four external systems are connected to the application tier
+(Figure~\ref{fig:arch:overall}): \textbf{Stripe} (Checkout, Connect and webhooks) for escrow
+payments and payouts, \textbf{Cloudinary} for avatar, document and portfolio binaries,
+\textbf{Google OAuth} for federated login, and the \textbf{AI moderation/analysis service}
+that scores forum content, parses CVs and checks identity documents. E-mail (OTP and
+notifications) is delivered through SMTP with Nodemailer, and secrets are loaded from
+\textbf{Infisical} at start-up. None of these systems is called from the browser: the web
+application only talks to the API, which owns every credential and decides when a third
+party is contacted. The table below (Table~\ref{tab:modules}) explains the API modules, and
+Section~\ref{subsec:package-diagram} explains every package of the repository.
+
+\subsubsection{Layered Architecture}
+
+The internal architecture of the API follows a strict layered pattern, enforced identically in every module (Figure~\ref{fig:arch:system}):
+
+\begin{itemize}[leftmargin=*]\sloppy
+    \item \textbf{Controller layer} --- thin Routing Layer. Exposes REST endpoints, applies guards (authentication, roles, permissions), binds validated request DTOs, and delegates to a service. Controllers never query the database directly.
+    \item \textbf{Service layer} --- business logic layer. Implements use cases, ownership/authorization checks, state-machine transitions (proposal, contract, dispute), and cross-aggregation logic; it throws typed HTTP exceptions (\texttt{NotFoundException 404}, \texttt{ForbiddenException 403}, \texttt{ConflictException 409}) that a global exception filter converts to a uniform error response.
+    \item \textbf{Repository layer} --- data access layer. The only component allowed to touch Prisma; complex list queries (pagination + counting) are wrapped in \texttt{\$transaction} for consistency.
+    \item \textbf{Shared kernel} --- the \texttt{@shared/types} workspace package contains Zod models, constants, permission names, and error codes shared with the web app.
+\end{itemize}
+
+Security flow: every request carries a JWT access token; the auth guard validates it and resolves the active role; role and permission guards authorize module-specific operations; refresh tokens are stored server-side in a \texttt{Session} row and can be revoked from the session management feature.
+
+AI-assisted pipeline: user-generated content (forum posts/comments, CVs, identity documents) is passed through AI moderation or AI analysis services; forum content can be auto-approved when clean, or queued in \texttt{ModerationQueue} for administrator approval when suspicious.
+
+\kfig{0.95\textwidth}{images/architecture/system-architecture}{Layered system architecture with security and AI moderation flows}{fig:arch:system}
+
+\subsubsection{API Module Structure}
+
+Table~\ref{tab:modules} summarizes the 31 route modules of the API and their responsibilities.
+
+\begin{longtable}{|L{4.2cm}|L{11.0cm}|}
+\caption{API route modules and responsibilities}
+\label{tab:modules}
+\\
+\hline
+\textbf{Module} & \textbf{Responsibility} \\ \hline
+\endfirsthead
+\hline
+\textbf{Module} & \textbf{Responsibility} \\ \hline
+\endhead
+auth & registration, OTP, login, refresh token, logout, forgot password, Google OAuth, current account, role switching/joining \\ \hline
+sessions & device session listing, detail, revocation \\ \hline
+account-profile & general account profile, avatar, identity verification upload/AI check, client profile, social links, favorite freelancers, following \\ \hline
+users & administrator user management and skill catalog \\ \hline
+roles, permissions & RBAC role and permission administration \\ \hline
+profiles & professional profile, CV upload/AI analysis, skills \\ \hline
+portfolios & portfolio item CRUD on profiles \\ \hline
+expert-profile & expert profile management and public expert directory \\ \hline
+profile-revisions & profile change request approval workflow \\ \hline
+identity-verifications-admin & identity verification review \\ \hline
+job-categories & public job category browsing \\ \hline
+job-categories-admin & job category administration (soft delete + restore) \\ \hline
+skills-admin & skill catalog administration (soft delete + restore) \\ \hline
+browse-job & public job listing and job detail by slug \\ \hline
+manage-job & client job management, bookmarks, skill search \\ \hline
+proposals & proposal lifecycle: draft, submit, withdraw, interview, reject, accept \\ \hline
+contract & contract lifecycle: create, update, sign, complete, cancel \\ \hline
+milestone & milestone management inside a contract \\ \hline
+milestone-file, milestone-submission & milestone attachments and work submission review \\ \hline
+shared-file & contract shared workspace files \\ \hline
+payments & Stripe Connect onboarding, platform fee, milestone funding, release, refund, dispute fee, transactions, webhook \\ \hline
+disputes & dispute lifecycle (user side and admin arbitration side) \\ \hline
+reviews & contract reviews and responses \\ \hline
+conversations & direct messaging with real-time delivery \\ \hline
+notifications & notification feed management \\ \hline
+forums & forum categories and posts (public side) \\ \hline
+forums-comment, forums-like, forums-reports & comments, likes, content reports \\ \hline
+forums-admin & AI moderation queue, pending posts, trash restore, forum statistics \\ \hline
+saved-search & saved job search filters \\ \hline
+banners, banners-admin & advertisement banner delivery and administration \\ \hline
+\end{longtable}
+
+\subsection{Package Diagram}
+\label{subsec:package-diagram}
+
+The repository is a pnpm monorepo managed by Turborepo (Figure~\ref{fig:arch:packages}):
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{\texttt{apps/web}} --- the Next.js application. Sub-packages group screens by actor (guest browsing, client, freelancer, admin), shared UI components (\texttt{@repo/ui}), server actions, and the i18n message catalogs used by next-intl.
+    \item \textbf{\texttt{apps/api}} --- the NestJS application. \texttt{src/routes/*} contains the 31 domain modules described above; \texttt{src/shared} contains cross-cutting infrastructure: authentication guards and decorators, permission constants, global HTTP exception filter, Zod serializer interceptor, Cloudinary storage service, and Prisma client setup. Each domain module folder is organized as \texttt{<module>.controller.ts}, \texttt{<module>.service.ts}, \texttt{<module>.repository.ts}, DTO classes, and module-specific error factories (e.g., \texttt{forums.error.ts}).
+    \item \textbf{\texttt{packages/shared-type}} --- the single source of truth for API contracts: Zod request/response models (\texttt{model/*}), enumeration/constant definitions, and permission name lists, imported by both \texttt{apps/web} and \texttt{apps/api}.
+\end{itemize}
+
+Dependencies only point downwards: \texttt{web} and \texttt{api} both depend on \texttt{shared-type}; no route module imports another route module --- cross-module data needs flow through services at the Prisma schema level.
+
+\kfig{0.95\textwidth}{images/architecture/package-diagram}{Package diagram of the Frevia monorepo}{fig:arch:packages}
+
+\subsubsection*{Package Descriptions}
+
+Table~\ref{tab:packages} lists every workspace package of the repository and its responsibility.
+
+{\small
+\begin{longtable}{|C{0.9cm}|L{5.4cm}|L{8.4cm}|}
+\caption{Workspace packages and their responsibility}
+\label{tab:packages}
+\\
+\hline
+\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endhead
+\texttt{01} & \texttt{apps/web} & Next.js 16 presentation layer (App Router, React Server Components, next-intl, TanStack Query, TailwindCSS 4 with shadcn/ui). Contains the screens per actor, the shared UI components, the server actions and the BFF route handlers that attach the access token. \\ \hline
+\texttt{02} & \texttt{apps/api} & NestJS 11 application tier: 31 route modules laid out as Controller, Service, Repository and DTO files, together with the global guards, exception filter, Zod serializer interceptor and the Socket.io gateway used by messaging. \\ \hline
+\texttt{03} & \texttt{apps/api/prisma} & Prisma 7 data layer: \texttt{schema.prisma} (64 models and their enums), migrations and seed data. The generated client is the only component allowed to query PostgreSQL. \\ \hline
+\texttt{04} & \texttt{packages/shared-type} & Contract single source of truth (\texttt{@shared/types}): Zod request/response models, enumerations, permission names and error codes consumed by both applications. \\ \hline
+\texttt{05} & \texttt{packages/ui} & Shared React component library (\texttt{@repo/ui}) imported by the web application so that buttons, dialogs, tables and form controls look and behave identically on every screen. \\ \hline
+\texttt{06} & \texttt{packages/eslint-config} & Shared ESLint configuration (\texttt{@repo/eslint-config}) applied to every workspace so that the same rules run across the monorepo. \\ \hline
+\texttt{07} & \texttt{packages/typescript-config} & Shared TypeScript configuration baselines (\texttt{@repo/typescript-config}) that the applications extend for strict compilation. \\ \hline
+\end{longtable}
+}
+
+\subsection{Assumptions and Risks}
+
+This system is designed based on the following assumptions:
+\begin{itemize}[leftmargin=*]
+    \item The Node.js runtime and the frameworks chosen for the project (NestJS 11 for the backend and Next.js 16 for the frontend) will continue to be actively supported and maintained, ensuring long-term stability and compatibility with evolving technologies.
+    \item The RESTful API architecture will remain a scalable and efficient choice for separating the Next.js presentation layer from the NestJS business layer.
+    \item PostgreSQL, accessed through Prisma ORM 7, will continue to provide reliable, scalable, and secure relational data storage suitable for handling user identity, jobs, contracts, escrow payments, and forum data.
+    \item Third-party services used by the platform --- Stripe (payments and escrow), Cloudinary (file storage), Google (OAuth login), the AI moderation/analysis service, and mail delivery via Nodemailer --- will stay available and API-compatible during the project lifetime.
+    \item Modern web browsers (e.g., Chrome, Edge, Firefox, Safari) will continue to support the front-end standards required by Next.js/React 19, including HTML5, CSS3 (TailwindCSS), JavaScript ESM, and responsive rendering with React Server Components.
+    \item The application will be deployed in environments with stable internet access to support real-time messaging (Socket.io) and online payment processing.
+    \item Users (Guests, Clients, Freelancers, Experts, and Admins) are familiar with basic web application navigation: browsing job boards, filling forms, managing profiles, and following payment flows.
+\end{itemize}
+
+This system design is also based on the following risks:
+\begin{itemize}[leftmargin=*]
+    \item Any breaking change in the major versions of Next.js, NestJS, or Prisma could require refactoring of the user interface components or of the data access layer.
+    \item Cross-browser inconsistencies or outdated device software may affect rendering or the real-time messaging experience.
+    \item Cybersecurity threats such as credential stuffing, token hijacking, or database breaches could compromise sensitive personal and financial information if not proactively managed (the design therefore includes bcrypt-hashed passwords, JWT access/refresh tokens, session revocation, and role-based access control).
+    \item Outages or policy changes of the integrated third-party services (Stripe, Cloudinary, Google OAuth, AI moderation) could temporarily disrupt payments, file uploads, login, or content moderation.
+    \item Network connectivity issues could disrupt access to job proposals, contract collaboration, or checkout flows that rely on server interaction.
+\end{itemize}
+
+\subsection{Design Constraints}
+
+This system should comply with the following constraints:
+
+\subsubsection{Platform Compatibility}
+
+The Frevia application must be compatible with modern web browsers (e.g., Chrome, Edge, Firefox, Safari) for all user roles including Guest, Client, Freelancer, Expert, and Admin. The frontend is implemented with Next.js 16 (App Router, React Server Components) styled with TailwindCSS 4 and shadcn/ui components; the backend is a NestJS 11 REST API. Responsive web design principles must be applied so that a consistent user experience is provided across desktop, tablet, and mobile browsers. Internationalization is achieved with next-intl so the interface can be served in multiple languages from the same code base.
+
+\subsubsection{Integration Complexity}
+
+The Frevia platform integrates a variety of components: the Next.js web application, the NestJS REST API, the PostgreSQL database (via Prisma 7 with the pg adapter), Stripe Checkout and Stripe Connect for escrow payments and payouts, Cloudinary for image and document storage, Socket.io for real-time chat and notifications, Google OAuth for federated login, e-mail for OTP delivery, and AI services for content moderation, CV parsing, and identity document verification. Communication between the client and the server is carried out through versioned REST endpoints secured with JWT access tokens and refresh tokens stored in dedicated session records; role-based access control restricts each operation to the allowed roles. Design decisions must keep these integrations loosely coupled behind services and repositories so that a provider can be replaced without rewriting business logic.
+
+\subsubsection{Performance Requirements}
+
+The application must remain responsive under concurrent usage by many freelancers and clients. Job browsing, proposal listing, forum feeds, and conversation histories must load promptly; therefore the design mandates server-side pagination for every list operation, database indexes on frequently filtered columns, optimized Prisma queries executed inside transactions for counted lists, and streaming React Server Components to reduce time-to-first-byte. Real-time features (messaging, notifications) must propagate events with minimal delay via Socket.io. Payment operations must reconcile eventual states through Stripe webhooks and explicit synchronization endpoints.
+
+\subsection{Technology Stack}
+
+Frevia adopts a RESTful API architecture to support secure, stateless, and scalable communication between the Next.js frontend and the NestJS backend. This approach provides:
+\begin{itemize}[leftmargin=*]
+    \item Modular, reusable API endpoints for account management, job posting, proposals, contracting, milestone escrow, dispute resolution, community forum, and administration.
+    \item Easy extension for mobile applications or third-party integrations in the future.
+    \item Secure access using JWT tokens with role-based authorization for every endpoint.
+    \item Uniform use of standard HTTP methods (GET, POST, PATCH, PUT, DELETE), making the system intuitive to maintain.
+    \item A clear separation between the presentation layer and the business logic layer.
+\end{itemize}
+All request/response payloads are validated and typed with shared Zod schemas packaged in \texttt{@shared/types}, which is consumed by both the frontend and the backend so that a single source of truth prevents contract drift between the two applications.
+
+\kfig{0.95\textwidth}{images/architecture/restful-api}{RESTful API communication between the Next.js frontend and the NestJS backend}{fig:restful-api}
+
+\subsubsection{NestJS Framework}
+
+The backend of Frevia is built with NestJS 11, a TypeScript-first, modular web framework running on Node.js. It is selected for its:
+\begin{itemize}[leftmargin=*]
+    \item Rich dependency-injection and module ecosystem, matching the Controller--Service--Repository layering.
+    \item First-class decorator-based REST routing with guards and interceptors for authentication, roles, permissions, and response serialization.
+    \item Excellent support for Zod schema validation (nestjs-zod) and typed DTOs.
+    \item Component structure for WebSockets (Socket.io gateways) used by the messaging module.
+    \item Straightforward integration with Prisma ORM and PostgreSQL for persistence.
+\end{itemize}
+
+\subsubsection{Next.js and React 19 Frontend}
+
+The web client uses Next.js 16 with the App Router. React Server Components render public pages (job lists, job details, forum) directly from the server, while TanStack Query drives interactive islands (forms, likes, real-time chat). react-hook-form together with Zod resolvers validate user input with the same schemas the API uses.
+
+\subsubsection{Prisma ORM and PostgreSQL}
+
+Persistence relies on PostgreSQL accessed through Prisma 7. The schema defines 64 models covering identity and access, profiles, jobs, proposals, contracts and milestones, payments and disputes, reviews, messaging, the community forum, and platform configuration. Prisma's type-safe client keeps data access code verifiable at compile time.
+
+\subsubsection{Supporting Services}
+
+Payments and payouts use Stripe Checkout and Stripe Connect with webhook-driven reconciliation; binaries are stored in Cloudinary; emails (OTP, notifications) are sent with Nodemailer; Google login uses OAuth 2.0; environment configuration is loaded through Infisical so no secret is committed to the repository.
