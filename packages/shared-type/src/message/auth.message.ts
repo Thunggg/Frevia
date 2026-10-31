@@ -2,6 +2,8 @@ export const AuthMessage = {
   // --- Service ---
   EMAIL_ALREADY_EXISTS: "Error.EmailAlreadyExists",
   EMAIL_NOT_FOUND: "Error.EmailNotFound",
+  PASSWORD_IS_REQUIRE: "Error.PasswordIsRequire",
+  CONFIRM_PASSWORD_IS_REQUIRE: "Error.PasswordIsRequire",
   INVALID_EMAIL: "Error.InvalidEmail",
   USER_BANNED: "Error.UserBanned",
   INVALID_VERIFICATION_CODE: "Error.InvalidVerificationCode",
@@ -11,8 +13,11 @@ export const AuthMessage = {
   REFRESH_TOKEN_REVOKED: "Error.RefreshTokenRevoked",
   EMAIL_REQUIRED: "Error.EmailRequired",
   ROLE_NOT_FOUND: "Error.RoleNotFound",
+  ROLE_ALREADY_ASSIGNED: "Error.RoleAlreadyAssigned",
   INCORRECT_EMAIL: "Error.IncorrectEmail",
   INCORRECT_PASSWORD: "Error.IncorrectPassword",
+  MISSING_ROLE_IN_TOKEN: "Error.MissingRoleInToken",
+  PERMISSION_DENIED: "Error.PermissionDenied",
 
   // --- Validation messages (dùng trong Zod schema) ---
   PASSWORD_REQUIRED: "Error.PasswordRequired",

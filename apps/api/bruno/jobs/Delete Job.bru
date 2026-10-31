@@ -1,0 +1,29 @@
+meta {
+  name: Delete Job
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/manage-jobs/{{jobId}}
+  body: none
+  auth: bearer
+}
+
+vars:pre-request {
+  jobId: 1
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status should be 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Success should be true", function () {
+    expect(res.getBody().success).to.equal(true);
+  });
+}

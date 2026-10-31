@@ -1,0 +1,20 @@
+meta {
+  name: View permission detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/permissions/2
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

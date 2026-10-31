@@ -1,0 +1,23 @@
+meta {
+  name: View Client Job Detail
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/manage-jobs/{{jobId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+vars:pre-request {
+  jobId: 1
+}

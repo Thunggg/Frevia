@@ -1,22 +1,27 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
-  AccessTokenPayloadCreate,
   EmailVerificationType,
   ForgotPasswordBodyType,
+  GetAuthorizationUrlResType,
+  GoogleUserInfo,
+  GetMeResType,
+  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
+  OauthProvider,
   RefreshTokenBodySchemaType,
-  RefreshTokenPayloadCreate,
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
+  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
+  AuthMessage,
 } from '@shared/types';
 import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
@@ -35,16 +40,19 @@ import {
   InvalidVerificationCodeException,
   OTPExpiredException,
   RefreshTokenRevokedException,
+  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
   UserBannedException,
 } from './auth.error';
 import { AuthRepository } from './auth.repo';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  public oauth2Client: OAuth2Client;
 
   constructor(
     private readonly hashingService: HashingService,
@@ -52,7 +60,13 @@ export class AuthService {
     private readonly sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
-  ) {}
+  ) {
+    this.oauth2Client = new OAuth2Client({
+      clientId: envConfig.GOOGLE_CLIENT_ID,
+      clientSecret: envConfig.GOOGLE_CLIENT_SECRET,
+      redirectUri: envConfig.GOOGLE_REDIRECT_URL,
+    });
+  }
 
   async register(
     body: RegisterBodyType,
@@ -60,7 +74,7 @@ export class AuthService {
     Omit<UserType, 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   > {
     try {
-      const { email, otpCode, password, fullName, role } = body;
+      const { email, code, password, fullName, role } = body;
 
       this.logger.log(`Register attempt for email: ${email}`);
 
@@ -78,7 +92,7 @@ export class AuthService {
 
       // 2. Xác thực mã OTP
       await this.validateVerificationCode({
-        code: otpCode,
+        code,
         email,
         type: TypeOfVerificationCode.EMAIL_VERIFICATION,
       });
@@ -97,7 +111,7 @@ export class AuthService {
 
       const result = await this.authRepository.createUserAndRegister(
         {
-          code: otpCode,
+          code,
           type: TypeOfVerificationCode.EMAIL_VERIFICATION,
           email,
         },
@@ -279,21 +293,11 @@ export class AuthService {
     userAgent: string;
     ipAddress: string;
   }) {
-    const accessTokenPayload: AccessTokenPayloadCreate = {
-      userId,
-      roleId,
-      roleName,
-    };
-    const accessToken =
-      await this.tokenService.signAccessToken(accessTokenPayload);
-    const refreshTokenPayload: RefreshTokenPayloadCreate = {
-      userId,
-    };
-    const refreshToken =
-      await this.tokenService.signRefreshToken(refreshTokenPayload);
+    // 1) Tạo refresh token trước
+    const refreshToken = await this.tokenService.signRefreshToken({ userId });
 
-    // Tạo session
-    await this.authRepository.createSession({
+    // 2) Lưu session vào DB để lấy session.id
+    const session = await this.authRepository.createSession({
       userId,
       refreshToken,
       deviceInfo: userAgent,
@@ -302,6 +306,14 @@ export class AuthService {
         new Date(),
         ms(envConfig.REFRESH_TOKEN_EXPIRES_IN as StringValue) as number,
       ),
+    });
+
+    // 3) Access token mang sessionId → biết đây là session nào đang dùng
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId,
+      roleName,
+      sessionId: session.id,
     });
 
     return { accessToken, refreshToken };
@@ -339,6 +351,16 @@ export class AuthService {
         userId,
       });
 
+      if (
+        refreshTokenIsInDB.user.isBanned ||
+        refreshTokenIsInDB.user.deletedAt
+      ) {
+        this.logger.warn(
+          `Banned user attempted to refresh token: userId=${userId}`,
+        );
+        throw UserBannedException();
+      }
+
       const tokens = await this.generateAccessAndRefreshTokens({
         userId,
         roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
@@ -371,8 +393,11 @@ export class AuthService {
     }
   }
 
-  async logout(refreshToken: string, userId: number): Promise<MessageResType> {
+  async logout(refreshToken: string): Promise<MessageResType> {
     try {
+      const { userId } =
+        await this.tokenService.verifyRefreshToken(refreshToken);
+
       this.logger.log(`Logout request: userId=${userId}`);
       await this.authRepository.deleteSessionByRefreshToken({
         refreshToken,
@@ -390,6 +415,8 @@ export class AuthService {
       } else if (error instanceof PrismaClientValidationError) {
         this.logger.error('PrismaClientValidationError during logout', error);
         throw ServerErrorException();
+      } else if (error instanceof JsonWebTokenError) {
+        throw RefreshTokenRevokedException();
       }
       throw error;
     }
@@ -409,6 +436,7 @@ export class AuthService {
       throw EmailNotFoundException();
     }
 
+    // Kiểm tra xem user có bị ban hay không
     if (user.isBanned) {
       this.logger.warn(`Banned user attempted forgot password: ${email}`);
       throw UserBannedException();
@@ -462,5 +490,189 @@ export class AuthService {
     }
 
     return verifycationOTP;
+  }
+
+  async getMe(userId: number): Promise<GetMeResType> {
+    const user = await this.authRepository.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException([
+        { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+      ]);
+    }
+
+    if (user.isBanned || user.deletedAt) {
+      throw UserBannedException();
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      isBanned: user.isBanned,
+      profile: user.profile
+        ? {
+            id: user.profile.id,
+            displayName: user.profile.displayName,
+            avatarUrl: user.profile.avatarUrl,
+          }
+        : null,
+      roles: user.userRoles.map((userRole) => ({
+        name: userRole.role.name as GetMeResType['roles'][number]['name'],
+        isPrimary: userRole.isPrimary,
+      })),
+    };
+  }
+
+  async switchRole(
+    userId: number,
+    sessionId: number,
+    body: SwitchRoleBodyType,
+  ) {
+    const role = await this.authRepository.switchPrimaryRole(userId, body.role);
+    if (!role) throw RoleNotFoundException();
+
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId: role.id,
+      roleName: role.name,
+      sessionId,
+    });
+
+    return { accessToken };
+  }
+
+  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
+    try {
+      const result = await this.authRepository.joinRole(userId, body.role);
+      if (!result) throw RoleNotFoundException();
+      if (result.status === 'already-assigned') {
+        throw RoleAlreadyAssignedException();
+      }
+
+      const accessToken = await this.tokenService.signAccessToken({
+        userId,
+        roleId: result.role.id,
+        roleName: result.role.name,
+        sessionId,
+      });
+
+      return { accessToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw RoleAlreadyAssignedException();
+      }
+      throw error;
+    }
+  }
+
+  getAuthorizationUrl(payload: {
+    userAgent: string;
+    ip: string;
+  }): GetAuthorizationUrlResType {
+    const { userAgent, ip } = payload;
+
+    const scopes = [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ];
+
+    const state = Buffer.from(JSON.stringify({ userAgent, ip })).toString(
+      'base64url',
+    );
+
+    const authorizationUrl = this.oauth2Client.generateAuthUrl({
+      // 'online' (default) or 'offline' (gets refresh_token)
+      access_type: 'offline',
+      /** Pass in the scopes array defined above.
+       * Alternatively, if only one scope is needed, you can pass a scope URL as a string */
+      scope: scopes,
+      // Enable incremental authorization. Recommended as a best practice.
+      include_granted_scopes: true,
+      // Include the state parameter to reduce the risk of CSRF attacks.
+      state: state,
+    });
+
+    return { url: authorizationUrl };
+  }
+
+  async googleCallback(payload: { code: string; state: string }): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const { code } = payload;
+
+    let userAgent = 'Unknown';
+    let ip = 'Unknown';
+
+    try {
+      const clientInfor = JSON.parse(
+        Buffer.from(payload.state, 'base64url').toString(),
+      );
+
+      userAgent = clientInfor.userAgent;
+      ip = clientInfor.ip;
+    } catch (error) {
+      this.logger.error('Error parsing client information', error);
+    }
+
+    // Lấy token từ Google
+    const { tokens } = await this.oauth2Client.getToken(code as string);
+    this.oauth2Client.setCredentials(tokens);
+
+    const { data } = await this.oauth2Client.request<GoogleUserInfo>({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'GET',
+    });
+
+    if (!data.email) {
+      throw EmailNotFoundException();
+    }
+
+    let user = await this.authRepository.findUserByEmailIncludeRoles(
+      data.email as string,
+    );
+
+    // Nếu user không tồn tại thì tạo mới user
+    if (!user) {
+      // Tạo user mới
+      user = await this.authRepository.createUserAndRegisterGoogle({
+        email: data.email as string,
+        fullName: data.name as string,
+        roleId: await this.sharedRoleRepository.getClientRoleId(),
+      });
+
+      // Tạo oauth account
+      await this.authRepository.createOauthAccount({
+        userId: user.id,
+        provider: OauthProvider.GOOGLE,
+        providerUserId: data.id as string,
+      });
+    }
+
+    if (user.isBanned) {
+      this.logger.warn(
+        `Banned user attempted to login via Google: ${data.email}`,
+      );
+      throw UserBannedException();
+    }
+
+    const primaryRole = user.userRoles[0]?.role;
+    if (!primaryRole) {
+      throw RoleNotFoundException();
+    }
+
+    const { accessToken, refreshToken } =
+      await this.generateAccessAndRefreshTokens({
+        userId: user.id,
+        roleId: primaryRole.id,
+        roleName: primaryRole.name,
+        userAgent: userAgent,
+        ipAddress: ip,
+      });
+
+    return { accessToken, refreshToken };
   }
 }

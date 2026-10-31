@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { ManageForumMessage } from "../message/manage-forum.message";
+import { PaginationSchema } from "./forum-post.model";
+import { MessageResSchema, type MessageResType } from "./response.model";
 
 export const ForumCategorySchema = z.object({
   id: z.number(),
@@ -8,19 +10,123 @@ export const ForumCategorySchema = z.object({
     .trim()
     .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
     .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG),
+  slug: z.string(),
   description: z
     .string()
     .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)
     .nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  postCount: z.number(),
 });
 
-export const ForumCategoryListResponseSchema = z.object({
-  data: z.array(ForumCategorySchema),
+// Schema response khi lấy danh sách categories
+export const ForumCategoryListResponseSchema = z.array(ForumCategorySchema);
+
+// Schema response khi lấy chi tiết category
+export const ForumCategoryDetailResponseSchema = ForumCategorySchema;
+
+// Schema response khi lấy top categories
+export const ForumCategoryTopListResponseSchema = z.array(ForumCategorySchema);
+
+// Schema response khi lấy top người dùng hoạt động nhiều nhất
+export const ForumTopActiveUserSchema = z.object({
+  id: z.number(),
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  postCount: z.number(),
+  commentCount: z.number(),
 });
+
+export const ForumTopActiveUserListResponseSchema = z.array(
+  ForumTopActiveUserSchema,
+);
 
 export type ForumCategoryType = z.infer<typeof ForumCategorySchema>;
 export type ForumCategoryListResponseType = z.infer<
   typeof ForumCategoryListResponseSchema
 >;
+export type ForumCategoryDetailResponseType = z.infer<
+  typeof ForumCategoryDetailResponseSchema
+>;
+export type ForumCategoryTopListResponseType = z.infer<
+  typeof ForumCategoryTopListResponseSchema
+>;
+export type ForumTopActiveUserType = z.infer<typeof ForumTopActiveUserSchema>;
+export type ForumTopActiveUserListResponseType = z.infer<
+  typeof ForumTopActiveUserListResponseSchema
+>;
+
+// --- Admin: list + search theo tên ---
+
+export const ForumAdminCategoryFilterSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).default(10),
+  search: z.string().optional(),
+  deleted: z.enum(["true", "false"]).optional(),
+  sortBy: z.enum(["id", "name", "createdAt"]).optional().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
+export const ForumAdminCategorySchema = ForumCategorySchema.extend({
+  deletedAt: z.coerce.date().nullable(),
+});
+
+export const ForumAdminCategoryListResponseSchema = z.object({
+  categories: z.array(ForumAdminCategorySchema),
+  pagination: PaginationSchema,
+});
+
+export type ForumAdminCategoryType = z.infer<
+  typeof ForumAdminCategorySchema
+>;
+export type ForumAdminCategoryFilterType = z.infer<
+  typeof ForumAdminCategoryFilterSchema
+>;
+export type ForumAdminCategoryListResponseType = z.infer<
+  typeof ForumAdminCategoryListResponseSchema
+>;
+
+// --- Admin: Create Category ---
+
+export const CreateForumCategoryBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
+    .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG),
+  description: z
+    .string()
+    .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)
+    .optional()
+    .nullable(),
+});
+
+export type CreateForumCategoryBodyType = z.infer<
+  typeof CreateForumCategoryBodySchema
+>;
+
+// --- Admin: Update Category ---
+
+export const UpdateForumCategoryBodySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, ManageForumMessage.FORUM_CATEGORY_NAME_REQUIRED)
+    .max(100, ManageForumMessage.FORUM_CATEGORY_NAME_TOO_LONG)
+    .optional(),
+  description: z
+    .string()
+    .max(500, ManageForumMessage.FORUM_CATEGORY_DESCRIPTION_TOO_LONG)
+    .optional()
+    .nullable(),
+});
+
+export type UpdateForumCategoryBodyType = z.infer<
+  typeof UpdateForumCategoryBodySchema
+>;
+
+// --- Admin: Delete Category ---
+
+export const DeleteForumCategoryResponseSchema = MessageResSchema;
+export type DeleteForumCategoryResponseType = MessageResType;

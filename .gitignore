@@ -36,3 +36,14 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Business rules (local only)
+business-rules/
+
+backup/
+# Drawio temp files
+.~*.drawio*
+.*.drawio*
+*.drawio.bkp
+*.drawio.dtmp
+sample/

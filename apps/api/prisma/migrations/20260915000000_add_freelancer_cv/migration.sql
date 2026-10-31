@@ -1,0 +1,4 @@
+ALTER TABLE "FreelancerProfile"
+  ADD COLUMN "cvUrl" VARCHAR(500),
+  ADD COLUMN "cvFileName" VARCHAR(255),
+  ADD COLUMN "cvPublicId" VARCHAR(255);

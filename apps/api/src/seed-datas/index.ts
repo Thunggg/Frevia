@@ -1,32 +1,53 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
-import { RoleName } from '@shared/types';
+import { RoleName, type RoleNameType } from '@shared/types';
 import 'dotenv/config';
 import { HashingService } from '../shared/services/hashing.service';
 
-// Kiểm tra xem có database url ko
 if (!process.env.DIRECT_URL) {
-  console.log('Cannot file DB URL');
+  console.log('Cannot find DB URL');
   process.exit(1);
 }
 
-// Khỏi tạo service và hash
+function requireSeedCredential(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required seed credential: ${name}`);
+  }
+  return value;
+}
+
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
 });
 
 const hashingService = new HashingService();
 
+type SeededAccountRole = RoleNameType;
+
 const DEFAULT_EMAIL_AND_PASSWORD: Record<
-  keyof typeof RoleName,
+  SeededAccountRole,
   {
     email: string;
     password: string;
   }
 > = {
-  ADMIN: { email: 'admin@gmail.com', password: '123456' },
-  FREELANCER: { email: 'freelancer@gmail.com', password: '123456' },
-  CLIENT: { email: 'client@gmail.com', password: '123456' },
+  [RoleName.ADMIN]: {
+    email: requireSeedCredential('SEED_ADMIN_EMAIL'),
+    password: requireSeedCredential('SEED_ADMIN_PASSWORD'),
+  },
+  [RoleName.FREELANCER]: {
+    email: requireSeedCredential('SEED_FREELANCER_EMAIL'),
+    password: requireSeedCredential('SEED_FREELANCER_PASSWORD'),
+  },
+  [RoleName.CLIENT]: {
+    email: requireSeedCredential('SEED_CLIENT_EMAIL'),
+    password: requireSeedCredential('SEED_CLIENT_PASSWORD'),
+  },
+  [RoleName.EXPERT]: {
+    email: requireSeedCredential('SEED_EXPERT_EMAIL'),
+    password: requireSeedCredential('SEED_EXPERT_PASSWORD'),
+  },
 };
 
 async function createAccountRole({
@@ -34,21 +55,34 @@ async function createAccountRole({
   role,
 }: {
   email: string;
-  role: keyof typeof RoleName;
+  role: SeededAccountRole;
 }) {
   const accountIsExist = await prisma.user.findFirst({
     where: {
       email,
     },
+    include: {
+      profile: {
+        include: {
+          freelancerProfile: true,
+        },
+      },
+    },
   });
 
-  if (!accountIsExist) {
-    const accountRole = await prisma.role.findFirst({
-      where: {
-        name: role as any,
-      },
-    });
+  const accountRole = await prisma.role.findFirst({
+    where: {
+      name: role,
+      deletedAt: null,
+    },
+  });
 
+  if (!accountRole) {
+    console.log(`Role not found: ${role}`);
+    return;
+  }
+
+  if (!accountIsExist) {
     const newAccount = await prisma.user.create({
       data: {
         email,
@@ -58,7 +92,21 @@ async function createAccountRole({
         isBanned: false,
         userRoles: {
           create: {
-            roleId: accountRole!.id,
+            roleId: accountRole.id,
+            isPrimary: true,
+          },
+        },
+        profile: {
+          create: {
+            displayName: email.split('@')[0],
+            freelancerProfile:
+              role === RoleName.FREELANCER
+                ? {
+                    create: {
+                      title: 'Senior UI/UX Designer',
+                    },
+                  }
+                : undefined,
           },
         },
         createdAt: new Date(),
@@ -68,37 +116,76 @@ async function createAccountRole({
 
     console.log('New account created: ', newAccount);
   } else {
-    console.log('Account already exists: ', accountIsExist);
+    console.log('Account already exists: ', accountIsExist.email);
+    if (!accountIsExist.profile) {
+      const newProfile = await prisma.profile.create({
+        data: {
+          userId: accountIsExist.id,
+          displayName: email.split('@')[0],
+          freelancerProfile:
+            role === RoleName.FREELANCER
+              ? {
+                  create: {
+                    title: 'Senior UI/UX Designer',
+                  },
+                }
+              : undefined,
+        },
+      });
+      console.log('Created missing profile for user: ', newProfile);
+    } else if (
+      role === RoleName.FREELANCER &&
+      !accountIsExist.profile.freelancerProfile
+    ) {
+      const newFreelancerProfile = await prisma.freelancerProfile.create({
+        data: {
+          profileId: accountIsExist.profile.id,
+          title: 'Senior UI/UX Designer',
+        },
+      });
+      console.log('Created missing freelancer profile: ', newFreelancerProfile);
+    }
   }
 }
 
 async function main() {
-  // Khởi tạo bảng roles
   const newRoles = await prisma.role.createMany({
     data: [
       { name: RoleName.ADMIN, description: 'Administrator role' },
       { name: RoleName.FREELANCER, description: 'Seller role' },
       { name: RoleName.CLIENT, description: 'Client role' },
+      { name: RoleName.EXPERT, description: 'Expert role' },
     ],
     skipDuplicates: true,
   });
   console.log('New roles created: ', newRoles);
 
-  // Kiểm tra xem đã có tài khoản admin chưa
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.ADMIN.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.ADMIN].email,
     role: RoleName.ADMIN,
   });
 
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.FREELANCER.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.FREELANCER].email,
     role: RoleName.FREELANCER,
   });
 
   await createAccountRole({
-    email: DEFAULT_EMAIL_AND_PASSWORD.CLIENT.email,
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.CLIENT].email,
     role: RoleName.CLIENT,
+  });
+
+  await createAccountRole({
+    email: DEFAULT_EMAIL_AND_PASSWORD[RoleName.EXPERT].email,
+    role: RoleName.EXPERT,
   });
 }
 
-main();
+main()
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

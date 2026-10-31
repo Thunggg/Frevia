@@ -1,0 +1,31 @@
+meta {
+  name: Create Role
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/roles
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Super admin",
+    "description": "djskadjsakldsa role"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

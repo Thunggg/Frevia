@@ -9,10 +9,80 @@ import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
 import { ApiResponseInterceptor } from './shared/interceptors/api-response.interceptor';
 import { MyZodValidationPipe } from './shared/pipes/custom-zod-validation.pipes';
 import { SharedModule } from './shared/shared.module';
-import { ForumModule } from './routes/forums/forums.module';
+import { ForumModule } from './routes/forums/forums-post/forums.module';
+import { ForumLikeModule } from './routes/forums/forums-like/forums-like.module';
+import { BrowseJobModule } from './routes/browse-job/browse-job.module';
+import { ForumCommentModule } from './routes/forums/forums-comment/forums-comment.module';
+import { ForumReportModule } from './routes/forums/forums-reports/forums-reports.module';
+import { ProfilesModule } from './routes/profiles/profile.module';
+import { PortfoliosModule } from './routes/portfolios/portfolio.module';
+import { ManageJobModule } from './routes/manage-job/manage-job.module';
+import { ForumAdminModule } from './routes/forums/forums-admin/forums-admin.module';
+import { RolesModule } from './routes/roles/roles.module';
+import { PermissionsModule } from './routes/permissions/permissions.module';
+import { SessionsModule } from './routes/sessions/sessions.module';
+import { ConversationModule } from './routes/conversations/conversations.module';
+import { ContractModule } from './routes/contract/contract.module';
+import { SharedFileModule } from './routes/shared-file/shared-file.module';
+import { MilestoneModule } from './routes/milestone/milestone.module';
+import { MilestoneFileModule } from './routes/milestone-file/milestone-file.module';
+import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
+import { AccountProfileModule } from './routes/account-profile/account-profile.module';
+import { SavedSearchModule } from './routes/saved-search/saved-search.module';
+import { NotificationModule } from './routes/notifications/notification.module';
+import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
+import { ProposalModule } from './routes/proposals/proposal.module';
+import { UsersModule } from './routes/users/users.module';
+import { SkillsAdminModule } from './routes/skills-admin/skills-admin.module';
+import { JobCategoriesAdminModule } from './routes/job-categories-admin/job-categories-admin.module';
+import { JobCategoriesModule } from './routes/job-categories/job-categories.module';
+import { ReviewModule } from './routes/reviews/review.module';
+import { BannersModule } from './routes/banners/banners.module';
+import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
+import { DisputeModule } from './routes/disputes/dispute.module';
+import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
+import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
+import { PaymentModule } from './routes/payments/payment.module';
 
 @Module({
-  imports: [SharedModule, AuthModule, ForumModule],
+  imports: [
+    SharedModule,
+    AuthModule,
+    ForumModule,
+    ForumLikeModule,
+    ForumCommentModule,
+    ForumReportModule,
+    ProfilesModule,
+    PortfoliosModule,
+    BrowseJobModule,
+    ManageJobModule,
+    ForumAdminModule,
+    RolesModule,
+    PermissionsModule,
+    SessionsModule,
+    ConversationModule,
+    ContractModule,
+    SharedFileModule,
+    MilestoneModule,
+    MilestoneFileModule,
+    MilestoneSubmissionModule,
+    AccountProfileModule,
+    SavedSearchModule,
+    NotificationModule,
+    IdentityVerificationsAdminModule,
+    ProposalModule,
+    UsersModule,
+    SkillsAdminModule,
+    JobCategoriesAdminModule,
+    JobCategoriesModule,
+    ReviewModule,
+    BannersModule,
+    BannersAdminModule,
+    DisputeModule,
+    ProfileRevisionModule,
+    ExpertProfileModule,
+    PaymentModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

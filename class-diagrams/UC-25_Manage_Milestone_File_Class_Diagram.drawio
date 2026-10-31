@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="719" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ==================== COLUMN 1: ROUTES (x=60, w=580) ==================== -->
+    <mxCell id="mf_route" value="&lt;&lt;route&gt;&gt;&#xa;MilestoneFileRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="60" y="260" width="580" height="158" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_route_r0" value="+GET /contracts/:contractId/milestones/:milestoneId/files (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_route" vertex="1">
+      <mxGeometry y="56" width="580" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_route_r1" value="+POST /contracts/:contractId/milestones/:milestoneId/files (AuthGuard, PermissionGuard, FileInterceptor)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_route" vertex="1">
+      <mxGeometry y="90" width="580" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_route_r2" value="+DELETE /contracts/:contractId/milestones/:milestoneId/files/:fileId (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_route" vertex="1">
+      <mxGeometry y="124" width="580" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 2: CONTROLLER & GUARDS (x=720, w=520) ==================== -->
+    <mxCell id="mf_ctrl" value="MilestoneFileController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="60" width="520" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_ctrl_a0" value="-milestoneFileService: MilestoneFileService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_ctrl" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_ctrl" vertex="1">
+      <mxGeometry y="62" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_ctrl_m0" value="+getMilestoneFiles(userId, roleName, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_ctrl" vertex="1">
+      <mxGeometry y="70" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_ctrl_m1" value="+uploadMilestoneFile(userId, contractId, milestoneId, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_ctrl" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_ctrl_m2" value="+deleteMilestoneFile(userId, contractId, milestoneId, fileId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_ctrl" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="260" width="520" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_a0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_a1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_a2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="92" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="122" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gAuth" vertex="1">
+      <mxGeometry y="160" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="490" width="520" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gPerm_a0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gPerm" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gPerm_a1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gPerm" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_gPerm" vertex="1">
+      <mxGeometry y="92" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_gPerm_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_gPerm" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 3: DTOS & TYPES (x=1320, w=420) ==================== -->
+    <mxCell id="mf_dtoUpload" value="&lt;&lt;dto&gt;&gt;&#xa;UploadMilestoneFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="60" width="420" height="222" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_r1" value="+milestoneId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="112" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="146" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_r4" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="180" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoUpload_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoUpload" vertex="1">
+      <mxGeometry y="214" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_dtoGet" value="&lt;&lt;dto&gt;&gt;&#xa;GetMilestoneFilesResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="312" width="420" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoGet_r0" value="+files: MilestoneFileType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoGet" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoGet_r1" value="+length: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoGet" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoGet_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoGet" vertex="1">
+      <mxGeometry y="112" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_dtoDelete" value="&lt;&lt;dto&gt;&gt;&#xa;DeleteMilestoneFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="462" width="420" height="154" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoDelete_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoDelete" vertex="1">
+      <mxGeometry y="44" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoDelete_r1" value="+milestoneId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoDelete" vertex="1">
+      <mxGeometry y="78" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoDelete_r2" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoDelete" vertex="1">
+      <mxGeometry y="112" width="420" height="34" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_dtoDelete_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_dtoDelete" vertex="1">
+      <mxGeometry y="146" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_typeMilestoneFile" value="&lt;&lt;type&gt;&gt;&#xa;MilestoneFileType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="646" width="420" height="250" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="44" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r1" value="+milestoneId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="72" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="100" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="128" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="156" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="184" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="212" width="420" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_typeMilestoneFile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_typeMilestoneFile" vertex="1">
+      <mxGeometry y="240" width="420" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 4: SERVICES & REPOSITORY (x=1820, w=520) ==================== -->
+    <mxCell id="mf_svc" value="MilestoneFileService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1820" y="60" width="520" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_a0" value="-milestoneFileRepository: MilestoneFileRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_a1" value="-cloudinaryService: CloudinaryService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="92" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_m0" value="+getMilestoneFiles(userId, roleName, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_m1" value="+uploadMilestoneFile(userId, contractId, milestoneId, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_svc_m2" value="+deleteMilestoneFile(userId, contractId, milestoneId, fileId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_svc" vertex="1">
+      <mxGeometry y="160" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_uCloudinary" value="&lt;&lt;utility&gt;&gt;&#xa;CloudinaryService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1820" y="280" width="520" height="152" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_uCloudinary_m0" value="+isConfigured(): boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_uCloudinary" vertex="1">
+      <mxGeometry y="44" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_uCloudinary_m1" value="+uploadFile(file: Express.Multer.File, folder?: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_uCloudinary" vertex="1">
+      <mxGeometry y="74" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_uCloudinary_m2" value="+deleteFile(publicId: string): Promise&lt;any&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_uCloudinary" vertex="1">
+      <mxGeometry y="104" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_uCloudinary_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_uCloudinary" vertex="1">
+      <mxGeometry y="134" width="520" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_repo" value="MilestoneFileRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1820" y="462" width="520" height="230" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="62" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m0" value="+findContractById(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="70" width="520" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m1" value="+findMilestoneById(milestoneId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="96" width="520" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m2" value="+findFileById(fileId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="122" width="520" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m3" value="+getMilestoneFiles(milestoneId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="148" width="520" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m4" value="+createMilestoneFile(data: { milestoneId, uploaderId, fileUrl, publicId, fileName? })" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="174" width="520" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_repo_m5" value="+softDeleteFile(fileId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_repo" vertex="1">
+      <mxGeometry y="200" width="520" height="26" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 5: DATABASE SCHEMAS (x=2420, w=320) ==================== -->
+    <mxCell id="mf_schemaFile" value="&lt;&lt;schema&gt;&gt;&#xa;MilestoneFile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2420" y="60" width="320" height="274" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r1" value="+milestoneId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r2" value="+uploaderId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="154" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="182" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="210" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_r7" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="238" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaFile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaFile" vertex="1">
+      <mxGeometry y="266" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_schemaMilestone" value="&lt;&lt;schema&gt;&gt;&#xa;Milestone" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2420" y="364" width="320" height="162" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaMilestone_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaMilestone" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaMilestone_r1" value="+contractId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaMilestone" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaMilestone_r2" value="+title: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaMilestone" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaMilestone_r3" value="+status: MilestoneStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaMilestone" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaMilestone_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaMilestone" vertex="1">
+      <mxGeometry y="154" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_schemaContract" value="&lt;&lt;schema&gt;&gt;&#xa;Contract" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2420" y="556" width="320" height="162" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaContract_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaContract" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaContract_r1" value="+clientId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaContract" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaContract_r2" value="+freelancerId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaContract" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaContract_r3" value="+status: ContractStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaContract" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaContract_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaContract" vertex="1">
+      <mxGeometry y="154" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_schemaUser" value="&lt;&lt;schema&gt;&gt;&#xa;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2420" y="748" width="320" height="162" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaUser_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaUser" vertex="1">
+      <mxGeometry y="42" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaUser_r1" value="+email: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaUser" vertex="1">
+      <mxGeometry y="70" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaUser_r2" value="+roleId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaUser" vertex="1">
+      <mxGeometry y="98" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaUser_r3" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaUser" vertex="1">
+      <mxGeometry y="126" width="320" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="mf_schemaUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="mf_schemaUser" vertex="1">
+      <mxGeometry y="154" width="320" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== EDGES / RELATIONSHIPS ==================== -->
+    <!-- Routes -> Controller & Guards -->
+    <mxCell id="mf_e_route_ctrl" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="mf_route" target="mf_ctrl" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="680" y="300" />
+          <mxPoint x="680" y="140" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_route_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.45;entryDx=0;entryDy=0;" parent="1" source="mf_route" target="mf_gAuth" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="680" y="339" />
+          <mxPoint x="680" y="345" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_route_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="mf_route" target="mf_gPerm" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="680" y="378" />
+          <mxPoint x="680" y="555" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Controller -> Service (calls over top) -->
+    <mxCell id="mf_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mf_ctrl" target="mf_svc" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="980" y="20" />
+          <mxPoint x="2080" y="20" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Controller & Service -> DTOs & Types -->
+    <mxCell id="mf_e_ctrl_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.31;entryDx=0;entryDy=0;" parent="1" source="mf_ctrl" target="mf_dtoUpload" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_e_svc_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.36;exitDx=0;exitDy=0;entryX=1;entryY=0.31;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_dtoUpload" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_e_ctrl_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_ctrl" target="mf_dtoGet" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1280" y="156" />
+          <mxPoint x="1280" y="348" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_svc_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.55;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_dtoGet" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1785" y="165" />
+          <mxPoint x="1785" y="348" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_ctrl_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_ctrl" target="mf_dtoDelete" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1290" y="204" />
+          <mxPoint x="1290" y="508" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_svc_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_dtoDelete" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1795" y="212" />
+          <mxPoint x="1795" y="508" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_svc_typeMilestoneFile" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.95;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_typeMilestoneFile" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1805" y="241" />
+          <mxPoint x="1805" y="721" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Service -> CloudinaryService (calls straight vertical) -->
+    <mxCell id="mf_e_svc_cloudinary" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.4;exitY=1;exitDx=0;exitDy=0;entryX=0.4;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_uCloudinary" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Service -> Repository (calls along left side corridor x=1765) -->
+    <mxCell id="mf_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="mf_svc" target="mf_repo" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1765" y="193" />
+          <mxPoint x="1765" y="531" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Repository -> Schemas (maps to along right side corridor) -->
+    <mxCell id="mf_e_repo_file" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" parent="1" source="mf_repo" target="mf_schemaFile" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2375" y="508" />
+          <mxPoint x="2375" y="252" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="mf_e_repo_milestone" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="mf_repo" target="mf_schemaMilestone" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2395" y="565" />
+          <mxPoint x="2395" y="445" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Schemas Relationships (1) -->
+    <mxCell id="mf_rel_file_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mf_schemaFile" target="mf_schemaMilestone" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_rel_milestone_contract" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mf_schemaMilestone" target="mf_schemaContract" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="mf_rel_contract_user" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mf_schemaContract" target="mf_schemaUser" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

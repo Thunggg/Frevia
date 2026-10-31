@@ -1,0 +1,19 @@
+meta {
+  name: Interview Proposal
+  type: http
+  seq: 11
+}
+
+patch {
+  url: {{baseUrl}}/proposals/{{proposalId}}/interview
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  proposalId: 1
+}

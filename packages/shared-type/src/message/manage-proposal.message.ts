@@ -1,0 +1,28 @@
+export const ManageProposalMessage = {
+  COVER_LETTER_REQUIRED: "Error.ProposalCoverLetterRequired",
+  COVER_LETTER_TOO_LONG: "Error.ProposalCoverLetterTooLong",
+  BID_AMOUNT_REQUIRED: "Error.ProposalBidAmountRequired",
+  BID_AMOUNT_POSITIVE: "Error.ProposalBidAmountMustBePositive",
+  DELIVERY_DAYS_REQUIRED: "Error.ProposalDeliveryDaysRequired",
+  DELIVERY_DAYS_POSITIVE: "Error.ProposalDeliveryDaysMustBePositive",
+  DRAFT_CONTENT_REQUIRED: "Error.ProposalDraftContentRequired",
+  PROPOSAL_NOT_FOUND: "Error.ProposalNotFound",
+  PROPOSAL_NOT_DRAFT: "Error.ProposalNotDraft",
+  // Đề xuất không còn ở trạng thái khách hàng có thể xử lý (SUBMITTED/INTERVIEWING).
+  PROPOSAL_NOT_SUBMITTED: "Error.ProposalNotSubmitted",
+  PROPOSAL_EXPIRED: "Error.ProposalExpired",
+  PROPOSAL_INCOMPLETE: "Error.ProposalIncomplete",
+  JOB_NOT_FOUND: "Error.ProposalJobNotFound",
+  JOB_UNAVAILABLE: "Error.ProposalJobUnavailable",
+  JOB_EXPIRED: "Error.ProposalJobExpired",
+  // Job đã tuyển đủ số vị trí nên không nhận thêm đề xuất.
+  JOB_POSITIONS_FILLED: "Error.ProposalJobPositionsFilled",
+  CANNOT_PROPOSE_OWN_JOB: "Error.CannotProposeOwnJob",
+  ACTIVE_PROPOSAL_EXISTS: "Error.ActiveProposalAlreadyExists",
+  FREELANCER_ONLY: "Error.ProposalFreelancerOnly",
+  CLIENT_ONLY: "Error.ProposalClientOnly",
+  FORBIDDEN: "Error.ProposalForbidden",
+  FAILED_TO_CREATE: "Error.FailedToCreateProposal",
+  FAILED_TO_UPDATE: "Error.FailedToUpdateProposal",
+  FAILED_TO_LOAD: "Error.FailedToLoadProposal",
+} as const;

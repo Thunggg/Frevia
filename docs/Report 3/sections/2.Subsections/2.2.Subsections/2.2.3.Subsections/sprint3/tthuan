@@ -1,0 +1,305 @@
+\paragraph{Manage User}
+
+% =================================================================
+\subparagraph{UC-17.1 View User List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.1 View User List} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin navigates to the \texttt{/admin/users} page or refreshes the user list view.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin retrieves a paginated, filterable, and sortable list of all active (non-soft-deleted) users in the system. The list displays user ID, email, display name, creation date, ban status, and assigned roles.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{GET} method on the \texttt{/api/users} path.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} A paginated list of active users is returned and rendered in the \texttt{UsersTable} component. \newline \textbf{POST-2} The filter bar (\texttt{UsersFilterBar}) reflects the currently applied search, role filter, sort column, and sort order.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Retrieve User List} \newline 1. The Admin opens the \texttt{/admin/users} page. \newline 2. The frontend sends \texttt{GET /api/users} with default query parameters: \texttt{page=1}, \texttt{limit=10}, \texttt{sortBy=id}, \texttt{sortOrder=desc}. \newline 3. The backend verifies the access token via the global \texttt{AuthGuard} and checks permission via the global \texttt{PermissionGuard}. \newline 4. The backend queries the database for users where \texttt{deletedAt = null}, ordered by the requested sort column and direction. \newline 5. The backend returns a response containing \texttt{users} (array of user objects with id, email, isBanned, createdAt, updatedAt, displayName, avatarUrl, roles) and \texttt{pagination} (page, limit, total, totalPages). \newline 6. The frontend renders the user list in \texttt{UsersTable} and the pagination controls.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Search Users} \newline 1. The Admin enters a search term in the search bar. \newline 2. The frontend sends \texttt{GET /api/users?search=\{term\}}. \newline 3. The backend performs a case-insensitive search on the \texttt{email} and \texttt{displayName} fields of active users. \newline 4. The filtered, paginated result set is returned and rendered. \newline Return to step 6. \newline \textbf{A.2 Filter by Role} \newline 1. The Admin selects a role from the role filter dropdown (CLIENT, FREELANCER, ADMIN, CUSTOM, or a custom role name). \newline 2. The frontend sends \texttt{GET /api/users?role=\{roleName\}}. \newline 3. The backend filters active users whose assigned roles include the specified role name (case-insensitive). Selecting \texttt{all} or \texttt{ALL} applies no role filter. \newline 4. The filtered result is returned and rendered. \newline Return to step 6. \newline \textbf{A.3 Change Sort Order} \newline 1. The Admin clicks a column header to sort. \newline 2. The frontend sends \texttt{GET /api/users?sortBy=\{column\}&sortOrder=\{asc|desc\}}. \newline 3. The backend re-queries with the new sort parameters. \newline 4. The re-sorted result is returned and rendered. \newline Return to step 6. \newline \textbf{A.4 Navigate Pages} \newline 1. The Admin clicks a pagination control (next, previous, or page number). \newline 2. The frontend sends \texttt{GET /api/users?page=\{n\}&limit=\{limit\}}. \newline 3. The backend returns the requested page of results. \newline 4. The new page is rendered.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Server Error} \newline 1. The backend encounters an unexpected error while querying the database. \newline 2. The backend returns an error response with code \texttt{Error.FailedToGetUsers} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-USER-01:} Only active users (\texttt{deletedAt = null}) are included in the list. Soft-deleted users are excluded. \newline \textbf{BR-USER-02:} The default sort order is by \texttt{id} in descending order (newest users first). \newline \textbf{BR-USER-03:} The maximum page size is 100; if \texttt{limit} exceeds 100, it is capped at 100. \newline \textbf{BR-USER-04:} Search on \texttt{email} and \texttt{displayName} is case-insensitive. \newline \textbf{BR-USER-05:} Role filtering is case-insensitive and supports both built-in role names and custom role names.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend route: \texttt{/admin/users}. Components: \texttt{UsersTable}, \texttt{UsersFilterBar}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin has the necessary permission records in the database to access this endpoint. The database is available and responsive.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.2 View User Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.2 View User Detail} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin selects a user row from the user list or navigates directly to \texttt{/admin/users/[id]}.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin retrieves the full account information for a specific user, including general profile data, assigned roles with permissions, social links, activity statistics, and role-specific profile tabs (Client Profile, Freelancer Profile, Custom Role Profiles).} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{GET} method on the \texttt{/api/users/:id} path.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The user's general info is displayed in \texttt{UserGeneralInfo} and \texttt{UserDetailHeader}. \newline \textbf{POST-2} Role-specific tabs (\texttt{UserRoleTabs}) are rendered showing Client Profile, Freelancer Profile, and Admin \& Custom Roles sections.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Retrieve User Detail} \newline 1. The Admin navigates to \texttt{/admin/users/[id]} for the target user. \newline 2. The frontend sends \texttt{GET /api/users/:id}. \newline 3. The backend verifies the access token and permission. \newline 4. The backend retrieves the user record including: general fields (id, email, isBanned, createdAt, updatedAt, displayName, avatarUrl, coverUrl, bio, onlineStatus, availabilityStatus, profileCompletionPercent), assigned roles (with id, name, description, isPrimary), social links, activity statistics (jobsPosted, contractsAsClient, contractsAsFreelancer, proposals, reviewsReceived, idVerificationDocuments), client profile (if present), freelancer profile (if present), and custom role profiles. \newline 5. The backend returns the complete user detail object. \newline 6. The frontend renders \texttt{UserDetailHeader}, \texttt{UserGeneralInfo}, and \texttt{UserRoleTabs} with each available tab populated from the response data.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 View Client Profile Tab} \newline 1. The Admin clicks the ``Client Profile'' tab. \newline 2. The frontend displays the \texttt{clientProfile} data (companyName, companyDescription, website, createdAt, updatedAt) from the already-retrieved response. \newline \textbf{A.2 View Freelancer Profile Tab} \newline 1. The Admin clicks the ``Freelancer Profile'' tab. \newline 2. The frontend displays the \texttt{freelancerProfile} data (title, education, certifications, languages, idVerified, skills with proficiency levels, portfolioItems) from the already-retrieved response. \newline \textbf{A.3 View Admin \& Custom Roles Tab} \newline 1. The Admin clicks the ``Admin \& Custom Roles'' tab. \newline 2. The frontend displays the \texttt{customRoleProfiles} data (roleName, description, isPrimary, permissions list with name, path, method, module).} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: User Not Found} \newline 1. The backend cannot find a user with the specified ID (or the user is soft-deleted). \newline 2. The backend returns an error response with code \texttt{Error.UserNotFound} and HTTP status 404. \newline 3. The use case ends. \newline \textbf{EX-02: Server Error} \newline 1. The backend encounters an unexpected error while retrieving the user detail. \newline 2. The backend returns an error response with code \texttt{Error.FailedToGetUser} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-USER-06:} The \texttt{clientProfile} and \texttt{freelancerProfile} fields may be \texttt{null} if the user does not have the corresponding role or has not yet created that profile. \newline \textbf{BR-USER-07:} The \texttt{customRoleProfiles} array contains only roles that are neither the built-in Client, Freelancer, nor Admin role. \newline \textbf{BR-USER-08:} Each role in the response includes an \texttt{isPrimary} flag indicating whether it is the user's primary role.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend route: \texttt{/admin/users/[id]}. Components: \texttt{UserDetailHeader}, \texttt{UserGeneralInfo}, \texttt{UserRoleTabs}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user ID is valid and corresponds to an existing, non-soft-deleted user. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.3 Create User}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.3 Create User} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin opens the ``Create User'' dialog (\texttt{CreateUserDialog}) from the user management page and submits the form.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin creates a new user account by providing a full name, email address, password, and selecting an initial role (Client, Freelancer, or a custom role). The system creates the user record, a profile with the display name, and assigns the selected primary role.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{POST} method on the \texttt{/api/users} path. \newline \textbf{PRE-3} The Admin has navigated to the \texttt{/admin/users} page.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} A new user record is created in the database with the provided email (lowercased), and a Profile record is created with \texttt{displayName} set to the provided full name. \newline \textbf{POST-2} A primary UserRole record linking the user to the selected role is created. \newline \textbf{POST-3} The new user's summary (id, email, displayName, roles) is returned and the user list is refreshed.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Create New User} \newline 1. The Admin clicks the ``Create User'' button on the user list page. \newline 2. The \texttt{CreateUserDialog} opens with fields: fullName, email, password, confirmPassword, and roleId (Select dropdown grouped by ``Built-in'' for Client/Freelancer and ``Custom roles'', excluding Admin). \newline 3. The Admin fills in all required fields and selects a role. \newline 4. The Admin submits the form. \newline 5. The frontend sends \texttt{POST /api/users} with body: \texttt{email} (lowercased, max 254 chars), \texttt{fullName} (required, max 100 chars), \texttt{password} (8--32 chars, must contain uppercase letter and number), \texttt{confirmPassword} (must match password), \texttt{roleId} (positive integer). \newline 6. The backend validates the input fields. \newline 7. The backend checks that the email is unique among non-deleted users. \newline 8. The backend verifies the specified role exists and is active. \newline 9. The backend verifies the role is not the Admin role. \newline 10. The backend creates a User record, a Profile record (\texttt{displayName = fullName}), and a primary UserRole record. \newline 11. The backend returns the new user's id, email, displayName, and roles. \newline 12. The frontend closes the dialog and refreshes the user list.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Email Already Exists} \newline 1. At step 7, the backend detects the email already exists among non-deleted users. \newline 2. The backend returns an error response with code \texttt{Error.EmailAlreadyExists} and HTTP status 409. \newline 3. The frontend displays an error message indicating the email is already in use. \newline 4. The Admin corrects the email and resubmits, returning to step 4. \newline \textbf{A.2 Role Not Found} \newline 1. At step 8, the backend cannot find the specified role or the role is inactive. \newline 2. The backend returns an error response with code \texttt{Error.CreateUserRoleNotFound} and HTTP status 404. \newline 3. The frontend displays an error message and the Admin selects a valid role. \newline Return to step 4. \newline \textbf{A.3 Attempt to Assign Admin Role} \newline 1. At step 9, the backend detects the selected role is the Admin role. \newline 2. The backend returns an error response with code \texttt{Error.CannotAssignAdminRole} and HTTP status 403. \newline 3. The frontend displays an error message indicating Admin role assignment is not permitted. \newline 4. The Admin selects a different role and resubmits, returning to step 4.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Password Mismatch} \newline 1. At step 6, the backend detects that \texttt{confirmPassword} does not match \texttt{password}. \newline 2. A validation error is returned. \newline 3. The use case ends (the form remains open for correction). \newline \textbf{EX-02: Invalid Password Format} \newline 1. At step 6, the backend detects the password does not meet the 8--32 character requirement or lacks an uppercase letter or number. \newline 2. A validation error is returned. \newline 3. The use case ends. \newline \textbf{EX-03: Server Error} \newline 1. The backend encounters an unexpected error during user creation. \newline 2. The backend returns an error response with code \texttt{Error.FailedToCreateUser} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-USER-09:} The email is automatically lowercased before storage and must be at most 254 characters. \newline \textbf{BR-USER-10:} Email uniqueness is checked among all non-soft-deleted users (\texttt{deletedAt = null}). \newline \textbf{BR-USER-11:} The password must be between 8 and 32 characters and must contain at least one uppercase letter and one number. \newline \textbf{BR-USER-12:} The Admin role cannot be assigned during user creation; only Client, Freelancer, or custom roles are permitted. \newline \textbf{BR-USER-13:} The selected role must exist in the role table and be active. \newline \textbf{BR-USER-14:} The assigned role is marked as the user's primary role (\texttt{isPrimary = true}).} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend component: \texttt{CreateUserDialog}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. A Profile record is created alongside the User record to store the display name.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one non-Admin role (Client, Freelancer, or a custom role) exists and is active in the system. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.4 Edit User}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.4 Edit User} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin opens the ``Edit User'' dialog (\texttt{EditUserDialog}) for a specific user and submits changes to the general account fields.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the general account information of an existing user, including email, full name (display name), and ban status. At least one field must be changed. The system validates the changes, updates the user and profile records, and returns the updated summary.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id} path. \newline \textbf{PRE-3} The target user exists and is not soft-deleted.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The user's email, display name, and/or ban status are updated in the database. \newline \textbf{POST-2} If \texttt{fullName} is provided, the Profile record's \texttt{displayName} is upserted. \newline \textbf{POST-3} The updated user summary (id, email, displayName, isBanned, roles) is returned.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Update User General Info} \newline 1. The Admin clicks the ``Edit'' action on a user row or from the user detail page. \newline 2. The \texttt{EditUserDialog} opens, pre-filled with the user's current email, fullName, and isBanned status. \newline 3. The Admin modifies one or more fields and submits the form. \newline 4. The frontend sends \texttt{PATCH /api/users/:id} with body containing at least one of: \texttt{email} (optional, lowercase), \texttt{fullName} (optional, nullable), \texttt{isBanned} (optional boolean). \newline 5. The backend verifies the access token and permission. \newline 6. The backend finds the user by ID (must not be soft-deleted). \newline 7. The backend validates that at least one updatable field is provided. \newline 8. If \texttt{email} is provided, the backend checks uniqueness among non-deleted users excluding the target user. \newline 9. If \texttt{isBanned = true} and the target user ID matches the actor's ID, the backend rejects the request. \newline 10. The backend updates the User record fields. \newline 11. If \texttt{fullName} is provided, the backend upserts the Profile record with \texttt{displayName = fullName}. \newline 12. The backend returns the updated user summary. \newline 13. The frontend closes the dialog and refreshes the user data.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Ban Status Toggled} \newline 1. At step 3, the Admin toggles the isBanned switch. \newline 2. The frontend includes \texttt{isBanned: true} or \texttt{isBanned: false} in the request body. \newline 3. The backend updates the \texttt{isBanned} field on the User record. \newline Return to step 12. \newline \textbf{A.2 Email Changed} \newline 1. At step 3, the Admin modifies the email field. \newline 2. At step 8, the backend confirms the new email is unique. \newline 3. The backend lowercases and updates the email field. \newline Return to step 10. \newline \textbf{A.3 Display Name Changed} \newline 1. At step 3, the Admin modifies the fullName field. \newline 2. At step 11, the backend upserts the Profile record with the new displayName. \newline Return to step 12.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Attempt to Ban Self} \newline 1. At step 9, the Admin attempts to set \texttt{isBanned = true} on their own account. \newline 2. The backend returns an error response with code \texttt{Error.CannotBanSelf} and HTTP status 403. \newline 3. The use case ends. \newline \textbf{EX-02: Duplicate Email} \newline 1. At step 8, the backend detects the new email already exists among non-deleted users (excluding the target user). \newline 2. The backend returns an error response with code \texttt{Error.EmailAlreadyExists} and HTTP status 409. \newline 3. The use case ends. \newline \textbf{EX-03: No Changes Provided} \newline 1. At step 7, the backend detects that none of the updatable fields (\texttt{email}, \texttt{fullName}, \texttt{isBanned}) are present in the request body. \newline 2. The backend returns an error response with code \texttt{Error.NothingToUpdate} and HTTP status 400. \newline 3. The use case ends. \newline \textbf{EX-04: User Not Found} \newline 1. At step 6, the backend cannot find a user with the specified ID. \newline 2. The backend returns an error response with code \texttt{Error.UserNotFound} and HTTP status 404. \newline 3. The use case ends. \newline \textbf{EX-05: Server Error} \newline 1. The backend encounters an unexpected error during the update. \newline 2. The backend returns an error response with code \texttt{Error.FailedToUpdateUser} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-USER-15:} An Admin cannot ban their own account (\texttt{isBanned = true} is rejected when the target user ID equals the actor's ID). \newline \textbf{BR-USER-16:} Email uniqueness is enforced among non-soft-deleted users, excluding the target user itself. \newline \textbf{BR-USER-17:} At least one updatable field must be provided; an empty update request is rejected. \newline \textbf{BR-USER-18:} The email is automatically lowercased before storage. \newline \textbf{BR-USER-19:} The \texttt{fullName} field is nullable; setting it to \texttt{null} clears the display name.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend component: \texttt{EditUserDialog}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. The \texttt{UserActive} decorator extracts the actor's userId from the token for the self-ban check.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user exists and is not soft-deleted. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.5 Edit Client Profile}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.5 Edit Client Profile} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Edit Client Profile'' button (\texttt{EditClientProfileButton}) on the Client Profile tab of a user's detail page and submits changes.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the Client profile of a user who has the Client role, modifying the company name, company description, and/or website URL. The system validates the changes and upserts the client profile record.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id/client-profile} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and either has the Client role assigned or already has an existing client profile record.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The client profile record is created (if absent) or updated with the provided field values. \newline \textbf{POST-2} Empty string values are converted to \texttt{null}, clearing the field content. \newline \textbf{POST-3} The updated client profile object is returned.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Update Client Profile} \newline 1. The Admin navigates to the user detail page and clicks the ``Client Profile'' tab. \newline 2. The Admin clicks the ``Edit Client Profile'' button. \newline 3. The \texttt{EditClientProfileDialog} opens, pre-filled with current values (companyName, companyDescription, website). \newline 4. The Admin modifies one or more fields and submits the form. \newline 5. The frontend sends \texttt{PATCH /api/users/:id/client-profile} with body containing at least one of: \texttt{companyName} (max 255 chars, nullable), \texttt{companyDescription} (max 5000 chars, nullable), \texttt{website} (URL format, nullable). \newline 6. The backend verifies the access token and permission. \newline 7. The backend verifies the target user exists and is not soft-deleted. \newline 8. The backend checks that the user has the Client role or already has an existing client profile record. \newline 9. The backend converts any empty string values to \texttt{null}. \newline 10. The backend upserts the client profile record with the provided fields. \newline 11. The backend returns the updated client profile object (id, profileId, userId, companyName, companyDescription, website, createdAt, updatedAt). \newline 12. The frontend closes the dialog and refreshes the Client Profile tab.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Clear Company Name} \newline 1. At step 4, the Admin clears the companyName field (sets it to empty string or null). \newline 2. At step 9, the backend converts the empty string to \texttt{null}. \newline 3. The companyName is set to \texttt{null} in the database. \newline Return to step 11. \newline \textbf{A.2 Clear Website} \newline 1. At step 4, the Admin clears the website field. \newline 2. At step 9, the backend converts the empty string to \texttt{null}. \newline 3. The website is set to \texttt{null} in the database. \newline Return to step 11.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: User Not Found} \newline 1. At step 7, the backend cannot find a user with the specified ID. \newline 2. The backend returns an error response with code \texttt{Error.UserNotFound} and HTTP status 404. \newline 3. The use case ends. \newline \textbf{EX-02: User Has No Client Role} \newline 1. At step 8, the backend determines the user does not have the Client role and does not have an existing client profile. \newline 2. The backend returns an error response with code \texttt{Error.UserHasNoClientRole} and HTTP status 403. \newline 3. The use case ends. \newline \textbf{EX-03: Server Error} \newline 1. The backend encounters an unexpected error during the update. \newline 2. The backend returns an error response with code \texttt{Error.FailedToUpdateClientProfile} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-CLT-01:} The target user must have the Client role or an existing client profile record; otherwise the update is rejected. \newline \textbf{BR-CLT-02:} The \texttt{companyName} field is limited to 255 characters. \newline \textbf{BR-CLT-03:} The \texttt{companyDescription} field is limited to 5000 characters. \newline \textbf{BR-CLT-04:} The \texttt{website} field must be a valid URL format. \newline \textbf{BR-CLT-05:} Empty string values are automatically converted to \texttt{null} to clear field content. \newline \textbf{BR-CLT-06:} At least one field must be provided in the request body.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend components: \texttt{EditClientProfileButton}, \texttt{EditClientProfileDialog}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. The client profile is upserted, creating it if it does not yet exist.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin is editing a user that has been assigned the Client role or has an existing client profile. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.6 Edit Freelancer Basics}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.6 Edit Freelancer Basics} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Edit Freelancer Profile'' button (\texttt{EditFreelancerProfileButton}) on the Freelancer Profile tab of a user's detail page and submits changes to the basic profile fields.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the Freelancer profile's basic fields (title, bio, languages, education, certifications) for a user who has the Freelancer role. The system validates the inputs and upserts the freelancer profile record.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id/freelancer-profile} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and either has the Freelancer role assigned or already has an existing freelancer profile record.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1} The freelancer profile record is created (if absent via upsert) or updated with the provided field values. \newline \textbf{POST-2} Empty strings are converted to \texttt{null}; empty or null arrays are converted to \texttt{[]}. \newline \textbf{POST-3} A success message ``Freelancer profile updated successfully'' is returned.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Update Freelancer Basic Info} \newline 1. The Admin navigates to the user detail page and clicks the ``Freelancer Profile'' tab. \newline 2. The Admin clicks the ``Edit Freelancer Profile'' button. \newline 3. The \texttt{EditFreelancerProfileDialog} opens, pre-filled with current values (title, bio, languages, education, certifications). \newline 4. The Admin modifies one or more fields and submits the form. \newline 5. The frontend sends \texttt{PATCH /api/users/:id/freelancer-profile} with body containing at least one of: \texttt{title} (max 255 chars, nullable), \texttt{bio} (max 5000 chars, nullable), \texttt{languages} (string array, max 100 items, each max 255 chars, nullable), \texttt{education} (same constraints), \texttt{certifications} (same constraints). \newline 6. The backend verifies the access token and permission. \newline 7. The backend verifies the target user exists and is not soft-deleted. \newline 8. The backend checks that the user has the Freelancer role or an existing freelancer profile. \newline 9. The backend converts empty string values to \texttt{null} and empty/null array values to \texttt{[]}. \newline 10. The backend upserts the freelancer profile record. \newline 11. The backend returns the success message. \newline 12. The frontend closes the dialog and refreshes the Freelancer Profile tab.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Clear Bio} \newline 1. At step 4, the Admin clears the bio field. \newline 2. At step 9, the backend converts the empty string to \texttt{null}. \newline 3. The bio is set to \texttt{null} in the database. \newline Return to step 11. \newline \textbf{A.2 Clear Languages List} \newline 1. At step 4, the Admin removes all entries from the languages array. \newline 2. At step 9, the backend converts the empty array to \texttt{[]}. \newline 3. The languages array is set to \texttt{[]} in the database. \newline Return to step 11.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: User Not Found} \newline 1. At step 7, the backend cannot find a user with the specified ID. \newline 2. The backend returns an error response with code \texttt{Error.UserNotFound} and HTTP status 404. \newline 3. The use case ends. \newline \textbf{EX-02: User Has No Freelancer Role} \newline 1. At step 8, the backend determines the user does not have the Freelancer role and does not have an existing freelancer profile. \newline 2. The backend returns an error response with code \texttt{Error.UserHasNoFreelancerRole} and HTTP status 403. \newline 3. The use case ends. \newline \textbf{EX-03: Validation Error} \newline 1. At step 9, the backend detects a credential item exceeds 255 characters or the array exceeds 100 items. \newline 2. A validation error is returned. \newline 3. The use case ends. \newline \textbf{EX-04: Server Error} \newline 1. The backend encounters an unexpected error during the update. \newline 2. The backend returns an error response with code \texttt{Error.FailedToUpdateFreelancerProfile} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-FLR-01:} The target user must have the Freelancer role or an existing freelancer profile; otherwise the update is rejected. \newline \textbf{BR-FLR-02:} The \texttt{title} field is limited to 255 characters. \newline \textbf{BR-FLR-03:} The \texttt{bio} field is limited to 5000 characters. \newline \textbf{BR-FLR-04:} The \texttt{languages}, \texttt{education}, and \texttt{certifications} arrays may contain at most 100 items each, with each item limited to 255 characters. \newline \textbf{BR-FLR-05:} Empty string values are converted to \texttt{null}; empty or null array values are converted to \texttt{[]}. \newline \textbf{BR-FLR-06:} At least one field must be provided in the request body.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend components: \texttt{EditFreelancerProfileButton}, \texttt{EditFreelancerProfileDialog}. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. The freelancer profile is upserted, creating it and the parent Profile if they do not yet exist.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin is editing a user that has been assigned the Freelancer role or has an existing freelancer profile. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.7 Edit Freelancer Skills}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.7 Edit Freelancer Skills} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Manage Freelancer Skills'' button (\texttt{ManageFreelancerSkillsButton}) on the Freelancer Profile tab of a user's detail page and submits the new skill set.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin replaces the entire skill set of a freelancer by selecting skills from the skill catalog with proficiency levels (1--10). The system deletes all existing skills and creates new ones from the provided list.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PUT} method on the \texttt{/api/users/:id/freelancer-profile/skills} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and has the Freelancer role or an existing freelancer profile.} \\ \hline
+
+Post-conditions: & \textbf{POST-1} All existing FreelancerSkill records for the freelancer are deleted. \newline \textbf{POST-2} New FreelancerSkill records are created for each skill in the submitted list, linked to catalog skills (found or created via case-insensitive match). \newline \textbf{POST-3} A success message ``Freelancer skills updated successfully'' is returned. \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Replace Freelancer Skills} \newline 1. The Admin navigates to the Freelancer Profile tab and clicks ``Manage Freelancer Skills.'' \newline 2. The skill management dialog opens, showing the current skill list with a ``Select'' dropdown populated from the skill catalog (\texttt{GET /api/users/skills-catalog} returning active skills as [\texttt{\{id, name\}}]) and a proficiency level input (1--10) per row. \newline 3. The Admin adds skill rows by selecting a skill from the catalog dropdown and setting a proficiency level. The Admin may also remove rows. \newline 4. The Admin submits the form. \newline 5. The frontend sends \texttt{PUT /api/users/:id/freelancer-profile/skills} with body: \texttt{skills[]} (max 100 items), each containing \texttt{skillName} (max 100 chars) and \texttt{proficiencyLevel} (integer 1--10). \newline 6. The backend verifies the access token and permission. \newline 7. The backend ensures the freelancer profile exists (auto-creates if needed). \newline 8. The backend deletes ALL existing FreelancerSkill records for this freelancer profile. \newline 9. For each skill in the submitted array, the backend performs a case-insensitive lookup in the skill catalog; if no match is found, a new catalog skill is created. \newline 10. The backend creates a FreelancerSkill record linking the freelancer profile to the catalog skill with the specified proficiency level. \newline 11. The backend returns the success message. \newline 12. The frontend closes the dialog and refreshes the Freelancer Profile tab.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Clear All Skills} \newline 1. At step 3, the Admin removes all skill rows (empty array). \newline 2. At step 8, the backend deletes all existing FreelancerSkill records. \newline 3. No new skills are created (empty \texttt{skills[]} array). \newline Return to step 11. \newline \textbf{A.2 Add New Catalog Skill} \newline 1. At step 3, the Admin selects a skill name not currently in the catalog. \newline 2. At step 9, the backend does not find a match in the catalog (case-insensitive). \newline 3. The backend creates a new catalog skill record with the provided name. \newline 4. The backend creates a FreelancerSkill linking to the new catalog skill. \newline Return to step 10.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Invalid Proficiency Level} \newline 1. At step 9, the backend detects a \texttt{proficiencyLevel} outside the 1--10 range. \newline 2. The backend returns a validation error with code \texttt{SkillLevelInvalid}. \newline 3. The use case ends. \newline \textbf{EX-02: Too Many Skills} \newline 1. At step 9, the backend detects the \texttt{skills[]} array contains more than 100 items. \newline 2. The backend returns a validation error with code \texttt{TooManySkills}. \newline 3. The use case ends. \newline \textbf{EX-03: Server Error} \newline 1. The backend encounters an unexpected error during skill replacement. \newline 2. The backend returns an error response with code \texttt{Error.FailedToSaveSkills} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-FLR-07:} This is a full-replacement operation: all existing skills are deleted and replaced with the submitted list. \newline \textbf{BR-FLR-08:} The \texttt{proficiencyLevel} must be an integer between 1 and 10 inclusive. \newline \textbf{BR-FLR-09:} The maximum number of skills per freelancer is 100. \newline \textbf{BR-FLR-10:} Skill catalog lookup is case-insensitive; if a matching skill does not exist, a new catalog entry is created. \newline \textbf{BR-FLR-11:} The \texttt{skillName} field is limited to 100 characters.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend components: \texttt{ManageFreelancerSkillsButton}, skill management dialog with Select dropdown and level input per row. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. Uses \texttt{PUT} (not PATCH) for full replacement semantics.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The skill catalog is populated with active skills. The target user has been assigned the Freelancer role or has an existing freelancer profile. The Admin has the necessary permission records to access this endpoint.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\subparagraph{UC-17.8 Edit Freelancer Portfolio}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-17.8 Edit Freelancer Portfolio} \\ \hline
+
+Created By: & Nguyen Tien Thuan & Date Created: & 14/09/2026 \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Manage Freelancer Portfolio'' button (\texttt{ManageFreelancerPortfolioButton}) on the Freelancer Profile tab of a user's detail page and performs create, edit, or delete operations on portfolio items.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{The Admin manages the portfolio items of a freelancer by creating new items, editing existing items, or soft-deleting items. Each portfolio item contains a title, description, technologies list, and optional project URL.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes permission records matching: \texttt{POST} on \texttt{/api/users/:id/freelancer-profile/portfolio-items} (create), \texttt{PATCH} on \texttt{/api/users/:id/freelancer-profile/portfolio-items/:itemId} (edit), and \texttt{DELETE} on \texttt{/api/users/:id/freelancer-profile/portfolio-items/:itemId} (delete). \newline \textbf{PRE-3} The target user exists, is not soft-deleted, has the Freelancer role or an existing freelancer profile.} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{POST-1 (Create)} A new portfolio item record is created in the database. \newline \textbf{POST-2 (Edit)} The specified portfolio item's fields are updated. \newline \textbf{POST-3 (Delete)} The specified portfolio item is soft-deleted (\texttt{deletedAt} is set). \newline \textbf{POST-4} A success message is returned for each operation.} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{\textbf{A. Create Portfolio Item} \newline 1. The Admin navigates to the Freelancer Profile tab and clicks ``Manage Freelancer Portfolio.'' \newline 2. The portfolio management dialog opens, listing existing portfolio items with their title, description, technologies, and project URL. \newline 3. The Admin clicks the ``Add Portfolio Item'' action. \newline 4. The Admin fills in: \texttt{title} (required, max 255 chars), \texttt{description} (max 5000 chars, nullable), \texttt{technologies} (string array, max 50 items, each max 100 chars, default []), \texttt{projectUrl} (URL format, nullable). \newline 5. The Admin submits the form. \newline 6. The frontend sends \texttt{POST /api/users/:id/freelancer-profile/portfolio-items} with the item data. \newline 7. The backend verifies the access token and permission. \newline 8. The backend creates the portfolio item record. \newline 9. The backend returns a success message ``Portfolio item created successfully.'' \newline 10. The dialog refreshes to show the new item in the list.} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{\textbf{A.1 Edit Portfolio Item} \newline 1. From the portfolio list dialog (step 2), the Admin clicks the ``Edit'' action on an existing item. \newline 2. The Admin modifies one or more fields (title, description, technologies, projectUrl) and submits. \newline 3. The frontend sends \texttt{PATCH /api/users/:id/freelancer-profile/portfolio-items/:itemId} with the updated fields. \newline 4. The backend verifies the item exists, is not soft-deleted, and belongs to this freelancer profile. \newline 5. The backend updates the item fields. \newline 6. The backend returns a success message ``Portfolio item updated successfully.'' \newline 7. The dialog refreshes to reflect the changes. \newline \textbf{A.2 Delete Portfolio Item} \newline 1. From the portfolio list dialog (step 2), the Admin clicks the ``Delete'' action on an existing item. \newline 2. The Admin confirms the deletion. \newline 3. The frontend sends \texttt{DELETE /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \newline 4. The backend verifies the item exists, is not soft-deleted, and belongs to this freelancer profile. \newline 5. The backend performs a soft delete by setting \texttt{deletedAt} on the portfolio item record. \newline 6. The backend returns a success message ``Portfolio item deleted successfully.'' \newline 7. The dialog refreshes and the deleted item is no longer listed.} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{EX-01: Portfolio Item Not Found} \newline 1. During edit or delete, the backend cannot find the specified item, the item is soft-deleted, or it does not belong to the target freelancer profile. \newline 2. The backend returns an error response with code \texttt{Error.PortfolioItemNotFound} and HTTP status 404. \newline 3. The use case ends. \newline \textbf{EX-02: Server Error on Create} \newline 1. The backend encounters an unexpected error while creating the portfolio item. \newline 2. The backend returns an error response with code \texttt{Error.FailedToCreatePortfolioItem} and HTTP status 500. \newline 3. The use case ends. \newline \textbf{EX-03: Server Error on Edit} \newline 1. The backend encounters an unexpected error while updating the portfolio item. \newline 2. The backend returns an error response with code \texttt{Error.FailedToUpdatePortfolioItem} and HTTP status 500. \newline 3. The use case ends. \newline \textbf{EX-04: Server Error on Delete} \newline 1. The backend encounters an unexpected error while soft-deleting the portfolio item. \newline 2. The backend returns an error response with code \texttt{Error.FailedToDeletePortfolioItem} and HTTP status 500. \newline 3. The use case ends.} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-FLR-12:} Portfolio items are soft-deleted (setting \texttt{deletedAt}); they are not permanently removed from the database. \newline \textbf{BR-FLR-13:} The \texttt{title} field is required and limited to 255 characters. \newline \textbf{BR-FLR-14:} The \texttt{description} field is limited to 5000 characters. \newline \textbf{BR-FLR-15:} The \texttt{technologies} array may contain at most 50 items, each limited to 100 characters. \newline \textbf{BR-FLR-16:} The \texttt{projectUrl} field must be a valid URL format. \newline \textbf{BR-FLR-17:} Edit and delete operations verify item ownership: the item must belong to the specified freelancer profile. \newline \textbf{BR-FLR-18:} Soft-deleted portfolio items are excluded from queries and cannot be edited or deleted again.} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Frontend component: \texttt{ManageFreelancerPortfolioButton}, portfolio management dialog listing items with add/edit/delete actions. Guards: global \texttt{AuthGuard} + \texttt{PermissionGuard}. Three separate endpoints are used: \texttt{POST} (create), \texttt{PATCH} (edit), and \texttt{DELETE} (soft-delete).} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user has been assigned the Freelancer role or has an existing freelancer profile. The Admin has the necessary permission records for all three portfolio endpoints.} \\ \hline
+
+\end{longtable}

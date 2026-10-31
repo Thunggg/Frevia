@@ -1,0 +1,136 @@
+The matrix assigns every output of the project to the members of the team. It uses the notation of the report template:
+
+\noindent\textit{D~Do;\; R~Review;\; S~Support;\; I~Informed;\; <blank> - Omitted}
+
+\vspace{0.3cm}
+
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+
+\begin{longtable}{|p{5.6cm}|c|c|c|c|c|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Responsibility}
+&
+\textbf{VyPK}
+&
+\textbf{ThuanNT}
+&
+\textbf{TaiTP}
+&
+\textbf{TinVN}
+&
+\textbf{HuyNLN}
+\\ \hline
+\endfirsthead
+
+\hline
+\rowcolor{fptHeader}
+\textbf{Responsibility}
+&
+\textbf{VyPK}
+&
+\textbf{ThuanNT}
+&
+\textbf{TaiTP}
+&
+\textbf{TinVN}
+&
+\textbf{HuyNLN}
+\\ \hline
+\endhead
+
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+Project initiation, scope and risk planning
+& DR & SI & SI & SI & SI \\ \hline
+
+Product Introduction Document
+& DR & SI & SI & SI & SI \\ \hline
+
+Project Management Plan
+& DR & SI & SI & SI & SI \\ \hline
+
+Requirements gathering and user stories
+& R & D & D & SI & SI \\ \hline
+
+UI/UX prototype and component library
+& R & SI & D & SI & D \\ \hline
+
+Software architecture and data model
+& R & D & D & D & D \\ \hline
+
+Authentication, permissions and session management
+& R & D & SI & SI & S \\ \hline
+
+Profile, skills, portfolio and curriculum vitae handling
+& R & S & SI & D & D \\ \hline
+
+Job marketplace, bookmarks and saved search
+& R & S & D & SI & D \\ \hline
+
+Proposal and hiring workflow
+& R & S & D & SI & S \\ \hline
+
+Contract signing, milestones and submissions
+& R & D & S & SI & D \\ \hline
+
+Stripe escrow, release, refund and reconciliation
+& R & S & SI & D & SI \\ \hline
+
+Dispute arbitration and settlement
+& R & D & S & S & SI \\ \hline
+
+Real-time messaging and notifications
+& R & D & SI & S & D \\ \hline
+
+Forum, moderation and content administration
+& DR & SI & S & SI & D \\ \hline
+
+AI integration: identity verification and CV analysis
+& R & S & SI & D & SI \\ \hline
+
+Administrative console, catalogues and banners
+& DR & S & SI & SI & D \\ \hline
+
+Frontend development
+& R & SI & D & SI & D \\ \hline
+
+Backend development
+& R & D & D & D & SI \\ \hline
+
+Unit testing
+& R & D & S & D & S \\ \hline
+
+Integration and end-to-end testing
+& R & S & D & D & D \\ \hline
+
+Payment and webhook security testing
+& R & S & SI & D & SI \\ \hline
+
+User acceptance testing
+& DR & I & I & I & I \\ \hline
+
+Technical training
+& DR & D & D & D & D \\ \hline
+
+Deployment and environment configuration
+& R & D & SI & D & SI \\ \hline
+
+Final project report
+& DR & D & D & D & D \\ \hline
+
+Thesis presentation
+& DR & D & D & D & D \\ \hline
+
+\caption{Responsibility Assignments Matrix}
+\label{tab:raci}
+\end{longtable}
+
+\normalsize
+
+Every row has exactly one member who reviews the work: that member confirms the output before it is demonstrated at the Sprint Review and reports its status. Where a row lists several members who do the work, the work is split by module rather than duplicated, and the split is recorded on the task board before the sprint begins. The rows that carry the highest technical risk -- Stripe escrow and reconciliation, dispute arbitration, and AI integration -- pair the member who does the work with at least one supporter so that a second person can check the implementation.

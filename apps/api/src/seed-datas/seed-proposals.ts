@@ -1,0 +1,141 @@
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+import { resolveProposalExpiryDate } from '@shared/types';
+import 'dotenv/config';
+
+if (!process.env.DIRECT_URL) {
+  console.log('Cannot find DB URL');
+  process.exit(1);
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
+});
+
+const FREELANCER_EMAIL = 'freelancer@gmail.com';
+
+const proposalData = [
+  {
+    coverLetter: `Hi! I'm an experienced React developer with 3+ years of building responsive UIs. I've worked on multiple landing pages using React and Tailwind CSS, delivering pixel-perfect designs. I can complete this within 7 days and ensure mobile responsiveness across all devices.`,
+    bidAmount: '350',
+    deliveryDays: 7,
+    status: 'SUBMITTED' as const,
+  },
+  {
+    coverLetter: `I specialize in NestJS and PostgreSQL backend development. I have built production-grade REST APIs with proper authentication, rate limiting, and Swagger documentation. I'd love to take on this project and deliver clean, well-tested code.`,
+    bidAmount: '900',
+    deliveryDays: 14,
+    status: 'HIRED' as const,
+  },
+  {
+    coverLetter: `React Native is my primary tech stack. I've published 5+ apps on both App Store and Google Play. I can handle state management, push notifications, and Firebase integration. Happy to share my portfolio upon request.`,
+    bidAmount: '2200',
+    deliveryDays: 30,
+    status: 'INTERVIEWING' as const,
+  },
+  {
+    coverLetter: `I have extensive e-commerce experience with Next.js and Stripe. I'll set up product catalog, cart, checkout flow, and admin dashboard. SEO optimization is included by default in my workflow.`,
+    bidAmount: '1800',
+    deliveryDays: 21,
+    status: 'REJECTED' as const,
+  },
+  {
+    coverLetter: `I've integrated OpenAI API in multiple Python/FastAPI projects. I can design the chatbot architecture, handle context windows, streaming responses, and fallback mechanisms. Looking forward to discussing your requirements.`,
+    bidAmount: '1100',
+    deliveryDays: 10,
+    status: 'WITHDRAWN' as const,
+  },
+];
+
+async function main() {
+  // Find freelancer user
+  const freelancer = await prisma.user.findUnique({
+    where: { email: FREELANCER_EMAIL },
+  });
+
+  if (!freelancer) {
+    throw new Error(
+      `Freelancer user not found (email: ${FREELANCER_EMAIL}). Please run the main seed first.`,
+    );
+  }
+
+  // Get existing jobs
+  const jobs = await prisma.job.findMany({
+    take: proposalData.length,
+    orderBy: { id: 'asc' },
+  });
+
+  if (jobs.length === 0) {
+    throw new Error('No jobs found in database. Please run seed:jobs first.');
+  }
+
+  console.log(`Found ${jobs.length} jobs. Creating proposals...`);
+
+  let created = 0;
+  let skipped = 0;
+
+  for (let i = 0; i < Math.min(jobs.length, proposalData.length); i++) {
+    const job = jobs[i];
+    const data = proposalData[i];
+
+    // Check if proposal already exists (active one)
+    const existed = await prisma.proposal.findFirst({
+      where: {
+        jobId: job.id,
+        freelancerId: freelancer.id,
+        deletedAt: null,
+      },
+    });
+
+    if (existed) {
+      console.log(
+        `  [SKIP] Proposal already exists for job "${job.title}" (id: ${existed.id})`,
+      );
+      skipped++;
+      continue;
+    }
+
+    const submittedAt = new Date();
+    const proposal = await prisma.proposal.create({
+      data: {
+        jobId: job.id,
+        freelancerId: freelancer.id,
+        coverLetter: data.coverLetter,
+        bidAmount: data.bidAmount,
+        deliveryDays: data.deliveryDays,
+        status: data.status,
+        submittedAt,
+        // Đề xuất đang chờ khách hàng xử lý có hạn 30 ngày.
+        expiresAt:
+          data.status === 'SUBMITTED' || data.status === 'INTERVIEWING'
+            ? resolveProposalExpiryDate(submittedAt)
+            : null,
+      },
+    });
+
+    console.log(
+      `  [OK] Created proposal #${proposal.id} for job "${job.title}" — status: ${data.status}, bid: $${data.bidAmount}`,
+    );
+    created++;
+  }
+
+  console.log(
+    `\nDone! Created: ${created}, Skipped (already existed): ${skipped}`,
+  );
+  console.log('\nProposal summary:');
+  console.log('  - SUBMITTED   : proposals waiting for client review');
+  console.log('  - INTERVIEWING: client responded, in discussion/interview');
+  console.log('  - HIRED       : client hired the freelancer');
+  console.log('  - REJECTED    : proposal rejected by client');
+  console.log('  - WITHDRAWN   : proposal withdrawn by freelancer');
+  console.log('  - EXPIRED     : client did not respond within 30 days');
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

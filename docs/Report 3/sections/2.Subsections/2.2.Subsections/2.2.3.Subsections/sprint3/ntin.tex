@@ -1,0 +1,453 @@
+\paragraph{Manage Dispute}
+% =================================================================
+% UC-33.01 Open Dispute
+% =================================================================
+\subparagraph{UC-33.01 Open Dispute}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.01 Open Dispute} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authorized contract participant clicks the ``Open Dispute'' button on an active, funded milestone.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to initiate a formal dispute over milestone deliverables, payment issues, or unresponsive behavior, freezing the milestone escrow funds and inviting the other party to provide counter-evidence.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The user is an active participant (Client or Freelancer) of the contract. \newline
+\textbf{PRE-3} The target milestone is in \texttt{FUNDED} payment status and has not yet been marked \texttt{COMPLETED}. \newline
+\textbf{PRE-4} No existing active dispute is currently associated with this milestone.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new dispute record is persisted in the database with status \texttt{OPEN} or \texttt{WAITING\_RESPONSE}. \newline
+\textbf{POST-2} Milestone status is frozen, preventing premature completion, submission, or manual escrow release. \newline
+\textbf{POST-3} Arbitration fee invoices with a 24-hour payment deadline are established for the involved parties. \newline
+\textbf{POST-4} The respondent receives a notification alerting them of the dispute with a 48-hour response deadline.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Open Dispute} \newline
+1. The user expands the disputed milestone in the contract view and clicks ``Open Dispute''. \newline
+2. The system renders the Open Dispute modal with fee schedule and arbitration rules. \newline
+3. The user selects a dispute reason category (e.g., Deliverables Unsatisfactory, Unresponsive Counterpart, Scope Discrepancy). \newline
+4. The user enters a detailed explanation outlining the issue, chronological events, and requested outcome. \newline
+5. The user selects and uploads supporting evidence files (up to 5 documents, images, or chat archives). \newline
+6. The user agrees to the arbitration fee policy and terms of resolution. \newline
+7. The user clicks ``Submit Dispute''. \newline
+8. The system validates the input, locks milestone escrow funds, creates the dispute record, and schedules notification deadlines. \newline
+9. The modal closes, a success notification appears, and the user is redirected to the Dispute Detail page.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Dispute Filing} \newline
+1. At any step prior to submission, the user clicks ``Cancel''. \newline
+2. The system closes the modal without creating a dispute. \newline
+3. The milestone remains in its active status.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Milestone Ineligible for Dispute} \newline
+1. If the milestone has not been funded into escrow or is already completed, the system displays: ``Disputes can only be opened on funded, incomplete milestones.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Existing Active Dispute} \newline
+1. If a dispute already exists for this milestone, the system displays: ``A dispute is already active for this milestone.'' \newline
+2. The use case ends. \newline
+\textbf{EX-03: Evidence File Limit Exceeded} \newline
+1. If more than 5 evidence files are attached, the system displays: ``You may attach a maximum of 5 evidence files.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-01: Only direct contract parties (Client or Freelancer) can open a dispute. \newline
+BR-DISPUTE-02: Filing a dispute immediately freezes milestone escrow balance from release, cancellation, or refund until resolution is achieved. \newline
+BR-DISPUTE-03: A maximum of 5 evidence files can be uploaded during the initial dispute claim.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Parties have attempted direct communication before escalating to formal dispute.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-33.02 View Dispute List
+% =================================================================
+\subparagraph{UC-33.02 View Dispute List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.02 View Dispute List} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the ``Disputes'' section from the main navigation menu.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, or Administrator to retrieve a paginated overview of disputes relevant to their account, with status filters and deadline indicators.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The database connection is active.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A paginated list of dispute records matching user role and filter criteria is displayed.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Dispute List} \newline
+1. The user navigates to the Disputes page. \newline
+2. The system queries disputes where the user is either the opener or the respondent (or all platform disputes if Admin). \newline
+3. The system sorts disputes chronologically with urgent cases (pending response or unpaid fees) prioritized at the top. \newline
+4. The system renders dispute summary cards displaying: Dispute ID, Contract Title, Disputed Amount, Opener, Respondent, Status Badge, and Response Deadline.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Filter by Status} \newline
+1. The user selects a status tab (All, Open, Waiting Response, Under Review, Decision Made, Finalized). \newline
+2. The system retrieves and renders matching records. \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: No Disputes Found} \newline
+1. If no records match the criteria, the system renders an empty state: ``No disputes found.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Database Query Failure} \newline
+1. If data retrieval fails, the system displays: ``Unable to load dispute list. Please try again.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-04: Non-admin users can only view disputes in which they are an opener or respondent. \newline
+BR-DISPUTE-05: Administrators have global visibility into all platform dispute records.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Dispute listings are paginated to maintain optimal rendering performance.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-33.03 View Dispute Detail
+% =================================================================
+\subparagraph{UC-33.03 View Dispute Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.03 View Dispute Detail} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a dispute card from the list or follows a dispute notification link.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an involved party or Administrator to view full case records, including claims, evidence files, fee payment status, resolution proposals, decision reviews, and audit timeline.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The user is an authorized participant (opener or respondent) or an Administrator. \newline
+\textbf{PRE-3} The dispute record exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The system renders the comprehensive dispute details and checks for any overdue fee conditions.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Dispute Detail} \newline
+1. The user clicks on a dispute entry. \newline
+2. The system verifies user authorization to view the case. \newline
+3. The system checks fee deadlines: if 24 hours have elapsed without payment, the fee status is updated to \texttt{OVERDUE}. \newline
+4. The system renders the Dispute Detail page displaying:
+   - Case Header: Dispute ID, Contract Name, Milestone Name, Disputed Amount, Status badge.
+   - Opener Claim: Reason, description narrative, submission timestamp, and evidence attachments.
+   - Respondent Rebuttal: Counter-statement, submission date, and evidence attachments (if submitted).
+   - Arbitration Fee Section: Fee status per party and payment button (if pending).
+   - Resolution Proposal: Arbitrator findings and proposed split amounts (if decision made).
+   - Timeline: Chronological audit history of dispute milestones.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Download Evidence File} \newline
+1. The user clicks on an attached evidence file card. \newline
+2. The system initiates the secure download from cloud storage. \newline
+3. Return to step A.4.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Access} \newline
+1. An unauthorized user attempts direct URL access. \newline
+2. The system displays: ``Access Denied: You do not have permission to view this dispute.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Dispute Not Found} \newline
+1. The specified dispute ID does not exist in the database. \newline
+2. The system displays: ``Dispute not found.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-06: Case evidence and claims are strictly accessible only to case participants and designated administrators. \newline
+BR-DISPUTE-07: Unpaid arbitration fees exceeding the 24-hour deadline automatically transition to \texttt{OVERDUE}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{All participants have access to a modern browser capable of rendering document and image evidence.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-33.04 Respond to Dispute
+% =================================================================
+\subparagraph{UC-33.04 Respond to Dispute}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.04 Respond to Dispute} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer (Respondent) & Secondary Actors: & Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the designated respondent clicks ``Submit Response'' on an open dispute.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the respondent party to submit their official rebuttal statement and counter-evidence within the 48-hour response window, ensuring equal hearing during arbitration.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as the designated respondent (\texttt{respondentId = userId}). \newline
+\textbf{PRE-2} The dispute status is \texttt{OPEN} or \texttt{WAITING\_RESPONSE}. \newline
+\textbf{PRE-3} The respondent has not previously submitted a response (single submission allowed). \newline
+\textbf{PRE-4} The submission occurs before the 48-hour response deadline.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The counter-response description and evidence files are persisted in the database. \newline
+\textbf{POST-2} Dispute status transitions to \texttt{UNDER\_REVIEW}. \newline
+\textbf{POST-3} The opener and administrator are notified that the rebuttal has been submitted.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Respond to Dispute} \newline
+1. The respondent navigates to the Dispute Detail page. \newline
+2. The respondent reviews the opener's claims and clicks ``Submit Response''. \newline
+3. The system displays the rebuttal submission form with the remaining deadline countdown. \newline
+4. The respondent enters a detailed counter-explanation addressing the claims. \newline
+5. The respondent uploads supporting evidence files (up to 5 documents or screenshots). \newline
+6. The respondent clicks ``Confirm \& Submit Response''. \newline
+7. The system validates the input, records the rebuttal, updates dispute status to \texttt{UNDER\_REVIEW}, and logs the event. \newline
+8. The system displays a success toast and refreshes the dispute view with the rebuttal displayed.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Response Draft} \newline
+1. The respondent clicks ``Cancel'' before submitting. \newline
+2. The system closes the form without saving; the case remains in waiting status until the deadline expires. \newline
+3. Return to step A.1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Response Deadline Expired} \newline
+1. If the 48-hour response deadline has elapsed, the system displays: ``The response window has closed. The case will be reviewed based on available evidence.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Response Already Submitted} \newline
+1. If the respondent has already submitted their rebuttal, the system displays: ``You have already submitted your response for this dispute.'' \newline
+2. The use case ends. \newline
+\textbf{EX-03: Evidence Limit Exceeded} \newline
+1. If more than 5 evidence files are selected, the system displays: ``Maximum 5 evidence files allowed.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-08: Only the designated respondent can submit a formal response. \newline
+BR-DISPUTE-09: A respondent is allowed exactly one rebuttal submission per dispute case. \newline
+BR-DISPUTE-10: Submitting a valid response moves the dispute status to \texttt{UNDER\_REVIEW}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The respondent provides factual and verifiable evidence to substantiate their position.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-33.05 Respond to Dispute Resolution
+% =================================================================
+\subparagraph{UC-33.05 Respond to Dispute Resolution}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.05 Respond to Dispute Resolution} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a participant clicks ``Accept Decision'' or ``Reject Decision'' upon reviewing an arbitrator's proposed resolution.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the Client and Freelancer to independently accept or reject a proposed resolution. If both accept, the decision is finalized and funds are disbursed; if either party rejects, the dispute escalates to final review.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as the Client or Freelancer of the disputed contract. \newline
+\textbf{PRE-2} The dispute status is currently \texttt{DECISION\_MADE}. \newline
+\textbf{PRE-3} The user has not yet submitted their decision review for this round.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The user's review choice (\texttt{ACCEPT} or \texttt{REJECT}) is recorded in the database. \newline
+\textbf{POST-2} If both parties submit \texttt{ACCEPT}, the dispute transitions to \texttt{FINALIZED}, milestone escrow funds are automatically disbursed according to split amounts, and milestone status is resolved. \newline
+\textbf{POST-3} If either party submits \texttt{REJECT}, the dispute transitions to \texttt{REVIEW\_REQUESTED} for final determination.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Respond to Resolution Proposal} \newline
+1. The participant opens the Dispute Detail page. \newline
+2. The system presents the proposed resolution: Client Split Amount, Freelancer Split Amount, and Arbitrator Findings. \newline
+3. The user selects either ``Accept Decision'' or ``Reject Decision''. \newline
+4. If rejecting, the user enters a mandatory objection explanation. \newline
+5. The user clicks ``Submit Decision Response''. \newline
+6. The system records the response in the decision review repository. \newline
+7. If both parties have now accepted:
+   - System executes escrow payout transaction allocating split balances.
+   - Dispute status updates to \texttt{FINALIZED}.
+   - Milestone status updates to \texttt{COMPLETED} and paymentStatus to \texttt{RELEASED}.
+8. If any party rejected:
+   - Dispute status updates to \texttt{REVIEW\_REQUESTED}.
+   - An escalation alert is dispatched to the administrator. \newline
+9. The system updates the UI and confirms submission with a notification.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Unilateral Acceptance Waiting} \newline
+1. One party accepts while the counterpart's response remains pending. \newline
+2. The system confirms the user's acceptance and shows: ``Waiting for counterpart's response.'' \newline
+3. Dispute status remains \texttt{DECISION\_MADE}.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Response Already Submitted} \newline
+1. If the user attempts to vote again, the system displays: ``You have already submitted your response to this decision.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Dispute Not Pending Review} \newline
+1. If the dispute is not in \texttt{DECISION\_MADE} status, the system displays: ``This dispute is not awaiting decision reviews.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-11: Mutual acceptance by both parties triggers immediate, automated escrow disbursement. \newline
+BR-DISPUTE-12: A single rejection automatically escalates the dispute to \texttt{REVIEW\_REQUESTED}. \newline
+BR-DISPUTE-13: Each participant can only submit one response per proposed decision round.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Disbursement transactions are executed atomically in database transactions.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-33.06 Propose Dispute Resolution
+% =================================================================
+\subparagraph{UC-33.06 Propose Dispute Resolution}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+UC ID and Name & \multicolumn{3}{l|}{UC-33.06 Propose Dispute Resolution} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Admin & Secondary Actors: & Client, Freelancer \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an Administrator opens a dispute under review and clicks ``Make Decision'' or ``Propose Resolution''.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an Administrator/Arbitrator to examine claims and evidence from both sides, determine a fair financial split of milestone escrow funds, record formal justification findings, and issue the proposed resolution for participant review.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated and holds the Admin role. \newline
+\textbf{PRE-2} The dispute status is \texttt{OPEN}, \texttt{WAITING\_RESPONSE}, or \texttt{UNDER\_REVIEW}. \newline
+\textbf{PRE-3} The total milestone escrow amount remains secured in escrow.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Dispute status transitions to \texttt{DECISION\_MADE}. \newline
+\textbf{POST-2} Split amounts (Client Amount, Freelancer Amount) and formal findings are persisted in the database. \newline
+\textbf{POST-3} Participant decision review records are initialized in \texttt{PENDING} status. \newline
+\textbf{POST-4} Both Client and Freelancer are notified of the arbitrator's decision.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Propose Resolution} \newline
+1. The Admin accesses the Dispute Detail page in the Admin Dashboard. \newline
+2. The Admin analyzes the contract deliverables, opener's claims, respondent's rebuttal, and all evidence files. \newline
+3. The Admin clicks ``Propose Resolution''. \newline
+4. The system presents the Decision Form displaying total milestone escrow budget. \newline
+5. The Admin enters the allocation amounts:
+   - Client Amount (\$)
+   - Freelancer Amount (\$)
+   - Written Decision Justification (reasoning and findings)
+6. The system validates that \texttt{Client Amount + Freelancer Amount} equals exactly the total milestone amount. \newline
+7. The Admin clicks ``Issue Decision''. \newline
+8. The system executes the decision transaction: updates dispute status to \texttt{DECISION\_MADE}, initializes participant review tracking, and logs the administrative action. \newline
+9. The system displays a confirmation notification and dispatches decision alerts to both parties.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Split Evenly (50/50)} \newline
+1. The Admin clicks the ``50/50 Split'' shortcut button. \newline
+2. The system automatically populates equal halves of the milestone amount into Client and Freelancer fields. \newline
+3. Return to step A.5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Split Amount Mismatch} \newline
+1. If the sum of Client Amount and Freelancer Amount does not equal the milestone amount, the system displays: ``Total split amount must exactly equal the milestone escrow amount.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Unauthorized Role} \newline
+1. A non-admin user attempts to issue an arbitration decision. \newline
+2. The system rejects the action with ``Access Denied.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-DISPUTE-14: Only users with the Admin role can formulate and propose formal dispute resolutions. \newline
+BR-DISPUTE-15: The sum of awarded amounts must mathematically equal 100\% of the disputed milestone escrow funds. \newline
+BR-DISPUTE-16: The decision proposal must include explicit written justification for legal and platform transparency.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Administrator acts as an impartial arbitrator adhering to platform terms of service.} \\ \hline
+
+\end{longtable}

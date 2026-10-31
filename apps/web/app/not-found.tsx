@@ -1,0 +1,59 @@
+import { FileQuestion } from "@/components/icons";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
+
+import authServerRequest from "@/apiRequests/auth.server";
+import { Footer } from "@/components/footer";
+import { Header, type UserRole } from "@/components/header";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { RoleName } from "@shared/types";
+
+export default async function NotFound() {
+  const user = await authServerRequest.getMe();
+  const primaryRole =
+    user?.roles?.find((r) => r.isPrimary)?.name ?? user?.roles?.[0]?.name;
+
+  let role: UserRole = "GUEST";
+  if (primaryRole === RoleName.CLIENT) role = "CLIENT";
+  else if (primaryRole === RoleName.FREELANCER) role = "FREELANCER";
+
+  const homeHref =
+    role === "CLIENT"
+      ? "/client/jobs"
+      : role === "FREELANCER"
+        ? "/freelancer/find-work"
+        : "/";
+
+  const t = await getTranslations("notFound");
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-background font-sans">
+      <Header role={role} />
+      <main className="flex flex-1 items-center justify-center px-4 py-16">
+        <section className="max-w-md text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+            <FileQuestion className="size-7" />
+          </div>
+          <p className="mt-6 text-sm font-medium text-[#4fae2e]">404</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+            {t("title")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("description")}</p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Button
+              className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+              asChild
+            >
+              <Link href={homeHref}>Go home</Link>
+              <Link href="/">{t("goHome")}</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/find-work">{t("findWork")}</Link>
+            </Button>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+}

@@ -3,10 +3,16 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { envConfig } from './config/validate-env';
 import { AuthGuard } from './guards/access-token.guard';
+import { PermissionGuard } from './guards/permission.guard';
+import { SharedPermissionRepository } from './repositories/shared-permission.repo';
 import { SharedRoleRepository } from './repositories/shared-role.repo';
+import { CloudinaryService } from './services/cloudinary.service';
 import { EmailService } from './services/email.service';
 import { HashingService } from './services/hashing.service';
 import { PrismaService } from './services/prisma.service';
+import { AiCvAnalyzerService } from './services/ai-cv-analyzer.service';
+import { IdentityAiService } from './services/identity-ai.service';
+import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
 
 @Module({
@@ -22,17 +28,31 @@ import { TokenService } from './services/token.service';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
+    },
     PrismaService,
+    AiCvAnalyzerService,
+    IdentityAiService,
+    SkillResolverService,
     HashingService,
     EmailService,
     TokenService,
+    CloudinaryService,
     SharedRoleRepository,
+    SharedPermissionRepository,
   ],
   exports: [
     PrismaService,
+    AiCvAnalyzerService,
+    IdentityAiService,
+    SkillResolverService,
     HashingService,
     EmailService,
+    CloudinaryService,
     SharedRoleRepository,
+    SharedPermissionRepository,
     TokenService,
   ],
 })

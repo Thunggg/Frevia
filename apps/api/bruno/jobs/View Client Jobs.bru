@@ -1,0 +1,28 @@
+meta {
+  name: View Client Jobs
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/manage-jobs?page=1&limit=10&sortBy=createdAt&order=desc
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+params:query {
+  page: 1
+  limit: 10
+  ~search: React
+  ~status: OPEN
+  sortBy: createdAt
+  order: desc
+}
+
+headers {
+  Accept: application/json
+}

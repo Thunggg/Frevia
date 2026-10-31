@@ -1,0 +1,21 @@
+The project documents are managed as versioned artefacts under the \texttt{docs} directory of the same repository that holds the source code. Keeping the documents next to the code means that a change to behaviour and the change to the document that describes it can be reviewed in the same pull request, which is the only reliable way to prevent the specification from drifting away from the delivered system.
+
+The managed documents include:
+
+\begin{itemize}
+    \item Product Introduction (Report 1), describing the background, existing systems, business opportunity, product vision, and the feature and limitation lists
+    \item Project Management Plan (Report 2), describing scope and estimation, objectives, risks, organisation, deliverables, communication, and configuration management
+    \item Software Requirements Specification (Report 3), containing the actors, use cases, and sprint mapping
+    \item Software Design Specification, containing the module structure, data model, and state machines
+    \item Test cases and test reports for each iteration
+    \item User guide and deployment guide
+    \item Meeting minutes and decision notes
+\end{itemize}
+
+Documents are written in LaTeX and stored as source files with their figures in a local \texttt{image} directory, so that a document can be rebuilt and diffed rather than being edited as a binary file. The PDF submitted at the end of an iteration is exported from the same source, and the export is repeated whenever the source changes.
+
+Versions follow a two-level scheme: the minor number increases for a review draft or a correction that does not change scope, and the major number increases when a baseline is approved and the document is submitted. A document therefore moves from 0.1 to 0.2 while it is being reviewed, and to 1.0 when it is submitted, and the version and the date appear on the cover page of every submission.
+
+Change control is applied to the Project Management Plan only. A change to the scope, the sprint allocation, the effort estimate, or the deliverables requires an update to the plan together with a short note describing what changed and why. Documents that describe the product rather than the plan are revised freely, because their purpose is to remain accurate rather than to remain stable.
+
+Obsolete versions are retained rather than deleted so that a reviewer can reconstruct what was agreed at a given submission. Each archived version keeps an explicit version suffix in its file name, so that two exports of the same document can never be confused.

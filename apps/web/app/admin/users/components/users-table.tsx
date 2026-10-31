@@ -1,0 +1,322 @@
+"use client";
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/components/shadcn/table";
+import type { AdminUserItemType } from "@shared/types";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Eye,
+  Pencil,
+  Shield,
+  User,
+} from "lucide-react";
+import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { NumberedPagination } from "../../components/numbered-pagination";
+import { EditUserDialog } from "./edit-user-dialog";
+
+const KNOWN_ROLES = new Set(["ADMIN", "CLIENT", "FREELANCER", "EXPERT"]);
+
+interface UsersTableProps {
+  users: AdminUserItemType[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export function UsersTable({ users, pagination }: UsersTableProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const t = useTranslations("adminUsers");
+  const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("adminCommon");
+  const format = useFormatter();
+  // User đang được chọn để mở dialog Edit (null = dialog đóng)
+  const [editingUser, setEditingUser] = useState<AdminUserItemType | null>(
+    null,
+  );
+
+  const currentSortBy = searchParams.get("sortBy") || "id";
+  const currentSortOrder = searchParams.get("sortOrder") || "desc";
+
+  const handleSort = (column: "id" | "email" | "createdAt" | "displayName") => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (currentSortBy === column) {
+      const nextOrder = currentSortOrder === "asc" ? "desc" : "asc";
+      params.set("sortOrder", nextOrder);
+    } else {
+      params.set("sortBy", column);
+      params.set("sortOrder", "desc");
+    }
+    params.delete("page");
+    router.push(`?${params.toString()}`);
+  };
+
+  const renderSortIcon = (
+    column: "id" | "email" | "createdAt" | "displayName",
+  ) => {
+    if (currentSortBy !== column) {
+      return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />;
+    }
+    return currentSortOrder === "asc" ? (
+      <ArrowUp className="ml-1.5 h-3.5 w-3.5 text-[#4fae2e]" />
+    ) : (
+      <ArrowDown className="ml-1.5 h-3.5 w-3.5 text-[#4fae2e]" />
+    );
+  };
+
+  const renderRoleBadge = (roleName: string) => {
+    const nameLower = roleName.toLowerCase();
+    const label = KNOWN_ROLES.has(roleName.toUpperCase())
+      ? tRole(roleName.toUpperCase())
+      : roleName;
+
+    if (nameLower === "client") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800"
+        >
+          {label}
+        </Badge>
+      );
+    }
+    if (nameLower === "freelancer") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800"
+        >
+          {label}
+        </Badge>
+      );
+    }
+    if (nameLower === "admin") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
+        >
+          <Shield className="mr-1 h-3 w-3" /> {label}
+        </Badge>
+      );
+    }
+    if (nameLower === "expert") {
+      return (
+        <Badge
+          key={roleName}
+          variant="outline"
+          className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800"
+        >
+          {label}
+        </Badge>
+      );
+    }
+    return (
+      <Badge key={roleName} variant="secondary">
+        {label}
+      </Badge>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-20">
+                <button
+                  type="button"
+                  onClick={() => handleSort("id")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  {tCommon("id")} {renderSortIcon("id")}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  type="button"
+                  onClick={() => handleSort("displayName")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  {t("colUser")} {renderSortIcon("displayName")}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  type="button"
+                  onClick={() => handleSort("email")}
+                  className="flex items-center font-semibold hover:text-foreground"
+                >
+                  {tCommon("email")} {renderSortIcon("email")}
+                </button>
+              </TableHead>
+              <TableHead>{t("colRoles")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
+              <TableHead className="text-right">
+                <button
+                  type="button"
+                  onClick={() => handleSort("createdAt")}
+                  className="ml-auto flex items-center font-semibold hover:text-foreground"
+                >
+                  {t("colJoined")} {renderSortIcon("createdAt")}
+                </button>
+              </TableHead>
+              <TableHead className="text-right">
+                {tCommon("actions")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="py-12 text-center text-muted-foreground"
+                >
+                  {t("noUsers")}
+                </TableCell>
+              </TableRow>
+            ) : (
+              users.map((user) => (
+                <TableRow key={user.id} className="group">
+                  <TableCell>
+                    <Badge variant="outline" className="font-mono">
+                      {user.id}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage
+                          src={user.avatarUrl || undefined}
+                          alt={user.displayName || user.email}
+                        />
+                        <AvatarFallback className="bg-muted text-xs">
+                          {user.displayName ? (
+                            user.displayName.slice(0, 2).toUpperCase()
+                          ) : (
+                            <User className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-sm text-foreground">
+                          {user.displayName || t("noName")}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono text-sm text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {user.roles.length === 0 ? (
+                        <span className="text-xs text-muted-foreground">
+                          {t("noRole")}
+                        </span>
+                      ) : (
+                        user.roles.map((r) =>
+                          renderRoleBadge(r.name),
+                        )
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {user.isBanned ? (
+                      <Badge variant="destructive" className="text-xs">
+                        {t("banned")}
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
+                      >
+                        {t("active")}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
+                    {format.dateTime(new Date(user.createdAt), {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {/* Cột hành động dạng icon-only: Eye = xem chi tiết, Pencil = sửa user */}
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                        title={t("viewDetails")}
+                      >
+                        <Link
+                          href={`/admin/users/${user.id}`}
+                          aria-label={t("viewDetailsAria", {
+                            name: user.displayName || user.email,
+                          })}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                        title={t("editUser")}
+                        aria-label={t("editUserAria", {
+                          name: user.displayName || user.email,
+                        })}
+                        onClick={() => setEditingUser(user)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
+
+      {pagination.totalPages > 1 && (
+        <NumberedPagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+        />
+      )}
+    </div>
+  );
+}

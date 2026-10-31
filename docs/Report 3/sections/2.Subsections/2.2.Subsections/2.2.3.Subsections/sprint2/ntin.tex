@@ -1,0 +1,1058 @@
+\paragraph{Manage Milestone}
+% =================================================================
+% UC-24.01 View Milestone List
+% =================================================================
+\subparagraph{UC-24.01 View Milestone List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.01 View Milestone List} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Contract Details page from the contract list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated contract participant (Client or Freelancer) to view all project milestones associated with the contract, including their sequence, title, deliverable description, due date, escrow funding status, amount, and work progress status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated in the system. \newline
+\textbf{PRE-2} The user is a participant of the contract (Client or Freelancer) or an Administrator. \newline
+\textbf{PRE-3} The contract exists in the database.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A list of all milestones is displayed ordered by milestone sequence and creation date. \newline
+\textbf{POST-2} Summary financial statistics (contract total, escrow deposit, remaining balance) are rendered. \newline
+\textbf{POST-3} The user can select a milestone to view its details (UC-24.02) or take role-based actions.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Milestone List} \newline
+1. The User accesses the Contract Details page (\textbf{Contracts} $\rightarrow$ \textbf{Contract \#ID}). \newline
+2. The system queries the database to retrieve all milestones associated with the contract ID where \texttt{deletedAt = NULL}. \newline
+3. For each milestone, the system retrieves title, description, amount, due date, status, paymentStatus, and submission count. \newline
+4. The system calculates the total allocated milestone amount and remaining contract balance. \newline
+5. The system displays the milestone cards with financial metrics and role-specific action buttons.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Milestones Found} \newline
+1. The User accesses the Contract Details page. \newline
+2. The system determines that no active milestones exist for the contract. \newline
+3. The system displays an empty state message ``No milestones created yet'' and displays the ``+ Add Milestone'' button for the Client. \newline
+4. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Contract Not Found} \newline
+1. The system attempts to find the contract by ID, but no record exists. \newline
+2. The system displays the message ``Contract not found.'' and redirects to the 404 page. \newline
+3. The use case ends. \newline
+\textbf{EX-02: Unauthorized Access} \newline
+1. The authenticated user is neither the client, freelancer, nor admin for this contract. \newline
+2. The system denies access with HTTP 403 Forbidden. \newline
+3. The use case ends. \newline
+\textbf{EX-03: Database Connection Failure} \newline
+1. Database query fails due to network interruption or server timeout. \newline
+2. The system displays ``Unable to load milestones. Please try again later.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-01: Only milestones where \texttt{deletedAt = NULL} shall be retrieved. \newline
+BR-MS-02: Milestones shall be sorted chronologically by creation index and due date. \newline
+BR-MS-03: Milestones in \texttt{SUBMITTED}, \texttt{CHANGES\_REQUESTED}, or \texttt{DISPUTED} status shall be auto-expanded upon initial view.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Real-time query invalidation keeps the milestone list synchronized upon escrow deposits or submissions.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The contract was previously agreed upon and initialized in the system.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.02 View Milestone Detail
+% =================================================================
+\subparagraph{UC-24.02 View Milestone Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.02 View Milestone Detail} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a milestone card header or chevron button in the milestone list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Expands the milestone card to display full deliverable scope criteria, attached files, latest deliverable submission notes, external preview URLs, and change request revision history.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
+\textbf{PRE-2} The milestone list is loaded on screen.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The selected milestone card expands, showing full deliverable criteria and latest submission details. \newline
+\textbf{POST-2} Action buttons corresponding to the user's role and milestone status become interactive.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Milestone Detail} \newline
+1. The User clicks the milestone header or expand chevron button. \newline
+2. The system retrieves the milestone submissions and deliverable attachments. \newline
+3. The system renders the deliverable requirements and acceptance criteria. \newline
+4. The system presents the latest submission: submission timestamp, freelancer notes, external links, and downloadable files. \newline
+5. If changes were requested, the system displays the client's revision message and deadline. \newline
+6. The user inspects the information or triggers available workflow actions.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Milestone is Disputed} \newline
+1. The milestone has paymentStatus \texttt{DISPUTED}. \newline
+2. The system renders an alert banner with a ``View Dispute'' button linking to the arbitration room. \newline
+\textbf{A.2 Collapse Milestone Card} \newline
+1. The user clicks the chevron button on an expanded milestone. \newline
+2. The card collapses, hiding deliverable scope and submissions.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Deliverables Failed to Load} \newline
+1. The network request to fetch submissions fails. \newline
+2. The system displays an error banner with a ``Retry'' button inside the expanded card. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-04: Deliverable review actions (Approve, Request Changes) shall be rendered only for the Client when status is \texttt{SUBMITTED}. \newline
+BR-MS-05: Work execution actions (Start Work, Submit Work) shall be rendered only for the Freelancer.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Submissions list includes version history of previous revision attempts.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone ID requested is valid and linked to the active contract.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.03 Create Milestone
+% =================================================================
+\subparagraph{UC-24.03 Create Milestone}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.03 Create Milestone} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client clicks the ``+ Add Milestone'' button on the Contract Details page.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to create a new milestone by providing a title, deliverable scope description, funding amount, and target due date, validating that the amount does not exceed the remaining contract budget.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is logged in as the Client of this contract. \newline
+\textbf{PRE-2} The contract status is \texttt{ACTIVE} or \texttt{PENDING\_SIGN}. \newline
+\textbf{PRE-3} Total existing milestone amounts are less than the contract total amount.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new milestone record is created in the database with status \texttt{PENDING} and paymentStatus \texttt{PENDING}. \newline
+\textbf{POST-2} The milestone list updates and the unallocated contract balance is recalculated.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Milestone} \newline
+1. The Client clicks the ``+ Add Milestone'' button. \newline
+2. The system opens the slide-over creation form with remaining contract budget displayed. \newline
+3. The Client enters: Title (required), Description/Deliverable criteria (optional), Amount (required), and Due Date (optional). \newline
+4. The Client clicks ``Create Milestone''. \newline
+5. The system validates that title is non-empty, amount > 0, amount $\le$ remaining balance, and due date is in the future. \newline
+6. The system persists the new milestone in the database. \newline
+7. The system closes the modal, renders a success notification, and refreshes the milestone list.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Creation} \newline
+1. The Client clicks ``Cancel'' or presses Escape. \newline
+2. The system closes the modal without saving data. \newline
+3. The use case ends.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Amount Exceeds Contract Budget} \newline
+1. The entered amount exceeds the remaining unallocated balance. \newline
+2. The system halts submission and displays ``Milestone amount exceeds remaining contract budget.'' \newline
+3. The Client adjusts the amount and resubmits. \newline
+\textbf{EX-02: Due Date In The Past} \newline
+1. The selected due date is earlier than the current time. \newline
+2. The system displays ``Due date must be in the future.'' \newline
+3. Return to step 3. \newline
+\textbf{EX-03: Contract Inactive} \newline
+1. Contract has been cancelled or completed. \newline
+2. The system rejects creation with ``Milestones cannot be added to inactive contracts.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-06: The sum of all non-deleted milestone amounts must not exceed the contract's \texttt{totalAmount}. \newline
+BR-MS-07: Newly created milestones must default to \texttt{status = PENDING} and \texttt{paymentStatus = PENDING}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Client can immediately proceed to fund the milestone via Stripe or saved payment card.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The contract has a defined fixed total price.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.04 Update Milestone
+% =================================================================
+\subparagraph{UC-24.04 Update Milestone}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.04 Update Milestone} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client selects ``Edit'' from the 3-dots dropdown menu on a pending milestone card.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to modify the title, description, budget amount, or target due date of a milestone that has not yet started work.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Client of the contract. \newline
+\textbf{PRE-2} The milestone status is \texttt{PENDING}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The milestone record is updated with new specifications. \newline
+\textbf{POST-2} The milestone card re-renders with the updated information.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Update Milestone} \newline
+1. The Client clicks the 3-dots option menu on a pending milestone and clicks ``Edit''. \newline
+2. The system opens the slide-over form pre-populated with current milestone values. \newline
+3. The Client modifies title, description, amount, or due date. \newline
+4. The Client clicks ``Save Changes''. \newline
+5. The system verifies that the updated amount does not exceed the remaining contract budget (offsetting the old amount). \newline
+6. The system updates the milestone details in the database. \newline
+7. The slide-over closes and a success message ``Milestone updated successfully'' is displayed.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Discard Changes} \newline
+1. The Client closes the modal without clicking save. \newline
+2. Changes are discarded and the milestone remains unaltered.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Milestone In Progress or Completed} \newline
+1. The milestone status is no longer \texttt{PENDING}. \newline
+2. The system rejects the update with ``Milestone cannot be edited once work has started.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Amount Exceeds Contract Total} \newline
+1. The new amount exceeds the available budget threshold. \newline
+2. The system displays an error and prompts the client to adjust the value. \newline
+3. Return to step 3.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-08: Only milestones in \texttt{PENDING} status can be modified. \newline
+BR-MS-09: Recalculated total amounts must not exceed the contract total amount.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone has not been locked by a dispute or escrow release.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.05 Delete Milestone
+% =================================================================
+\subparagraph{UC-24.05 Delete Milestone}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.05 Delete Milestone} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client selects ``Delete'' from the 3-dots dropdown menu on a pending milestone card.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to delete an unstarted and unfunded milestone, restoring its allocated funds back to the contract's unallocated balance.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Client of the contract. \newline
+\textbf{PRE-2} The milestone status is \texttt{PENDING} and paymentStatus is \texttt{PENDING}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The milestone is soft-deleted (\texttt{deletedAt = new Date()}) and removed from the active list. \newline
+\textbf{POST-2} Contract unallocated balance is restored.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Milestone} \newline
+1. The Client opens the 3-dots menu on a pending milestone and selects ``Delete''. \newline
+2. The system presents an alert confirmation dialog: ``Are you sure you want to delete this milestone?'' \newline
+3. The Client clicks ``Delete''. \newline
+4. The system removes the milestone from the contract. \newline
+5. The backend sets \texttt{deletedAt} timestamp on the milestone record. \newline
+6. The dialog closes, the card is removed from the view, and a confirmation toast is displayed.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Deletion} \newline
+1. The Client selects ``Cancel'' in the alert dialog. \newline
+2. The dialog closes without deleting the milestone.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Milestone In Progress or Funded} \newline
+1. The milestone has status $\neq$ \texttt{PENDING} or paymentStatus $\neq$ \texttt{PENDING}. \newline
+2. The system rejects deletion with ``Milestone cannot be deleted.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-10: Funded, in-progress, or completed milestones cannot be deleted to protect freelancer rights and escrow funds.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Soft deletion ensures audit history remains traceable in the database.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone has no pending financial transactions.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.06 Request Milestone Changes
+% =================================================================
+\subparagraph{UC-24.06 Request Milestone Changes}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.06 Request Milestone Changes} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client reviews submitted work and clicks ``Request Changes''.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to reject the current submission and ask for modifications, supplying detailed feedback and an optional revision deadline.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Client of the contract. \newline
+\textbf{PRE-2} The milestone status is \texttt{SUBMITTED}. \newline
+\textbf{PRE-3} The active submission status is \texttt{PENDING\_REVIEW}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The submission status transitions to \texttt{CHANGES\_REQUESTED} with feedback and deadline saved. \newline
+\textbf{POST-2} Milestone status transitions to \texttt{CHANGES\_REQUESTED}. \newline
+\textbf{POST-3} The Freelancer is notified to revise and resubmit work.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Request Changes} \newline
+1. The Client clicks ``Review Deliverables'' on a submitted milestone card. \newline
+2. The system opens the Review Deliverable slide-over sheet. \newline
+3. The Client clicks ``Request Changes''. \newline
+4. The system presents the feedback message input box and date picker for revision deadline. \newline
+5. The Client types specific revision requirements and selects a target date. \newline
+6. The Client clicks ``Submit Change Request''. \newline
+7. The system updates the submission status to changes requested and records the feedback message. \newline
+8. The database updates the submission status to \texttt{CHANGES\_REQUESTED} and sets milestone status to \texttt{CHANGES\_REQUESTED}. \newline
+9. The modal closes, a success toast appears, and the milestone card displays an amber revision banner.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Cancel Feedback Entry} \newline
+1. The Client clicks ``Cancel'' or ``Back to Review''. \newline
+2. The feedback form closes and the submission remains in \texttt{PENDING\_REVIEW}.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Empty Feedback Message} \newline
+1. The Client attempts to submit without entering a feedback message. \newline
+2. The system displays ``Please explain what needs to be changed.'' \newline
+3. Return to step 5. \newline
+\textbf{EX-02: Submission Already Reviewed} \newline
+1. The submission has already been approved or changes requested by another session. \newline
+2. The system returns HTTP 400 with ``Submission is not pending review.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-11: A change request must include a non-empty explanation message. \newline
+BR-MS-12: Requesting changes enables the Freelancer to create a new submission iteration.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Feedback message is archived in submission history to preserve review trail.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone has a funded escrow deposit.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.07 Approve Milestone
+% =================================================================
+\subparagraph{UC-24.07 Approve Milestone}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.07 Approve Milestone} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client reviews submitted work and clicks ``Approve \& Release Payment''.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Enables the client to accept completed deliverables, marking the milestone as Completed and releasing escrowed funds to the freelancer's account.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Client of the contract. \newline
+\textbf{PRE-2} The milestone is in \texttt{SUBMITTED} status and paymentStatus is \texttt{FUNDED}. \newline
+\textbf{PRE-3} The submission is in \texttt{PENDING\_REVIEW} status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Submission status becomes \texttt{APPROVED}. \newline
+\textbf{POST-2} Milestone status transitions to \texttt{COMPLETED} and paymentStatus becomes \texttt{RELEASED}. \newline
+\textbf{POST-3} Escrow funds are transferred to the freelancer.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Approve Milestone} \newline
+1. The Client opens the Review Deliverables slide-over sheet. \newline
+2. The Client inspects the freelancer notes, links, and files. \newline
+3. The Client clicks ``Approve \& Release (\$X,XXX)''. \newline
+4. The system displays a confirmation dialog informing the client that escrow funds will be immediately released. \newline
+5. The Client clicks ``Confirm Release''. \newline
+6. The system initiates the approval and escrow release transaction. \newline
+7. The database transaction executes: marks submission \texttt{APPROVED}, sets milestone \texttt{COMPLETED}, sets paymentStatus \texttt{RELEASED}, and debits escrow balance. \newline
+8. The sheet closes, a success toast confirms release, and the milestone card displays a completed badge with green styling.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Final Contract Milestone} \newline
+1. The approved milestone is the last milestone of the contract. \newline
+2. The system prompts the Client to complete the contract and leave a rating and review for the freelancer.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Milestone Not Funded} \newline
+1. The milestone has paymentStatus $\neq$ \texttt{FUNDED}. \newline
+2. The system blocks approval with ``Milestone funds must be deposited into escrow prior to approval.'' \newline
+3. The use case ends. \newline
+\textbf{EX-02: Transaction Failure} \newline
+1. Escrow fund transfer fails due to banking service timeout. \newline
+2. The database rolls back the approval transaction and displays ``Payment release failed. Please try again.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-13: Approving a milestone irrevocably releases the associated escrow funds to the freelancer's balance. \newline
+BR-MS-14: Completed milestones cannot be reopened or edited.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Platform transaction fee is deducted according to platform commission policy.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Escrow deposit was previously confirmed via Stripe payment gateway.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-24.08 Update Milestone Progress
+% =================================================================
+\subparagraph{UC-24.08 Update Milestone Progress}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-24.08 Update Milestone Progress} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer clicks the ``Start Work'' button on a funded upcoming milestone card.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Transitions a milestone from Pending to In Progress, verifying that funds are secured in escrow and enforcing that only one milestone can be in progress at a time.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Freelancer assigned to the contract. \newline
+\textbf{PRE-2} The milestone status is \texttt{PENDING}. \newline
+\textbf{PRE-3} The milestone paymentStatus is \texttt{FUNDED}. \newline
+\textbf{PRE-4} No other milestone in the contract currently has status \texttt{IN\_PROGRESS}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Milestone status becomes \texttt{IN\_PROGRESS}. \newline
+\textbf{POST-2} The milestone card renders the ``Submit Work'' button for the Freelancer.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Start Work on Milestone} \newline
+1. The Freelancer views the Contract Details page. \newline
+2. The Freelancer locates an upcoming milestone with status ``Pending'' and paymentStatus ``Funded''. \newline
+3. The Freelancer clicks ``Start Work''. \newline
+4. The system updates the milestone progress percentage and status. \newline
+5. The backend verifies freelancer ownership, funded escrow status, and absence of other active milestones. \newline
+6. The database updates the milestone status to \texttt{IN\_PROGRESS}. \newline
+7. The milestone card updates to ``In Progress'' and the ``Submit Work'' button becomes enabled.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Milestone Unfunded} \newline
+1. The milestone has paymentStatus \texttt{PENDING}. \newline
+2. The ``Start Work'' button is replaced by an ``Awaiting Escrow Deposit'' badge. \newline
+3. Work cannot begin until the Client deposits funds. \newline
+\textbf{A.2 Another Milestone In Progress} \newline
+1. Another milestone in the contract is already in \texttt{IN\_PROGRESS} status. \newline
+2. The ``Start Work'' button is disabled with tooltip ``Another milestone is already in progress''.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Milestone Already In Progress} \newline
+1. Request sent for an already active milestone. \newline
+2. System returns HTTP 400 ``Milestone is already in progress.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-MS-15: A freelancer shall not start work on a milestone until escrow funds are confirmed (\texttt{paymentStatus = FUNDED}). \newline
+BR-MS-16: Only one milestone per contract can be in \texttt{IN\_PROGRESS} status at any given time.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Sequential milestone enforcement prevents multitasking disputes and scopes deliverable deadlines.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The contract is active and signed by both parties.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\paragraph{Manage Milestone File}
+% =================================================================
+% UC-25.01 View Milestone Files
+% =================================================================
+\subparagraph{UC-25.01 View Milestone Files}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-25.01 View Milestone Files} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views the attached deliverables of an expanded milestone or opens the submit work dialog.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays all deliverable files uploaded for a milestone, indicating file name, file type icon, upload date, and secure download link.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
+\textbf{PRE-2} The milestone exists in the contract.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The user views all deliverable files attached to the milestone. \newline
+\textbf{POST-2} Files can be downloaded directly from Cloudinary CDN.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Milestone Files} \newline
+1. The User expands a milestone card or opens the deliverable modal. \newline
+2. The system retrieves all uploaded files and attachments for the milestone. \newline
+3. The system filters records where \texttt{deletedAt = NULL}. \newline
+4. The system renders each file item with its respective icon (PDF, ZIP, Image, Code), file name, and download button. \newline
+5. The User clicks ``Download'' to retrieve the file from Cloudinary CDN.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 No Files Uploaded} \newline
+1. No files are linked to the milestone. \newline
+2. The system displays ``No files attached''.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized User} \newline
+1. User is not a participant of the contract. \newline
+2. The system rejects request with HTTP 403 Forbidden. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FILE-01: Only files with \texttt{deletedAt = NULL} shall be accessible to participants.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Files are stored securely in Cloudinary under milestone-specific directories.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The file URLs are valid and accessible via CDN.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-25.02 Upload Milestone File
+% =================================================================
+\subparagraph{UC-25.02 Upload Milestone File}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-25.02 Upload Milestone File} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer selects a file or drops a file into the upload dropzone in the Submit Milestone dialog.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Uploads a deliverable file to Cloudinary storage and registers its metadata in the milestone files database, preparing it for inclusion in a submission.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Freelancer (or Client) of the contract. \newline
+\textbf{PRE-2} The file size is $\le$ 25MB.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The file is uploaded to Cloudinary and saved in the \texttt{MilestoneFile} table. \newline
+\textbf{POST-2} The uploaded file is appended to the draft submission list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Upload File} \newline
+1. The Freelancer selects a file from the device file chooser or drops a file into the dropzone. \newline
+2. Client-side validation checks that the file size is within the 25MB limit. \newline
+3. The UI shows an upload spinner indicator. \newline
+4. The system uploads the file to storage and saves file metadata in the database. \newline
+5. The backend stores the file in cloud storage under the milestone asset folder. \newline
+6. The backend records \texttt{uploaderId}, \texttt{fileUrl}, \texttt{publicId}, and \texttt{fileName} in database. \newline
+7. The system returns the created file object and renders it in the attached files list with a success toast.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 File Size Exceeded} \newline
+1. The selected file exceeds 25MB. \newline
+2. The system alerts ``File size exceeds 25MB limit'' and halts upload. \newline
+3. Return to step 1.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Cloudinary Upload Failure} \newline
+1. Cloud storage upload fails due to network or service error. \newline
+2. The server rolls back and returns HTTP 500 ``Upload failed. Please try again.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FILE-02: Maximum upload file size is capped at 25MB per file. \newline
+BR-FILE-03: Uploaded files must be scanned and verified for secure MIME-types.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Multiple files can be uploaded sequentially for a single milestone deliverable.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user device has an active internet connection.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-25.03 Delete Milestone File
+% =================================================================
+\subparagraph{UC-25.03 Delete Milestone File}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-25.03 Delete Milestone File} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user clicks the trash icon next to an uploaded file in the Submit Milestone dialog.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the file uploader to remove a file they uploaded, purging the asset from Cloudinary storage and soft-deleting the database record.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the original uploader of the file (\texttt{uploaderId === userId}). \newline
+\textbf{PRE-2} The file exists and has not been deleted.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The file asset is deleted from Cloudinary. \newline
+\textbf{POST-2} The database record is marked as deleted (\texttt{deletedAt = new Date()}). \newline
+\textbf{POST-3} The file is removed from the UI attachment list.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Delete Milestone File} \newline
+1. The User clicks the trash icon next to the file card in the modal. \newline
+2. The system deletes the file from storage and removes its record from the database. \newline
+3. The backend confirms ownership (\texttt{uploaderId === userId}). \newline
+4. The backend calls Cloudinary API to remove the asset using its \texttt{publicId}. \newline
+5. The backend sets \texttt{deletedAt} timestamp on the database record. \newline
+6. The file is removed from the UI and a toast confirms deletion.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Network Failure} \newline
+1. The server delete request fails. \newline
+2. The UI unlinks the file locally from the submission form to allow the freelancer to proceed without delay.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Unauthorized Deletion} \newline
+1. The user attempting deletion is not the file's original uploader. \newline
+2. The system rejects request with HTTP 403 Forbidden. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-FILE-04: Only the user who uploaded a file has permission to delete it.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Cloudinary credentials have asset removal permissions.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+\paragraph{Manage Milestone Submission}
+% =================================================================
+% UC-26.01 Submit Milestone
+% =================================================================
+\subparagraph{UC-26.01 Submit Milestone}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-26.01 Submit Milestone} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer clicks ``Submit Work'' (or ``Resubmit Work'') on a milestone card.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows the freelancer to submit completed deliverables for client evaluation, bundling a message, external preview links, and uploaded files. The milestone transitions to Submitted status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is the Freelancer of the contract. \newline
+\textbf{PRE-2} The milestone status is \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}. \newline
+\textbf{PRE-3} The milestone paymentStatus is \texttt{FUNDED}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A new submission record is created with status \texttt{PENDING\_REVIEW}. \newline
+\textbf{POST-2} Milestone status updates to \texttt{SUBMITTED}. \newline
+\textbf{POST-3} The Client is prompted to review deliverables.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Submit Milestone Deliverables} \newline
+1. The Freelancer clicks ``Submit Work'' on the milestone card. \newline
+2. The system opens the Submit Deliverables modal. \newline
+3. The Freelancer inputs a message explaining the work completed. \newline
+4. The Freelancer inputs external preview URLs and clicks ``+ Add Link''. \newline
+5. The Freelancer uploads deliverable files (UC-25.02). \newline
+6. The Freelancer clicks ``Submit Deliverables''. \newline
+7. The system validates that at least one deliverable element (message, link, or file) is provided. \newline
+8. The system creates the submission record and notifies the client for review. \newline
+9. The backend transaction creates the submission, links files, and updates milestone status to \texttt{SUBMITTED}. \newline
+10. The modal closes, a success toast confirms submission, and the card updates to ``Submitted - Awaiting Review''.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Resubmission After Revision} \newline
+1. The milestone has status \texttt{CHANGES\_REQUESTED}. \newline
+2. The modal displays the client's previous revision request message and target deadline. \newline
+3. The Freelancer addresses feedback and submits a new revision bundle.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Empty Deliverables} \newline
+1. The Freelancer clicks submit without providing message, link, or file. \newline
+2. The system halts submission with ``Please provide at least a message, a link, or a file.'' \newline
+3. Return to step 3. \newline
+\textbf{EX-02: Milestone Not In Progress} \newline
+1. The milestone status is not \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}. \newline
+2. The system rejects request with ``Milestone is not in progress.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SUB-01: Only the contract's assigned freelancer can submit milestone work. \newline
+BR-SUB-02: Submissions require at least one deliverable artifact (notes, links, or files). \newline
+BR-SUB-03: Submitting work automatically transitions milestone status to \texttt{SUBMITTED}.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Submissions are versioned chronologically to support client audits and revision history.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone work is ready for client review.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-26.02 Delete Milestone Submission
+% =================================================================
+\subparagraph{UC-26.02 Delete Milestone Submission}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-26.02 Delete Milestone Submission} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer discards an ongoing submission draft before confirming submission in the modal.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Enables the freelancer to discard an in-progress submission draft, remove attached files, and close the dialog without altering the milestone status.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The freelancer is in the Submit Deliverables dialog. \newline
+\textbf{PRE-2} The submission has not been finalized.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Draft state is discarded and unlinked files are cleaned up. \newline
+\textbf{POST-2} Milestone status remains \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Discard Submission Draft} \newline
+1. The Freelancer decides to cancel the submission draft. \newline
+2. The Freelancer deletes any attached files (UC-25.03) and clears links. \newline
+3. The Freelancer clicks ``Cancel'' or the close icon on the modal. \newline
+4. The system resets all local draft inputs. \newline
+5. The milestone card remains in its current active state without any status change.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Resume Editing} \newline
+1. The Freelancer cancels modal closing to continue refining deliverables. \newline
+2. Return to draft editing.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: File Deletion Failure} \newline
+1. Removal of an uploaded draft file fails over network. \newline
+2. An inline notification appears while safely closing the dialog. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SUB-04: Official submissions already submitted to the client cannot be unilaterally deleted to maintain an immutable audit trail for dispute arbitration.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Drafting takes place locally in client browser state.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-26.03 View Milestone Submission List
+% =================================================================
+\subparagraph{UC-26.03 View Milestone Submission List}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-26.03 View Milestone Submission List} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Freelancer, Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user expands a milestone card with deliverable activity and toggles the ``Revision History'' view.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays the complete chronological list of all deliverable submissions made for a milestone, indicating version number, submission timestamp, review status, and feedback remarks.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
+\textbf{PRE-2} The milestone card is expanded.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The full history log of submissions for the milestone is displayed in chronological order.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Submission List} \newline
+1. The User expands a milestone card in the contract view. \newline
+2. The system retrieves the list of submissions associated with the milestone. \newline
+3. The latest submission is displayed at the top of the deliverables section. \newline
+4. If earlier revisions exist, the user clicks the toggle ``Revision History (n previous revisions)''. \newline
+5. The system renders the accordion containing all past iterations: version index, submission date, status badge, and client feedback snippet.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Single Submission} \newline
+1. Only one submission attempt exists. \newline
+2. The history accordion is omitted and only the primary submission card is shown.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Submissions Failed to Load} \newline
+1. The server request fails. \newline
+2. A retry button prompts the user to reload the submission list. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SUB-05: Submissions shall be listed in descending order by submission date (newest first).
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Both Client and Freelancer see the identical submission history.} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Submissions are linked to the current milestone ID.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-26.04 View Milestone Submission Detail
+% =================================================================
+\subparagraph{UC-26.04 View Milestone Submission Detail}
+
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+
+UC ID and Name & \multicolumn{3}{l|}{UC-26.04 View Milestone Submission Detail} \\ \hline
+
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Freelancer, Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client clicks ``Review Deliverables'' on a submitted milestone, or a participant clicks a submission in the history list.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays the comprehensive details of a specific milestone submission, including submission timestamp, review status, freelancer notes, preview links, attached downloadable files, and interactive evaluation buttons for the client.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is an authenticated contract participant or Admin. \newline
+\textbf{PRE-2} The submission exists for the requested milestone.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} The complete submission details are displayed in a slide-over sheet. \newline
+\textbf{POST-2} The Client can trigger ``Request Changes'' (UC-24.06) or ``Approve Milestone'' (UC-24.07).
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. View Submission Detail} \newline
+1. The User clicks ``Review Deliverables'' or clicks a submission entry in the history log. \newline
+2. The system retrieves the detailed submission record, including files and review history. \newline
+3. The system renders the Review Deliverables slide-over sheet displaying:
+   - Milestone title, index number, and escrow amount.
+   - Submission date and status badge (\texttt{PENDING\_REVIEW}, \texttt{CHANGES\_REQUESTED}, or \texttt{APPROVED}).
+   - Freelancer's submission notes and implementation commentary.
+   - List of external preview URLs with open-in-new-tab links.
+   - Attached deliverable files with file type icons and download links.
+   - If revisions were requested, client feedback message and revision due date. \newline
+4. If viewed by the Client when status is \texttt{PENDING\_REVIEW}, the evaluation action buttons ``Request Changes'' and ``Approve \& Release Payment'' are rendered.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Freelancer Read-Only View} \newline
+1. The Freelancer opens the submission detail. \newline
+2. The same submission content is presented in read-only mode with an ``Awaiting Client Review'' badge instead of action buttons.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Submission Not Found} \newline
+1. The requested submission ID does not match the milestone. \newline
+2. The system returns HTTP 404 Not Found. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-SUB-06: Review actions (Approve / Request Changes) are strictly restricted to the verified contract Client.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The submission data is preserved in database with referential integrity.} \\ \hline
+
+\end{longtable}

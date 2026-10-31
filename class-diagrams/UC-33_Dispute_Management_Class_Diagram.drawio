@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="719" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ==================== COLUMN 1: ROUTES (x=60, w=580) ==================== -->
+    <mxCell id="disp_routeUser" value="&lt;&lt;route&gt;&gt;&#xa;DisputeUserRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="60" y="60" width="580" height="376" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r0" value="+GET /disputes (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="56" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r1" value="+POST /disputes (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="88" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r2" value="+POST /disputes/upload (AuthGuard, FileInterceptor)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="120" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r3" value="+POST /disputes/:id/evidence (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="152" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r4" value="+POST /disputes/:id/counter-offer (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="184" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r5" value="+POST /disputes/:id/accept-offer (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="216" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r6" value="+POST /disputes/:id/escalate (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="248" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r7" value="+POST /disputes/:id/vote-decision (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="280" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r8" value="+GET /disputes/milestone/:milestoneId (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="312" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeUser_r9" value="+GET /disputes/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeUser" vertex="1">
+      <mxGeometry y="344" width="580" height="32" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_routeExpert" value="&lt;&lt;route&gt;&gt;&#xa;DisputeExpertRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="60" y="466" width="580" height="184" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeExpert_r0" value="+GET /expert/disputes (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeExpert" vertex="1">
+      <mxGeometry y="56" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeExpert_r1" value="+GET /expert/disputes/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeExpert" vertex="1">
+      <mxGeometry y="88" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeExpert_r2" value="+POST /expert/disputes/:id/claim (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeExpert" vertex="1">
+      <mxGeometry y="120" width="580" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_routeExpert_r3" value="+POST /expert/disputes/:id/decision (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_routeExpert" vertex="1">
+      <mxGeometry y="152" width="580" height="32" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 2: CONTROLLERS & GUARDS (x=720, w=520) ==================== -->
+    <mxCell id="disp_ctrlUser" value="DisputeUserController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="60" width="520" height="350" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_a0" value="-disputeUserService: DisputeUserService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="62" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m0" value="+listMyDisputes(userId, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="70" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m1" value="+createDispute(userId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="98" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m2" value="+uploadFile(file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="126" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m3" value="+addEvidence(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="154" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m4" value="+submitCounterOffer(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="182" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m5" value="+acceptOffer(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="210" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m6" value="+escalateToExpert(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="238" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m7" value="+voteExpertDecision(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="266" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m8" value="+getDisputeByMilestoneId(userId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="294" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlUser_m9" value="+getDisputeDetail(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlUser" vertex="1">
+      <mxGeometry y="322" width="520" height="28" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_ctrlExpert" value="DisputeExpertController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="430" width="520" height="182" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_a0" value="-disputeExpertService: DisputeExpertService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="62" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_m0" value="+listDisputes(expertUserId, roleName, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="70" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_m1" value="+getDisputeDetail(expertUserId, roleName, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="98" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_m2" value="+claimDispute(expertUserId, roleName, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="126" width="520" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_ctrlExpert_m3" value="+expertDecision(expertUserId, roleName, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_ctrlExpert" vertex="1">
+      <mxGeometry y="154" width="520" height="28" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="632" width="520" height="190" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_a0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_a1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_a2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="92" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="122" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="130" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gAuth" vertex="1">
+      <mxGeometry y="160" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="720" y="842" width="520" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gPerm_a0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gPerm" vertex="1">
+      <mxGeometry y="32" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gPerm_a1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gPerm" vertex="1">
+      <mxGeometry y="62" width="520" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_gPerm" vertex="1">
+      <mxGeometry y="92" width="520" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_gPerm_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_gPerm" vertex="1">
+      <mxGeometry y="100" width="520" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 3: DTOS & TYPES (x=1320, w=440) ==================== -->
+    <mxCell id="disp_dtoCreate" value="&lt;&lt;dto&gt;&gt;&#xa;CreateDisputeBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="60" width="440" height="208" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r0" value="+milestoneId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="44" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r1" value="+reason: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="70" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r2" value="+description: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="96" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r3" value="+freelancerAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="122" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r4" value="+clientAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="148" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_r5" value="+files?: DisputeFileItemType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="174" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCreate_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCreate" vertex="1">
+      <mxGeometry y="200" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_dtoCounter" value="&lt;&lt;dto&gt;&gt;&#xa;CounterOfferBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="288" width="440" height="156" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCounter_r0" value="+freelancerAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCounter" vertex="1">
+      <mxGeometry y="44" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCounter_r1" value="+clientAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCounter" vertex="1">
+      <mxGeometry y="70" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCounter_r2" value="+reason?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCounter" vertex="1">
+      <mxGeometry y="96" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCounter_r3" value="+files?: DisputeFileItemType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCounter" vertex="1">
+      <mxGeometry y="122" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoCounter_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoCounter" vertex="1">
+      <mxGeometry y="148" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_dtoDecision" value="&lt;&lt;dto&gt;&gt;&#xa;ExpertDecisionBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="464" width="440" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDecision_r0" value="+freelancerAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDecision" vertex="1">
+      <mxGeometry y="44" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDecision_r1" value="+clientAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDecision" vertex="1">
+      <mxGeometry y="70" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDecision_r2" value="+reason: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDecision" vertex="1">
+      <mxGeometry y="96" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDecision_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDecision" vertex="1">
+      <mxGeometry y="122" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_dtoVote" value="&lt;&lt;dto&gt;&gt;&#xa;VoteExpertDecisionBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="614" width="440" height="78" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoVote_r0" value="+agree: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoVote" vertex="1">
+      <mxGeometry y="44" width="440" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoVote_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoVote" vertex="1">
+      <mxGeometry y="70" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_dtoDetail" value="&lt;&lt;type&gt;&gt;&#xa;DisputeDetailType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="712" width="440" height="364" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="44" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r1" value="+milestoneId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="68" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r2" value="+openedById: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="92" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r3" value="+respondentId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="116" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r4" value="+status: DisputeStatusEnum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="140" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r5" value="+negotiationDeadline: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="164" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r6" value="+freelancerAmount: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="188" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r7" value="+clientAmount: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="212" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r8" value="+expertId: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="236" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r9" value="+expertFreelancerAmt: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="260" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r10" value="+expertClientAmt: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="284" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r11" value="+clientAgreed: boolean | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="308" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_r12" value="+freelancerAgreed: boolean | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="332" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_dtoDetail_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_dtoDetail" vertex="1">
+      <mxGeometry y="356" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_typeEvidence" value="&lt;&lt;type&gt;&gt;&#xa;DisputeEvidenceTypeModel" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="1096" width="440" height="172" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="44" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_r1" value="+disputeId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="68" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_r2" value="+submittedById: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="92" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_r3" value="+type: DisputeEvidenceTypeEnum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="116" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_r4" value="+comment: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="140" width="440" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_typeEvidence_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_typeEvidence" vertex="1">
+      <mxGeometry y="164" width="440" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 4: SERVICES & REPOSITORIES (x=1840, w=540) ==================== -->
+    <mxCell id="disp_svcUser" value="DisputeUserService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1840" y="60" width="540" height="412" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_a0" value="-disputeUserRepo: DisputeUserRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="32" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_a1" value="-paymentService: PaymentService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="60" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_a2" value="-cloudinaryService: CloudinaryService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="88" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_a3" value="-logger: Logger" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="116" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="144" width="540" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m0" value="+uploadFile(file: Express.Multer.File)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="152" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m1" value="+listMyDisputes(userId, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="178" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m2" value="+getDisputeDetail(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="204" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m3" value="+getDisputeByMilestoneId(userId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="230" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m4" value="+createDispute(userId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="256" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m5" value="+addEvidence(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="282" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m6" value="+submitCounterOffer(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="308" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m7" value="+acceptOffer(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="334" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m8" value="+escalateToExpert(userId, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="360" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcUser_m9" value="+voteExpertDecision(userId, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcUser" vertex="1">
+      <mxGeometry y="386" width="540" height="26" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_svcExpert" value="DisputeExpertService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1840" y="492" width="540" height="226" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_a0" value="-disputeExpertRepo: DisputeExpertRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="32" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_a1" value="-logger: Logger" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="60" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="88" width="540" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_m0" value="-getActiveExpertProfile(expertUserId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="96" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_m1" value="+listDisputes(expertUserId, roleName, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="122" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_m2" value="+getDisputeDetail(expertUserId, roleName, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="148" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_m3" value="+claimDispute(expertUserId, roleName, disputeId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="174" width="540" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_svcExpert_m4" value="+expertDecision(expertUserId, roleName, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_svcExpert" vertex="1">
+      <mxGeometry y="200" width="540" height="26" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_repoUser" value="DisputeUserRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1840" y="738" width="540" height="318" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="32" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="60" width="540" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m0" value="+findMilestoneWithContract(milestoneId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="68" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m1" value="+findDisputeById(disputeId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="93" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m2" value="+findDisputeByMilestoneId(milestoneId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="118" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m3" value="+listDisputes(query, userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="143" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m4" value="+createDisputeTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="168" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m5" value="+addEvidenceTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="193" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m6" value="+submitCounterOfferTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="218" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m7" value="+escalateToExpert(disputeId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="243" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m8" value="+voteExpertDecisionTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="268" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoUser_m9" value="+finalizeDisputeTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoUser" vertex="1">
+      <mxGeometry y="293" width="540" height="25" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_repoExpert" value="DisputeExpertRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1840" y="1076" width="540" height="193" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="32" width="540" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="60" width="540" height="8" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_m0" value="+findDisputeById(disputeId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="68" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_m1" value="+findUserWithProfileAndExpert(userId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="93" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_m2" value="+listDisputesForExpert(query, expertExpertise, expertId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="118" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_m3" value="+claimDisputeAtomic(disputeId, expertId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="143" width="540" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_repoExpert_m4" value="+expertDecisionTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_repoExpert" vertex="1">
+      <mxGeometry y="168" width="540" height="25" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== COLUMN 5: DATABASE SCHEMAS (x=2460, w=340) ==================== -->
+    <mxCell id="disp_schemaDispute" value="&lt;&lt;schema&gt;&gt;&#xa;Dispute" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2460" y="60" width="340" height="464" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="42" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r1" value="+milestoneId: number [FK, Unique]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="65" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r2" value="+openedById: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="88" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r3" value="+respondentId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="111" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r4" value="+reason: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="134" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r5" value="+description: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="157" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r6" value="+status: DisputeStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="180" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r7" value="+negotiationDeadline: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="203" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r8" value="+freelancerAmount: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="226" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r9" value="+clientAmount: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="249" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r10" value="+lastOfferById: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="272" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r11" value="+expertId: number | null [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="295" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r12" value="+expertReason: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="318" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r13" value="+expertFreelancerAmt: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="341" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r14" value="+expertClientAmt: Decimal | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="364" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r15" value="+clientAgreed: boolean | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="387" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r16" value="+freelancerAgreed: boolean | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="410" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_r17" value="+resolvedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="433" width="340" height="23" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaDispute_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaDispute" vertex="1">
+      <mxGeometry y="456" width="340" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_schemaEvidence" value="&lt;&lt;schema&gt;&gt;&#xa;DisputeEvidence" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2460" y="544" width="340" height="194" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="42" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r1" value="+disputeId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="66" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r2" value="+submittedById: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="90" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r3" value="+type: DisputeEvidenceType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="114" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r4" value="+comment: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="138" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_r5" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="162" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaEvidence_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaEvidence" vertex="1">
+      <mxGeometry y="186" width="340" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_schemaFile" value="&lt;&lt;schema&gt;&gt;&#xa;DisputeFile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2460" y="758" width="340" height="242" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="42" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r1" value="+disputeId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="66" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r2" value="+evidenceId: number | null [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="90" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r3" value="+uploadedById: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="114" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r4" value="+fileName: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="138" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r5" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="162" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r6" value="+fileSize: number | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="186" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_r7" value="+fileType: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="210" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaFile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaFile" vertex="1">
+      <mxGeometry y="234" width="340" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_schemaMilestone" value="&lt;&lt;schema&gt;&gt;&#xa;Milestone" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2460" y="1020" width="340" height="194" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="42" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r1" value="+contractId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="66" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r2" value="+title: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="90" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r3" value="+amount: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="114" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r4" value="+status: MilestoneStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="138" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_r5" value="+paymentStatus: MilestonePaymentStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="162" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaMilestone_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaMilestone" vertex="1">
+      <mxGeometry y="186" width="340" height="8" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_schemaContract" value="&lt;&lt;schema&gt;&gt;&#xa;Contract" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2460" y="1234" width="340" height="146" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaContract_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaContract" vertex="1">
+      <mxGeometry y="42" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaContract_r1" value="+clientId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaContract" vertex="1">
+      <mxGeometry y="66" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaContract_r2" value="+freelancerId: number [FK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaContract" vertex="1">
+      <mxGeometry y="90" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaContract_r3" value="+status: ContractStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaContract" vertex="1">
+      <mxGeometry y="114" width="340" height="24" as="geometry" />
+    </mxCell>
+    <mxCell id="disp_schemaContract_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="disp_schemaContract" vertex="1">
+      <mxGeometry y="138" width="340" height="8" as="geometry" />
+    </mxCell>
+
+    <!-- ==================== EDGES / RELATIONSHIPS ==================== -->
+    <mxCell id="disp_e_routeUser_ctrlUser" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=block;endFill=1;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeUser" target="disp_ctrlUser" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_routeExpert_ctrlExpert" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=block;endFill=1;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeExpert" target="disp_ctrlExpert" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_routeUser_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeUser" target="disp_gAuth" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_routeUser_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeUser" target="disp_gPerm" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_routeExpert_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeExpert" target="disp_gAuth" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_routeExpert_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_routeExpert" target="disp_gPerm" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Overhead arch from Controller to Service -->
+    <mxCell id="disp_e_ctrlUser_svcUser" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="disp_ctrlUser" target="disp_svcUser" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="980" y="20" />
+          <mxPoint x="2110" y="20" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="disp_e_ctrlExpert_svcExpert" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_ctrlExpert" target="disp_svcExpert" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_ctrlUser_dtoCreate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_ctrlUser" target="disp_dtoCreate" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_ctrlUser_dtoCounter" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_ctrlUser" target="disp_dtoCounter" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_ctrlUser_dtoVote" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_ctrlUser" target="disp_dtoVote" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_ctrlExpert_dtoDecision" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_ctrlExpert" target="disp_dtoDecision" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_svcUser_dtoDetail" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_svcUser" target="disp_dtoDetail" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_svcExpert_dtoDetail" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_svcExpert" target="disp_dtoDetail" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_svcUser_repoUser" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_svcUser" target="disp_repoUser" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_svcExpert_repoExpert" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_svcExpert" target="disp_repoExpert" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_repoUser_schemaDispute" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_repoUser" target="disp_schemaDispute" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_repoExpert_schemaDispute" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_repoExpert" target="disp_schemaDispute" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_repoUser_schemaEvidence" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_repoUser" target="disp_schemaEvidence" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_e_repoUser_schemaFile" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_repoUser" target="disp_schemaFile" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Schema Relationships -->
+    <mxCell id="disp_rel_milestone_dispute" value="0..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_schemaMilestone" target="disp_schemaDispute" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_rel_dispute_evidence" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_schemaDispute" target="disp_schemaEvidence" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_rel_evidence_file" value="0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_schemaEvidence" target="disp_schemaFile" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="disp_rel_contract_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;" parent="1" source="disp_schemaContract" target="disp_schemaMilestone" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>

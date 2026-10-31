@@ -1,0 +1,19 @@
+meta {
+  name: Bookmark Job
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/manage-jobs/jobs/{{jobSlug}}/bookmark
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+vars:pre-request {
+  jobSlug: e-commerce-website
+}

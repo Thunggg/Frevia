@@ -1,0 +1,745 @@
+"use client";
+
+import { useFormatter, useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Download,
+  Edit2,
+  Ellipsis,
+  ExternalLink,
+  FileText,
+  Gavel,
+  Loader2,
+  Play,
+  RotateCcw,
+  ShieldAlert,
+  ShieldCheck,
+  Trash2,
+  Upload,
+} from "@/components/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/shadcn/dropdown-menu";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
+import type { GetSubmissionResponseType, MilestoneType } from "@shared/types";
+
+const PAYMENT_STATUS_KEYS = [
+  "PENDING",
+  "FUNDED",
+  "RELEASED",
+  "REFUNDED",
+  "DISPUTED",
+] as const;
+
+const MILESTONE_STATUS_KEYS = [
+  "COMPLETED",
+  "SUBMITTED",
+  "IN_PROGRESS",
+  "CHANGES_REQUESTED",
+] as const;
+
+function getMilestoneStatusBadgeClass(
+  status: MilestoneType["status"],
+  paymentStatus?: MilestoneType["paymentStatus"],
+): string {
+  if (paymentStatus === "DISPUTED") {
+    return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 font-semibold";
+  }
+
+  if (paymentStatus === "RELEASED") {
+    return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold";
+  }
+
+  if (paymentStatus === "REFUNDED") {
+    return "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-semibold";
+  }
+
+  switch (status) {
+    case "COMPLETED":
+      return "bg-[#F1F0F5] text-foreground border border-border/80";
+    case "SUBMITTED":
+      return "bg-[#D0E1F8] text-[#0069D3] border border-[#0069D3]/20 font-semibold";
+    case "IN_PROGRESS":
+      return "bg-[#D0E1F8]/40 text-[#0069D3] border border-[#0069D3]/15 font-medium";
+    case "CHANGES_REQUESTED":
+      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-medium";
+    default:
+      return "bg-[#F1F0F5] text-muted-foreground border border-border/60";
+  }
+}
+
+interface MilestoneCardProps {
+  contractId: number;
+  milestone: MilestoneType;
+  index: number;
+  isFreelancer?: boolean;
+  hasOtherInProgressMilestone?: boolean;
+  onEdit?: (milestone: MilestoneType) => void;
+  onDelete?: (milestone: MilestoneType) => void;
+  onReview?: (milestone: MilestoneType, submission: GetSubmissionResponseType) => void;
+  onSubmitWork?: (milestone: MilestoneType) => void;
+  onStartWork?: (milestone: MilestoneType) => void;
+  onOpenDispute?: (milestone: MilestoneType) => void;
+  onViewDispute?: (milestone: MilestoneType) => void;
+  onFund?: (milestone: MilestoneType) => void;
+  onRelease?: (milestone: MilestoneType) => void;
+  onRefund?: (milestone: MilestoneType) => void;
+}
+
+export function MilestoneCard({
+  contractId,
+  milestone,
+  index,
+  isFreelancer = false,
+  hasOtherInProgressMilestone = false,
+  onEdit,
+  onDelete,
+  onReview,
+  onSubmitWork,
+  onStartWork,
+  onOpenDispute,
+  onViewDispute,
+  onFund,
+  onRelease,
+  onRefund,
+}: MilestoneCardProps) {
+  const t = useTranslations("milestoneCard");
+  const tMilestoneStatus = useTranslations("milestoneStatus");
+  const tPaymentStatus = useTranslations("paymentStatus");
+  const tSubmissionStatus = useTranslations("submissionStatus");
+  const format = useFormatter();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [submissions, setSubmissions] = useState<GetSubmissionResponseType[] | null>(null);
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+
+  // Auto-expand if milestone needs attention
+  useEffect(() => {
+    if (
+      milestone.status === "SUBMITTED" ||
+      milestone.status === "CHANGES_REQUESTED" ||
+      milestone.status === "IN_PROGRESS" ||
+      milestone.paymentStatus === "DISPUTED"
+    ) {
+      setIsExpanded(true);
+    }
+  }, [milestone.status, milestone.paymentStatus]);
+
+  // Fetch submissions when expanded
+  useEffect(() => {
+    if (isExpanded && submissions === null && !loadingSubmissions) {
+      setLoadingSubmissions(true);
+      contractApiRequest
+        .getSubmissions(contractId, milestone.id)
+        .then((res) => {
+          const data = extractContractData(res);
+          setSubmissions(Array.isArray(data) ? data : []);
+        })
+        .catch(() => {
+          setSubmissions([]);
+        })
+        .finally(() => {
+          setLoadingSubmissions(false);
+        });
+    }
+  }, [isExpanded, submissions, loadingSubmissions, contractId, milestone.id]);
+
+  const latestSubmission = submissions && submissions.length > 0 ? submissions[0] : null;
+  const badgeClass = getMilestoneStatusBadgeClass(
+    milestone.status,
+    milestone.paymentStatus,
+  );
+  const statusKey =
+    milestone.paymentStatus === "DISPUTED"
+      ? "DISPUTED"
+      : (MILESTONE_STATUS_KEYS as readonly string[]).includes(milestone.status)
+        ? milestone.status
+        : "UPCOMING";
+  const paymentText = (PAYMENT_STATUS_KEYS as readonly string[]).includes(
+    milestone.paymentStatus,
+  )
+    ? tPaymentStatus(milestone.paymentStatus)
+    : milestone.paymentStatus;
+
+  const money = (amount: number) =>
+    format.number(amount, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const formatDate = (date: string | Date | null) =>
+    date
+      ? format.dateTime(new Date(date), {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : t("notSpecified");
+
+  const submissionStatusText = (status: string) =>
+    (["PENDING_REVIEW", "CHANGES_REQUESTED", "APPROVED"] as readonly string[]).includes(
+      status,
+    )
+      ? tSubmissionStatus(status)
+      : status;
+
+  const handleToggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  return (
+    <div className="group rounded-2xl border border-border/70 bg-card hover:border-[#0069D3]/40 transition-all shadow-xs overflow-hidden">
+      {/* Top Main Bar (Always Visible) */}
+      <div
+        onClick={handleToggleExpand}
+        className="flex flex-col sm:flex-row sm:items-center justify-between p-5 cursor-pointer gap-4 transition-colors hover:bg-muted/20 select-none"
+      >
+        {/* Left: Index badge + Title + Dates + Amount */}
+        <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+          {/* Milestone Number Index */}
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#F1F0F5] text-xs font-bold text-foreground">
+            {index + 1}
+          </div>
+
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-foreground truncate">
+                {milestone.title}
+              </h4>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <CalendarDays className="size-3.5 text-muted-foreground/70" />
+                {t("due", { date: formatDate(milestone.dueDate) })}
+              </span>
+              <span>•</span>
+              <span>
+                {t("paymentLabel", { status: paymentText })}
+              </span>
+            </div>
+          </div>
+
+          {/* Amount Badge */}
+          <div className="text-right shrink-0">
+            <span className="text-base font-extrabold text-foreground block tracking-tight">
+              {money(Number(milestone.amount))}
+            </span>
+          </div>
+        </div>
+
+        {/* Right: Status badge + Payment Action Buttons + 3 dots action menu + Chevron */}
+        <div
+          className="flex items-center gap-2 shrink-0 self-start sm:self-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Client Payment Action Quick Buttons */}
+          {!isFreelancer && milestone.paymentStatus === "PENDING" && onFund && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => onFund(milestone)}
+              className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-7 px-3 shadow-sm shrink-0"
+            >
+              <ShieldCheck className="mr-1 size-3.5" />
+              Fund Milestone
+            </Button>
+          )}
+
+          {!isFreelancer &&
+            milestone.paymentStatus === "FUNDED" &&
+            onRelease && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => onRelease(milestone)}
+                className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-7 px-3 shadow-sm shrink-0"
+              >
+                <CheckCircle2 className="mr-1 size-3.5" />
+                Release Payment
+              </Button>
+            )}
+
+          <span className={`rounded-full px-3 py-1 text-xs ${badgeClass}`}>
+            {tMilestoneStatus(statusKey)}
+          </span>
+
+          {/* 3-dots action menu for both Client and Freelancer */}
+          {(onEdit || onDelete || onOpenDispute || onViewDispute) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-colors outline-none"
+                  title={t("options")}
+                >
+                  <Ellipsis className="size-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={6}
+                className="w-48 rounded-[20px] border border-border bg-white dark:bg-zinc-900 p-1.5 shadow-xl flex flex-col gap-1"
+              >
+                {!isFreelancer && milestone.status === "PENDING" && onEdit && (
+                  <DropdownMenuItem
+                    onClick={() => onEdit(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 cursor-pointer transition-all outline-none"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Edit2 className="size-3.5 text-foreground" />
+                      <span className="text-xs font-medium text-foreground">
+                        {t("edit")}
+                      </span>
+                    </div>
+                    <ChevronRight className="size-3 text-muted-foreground/50 group-hover:text-[#0069D3] transition-all" />
+                  </DropdownMenuItem>
+                )}
+
+                {!isFreelancer && milestone.status === "PENDING" && onDelete && (
+                  <DropdownMenuItem
+                    onClick={() => onDelete(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Trash2 className="size-3.5 text-red-600" />
+                      <span className="text-xs font-medium text-red-600">
+                        {t("delete")}
+                      </span>
+                    </div>
+                    <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                  </DropdownMenuItem>
+                )}
+
+                {!isFreelancer &&
+                  milestone.paymentStatus === "FUNDED" &&
+                  onRefund && (
+                    <DropdownMenuItem
+                      onClick={() => onRefund(milestone)}
+                      className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-all outline-none text-rose-600"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RotateCcw className="size-3.5 text-rose-600" />
+                        <span className="text-xs font-medium text-rose-600">
+                          Refund to Client
+                        </span>
+                      </div>
+                      <ChevronRight className="size-3 text-muted-foreground/50 transition-all" />
+                    </DropdownMenuItem>
+                  )}
+
+                {/* View Dispute option */}
+                {milestone.paymentStatus === "DISPUTED" && onViewDispute && (
+                  <DropdownMenuItem
+                    onClick={() => onViewDispute(milestone)}
+                    className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 cursor-pointer transition-all outline-none text-red-600"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Gavel className="size-3.5 text-red-600" />
+                      <span className="text-xs font-bold text-red-600">
+                        {t("viewDispute")}
+                      </span>
+                    </div>
+                    <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                  </DropdownMenuItem>
+                )}
+
+                {/* Open Dispute option (available for both roles if eligible) */}
+                {milestone.paymentStatus !== "DISPUTED" &&
+                  milestone.status !== "COMPLETED" &&
+                  milestone.paymentStatus !== "RELEASED" &&
+                  milestone.paymentStatus !== "REFUNDED" &&
+                  onOpenDispute && (
+                    <DropdownMenuItem
+                      onClick={() => onOpenDispute(milestone)}
+                      className="group flex items-center justify-between rounded-full px-3 py-1.5 bg-[#F1F0F5] hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer transition-all outline-none text-red-600"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ShieldAlert className="size-3.5 text-red-600" />
+                        <span className="text-xs font-medium text-red-600">
+                          {t("openDispute")}
+                        </span>
+                      </div>
+                      <ChevronRight className="size-3 text-red-400/50 group-hover:text-red-600 transition-all" />
+                    </DropdownMenuItem>
+                  )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
+          {/* Expand / Collapse Chevron */}
+          <button
+            type="button"
+            onClick={handleToggleExpand}
+            className="flex size-8 items-center justify-center rounded-full bg-[#F1F0F5] hover:bg-[#D0E1F8]/50 text-muted-foreground hover:text-[#0069D3] cursor-pointer transition-all outline-none"
+            title={isExpanded ? t("collapse") : t("expand")}
+          >
+            <ChevronDown
+              className={`size-4 transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* Expanded Details */}
+      {isExpanded && (
+        <div className="border-t border-border/60 px-5 py-4 space-y-4 bg-[#F1F0F5]/20 dark:bg-zinc-900/20">
+          {/* Dispute Banner if Milestone is Disputed */}
+          {milestone.paymentStatus === "DISPUTED" && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-red-700 dark:text-red-300">
+              <div className="flex items-center gap-2.5">
+                <ShieldAlert className="size-4 shrink-0 text-red-600" />
+                <div>
+                  <span className="font-bold block">
+                    {t("arbitrationActive")}
+                  </span>
+                  <span className="text-[11px] text-red-600/90 dark:text-red-400">
+                    {t("arbitrationHint")}
+                  </span>
+                </div>
+              </div>
+              {onViewDispute && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewDispute(milestone);
+                  }}
+                  className="rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold h-8 px-3.5 shrink-0"
+                >
+                  <Gavel className="mr-1.5 size-3.5" />
+                  {t("viewDispute")}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Deliverable Scope & Criteria */}
+          {milestone.description && (
+            <div>
+              <span className="text-[11px] block mb-1">
+                {t.rich("deliverableRequirements", {
+                  description: milestone.description,
+                  strong: (chunks) => (
+                    <span className="text-foreground/90">{chunks}</span>
+                  ),
+                })}
+              </span>
+            </div>
+          )}
+
+          {/* Revision Requested Message Banner */}
+          {milestone.status === "CHANGES_REQUESTED" && latestSubmission?.changeRequestMessage && (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1.5">
+              <span className="font-semibold text-amber-600 dark:text-amber-400 block">
+                {t("feedbackLabel")}
+              </span>
+              <p className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                {latestSubmission.changeRequestMessage}
+              </p>
+              {latestSubmission.changeRequestDueDate && (
+                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-medium pt-1 border-t border-amber-500/20 text-[11px]">
+                  <CalendarDays className="size-3.5 shrink-0" />
+                  <span>
+                    {t("revisionDue", {
+                      date: formatDate(latestSubmission.changeRequestDueDate),
+                    })}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Submissions Section */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              {milestone.status === "SUBMITTED" && latestSubmission && (
+                <span className="text-[11px] font-semibold text-[#0069D3]">
+                  {t("submittedForReview")}
+                </span>
+              )}
+            </div>
+
+            {loadingSubmissions ? (
+              <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground">
+                <Loader2 className="size-4 animate-spin text-primary" />
+                <span>{t("loadingDeliverables")}</span>
+              </div>
+            ) : latestSubmission ? (
+              <div className="space-y-3 rounded-2xl border border-border/70 bg-card p-4">
+                {/* Submission Meta */}
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-border/40 text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="size-3.5" />
+                    {t("submittedAt", {
+                      date: formatDate(latestSubmission.submittedAt),
+                    })}
+                  </span>
+                  <span className="rounded-full bg-[#D0E1F8] text-[#0069D3] px-2.5 py-0.5 text-[11px] font-semibold">
+                    {submissionStatusText(latestSubmission.status)}
+                  </span>
+                </div>
+
+                {/* Submission Notes */}
+                {latestSubmission.message && (
+                  <div>
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                      {t.rich("deliverableNotes", {
+                        notes: latestSubmission.message,
+                        strong: (chunks) => (
+                          <span className="font-medium text-foreground">
+                            {chunks}
+                          </span>
+                        ),
+                      })}
+                    </span>
+                  </div>
+                )}
+
+                {/* Submitted Links */}
+                {latestSubmission.links && latestSubmission.links.length > 0 && (
+                  <div>
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                      {t("previewLinks")}
+                    </span>
+                    <div className="space-y-1.5">
+                      {latestSubmission.links.map((link, idx) => (
+                        <a
+                          key={idx}
+                          href={link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center justify-between rounded-xl border border-border/70 bg-background px-3 py-2 text-xs text-primary hover:underline"
+                        >
+                          <span className="truncate">{link}</span>
+                          <ExternalLink className="size-3.5 shrink-0 ml-2" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Attached Files */}
+                {latestSubmission.files && latestSubmission.files.length > 0 && (
+                  <div>
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                      {t("attachedFiles")}
+                    </span>
+                    <div className="space-y-1.5">
+                      {latestSubmission.files.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between rounded-xl border border-border/70 bg-background px-3 py-2 text-xs"
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <FileText className="size-4 text-muted-foreground" />
+                            <span className="truncate font-medium text-foreground">
+                              {item.file?.fileName ||
+                                t("fileFallback", { id: item.fileId })}
+                            </span>
+                          </div>
+                          {item.file?.fileUrl && (
+                            <a
+                              href={item.file.fileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-1 text-primary hover:underline p-1 text-xs shrink-0"
+                            >
+                              <Download className="size-3.5" />
+                              {t("download")}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CLIENT-ONLY: Review & Evaluation Actions */}
+                {!isFreelancer && milestone.status === "SUBMITTED" && onReview && (
+                  <div className="pt-3 border-t border-border/60 flex flex-col sm:flex-row items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onReview(milestone, latestSubmission)}
+                      className="w-full sm:w-auto rounded-full text-xs border-border bg-[#F1F0F5] hover:bg-[#D0E1F8]/60 text-foreground"
+                    >
+                      <RotateCcw className="mr-1.5 size-3.5" />
+                      {t("requestChanges")}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => onReview(milestone, latestSubmission)}
+                      className="w-full sm:w-auto rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold"
+                    >
+                      <CheckCircle2 className="mr-1.5 size-3.5" />
+                      {t("approveRelease", {
+                        amount: money(Number(milestone.amount)),
+                      })}
+                    </Button>
+                  </div>
+                )}
+
+                {/* FREELANCER-ONLY: Waiting for review badge */}
+                {isFreelancer && milestone.status === "SUBMITTED" && (
+                  <div className="pt-2 border-t border-border/60 flex items-center justify-end text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full font-medium">
+                      <Clock className="size-3.5 text-primary" />
+                      <span>{t("awaitingReview")}</span>
+                    </div>
+                  </div>
+                )}
+
+                {milestone.status === "COMPLETED" && (
+                  <div className="flex items-center gap-2 text-xs text-foreground bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>
+                      {t.rich("approvedReleased", {
+                        amount: money(Number(milestone.amount)),
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-border/70 p-4 text-center text-xs text-muted-foreground bg-card">
+                {milestone.status === "COMPLETED" ? (
+                  <span className="text-foreground font-medium">
+                    {t("completedNotice")}
+                  </span>
+                ) : (
+                  <span>{t("noDeliverables")}</span>
+                )}
+              </div>
+            )}
+            {/* Previous Submission Revisions History */}
+            {submissions && submissions.length > 1 && (
+              <div className="pt-2">
+                <details className="text-xs group/history">
+                  <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 select-none">
+                    <span>
+                      {t("historyToggle", { count: submissions.length - 1 })}
+                    </span>
+                  </summary>
+                  <div className="mt-2 space-y-2 pl-2 border-l-2 border-border/80">
+                    {submissions.slice(1).map((sub, sIdx) => (
+                      <div
+                        key={sub.id || sIdx}
+                        className="rounded-xl bg-card border border-border/60 p-2.5 space-y-1 text-xs"
+                      >
+                        <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                          <span>
+                            {t("submissionNumber", {
+                              number: submissions.length - 1 - sIdx,
+                            })}{" "}
+                            • {formatDate(sub.submittedAt)}
+                          </span>
+                          <span className="font-semibold text-amber-600 dark:text-amber-400">
+                            {submissionStatusText(sub.status)}
+                          </span>
+                        </div>
+                        {sub.message && (
+                          <p className="text-foreground/80 line-clamp-2">
+                            {sub.message}
+                          </p>
+                        )}
+                        {sub.changeRequestMessage && (
+                          <p className="text-amber-700 dark:text-amber-300 text-[11px] italic bg-amber-500/10 p-1.5 rounded-lg">
+                            {t("feedbackInline", {
+                              message: sub.changeRequestMessage,
+                            })}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              </div>
+            )}
+          </div>
+
+          {/* FREELANCER WORK ACTIONS */}
+          {isFreelancer && (
+            <div className="pt-2 border-t border-border/60 flex flex-wrap items-center justify-end gap-2">
+              {/* 1. Start milestone (when PENDING and FUNDED) */}
+              {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && onStartWork && (
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                  {hasOtherInProgressMilestone && (
+                    <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                      {t("otherInProgress")}
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={hasOtherInProgressMilestone}
+                    onClick={() => onStartWork(milestone)}
+                    title={
+                      hasOtherInProgressMilestone
+                        ? t("startDisabledTitle")
+                        : t("startTitle")
+                    }
+                    className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Play className="mr-1.5 size-3.5" />
+                    {t("startWork")}
+                  </Button>
+                </div>
+              )}
+
+              {/* Notice when milestone is PENDING but payment is PENDING */}
+              {milestone.status === "PENDING" && milestone.paymentStatus === "PENDING" && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full font-medium">
+                  <Clock className="size-3.5 text-amber-500 shrink-0" />
+                  <span>{t("awaitingEscrow")}</span>
+                </div>
+              )}
+
+              {/* 2. Submit Work (when IN_PROGRESS) */}
+              {milestone.status === "IN_PROGRESS" && onSubmitWork && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onSubmitWork(milestone)}
+                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
+                >
+                  <Upload className="mr-1.5 size-3.5" />
+                  {t("submitWork")}
+                </Button>
+              )}
+
+              {/* 3. Resubmit Work (when CHANGES_REQUESTED) */}
+              {milestone.status === "CHANGES_REQUESTED" && onSubmitWork && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onSubmitWork(milestone)}
+                  className="rounded-full bg-[#4fae2e] hover:bg-[#459928] text-white text-xs font-semibold"
+                >
+                  <RotateCcw className="mr-1.5 size-3.5" />
+                  {t("resubmit")}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

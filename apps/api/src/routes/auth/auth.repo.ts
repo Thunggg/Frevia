@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import {
   EmailVerificationType,
+  JoinRoleBodyType,
+  OauthProvider,
+  RoleName,
+  RoleType,
   TypeOfVerificationCode,
   UserType,
 } from '@shared/types';
@@ -21,6 +25,20 @@ export class AuthRepository {
       where: {
         email,
         deletedAt: null,
+      },
+    });
+  }
+
+  async findUserByEmailIncludeRoles(
+    email: string,
+  ): Promise<(UserType & { userRoles: { role: RoleType }[] }) | null> {
+    return this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
+      include: {
+        userRoles: {
+          include: { role: true },
+          orderBy: { isPrimary: 'desc' },
+        },
       },
     });
   }
@@ -100,6 +118,49 @@ export class AuthRepository {
       }),
     ]);
     return createdUser;
+  }
+
+  async createUserAndRegisterGoogle(user: {
+    email: string;
+    fullName: string;
+    roleId: number;
+  }): Promise<
+    UserType & {
+      userRoles: {
+        role: RoleType;
+      }[];
+    }
+  > {
+    return await this.prisma.user.create({
+      data: {
+        email: user.email,
+        userRoles: {
+          create: {
+            roleId: user.roleId,
+            isPrimary: true,
+          },
+        },
+        profile: {
+          create: {
+            displayName: user.fullName,
+          },
+        },
+        isBanned: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
+      },
+    });
   }
 
   async upsertVerificationCode(data: {
@@ -234,6 +295,122 @@ export class AuthRepository {
     return await this.prisma.verificationCode.delete({
       where: {
         email_type: uniqueValue,
+      },
+    });
+  }
+
+  async findUserById(userId: number) {
+    return this.prisma.user.findUnique({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+        userRoles: {
+          include: { role: true },
+          orderBy: {
+            isPrimary: 'desc',
+          },
+        },
+      },
+    });
+  }
+
+  async switchPrimaryRole(userId: number, roleName: string) {
+    const assignment = await this.prisma.userRole.findFirst({
+      where: {
+        userId,
+        role: { name: roleName, deletedAt: null },
+      },
+      include: { role: true },
+    });
+    if (!assignment) return null;
+
+    await this.prisma.$transaction([
+      this.prisma.userRole.updateMany({
+        where: { userId, isPrimary: true },
+        data: { isPrimary: false },
+      }),
+      this.prisma.userRole.update({
+        where: {
+          userId_roleId: { userId, roleId: assignment.roleId },
+        },
+        data: { isPrimary: true },
+      }),
+    ]);
+
+    return assignment.role;
+  }
+
+  async joinRole(userId: number, roleName: JoinRoleBodyType['role']) {
+    return this.prisma.$transaction(async (transaction) => {
+      const role = await transaction.role.findFirst({
+        where: { name: roleName, deletedAt: null },
+      });
+      if (!role) return null;
+
+      const existingAssignment = await transaction.userRole.findUnique({
+        where: { userId_roleId: { userId, roleId: role.id } },
+      });
+      if (existingAssignment) {
+        return { status: 'already-assigned' as const, role };
+      }
+
+      const profile = await transaction.profile.upsert({
+        where: { userId },
+        create: { userId },
+        update: {},
+        select: { id: true },
+      });
+
+      if (roleName === RoleName.FREELANCER) {
+        await transaction.freelancerProfile.upsert({
+          where: { profileId: profile.id },
+          create: { profileId: profile.id },
+          update: {},
+        });
+      } else {
+        await transaction.clientProfile.upsert({
+          where: { profileId: profile.id },
+          create: { profileId: profile.id },
+          update: {},
+        });
+      }
+
+      await transaction.userRole.updateMany({
+        where: { userId, isPrimary: true },
+        data: { isPrimary: false },
+      });
+      await transaction.userRole.create({
+        data: { userId, roleId: role.id, isPrimary: true },
+      });
+
+      return { status: 'joined' as const, role };
+    });
+  }
+
+  async createOauthAccount({
+    userId,
+    provider,
+    providerUserId,
+  }: {
+    userId: number;
+    provider: (typeof OauthProvider)[keyof typeof OauthProvider];
+    providerUserId: string;
+  }) {
+    return await this.prisma.oauthAccount.create({
+      data: {
+        userId,
+        provider,
+        providerUserId,
+        createdAt: new Date(),
       },
     });
   }

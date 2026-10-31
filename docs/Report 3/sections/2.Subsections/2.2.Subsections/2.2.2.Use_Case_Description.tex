@@ -1,0 +1,342 @@
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{7.5cm}|}
+\hline
+\rowcolor{headerbg}
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{headerbg}
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+
+UC-01 & Login with Google & Guest & Allows users to login/register using Google OAuth. \\
+\hline
+UC-02 & Login & Guest & Allows users to log in using email/password and JWT authentication. \\
+\hline
+UC-03 & Logout & Client, Expert, Freelancer, Admin & Allows users to logout and terminate authentication session. \\
+\hline
+UC-04 & Register & Guest & Allows users to create new accounts using email and password. \\
+\hline
+UC-05 & Forgot Password & Guest & Allows users to request password reset via email verification link. \\
+\hline
+UC-06.01 & View Role List & Admin & Retrieve list of all roles along with their assigned permissions. \\
+\hline
+UC-06.02 & View Role Detail & Admin & View detailed information of a specific role including its permissions. \\
+\hline
+UC-06.03 & Create Role & Admin & Create a new role with name, description, and a list of permission IDs. \\
+\hline
+UC-06.04 & Update Role & Admin & Update a role's name, description, and replace all assigned permissions. \\
+\hline
+UC-06.05 & Delete Role & Admin & Delete a role from the system. \\
+\hline
+UC-06.06 & Update Role Permissions & Admin & Assign route access rights to roles. \\
+\hline
+UC-15.01 & View Permission List & Admin & Retrieve all permissions (id, name, path, method, module) for admin to assign to roles. \\
+\hline
+UC-15.02 & View Permission Detail & Admin & View detailed information of a specific permission. \\
+\hline
+UC-16.01 & View Session List & Client, Expert, Freelancer, Admin & View a list of active login sessions. \\
+\hline
+UC-16.02 & View Session Detail & Client, Expert, Freelancer, Admin & View login session information (device, IP address, login time, approximate location, etc.). \\
+\hline
+UC-16.03 & Revoke Session & Client, Expert, Freelancer, Admin & Log out of a specific device remotely. \\
+\hline
+UC-17.01 & Create Forum Category & Admin & Allows admins to create a new forum category. \\
+\hline
+UC-17.02 & Update Forum Category & Admin & Allows admins to update an existing forum category. \\
+\hline
+UC-17.03 & Delete Forum Category & Admin & Allows admins to soft-delete a forum category. \\
+\hline
+UC-14.01 & View Forum Category List & Admin & Allows admins to view the list of forum categories. \\
+\hline
+UC-14.02 & View Forum Category Detail & Admin & Allows admins to view the details of a specific forum category. \\
+\hline
+UC-17.06 & Restore Forum Category & Admin & Restore a deleted Category forum by setting deletedAt back to null. \\
+\hline
+UC-03 & Job Browsing & Guest, Client, Freelancer & Enables guests to browse and search for available job listings. \\
+\hline
+UC-03.1 & View List Job & Guest, Client, Freelancer & Retrieve paginated job list with filters (category, budget, skills, status, keywords) and sorting options. \\
+\hline
+UC-03.2 & View Job Detail & Guest, Client, Freelancer & Get full job details: title, description, budget, skills, client info, proposals count, attachments, timeline. \\
+\hline
+UC-04 & Manage Forum & Guest, Client, Freelancer, Admin & Manages forum operations including viewing, creating, editing, and moderating posts and comments. \\
+\hline
+UC-04.1 & View Forum Categories & Guest, Client, Freelancer, Admin & Displays all available forum categories for browsing. \\
+\hline
+UC-04.2 & View Forum Category Detail & Guest, Client, Freelancer, Admin & Shows detailed information of a specific forum category and its sub-forums. \\
+\hline
+UC-04.3 & View Post List & Guest, Client, Freelancer, Admin & Retrieves paginated list of posts within a forum category with filters and sorting. \\
+\hline
+UC-04.4 & View Post Detail & Guest, Client, Freelancer, Admin & Displays full post content, author info, creation date, and associated tags. \\
+\hline
+UC-04.5 & View Comments & Guest, Client, Freelancer, Admin & Retrieves all comments related to a specific forum post. \\
+\hline
+UC-04.6 & View Comment Detail & Guest, Client, Freelancer, Admin & Shows detailed information of a specific comment, including content, author, and timestamps. \\
+\hline
+UC-04.7 & Create Post & Client, Freelancer & Allows freelancers to create new discussion posts or questions in the forum. \\
+\hline
+UC-04.8 & Edit Post & Client, Freelancer & Allows freelancers to edit their own forum posts. \\
+\hline
+UC-04.9 & Delete Post & Client, Freelancer, Admin & Allows post owners or admins to delete a forum post. \\
+\hline
+UC-04.10 & Like Post & Client, Freelancer & Allows freelancers to like a forum post. \\
+\hline
+UC-04.11 & Unlike Post & Client, Freelancer & Allows freelancers to remove their like from a forum post. \\
+\hline
+UC-04.12 & Add Comment & Client, Freelancer & Allows freelancers to add comments to a forum post. \\
+\hline
+UC-04.13 & Edit Comment & Client, Freelancer & Allows freelancers to edit their own comments. \\
+\hline
+UC-04.14 & Delete Comment & Client, Freelancer & Allows comment owners or admins to delete a comment. \\
+\hline
+UC-04.15 & Like Comment & Client, Freelancer & Allows freelancers to like a comment. \\
+\hline
+UC-04.16 & Unlike Comment & Client, Freelancer & Allows freelancers to remove their like from a comment. \\
+\hline
+UC-04.17 & Report Content & Client, Freelancer & Allows freelancers to report inappropriate content in forum posts or comments. \\
+\hline
+UC-06 & Manage Job & Client, Freelancer & Manages job postings including creation, editing, deletion, and status changes. \\
+\hline
+UC-06.1 & View List Job & Guest, Client, Freelancer & Retrieve paginated job list with filters and sorting options. \\
+\hline
+UC-06.2 & Post New Job & Client & Allows clients to create and publish new job postings. \\
+\hline
+UC-06.3 & Edit Job & Client & Allows clients to edit their own job postings. \\
+\hline
+UC-06.4 & Delete Job & Client & Allows clients to delete their own job postings. \\
+\hline
+UC-06.5 & Change Job Status & Client & Allows clients to update job status (Open, In Progress, Closed, Cancelled). \\
+\hline
+UC-06.6 & View List Bookmarked Job & Freelancer & Retrieves list of jobs bookmarked by the freelancer. \\
+\hline
+UC-06.7 & Bookmark Job & Freelancer & Allows freelancers to save/bookmark a job for later reference. \\
+\hline
+UC-06.8 & Remove Bookmark & Freelancer & Allows freelancers to remove a bookmarked job from their list. \\
+\hline
+UC-13 & Manage Contract & Client, Freelancer, Admin & Manages contractual agreements, milestones, deliverables, and file exchanges. \\
+\hline
+UC-13.01 & Create Contract & Client & Allows clients to create and initiate a new contract with a freelancer. \\
+\hline
+UC-13.02 & Update Contract & Client & Allows clients to update contract terms, budget, milestones, or deadlines before signing. \\
+\hline
+UC-13.03 & Complete Contract & Client, Freelancer & Marks an active contract as completed after all milestones are approved and settled. \\
+\hline
+UC-13.04 & View Contract List & Client, Freelancer, Admin & Retrieves paginated list of contracts with status filters and sorting. \\
+\hline
+UC-13.05 & View Contract Detail & Client, Freelancer, Admin & Displays full contract details including terms, parties, status, and milestones. \\
+\hline
+UC-13.06 & Sign Contract & Freelancer, Client & Allows users to digitally accept and sign a contract to activate it. \\
+\hline
+UC-13.07 & Cancel Contract & Client, Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\
+\hline
+UC-13.08 & View Contract Files & Client, Freelancer, Admin & Manages and accesses all files and documentation associated with a contract. \\
+\hline
+UC-13.09 & Upload Contract File & Client, Freelancer & Allows users to upload documents and deliverables to the contract workspace. \\
+\hline
+UC-13.10 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
+\hline
+UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
+\hline
+UC-10.1 & View Detailed Freelancer Profile & Freelancer & Displays full freelancer profile including skills, portfolio, experience, and ratings. \\
+\hline
+UC-10.2 & Update Your Detailed Freelancer Profile & Freelancer & Allows freelancers to edit and update their profile information. \\
+\hline
+UC-11 & Manage Skills & Freelancer & Manages freelancer skill set and proficiency levels. \\
+\hline
+UC-11.1 & View List Freelancer Skill & Freelancer & Retrieve the list of skills added by the freelancer. \\
+\hline
+UC-11.2 & Add Freelancer Skill & Freelancer & Allows freelancers to add new skills to their profile. \\
+\hline
+UC-11.3 & Delete Freelancer Skill & Freelancer & Allows freelancers to remove skills from their profile. \\
+\hline
+UC-12 & Manage Portfolio & Freelancer & Manages freelancer portfolio projects and work samples. \\
+\hline
+UC-12.1 & View Portfolio List & Freelancer & Retrieve the list of portfolios created by the freelancer. \\
+\hline
+UC-12.2 & Add New Portfolio & Freelancer & Allows freelancers to add new portfolio items with images and descriptions. \\
+\hline
+UC-12.3 & View Portfolio Detail & Freelancer & Displays full details of a portfolio item including media, description, and technologies used. \\
+\hline
+UC-12.4 & Update Portfolio & Freelancer & Allows freelancers to edit and update their portfolio items. \\
+\hline
+UC-12.5 & Delete Portfolio & Freelancer & Allows freelancers to remove portfolio items. \\
+\hline
+UC-15 & Identity Verification & Freelancer & Manages freelancer identity verification document submission and review. \\
+\hline
+UC-15.1 & Upload Identity Documents & Freelancer & Allows freelancers to upload ID card, passport, or license documents. \\
+\hline
+UC-15.2 & View Verification Status & Freelancer & Displays current identity verification status (Pending, Approved, Rejected). \\
+\hline
+UC-16 & View Client Profile & Guest, Client, Freelancer & Manages client company profile details and public showcase. \\
+\hline
+UC-16.1 & View Client Profile Detail & Guest, Client, Freelancer & Displays client company details, bio, website, and job history. \\
+\hline
+UC-16.2 & Update Company Information & Client & Allows clients to update company name, bio, website URL, and industry sector. \\
+\hline
+UC-17 & Social Links & Guest, Client, Freelancer & Manages external social and portfolio links on user profiles. \\
+\hline
+UC-17.1 & View Social Links & Guest, Client, Freelancer & Retrieves social links associated with a user profile. \\
+\hline
+UC-17.2 & Add Social Link & Client, Freelancer & Allows users to add external social links to their profile. \\
+\hline
+UC-17.3 & Delete Social Link & Client, Freelancer & Allows users to remove social links from their profile. \\
+\hline
+UC-18 & Favorites & Client & Manages saved favorite freelancer profiles for clients. \\
+\hline
+UC-18.1 & View Favorite Freelancers & Client & Retrieves paginated list of client's favorite freelancers. \\
+\hline
+UC-18.2 & Add to Favorites & Client & Allows clients to save a freelancer profile to their favorites. \\
+\hline
+UC-18.3 & Remove from Favorites & Client & Allows clients to remove a freelancer from their favorites list. \\
+\hline
+UC-19 & Following & Client, Freelancer & Manages followed freelancer network connections. \\
+\hline
+UC-19.1 & View Following List & Client, Freelancer & Retrieves list of freelancers currently followed by the user. \\
+\hline
+UC-19.2 & Follow Freelancer & Client, Freelancer & Allows users to follow a freelancer for activity updates. \\
+\hline
+UC-19.3 & Unfollow Freelancer & Client, Freelancer & Allows users to stop following a freelancer. \\
+\hline
+UC-20 & Manage Notifications & Client, Freelancer, Admin & Manages user in-app notification center and read states. \\
+\hline
+UC-20.1 & View Notification List & Client, Freelancer, Admin & Retrieves user notifications list with unread counter. \\
+\hline
+UC-20.2 & Mark Notification as Read & Client, Freelancer, Admin & Sets read status of a specific notification to true. \\
+\hline
+UC-20.3 & Mark All Notifications as Read & Client, Freelancer, Admin & Bulk marks all user notifications as read. \\
+\hline
+UC-20.4 & Delete Notification & Client, Freelancer, Admin & Soft-deletes a notification from user's notification list. \\
+\hline
+UC-21 & Account Management & Client, Freelancer & Manages user role switching and complementary role activation. \\
+\hline
+UC-21.1 & Switch Role & Client, Freelancer & Allows dual-role users to switch working context between Client and Freelancer. \\
+\hline
+UC-21.2 & Join New Role & Client, Freelancer & Allows single-role users to activate complementary secondary role. \\
+\hline
+UC-22 & Reviews & Guest, Client, Freelancer, Admin & Manages post-contract ratings and detailed feedback reviews. \\
+\hline
+UC-22.1 & View Reviews List & Guest, Client, Freelancer & Retrieves reviews list for a user profile or contract. \\
+\hline
+UC-22.2 & View Review Detail & Guest, Client, Freelancer & Displays rating breakdown scores and detailed comment text. \\
+\hline
+UC-22.3 & Write Review & Client, Freelancer & Allows contract participants to review each other upon project completion. \\
+\hline
+UC-22.4 & Edit Review & Client, Freelancer & Allows review authors to update ratings or feedback text. \\
+\hline
+UC-22.5 & Delete Review & Client, Freelancer, Admin & Soft-deletes a review record. \\
+\hline
+UC-23 & Manage Response Review & Client, Freelancer, Admin & Manages recipient responses to reviews. \\
+\hline
+UC-23.1 & Respond to Review & Client, Freelancer & Allows review recipients to post a public response. \\
+\hline
+UC-23.2 & Edit Response & Client, Freelancer & Allows response authors to modify response text. \\
+\hline
+UC-23.3 & Delete Response & Client, Freelancer, Admin & Soft-deletes a review response. \\
+\hline
+UC-24 & Manage Profile & Client, Freelancer, Admin & Manages account credentials, profile details, and avatar. \\
+\hline
+UC-24.1 & Get Profile & Client, Freelancer, Admin & Retrieves general account profile information. \\
+\hline
+UC-24.2 & Update Profile & Client, Freelancer, Admin & Updates general profile details (name, phone, bio, location). \\
+\hline
+UC-24.3 & Change Password & Client, Freelancer, Admin & Allows authenticated users to change password securely. \\
+\hline
+UC-24.4 & Upload Avatar & Client, Freelancer, Admin & Allows users to upload and crop profile avatar image. \\
+\hline
+UC-25 & Profile Update Review & Admin & Manages manual admin review of profile modification requests. \\
+\hline
+UC-25.1 & View Pending Profile Update Requests & Admin & Retrieves list of profile update requests awaiting review. \\
+\hline
+UC-25.2 & View Profile Update Request Detail & Admin & Displays side-by-side diff comparison for profile changes. \\
+\hline
+UC-25.3 & Approve Profile Update Request & Admin & Approves profile modification request and updates live profile. \\
+\hline
+UC-25.4 & Reject Profile Update Request & Admin & Rejects profile request with mandatory reason note. \\
+\hline
+UC-25.5 & View Profile Update Request History & Admin & Views history of processed profile update requests. \\
+\hline
+UC-25.6 & Update Profile Expert & Expert, Admin & Updates expert consultant profile and homepage showcase. \\
+\hline
+UC-47.01 & View Pending Profile Update Request List & Admin & Retrieves profile update requests awaiting manual review. \\
+\hline
+UC-47.02 & View Profile Update Request Detail & Admin & Displays a request and compares current profile data with proposed changes. \\
+\hline
+UC-47.03 & Approve Profile Update Request & Admin & Approves a request and applies its proposed changes to the live profile. \\
+\hline
+UC-47.04 & Reject Profile Update Request & Admin & Rejects a request with a reason while preserving the current profile data. \\
+\hline
+UC-47.05 & View Profile Update Request History & Admin & Displays previously approved and rejected profile update requests. \\
+\hline
+UC-47.06 & Update Profile Expert & Expert & Allows an Expert to edit the profile used in the public expert experience. \\
+\hline
+UC-07.03 & Upload CV & Freelancer & Uploads a supported CV file and associates it with the Freelancer profile. \\
+\hline
+UC-07.04 & View CV & Freelancer & Views or downloads the CV currently associated with the Freelancer profile. \\
+\hline
+UC-07.05 & Replace CV & Freelancer & Replaces the existing CV with a newly uploaded supported file. \\
+\hline
+UC-07.06 & Delete CV & Freelancer & Removes the CV associated with the Freelancer profile. \\
+\hline
+UC-33 & Manage Dispute & Client, Freelancer, Admin & Manages formal dispute arbitration on funded contract milestones. \\
+\hline
+UC-33.01 & Open Dispute & Client, Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone. \\
+\hline
+UC-33.02 & View Dispute List & Client, Freelancer, Admin & Retrieves paginated overview of disputes with status filtering and deadline badges. \\
+\hline
+UC-33.03 & View Dispute Detail & Client, Freelancer, Admin & Displays full dispute case records, claims, evidence, fees, and resolutions. \\
+\hline
+UC-33.04 & Respond to Dispute & Client, Freelancer & Allows the respondent to submit a rebuttal statement and counter-evidence. \\
+\hline
+UC-33.05 & Respond to Dispute Resolution & Client, Freelancer & Allows involved parties to accept or reject the arbitrator's proposed decision. \\
+\hline
+UC-33.06 & Propose Dispute Resolution & Admin & Allows an administrator/arbitrator to evaluate claims and propose a fund split decision. \\
+\hline
+UC-43 & Manage Payment & Client, Freelancer, Admin & Handles platform financial transactions, escrow deposits, payouts, and fees via Stripe. \\
+\hline
+UC-43.01 & Connect Stripe Account & Freelancer & Connects a freelancer's bank account via Stripe Connect Express to receive payouts. \\
+\hline
+UC-43.02 & View Payout History & Freelancer, Admin & Retrieves paginated history of all payout transfers sent to the freelancer's bank. \\
+\hline
+UC-43.03 & View Payout Detail & Freelancer, Admin & Displays detailed ledger breakdown, fees, and arrival estimates for a payout transfer. \\
+\hline
+UC-43.04 & Fund Milestone & Client & Deposits milestone funds into platform escrow using credit card or saved payment methods. \\
+\hline
+UC-43.05 & Refund Payment & Client, Admin & Returns escrowed milestone funds to the client upon contract cancellation or dispute. \\
+\hline
+UC-43.06 & Pay Platform Fee & Client & Processes the platform engagement fee upon contract initiation via Stripe. \\
+\hline
+UC-43.07 & Release Payment & Client & Authorizes the release of escrowed milestone funds to the freelancer upon work approval. \\
+\hline
+UC-43.08 & Pay Dispute Fee & Client, Freelancer & Processes arbitration fee payment within the 24-hour dispute window via Stripe. \\
+\hline
+UC-43.09 & View Payment History & Client, Freelancer, Admin & Displays a comprehensive, paginated ledger of all account financial transactions. \\
+\hline
+UC-43.10 & View Payment Detail & Client, Freelancer, Admin & Shows itemized receipt details, fees, and downloadable invoice for a transaction. \\
+\hline
+UC-43.11 & Execute Dispute Resolution Payment & Admin, System & Executes split payouts (client refund and freelancer transfer) upon dispute finalization. \\
+\hline
+UC-43.12 & Handle Stripe Webhook Event & Stripe, System & Listens for and verifies asynchronous Stripe webhook events to reconcile database state. \\
+\hline
+UC-43.13 & Sync Payment Intent Status & Client, System & Synchronizes real-time payment intent and checkout status directly with the Stripe API. \\
+\hline
+
+
+
+\end{longtable}
+\label{tab:use_cases}

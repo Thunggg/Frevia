@@ -1,0 +1,20 @@
+meta {
+  name: View Job Category Detail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/job-categories/web-development?page=1&limit=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  limit: 10
+}
+
+headers {
+  Accept: application/json
+}

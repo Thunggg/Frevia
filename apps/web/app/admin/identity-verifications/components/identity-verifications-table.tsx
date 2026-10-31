@@ -1,0 +1,465 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { adminApiRequest } from "@/apiRequests/admin";
+import { formatDate, formatDateTime } from "@/lib/format";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/components/shadcn/table";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import { Separator } from "@repo/ui/components/shadcn/separator";
+import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/shadcn/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/shadcn/dialog";
+import { Label } from "@repo/ui/components/shadcn/label";
+import { Textarea } from "@repo/ui/components/shadcn/textarea";
+import { toastSuccess, toastError } from "@repo/ui/components/shadcn/toast";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
+import {
+  Eye,
+  User,
+  Calendar,
+  FileCheck,
+  FileX,
+  Clock,
+  CheckCircle,
+  XCircle,
+  ShieldCheck,
+  Mail,
+} from "lucide-react";
+import { NumberedPagination } from "../../components/numbered-pagination";
+import type { IdentityVerificationAdminListResponseType } from "@shared/types";
+
+type DocumentItem = IdentityVerificationAdminListResponseType["documents"][number];
+
+interface IdentityVerificationsTableProps {
+  documents: DocumentItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  currentStatus?: string;
+}
+
+const documentTypeKeys = [
+  "ID_CARD",
+  "PASSPORT",
+  "DRIVER_LICENSE",
+  "RESIDENCE_PERMIT",
+  "OTHER",
+] as const;
+
+type DocumentTypeKey = (typeof documentTypeKeys)[number];
+
+const statusConfig: Record<
+  string,
+  { color: string; icon: React.ElementType }
+> = {
+  PENDING: {
+    color:
+      "border-amber-500/30 bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+    icon: Clock,
+  },
+  APPROVED: {
+    color:
+      "border-[#4fae2e]/30 bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15",
+    icon: CheckCircle,
+  },
+  REJECTED: {
+    color: "border-destructive/30 bg-destructive/10 text-destructive",
+    icon: XCircle,
+  },
+};
+
+export function IdentityVerificationsTable({
+  documents,
+  pagination,
+  currentStatus,
+}: IdentityVerificationsTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("adminIdentityVerifications");
+  const tCommon = useTranslations("adminCommon");
+  const tDocumentType = useTranslations("documentType");
+  const router = useRouter();
+  const [viewing, setViewing] = useState<DocumentItem | null>(null);
+  const [reviewNotes, setReviewNotes] = useState("");
+  const [acting, setActing] = useState<"approve" | "reject" | null>(null);
+  const [zoomSide, setZoomSide] = useState<"front" | "back" | null>(null);
+
+  const statusLabel = (status: string) => {
+    if (status === "PENDING") return tCommon("pending");
+    if (status === "APPROVED") return tCommon("approved");
+    return tCommon("rejected");
+  };
+
+  const documentTypeLabel = (value: string) =>
+    documentTypeKeys.includes(value as DocumentTypeKey)
+      ? tDocumentType(value as DocumentTypeKey)
+      : value;
+
+  const handleTabChange = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams();
+      if (value && value !== "all") params.set("status", value);
+      router.push(`?${params.toString()}`);
+    },
+    [router],
+  );
+
+  const openDetail = (document: DocumentItem) => {
+    setViewing(document);
+    setReviewNotes(document.reviewNotes ?? "");
+    setActing(null);
+    setZoomSide(null);
+  };
+
+  const handleAction = async (document: DocumentItem, action: "approve" | "reject") => {
+    setActing(action);
+    try {
+      if (action === "approve") {
+        await adminApiRequest.approveIdentityVerification(
+          document.id,
+          reviewNotes.trim() || null,
+        );
+        toastSuccess({ message: t("approvedToast") });
+      } else {
+        await adminApiRequest.rejectIdentityVerification(
+          document.id,
+          reviewNotes.trim() || null,
+        );
+        toastSuccess({ message: t("rejectedToast") });
+      }
+      setViewing(null);
+      router.refresh();
+    } catch {
+      toastError({ message: t("actionFailed") });
+    } finally {
+      setActing(null);
+    }
+  };
+
+  const displayStatus = currentStatus || "all";
+
+  return (
+    <div className="space-y-4">
+      <Tabs value={displayStatus} onValueChange={handleTabChange}>
+        <TabsList>
+          <TabsTrigger value="all">{tCommon("all")}</TabsTrigger>
+          <TabsTrigger value="PENDING">{tCommon("pending")}</TabsTrigger>
+          <TabsTrigger value="APPROVED">{tCommon("approved")}</TabsTrigger>
+          <TabsTrigger value="REJECTED">{tCommon("rejected")}</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="rounded-lg border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-16">{tCommon("id")}</TableHead>
+              <TableHead>{tCommon("name")}</TableHead>
+              <TableHead>{t("colDocumentType")}</TableHead>
+              <TableHead>{tCommon("status")}</TableHead>
+              <TableHead>{t("colSubmitted")}</TableHead>
+              <TableHead className="w-24 text-right">{tCommon("actions")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {documents.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-12 text-muted-foreground"
+                >
+                  {t("empty")}
+                </TableCell>
+              </TableRow>
+            ) : (
+              documents.map((document) => {
+                const config = statusConfig[document.status];
+                const StatusIcon = config?.icon ?? Clock;
+                return (
+                  <TableRow key={document.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {document.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage
+                            src={
+                              document.user.profile?.avatarUrl ?? undefined
+                            }
+                          />
+                          <AvatarFallback className="text-[10px]">
+                            <User className="h-3 w-3" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <span className="text-sm text-foreground">
+                            {document.user.profile?.displayName ??
+                              `User #${document.user.id}`}
+                          </span>
+                          <span className="text-xs text-muted-foreground block truncate">
+                            {document.user.email}
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {documentTypeLabel(document.documentType)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={`${config?.color} border`}
+                      >
+                        <StatusIcon className="h-3 w-3 mr-1" />
+                        {statusLabel(document.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {formatDate(document.createdAt, locale)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => openDetail(document)}
+                          aria-label={t("viewRequestLabel", { id: document.id })}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {pagination.totalPages > 1 && (
+        <NumberedPagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+        />
+      )}
+
+      <Dialog
+        open={!!viewing}
+        onOpenChange={(open) => !open && setViewing(null)}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 pr-8">
+              <ShieldCheck className="h-4 w-4 text-[#4fae2e]" />
+              {t("dialogTitle", { id: viewing?.id ?? "" })}
+            </DialogTitle>
+          </DialogHeader>
+          {viewing && (
+            <div className="space-y-5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src={viewing.user.profile?.avatarUrl ?? undefined}
+                    />
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">
+                      {viewing.user.profile?.displayName ??
+                        `User #${viewing.user.id}`}
+                    </p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Mail className="h-3 w-3" />
+                      {viewing.user.email}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="border-border bg-muted">
+                    {documentTypeLabel(viewing.documentType)}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className={`${statusConfig[viewing.status]?.color} border`}
+                  >
+                    {statusLabel(viewing.status)}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                {t("submittedAt", {
+                  date: formatDateTime(viewing.createdAt, locale),
+                })}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                  {t("documentHeading")}
+                </p>
+                <div
+                  className={`grid gap-3 ${viewing.backFileUrl ? "grid-cols-2" : "grid-cols-1"}`}
+                >
+                  <figure className="space-y-1.5">
+                    <figcaption className="text-xs font-medium text-muted-foreground">
+                      {t("frontLabel")}
+                    </figcaption>
+                    <button
+                      type="button"
+                      className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                      onClick={() => setZoomSide("front")}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={viewing.fileUrl}
+                        alt={t("frontAlt")}
+                        className="max-h-[260px] w-full object-contain"
+                      />
+                    </button>
+                  </figure>
+                  {viewing.backFileUrl ? (
+                    <figure className="space-y-1.5">
+                      <figcaption className="text-xs font-medium text-muted-foreground">
+                        {t("backLabel")}
+                      </figcaption>
+                      <button
+                        type="button"
+                        className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                        onClick={() => setZoomSide("back")}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={viewing.backFileUrl}
+                          alt={t("backAlt")}
+                          className="max-h-[260px] w-full object-contain"
+                        />
+                      </button>
+                    </figure>
+                  ) : (
+                    <figure className="space-y-1.5">
+                      <figcaption className="text-xs font-medium text-muted-foreground">
+                        {t("backLabel")}
+                      </figcaption>
+                      <div className="flex h-full min-h-[120px] items-center justify-center rounded-lg border border-dashed bg-muted/20 p-4 text-center text-xs text-muted-foreground">
+                        {t("backMissing")}
+                      </div>
+                    </figure>
+                  )}
+                </div>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  {t("zoomHint")}
+                </p>
+              </div>
+
+              {viewing.reviewNotes && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                    {t("reviewNotesHeading")}
+                  </p>
+                  <div className="rounded-lg bg-muted/50 p-4">
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {viewing.reviewNotes}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <Separator />
+
+              {viewing.status === "PENDING" && (
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="review-notes">
+                      {t("reviewNotesLabel")}
+                    </Label>
+                    <Textarea
+                      id="review-notes"
+                      value={reviewNotes}
+                      onChange={(e) => setReviewNotes(e.target.value)}
+                      placeholder={t("reviewNotesPlaceholder")}
+                      rows={3}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="destructive"
+                      disabled={acting === "reject"}
+                      onClick={() => handleAction(viewing, "reject")}
+                    >
+                      <FileX className="h-4 w-4 mr-1.5" />
+                      {acting === "reject"
+                        ? t("rejectingAction")
+                        : t("rejectAction")}
+                    </Button>
+                    <Button
+                      disabled={acting === "approve"}
+                      onClick={() => handleAction(viewing, "approve")}
+                    >
+                      <FileCheck className="h-4 w-4 mr-1.5" />
+                      {acting === "approve"
+                        ? t("approvingAction")
+                        : t("approveAction")}
+                    </Button>
+                  </DialogFooter>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!zoomSide} onOpenChange={(open) => !open && setZoomSide(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="pr-8">
+              {zoomSide === "back" ? t("backLabel") : t("frontLabel")}
+            </DialogTitle>
+          </DialogHeader>
+          {viewing && zoomSide ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={zoomSide === "back" ? viewing.backFileUrl! : viewing.fileUrl}
+              alt={
+                zoomSide === "back"
+                  ? t("backAlt")
+                  : t("frontAlt")
+              }
+              className="max-h-[70vh] w-full rounded-md object-contain"
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
