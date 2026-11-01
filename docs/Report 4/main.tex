@@ -88,8 +88,8 @@
 \usepackage{geometry}
 
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
+    top=2.0cm,
+    bottom=2.0cm,
     left=3.0cm,
     right=2.0cm
 }
@@ -130,18 +130,24 @@
   {\normalfont\fontsize{12}{14}\selectfont\bfseries}
   {\thesubsubsection}{0.8em}{}
 
-% Numbering of the template: "II." for parts, "1." for sections, then "1.1"
-% and "1.1.1". The subsection counter is written out explicitly because
-% \thesection now carries a trailing dot.
+% Level 5 (1.1.1.1, ...) -- 12 pt bold black
+\titleformat{\paragraph}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}
+  {\theparagraph}{0.8em}{}
+
+% Numbering of the template: "I." for parts, "1." for sections, then "1.1"
+% and "1.1.1".
 \renewcommand{\thepart}{\Roman{part}.}
 \renewcommand{\thesection}{\arabic{section}.}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+\renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}
 
 \titlespacing*{\part}{0pt}{0pt}{1.2ex plus .2ex}
 \titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
 \titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
 \titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+\titlespacing*{\paragraph}{0pt}{0.8ex plus .2ex minus .2ex}{0.3ex plus .2ex}
 
 %====================================================
 % PARAGRAPH NUMBERING
@@ -149,43 +155,13 @@
 
 \makeatletter
 
-\renewcommand{\theparagraph}
-{\thesubsection.\arabic{paragraph}}
-
-\@addtoreset{paragraph}{subsection}
-
+\@addtoreset{paragraph}{subsubsection}
 \def\toclevel@paragraph{4}
 
-\renewcommand{\thesubparagraph}
-{\thesubsubsection.\arabic{subparagraph}}
-
-\@addtoreset{subparagraph}{subsubsection}
-
-\def\toclevel@subparagraph{4}
+\@addtoreset{subparagraph}{paragraph}
+\def\toclevel@subparagraph{5}
 
 \makeatother
-
-\titleformat{\paragraph}
-{\normalfont\normalsize\bfseries}
-{\theparagraph}
-{1em}
-{}
-
-\titlespacing*{\paragraph}
-{0pt}
-{3.25ex plus 1ex minus .2ex}
-{1em}
-
-\titleformat{\subparagraph}[runin]
-{\normalfont\normalsize\bfseries}
-{\thesubparagraph}
-{1em}
-{}
-
-\titlespacing*{\subparagraph}
-{0pt}
-{3.25ex plus 1ex minus .2ex}
-{1em}
 
 %====================================================
 % TABLE OF CONTENTS
@@ -196,11 +172,27 @@
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
 
+\renewcommand{\cftpartfont}{\bfseries}
+\renewcommand{\cftpartpagefont}{\bfseries}
 \renewcommand{\cftsecfont}{\bfseries}
 \renewcommand{\cftsecpagefont}{\bfseries}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+\renewcommand{\cftsubsubsecfont}{\normalfont}
+\renewcommand{\cftsubsubsecpagefont}{\normalfont}
+\renewcommand{\cftparafont}{\normalfont}
+\renewcommand{\cftparapagefont}{\normalfont}
 
-\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforepartskip}{6pt}
+\setlength{\cftbeforesecskip}{4pt}
 \setlength{\cftbeforesubsecskip}{2pt}
+\setlength{\cftbeforesubsubsecskip}{1pt}
+\setlength{\cftbeforeparaskip}{0pt}
+
+\setlength{\cftsecindent}{0pt}
+\setlength{\cftsubsecindent}{0pt}
+\setlength{\cftsubsubsecindent}{0pt}
+\setlength{\cftparaindent}{0pt}
 
 \setlength{\cftparaindent}{\cftsubsubsecindent}
 \setlength{\cftparanumwidth}{\cftsubsubsecnumwidth}
@@ -222,6 +214,7 @@
 % COLORS
 %====================================================
 \definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptTocBlue}{RGB}{0,112,192}
 \definecolor{fptBlue}{RGB}{0,0,139}
 \definecolor{fptOrange}{RGB}{255,140,0}
 \definecolor{headerbg}{RGB}{242,226,204}
@@ -351,11 +344,10 @@
 % II. Software Design Document
 \part{Software Design Document}
 
-% Chapter order follows the sample: 1 System Design (1.1 System Architecture,
-% 1.2 Package Diagram), 2 Database Design (Table Descriptions), 3 Detailed Design
-% (class + sequence diagrams per feature).
+% Chapter order follows the sample: 1 System Design, 2 Database Design, 3 Detailed Design
 \input{sections/1.System_Design}
 \input{sections/2.Database_Design}
 \input{sections/3.Detailed_Design}
+\input{sections/4.Class_Specification}
 
 \end{document}
