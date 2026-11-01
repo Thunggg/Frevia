@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import authServerRequest from "@/apiRequests/auth.server";
 import accountProfileServerRequest from "@/apiRequests/account-profile.server";
-import { RoleName, VerificationStatus } from "@shared/types";
+import { RoleName, VerificationStatus, type VerificationStatusType } from "@shared/types";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { FreelancerSidebar } from "../_components/freelancer-sidebar";
@@ -31,7 +31,7 @@ export default async function FreelancerDashboardLayout({
   const headerStore = await headers();
   const pathname = headerStore.get("x-pathname") ?? "";
   if (!pathname.startsWith("/freelancer/profile")) {
-    let identityStatus: VerificationStatus | null | undefined;
+    let identityStatus: VerificationStatusType | null | undefined;
     try {
       identityStatus = (await accountProfileServerRequest.getIdentityStatus())
         ?.status;

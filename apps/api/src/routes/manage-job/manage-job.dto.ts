@@ -2,16 +2,17 @@ import { createZodDto } from 'nestjs-zod';
 
 import {
   BookmarkJobBodySchema,
-  ChangeJobStatusBodySchema,
-  ChangeJobStatusResponseSchema,
+  CloseJobResponseSchema,
   CreateJobBodySchema,
+  PublishJobResponseSchema,
+  ReopenJobResponseSchema,
   UpdateJobBodySchema,
   UpdateJobResponseSchema,
   ViewBookmarkedJobFilterSchema,
   ViewBookmarkedJobResponseSchema,
+  ViewJobDetailResSchema,
   ViewListJobFilterSchema,
   ViewListJobResponseSchema,
-  ViewJobDetailResSchema,
 } from '@shared/types';
 
 export class ViewBookmarkedJobQueryDto extends createZodDto(
@@ -43,10 +44,12 @@ export class UpdateJobResponseDto extends createZodDto(
   UpdateJobResponseSchema,
 ) {}
 
-export class ChangeJobStatusBodyDto extends createZodDto(
-  ChangeJobStatusBodySchema,
+export class PublishJobResponseDto extends createZodDto(
+  PublishJobResponseSchema,
 ) {}
 
-export class ChangeJobStatusResponseDto extends createZodDto(
-  ChangeJobStatusResponseSchema,
+export class CloseJobResponseDto extends createZodDto(CloseJobResponseSchema) {}
+
+export class ReopenJobResponseDto extends createZodDto(
+  ReopenJobResponseSchema,
 ) {}
