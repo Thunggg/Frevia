@@ -5,6 +5,7 @@
 %   2.1 Table Relationships
 %   "Table Descriptions" label + one row per table with
 %   description, primary keys and foreign keys (sample format)
+%   2.2 Module Entity--Relationship Diagrams (ERD1 .. ERD22)
 % Primary and foreign keys are taken from apps/api/prisma/schema.prisma
 % (@id, @@id and @relation(fields: [...])).
 % ========================================================
@@ -20,10 +21,12 @@ never removed) or implemented as a soft delete through a \texttt{deletedAt} colu
 skills, banners, contract term templates). Binary files are not stored in the database:
 only their Cloudinary URL is kept in the owning row.
 
-Figure~\ref{fig:db:erd} shows the entity--relationship diagram of the whole schema;
-the arrows read from the one-side to the many-side of each relationship. Each entity is
-drawn as a box that lists its key attributes, and the diamond shapes are the relationship
-endpoints of the foreign keys.
+Figure~\ref{fig:db:erd} shows the entity--relationship diagram of the whole schema.
+Every table is drawn as a frameless box: the header carries the table name, each of the
+following rows is one column, and the key columns are flagged with \texttt{PK} (primary
+key) or \texttt{FK} (foreign key). A relationship is a line that leaves the many-side
+table with a crow's foot and ends on the one-side table with a single bar, so it reads
+from the row that holds the foreign key to the row it references.
 
 \kfig{0.95\textwidth}{images/database/erd}{Entity--relationship diagram of the Frevia database}{fig:db:erd}
 
@@ -255,3 +258,62 @@ primary key and its foreign keys.
 \newline \textbullet~\textbf{Foreign keys:} \texttt{conversationId} $\rightarrow$ \texttt{Conversation}, \texttt{senderId} $\rightarrow$ \texttt{User} \\ \hline
 \end{longtable}
 }
+
+% ========================================================
+% 2.2 Module entity-relationship diagrams
+% One figure per functional module of Report 3 (ERD1 .. ERD22).
+% Source: database_design/ERD-ERD<n>.drawio
+%         -> images/database/erd-<nn>.svg -> erd-<nn>.pdf (tools/svg2pdf.js)
+% ========================================================
+\subsection{Module Entity--Relationship Diagrams}
+\label{sec:db:module-erds}
+
+The whole schema is easier to navigate when it is split along the functional modules used
+in Report~3. Each figure below shows one module together with the tables that the module
+references, so every foreign key of the module is visible in the same picture. The
+notation is the one of Figure~\ref{fig:db:erd}: the crow's foot marks the many side of a
+relationship and the single bar marks the one side.
+
+\kfig{0.95\textwidth}{images/database/erd-01}{ERD1 --- Authentication \& Sessions (\texttt{User}, \texttt{Session}, \texttt{OauthAccount}, \texttt{TwoFactorAuth}, \texttt{UserSetting}, \texttt{VerificationCode})}{fig:db:erd1}
+
+\kfig{0.95\textwidth}{images/database/erd-02}{ERD2 --- Role-Based Access Control (\texttt{User}, \texttt{Role}, \texttt{UserRole}, \texttt{Permission}, \texttt{RolePermission})}{fig:db:erd2}
+
+\kfig{0.95\textwidth}{images/database/erd-03}{ERD3 --- Profile Core (\texttt{User}, \texttt{Profile}, \texttt{FreelancerProfile}, \texttt{ClientProfile}, \texttt{Expert})}{fig:db:erd3}
+
+\kfig{0.95\textwidth}{images/database/erd-04}{ERD4 --- Profile History \& Social Links (\texttt{User}, \texttt{Profile}, \texttt{ProfileRevision}, \texttt{SocialLink})}{fig:db:erd4}
+
+\kfig{0.95\textwidth}{images/database/erd-05}{ERD5 --- Identity Verification \& Profile Visits (\texttt{User}, \texttt{IdVerificationDocument}, \texttt{ProfileVisitLog})}{fig:db:erd5}
+
+\kfig{0.95\textwidth}{images/database/erd-06}{ERD6 --- Portfolio \& Skills (\texttt{User}, \texttt{FreelancerProfile}, \texttt{FreelancerSkill}, \texttt{Skill}, \texttt{PortfolioItem}, \texttt{PortfolioLike})}{fig:db:erd6}
+
+\kfig{0.95\textwidth}{images/database/erd-07}{ERD7 --- Favorites \& Follows (\texttt{User}, \texttt{FavoriteFreelancer}, \texttt{FollowFreelancer})}{fig:db:erd7}
+
+\kfig{0.95\textwidth}{images/database/erd-08}{ERD8 --- Job Posting (\texttt{User}, \texttt{Job}, \texttt{JobCategory}, \texttt{JobJobCategory}, \texttt{JobSkill}, \texttt{Skill})}{fig:db:erd8}
+
+\kfig{0.95\textwidth}{images/database/erd-09}{ERD9 --- Job Discovery \& Alerts (\texttt{User}, \texttt{Job}, \texttt{JobBookmark}, \texttt{RecentlyViewedJob}, \texttt{SavedSearch}, \texttt{JobAlert})}{fig:db:erd9}
+
+\kfig{0.95\textwidth}{images/database/erd-10}{ERD10 --- Proposal (\texttt{Job}, \texttt{User}, \texttt{Proposal}, \texttt{ProposalAttachment})}{fig:db:erd10}
+
+\kfig{0.95\textwidth}{images/database/erd-11}{ERD11 --- Contract (\texttt{Job}, \texttt{Proposal}, \texttt{User}, \texttt{Contract}, \texttt{ContractTermTemplate})}{fig:db:erd11}
+
+\kfig{0.95\textwidth}{images/database/erd-12}{ERD12 --- Milestone \& Project Progress (\texttt{User}, \texttt{Contract}, \texttt{Milestone}, \texttt{MilestoneFile}, \texttt{ProjectProgressUpdate})}{fig:db:erd12}
+
+\kfig{0.95\textwidth}{images/database/erd-13}{ERD13 --- Milestone Submission (\texttt{User}, \texttt{Milestone}, \texttt{MilestoneFile}, \texttt{MilestoneSubmission}, \texttt{MilestoneSubmissionFile})}{fig:db:erd13}
+
+\kfig{0.95\textwidth}{images/database/erd-14}{ERD14 --- Escrow, Payments \& Certificates (\texttt{User}, \texttt{Contract}, \texttt{Invoice}, \texttt{Transaction}, \texttt{Certificate})}{fig:db:erd14}
+
+\kfig{0.95\textwidth}{images/database/erd-15}{ERD15 --- Dispute Core (\texttt{Contract}, \texttt{Milestone}, \texttt{User}, \texttt{SharedFile}, \texttt{Dispute})}{fig:db:erd15}
+
+\kfig{0.95\textwidth}{images/database/erd-16}{ERD16 --- Dispute Resolution (\texttt{User}, \texttt{Dispute}, \texttt{DisputeFee}, \texttt{DisputeEvidence}, \texttt{SharedFile}, \texttt{DisputeDecisionReview})}{fig:db:erd16}
+
+\kfig{0.95\textwidth}{images/database/erd-17}{ERD17 --- Reviews \& Reputation (\texttt{Contract}, \texttt{User}, \texttt{Review}, \texttt{ReviewResponse})}{fig:db:erd17}
+
+\kfig{0.95\textwidth}{images/database/erd-18}{ERD18 --- Forum Posts \& Comments (\texttt{ForumCategory}, \texttt{ForumPost}, \texttt{User}, \texttt{ForumComment})}{fig:db:erd18}
+
+\kfig{0.95\textwidth}{images/database/erd-19}{ERD19 --- Forum Likes (\texttt{User}, \texttt{ForumPost}, \texttt{ForumComment}, \texttt{ForumLike})}{fig:db:erd19}
+
+\kfig{0.95\textwidth}{images/database/erd-20}{ERD20 --- Forum Reports \& Moderation (\texttt{User}, \texttt{ForumPost}, \texttt{ForumComment}, \texttt{ForumReport})}{fig:db:erd20}
+
+\kfig{0.95\textwidth}{images/database/erd-21}{ERD21 --- Messaging \& Notifications (\texttt{User}, \texttt{Conversation}, \texttt{DirectMessage}, \texttt{Notification})}{fig:db:erd21}
+
+\kfig{0.95\textwidth}{images/database/erd-22}{ERD22 --- Administration \& System (\texttt{User}, \texttt{ModerationQueue}, \texttt{BannedKeyword}, \texttt{AnnouncementBanner}, \texttt{AdvertisementBanner}, \texttt{SystemSetting})}{fig:db:erd22}
