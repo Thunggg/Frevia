@@ -250,36 +250,23 @@ export function DisputeDialog({
         window.location.href = res.data.checkoutUrl;
         return;
       }
-    } catch (error) {
+    } catch {
       // Fallback to direct pay endpoint if Stripe intent is already paid or failed
       try {
         await disputeApiRequest.payFee(dispute.id);
         toastSuccess({
-          message: "Arbitration fee paid successfully! Your case is proceeding.",
+          message: t("feePaid"),
         });
         await refetchDispute();
         await queryClient.invalidateQueries({
           queryKey: ["client-contract-milestones", contractId],
         });
-      } catch {
-        if (error instanceof ApiFail) {
-          toastError({ message: error.message });
+      } catch (fallbackError) {
+        if (fallbackError instanceof ApiFail) {
+          toastError({ message: fallbackError.message });
         } else {
-          toastError({ message: "Failed to initiate arbitration fee payment." });
+          toastError({ message: t("feeFailed") });
         }
-      await disputeApiRequest.payFee(dispute.id);
-      toastSuccess({
-        message: t("feePaid"),
-      });
-      await refetchDispute();
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contractId],
-      });
-    } catch (error) {
-      if (error instanceof ApiFail) {
-        toastError({ message: error.message });
-      } else {
-        toastError({ message: t("feeFailed") });
       }
     } finally {
       setIsPayingFee(false);
