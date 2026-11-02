@@ -2106,13 +2106,13 @@
         <mxCell id="Freela2-937a01b0ea70" edge="1" parent="1" source="Freela2-001ab16a2ae2" target="Freela2-d918063e3888" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Freela2-9ba2d2494626" parent="Freela2-d13d0d3e2041" value="View Job Category List&lt;div&gt;UC-46.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+        <mxCell id="Freela2-9ba2d2494626" parent="Freela2-d13d0d3e2041" value="View Job Category List&lt;div&gt;UC-46.07&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
           <mxGeometry x="2135" y="2557" width="140" height="73" as="geometry" />
         </mxCell>
         <mxCell id="Freela2-f2d0c556ae88" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d918063e3888" target="Freela2-9ba2d2494626" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Freela2-bdd407a869e5" parent="Freela2-d13d0d3e2041" value="View Job Category Detail&lt;div&gt;UC-46.07&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+        <mxCell id="Freela2-bdd407a869e5" parent="Freela2-d13d0d3e2041" value="View Job Category Detail&lt;div&gt;UC-46.08&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
           <mxGeometry x="2135" y="2645" width="140" height="73" as="geometry" />
         </mxCell>
         <mxCell id="Freela2-680924b90fad" edge="1" parent="Freela2-d13d0d3e2041" source="Freela2-d918063e3888" target="Freela2-bdd407a869e5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
@@ -2606,39 +2606,45 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-33f4410600bd" parent="Admin1-a733a278d1c0" value="Job Category Management&lt;div&gt;UC-46&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1560" y="1138" width="140" height="73" as="geometry" />
+          <mxGeometry x="1560" y="1148" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-90b162c7cb5e" edge="1" parent="1" source="Admin1-b2836af5a3a7" target="Admin1-33f4410600bd" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-5bb74f142793" parent="Admin1-a733a278d1c0" value="View Job Category List&lt;div&gt;UC-46.01&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1745" y="962" width="140" height="73" as="geometry" />
+          <mxGeometry x="1745" y="960" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-60d20b6477c9" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-5bb74f142793" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-509acf4c3ba5" parent="Admin1-a733a278d1c0" value="View Job Category Detail&lt;div&gt;UC-46.02&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1745" y="1050" width="140" height="73" as="geometry" />
+          <mxGeometry x="1745" y="1035" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-a0240bf2fdb9" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-509acf4c3ba5" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-7f8df2576054" parent="Admin1-a733a278d1c0" value="Create Job Category&lt;div&gt;UC-46.03&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1745" y="1138" width="140" height="73" as="geometry" />
+          <mxGeometry x="1745" y="1110" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-a99a3f2c65ab" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-7f8df2576054" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-b9ca1b38c889" parent="Admin1-a733a278d1c0" value="Update Job Category&lt;div&gt;UC-46.04&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1745" y="1226" width="140" height="73" as="geometry" />
+          <mxGeometry x="1745" y="1185" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-785781c55127" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-b9ca1b38c889" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-fd6ac97e1aa1" parent="Admin1-a733a278d1c0" value="Delete Job Category&lt;div&gt;UC-46.05&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
-          <mxGeometry x="1745" y="1314" width="140" height="73" as="geometry" />
+          <mxGeometry x="1745" y="1260" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-490d2196d23d" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-fd6ac97e1aa1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-7c9f56a0e41b" parent="Admin1-a733a278d1c0" value="Restore Job Category&lt;div&gt;UC-46.06&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">
+          <mxGeometry x="1745" y="1335" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Admin1-c19f56a0e41c" edge="1" parent="Admin1-a733a278d1c0" source="Admin1-33f4410600bd" target="Admin1-7c9f56a0e41b" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Tahoma;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Admin1-aab4bf6e84c6" parent="Admin1-a733a278d1c0" value="Profile Update Review&lt;div&gt;UC-47&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;fontFamily=Tahoma;" vertex="1">

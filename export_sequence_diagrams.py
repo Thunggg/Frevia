@@ -63,11 +63,14 @@ MAP = {
     "UC-46.03-create-job-category.drawio": "docs/Report 4/images/sprint5/tthuan/sequences/CreateJobCategory.pdf",
     "UC-46.04-update-job-category.drawio": "docs/Report 4/images/sprint5/tthuan/sequences/UpdateJobCategory.pdf",
     "UC-46.05-delete-job-category.drawio": "docs/Report 4/images/sprint5/tthuan/sequences/DeleteJobCategory.pdf",
+    "UC-46.06-restore-job-category.drawio": "docs/Report 4/images/sprint5/tthuan/sequences/RestoreJobCategory.pdf",
 }
 
 def export_one(item):
     src_file, dst_rel = item
     src_path = os.path.join(BASE_DIR, "sequence-diagrams-remake", src_file)
+    if not os.path.exists(src_path):
+        src_path = os.path.join(BASE_DIR, "sequence-diagrams-remake", "tthuan", src_file)
     dst_path = os.path.join(BASE_DIR, dst_rel.replace("/", os.sep))
     os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
@@ -93,4 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
