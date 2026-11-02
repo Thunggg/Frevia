@@ -63,10 +63,10 @@ Table~\ref{tab:modules} summarizes the 31 route modules of the API and their res
 \label{tab:modules}
 \\
 \hline
-\textbf{Module} & \textbf{Responsibility} \\ \hline
+\rowcolor{headerbg}\textbf{Module} & \textbf{Responsibility} \\ \hline
 \endfirsthead
 \hline
-\textbf{Module} & \textbf{Responsibility} \\ \hline
+\rowcolor{headerbg}\textbf{Module} & \textbf{Responsibility} \\ \hline
 \endhead
 auth & registration, OTP, login, refresh token, logout, forgot password, Google OAuth, current account, role switching/joining \\ \hline
 sessions & device session listing, detail, revocation \\ \hline
@@ -125,10 +125,10 @@ Table~\ref{tab:packages} lists every workspace package of the repository and its
 \label{tab:packages}
 \\
 \hline
-\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endfirsthead
 \hline
-\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endhead
 \texttt{01} & \texttt{apps/web} & Next.js 16 presentation layer (App Router, React Server Components, next-intl, TanStack Query, TailwindCSS 4 with shadcn/ui). Contains the screens per actor, the shared UI components, the server actions and the BFF route handlers that attach the access token. \\ \hline
 \texttt{02} & \texttt{apps/api} & NestJS 11 application tier: 31 route modules laid out as Controller, Service, Repository and DTO files, together with the global guards, exception filter, Zod serializer interceptor and the Socket.io gateway used by messaging. \\ \hline
