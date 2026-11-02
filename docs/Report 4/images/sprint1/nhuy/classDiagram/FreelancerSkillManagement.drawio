@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-FreelancerSkillManagement" name="Freelancer Skill Management">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="1110">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ProfileController" value="ProfileController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileController_body" value="&lt;div&gt;- profileService: ProfileService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getSkills(id: number)&lt;/div&gt;&lt;div&gt;+ searchSkillSuggestions(search?: string)&lt;/div&gt;&lt;div&gt;+ addSkill(id: number, currentUserId: number, body:&lt;/div&gt;&lt;div&gt;AddFreelancerSkillDto)&lt;/div&gt;&lt;div&gt;+ deleteSkill(id: number, currentUserId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileController">
+          <mxGeometry x="0" y="45" width="600" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileController" target="ProfileService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileService" value="ProfileService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="316" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileService_body" value="&lt;div&gt;- profileRepository: ProfileRepository&lt;/div&gt;&lt;div&gt;- cloudinary: CloudinaryService&lt;/div&gt;&lt;div&gt;- aiCvAnalyzer: AiCvAnalyzerService&lt;/div&gt;&lt;div&gt;- skillResolver: SkillResolverService&lt;/div&gt;&lt;div&gt;- profileRevisionService: ProfileRevisionService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getSkills(profileId: number)&lt;/div&gt;&lt;div&gt;+ searchSkillSuggestions(search?: string)&lt;/div&gt;&lt;div&gt;+ addSkill(profileId: number, currentUserId: number, dto:&lt;/div&gt;&lt;div&gt;AddFreelancerSkillType)&lt;/div&gt;&lt;div&gt;+ deleteSkill(skillId: number, currentUserId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileService">
+          <mxGeometry x="0" y="45" width="600" height="271" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileService" target="ProfileRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileService" target="CloudinaryService">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="40" />
+              <mxPoint x="2175" y="40" />
+              <mxPoint x="2175" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dependency4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileService" target="AiCvAnalyzerService">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="40" />
+              <mxPoint x="2175" y="40" />
+              <mxPoint x="2175" y="365" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dependency5" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileService" target="SkillResolverService">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="40" />
+              <mxPoint x="2175" y="40" />
+              <mxPoint x="2175" y="555" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dependency6" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileService" target="ProfileRevisionService">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="40" />
+              <mxPoint x="2175" y="40" />
+              <mxPoint x="2175" y="745" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ProfileRepository" value="ProfileRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="316" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findFreelancerProfileById(profileId: number)&lt;/div&gt;&lt;div&gt;+ findSkillsByProfileId(profileId: number)&lt;/div&gt;&lt;div&gt;+ searchActiveCatalogSkills(search?: string)&lt;/div&gt;&lt;div&gt;+ findOrCreateCatalogSkill(name: string)&lt;/div&gt;&lt;div&gt;+ findSkillByProfileIdAndSkillId(profileId: number, skillId: number)&lt;/div&gt;&lt;div&gt;+ addSkillToProfile(profileId: number, skillId: number,&lt;/div&gt;&lt;div&gt;proficiencyLevel: number)&lt;/div&gt;&lt;div&gt;+ findSkillById(skillId: number)&lt;/div&gt;&lt;div&gt;+ deleteSkill(skillId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRepository">
+          <mxGeometry x="0" y="45" width="600" height="271" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency7" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="CloudinaryService" value="CloudinaryService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="CloudinaryService_body" value="&lt;div&gt;&amp;lt;&amp;lt;shared dependency&amp;gt;&amp;gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="CloudinaryService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="AiCvAnalyzerService" value="AiCvAnalyzerService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="310" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="AiCvAnalyzerService_body" value="&lt;div&gt;&amp;lt;&amp;lt;shared dependency&amp;gt;&amp;gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="AiCvAnalyzerService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="SkillResolverService" value="SkillResolverService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="500" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="SkillResolverService_body" value="&lt;div&gt;&amp;lt;&amp;lt;shared dependency&amp;gt;&amp;gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="SkillResolverService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService" value="ProfileRevisionService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="690" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService_body" value="&lt;div&gt;&amp;lt;&amp;lt;shared dependency&amp;gt;&amp;gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="880" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

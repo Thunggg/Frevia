@@ -1,0 +1,169 @@
+% Sprint 3 -- Nguyen Lu Nhat Huy
+% Method names, parameters, and constructor dependencies follow the API sources.
+
+\subsection{FollowingFreelancerController Class (Following Management)}
+
+This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{discover(userId: number)} & Exposes \code{discover} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{getFollowing(userId: number)} & Exposes \code{getFollowing} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{followFreelancer(userId: number, freelancerId: number)} & Exposes \code{followFreelancer} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{unfollowFreelancer(userId: number, freelancerId: number)} & Exposes \code{unfollowFreelancer} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Following Management)}
+
+This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getFollowing(clientId: number)} & Loads the current client\'s followed freelancers. \\ \hline
+02 & \code{discoverFreelancers(clientId: number)} & Loads freelancer profiles available for discovery. \\ \hline
+03 & \code{followFreelancer(clientId: number, freelancerId: number)} & Creates a following relationship after role, target, and duplicate checks. \\ \hline
+04 & \code{unfollowFreelancer(clientId: number, freelancerId: number)} & Removes an existing following relationship owned by the client. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Following Management)}
+
+This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Following Management through the persistence repository. \\ \hline
+02 & \code{findFollow(clientId: number, freelancerId: number)} & Performs the \code{findFollow} operation for Following Management through the persistence repository. \\ \hline
+03 & \code{createFollowWithNotification(clientId: number, freelancerId: number, followerName: string)} & Performs the \code{createFollowWithNotification} operation for Following Management through the persistence repository. \\ \hline
+04 & \code{deleteFollow(clientId: number, freelancerId: number)} & Performs the \code{deleteFollow} operation for Following Management through the persistence repository. \\ \hline
+05 & \code{findFollowing(clientId: number)} & Performs the \code{findFollowing} operation for Following Management through the persistence repository. \\ \hline
+06 & \code{findDiscoverableFreelancers(clientId: number)} & Performs the \code{findDiscoverableFreelancers} operation for Following Management through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{NotificationController Class (Notification Management)}
+
+This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/notifications/notification.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{markAllRead(userId: number)} & Exposes \code{markAllRead} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{markRead(userId: number, id: number)} & Exposes \code{markRead} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{delete(userId: number, id: number)} & Exposes \code{delete} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{NotificationService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{NotificationService Class (Notification Management)}
+
+This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/notifications/notification.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getAll(userId: number)} & Returns the list associated with the authenticated user. \\ \hline
+02 & \code{markRead(userId: number, notificationId: number)} & Marks an owned notification as read. \\ \hline
+03 & \code{markAllRead(userId: number)} & Marks all active unread notifications of the user as read. \\ \hline
+04 & \code{delete(userId: number, notificationId: number)} & Performs the \code{delete} operation for Notification Management through the application service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{NotificationRepository} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{NotificationRepository Class (Notification Management)}
+
+This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/notifications/notification.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findAll(userId: number)} & Performs the \code{findAll} operation for Notification Management through the persistence repository. \\ \hline
+02 & \code{findById(userId: number, notificationId: number)} & Performs the \code{findById} operation for Notification Management through the persistence repository. \\ \hline
+03 & \code{markRead(notificationId: number)} & Marks an owned notification as read. \\ \hline
+04 & \code{markAllRead(userId: number)} & Marks all active unread notifications of the user as read. \\ \hline
+05 & \code{softDelete(notificationId: number)} & Persists the deletion timestamp for the specified record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AuthController Class (Role Switching)}
+
+This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/auth/auth.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{switchRole(userId: number, sessionId: number, body: SwitchRoleBodyDto)} & Exposes \code{switchRole} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{joinRole(userId: number, sessionId: number, body: JoinRoleBodyDto)} & Exposes \code{joinRole} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{authService} & \code{AuthService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AuthService Class (Role Switching)}
+
+This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/auth/auth.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{switchRole(userId: number, sessionId: number, body: SwitchRoleBodyType)} & Switches the primary role to an existing assignment and returns a new access token. \\ \hline
+02 & \code{joinRole(userId: number, sessionId: number, body: JoinRoleBodyType)} & Adds a supported role assignment and required profile data before issuing a new access token. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{hashingService} & \code{HashingService} -- injected dependency. \\ \hline
+02 & \code{emailService} & \code{EmailService} -- injected dependency. \\ \hline
+03 & \code{sharedRoleRepository} & \code{SharedRoleRepository} -- injected dependency. \\ \hline
+04 & \code{authRepository} & \code{AuthRepository} -- injected dependency. \\ \hline
+05 & \code{tokenService} & \code{TokenService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AuthRepository Class (Role Switching)}
+
+This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/auth/auth.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{switchPrimaryRole(userId: number, roleName: string)} & Updates primary-role assignments for an existing user-role relationship. \\ \hline
+02 & \code{joinRole(userId: number, roleName: JoinRoleBodyType['role'])} & Adds a supported role assignment and required profile data before issuing a new access token. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}

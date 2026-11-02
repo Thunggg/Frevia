@@ -1,0 +1,231 @@
+% Sprint 2 -- Nguyen Lu Nhat Huy
+% Method names, parameters, and constructor dependencies follow the API sources.
+
+\subsection{IdentityVerificationController Class (Identity Verification)}
+
+This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{upload(userId: number, body: UploadIdentityDocumentDto, file?: Express.Multer.File)} & Exposes \code{upload} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{aiCheck(userId: number, body: UploadIdentityDocumentDto, files?: Express.Multer.File[])} & Exposes \code{aiCheck} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{livenessPose(userId: number, file?: Express.Multer.File)} & Exposes \code{livenessPose} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{getStatus(userId: number)} & Exposes \code{getStatus} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+05 & \code{getFile(userId: number, id: number, side: string | undefined, response: Response)} & Exposes \code{getFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Identity Verification)}
+
+This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{uploadIdentityDocument(userId: number, documentType: DocumentTypeType, file?: Express.Multer.File)} & Validates and stores identity evidence and creates its verification record. \\ \hline
+02 & \code{submitIdentityAiCheck(userId: number, documentType: DocumentTypeType, files: { front?: Express.Multer.File; back?: Express.Multer.File; selfie?: Express.Multer.File; liveness: Express.Multer.File[]; })} & Checks submitted identity images and stores the verification evidence and AI result. \\ \hline
+03 & \code{livenessPose(userId: number, file?: Express.Multer.File)} & Requests pose checking for a submitted liveness image. \\ \hline
+04 & \code{getIdentityStatus(userId: number)} & Returns the latest verification state and document history. \\ \hline
+05 & \code{getIdentityDocumentFile(userId: number, id: number, side: 'front' | 'back')} & Resolves an identity document file belonging to the authenticated user. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Identity Verification)}
+
+This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Identity Verification through the persistence repository. \\ \hline
+02 & \code{createIdentityDocument(userId: number, documentType: DocumentTypeType, fileUrl: string)} & Performs the \code{createIdentityDocument} operation for Identity Verification through the persistence repository. \\ \hline
+03 & \code{createIdentityAiDocument(data: { userId: number; documentType: DocumentTypeType; fileUrl: string; backFileUrl: string | null; status: VerificationStatus; reviewNotes: string | null; duplicateOfId: number | null; aiStatus: string; aiScore: number | null; aiError: string | null; aiSummary: Prisma.InputJsonValue; aiSelfieSummary: Prisma.InputJsonValue; aiScannedAt: Date; })} & Performs the \code{createIdentityAiDocument} operation for Identity Verification through the persistence repository. \\ \hline
+04 & \code{findApprovedIdentityDocumentByIdentityNumber(userId: number, identityNumber: string)} & Performs the \code{findApprovedIdentityDocumentByIdentityNumber} operation for Identity Verification through the persistence repository. \\ \hline
+05 & \code{findIdentityDocuments(userId: number)} & Performs the \code{findIdentityDocuments} operation for Identity Verification through the persistence repository. \\ \hline
+06 & \code{findIdentityDocumentById(id: number)} & Performs the \code{findIdentityDocumentById} operation for Identity Verification through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ClientProfileController Class (Client Profile Management)}
+
+This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getDetail(userId: number)} & Exposes \code{getDetail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{update(userId: number, body: UpdateClientProfileDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Client Profile Management)}
+
+This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getClientProfile(userId: number)} & Loads public client profile details and verifies the client role. \\ \hline
+02 & \code{updateClientProfile(userId: number, input: UpdateClientProfileType)} & Submits or applies changes to company information according to the revision policy. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Client Profile Management)}
+
+This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Client Profile Management through the persistence repository. \\ \hline
+02 & \code{findClientProfile(userId: number)} & Performs the \code{findClientProfile} operation for Client Profile Management through the persistence repository. \\ \hline
+03 & \code{updateClientProfile(userId: number, input: UpdateClientProfileType)} & Submits or applies changes to company information according to the revision policy. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SocialLinkController Class (Social Link Management)}
+
+This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{add(userId: number, body: AddSocialLinkDto)} & Exposes \code{add} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{remove(userId: number, id: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Social Link Management)}
+
+This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getSocialLinks(userId: number)} & Retrieves social links associated with the current user\'s profile. \\ \hline
+02 & \code{addSocialLink(userId: number, input: AddSocialLinkType)} & Creates a profile social link after checking for a duplicate platform. \\ \hline
+03 & \code{deleteSocialLink(userId: number, id: number)} & Deletes a social link after verifying its owner. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Social Link Management)}
+
+This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findSocialLinks(userId: number)} & Performs the \code{findSocialLinks} operation for Social Link Management through the persistence repository. \\ \hline
+02 & \code{findSocialLinkByPlatform(userId: number, platform: AddSocialLinkType['platform'])} & Performs the \code{findSocialLinkByPlatform} operation for Social Link Management through the persistence repository. \\ \hline
+03 & \code{createSocialLink(userId: number, input: AddSocialLinkType)} & Performs the \code{createSocialLink} operation for Social Link Management through the persistence repository. \\ \hline
+04 & \code{findSocialLinkById(id: number)} & Performs the \code{findSocialLinkById} operation for Social Link Management through the persistence repository. \\ \hline
+05 & \code{deleteSocialLink(id: number)} & Deletes a social link after verifying its owner. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{FavoriteFreelancerController Class (Favorite Freelancer Management)}
+
+This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{add(userId: number, freelancerId: number)} & Exposes \code{add} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{remove(userId: number, freelancerId: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Favorite Freelancer Management)}
+
+This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getFavorites(clientId: number)} & Returns the client\'s favourite freelancers. \\ \hline
+02 & \code{addFavorite(clientId: number, freelancerId: number)} & Creates a favourite relationship after client and target validation. \\ \hline
+03 & \code{removeFavorite(clientId: number, freelancerId: number)} & Removes a favourite relationship belonging to the client. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Favorite Freelancer Management)}
+
+This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
+02 & \code{findFavorite(clientId: number, freelancerId: number)} & Performs the \code{findFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
+03 & \code{createFavorite(clientId: number, freelancerId: number)} & Performs the \code{createFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
+04 & \code{deleteFavorite(clientId: number, freelancerId: number)} & Performs the \code{deleteFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
+05 & \code{findFavorites(clientId: number)} & Performs the \code{findFavorites} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}

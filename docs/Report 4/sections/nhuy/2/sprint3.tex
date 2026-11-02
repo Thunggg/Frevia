@@ -1,0 +1,59 @@
+% Sprint 3 -- Nguyen Lu Nhat Huy
+% System Detailed Design; editable diagram sources are linked by module.
+
+\subsection{Following Management}
+
+Clients retrieve followed and discoverable freelancers, follow a freelancer, or remove an existing following relationship. New follows also create a notification.
+
+\subsubsection{Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/FollowingManagement}{Class diagram of Following Management}{fig:nhuy-class-FollowingManagement}
+
+
+
+\subsubsection{UC-29.01 -- View Following List}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-29.01-view-following-list}{Sequence diagram of UC-29.01 View Following List}{fig:nhuy-seq-UC-29.01-view-following-list}
+
+\subsubsection{UC-29.02 -- Follow Freelancer}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-29.02-follow-freelancer}{Sequence diagram of UC-29.02 Follow Freelancer}{fig:nhuy-seq-UC-29.02-follow-freelancer}
+
+\subsubsection{UC-29.03 -- Unfollow Freelancer}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-29.03-unfollow-freelancer}{Sequence diagram of UC-29.03 Unfollow Freelancer}{fig:nhuy-seq-UC-29.03-unfollow-freelancer}
+
+\subsection{Notification Management}
+
+Users retrieve their notifications, mark one or all as read, and delete an owned notification. Deletion is persisted as a soft delete.
+
+\subsubsection{Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/NotificationManagement}{Class diagram of Notification Management}{fig:nhuy-class-NotificationManagement}
+
+
+
+\subsubsection{UC-30.01 -- View Notification List}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-30.01-view-notification-list}{Sequence diagram of UC-30.01 View Notification List}{fig:nhuy-seq-UC-30.01-view-notification-list}
+
+\subsubsection{UC-30.02 -- Mark Notification as Read}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-30.02-mark-notification-as-read}{Sequence diagram of UC-30.02 Mark Notification as Read}{fig:nhuy-seq-UC-30.02-mark-notification-as-read}
+
+\subsubsection{UC-30.03 -- Mark All Notifications as Read}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-30.03-mark-all-notifications-as-read}{Sequence diagram of UC-30.03 Mark All Notifications as Read}{fig:nhuy-seq-UC-30.03-mark-all-notifications-as-read}
+
+\subsubsection{UC-30.04 -- Delete Notification}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-30.04-delete-notification}{Sequence diagram of UC-30.04 Delete Notification}{fig:nhuy-seq-UC-30.04-delete-notification}
+
+\subsection{Role Switching}
+
+Authenticated users switch to an assigned role or join a new supported role. The role assignment is updated and a new access token is issued for the existing session.
+
+\subsubsection{Class Diagram}
+
+\kfig{0.92\textwidth}{images/sprint3/nhuy/classDiagram/RoleSwitching}{Class diagram of Role Switching}{fig:nhuy-class-RoleSwitching}
+
+
+
+\subsubsection{UC-31.01 -- Switch Role}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-31.01-switch-role}{Sequence diagram of UC-31.01 Switch Role}{fig:nhuy-seq-UC-31.01-switch-role}
+
+\subsubsection{UC-31.02 -- Join New Role}
+\kfig{0.88\textwidth}{images/sprint3/nhuy/sequences/UC-31.02-join-new-role}{Sequence diagram of UC-31.02 Join New Role}{fig:nhuy-seq-UC-31.02-join-new-role}

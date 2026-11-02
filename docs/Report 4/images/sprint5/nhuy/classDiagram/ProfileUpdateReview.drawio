@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-ProfileUpdateReview" name="Profile Update Review">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="682">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ProfileRevisionController" value="ProfileRevisionController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionController_body" value="&lt;div&gt;- service: ProfileRevisionService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ latest(userId: number, profileType: ProfileRevisionType)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionController">
+          <mxGeometry x="0" y="45" width="600" height="103" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileRevisionController" target="ProfileRevisionService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionAdminController" value="ProfileRevisionAdminController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="348" width="600" height="211" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionAdminController_body" value="&lt;div&gt;- service: ProfileRevisionService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ list(query: ProfileRevisionAdminFilterDto)&lt;/div&gt;&lt;div&gt;+ detail(id: number)&lt;/div&gt;&lt;div&gt;+ approve(id: number, adminId: number, body: ApproveProfileRevisionDto)&lt;/div&gt;&lt;div&gt;+ reject(id: number, adminId: number, body: RejectProfileRevisionDto)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionAdminController">
+          <mxGeometry x="0" y="45" width="600" height="166" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileRevisionAdminController" target="ProfileRevisionService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService" value="ProfileRevisionService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="442" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService_body" value="&lt;div&gt;- repository: ProfileRevisionRepository&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ requiresManualReview(profileStrength: number)&lt;/div&gt;&lt;div&gt;+ directUpdateResult(profileStrength: number)&lt;/div&gt;&lt;div&gt;+ submitFreelancer(userId: number, profileId: number, proposedData:&lt;/div&gt;&lt;div&gt;UpdateFreelancerProfileType, profileStrength: number)&lt;/div&gt;&lt;div&gt;+ submitClient(userId: number, profileId: number, proposedData:&lt;/div&gt;&lt;div&gt;UpdateClientProfileType, profileStrength: number)&lt;/div&gt;&lt;div&gt;+ submitExpert(userId: number, profileId: number, proposedData:&lt;/div&gt;&lt;div&gt;UpdateExpertProfileType, profileStrength: number)&lt;/div&gt;&lt;div&gt;+ submitGeneral(userId: number, profileId: number, primaryRole: string,&lt;/div&gt;&lt;div&gt;proposedData: UpdateGeneralProfileType, profileStrength: number)&lt;/div&gt;&lt;div&gt;+ latestForUser(userId: number, profileType: ProfileRevisionType)&lt;/div&gt;&lt;div&gt;+ list(filter: ProfileRevisionAdminFilterType)&lt;/div&gt;&lt;div&gt;+ detail(id: number)&lt;/div&gt;&lt;div&gt;+ approve(id: number, adminId: number, reviewNotes?: string | null)&lt;/div&gt;&lt;div&gt;+ reject(id: number, adminId: number, reviewNotes: string)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionService">
+          <mxGeometry x="0" y="45" width="600" height="397" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileRevisionService" target="ProfileRevisionRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionRepository" value="ProfileRevisionRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findProfileForSnapshot(userId: number, profileId: number)&lt;/div&gt;&lt;div&gt;+ submit(userId: number, profileId: number, profileType:&lt;/div&gt;&lt;div&gt;ProfileRevisionType, currentData: Prisma.InputJsonValue, proposedData:&lt;/div&gt;&lt;div&gt;Prisma.InputJsonValue, profileStrength: number)&lt;/div&gt;&lt;div&gt;+ findLatestForUser(userId: number, profileType: ProfileRevisionType)&lt;/div&gt;&lt;div&gt;+ syncLowStrengthProfiles(threshold: number)&lt;/div&gt;&lt;div&gt;+ findMany(params: { page: number; limit: number; status?:&lt;/div&gt;&lt;div&gt;RevisionStatus; profileType?: ProfileRevisionType; search?: string; })&lt;/div&gt;&lt;div&gt;+ findById(id: number)&lt;/div&gt;&lt;div&gt;+ review(id: number, adminId: number, status: typeof&lt;/div&gt;&lt;div&gt;RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED, reviewNotes:&lt;/div&gt;&lt;div&gt;string | null, proposedData: FreelancerProposal | ClientProposal |&lt;/div&gt;&lt;div&gt;ExpertProposal, profileType: ProfileRevisionType)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionRepository">
+          <mxGeometry x="0" y="45" width="600" height="355" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ProfileRevisionRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,191 @@
+% Sprint 5 -- Nguyen Lu Nhat Huy
+% Method names, parameters, and constructor dependencies follow the API sources.
+
+\subsection{ProfileRevisionController Class (Profile Update Review)}
+
+This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profile-revisions/profile-revision.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{latest(userId: number, profileType: ProfileRevisionType)} & Exposes \code{latest} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionAdminController Class (Profile Update Review)}
+
+This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profile-revisions/profile-revision.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{list(query: ProfileRevisionAdminFilterDto)} & Exposes \code{list} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{detail(id: number)} & Exposes \code{detail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{approve(id: number, adminId: number, body: ApproveProfileRevisionDto)} & Exposes \code{approve} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{reject(id: number, adminId: number, body: RejectProfileRevisionDto)} & Exposes \code{reject} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionService Class (Profile Update Review)}
+
+This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profile-revisions/profile-revision.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{requiresManualReview(profileStrength: number)} & Compares profile strength with the manual-review threshold. \\ \hline
+02 & \code{directUpdateResult(profileStrength: number)} & Builds the result of an update that does not require manual review. \\ \hline
+03 & \code{submitFreelancer(userId: number, profileId: number, proposedData: UpdateFreelancerProfileType, profileStrength: number)} & Submits proposed freelancer-profile fields for review. \\ \hline
+04 & \code{submitClient(userId: number, profileId: number, proposedData: UpdateClientProfileType, profileStrength: number)} & Submits proposed client-profile fields for review. \\ \hline
+05 & \code{submitExpert(userId: number, profileId: number, proposedData: UpdateExpertProfileType, profileStrength: number)} & Submits proposed expert-profile fields for review. \\ \hline
+06 & \code{submitGeneral(userId: number, profileId: number, primaryRole: string, proposedData: UpdateGeneralProfileType, profileStrength: number)} & Submits proposed general-profile fields for review. \\ \hline
+07 & \code{latestForUser(userId: number, profileType: ProfileRevisionType)} & Returns the most recent revision for a user and profile type. \\ \hline
+08 & \code{list(filter: ProfileRevisionAdminFilterType)} & Loads the records associated with the supplied contract or administrative filters. \\ \hline
+09 & \code{detail(id: number)} & Loads one record and enforces the corresponding visibility rules. \\ \hline
+10 & \code{approve(id: number, adminId: number, reviewNotes?: string | null)} & Approves a pending revision and applies its proposed profile changes. \\ \hline
+11 & \code{reject(id: number, adminId: number, reviewNotes: string)} & Rejects a pending revision with review notes and preserves the current profile. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ProfileRevisionRepository} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRevisionRepository Class (Profile Update Review)}
+
+This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profile-revisions/profile-revision.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findProfileForSnapshot(userId: number, profileId: number)} & Performs the \code{findProfileForSnapshot} operation for Profile Update Review through the persistence repository. \\ \hline
+02 & \code{submit(userId: number, profileId: number, profileType: ProfileRevisionType, currentData: Prisma.InputJsonValue, proposedData: Prisma.InputJsonValue, profileStrength: number)} & Performs the \code{submit} operation for Profile Update Review through the persistence repository. \\ \hline
+03 & \code{findLatestForUser(userId: number, profileType: ProfileRevisionType)} & Performs the \code{findLatestForUser} operation for Profile Update Review through the persistence repository. \\ \hline
+04 & \code{syncLowStrengthProfiles(threshold: number)} & Performs the \code{syncLowStrengthProfiles} operation for Profile Update Review through the persistence repository. \\ \hline
+05 & \code{findMany(params: { page: number; limit: number; status?: RevisionStatus; profileType?: ProfileRevisionType; search?: string; })} & Performs the \code{findMany} operation for Profile Update Review through the persistence repository. \\ \hline
+06 & \code{findById(id: number)} & Performs the \code{findById} operation for Profile Update Review through the persistence repository. \\ \hline
+07 & \code{review(id: number, adminId: number, status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED, reviewNotes: string | null, proposedData: FreelancerProposal | ClientProposal | ExpertProposal, profileType: ProfileRevisionType)} & Performs the \code{review} operation for Profile Update Review through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileController Class (Expert Profile Update)}
+
+This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/expert-profile/expert-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getMine(userId: number)} & Exposes \code{getMine} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{updateMine(userId: number, body: UpdateExpertProfileDto)} & Exposes \code{updateMine} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ExpertProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileService Class (Expert Profile Update)}
+
+This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/expert-profile/expert-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getMine(userId: number)} & Performs the \code{getMine} operation for Expert Profile Update through the application service. \\ \hline
+02 & \code{submitUpdate(userId: number, input: UpdateExpertProfileType)} & Performs the \code{submitUpdate} operation for Expert Profile Update through the application service. \\ \hline
+03 & \code{updateByAdmin(userId: number, adminId: number, input: AdminUpdateExpertProfileType)} & Performs the \code{updateByAdmin} operation for Expert Profile Update through the application service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ExpertProfileRepository} -- injected dependency. \\ \hline
+02 & \code{revisions} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ExpertProfileRepository Class (Expert Profile Update)}
+
+This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/expert-profile/expert-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findByUserId(userId: number)} & Performs the \code{findByUserId} operation for Expert Profile Update through the persistence repository. \\ \hline
+02 & \code{updateDirect(userId: number, adminId: number, input: AdminUpdateExpertProfileType, profileCompletionPercent: number)} & Performs the \code{updateDirect} operation for Expert Profile Update through the persistence repository. \\ \hline
+03 & \code{hasPendingRevision(userId: number)} & Performs the \code{hasPendingRevision} operation for Expert Profile Update through the persistence repository. \\ \hline
+04 & \code{findPublicMany(query: PublicExpertQueryType)} & Performs the \code{findPublicMany} operation for Expert Profile Update through the persistence repository. \\ \hline
+05 & \code{findPublicById(id: number)} & Performs the \code{findPublicById} operation for Expert Profile Update through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileController Class (Freelancer CV Management)}
+
+This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{uploadCv(id: number, currentUserId: number, file?: Express.Multer.File)} & Exposes \code{uploadCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{getCvFile(id: number, currentUserId: number, response: Response)} & Exposes \code{getCvFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{analyzeCv(id: number, currentUserId: number)} & Exposes \code{analyzeCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{deleteCv(id: number, currentUserId: number)} & Exposes \code{deleteCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileService Class (Freelancer CV Management)}
+
+This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{uploadCv(profileId: number, userId: number, file?: Express.Multer.File)} & Checks ownership, validates the CV, stores it, and updates its profile metadata. \\ \hline
+02 & \code{deleteCv(profileId: number, userId: number)} & Removes the stored CV and clears its profile metadata. \\ \hline
+03 & \code{getCvFile(profileId: number, userId: number)} & Checks ownership and resolves the stored CV file or remote URL. \\ \hline
+04 & \code{analyzeCv(profileId: number, userId: number)} & Analyzes the owned CV and returns skill suggestions. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRepository Class (Freelancer CV Management)}
+
+This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
+02 & \code{updateCv(profileId: number, data: { cvUrl: string; cvFileName: string; cvPublicId: string | null })} & Upserts stored CV metadata on a freelancer profile. \\ \hline
+03 & \code{clearCv(profileId: number)} & Clears the freelancer profile\'s CV metadata. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}

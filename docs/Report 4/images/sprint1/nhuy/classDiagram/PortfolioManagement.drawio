@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-PortfolioManagement" name="Portfolio Management">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="514">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="PortfolioController" value="PortfolioController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="253" as="geometry" />
+        </mxCell>
+        <mxCell id="PortfolioController_body" value="&lt;div&gt;- portfolioService: PortfolioService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getPortfolios(id: number)&lt;/div&gt;&lt;div&gt;+ addPortfolio(currentUserId: number, id: number, body: AddPortfolioDto)&lt;/div&gt;&lt;div&gt;+ getPortfolioDetail(id: number)&lt;/div&gt;&lt;div&gt;+ updatePortfolio(currentUserId: number, id: number, body:&lt;/div&gt;&lt;div&gt;UpdatePortfolioDto)&lt;/div&gt;&lt;div&gt;+ deletePortfolio(currentUserId: number, id: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PortfolioController">
+          <mxGeometry x="0" y="45" width="600" height="208" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="PortfolioController" target="PortfolioService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PortfolioService" value="PortfolioService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="274" as="geometry" />
+        </mxCell>
+        <mxCell id="PortfolioService_body" value="&lt;div&gt;- portfolioRepository: PortfolioRepository&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getPortfolios(profileId: number)&lt;/div&gt;&lt;div&gt;+ addPortfolio(profileId: number, currentUserId: number, data:&lt;/div&gt;&lt;div&gt;AddPortfolioType)&lt;/div&gt;&lt;div&gt;+ getPortfolioDetail(portfolioId: number)&lt;/div&gt;&lt;div&gt;+ updatePortfolio(portfolioId: number, currentUserId: number, data:&lt;/div&gt;&lt;div&gt;UpdatePortfolioType)&lt;/div&gt;&lt;div&gt;+ deletePortfolio(portfolioId: number, currentUserId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PortfolioService">
+          <mxGeometry x="0" y="45" width="600" height="229" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="PortfolioService" target="PortfolioRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PortfolioRepository" value="PortfolioRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="274" as="geometry" />
+        </mxCell>
+        <mxCell id="PortfolioRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findFreelancerProfileById(profileId: number)&lt;/div&gt;&lt;div&gt;+ findPortfoliosByFreelancerProfileId(freelancerProfileId: number)&lt;/div&gt;&lt;div&gt;+ addPortfolioToProfile(profileId: number, data: AddPortfolioType)&lt;/div&gt;&lt;div&gt;+ findPortfolioById(portfolioId: number)&lt;/div&gt;&lt;div&gt;+ findPortfolioWithProfile(portfolioId: number)&lt;/div&gt;&lt;div&gt;+ updatePortfolio(portfolioId: number, data: UpdatePortfolioType)&lt;/div&gt;&lt;div&gt;+ deletePortfolio(portfolioId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PortfolioRepository">
+          <mxGeometry x="0" y="45" width="600" height="229" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="PortfolioRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

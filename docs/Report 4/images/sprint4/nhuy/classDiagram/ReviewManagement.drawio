@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-ReviewManagement" name="Review Management">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="535">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ReviewController" value="ReviewController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="ReviewController_body" value="&lt;div&gt;- service: ReviewService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ list(userId: number, contractId: number)&lt;/div&gt;&lt;div&gt;+ create(userId: number, contractId: number, body: CreateReviewDto)&lt;/div&gt;&lt;div&gt;+ detail(userId: number, reviewId: number)&lt;/div&gt;&lt;div&gt;+ update(userId: number, reviewId: number, body: UpdateReviewDto)&lt;/div&gt;&lt;div&gt;+ remove(userId: number, reviewId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ReviewController">
+          <mxGeometry x="0" y="45" width="600" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ReviewController" target="ReviewService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ReviewService" value="ReviewService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="ReviewService_body" value="&lt;div&gt;- repository: ReviewRepository&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ list(userId: number, contractId: number)&lt;/div&gt;&lt;div&gt;+ detail(userId: number, reviewId: number)&lt;/div&gt;&lt;div&gt;+ create(userId: number, contractId: number, input: CreateReviewType)&lt;/div&gt;&lt;div&gt;+ update(userId: number, reviewId: number, input: UpdateReviewType)&lt;/div&gt;&lt;div&gt;+ remove(userId: number, reviewId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ReviewService">
+          <mxGeometry x="0" y="45" width="600" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ReviewService" target="ReviewRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ReviewRepository" value="ReviewRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="ReviewRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findContract(contractId: number)&lt;/div&gt;&lt;div&gt;+ findById(reviewId: number, includeDeleted: inferred)&lt;/div&gt;&lt;div&gt;+ findByContractAndReviewer(contractId: number, reviewerId: number)&lt;/div&gt;&lt;div&gt;+ findManyByContract(contractId: number)&lt;/div&gt;&lt;div&gt;+ create(contractId: number, reviewerId: number, revieweeId: number,&lt;/div&gt;&lt;div&gt;reviewerName: string, input: CreateReviewType)&lt;/div&gt;&lt;div&gt;+ update(reviewId: number, input: UpdateReviewType)&lt;/div&gt;&lt;div&gt;+ softDelete(reviewId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ReviewRepository">
+          <mxGeometry x="0" y="45" width="600" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ReviewRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-ExpertProfileUpdate" name="Expert Profile Update">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="540">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ExpertProfileController" value="ExpertProfileController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="169" as="geometry" />
+        </mxCell>
+        <mxCell id="ExpertProfileController_body" value="&lt;div&gt;- service: ExpertProfileService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getMine(userId: number)&lt;/div&gt;&lt;div&gt;+ updateMine(userId: number, body: UpdateExpertProfileDto)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ExpertProfileController">
+          <mxGeometry x="0" y="45" width="600" height="124" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ExpertProfileController" target="ExpertProfileService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ExpertProfileService" value="ExpertProfileService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="ExpertProfileService_body" value="&lt;div&gt;- repository: ExpertProfileRepository&lt;/div&gt;&lt;div&gt;- revisions: ProfileRevisionService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getMine(userId: number)&lt;/div&gt;&lt;div&gt;+ submitUpdate(userId: number, input: UpdateExpertProfileType)&lt;/div&gt;&lt;div&gt;+ updateByAdmin(userId: number, adminId: number, input:&lt;/div&gt;&lt;div&gt;AdminUpdateExpertProfileType)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ExpertProfileService">
+          <mxGeometry x="0" y="45" width="600" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ExpertProfileService" target="ExpertProfileRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="ExpertProfileService" target="ProfileRevisionService">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="40" />
+              <mxPoint x="2175" y="40" />
+              <mxPoint x="2175" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ExpertProfileRepository" value="ExpertProfileRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="253" as="geometry" />
+        </mxCell>
+        <mxCell id="ExpertProfileRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findByUserId(userId: number)&lt;/div&gt;&lt;div&gt;+ updateDirect(userId: number, adminId: number, input:&lt;/div&gt;&lt;div&gt;AdminUpdateExpertProfileType, profileCompletionPercent: number)&lt;/div&gt;&lt;div&gt;+ hasPendingRevision(userId: number)&lt;/div&gt;&lt;div&gt;+ findPublicMany(query: PublicExpertQueryType)&lt;/div&gt;&lt;div&gt;+ findPublicById(id: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ExpertProfileRepository">
+          <mxGeometry x="0" y="45" width="600" height="208" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ExpertProfileRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService" value="ProfileRevisionService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ProfileRevisionService_body" value="&lt;div&gt;&amp;lt;&amp;lt;shared dependency&amp;gt;&amp;gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="ProfileRevisionService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="310" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

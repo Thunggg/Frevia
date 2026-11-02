@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" version="29.0.3">
+  <diagram id="nhuy-NotificationManagement" name="Notification Management">
+    <mxGraphModel grid="1" page="0" pageWidth="2900" pageHeight="472">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="NotificationController" value="NotificationController" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="600" height="211" as="geometry" />
+        </mxCell>
+        <mxCell id="NotificationController_body" value="&lt;div&gt;- service: NotificationService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getAll(userId: number)&lt;/div&gt;&lt;div&gt;+ markAllRead(userId: number)&lt;/div&gt;&lt;div&gt;+ markRead(userId: number, id: number)&lt;/div&gt;&lt;div&gt;+ delete(userId: number, id: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="NotificationController">
+          <mxGeometry x="0" y="45" width="600" height="166" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="NotificationController" target="NotificationService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NotificationService" value="NotificationService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="600" height="211" as="geometry" />
+        </mxCell>
+        <mxCell id="NotificationService_body" value="&lt;div&gt;- repository: NotificationRepository&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ getAll(userId: number)&lt;/div&gt;&lt;div&gt;+ markRead(userId: number, notificationId: number)&lt;/div&gt;&lt;div&gt;+ markAllRead(userId: number)&lt;/div&gt;&lt;div&gt;+ delete(userId: number, notificationId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="NotificationService">
+          <mxGeometry x="0" y="45" width="600" height="166" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="NotificationService" target="NotificationRepository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NotificationRepository" value="NotificationRepository" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="120" width="600" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="NotificationRepository_body" value="&lt;div&gt;- prisma: PrismaService&lt;/div&gt;&lt;div&gt;--&lt;/div&gt;&lt;div&gt;+ findAll(userId: number)&lt;/div&gt;&lt;div&gt;+ findById(userId: number, notificationId: number)&lt;/div&gt;&lt;div&gt;+ markRead(notificationId: number)&lt;/div&gt;&lt;div&gt;+ markAllRead(userId: number)&lt;/div&gt;&lt;div&gt;+ softDelete(notificationId: number)&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="NotificationRepository">
+          <mxGeometry x="0" y="45" width="600" height="187" as="geometry" />
+        </mxCell>
+        <mxCell id="dependency3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;dashed=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="NotificationRepository" target="PrismaService">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService" value="PrismaService" style="swimlane;html=1;fontStyle=1;fontSize=17;startSize=45;align=center;collapsible=0;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="120" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="PrismaService_body" value="&lt;div&gt;+ Database access through generated Prisma client&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;spacingLeft=10;spacingTop=5;overflow=visible;" vertex="1" parent="PrismaService">
+          <mxGeometry x="0" y="45" width="570" height="65" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

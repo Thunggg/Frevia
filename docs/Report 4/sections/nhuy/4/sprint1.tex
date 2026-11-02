@@ -1,0 +1,175 @@
+% Sprint 1 -- Nguyen Lu Nhat Huy
+% Method names, parameters, and constructor dependencies follow the API sources.
+
+\subsection{ProfileController Class (Freelancer Profile Management)}
+
+This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{viewProfile(id: number)} & Exposes \code{viewProfile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{updateProfile(id: number, currentUserId: number, body: UpdateFreelancerProfileDto)} & Exposes \code{updateProfile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileService Class (Freelancer Profile Management)}
+
+This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{viewProfile(profileId: number)} & Loads the public freelancer profile and verifies that the associated user has the freelancer role. \\ \hline
+02 & \code{updateProfile(profileId: number, currentUserId: number, dto: UpdateFreelancerProfileType)} & Checks profile ownership and applies the profile revision policy before persisting changes. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRepository Class (Freelancer Profile Management)}
+
+This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
+02 & \code{updateFreelancerProfile(profileId: number, data: { displayName: string; title: string; bio?: string | null; availabilityStatus?: AvailabilityStatus; education?: string[] | null; certifications?: string[] | null; languages?: string[] | null; experience?: string[] | null; })} & Performs the \code{updateFreelancerProfile} operation for Freelancer Profile Management through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileController Class (Freelancer Skill Management)}
+
+This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getSkills(id: number)} & Exposes \code{getSkills} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{searchSkillSuggestions(search?: string)} & Exposes \code{searchSkillSuggestions} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{addSkill(id: number, currentUserId: number, body: AddFreelancerSkillDto)} & Exposes \code{addSkill} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{deleteSkill(id: number, currentUserId: number)} & Exposes \code{deleteSkill} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileService Class (Freelancer Skill Management)}
+
+This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getSkills(profileId: number)} & Loads the skill associations visible on a freelancer profile. \\ \hline
+02 & \code{searchSkillSuggestions(search?: string)} & Searches the active skill catalog using the supplied text. \\ \hline
+03 & \code{addSkill(profileId: number, currentUserId: number, dto: AddFreelancerSkillType)} & Resolves a catalog skill, checks for an existing association, and adds a proficiency value to the owned profile. \\ \hline
+04 & \code{deleteSkill(skillId: number, currentUserId: number)} & Removes an owned freelancer-skill association while retaining the catalog skill. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ProfileRepository Class (Freelancer Skill Management)}
+
+This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/profiles/profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
+02 & \code{findSkillsByProfileId(profileId: number)} & Queries active catalog-skill associations for a freelancer profile. \\ \hline
+03 & \code{searchActiveCatalogSkills(search?: string)} & Performs the \code{searchActiveCatalogSkills} operation for Freelancer Skill Management through the persistence repository. \\ \hline
+04 & \code{findOrCreateCatalogSkill(name: string)} & Returns a matching active catalog skill or creates one with a unique slug. \\ \hline
+05 & \code{findSkillByProfileIdAndSkillId(profileId: number, skillId: number)} & Finds an existing freelancer-skill association for duplicate checking. \\ \hline
+06 & \code{addSkillToProfile(profileId: number, skillId: number, proficiencyLevel: number)} & Ensures a freelancer profile exists and inserts a skill association. \\ \hline
+07 & \code{findSkillById(skillId: number)} & Loads a skill association with the profile data needed to identify its owner. \\ \hline
+08 & \code{deleteSkill(skillId: number)} & Removes an owned freelancer-skill association while retaining the catalog skill. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioController Class (Portfolio Management)}
+
+This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/portfolios/portfolio.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getPortfolios(id: number)} & Exposes \code{getPortfolios} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{addPortfolio(currentUserId: number, id: number, body: AddPortfolioDto)} & Exposes \code{addPortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{getPortfolioDetail(id: number)} & Exposes \code{getPortfolioDetail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{updatePortfolio(currentUserId: number, id: number, body: UpdatePortfolioDto)} & Exposes \code{updatePortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+05 & \code{deletePortfolio(currentUserId: number, id: number)} & Exposes \code{deletePortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{portfolioService} & \code{PortfolioService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioService Class (Portfolio Management)}
+
+This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/portfolios/portfolio.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getPortfolios(profileId: number)} & Loads the active portfolio items for a freelancer profile. \\ \hline
+02 & \code{addPortfolio(profileId: number, currentUserId: number, data: AddPortfolioType)} & Creates a portfolio item on the current user\'s freelancer profile. \\ \hline
+03 & \code{getPortfolioDetail(portfolioId: number)} & Loads one active portfolio item. \\ \hline
+04 & \code{updatePortfolio(portfolioId: number, currentUserId: number, data: UpdatePortfolioType)} & Updates an owned portfolio item using the supplied fields. \\ \hline
+05 & \code{deletePortfolio(portfolioId: number, currentUserId: number)} & Marks an owned portfolio item as deleted. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{portfolioRepository} & \code{PortfolioRepository} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{PortfolioRepository Class (Portfolio Management)}
+
+This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/portfolios/portfolio.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
+02 & \code{findPortfoliosByFreelancerProfileId(freelancerProfileId: number)} & Queries portfolio items that have not been soft-deleted. \\ \hline
+03 & \code{addPortfolioToProfile(profileId: number, data: AddPortfolioType)} & Creates a portfolio item in a transaction, creating the freelancer profile if required. \\ \hline
+04 & \code{findPortfolioById(portfolioId: number)} & Queries one portfolio item that has not been soft-deleted. \\ \hline
+05 & \code{findPortfolioWithProfile(portfolioId: number)} & Loads a portfolio item together with the profile used to verify ownership. \\ \hline
+06 & \code{updatePortfolio(portfolioId: number, data: UpdatePortfolioType)} & Updates an owned portfolio item using the supplied fields. \\ \hline
+07 & \code{deletePortfolio(portfolioId: number)} & Marks an owned portfolio item as deleted. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}

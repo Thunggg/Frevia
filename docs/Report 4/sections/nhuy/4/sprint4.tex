@@ -1,0 +1,177 @@
+% Sprint 4 -- Nguyen Lu Nhat Huy
+% Method names, parameters, and constructor dependencies follow the API sources.
+
+\subsection{ReviewController Class (Review Management)}
+
+This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{list(userId: number, contractId: number)} & Exposes \code{list} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{create(userId: number, contractId: number, body: CreateReviewDto)} & Exposes \code{create} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{detail(userId: number, reviewId: number)} & Exposes \code{detail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{update(userId: number, reviewId: number, body: UpdateReviewDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+05 & \code{remove(userId: number, reviewId: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ReviewService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewService Class (Review Management)}
+
+This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{list(userId: number, contractId: number)} & Loads the records associated with the supplied contract or administrative filters. \\ \hline
+02 & \code{detail(userId: number, reviewId: number)} & Loads one record and enforces the corresponding visibility rules. \\ \hline
+03 & \code{create(userId: number, contractId: number, input: CreateReviewType)} & Persists a new record using the supplied, validated fields. \\ \hline
+04 & \code{update(userId: number, reviewId: number, input: UpdateReviewType)} & Applies the supplied changes to the selected record. \\ \hline
+05 & \code{remove(userId: number, reviewId: number)} & Removes the selected record after the relevant service checks. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ReviewRepository} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewRepository Class (Review Management)}
+
+This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findContract(contractId: number)} & Performs the \code{findContract} operation for Review Management through the persistence repository. \\ \hline
+02 & \code{findById(reviewId: number, includeDeleted: inferred)} & Performs the \code{findById} operation for Review Management through the persistence repository. \\ \hline
+03 & \code{findByContractAndReviewer(contractId: number, reviewerId: number)} & Performs the \code{findByContractAndReviewer} operation for Review Management through the persistence repository. \\ \hline
+04 & \code{findManyByContract(contractId: number)} & Performs the \code{findManyByContract} operation for Review Management through the persistence repository. \\ \hline
+05 & \code{create(contractId: number, reviewerId: number, revieweeId: number, reviewerName: string, input: CreateReviewType)} & Persists a new record using the supplied, validated fields. \\ \hline
+06 & \code{update(reviewId: number, input: UpdateReviewType)} & Applies the supplied changes to the selected record. \\ \hline
+07 & \code{softDelete(reviewId: number)} & Persists the deletion timestamp for the specified record. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewController Class (Review Response Management)}
+
+This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{respond(userId: number, reviewId: number, body: CreateReviewResponseDto)} & Exposes \code{respond} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{updateResponse(userId: number, responseId: number, body: UpdateReviewResponseDto)} & Exposes \code{updateResponse} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{removeResponse(userId: number, responseId: number)} & Exposes \code{removeResponse} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{ReviewService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewService Class (Review Response Management)}
+
+This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{respond(userId: number, reviewId: number, responseText: string)} & Creates a response to a review addressed to the current user. \\ \hline
+02 & \code{updateResponse(userId: number, responseId: number, responseText: string)} & Updates a review response owned by the current user. \\ \hline
+03 & \code{removeResponse(userId: number, responseId: number)} & Removes a review response owned by the current user. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{ReviewRepository} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ReviewRepository Class (Review Response Management)}
+
+This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/reviews/review.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findContract(contractId: number)} & Performs the \code{findContract} operation for Review Response Management through the persistence repository. \\ \hline
+02 & \code{findById(reviewId: number, includeDeleted: inferred)} & Performs the \code{findById} operation for Review Response Management through the persistence repository. \\ \hline
+03 & \code{findResponseByReview(reviewId: number)} & Performs the \code{findResponseByReview} operation for Review Response Management through the persistence repository. \\ \hline
+04 & \code{findResponseById(responseId: number)} & Performs the \code{findResponseById} operation for Review Response Management through the persistence repository. \\ \hline
+05 & \code{createResponse(reviewId: number, userId: number, reviewerId: number, contractId: number, responderName: string, responseText: string, deletedResponseId?: number)} & Persists a review response and the notification for the reviewer. \\ \hline
+06 & \code{updateResponse(responseId: number, responseText: string)} & Updates a review response owned by the current user. \\ \hline
+07 & \code{softDeleteResponse(responseId: number)} & Persists a deletion timestamp on a review response. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{GeneralAccountProfileController Class (Account Profile Management)}
+
+This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.controller.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{get(userId: number)} & Exposes \code{get} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+02 & \code{update(userId: number, body: UpdateGeneralProfileDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+03 & \code{changePassword(userId: number, body: ChangePasswordDto)} & Exposes \code{changePassword} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+04 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} & Exposes \code{uploadAvatar} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+05 & \code{getAvatarFile(userId: number, response: Response)} & Exposes \code{getAvatarFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileService Class (Account Profile Management)}
+
+This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{getGeneralProfile(userId: number)} & Loads general account and profile information for the authenticated user. \\ \hline
+02 & \code{updateGeneralProfile(userId: number, input: UpdateGeneralProfileType)} & Submits or applies edits to general profile information according to the revision policy. \\ \hline
+03 & \code{changePassword(userId: number, input: ChangePasswordType)} & Verifies the existing password and stores the newly hashed password. \\ \hline
+04 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} & Validates and stores an avatar file, then updates the profile reference. \\ \hline
+05 & \code{getAvatarFile(userId: number)} & Resolves the stored avatar for delivery. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{AccountProfileRepository Class (Account Profile Management)}
+
+This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
+% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{findGeneralProfile(userId: number)} & Performs the \code{findGeneralProfile} operation for Account Profile Management through the persistence repository. \\ \hline
+02 & \code{findPasswordCredential(userId: number)} & Performs the \code{findPasswordCredential} operation for Account Profile Management through the persistence repository. \\ \hline
+03 & \code{updateGeneralProfile(userId: number, input: UpdateGeneralProfileType, primaryRole?: string)} & Submits or applies edits to general profile information according to the revision policy. \\ \hline
+04 & \code{updatePassword(userId: number, password: string)} & Performs the \code{updatePassword} operation for Account Profile Management through the persistence repository. \\ \hline
+05 & \code{updateAvatar(userId: number, avatarUrl: string)} & Performs the \code{updateAvatar} operation for Account Profile Management through the persistence repository. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+\end{ClassAttributeTable}
