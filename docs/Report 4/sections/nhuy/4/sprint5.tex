@@ -1,191 +1,338 @@
 % Sprint 5 -- Nguyen Lu Nhat Huy
-% Method names, parameters, and constructor dependencies follow the API sources.
+% Structure follows tthuan: constructor, methods, parameters, returns, routes, attributes.
+% Shared classes are specified once across the report.
 
-\subsection{ProfileRevisionController Class (Profile Update Review)}
-
-This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+\subsection{ProfileRevisionController Class}
+\label{cls:nhuy-ProfileRevisionController}
 % Source: apps/api/src/routes/profile-revisions/profile-revision.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{latest(userId: number, profileType: ProfileRevisionType)} & Exposes \code{latest} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ProfileRevisionController(service: ProfileRevisionService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{ProfileRevisionService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{latest(userId: number, profileType: ProfileRevisionType)} &
+Returns the most recent revision for a user and profile type.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- role-specific profile category.
+\newline -- \textit{Returns:} An awaitable record with \code{revision}.
+\newline -- Response schema: \code{MyProfileRevisionDto}.
+\newline -- Route: \code{GET /profile-revisions/me}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{ProfileRevisionService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileRevisionAdminController Class (Profile Update Review)}
-
-This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+\subsection{\texorpdfstring{Profile\allowbreak Revision\allowbreak Admin\allowbreak Controller}{ProfileRevisionAdminController} Class}
+\label{cls:nhuy-ProfileRevisionAdminController}
 % Source: apps/api/src/routes/profile-revisions/profile-revision.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{list(query: ProfileRevisionAdminFilterDto)} & Exposes \code{list} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{detail(id: number)} & Exposes \code{detail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{approve(id: number, adminId: number, body: ApproveProfileRevisionDto)} & Exposes \code{approve} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{reject(id: number, adminId: number, body: RejectProfileRevisionDto)} & Exposes \code{reject} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ProfileRevisionAdminController(}\newline\code{service: ProfileRevisionService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{ProfileRevisionService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(query: ProfileRevisionAdminFilterDto)} &
+Synchronizes low-strength profiles, then loads filtered revisions and pagination metadata.
+\newline -- \code{query}: \code{ProfileRevisionAdminFilterDto} -- query criteria, including the filters and pagination fields declared by the type.
+\newline -- \textit{Returns:} An awaitable record with \code{revisions}, \code{pagination}.
+\newline -- Response schema: \code{ProfileRevisionAdminListDto}.
+\newline -- Route: \code{GET /admin/profile-revisions}.
+ \\ \hline
+
+03 & \code{detail(id: number)} &
+Loads revision details and fails when the revision does not exist.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+\newline -- Response schema: \code{ProfileRevisionDetailDto}.
+\newline -- Route: \code{GET /admin/profile-revisions/:id}.
+ \\ \hline
+
+04 & \code{approve(}\newline\code{id: number,}\newline\code{adminId: number,}\newline\code{body: ApproveProfileRevisionDto)} &
+Approves a pending revision and applies its proposed profile changes.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded for the review.
+\newline -- \code{body}: \code{ApproveProfileRevisionDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+\newline -- Response schema: \code{ProfileRevisionDetailDto}.
+\newline -- Route: \code{PATCH /admin/profile-revisions/:id/approve}.
+ \\ \hline
+
+05 & \code{reject(}\newline\code{id: number,}\newline\code{adminId: number,}\newline\code{body: RejectProfileRevisionDto)} &
+Rejects a pending revision with review notes and preserves the current profile.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded for the review.
+\newline -- \code{body}: \code{RejectProfileRevisionDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+\newline -- Response schema: \code{ProfileRevisionDetailDto}.
+\newline -- Route: \code{PATCH /admin/profile-revisions/:id/reject}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{ProfileRevisionService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileRevisionService Class (Profile Update Review)}
-
-This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+\subsection{ProfileRevisionService Class}
+\label{cls:nhuy-ProfileRevisionService}
 % Source: apps/api/src/routes/profile-revisions/profile-revision.service.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{requiresManualReview(profileStrength: number)} & Compares profile strength with the manual-review threshold. \\ \hline
-02 & \code{directUpdateResult(profileStrength: number)} & Builds the result of an update that does not require manual review. \\ \hline
-03 & \code{submitFreelancer(userId: number, profileId: number, proposedData: UpdateFreelancerProfileType, profileStrength: number)} & Submits proposed freelancer-profile fields for review. \\ \hline
-04 & \code{submitClient(userId: number, profileId: number, proposedData: UpdateClientProfileType, profileStrength: number)} & Submits proposed client-profile fields for review. \\ \hline
-05 & \code{submitExpert(userId: number, profileId: number, proposedData: UpdateExpertProfileType, profileStrength: number)} & Submits proposed expert-profile fields for review. \\ \hline
-06 & \code{submitGeneral(userId: number, profileId: number, primaryRole: string, proposedData: UpdateGeneralProfileType, profileStrength: number)} & Submits proposed general-profile fields for review. \\ \hline
-07 & \code{latestForUser(userId: number, profileType: ProfileRevisionType)} & Returns the most recent revision for a user and profile type. \\ \hline
-08 & \code{list(filter: ProfileRevisionAdminFilterType)} & Loads the records associated with the supplied contract or administrative filters. \\ \hline
-09 & \code{detail(id: number)} & Loads one record and enforces the corresponding visibility rules. \\ \hline
-10 & \code{approve(id: number, adminId: number, reviewNotes?: string | null)} & Approves a pending revision and applies its proposed profile changes. \\ \hline
-11 & \code{reject(id: number, adminId: number, reviewNotes: string)} & Rejects a pending revision with review notes and preserves the current profile. \\ \hline
+01 & \code{ProfileRevisionService(}\newline\code{repository: ProfileRevisionRepository)} &
+Initializes the class with its required dependencies.
+\newline -- \code{repository}: \code{ProfileRevisionRepository} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{requiresManualReview(profileStrength: number)} &
+Compares profile strength with the manual-review threshold.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} \code{boolean}
+ \\ \hline
+
+03 & \code{directUpdateResult(profileStrength: number)} &
+Builds the result of an update that does not require manual review.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} \code{{ message: "Success.ProfileUpdated"; reviewRequired: boolean; profileStrength: number; revision: null; }}
+ \\ \hline
+
+04 & \code{submitFreelancer(}\newline\code{userId: number,}\newline\code{profileId: number,}\newline\code{proposedData: UpdateFreelancerProfileType,}\newline\code{profileStrength: number)} &
+Submits proposed freelancer-profile fields for review.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{proposedData}: \code{UpdateFreelancerProfileType} -- proposed role-specific profile changes.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+ \\ \hline
+
+05 & \code{submitClient(}\newline\code{userId: number,}\newline\code{profileId: number,}\newline\code{proposedData: UpdateClientProfileType,}\newline\code{profileStrength: number)} &
+Submits proposed client-profile fields for review.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{proposedData}: \code{UpdateClientProfileType} -- proposed role-specific profile changes.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+ \\ \hline
+
+06 & \code{submitExpert(}\newline\code{userId: number,}\newline\code{profileId: number,}\newline\code{proposedData: UpdateExpertProfileType,}\newline\code{profileStrength: number)} &
+Submits proposed expert-profile fields for review.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{proposedData}: \code{UpdateExpertProfileType} -- proposed role-specific profile changes.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+ \\ \hline
+
+07 & \code{submitGeneral(}\newline\code{userId: number,}\newline\code{profileId: number,}\newline\code{primaryRole: string,}\newline\code{proposedData: UpdateGeneralProfileType,}\newline\code{profileStrength: number)} &
+Submits proposed general-profile fields for review.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{primaryRole}: \code{string} -- primary role used to select the profile policy.
+\newline -- \code{proposedData}: \code{UpdateGeneralProfileType} -- proposed role-specific profile changes.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+ \\ \hline
+
+08 & \code{latestForUser(}\newline\code{userId: number,}\newline\code{profileType: ProfileRevisionType)} &
+Returns the most recent revision for a user and profile type.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- role-specific profile category.
+\newline -- \textit{Returns:} An awaitable record with \code{revision}.
+ \\ \hline
+
+09 & \code{list(filter: ProfileRevisionAdminFilterType)} &
+Synchronizes low-strength profiles, then loads filtered revisions and pagination metadata.
+\newline -- \code{filter}: \code{ProfileRevisionAdminFilterType} -- query criteria, including the filters and pagination fields declared by the type.
+\newline -- \textit{Returns:} An awaitable record with \code{revisions}, \code{pagination}.
+ \\ \hline
+
+10 & \code{detail(id: number)} &
+Loads revision details and fails when the revision does not exist.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+\newline -- Throws \code{ProfileRevisionNotFoundException}.
+ \\ \hline
+
+11 & \code{approve(}\newline\code{id: number,}\newline\code{adminId: number,}\newline\code{reviewNotes?: string | null)} &
+Approves a pending revision and applies its proposed profile changes.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded for the review.
+\newline -- \code{reviewNotes}: \code{string | null} -- administrator review comments; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+ \\ \hline
+
+12 & \code{reject(id: number, adminId: number, reviewNotes: string)} &
+Rejects a pending revision with review notes and preserves the current profile.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded for the review.
+\newline -- \code{reviewNotes}: \code{string} -- administrator review comments.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{repository} & \code{ProfileRevisionRepository} -- injected dependency. \\ \hline
+01 & \code{repository} & \code{ProfileRevisionRepository} -- private readonly injected dependency. \\ \hline
+02 & \code{MANUAL_REVIEW_STRENGTH_THRESHOLD} & \code{number} -- static readonly threshold, currently 20. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileRevisionRepository Class (Profile Update Review)}
-
-This specification lists the operations used by Profile Update Review. Shared classes may expose additional operations in other modules.
+\subsection{ProfileRevisionRepository Class}
+\label{cls:nhuy-ProfileRevisionRepository}
 % Source: apps/api/src/routes/profile-revisions/profile-revision.repo.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findProfileForSnapshot(userId: number, profileId: number)} & Performs the \code{findProfileForSnapshot} operation for Profile Update Review through the persistence repository. \\ \hline
-02 & \code{submit(userId: number, profileId: number, profileType: ProfileRevisionType, currentData: Prisma.InputJsonValue, proposedData: Prisma.InputJsonValue, profileStrength: number)} & Performs the \code{submit} operation for Profile Update Review through the persistence repository. \\ \hline
-03 & \code{findLatestForUser(userId: number, profileType: ProfileRevisionType)} & Performs the \code{findLatestForUser} operation for Profile Update Review through the persistence repository. \\ \hline
-04 & \code{syncLowStrengthProfiles(threshold: number)} & Performs the \code{syncLowStrengthProfiles} operation for Profile Update Review through the persistence repository. \\ \hline
-05 & \code{findMany(params: { page: number; limit: number; status?: RevisionStatus; profileType?: ProfileRevisionType; search?: string; })} & Performs the \code{findMany} operation for Profile Update Review through the persistence repository. \\ \hline
-06 & \code{findById(id: number)} & Performs the \code{findById} operation for Profile Update Review through the persistence repository. \\ \hline
-07 & \code{review(id: number, adminId: number, status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED, reviewNotes: string | null, proposedData: FreelancerProposal | ClientProposal | ExpertProposal, profileType: ProfileRevisionType)} & Performs the \code{review} operation for Profile Update Review through the persistence repository. \\ \hline
+01 & \code{ProfileRevisionRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findProfileForSnapshot(userId: number, profileId: number)} &
+Loads a profile owned by the account, including role-specific fields used to snapshot current data.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{freelancerProfile}, \code{clientProfile}, \code{expertProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+03 & \code{submit(}\newline\code{userId: number,}\newline\code{profileId: number,}\newline\code{profileType: ProfileRevisionType,}\newline\code{currentData: Prisma.InputJsonValue,}\newline\code{proposedData: Prisma.InputJsonValue,}\newline\code{profileStrength: number)} &
+Saves the current and proposed profile data as a pending revision and supersedes existing pending requests.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- role-specific profile category.
+\newline -- \code{currentData}: \code{Prisma.InputJsonValue} -- snapshot of the current live profile.
+\newline -- \code{proposedData}: \code{Prisma.InputJsonValue} -- proposed role-specific profile changes.
+\newline -- \code{profileStrength}: \code{number} -- calculated profile completion percentage.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields.
+ \\ \hline
+
+04 & \code{findLatestForUser(}\newline\code{userId: number,}\newline\code{profileType: ProfileRevisionType)} &
+Loads the latest revision for the account and profile type.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- role-specific profile category.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+05 & \code{syncLowStrengthProfiles(threshold: number)} &
+Ensures low-strength profiles have pending review requests where required.
+\newline -- \code{threshold}: \code{number} -- profile strength threshold for manual review.
+\newline -- \textit{Returns:} \code{Promise<void>}
+ \\ \hline
+
+06 & \code{findMany(}\newline\code{params: { page: number; limit: number; status?: RevisionStatus; profileType?: ProfileRevisionType; search?: string; })} &
+Loads a filtered page of revisions and the total matching count.
+\newline -- \code{params}: \code{{ page: number; limit: number; status?: RevisionStatus; profileType?: ProfileRevisionType; search?: string; }} -- query criteria, including the filters and pagination fields declared by the type.
+\newline -- \textit{Returns:} An awaitable record with \code{revisions}, \code{total}.
+ \\ \hline
+
+07 & \code{findById(id: number)} &
+Loads a revision with its account and profile summary.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+08 & \code{review(}\newline\code{id: number,}\newline\code{adminId: number,}\newline\code{status: typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED,}\newline\code{reviewNotes: string | null,}\newline\code{proposedData: FreelancerProposal | ClientProposal | ExpertProposal,}\newline\code{profileType: ProfileRevisionType)} &
+Processes a pending revision transactionally; approval applies proposed profile fields, while rejection preserves the live profile.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{adminId}: \code{number} -- administrator identifier recorded for the review.
+\newline -- \code{status}: \code{typeof RevisionStatus.APPROVED | typeof RevisionStatus.REJECTED} -- target revision review status.
+\newline -- \code{reviewNotes}: \code{string | null} -- administrator review comments.
+\newline -- \code{proposedData}: \code{FreelancerProposal | ClientProposal | ExpertProposal} -- proposed role-specific profile changes.
+\newline -- \code{profileType}: \code{ProfileRevisionType} -- role-specific profile category.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{user}, \code{profileId}, \code{profileType}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ExpertProfileController Class (Expert Profile Update)}
-
-This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
+\subsection{ExpertProfileController Class}
+\label{cls:nhuy-ExpertProfileController}
 % Source: apps/api/src/routes/expert-profile/expert-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getMine(userId: number)} & Exposes \code{getMine} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{updateMine(userId: number, body: UpdateExpertProfileDto)} & Exposes \code{updateMine} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ExpertProfileController(service: ExpertProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{ExpertProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getMine(userId: number)} &
+Loads the current expert profile and calculates the fields exposed by the self-service profile response.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{bio}, \code{profileCompletionPercent}, \code{title}, and the remaining selected fields.
+\newline -- Response schema: \code{ExpertProfileDto}.
+\newline -- Route: \code{GET /expert-profile/me}.
+ \\ \hline
+
+03 & \code{updateMine(userId: number, body: UpdateExpertProfileDto)} &
+Validates the expert profile and submits proposed changes through the profile revision workflow.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{UpdateExpertProfileDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Response schema: \code{ExpertProfileUpdateResponseDto}.
+\newline -- Route: \code{PUT /expert-profile/me}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{ExpertProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{ExpertProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ExpertProfileService Class (Expert Profile Update)}
+\subsection{Expert Profile Update (Shared Classes)}
 
-This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/expert-profile/expert-profile.service.ts
+\code{ExpertProfileService} is specified in Expert Profile Administration in Sprint 5.
+\begin{itemize}[nosep]
+\item \code{getMine()}.
+\item \code{submitUpdate()}.
+\item \code{updateByAdmin()}.
+\end{itemize}
 
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getMine(userId: number)} & Performs the \code{getMine} operation for Expert Profile Update through the application service. \\ \hline
-02 & \code{submitUpdate(userId: number, input: UpdateExpertProfileType)} & Performs the \code{submitUpdate} operation for Expert Profile Update through the application service. \\ \hline
-03 & \code{updateByAdmin(userId: number, adminId: number, input: AdminUpdateExpertProfileType)} & Performs the \code{updateByAdmin} operation for Expert Profile Update through the application service. \\ \hline
-\end{ClassMethodTable}
+\code{ExpertProfileRepository} is specified in Expert Profile Administration in Sprint 5.
+\begin{itemize}[nosep]
+\item \code{findByUserId()}.
+\item \code{updateDirect()}.
+\item \code{hasPendingRevision()}.
+\item \code{findPublicMany()}.
+\item \code{findPublicById()}.
+\end{itemize}
 
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{ExpertProfileRepository} -- injected dependency. \\ \hline
-02 & \code{revisions} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
+\subsection{Freelancer CV Management (Shared Classes)}
 
-\subsection{ExpertProfileRepository Class (Expert Profile Update)}
+\code{ProfileController} is specified in Section~\ref{cls:nhuy-ProfileController}.
+\begin{itemize}[nosep]
+\item \code{uploadCv()}.
+\item \code{getCvFile()}.
+\item \code{analyzeCv()}.
+\item \code{deleteCv()}.
+\end{itemize}
 
-This specification lists the operations used by Expert Profile Update. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/expert-profile/expert-profile.repo.ts
+\code{ProfileService} is specified in Section~\ref{cls:nhuy-ProfileService}.
+\begin{itemize}[nosep]
+\item \code{uploadCv()}.
+\item \code{deleteCv()}.
+\item \code{getCvFile()}.
+\item \code{analyzeCv()}.
+\end{itemize}
 
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findByUserId(userId: number)} & Performs the \code{findByUserId} operation for Expert Profile Update through the persistence repository. \\ \hline
-02 & \code{updateDirect(userId: number, adminId: number, input: AdminUpdateExpertProfileType, profileCompletionPercent: number)} & Performs the \code{updateDirect} operation for Expert Profile Update through the persistence repository. \\ \hline
-03 & \code{hasPendingRevision(userId: number)} & Performs the \code{hasPendingRevision} operation for Expert Profile Update through the persistence repository. \\ \hline
-04 & \code{findPublicMany(query: PublicExpertQueryType)} & Performs the \code{findPublicMany} operation for Expert Profile Update through the persistence repository. \\ \hline
-05 & \code{findPublicById(id: number)} & Performs the \code{findPublicById} operation for Expert Profile Update through the persistence repository. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ProfileController Class (Freelancer CV Management)}
-
-This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.controller.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{uploadCv(id: number, currentUserId: number, file?: Express.Multer.File)} & Exposes \code{uploadCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{getCvFile(id: number, currentUserId: number, response: Response)} & Exposes \code{getCvFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{analyzeCv(id: number, currentUserId: number)} & Exposes \code{analyzeCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{deleteCv(id: number, currentUserId: number)} & Exposes \code{deleteCv} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ProfileService Class (Freelancer CV Management)}
-
-This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{uploadCv(profileId: number, userId: number, file?: Express.Multer.File)} & Checks ownership, validates the CV, stores it, and updates its profile metadata. \\ \hline
-02 & \code{deleteCv(profileId: number, userId: number)} & Removes the stored CV and clears its profile metadata. \\ \hline
-03 & \code{getCvFile(profileId: number, userId: number)} & Checks ownership and resolves the stored CV file or remote URL. \\ \hline
-04 & \code{analyzeCv(profileId: number, userId: number)} & Analyzes the owned CV and returns skill suggestions. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
-02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
-04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
-05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ProfileRepository Class (Freelancer CV Management)}
-
-This specification lists the operations used by Freelancer CV Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
-02 & \code{updateCv(profileId: number, data: { cvUrl: string; cvFileName: string; cvPublicId: string | null })} & Upserts stored CV metadata on a freelancer profile. \\ \hline
-03 & \code{clearCv(profileId: number)} & Clears the freelancer profile\'s CV metadata. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
+\code{ProfileRepository} is specified in Section~\ref{cls:nhuy-ProfileRepository}.
+\begin{itemize}[nosep]
+\item \code{findFreelancerProfileById()}.
+\item \code{updateCv()}.
+\item \code{clearCv()}.
+\end{itemize}

@@ -1,169 +1,238 @@
 % Sprint 3 -- Nguyen Lu Nhat Huy
-% Method names, parameters, and constructor dependencies follow the API sources.
+% Structure follows tthuan: constructor, methods, parameters, returns, routes, attributes.
+% Shared classes are specified once across the report.
 
-\subsection{FollowingFreelancerController Class (Following Management)}
-
-This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
+\subsection{\texorpdfstring{Following\allowbreak Freelancer\allowbreak Controller}{FollowingFreelancerController} Class}
+\label{cls:nhuy-FollowingFreelancerController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{discover(userId: number)} & Exposes \code{discover} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{getFollowing(userId: number)} & Exposes \code{getFollowing} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{followFreelancer(userId: number, freelancerId: number)} & Exposes \code{followFreelancer} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{unfollowFreelancer(userId: number, freelancerId: number)} & Exposes \code{unfollowFreelancer} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{FollowingFreelancerController(}\newline\code{service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{discover(userId: number)} &
+Loads freelancer profiles available for discovery.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{isFollowing}, \code{profile}.
+\newline -- Response schema: \code{DiscoverFreelancerListDto}.
+\newline -- Route: \code{GET /following/freelancers/discover}.
+ \\ \hline
+
+03 & \code{getFollowing(userId: number)} &
+Loads the current client's followed freelancers.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{createdAt}, \code{profile}.
+\newline -- Response schema: \code{FollowingFreelancerListDto}.
+\newline -- Route: \code{GET /following/freelancers}.
+ \\ \hline
+
+04 & \code{followFreelancer(userId: number, freelancerId: number)} &
+Creates a following relationship after role, target, and duplicate checks.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{POST /following/freelancers/:freelancerId}.
+ \\ \hline
+
+05 & \code{unfollowFreelancer(userId: number, freelancerId: number)} &
+Removes an existing following relationship owned by the client.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{DELETE /following/freelancers/:freelancerId}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileService Class (Following Management)}
-
-This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getFollowing(clientId: number)} & Loads the current client\'s followed freelancers. \\ \hline
-02 & \code{discoverFreelancers(clientId: number)} & Loads freelancer profiles available for discovery. \\ \hline
-03 & \code{followFreelancer(clientId: number, freelancerId: number)} & Creates a following relationship after role, target, and duplicate checks. \\ \hline
-04 & \code{unfollowFreelancer(clientId: number, freelancerId: number)} & Removes an existing following relationship owned by the client. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileRepository Class (Following Management)}
-
-This specification lists the operations used by Following Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Following Management through the persistence repository. \\ \hline
-02 & \code{findFollow(clientId: number, freelancerId: number)} & Performs the \code{findFollow} operation for Following Management through the persistence repository. \\ \hline
-03 & \code{createFollowWithNotification(clientId: number, freelancerId: number, followerName: string)} & Performs the \code{createFollowWithNotification} operation for Following Management through the persistence repository. \\ \hline
-04 & \code{deleteFollow(clientId: number, freelancerId: number)} & Performs the \code{deleteFollow} operation for Following Management through the persistence repository. \\ \hline
-05 & \code{findFollowing(clientId: number)} & Performs the \code{findFollowing} operation for Following Management through the persistence repository. \\ \hline
-06 & \code{findDiscoverableFreelancers(clientId: number)} & Performs the \code{findDiscoverableFreelancers} operation for Following Management through the persistence repository. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{NotificationController Class (Notification Management)}
-
-This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+\subsection{NotificationController Class}
+\label{cls:nhuy-NotificationController}
 % Source: apps/api/src/routes/notifications/notification.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{markAllRead(userId: number)} & Exposes \code{markAllRead} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{markRead(userId: number, id: number)} & Exposes \code{markRead} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{delete(userId: number, id: number)} & Exposes \code{delete} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{NotificationController(service: NotificationService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{NotificationService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(userId: number)} &
+Returns the list associated with the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+\newline -- Response schema: \code{NotificationListDto}.
+\newline -- Route: \code{GET /notifications}.
+ \\ \hline
+
+03 & \code{markAllRead(userId: number)} &
+Marks all active unread notifications of the user as read.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.NotificationsMarkedAsRead"; count: number; }>}
+\newline -- Route: \code{PATCH /notifications/read-all}.
+ \\ \hline
+
+04 & \code{markRead(userId: number, id: number)} &
+Marks an owned notification as read.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+\newline -- Response schema: \code{NotificationDto}.
+\newline -- Route: \code{PATCH /notifications/:id/read}.
+ \\ \hline
+
+05 & \code{delete(userId: number, id: number)} &
+Checks notification ownership and marks the notification as deleted.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.NotificationDeleted"; }>}
+\newline -- Route: \code{DELETE /notifications/:id}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{NotificationService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{NotificationService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{NotificationService Class (Notification Management)}
-
-This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+\subsection{NotificationService Class}
+\label{cls:nhuy-NotificationService}
 % Source: apps/api/src/routes/notifications/notification.service.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getAll(userId: number)} & Returns the list associated with the authenticated user. \\ \hline
-02 & \code{markRead(userId: number, notificationId: number)} & Marks an owned notification as read. \\ \hline
-03 & \code{markAllRead(userId: number)} & Marks all active unread notifications of the user as read. \\ \hline
-04 & \code{delete(userId: number, notificationId: number)} & Performs the \code{delete} operation for Notification Management through the application service. \\ \hline
+01 & \code{NotificationService(repository: NotificationRepository)} &
+Initializes the class with its required dependencies.
+\newline -- \code{repository}: \code{NotificationRepository} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(userId: number)} &
+Returns the list associated with the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+ \\ \hline
+
+03 & \code{markRead(userId: number, notificationId: number)} &
+Marks an owned notification as read.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{notificationId}: \code{number} -- notification identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+\newline -- Throws \code{NotificationNotFoundException}.
+ \\ \hline
+
+04 & \code{markAllRead(userId: number)} &
+Marks all active unread notifications of the user as read.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.NotificationsMarkedAsRead"; count: number; }>}
+ \\ \hline
+
+05 & \code{delete(userId: number, notificationId: number)} &
+Checks notification ownership and marks the notification as deleted.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{notificationId}: \code{number} -- notification identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.NotificationDeleted"; }>}
+\newline -- Throws \code{NotificationNotFoundException}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{repository} & \code{NotificationRepository} -- injected dependency. \\ \hline
+01 & \code{repository} & \code{NotificationRepository} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{NotificationRepository Class (Notification Management)}
-
-This specification lists the operations used by Notification Management. Shared classes may expose additional operations in other modules.
+\subsection{NotificationRepository Class}
+\label{cls:nhuy-NotificationRepository}
 % Source: apps/api/src/routes/notifications/notification.repo.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findAll(userId: number)} & Performs the \code{findAll} operation for Notification Management through the persistence repository. \\ \hline
-02 & \code{findById(userId: number, notificationId: number)} & Performs the \code{findById} operation for Notification Management through the persistence repository. \\ \hline
-03 & \code{markRead(notificationId: number)} & Marks an owned notification as read. \\ \hline
-04 & \code{markAllRead(userId: number)} & Marks all active unread notifications of the user as read. \\ \hline
-05 & \code{softDelete(notificationId: number)} & Persists the deletion timestamp for the specified record. \\ \hline
+01 & \code{NotificationRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findAll(userId: number)} &
+Lists non-deleted notifications for the account, newest first.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+ \\ \hline
+
+03 & \code{findById(userId: number, notificationId: number)} &
+Finds a non-deleted notification belonging to the specified account.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{notificationId}: \code{number} -- notification identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+04 & \code{markRead(notificationId: number)} &
+Marks an owned notification as read.
+\newline -- \code{notificationId}: \code{number} -- notification identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+ \\ \hline
+
+05 & \code{markAllRead(userId: number)} &
+Marks all active unread notifications of the user as read.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{count}.
+ \\ \hline
+
+06 & \code{softDelete(notificationId: number)} &
+Persists the deletion timestamp for the specified record.
+\newline -- \code{notificationId}: \code{number} -- notification identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{title}, \code{data}, \code{type}, and the remaining selected fields.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AuthController Class (Role Switching)}
+\subsection{Following Management (Shared Classes)}
 
-This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/auth/auth.controller.ts
+\code{AccountProfileService} is specified in Section~\ref{cls:nhuy-AccountProfileService}.
+\begin{itemize}[nosep]
+\item \code{getFollowing()}.
+\item \code{discoverFreelancers()}.
+\item \code{followFreelancer()}.
+\item \code{unfollowFreelancer()}.
+\end{itemize}
 
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{switchRole(userId: number, sessionId: number, body: SwitchRoleBodyDto)} & Exposes \code{switchRole} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{joinRole(userId: number, sessionId: number, body: JoinRoleBodyDto)} & Exposes \code{joinRole} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-\end{ClassMethodTable}
+\code{AccountProfileRepository} is specified in Section~\ref{cls:nhuy-AccountProfileRepository}.
+\begin{itemize}[nosep]
+\item \code{findUserWithRoles()}.
+\item \code{findFollow()}.
+\item \code{createFollowWithNotification()}.
+\item \code{deleteFollow()}.
+\item \code{findFollowing()}.
+\item \code{findDiscoverableFreelancers()}.
+\end{itemize}
 
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{authService} & \code{AuthService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
+\subsection{Role Switching (Shared Classes)}
 
-\subsection{AuthService Class (Role Switching)}
+\code{AuthController} is specified in Authentication in Sprint 1.
+\begin{itemize}[nosep]
+\item \code{switchRole()}.
+\item \code{joinRole()}.
+\end{itemize}
 
-This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/auth/auth.service.ts
+\code{AuthService} is specified in Authentication in Sprint 1.
+\begin{itemize}[nosep]
+\item \code{switchRole()}.
+\item \code{joinRole()}.
+\end{itemize}
 
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{switchRole(userId: number, sessionId: number, body: SwitchRoleBodyType)} & Switches the primary role to an existing assignment and returns a new access token. \\ \hline
-02 & \code{joinRole(userId: number, sessionId: number, body: JoinRoleBodyType)} & Adds a supported role assignment and required profile data before issuing a new access token. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{hashingService} & \code{HashingService} -- injected dependency. \\ \hline
-02 & \code{emailService} & \code{EmailService} -- injected dependency. \\ \hline
-03 & \code{sharedRoleRepository} & \code{SharedRoleRepository} -- injected dependency. \\ \hline
-04 & \code{authRepository} & \code{AuthRepository} -- injected dependency. \\ \hline
-05 & \code{tokenService} & \code{TokenService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AuthRepository Class (Role Switching)}
-
-This specification lists the operations used by Role Switching. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/auth/auth.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{switchPrimaryRole(userId: number, roleName: string)} & Updates primary-role assignments for an existing user-role relationship. \\ \hline
-02 & \code{joinRole(userId: number, roleName: JoinRoleBodyType['role'])} & Adds a supported role assignment and required profile data before issuing a new access token. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
+\code{AuthRepository} is specified in Authentication in Sprint 1.
+\begin{itemize}[nosep]
+\item \code{switchPrimaryRole()}.
+\item \code{joinRole()}.
+\end{itemize}

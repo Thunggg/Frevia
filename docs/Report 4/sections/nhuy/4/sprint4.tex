@@ -1,177 +1,370 @@
 % Sprint 4 -- Nguyen Lu Nhat Huy
-% Method names, parameters, and constructor dependencies follow the API sources.
+% Structure follows tthuan: constructor, methods, parameters, returns, routes, attributes.
+% Shared classes are specified once across the report.
 
-\subsection{ReviewController Class (Review Management)}
-
-This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+\subsection{ReviewController Class}
+\label{cls:nhuy-ReviewController}
 % Source: apps/api/src/routes/reviews/review.controller.ts
 
+This shared class supports Review Management, Review Response Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{list(userId: number, contractId: number)} & Exposes \code{list} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{create(userId: number, contractId: number, body: CreateReviewDto)} & Exposes \code{create} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{detail(userId: number, reviewId: number)} & Exposes \code{detail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{update(userId: number, reviewId: number, body: UpdateReviewDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-05 & \code{remove(userId: number, reviewId: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ReviewController(service: ReviewService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{ReviewService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(userId: number, contractId: number)} &
+Loads the records associated with the supplied contract or administrative filters.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewListDto}.
+\newline -- Route: \code{GET /reviews/contracts/:contractId}.
+ \\ \hline
+
+03 & \code{create(}\newline\code{userId: number,}\newline\code{contractId: number,}\newline\code{body: CreateReviewDto)} &
+Persists a new record using the supplied, validated fields.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{body}: \code{CreateReviewDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewDto}.
+\newline -- Route: \code{POST /reviews/contracts/:contractId}.
+ \\ \hline
+
+04 & \code{detail(userId: number, reviewId: number)} &
+Loads one record and enforces the corresponding visibility rules.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewDto}.
+\newline -- Route: \code{GET /reviews/:reviewId}.
+ \\ \hline
+
+05 & \code{update(}\newline\code{userId: number,}\newline\code{reviewId: number,}\newline\code{body: UpdateReviewDto)} &
+Applies the supplied changes to the selected record.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{body}: \code{UpdateReviewDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewDto}.
+\newline -- Route: \code{PATCH /reviews/:reviewId}.
+ \\ \hline
+
+06 & \code{remove(userId: number, reviewId: number)} &
+Removes the selected record after the relevant service checks.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewDeleted"; }>}
+\newline -- Route: \code{DELETE /reviews/:reviewId}.
+ \\ \hline
+
+07 & \code{respond(}\newline\code{userId: number,}\newline\code{reviewId: number,}\newline\code{body: CreateReviewResponseDto)} &
+Creates a response to a review addressed to the current user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{body}: \code{CreateReviewResponseDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewResponseDto}.
+\newline -- Route: \code{POST /reviews/:reviewId/response}.
+ \\ \hline
+
+08 & \code{updateResponse(}\newline\code{userId: number,}\newline\code{responseId: number,}\newline\code{body: UpdateReviewResponseDto)} &
+Updates a review response owned by the current user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{body}: \code{UpdateReviewResponseDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+\newline -- Response schema: \code{ReviewResponseDto}.
+\newline -- Route: \code{PATCH /reviews/responses/:responseId}.
+ \\ \hline
+
+09 & \code{removeResponse(userId: number, responseId: number)} &
+Removes a review response owned by the current user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewResponseDeleted"; }>}
+\newline -- Route: \code{DELETE /reviews/responses/:responseId}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{ReviewService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{ReviewService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ReviewService Class (Review Management)}
-
-This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+\subsection{ReviewService Class}
+\label{cls:nhuy-ReviewService}
 % Source: apps/api/src/routes/reviews/review.service.ts
 
+This shared class supports Review Management, Review Response Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{list(userId: number, contractId: number)} & Loads the records associated with the supplied contract or administrative filters. \\ \hline
-02 & \code{detail(userId: number, reviewId: number)} & Loads one record and enforces the corresponding visibility rules. \\ \hline
-03 & \code{create(userId: number, contractId: number, input: CreateReviewType)} & Persists a new record using the supplied, validated fields. \\ \hline
-04 & \code{update(userId: number, reviewId: number, input: UpdateReviewType)} & Applies the supplied changes to the selected record. \\ \hline
-05 & \code{remove(userId: number, reviewId: number)} & Removes the selected record after the relevant service checks. \\ \hline
+01 & \code{ReviewService(repository: ReviewRepository)} &
+Initializes the class with its required dependencies.
+\newline -- \code{repository}: \code{ReviewRepository} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{list(userId: number, contractId: number)} &
+Loads the records associated with the supplied contract or administrative filters.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+ \\ \hline
+
+03 & \code{detail(userId: number, reviewId: number)} &
+Loads one record and enforces the corresponding visibility rules.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Throws \code{ReviewNotFoundException}.
+ \\ \hline
+
+04 & \code{create(}\newline\code{userId: number,}\newline\code{contractId: number,}\newline\code{input: CreateReviewType)} &
+Persists a new record using the supplied, validated fields.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{input}: \code{CreateReviewType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Throws \code{ReviewContractNotCompletedException}, \code{ReviewAlreadyExistsException}.
+ \\ \hline
+
+05 & \code{update(}\newline\code{userId: number,}\newline\code{reviewId: number,}\newline\code{input: UpdateReviewType)} &
+Applies the supplied changes to the selected record.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{input}: \code{UpdateReviewType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+\newline -- Throws \code{ReviewNotFoundException}, \code{ReviewForbiddenException}.
+ \\ \hline
+
+06 & \code{remove(userId: number, reviewId: number)} &
+Removes the selected record after the relevant service checks.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewDeleted"; }>}
+\newline -- Throws \code{ReviewNotFoundException}, \code{ReviewForbiddenException}.
+ \\ \hline
+
+07 & \code{respond(}\newline\code{userId: number,}\newline\code{reviewId: number,}\newline\code{responseText: string)} &
+Creates a response to a review addressed to the current user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{responseText}: \code{string} -- response text supplied to the operation.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+\newline -- Throws \code{ReviewNotFoundException}, \code{ReviewForbiddenException}, \code{ReviewResponseAlreadyExistsException}.
+ \\ \hline
+
+08 & \code{updateResponse(}\newline\code{userId: number,}\newline\code{responseId: number,}\newline\code{responseText: string)} &
+Updates a review response owned by the current user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{responseText}: \code{string} -- response text supplied to the operation.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+\newline -- Throws \code{ReviewResponseNotFoundException}, \code{ReviewForbiddenException}.
+ \\ \hline
+
+09 & \code{removeResponse(userId: number, responseId: number)} &
+Removes a review response owned by the current user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.ReviewResponseDeleted"; }>}
+\newline -- Throws \code{ReviewResponseNotFoundException}, \code{ReviewForbiddenException}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{repository} & \code{ReviewRepository} -- injected dependency. \\ \hline
+01 & \code{repository} & \code{ReviewRepository} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ReviewRepository Class (Review Management)}
-
-This specification lists the operations used by Review Management. Shared classes may expose additional operations in other modules.
+\subsection{ReviewRepository Class}
+\label{cls:nhuy-ReviewRepository}
 % Source: apps/api/src/routes/reviews/review.repo.ts
 
+This shared class supports Review Management, Review Response Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findContract(contractId: number)} & Performs the \code{findContract} operation for Review Management through the persistence repository. \\ \hline
-02 & \code{findById(reviewId: number, includeDeleted: inferred)} & Performs the \code{findById} operation for Review Management through the persistence repository. \\ \hline
-03 & \code{findByContractAndReviewer(contractId: number, reviewerId: number)} & Performs the \code{findByContractAndReviewer} operation for Review Management through the persistence repository. \\ \hline
-04 & \code{findManyByContract(contractId: number)} & Performs the \code{findManyByContract} operation for Review Management through the persistence repository. \\ \hline
-05 & \code{create(contractId: number, reviewerId: number, revieweeId: number, reviewerName: string, input: CreateReviewType)} & Persists a new record using the supplied, validated fields. \\ \hline
-06 & \code{update(reviewId: number, input: UpdateReviewType)} & Applies the supplied changes to the selected record. \\ \hline
-07 & \code{softDelete(reviewId: number)} & Persists the deletion timestamp for the specified record. \\ \hline
+01 & \code{ReviewRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findContract(contractId: number)} &
+Loads contract status and participants for review eligibility and visibility checks.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{status}, \code{clientId}, \code{freelancerId}, \code{client}, \code{freelancer}; \code{null} when absent.
+ \\ \hline
+
+03 & \code{findById(reviewId: number, includeDeleted?: boolean)} &
+Loads one review for visibility and ownership checks.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{includeDeleted}: \code{boolean} -- whether to include soft-deleted reviews; defaults to false; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+04 & \code{findByContractAndReviewer(}\newline\code{contractId: number,}\newline\code{reviewerId: number)} &
+Finds the existing review identifier for a contract and reviewer pair.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{reviewerId}: \code{number} -- reviewer id supplied to the operation.
+\newline -- \textit{Returns:} An awaitable record with \code{id}; \code{null} when absent.
+ \\ \hline
+
+05 & \code{findManyByContract(contractId: number)} &
+Lists reviews associated with the contract.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+ \\ \hline
+
+06 & \code{create(}\newline\code{contractId: number,}\newline\code{reviewerId: number,}\newline\code{revieweeId: number,}\newline\code{reviewerName: string,}\newline\code{input: CreateReviewType)} &
+Persists a new record using the supplied, validated fields.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{reviewerId}: \code{number} -- reviewer id supplied to the operation.
+\newline -- \code{revieweeId}: \code{number} -- reviewee id supplied to the operation.
+\newline -- \code{reviewerName}: \code{string} -- reviewer name supplied to the operation.
+\newline -- \code{input}: \code{CreateReviewType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+ \\ \hline
+
+07 & \code{update(reviewId: number, input: UpdateReviewType)} &
+Applies the supplied changes to the selected record.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{input}: \code{UpdateReviewType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+ \\ \hline
+
+08 & \code{softDelete(reviewId: number)} &
+Persists the deletion timestamp for the specified record.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{contractId}, \code{reviewerId}, \code{revieweeId}, and the remaining selected fields.
+ \\ \hline
+
+09 & \code{findResponseByReview(reviewId: number)} &
+Finds the response identifier and deletion state for the specified review.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{deletedAt}; \code{null} when absent.
+ \\ \hline
+
+10 & \code{findResponseById(responseId: number)} &
+Loads a response identifier, author, and parent review for authorization checks.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{reviewId}; \code{null} when absent.
+ \\ \hline
+
+11 & \code{createResponse(}\newline\code{reviewId: number,}\newline\code{userId: number,}\newline\code{reviewerId: number,}\newline\code{contractId: number,}\newline\code{responderName: string,}\newline\code{responseText: string,}\newline\code{deletedResponseId?: number)} &
+Persists a review response and the notification for the reviewer.
+\newline -- \code{reviewId}: \code{number} -- review identifier.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{reviewerId}: \code{number} -- reviewer id supplied to the operation.
+\newline -- \code{contractId}: \code{number} -- contract identifier.
+\newline -- \code{responderName}: \code{string} -- responder name supplied to the operation.
+\newline -- \code{responseText}: \code{string} -- response text supplied to the operation.
+\newline -- \code{deletedResponseId}: \code{number} -- deleted response id supplied to the operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+ \\ \hline
+
+12 & \code{updateResponse(responseId: number, responseText: string)} &
+Updates a review response owned by the current user.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \code{responseText}: \code{string} -- response text supplied to the operation.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, and the remaining selected fields.
+ \\ \hline
+
+13 & \code{softDeleteResponse(responseId: number)} &
+Persists a deletion timestamp on a review response.
+\newline -- \code{responseId}: \code{number} -- review response identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{reviewId}, \code{responseText}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ReviewController Class (Review Response Management)}
-
-This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/reviews/review.controller.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{respond(userId: number, reviewId: number, body: CreateReviewResponseDto)} & Exposes \code{respond} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{updateResponse(userId: number, responseId: number, body: UpdateReviewResponseDto)} & Exposes \code{updateResponse} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{removeResponse(userId: number, responseId: number)} & Exposes \code{removeResponse} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{service} & \code{ReviewService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ReviewService Class (Review Response Management)}
-
-This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/reviews/review.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{respond(userId: number, reviewId: number, responseText: string)} & Creates a response to a review addressed to the current user. \\ \hline
-02 & \code{updateResponse(userId: number, responseId: number, responseText: string)} & Updates a review response owned by the current user. \\ \hline
-03 & \code{removeResponse(userId: number, responseId: number)} & Removes a review response owned by the current user. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{ReviewRepository} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ReviewRepository Class (Review Response Management)}
-
-This specification lists the operations used by Review Response Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/reviews/review.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findContract(contractId: number)} & Performs the \code{findContract} operation for Review Response Management through the persistence repository. \\ \hline
-02 & \code{findById(reviewId: number, includeDeleted: inferred)} & Performs the \code{findById} operation for Review Response Management through the persistence repository. \\ \hline
-03 & \code{findResponseByReview(reviewId: number)} & Performs the \code{findResponseByReview} operation for Review Response Management through the persistence repository. \\ \hline
-04 & \code{findResponseById(responseId: number)} & Performs the \code{findResponseById} operation for Review Response Management through the persistence repository. \\ \hline
-05 & \code{createResponse(reviewId: number, userId: number, reviewerId: number, contractId: number, responderName: string, responseText: string, deletedResponseId?: number)} & Persists a review response and the notification for the reviewer. \\ \hline
-06 & \code{updateResponse(responseId: number, responseText: string)} & Updates a review response owned by the current user. \\ \hline
-07 & \code{softDeleteResponse(responseId: number)} & Persists a deletion timestamp on a review response. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{GeneralAccountProfileController Class (Account Profile Management)}
-
-This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
+\subsection{\texorpdfstring{General\allowbreak Account\allowbreak Profile\allowbreak Controller}{GeneralAccountProfileController} Class}
+\label{cls:nhuy-GeneralAccountProfileController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{get(userId: number)} & Exposes \code{get} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{update(userId: number, body: UpdateGeneralProfileDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{changePassword(userId: number, body: ChangePasswordDto)} & Exposes \code{changePassword} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} & Exposes \code{uploadAvatar} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-05 & \code{getAvatarFile(userId: number, response: Response)} & Exposes \code{getAvatarFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{GeneralAccountProfileController(}\newline\code{service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{get(userId: number)} &
+Loads general account and profile information for the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable record with \code{email}, \code{avatarUrl}, \code{roles}, \code{id}, \code{userId}, \code{displayName}, \code{coverUrl}, and the remaining selected fields.
+\newline -- Response schema: \code{GeneralProfileDto}.
+\newline -- Route: \code{GET /account-profile}.
+ \\ \hline
+
+03 & \code{update(userId: number, body: UpdateGeneralProfileDto)} &
+Submits or applies edits to general profile information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{UpdateGeneralProfileDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Response schema: \code{ProfileRevisionSubmissionDto}.
+\newline -- Route: \code{PUT /account-profile}.
+ \\ \hline
+
+04 & \code{changePassword(userId: number, body: ChangePasswordDto)} &
+Verifies the existing password and stores the newly hashed password.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{ChangePasswordDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{PUT /account-profile/password}.
+ \\ \hline
+
+05 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} &
+Validates and stores an avatar file, then updates the profile reference.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} \code{Promise<{ avatarUrl: string; }>}
+\newline -- Response schema: \code{AvatarUploadResponseDto}.
+\newline -- Route: \code{POST /account-profile/avatar}.
+ \\ \hline
+
+06 & \code{getAvatarFile(userId: number, response: Response)} &
+Resolves the stored avatar for delivery.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{response}: \code{Response} -- Express response used to set file headers or redirect.
+\newline -- \textit{Returns:} \code{Promise<StreamableFile>}
+\newline -- Route: \code{GET /account-profile/avatar/:userId/file}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileService Class (Account Profile Management)}
+\subsection{Account Profile Management (Shared Classes)}
 
-This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.service.ts
+\code{AccountProfileService} is specified in Section~\ref{cls:nhuy-AccountProfileService}.
+\begin{itemize}[nosep]
+\item \code{getGeneralProfile()}.
+\item \code{updateGeneralProfile()}.
+\item \code{changePassword()}.
+\item \code{uploadAvatar()}.
+\item \code{getAvatarFile()}.
+\end{itemize}
 
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getGeneralProfile(userId: number)} & Loads general account and profile information for the authenticated user. \\ \hline
-02 & \code{updateGeneralProfile(userId: number, input: UpdateGeneralProfileType)} & Submits or applies edits to general profile information according to the revision policy. \\ \hline
-03 & \code{changePassword(userId: number, input: ChangePasswordType)} & Verifies the existing password and stores the newly hashed password. \\ \hline
-04 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} & Validates and stores an avatar file, then updates the profile reference. \\ \hline
-05 & \code{getAvatarFile(userId: number)} & Resolves the stored avatar for delivery. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileRepository Class (Account Profile Management)}
-
-This specification lists the operations used by Account Profile Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findGeneralProfile(userId: number)} & Performs the \code{findGeneralProfile} operation for Account Profile Management through the persistence repository. \\ \hline
-02 & \code{findPasswordCredential(userId: number)} & Performs the \code{findPasswordCredential} operation for Account Profile Management through the persistence repository. \\ \hline
-03 & \code{updateGeneralProfile(userId: number, input: UpdateGeneralProfileType, primaryRole?: string)} & Submits or applies edits to general profile information according to the revision policy. \\ \hline
-04 & \code{updatePassword(userId: number, password: string)} & Performs the \code{updatePassword} operation for Account Profile Management through the persistence repository. \\ \hline
-05 & \code{updateAvatar(userId: number, avatarUrl: string)} & Performs the \code{updateAvatar} operation for Account Profile Management through the persistence repository. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
+\code{AccountProfileRepository} is specified in Section~\ref{cls:nhuy-AccountProfileRepository}.
+\begin{itemize}[nosep]
+\item \code{findGeneralProfile()}.
+\item \code{findPasswordCredential()}.
+\item \code{updateGeneralProfile()}.
+\item \code{updatePassword()}.
+\item \code{updateAvatar()}.
+\end{itemize}

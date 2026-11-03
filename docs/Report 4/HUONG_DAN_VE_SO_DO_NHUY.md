@@ -307,15 +307,14 @@ Ví dụ trong `sections/nhuy/2/sprint1.tex`:
 ```tex
 \subsection{Portfolio Management}
 
-\textbf{a.~Class Diagram}
+\subsubsection{Class Diagram}
 \kfig{0.92\textwidth}
   {images/sprint1/nhuy/classDiagram/PortfolioManagement}
   {Class diagram of Portfolio Management}
   {fig:nhuy-class-PortfolioManagement}
 
-\textbf{b.~Sequence Diagram(s)}
 \subsubsection{UC-09.05 -- Delete Portfolio}
-\kfig{0.88\textwidth}
+\kfig{0.78\textwidth}
   {images/sprint1/nhuy/sequences/UC-09.05-delete-portfolio}
   {Sequence diagram of UC-09.05 Delete Portfolio}
   {fig:nhuy-seq-UC-09.05-delete-portfolio}
@@ -324,6 +323,28 @@ Ví dụ trong `sections/nhuy/2/sprint1.tex`:
 Không thêm đuôi `.pdf` vào tham số đường dẫn của `\kfig`. Label phải duy nhất trong toàn báo cáo. Với sơ đồ dài, kiểm tra thêm trang PDF của report vì hình có thể bị thu nhỏ quá mức; có thể tách interaction phụ bằng `ref` nếu vẫn giữ được logic và định nghĩa đầy đủ phần được tham chiếu.
 
 Phần đặc tả lớp đặt ở `sections/nhuy/4/sprint<N>.tex`, dùng `ClassMethodTable` và `ClassAttributeTable` như mẫu tthuan. Khi thay đổi chữ ký phương thức trong hình, kiểm tra lại bảng đặc tả tương ứng.
+
+### 11.1. Cấu trúc thống nhất sau khi đối chiếu PDF của tthuan
+
+- Mỗi module bắt đầu bằng `\subsection{Tên module}`, một đoạn giới thiệu, rồi `\subsubsection{Class Diagram}`. Mỗi sequence dùng `\subsubsection{UC-xx.yy -- Tên chức năng}`.
+- Hình class dùng `0.92\textwidth`; hình sequence dùng `0.78\textwidth`. Dùng macro `\kfig` chung để căn giữa, giới hạn chiều cao, tạo caption và label.
+- Đặc tả lớp dùng tiêu đề ngắn `\subsection{ClassName Class}`, tiếp theo là `\paragraph{ClassMethod}` và `\paragraph{ClassAttribute}`. Dùng bảng ba cột với hàng tiêu đề màu cam có sẵn trong `main.tex`.
+- Dòng `01` của bảng method là constructor, ghi đủ dependency và `Returns: void`. Các method bắt đầu từ `02`, đánh số liên tục trong từng lớp.
+- Mỗi method có chữ ký, mục đích xử lý, ý nghĩa từng tham số, kết quả trả về và route HTTP nếu là controller. Chữ ký dài được xuống dòng bằng `\newline\code{...}`.
+- Giữ đúng kiểu được khai báo trong code. Khi Prisma suy ra một kiểu cấu trúc quá dài, mô tả dữ liệu trả về bằng các trường thực tế; không tự đặt tên type không tồn tại. Response DTO là hợp đồng serialize, được ghi riêng với kiểu trả về của method.
+- Lớp dùng chung chỉ đặc tả một lần. Các module hoặc sprint khác dẫn đến mục đã có và liệt kê những method được sử dụng. Auth tham chiếu đặc tả Authentication; ExpertProfileService và ExpertProfileRepository tham chiếu phần quản trị chuyên gia của tthuan.
+- Sau khi sửa nguồn, biên dịch toàn Report 4 và xem trang PDF thực tế: bảng không tràn, chữ ký đọc được, tham chiếu có số mục và caption đúng. Cảnh báo từ phần của thành viên khác cần được phân biệt với phần vừa chỉnh.
+
+Mẫu một method theo cách trình bày chung:
+
+```tex
+02 & \code{getPortfolioDetail(id: number)} &
+Loads one active portfolio item.
+\newline -- \code{id}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} the portfolio item, or an exception when absent.
+\newline -- Route: \code{GET /profiles/portfolios/:id}.
+\\ \hline
+```
 
 ## 12. Checklist trước khi bàn giao
 

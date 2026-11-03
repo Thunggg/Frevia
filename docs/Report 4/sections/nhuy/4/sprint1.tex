@@ -1,175 +1,489 @@
 % Sprint 1 -- Nguyen Lu Nhat Huy
-% Method names, parameters, and constructor dependencies follow the API sources.
+% Structure follows tthuan: constructor, methods, parameters, returns, routes, attributes.
+% Shared classes are specified once across the report.
 
-\subsection{ProfileController Class (Freelancer Profile Management)}
-
-This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+\subsection{ProfileController Class}
+\label{cls:nhuy-ProfileController}
 % Source: apps/api/src/routes/profiles/profile.controller.ts
 
+This shared class supports Freelancer Profile Management, Freelancer Skill Management, Freelancer CV Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{viewProfile(id: number)} & Exposes \code{viewProfile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{updateProfile(id: number, currentUserId: number, body: UpdateFreelancerProfileDto)} & Exposes \code{updateProfile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ProfileController(profileService: ProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{profileService}: \code{ProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{viewProfile(id: number)} &
+Loads the public freelancer profile and verifies that the associated user has the freelancer role.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{freelancerProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, and the remaining selected fields.
+\newline -- Response schema: \code{FreelancerProfileDetailDto}.
+\newline -- Route: \code{GET /profiles/:id}.
+ \\ \hline
+
+03 & \code{updateProfile(}\newline\code{id: number,}\newline\code{currentUserId: number,}\newline\code{body: UpdateFreelancerProfileDto)} &
+Checks profile ownership and applies the profile revision policy before persisting changes.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{body}: \code{UpdateFreelancerProfileDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Response schema: \code{ProfileRevisionSubmissionDto}.
+\newline -- Route: \code{PUT /profiles/:id}.
+ \\ \hline
+
+04 & \code{uploadCv(}\newline\code{id: number,}\newline\code{currentUserId: number,}\newline\code{file?: Express.Multer.File)} &
+Checks ownership, validates the CV, stores it, and updates its profile metadata.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} \code{Promise<{ cvUrl: string | null; cvFileName: string | null; }>}
+\newline -- Response schema: \code{CvUploadResponseDto}.
+\newline -- Route: \code{POST /profiles/:id/cv}.
+ \\ \hline
+
+05 & \code{getCvFile(}\newline\code{id: number,}\newline\code{currentUserId: number,}\newline\code{response: Response)} &
+Checks ownership and resolves the stored CV file or remote URL.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{response}: \code{Response} -- Express response used to set file headers or redirect.
+\newline -- \textit{Returns:} \code{Promise<void | StreamableFile>}
+\newline -- Route: \code{GET /profiles/:id/cv/file}.
+ \\ \hline
+
+06 & \code{analyzeCv(id: number, currentUserId: number)} &
+Analyzes the owned CV and returns skill suggestions.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ suggestions: { skillName: string; proficiencyLevel: number | null; }[]; }>}
+\newline -- Response schema: \code{CvAnalyzeResponseDto}.
+\newline -- Route: \code{POST /profiles/:id/cv/analyze}.
+ \\ \hline
+
+07 & \code{deleteCv(id: number, currentUserId: number)} &
+Removes the stored CV and clears its profile metadata.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{DELETE /profiles/:id/cv}.
+ \\ \hline
+
+08 & \code{getSkills(id: number)} &
+Loads the skill associations visible on a freelancer profile.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+\newline -- Route: \code{GET /profiles/:id/skills}.
+ \\ \hline
+
+09 & \code{searchSkillSuggestions(search?: string)} &
+Searches the active skill catalog using the supplied text.
+\newline -- \code{search}: \code{string} -- optional skill-name search text; optional.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>}
+\newline -- Route: \code{GET /profiles/skills/suggestions}.
+ \\ \hline
+
+10 & \code{addSkill(}\newline\code{id: number,}\newline\code{currentUserId: number,}\newline\code{body: AddFreelancerSkillDto)} &
+Resolves a catalog skill, checks for an existing association, and adds a proficiency value to the owned profile.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{body}: \code{AddFreelancerSkillDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+\newline -- Response schema: \code{AddFreelancerSkillResponseDto}.
+\newline -- Route: \code{POST /profiles/:id/skills}.
+ \\ \hline
+
+11 & \code{deleteSkill(id: number, currentUserId: number)} &
+Removes an owned freelancer-skill association while retaining the catalog skill.
+\newline -- \code{id}: \code{number} -- freelancer-skill association identifier from the route.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; proficiencyLevel: number; freelancerProfileId: number; skillId: number; }>}
+\newline -- Route: \code{DELETE /profiles/skills/:id}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
+01 & \code{profileService} & \code{ProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileService Class (Freelancer Profile Management)}
-
-This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+\subsection{ProfileService Class}
+\label{cls:nhuy-ProfileService}
 % Source: apps/api/src/routes/profiles/profile.service.ts
 
+This shared class supports Freelancer Profile Management, Freelancer Skill Management, Freelancer CV Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{viewProfile(profileId: number)} & Loads the public freelancer profile and verifies that the associated user has the freelancer role. \\ \hline
-02 & \code{updateProfile(profileId: number, currentUserId: number, dto: UpdateFreelancerProfileType)} & Checks profile ownership and applies the profile revision policy before persisting changes. \\ \hline
+01 & \code{ProfileService(}\newline\code{profileRepository: ProfileRepository,}\newline\code{cloudinary: CloudinaryService,}\newline\code{aiCvAnalyzer: AiCvAnalyzerService,}\newline\code{skillResolver: SkillResolverService,}\newline\code{profileRevisionService: ProfileRevisionService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{profileRepository}: \code{ProfileRepository} -- injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- injected dependency.
+\newline -- \code{aiCvAnalyzer}: \code{AiCvAnalyzerService} -- injected dependency.
+\newline -- \code{skillResolver}: \code{SkillResolverService} -- injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{uploadCv(}\newline\code{profileId: number,}\newline\code{userId: number,}\newline\code{file?: Express.Multer.File)} &
+Checks ownership, validates the CV, stores it, and updates its profile metadata.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} \code{Promise<{ cvUrl: string | null; cvFileName: string | null; }>}
+\newline -- Throws \code{CvFileRequiredException}, \code{CvFileInvalidException}.
+ \\ \hline
+
+03 & \code{deleteCv(profileId: number, userId: number)} &
+Removes the stored CV and clears its profile metadata.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{CvNotFoundException}.
+ \\ \hline
+
+04 & \code{getCvFile(profileId: number, userId: number)} &
+Checks ownership and resolves the stored CV file or remote URL.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} \code{Promise<{ remoteUrl: string; fileName: string; absolutePath?: undefined; } | { absolutePath: string; fileName: string; remoteUrl?: undefined; }>}
+\newline -- Throws \code{CvNotFoundException}.
+ \\ \hline
+
+05 & \code{analyzeCv(profileId: number, userId: number)} &
+Analyzes the owned CV and returns skill suggestions.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} \code{Promise<{ suggestions: { skillName: string; proficiencyLevel: number | null; }[]; }>}
+\newline -- Throws \code{CvNotFoundException}, \code{CvAiUnavailableException}.
+ \\ \hline
+
+06 & \code{viewProfile(profileId: number)} &
+Loads the public freelancer profile and verifies that the associated user has the freelancer role.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{freelancerProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, and the remaining selected fields.
+\newline -- Throws \code{FreelancerProfileNotFoundException}.
+ \\ \hline
+
+07 & \code{updateProfile(}\newline\code{profileId: number,}\newline\code{currentUserId: number,}\newline\code{dto: UpdateFreelancerProfileType)} &
+Checks profile ownership and applies the profile revision policy before persisting changes.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{dto}: \code{UpdateFreelancerProfileType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Throws \code{FreelancerProfileNotFoundException}, \code{ProfileForbiddenException}.
+ \\ \hline
+
+08 & \code{getSkills(profileId: number)} &
+Loads the skill associations visible on a freelancer profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+\newline -- Throws \code{FreelancerProfileNotFoundException}.
+ \\ \hline
+
+09 & \code{searchSkillSuggestions(search?: string)} &
+Searches the active skill catalog using the supplied text.
+\newline -- \code{search}: \code{string} -- optional skill-name search text; optional.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>}
+ \\ \hline
+
+10 & \code{addSkill(}\newline\code{profileId: number,}\newline\code{currentUserId: number,}\newline\code{dto: AddFreelancerSkillType)} &
+Resolves a catalog skill, checks for an existing association, and adds a proficiency value to the owned profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{dto}: \code{AddFreelancerSkillType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+\newline -- Throws \code{FreelancerProfileNotFoundException}, \code{ProfileForbiddenException}, \code{FreelancerSkillDuplicateException}.
+ \\ \hline
+
+11 & \code{deleteSkill(skillId: number, currentUserId: number)} &
+Removes an owned freelancer-skill association while retaining the catalog skill.
+\newline -- \code{skillId}: \code{number} -- skill or association identifier used by this operation.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; proficiencyLevel: number; freelancerProfileId: number; skillId: number; }>}
+\newline -- Throws \code{FreelancerSkillNotFoundException}, \code{SkillForbiddenException}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
-02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
-04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
-05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
+01 & \code{profileRepository} & \code{ProfileRepository} -- private readonly injected dependency. \\ \hline
+02 & \code{cloudinary} & \code{CloudinaryService} -- private readonly injected dependency. \\ \hline
+03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- private readonly injected dependency. \\ \hline
+04 & \code{skillResolver} & \code{SkillResolverService} -- private readonly injected dependency. \\ \hline
+05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileRepository Class (Freelancer Profile Management)}
-
-This specification lists the operations used by Freelancer Profile Management. Shared classes may expose additional operations in other modules.
+\subsection{ProfileRepository Class}
+\label{cls:nhuy-ProfileRepository}
 % Source: apps/api/src/routes/profiles/profile.repo.ts
 
+This shared class supports Freelancer Profile Management, Freelancer Skill Management, Freelancer CV Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
-02 & \code{updateFreelancerProfile(profileId: number, data: { displayName: string; title: string; bio?: string | null; availabilityStatus?: AvailabilityStatus; education?: string[] | null; certifications?: string[] | null; languages?: string[] | null; experience?: string[] | null; })} & Performs the \code{updateFreelancerProfile} operation for Freelancer Profile Management through the persistence repository. \\ \hline
+01 & \code{ProfileRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findFreelancerProfileById(profileId: number)} &
+Retrieves profile data, freelancer information, and user roles used for existence and ownership checks.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{freelancerProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+03 & \code{updateFreelancerProfile(}\newline\code{profileId: number,}\newline\code{data: { displayName: string; title: string; bio?: string | null; availabilityStatus?: AvailabilityStatus; education?: string[] | null; certifications?: string[] | null; languages?: string[] | null; experience?: string[] | null; })} &
+Updates freelancer and general profile fields and recalculates profile completion.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{data}: \code{{ displayName: string; title: string; bio?: string | null; availabilityStatus?: AvailabilityStatus; education?: string[] | null; certifications?: string[] | null; languages?: string[] | null; experience?: string[] | null; }} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{freelancerProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, \code{bio}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+04 & \code{updateCv(}\newline\code{profileId: number,}\newline\code{data: { cvUrl: string; cvFileName: string; cvPublicId: string | null })} &
+Upserts stored CV metadata on a freelancer profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{data}: \code{{ cvUrl: string; cvFileName: string; cvPublicId: string | null }} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{profileId}, \code{title}, \code{education}, \code{certifications}, and the remaining selected fields.
+ \\ \hline
+
+05 & \code{clearCv(profileId: number)} &
+Clears the freelancer profile's CV metadata.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{profileId}, \code{title}, \code{education}, \code{certifications}, and the remaining selected fields.
+ \\ \hline
+
+06 & \code{findSkillsByProfileId(profileId: number)} &
+Queries active catalog-skill associations for a freelancer profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+ \\ \hline
+
+07 & \code{searchActiveCatalogSkills(search?: string)} &
+Searches non-deleted catalog skills by name and returns matching identifiers and names.
+\newline -- \code{search}: \code{string} -- optional skill-name search text; optional.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; name: string; }[]>}
+ \\ \hline
+
+08 & \code{findOrCreateCatalogSkill(name: string)} &
+Returns a matching active catalog skill or creates one with a unique slug.
+\newline -- \code{name}: \code{string} -- catalog skill name.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; createdAt: Date; updatedAt: Date; deletedAt: Date | null; name: string; description: string | null; slug: string; }>}
+ \\ \hline
+
+09 & \code{findSkillByProfileIdAndSkillId(}\newline\code{profileId: number,}\newline\code{skillId: number)} &
+Finds an existing freelancer-skill association for duplicate checking.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{skillId}: \code{number} -- skill or association identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; proficiencyLevel: number; freelancerProfileId: number; skillId: number; } | null>}
+ \\ \hline
+
+10 & \code{addSkillToProfile(}\newline\code{profileId: number,}\newline\code{skillId: number,}\newline\code{proficiencyLevel: number)} &
+Ensures a freelancer profile exists and inserts a skill association.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{skillId}: \code{number} -- skill or association identifier used by this operation.
+\newline -- \code{proficiencyLevel}: \code{number} -- skill proficiency level.
+\newline -- \textit{Returns:} An awaitable record with \code{skill}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}.
+ \\ \hline
+
+11 & \code{findSkillById(skillId: number)} &
+Loads a skill association with the profile data needed to identify its owner.
+\newline -- \code{skillId}: \code{number} -- skill or association identifier used by this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{freelancerProfile}, \code{id}, \code{proficiencyLevel}, \code{freelancerProfileId}, \code{skillId}; \code{null} when absent.
+ \\ \hline
+
+12 & \code{deleteSkill(skillId: number)} &
+Removes an owned freelancer-skill association while retaining the catalog skill.
+\newline -- \code{skillId}: \code{number} -- skill or association identifier used by this operation.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; proficiencyLevel: number; freelancerProfileId: number; skillId: number; }>}
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ProfileController Class (Freelancer Skill Management)}
-
-This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.controller.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getSkills(id: number)} & Exposes \code{getSkills} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{searchSkillSuggestions(search?: string)} & Exposes \code{searchSkillSuggestions} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{addSkill(id: number, currentUserId: number, body: AddFreelancerSkillDto)} & Exposes \code{addSkill} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{deleteSkill(id: number, currentUserId: number)} & Exposes \code{deleteSkill} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{profileService} & \code{ProfileService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ProfileService Class (Freelancer Skill Management)}
-
-This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getSkills(profileId: number)} & Loads the skill associations visible on a freelancer profile. \\ \hline
-02 & \code{searchSkillSuggestions(search?: string)} & Searches the active skill catalog using the supplied text. \\ \hline
-03 & \code{addSkill(profileId: number, currentUserId: number, dto: AddFreelancerSkillType)} & Resolves a catalog skill, checks for an existing association, and adds a proficiency value to the owned profile. \\ \hline
-04 & \code{deleteSkill(skillId: number, currentUserId: number)} & Removes an owned freelancer-skill association while retaining the catalog skill. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{profileRepository} & \code{ProfileRepository} -- injected dependency. \\ \hline
-02 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-03 & \code{aiCvAnalyzer} & \code{AiCvAnalyzerService} -- injected dependency. \\ \hline
-04 & \code{skillResolver} & \code{SkillResolverService} -- injected dependency. \\ \hline
-05 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{ProfileRepository Class (Freelancer Skill Management)}
-
-This specification lists the operations used by Freelancer Skill Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/profiles/profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
-02 & \code{findSkillsByProfileId(profileId: number)} & Queries active catalog-skill associations for a freelancer profile. \\ \hline
-03 & \code{searchActiveCatalogSkills(search?: string)} & Performs the \code{searchActiveCatalogSkills} operation for Freelancer Skill Management through the persistence repository. \\ \hline
-04 & \code{findOrCreateCatalogSkill(name: string)} & Returns a matching active catalog skill or creates one with a unique slug. \\ \hline
-05 & \code{findSkillByProfileIdAndSkillId(profileId: number, skillId: number)} & Finds an existing freelancer-skill association for duplicate checking. \\ \hline
-06 & \code{addSkillToProfile(profileId: number, skillId: number, proficiencyLevel: number)} & Ensures a freelancer profile exists and inserts a skill association. \\ \hline
-07 & \code{findSkillById(skillId: number)} & Loads a skill association with the profile data needed to identify its owner. \\ \hline
-08 & \code{deleteSkill(skillId: number)} & Removes an owned freelancer-skill association while retaining the catalog skill. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{PortfolioController Class (Portfolio Management)}
-
-This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+\subsection{PortfolioController Class}
+\label{cls:nhuy-PortfolioController}
 % Source: apps/api/src/routes/portfolios/portfolio.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getPortfolios(id: number)} & Exposes \code{getPortfolios} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{addPortfolio(currentUserId: number, id: number, body: AddPortfolioDto)} & Exposes \code{addPortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{getPortfolioDetail(id: number)} & Exposes \code{getPortfolioDetail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{updatePortfolio(currentUserId: number, id: number, body: UpdatePortfolioDto)} & Exposes \code{updatePortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-05 & \code{deletePortfolio(currentUserId: number, id: number)} & Exposes \code{deletePortfolio} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{PortfolioController(portfolioService: PortfolioService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{portfolioService}: \code{PortfolioService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPortfolios(id: number)} &
+Loads the active portfolio items for a freelancer profile.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Response schema: \code{PortfolioItemListResponseDto}.
+\newline -- Route: \code{GET /profiles/:id/portfolios}.
+ \\ \hline
+
+03 & \code{addPortfolio(}\newline\code{currentUserId: number,}\newline\code{id: number,}\newline\code{body: AddPortfolioDto)} &
+Creates a portfolio item on the current user's freelancer profile.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{id}: \code{number} -- general profile identifier from the route.
+\newline -- \code{body}: \code{AddPortfolioDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Response schema: \code{AddPortfolioResponseDto}.
+\newline -- Route: \code{POST /profiles/:id/portfolios}.
+ \\ \hline
+
+04 & \code{getPortfolioDetail(id: number)} &
+Loads one active portfolio item.
+\newline -- \code{id}: \code{number} -- portfolio item identifier from the route.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Response schema: \code{PortfolioItemResponseDto}.
+\newline -- Route: \code{GET /profiles/portfolios/:id}.
+ \\ \hline
+
+05 & \code{updatePortfolio(}\newline\code{currentUserId: number,}\newline\code{id: number,}\newline\code{body: UpdatePortfolioDto)} &
+Updates an owned portfolio item using the supplied fields.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{id}: \code{number} -- portfolio item identifier from the route.
+\newline -- \code{body}: \code{UpdatePortfolioDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Response schema: \code{UpdatePortfolioResponseDto}.
+\newline -- Route: \code{PUT /profiles/portfolios/:id}.
+ \\ \hline
+
+06 & \code{deletePortfolio(currentUserId: number, id: number)} &
+Marks an owned portfolio item as deleted.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{id}: \code{number} -- portfolio item identifier from the route.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.PortfolioDeleted"; }>}
+\newline -- Route: \code{DELETE /profiles/portfolios/:id}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{portfolioService} & \code{PortfolioService} -- injected dependency. \\ \hline
+01 & \code{portfolioService} & \code{PortfolioService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{PortfolioService Class (Portfolio Management)}
-
-This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+\subsection{PortfolioService Class}
+\label{cls:nhuy-PortfolioService}
 % Source: apps/api/src/routes/portfolios/portfolio.service.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getPortfolios(profileId: number)} & Loads the active portfolio items for a freelancer profile. \\ \hline
-02 & \code{addPortfolio(profileId: number, currentUserId: number, data: AddPortfolioType)} & Creates a portfolio item on the current user\'s freelancer profile. \\ \hline
-03 & \code{getPortfolioDetail(portfolioId: number)} & Loads one active portfolio item. \\ \hline
-04 & \code{updatePortfolio(portfolioId: number, currentUserId: number, data: UpdatePortfolioType)} & Updates an owned portfolio item using the supplied fields. \\ \hline
-05 & \code{deletePortfolio(portfolioId: number, currentUserId: number)} & Marks an owned portfolio item as deleted. \\ \hline
+01 & \code{PortfolioService(portfolioRepository: PortfolioRepository)} &
+Initializes the class with its required dependencies.
+\newline -- \code{portfolioRepository}: \code{PortfolioRepository} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getPortfolios(profileId: number)} &
+Loads the active portfolio items for a freelancer profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Throws \code{FreelancerProfileNotFoundException}, \code{UnableToLoadPortfoliosException}.
+ \\ \hline
+
+03 & \code{addPortfolio(}\newline\code{profileId: number,}\newline\code{currentUserId: number,}\newline\code{data: AddPortfolioType)} &
+Creates a portfolio item on the current user's freelancer profile.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{data}: \code{AddPortfolioType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Throws \code{FreelancerProfileNotFoundException}, \code{PortfolioForbiddenException}, \code{UnableToLoadPortfoliosException}.
+ \\ \hline
+
+04 & \code{getPortfolioDetail(portfolioId: number)} &
+Loads one active portfolio item.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Throws \code{PortfolioNotFoundException}, \code{UnableToLoadPortfoliosException}.
+ \\ \hline
+
+05 & \code{updatePortfolio(}\newline\code{portfolioId: number,}\newline\code{currentUserId: number,}\newline\code{data: UpdatePortfolioType)} &
+Updates an owned portfolio item using the supplied fields.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \code{data}: \code{UpdatePortfolioType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+\newline -- Throws \code{PortfolioNotFoundException}, \code{PortfolioForbiddenException}, \code{UnableToUpdatePortfolioException}.
+ \\ \hline
+
+06 & \code{deletePortfolio(portfolioId: number, currentUserId: number)} &
+Marks an owned portfolio item as deleted.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \code{currentUserId}: \code{number} -- authenticated account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: "Success.PortfolioDeleted"; }>}
+\newline -- Throws \code{PortfolioNotFoundException}, \code{PortfolioForbiddenException}, \code{UnableToDeletePortfolioException}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{portfolioRepository} & \code{PortfolioRepository} -- injected dependency. \\ \hline
+01 & \code{portfolioRepository} & \code{PortfolioRepository} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{PortfolioRepository Class (Portfolio Management)}
-
-This specification lists the operations used by Portfolio Management. Shared classes may expose additional operations in other modules.
+\subsection{PortfolioRepository Class}
+\label{cls:nhuy-PortfolioRepository}
 % Source: apps/api/src/routes/portfolios/portfolio.repo.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findFreelancerProfileById(profileId: number)} & Retrieves profile data, freelancer information, and user roles used for existence and ownership checks. \\ \hline
-02 & \code{findPortfoliosByFreelancerProfileId(freelancerProfileId: number)} & Queries portfolio items that have not been soft-deleted. \\ \hline
-03 & \code{addPortfolioToProfile(profileId: number, data: AddPortfolioType)} & Creates a portfolio item in a transaction, creating the freelancer profile if required. \\ \hline
-04 & \code{findPortfolioById(portfolioId: number)} & Queries one portfolio item that has not been soft-deleted. \\ \hline
-05 & \code{findPortfolioWithProfile(portfolioId: number)} & Loads a portfolio item together with the profile used to verify ownership. \\ \hline
-06 & \code{updatePortfolio(portfolioId: number, data: UpdatePortfolioType)} & Updates an owned portfolio item using the supplied fields. \\ \hline
-07 & \code{deletePortfolio(portfolioId: number)} & Marks an owned portfolio item as deleted. \\ \hline
+01 & \code{PortfolioRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findFreelancerProfileById(profileId: number)} &
+Retrieves profile data, freelancer information, and user roles used for existence and ownership checks.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{freelancerProfile}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+03 & \code{findPortfoliosByFreelancerProfileId(}\newline\code{freelancerProfileId: number)} &
+Queries portfolio items that have not been soft-deleted.
+\newline -- \code{freelancerProfileId}: \code{number} -- freelancer profile identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+ \\ \hline
+
+04 & \code{addPortfolioToProfile(}\newline\code{profileId: number,}\newline\code{data: AddPortfolioType)} &
+Creates a portfolio item in a transaction, creating the freelancer profile if required.
+\newline -- \code{profileId}: \code{number} -- general profile identifier.
+\newline -- \code{data}: \code{AddPortfolioType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+ \\ \hline
+
+05 & \code{findPortfolioById(portfolioId: number)} &
+Queries one portfolio item that has not been soft-deleted.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+06 & \code{findPortfolioWithProfile(portfolioId: number)} &
+Loads a portfolio item together with the profile used to verify ownership.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{freelancerProfile}, \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+07 & \code{updatePortfolio(}\newline\code{portfolioId: number,}\newline\code{data: UpdatePortfolioType)} &
+Updates an owned portfolio item using the supplied fields.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \code{data}: \code{UpdatePortfolioType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+ \\ \hline
+
+08 & \code{deletePortfolio(portfolioId: number)} &
+Marks an owned portfolio item as deleted.
+\newline -- \code{portfolioId}: \code{number} -- portfolio item identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{deletedAt}, \code{title}, \code{description}, \code{freelancerProfileId}, and the remaining selected fields.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}

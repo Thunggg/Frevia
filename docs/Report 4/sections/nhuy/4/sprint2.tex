@@ -1,231 +1,580 @@
 % Sprint 2 -- Nguyen Lu Nhat Huy
-% Method names, parameters, and constructor dependencies follow the API sources.
+% Structure follows tthuan: constructor, methods, parameters, returns, routes, attributes.
+% Shared classes are specified once across the report.
 
-\subsection{IdentityVerificationController Class (Identity Verification)}
-
-This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+\subsection{\texorpdfstring{Identity\allowbreak Verification\allowbreak Controller}{IdentityVerificationController} Class}
+\label{cls:nhuy-IdentityVerificationController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{upload(userId: number, body: UploadIdentityDocumentDto, file?: Express.Multer.File)} & Exposes \code{upload} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{aiCheck(userId: number, body: UploadIdentityDocumentDto, files?: Express.Multer.File[])} & Exposes \code{aiCheck} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{livenessPose(userId: number, file?: Express.Multer.File)} & Exposes \code{livenessPose} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-04 & \code{getStatus(userId: number)} & Exposes \code{getStatus} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-05 & \code{getFile(userId: number, id: number, side: string | undefined, response: Response)} & Exposes \code{getFile} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{IdentityVerificationController(}\newline\code{service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{upload(}\newline\code{userId: number,}\newline\code{body: UploadIdentityDocumentDto,}\newline\code{file?: Express.Multer.File)} &
+Validates and stores identity evidence and creates its verification record.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{UploadIdentityDocumentDto} -- validated input fields defined by the declared type.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+\newline -- Response schema: \code{IdentityVerificationDocumentDto}.
+\newline -- Route: \code{POST /identity-verifications/documents}.
+ \\ \hline
+
+03 & \code{aiCheck(}\newline\code{userId: number,}\newline\code{body: UploadIdentityDocumentDto,}\newline\code{files?: Express.Multer.File[])} &
+Checks submitted identity images and stores the verification evidence and AI result.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{UploadIdentityDocumentDto} -- validated input fields defined by the declared type.
+\newline -- \code{files}: \code{Express.Multer.File[]} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+\newline -- Response schema: \code{IdentityVerificationDocumentDto}.
+\newline -- Route: \code{POST /identity-verifications/ai-check}.
+ \\ \hline
+
+04 & \code{livenessPose(userId: number, file?: Express.Multer.File)} &
+Requests pose checking for a submitted liveness image.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{face_found}, \code{yaw}, \code{pitch}, \code{roll}, \code{blink}.
+\newline -- Route: \code{POST /identity-verifications/liveness-pose}.
+ \\ \hline
+
+05 & \code{getStatus(userId: number)} &
+Returns the latest verification state and document history.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable record with \code{status}, \code{documents}.
+\newline -- Response schema: \code{IdentityVerificationStatusDto}.
+\newline -- Route: \code{GET /identity-verifications/status}.
+ \\ \hline
+
+06 & \code{getFile(}\newline\code{userId: number,}\newline\code{id: number,}\newline\code{side: string | undefined,}\newline\code{response: Response)} &
+Resolves an identity document file belonging to the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{side}: \code{string | undefined} -- side supplied to the operation.
+\newline -- \code{response}: \code{Response} -- Express response used to set file headers or redirect.
+\newline -- \textit{Returns:} \code{Promise<StreamableFile>}
+\newline -- Route: \code{GET /identity-verifications/documents/:id/file}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileService Class (Identity Verification)}
-
-This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+\subsection{AccountProfileService Class}
+\label{cls:nhuy-AccountProfileService}
 % Source: apps/api/src/routes/account-profile/account-profile.service.ts
 
+This shared class supports Identity Verification, Client Profile Management, Social Link Management, Favorite Freelancer Management, Following Management, Account Profile Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{uploadIdentityDocument(userId: number, documentType: DocumentTypeType, file?: Express.Multer.File)} & Validates and stores identity evidence and creates its verification record. \\ \hline
-02 & \code{submitIdentityAiCheck(userId: number, documentType: DocumentTypeType, files: { front?: Express.Multer.File; back?: Express.Multer.File; selfie?: Express.Multer.File; liveness: Express.Multer.File[]; })} & Checks submitted identity images and stores the verification evidence and AI result. \\ \hline
-03 & \code{livenessPose(userId: number, file?: Express.Multer.File)} & Requests pose checking for a submitted liveness image. \\ \hline
-04 & \code{getIdentityStatus(userId: number)} & Returns the latest verification state and document history. \\ \hline
-05 & \code{getIdentityDocumentFile(userId: number, id: number, side: 'front' | 'back')} & Resolves an identity document file belonging to the authenticated user. \\ \hline
+01 & \code{AccountProfileService(}\newline\code{repository: AccountProfileRepository,}\newline\code{profileRevisionService: ProfileRevisionService,}\newline\code{cloudinary: CloudinaryService,}\newline\code{hashing: HashingService,}\newline\code{identityAi: IdentityAiService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{repository}: \code{AccountProfileRepository} -- injected dependency.
+\newline -- \code{profileRevisionService}: \code{ProfileRevisionService} -- injected dependency.
+\newline -- \code{cloudinary}: \code{CloudinaryService} -- injected dependency.
+\newline -- \code{hashing}: \code{HashingService} -- injected dependency.
+\newline -- \code{identityAi}: \code{IdentityAiService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getGeneralProfile(userId: number)} &
+Loads general account and profile information for the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{email}, \code{avatarUrl}, \code{roles}, \code{id}, \code{userId}, \code{displayName}, \code{coverUrl}, and the remaining selected fields.
+\newline -- Throws \code{ProfileNotFoundException}.
+ \\ \hline
+
+03 & \code{updateGeneralProfile(}\newline\code{userId: number,}\newline\code{input: UpdateGeneralProfileType)} &
+Submits or applies edits to general profile information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{UpdateGeneralProfileType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Throws \code{ProfileNotFoundException}.
+ \\ \hline
+
+04 & \code{changePassword(userId: number, input: ChangePasswordType)} &
+Verifies the existing password and stores the newly hashed password.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{ChangePasswordType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{ProfileNotFoundException}, \code{PasswordUnavailableException}, \code{CurrentPasswordIncorrectException}.
+ \\ \hline
+
+05 & \code{uploadAvatar(userId: number, file?: Express.Multer.File)} &
+Validates and stores an avatar file, then updates the profile reference.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} \code{Promise<{ avatarUrl: string; }>}
+\newline -- Throws \code{ProfileNotFoundException}, \code{AvatarFileRequiredException}, \code{AvatarFileInvalidException}.
+ \\ \hline
+
+06 & \code{getAvatarFile(userId: number)} &
+Resolves the stored avatar for delivery.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} \code{Promise<{ absolutePath: string; fileName: string; contentType: string; }>}
+\newline -- Throws \code{AvatarNotFoundException}.
+ \\ \hline
+
+07 & \code{uploadIdentityDocument(}\newline\code{userId: number,}\newline\code{documentType: DocumentTypeType,}\newline\code{file?: Express.Multer.File)} &
+Validates and stores identity evidence and creates its verification record.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- supported identity-document category.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+\newline -- Throws \code{IdentityFileRequiredException}, \code{IdentityFileInvalidException}.
+ \\ \hline
+
+08 & \code{submitIdentityAiCheck(}\newline\code{userId: number,}\newline\code{documentType: DocumentTypeType,}\newline\code{files: { front?: Express.Multer.File; back?: Express.Multer.File; selfie?: Express.Multer.File; liveness: Express.Multer.File[]; })} &
+Checks submitted identity images and stores the verification evidence and AI result.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- supported identity-document category.
+\newline -- \code{files}: \code{{ front?: Express.Multer.File; back?: Express.Multer.File; selfie?: Express.Multer.File; liveness: Express.Multer.File[]; }} -- uploaded file supplied to this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+\newline -- Throws \code{IdentityAiFrontRequiredException}, \code{IdentityAiSelfieRequiredException}, \code{IdentityAiLivenessRequiredException}, \code{IdentityAiFramesInvalidException}, \code{IdentityAlreadyVerifiedException}.
+ \\ \hline
+
+09 & \code{livenessPose(userId: number, file?: Express.Multer.File)} &
+Requests pose checking for a submitted liveness image.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded file supplied to this operation; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{face_found}, \code{yaw}, \code{pitch}, \code{roll}, \code{blink}.
+\newline -- Throws \code{IdentityAiFramesInvalidException}.
+ \\ \hline
+
+10 & \code{getIdentityStatus(userId: number)} &
+Returns the latest verification state and document history.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{status}, \code{documents}.
+ \\ \hline
+
+11 & \code{getIdentityDocumentFile(}\newline\code{userId: number,}\newline\code{id: number,}\newline\code{side?: 'front' | 'back')} &
+Resolves an identity document file belonging to the authenticated user.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \code{side}: \code{'front' | 'back'} -- side supplied to the operation; optional.
+\newline -- \textit{Returns:} \code{Promise<{ absolutePath: string; fileName: string; }>}
+\newline -- Throws \code{IdentityDocumentNotFoundException}.
+ \\ \hline
+
+12 & \code{getClientProfile(userId: number)} &
+Loads public client profile details and verifies the client role.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{clientProfile}, \code{socialLinks}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, and the remaining selected fields.
+\newline -- Throws \code{ClientProfileNotFoundException}.
+ \\ \hline
+
+13 & \code{updateClientProfile(}\newline\code{userId: number,}\newline\code{input: UpdateClientProfileType)} &
+Submits or applies changes to company information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{UpdateClientProfileType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+ \\ \hline
+
+14 & \code{getSocialLinks(userId: number)} &
+Retrieves social links associated with the current user's profile.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+\newline -- Throws \code{ProfileNotFoundException}.
+ \\ \hline
+
+15 & \code{addSocialLink(userId: number, input: AddSocialLinkType)} &
+Creates a profile social link after checking for a duplicate platform.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{AddSocialLinkType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+\newline -- Throws \code{ProfileNotFoundException}, \code{SocialLinkDuplicateException}.
+ \\ \hline
+
+16 & \code{deleteSocialLink(userId: number, id: number)} &
+Deletes a social link after verifying its owner.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{SocialLinkNotFoundException}, \code{AccountProfileForbiddenException}.
+ \\ \hline
+
+17 & \code{getFavorites(clientId: number)} &
+Returns the client's favourite freelancers.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{createdAt}, \code{profile}.
+ \\ \hline
+
+18 & \code{addFavorite(clientId: number, freelancerId: number)} &
+Creates a favourite relationship after client and target validation.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{FreelancerNotFoundException}, \code{FavoriteDuplicateException}.
+ \\ \hline
+
+19 & \code{removeFavorite(clientId: number, freelancerId: number)} &
+Removes a favourite relationship belonging to the client.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{FavoriteNotFoundException}.
+ \\ \hline
+
+20 & \code{getFollowing(clientId: number)} &
+Loads the current client's followed freelancers.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{createdAt}, \code{profile}.
+ \\ \hline
+
+21 & \code{discoverFreelancers(clientId: number)} &
+Loads freelancer profiles available for discovery.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{isFollowing}, \code{profile}.
+ \\ \hline
+
+22 & \code{followFreelancer(clientId: number, freelancerId: number)} &
+Creates a following relationship after role, target, and duplicate checks.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{FreelancerNotFoundException}, \code{FollowDuplicateException}.
+ \\ \hline
+
+23 & \code{unfollowFreelancer(clientId: number, freelancerId: number)} &
+Removes an existing following relationship owned by the client.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Throws \code{FollowNotFoundException}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
+01 & \code{repository} & \code{AccountProfileRepository} -- private readonly injected dependency. \\ \hline
+02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- private readonly injected dependency. \\ \hline
+03 & \code{cloudinary} & \code{CloudinaryService} -- private readonly injected dependency. \\ \hline
+04 & \code{hashing} & \code{HashingService} -- private readonly injected dependency. \\ \hline
+05 & \code{identityAi} & \code{IdentityAiService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileRepository Class (Identity Verification)}
-
-This specification lists the operations used by Identity Verification. Shared classes may expose additional operations in other modules.
+\subsection{AccountProfileRepository Class}
+\label{cls:nhuy-AccountProfileRepository}
 % Source: apps/api/src/routes/account-profile/account-profile.repo.ts
 
+This shared class supports Identity Verification, Client Profile Management, Social Link Management, Favorite Freelancer Management, Following Management, Account Profile Management. Its relevant operations are specified together here.
+
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Identity Verification through the persistence repository. \\ \hline
-02 & \code{createIdentityDocument(userId: number, documentType: DocumentTypeType, fileUrl: string)} & Performs the \code{createIdentityDocument} operation for Identity Verification through the persistence repository. \\ \hline
-03 & \code{createIdentityAiDocument(data: { userId: number; documentType: DocumentTypeType; fileUrl: string; backFileUrl: string | null; status: VerificationStatus; reviewNotes: string | null; duplicateOfId: number | null; aiStatus: string; aiScore: number | null; aiError: string | null; aiSummary: Prisma.InputJsonValue; aiSelfieSummary: Prisma.InputJsonValue; aiScannedAt: Date; })} & Performs the \code{createIdentityAiDocument} operation for Identity Verification through the persistence repository. \\ \hline
-04 & \code{findApprovedIdentityDocumentByIdentityNumber(userId: number, identityNumber: string)} & Performs the \code{findApprovedIdentityDocumentByIdentityNumber} operation for Identity Verification through the persistence repository. \\ \hline
-05 & \code{findIdentityDocuments(userId: number)} & Performs the \code{findIdentityDocuments} operation for Identity Verification through the persistence repository. \\ \hline
-06 & \code{findIdentityDocumentById(id: number)} & Performs the \code{findIdentityDocumentById} operation for Identity Verification through the persistence repository. \\ \hline
+01 & \code{AccountProfileRepository(prisma: PrismaService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{prisma}: \code{PrismaService} -- injected database client.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{findUserWithRoles(userId: number)} &
+Loads a non-deleted account with its roles and profile for authorization checks.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{profile}, \code{userRoles}, \code{id}, \code{createdAt}, \code{updatedAt}, \code{email}, \code{password}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+03 & \code{findGeneralProfile(userId: number)} &
+Loads account email, role assignments, and general profile information.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{profile}, \code{id}, \code{email}, \code{userRoles}; \code{null} when absent.
+ \\ \hline
+
+04 & \code{findPasswordCredential(userId: number)} &
+Loads the current password hash and profile identifier for a non-deleted account.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{profile}, \code{password}; \code{null} when absent.
+ \\ \hline
+
+05 & \code{updateGeneralProfile(}\newline\code{userId: number,}\newline\code{input: UpdateGeneralProfileType,}\newline\code{primaryRole?: string)} &
+Submits or applies edits to general profile information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{UpdateGeneralProfileType} -- validated input fields defined by the declared type.
+\newline -- \code{primaryRole}: \code{string} -- primary role used to select the profile policy; optional.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, \code{bio}, \code{onlineStatus}, and the remaining selected fields.
+ \\ \hline
+
+06 & \code{updatePassword(userId: number, password: string)} &
+Persists an already hashed account password.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{password}: \code{string} -- already hashed password persisted by the repository.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{createdAt}, \code{updatedAt}, \code{email}, \code{password}, \code{isBanned}, \code{deletedAt}, and the remaining selected fields.
+ \\ \hline
+
+07 & \code{updateAvatar(userId: number, avatarUrl: string)} &
+Updates the profile avatar URL and returns the stored URL and update time.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{avatarUrl}: \code{string} -- stored avatar URL.
+\newline -- \textit{Returns:} An awaitable record with \code{avatarUrl}, \code{updatedAt}.
+ \\ \hline
+
+08 & \code{findClientProfile(userId: number)} &
+Loads the client profile, social links, and account roles.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{clientProfile}, \code{socialLinks}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+09 & \code{updateClientProfile(}\newline\code{userId: number,}\newline\code{input: UpdateClientProfileType)} &
+Submits or applies changes to company information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{UpdateClientProfileType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{clientProfile}, \code{socialLinks}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, \code{coverUrl}, and the remaining selected fields.
+ \\ \hline
+
+10 & \code{createIdentityDocument(}\newline\code{userId: number,}\newline\code{documentType: DocumentTypeType,}\newline\code{fileUrl: string)} &
+Creates an identity document associated with the account and uploaded file.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{documentType}: \code{DocumentTypeType} -- supported identity-document category.
+\newline -- \code{fileUrl}: \code{string} -- stored identity-document URL.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+ \\ \hline
+
+11 & \code{createIdentityAiDocument(}\newline\code{data: { userId: number; documentType: DocumentTypeType; fileUrl: string; backFileUrl: string | null; status: VerificationStatus; reviewNotes: string | null; duplicateOfId: number | null; aiStatus: string; aiScore: number | null; aiError: string | null; aiSummary: Prisma.InputJsonValue; aiSelfieSummary: Prisma.InputJsonValue; aiScannedAt: Date; })} &
+Stores the identity document together with AI verification results and review metadata.
+\newline -- \code{data}: \code{{ userId: number; documentType: DocumentTypeType; fileUrl: string; backFileUrl: string | null; status: VerificationStatus; reviewNotes: string | null; duplicateOfId: number | null; aiStatus: string; aiScore: number | null; aiError: string | null; aiSummary: Prisma.InputJsonValue; aiSelfieSummary: Prisma.InputJsonValue; aiScannedAt: Date; }} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+ \\ \hline
+
+12 & \code{findApprovedIdentityDocumentByIdentityNumber(}\newline\code{userId: number,}\newline\code{identityNumber: string)} &
+Searches other accounts for an approved document with the same normalized identity number.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{identityNumber}: \code{string} -- identity number used for duplicate checking.
+\newline -- \textit{Returns:} \code{Promise<{ id: number; }>}
+ \\ \hline
+
+13 & \code{findIdentityDocuments(userId: number)} &
+Lists non-deleted identity documents for the account, newest first.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields.
+ \\ \hline
+
+14 & \code{findIdentityDocumentById(id: number)} &
+Loads a non-deleted identity document by its identifier.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{userId}, \code{createdAt}, \code{deletedAt}, \code{status}, \code{adminId}, \code{reviewNotes}, and the remaining selected fields; \code{null} when absent.
+ \\ \hline
+
+15 & \code{findSocialLinks(userId: number)} &
+Lists profile social links by platform; returns null if the profile does not exist.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{profileId}, \code{url}, \code{platform}; \code{null} when absent.
+ \\ \hline
+
+16 & \code{findSocialLinkByPlatform(}\newline\code{userId: number,}\newline\code{platform: AddSocialLinkType['platform'])} &
+Finds a profile social link for the specified platform to detect duplicates.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{platform}: \code{AddSocialLinkType['platform']} -- social platform identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{profileId}, \code{url}, \code{platform}; \code{null} when absent.
+ \\ \hline
+
+17 & \code{createSocialLink(userId: number, input: AddSocialLinkType)} &
+Creates a social link on the existing account profile.
+\newline -- \code{userId}: \code{number} -- account identifier for this operation.
+\newline -- \code{input}: \code{AddSocialLinkType} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+ \\ \hline
+
+18 & \code{findSocialLinkById(id: number)} &
+Loads a social link with its profile for ownership validation.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{profile}, \code{id}, \code{profileId}, \code{url}, \code{platform}; \code{null} when absent.
+ \\ \hline
+
+19 & \code{deleteSocialLink(id: number)} &
+Deletes a social link after verifying its owner.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+ \\ \hline
+
+20 & \code{findFavorite(clientId: number, freelancerId: number)} &
+Finds the favorite association for a client and freelancer pair.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{createdAt}, \code{clientId}, \code{freelancerId}; \code{null} when absent.
+ \\ \hline
+
+21 & \code{createFavorite(clientId: number, freelancerId: number)} &
+Creates the client-to-freelancer favorite association.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{createdAt}, \code{clientId}, \code{freelancerId}.
+ \\ \hline
+
+22 & \code{deleteFavorite(clientId: number, freelancerId: number)} &
+Deletes the specified favorite association.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{createdAt}, \code{clientId}, \code{freelancerId}.
+ \\ \hline
+
+23 & \code{findFavorites(clientId: number)} &
+Lists favorites with freelancer profile and skill information, newest first.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancer}, \code{createdAt}, \code{clientId}, \code{freelancerId}.
+ \\ \hline
+
+24 & \code{findFollow(clientId: number, freelancerId: number)} &
+Finds the follow association for a client and freelancer pair.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{createdAt}, \code{clientId}, \code{freelancerId}; \code{null} when absent.
+ \\ \hline
+
+25 & \code{createFollowWithNotification(}\newline\code{clientId: number,}\newline\code{freelancerId: number,}\newline\code{followerName: string)} &
+Creates the follow association and a new-follower notification in one transaction.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \code{followerName}: \code{string} -- display name used in the follower notification.
+\newline -- \textit{Returns:} \code{Promise<{ createdAt: Date; clientId: number; freelancerId: number; }>}
+ \\ \hline
+
+26 & \code{deleteFollow(clientId: number, freelancerId: number)} &
+Deletes the specified follow association.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} An awaitable record with \code{createdAt}, \code{clientId}, \code{freelancerId}.
+ \\ \hline
+
+27 & \code{findFollowing(clientId: number)} &
+Lists followed freelancers whose accounts are active, with profile and skill information.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancer}, \code{createdAt}, \code{clientId}, \code{freelancerId}.
+ \\ \hline
+
+28 & \code{findDiscoverableFreelancers(clientId: number)} &
+Lists eligible freelancer accounts with their profile, skills, and follow relationship to the current client.
+\newline -- \code{clientId}: \code{number} -- client account identifier.
+\newline -- \textit{Returns:} An awaitable list of records with \code{profile}, \code{id}, \code{followsAsFreelancer}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{prisma} & \code{PrismaService} -- private readonly database client. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{ClientProfileController Class (Client Profile Management)}
-
-This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
+\subsection{ClientProfileController Class}
+\label{cls:nhuy-ClientProfileController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getDetail(userId: number)} & Exposes \code{getDetail} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{update(userId: number, body: UpdateClientProfileDto)} & Exposes \code{update} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{ClientProfileController(service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getDetail(userId: number)} &
+Loads public client profile details and verifies the client role.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable record with \code{user}, \code{clientProfile}, \code{socialLinks}, \code{id}, \code{userId}, \code{displayName}, \code{avatarUrl}, and the remaining selected fields.
+\newline -- Response schema: \code{ClientProfileDetailDto}.
+\newline -- Route: \code{GET /clients/:userId}.
+ \\ \hline
+
+03 & \code{update(userId: number, body: UpdateClientProfileDto)} &
+Submits or applies changes to company information according to the revision policy.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{UpdateClientProfileDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{message}, \code{reviewRequired}, \code{profileStrength}, \code{revision}.
+\newline -- Response schema: \code{ProfileRevisionSubmissionDto}.
+\newline -- Route: \code{PUT /clients/me/profile}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileService Class (Client Profile Management)}
-
-This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getClientProfile(userId: number)} & Loads public client profile details and verifies the client role. \\ \hline
-02 & \code{updateClientProfile(userId: number, input: UpdateClientProfileType)} & Submits or applies changes to company information according to the revision policy. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileRepository Class (Client Profile Management)}
-
-This specification lists the operations used by Client Profile Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Client Profile Management through the persistence repository. \\ \hline
-02 & \code{findClientProfile(userId: number)} & Performs the \code{findClientProfile} operation for Client Profile Management through the persistence repository. \\ \hline
-03 & \code{updateClientProfile(userId: number, input: UpdateClientProfileType)} & Submits or applies changes to company information according to the revision policy. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{SocialLinkController Class (Social Link Management)}
-
-This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
+\subsection{SocialLinkController Class}
+\label{cls:nhuy-SocialLinkController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{add(userId: number, body: AddSocialLinkDto)} & Exposes \code{add} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{remove(userId: number, id: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{SocialLinkController(service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(userId: number)} &
+Retrieves social links associated with the current user's profile.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+\newline -- Response schema: \code{SocialLinkListDto}.
+\newline -- Route: \code{GET /social-links}.
+ \\ \hline
+
+03 & \code{add(userId: number, body: AddSocialLinkDto)} &
+Creates a profile social link after checking for a duplicate platform.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{body}: \code{AddSocialLinkDto} -- validated input fields defined by the declared type.
+\newline -- \textit{Returns:} An awaitable record with \code{id}, \code{profileId}, \code{url}, \code{platform}.
+\newline -- Response schema: \code{SocialLinkDto}.
+\newline -- Route: \code{POST /social-links}.
+ \\ \hline
+
+04 & \code{remove(userId: number, id: number)} &
+Deletes a social link after verifying its owner.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{id}: \code{number} -- target record identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{DELETE /social-links/:id}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
 
-\subsection{AccountProfileService Class (Social Link Management)}
-
-This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getSocialLinks(userId: number)} & Retrieves social links associated with the current user\'s profile. \\ \hline
-02 & \code{addSocialLink(userId: number, input: AddSocialLinkType)} & Creates a profile social link after checking for a duplicate platform. \\ \hline
-03 & \code{deleteSocialLink(userId: number, id: number)} & Deletes a social link after verifying its owner. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileRepository Class (Social Link Management)}
-
-This specification lists the operations used by Social Link Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findSocialLinks(userId: number)} & Performs the \code{findSocialLinks} operation for Social Link Management through the persistence repository. \\ \hline
-02 & \code{findSocialLinkByPlatform(userId: number, platform: AddSocialLinkType['platform'])} & Performs the \code{findSocialLinkByPlatform} operation for Social Link Management through the persistence repository. \\ \hline
-03 & \code{createSocialLink(userId: number, input: AddSocialLinkType)} & Performs the \code{createSocialLink} operation for Social Link Management through the persistence repository. \\ \hline
-04 & \code{findSocialLinkById(id: number)} & Performs the \code{findSocialLinkById} operation for Social Link Management through the persistence repository. \\ \hline
-05 & \code{deleteSocialLink(id: number)} & Deletes a social link after verifying its owner. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{FavoriteFreelancerController Class (Favorite Freelancer Management)}
-
-This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
+\subsection{\texorpdfstring{Favorite\allowbreak Freelancer\allowbreak Controller}{FavoriteFreelancerController} Class}
+\label{cls:nhuy-FavoriteFreelancerController}
 % Source: apps/api/src/routes/account-profile/account-profile.controller.ts
 
 \paragraph{ClassMethod}
 \begin{ClassMethodTable}
-01 & \code{getAll(userId: number)} & Exposes \code{getAll} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-02 & \code{add(userId: number, freelancerId: number)} & Exposes \code{add} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
-03 & \code{remove(userId: number, freelancerId: number)} & Exposes \code{remove} to the module's HTTP interface and delegates processing to the injected service. \\ \hline
+01 & \code{FavoriteFreelancerController(}\newline\code{service: AccountProfileService)} &
+Initializes the class with its required dependencies.
+\newline -- \code{service}: \code{AccountProfileService} -- injected dependency.
+\newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
+
+02 & \code{getAll(userId: number)} &
+Returns the client's favourite freelancers.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \textit{Returns:} An awaitable list of records with \code{freelancerId}, \code{createdAt}, \code{profile}.
+\newline -- Response schema: \code{FavoriteFreelancerListDto}.
+\newline -- Route: \code{GET /favorites/freelancers}.
+ \\ \hline
+
+03 & \code{add(userId: number, freelancerId: number)} &
+Creates a favourite relationship after client and target validation.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{POST /favorites/freelancers/:freelancerId}.
+ \\ \hline
+
+04 & \code{remove(userId: number, freelancerId: number)} &
+Removes a favourite relationship belonging to the client.
+\newline -- \code{userId}: \code{number} -- account identifier supplied by authentication or the route.
+\newline -- \code{freelancerId}: \code{number} -- freelancer account identifier.
+\newline -- \textit{Returns:} \code{Promise<{ message: string; }>}
+\newline -- Route: \code{DELETE /favorites/freelancers/:freelancerId}.
+ \\ \hline
+
 \end{ClassMethodTable}
 
 \paragraph{ClassAttribute}
 \begin{ClassAttributeTable}
-01 & \code{service} & \code{AccountProfileService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileService Class (Favorite Freelancer Management)}
-
-This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.service.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{getFavorites(clientId: number)} & Returns the client\'s favourite freelancers. \\ \hline
-02 & \code{addFavorite(clientId: number, freelancerId: number)} & Creates a favourite relationship after client and target validation. \\ \hline
-03 & \code{removeFavorite(clientId: number, freelancerId: number)} & Removes a favourite relationship belonging to the client. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{repository} & \code{AccountProfileRepository} -- injected dependency. \\ \hline
-02 & \code{profileRevisionService} & \code{ProfileRevisionService} -- injected dependency. \\ \hline
-03 & \code{cloudinary} & \code{CloudinaryService} -- injected dependency. \\ \hline
-04 & \code{hashing} & \code{HashingService} -- injected dependency. \\ \hline
-05 & \code{identityAi} & \code{IdentityAiService} -- injected dependency. \\ \hline
-\end{ClassAttributeTable}
-
-\subsection{AccountProfileRepository Class (Favorite Freelancer Management)}
-
-This specification lists the operations used by Favorite Freelancer Management. Shared classes may expose additional operations in other modules.
-% Source: apps/api/src/routes/account-profile/account-profile.repo.ts
-
-\paragraph{ClassMethod}
-\begin{ClassMethodTable}
-01 & \code{findUserWithRoles(userId: number)} & Performs the \code{findUserWithRoles} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
-02 & \code{findFavorite(clientId: number, freelancerId: number)} & Performs the \code{findFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
-03 & \code{createFavorite(clientId: number, freelancerId: number)} & Performs the \code{createFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
-04 & \code{deleteFavorite(clientId: number, freelancerId: number)} & Performs the \code{deleteFavorite} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
-05 & \code{findFavorites(clientId: number)} & Performs the \code{findFavorites} operation for Favorite Freelancer Management through the persistence repository. \\ \hline
-\end{ClassMethodTable}
-
-\paragraph{ClassAttribute}
-\begin{ClassAttributeTable}
-01 & \code{prisma} & \code{PrismaService} -- injected dependency. \\ \hline
+01 & \code{service} & \code{AccountProfileService} -- private readonly injected dependency. \\ \hline
 \end{ClassAttributeTable}
