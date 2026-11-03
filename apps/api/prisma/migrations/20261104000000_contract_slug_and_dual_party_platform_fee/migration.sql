@@ -13,3 +13,4 @@ WHERE "slug" IS NULL;
 -- Set slug to NOT NULL and add UNIQUE constraint
 ALTER TABLE "Contract" ALTER COLUMN "slug" SET NOT NULL;
 CREATE UNIQUE INDEX "Contract_slug_key" ON "Contract"("slug");
+

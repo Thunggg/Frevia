@@ -294,7 +294,9 @@ export class ContractRepository {
     query: GetContractListQueryType,
     filter: { userId?: number; role?: 'client' | 'freelancer' },
   ) {
-    const { page, limit, status, proposalId } = query;
+    const page = Number(query.page) > 0 ? Number(query.page) : 1;
+    const limit = Number(query.limit) > 0 ? Number(query.limit) : 10;
+    const { status, proposalId } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ContractWhereInput = {

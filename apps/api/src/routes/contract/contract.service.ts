@@ -196,6 +196,7 @@ export class ContractService {
 
       return await this.contractRepository.getContractList(query, filter);
     } catch (error) {
+      this.logger.error('Failed to get contract list:', error);
       if (error instanceof HttpException) throw error;
       throw FailedToLoadContractException();
     }
