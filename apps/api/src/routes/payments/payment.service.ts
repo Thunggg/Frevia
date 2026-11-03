@@ -30,6 +30,7 @@ import {
 } from './payment.error';
 import { PaymentRepository } from './payment.repo';
 import { StripeService } from './stripe.service';
+import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 
 @Injectable()
 export class PaymentService {
@@ -38,6 +39,7 @@ export class PaymentService {
   constructor(
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
+    private readonly contractPdfService: ContractPdfService,
   ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
@@ -236,13 +238,55 @@ export class PaymentService {
     }
   }
 
+  async handlePlatformFeeSuccess(contractId: number, userId?: number) {
+    const contract = await this.paymentRepo.findContractById(contractId);
+    if (!contract) return;
+
+    if (userId) {
+      if (contract.clientId === userId) {
+        await this.paymentRepo.recordPartyPlatformFeePaid(contractId, 'client');
+      } else if (contract.freelancerId === userId) {
+        await this.paymentRepo.recordPartyPlatformFeePaid(
+          contractId,
+          'freelancer',
+        );
+      } else {
+        await this.paymentRepo.updateContractPlatformFee(
+          contractId,
+          PlatformFeeStatus.PAID,
+        );
+      }
+    } else {
+      await this.paymentRepo.updateContractPlatformFee(
+        contractId,
+        PlatformFeeStatus.PAID,
+      );
+    }
+
+    const activationResult =
+      await this.paymentRepo.activateContractIfReady(contractId);
+    if (activationResult?.activated) {
+      try {
+        await this.contractPdfService.generateAndSaveContractPdf(contractId);
+      } catch (pdfErr) {
+        this.logger.error(
+          `Failed to generate contract PDF on fee settlement for contract #${contractId}:`,
+          pdfErr,
+        );
+      }
+    }
+  }
+
   async chargeSavedCardForPlatformFee(
     userId: number,
     contractId: number,
     paymentMethodId?: string,
   ) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -250,11 +294,18 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    const customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    const customerId = payer.stripeCustomerId;
     if (!customerId) {
       throw new HttpException(
         'No saved payment method found. Please pay via Stripe Checkout to save your card.',
@@ -276,7 +327,10 @@ export class PaymentService {
       targetPmId = defaultPm.id;
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
     try {
@@ -293,10 +347,7 @@ export class PaymentService {
       });
 
       if (paymentIntent.status === 'succeeded') {
-        await this.paymentRepo.updateContractPlatformFee(
-          contractId,
-          PlatformFeeStatus.PAID,
-        );
+        await this.handlePlatformFeeSuccess(contractId, userId);
 
         const tx = await this.paymentRepo.createTransaction({
           userId,
@@ -425,7 +476,10 @@ export class PaymentService {
 
   async createPlatformFeeIntent(userId: number, contractId: number) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -433,22 +487,30 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    let customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    let customerId = payer.stripeCustomerId;
     if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        contract.client.email,
-      );
+      const customer = await this.stripeService.createCustomer(payer.email);
       customerId = customer.id;
       await this.paymentRepo.updateUserStripe(userId, {
         stripeCustomerId: customerId,
       });
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
     const paymentIntent = await this.stripeService.createPaymentIntent({
@@ -483,7 +545,10 @@ export class PaymentService {
 
   async createPlatformFeeCheckoutSession(userId: number, contractId: number) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -491,32 +556,41 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    let customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    let customerId = payer.stripeCustomerId;
     if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        contract.client.email,
-      );
+      const customer = await this.stripeService.createCustomer(payer.email);
       customerId = customer.id;
       await this.paymentRepo.updateUserStripe(userId, {
         stripeCustomerId: customerId,
       });
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
+    const rolePath = isClient ? 'client' : 'freelancer';
     const session = await this.stripeService.createCheckoutSession({
       amountInCents,
       currency: 'usd',
       customerId,
       title: 'Contract Platform Activation Fee',
-      description: `One-time platform fee to activate contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=cancelled`,
+      description: `One-time platform fee (1%) to activate contract #${contractId}`,
+      successUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractId}?payment=cancelled`,
       metadata: {
         type: TransactionType.PLATFORM_FEE,
         contractId: String(contractId),
@@ -1169,9 +1243,10 @@ export class PaymentService {
     }
 
     if (type === TransactionType.PLATFORM_FEE && metadata.contractId) {
-      await this.paymentRepo.updateContractPlatformFee(
+      const payerUserId = metadata.userId ? Number(metadata.userId) : undefined;
+      await this.handlePlatformFeeSuccess(
         Number(metadata.contractId),
-        PlatformFeeStatus.PAID,
+        payerUserId,
       );
     } else if (
       type === TransactionType.ESCROW_DEPOSIT &&
@@ -1231,9 +1306,10 @@ export class PaymentService {
     }
 
     if (type === TransactionType.PLATFORM_FEE && metadata.contractId) {
-      await this.paymentRepo.updateContractPlatformFee(
+      const payerUserId = metadata.userId ? Number(metadata.userId) : undefined;
+      await this.handlePlatformFeeSuccess(
         Number(metadata.contractId),
-        PlatformFeeStatus.PAID,
+        payerUserId,
       );
     } else if (
       type === TransactionType.ESCROW_DEPOSIT &&

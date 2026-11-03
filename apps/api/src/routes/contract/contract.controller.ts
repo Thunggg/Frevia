@@ -47,6 +47,16 @@ export class ContractController {
     );
   }
 
+  @Get('slug/:slug')
+  @ZodSerializerDto(GetContractDetailResponseDTO)
+  getContractBySlug(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('slug') slug: string,
+  ) {
+    return this.contractService.getContractBySlug(userId, roleName, slug);
+  }
+
   @Get(':id')
   @ZodSerializerDto(GetContractDetailResponseDTO)
   getContractDetail(

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ContractStatus,
+  JobStatus,
   DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
@@ -53,11 +55,76 @@ export class PaymentRepository {
           select: {
             id: true,
             email: true,
+            stripeCustomerId: true,
             stripeAccountId: true,
             stripeOnboardingCompleted: true,
           },
         },
       },
+    });
+  }
+
+  async recordPartyPlatformFeePaid(
+    contractId: number,
+    party: 'client' | 'freelancer',
+  ) {
+    const isClient = party === 'client';
+    const now = new Date();
+    return this.prisma.contract.update({
+      where: { id: contractId },
+      data: isClient
+        ? { clientFeeStatus: PlatformFeeStatus.PAID, clientFeePaidAt: now }
+        : {
+            freelancerFeeStatus: PlatformFeeStatus.PAID,
+            freelancerFeePaidAt: now,
+          },
+    });
+  }
+
+  async activateContractIfReady(contractId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.findUnique({
+        where: { id: contractId },
+      });
+      if (!contract) return null;
+
+      const bothFeesPaid =
+        contract.clientFeeStatus === PlatformFeeStatus.PAID &&
+        contract.freelancerFeeStatus === PlatformFeeStatus.PAID;
+      const bothSigned = contract.signedByClient && contract.signedByFreelancer;
+
+      if (
+        bothFeesPaid &&
+        contract.platformFeeStatus !== PlatformFeeStatus.PAID
+      ) {
+        await tx.contract.update({
+          where: { id: contractId },
+          data: {
+            platformFeeStatus: PlatformFeeStatus.PAID,
+            platformFeePaidAt: new Date(),
+          },
+        });
+      }
+
+      if (
+        bothFeesPaid &&
+        bothSigned &&
+        contract.status !== ContractStatus.ACTIVE
+      ) {
+        const activated = await tx.contract.update({
+          where: { id: contractId },
+          data: {
+            status: ContractStatus.ACTIVE,
+          },
+        });
+        await tx.job.update({
+          where: { id: contract.jobId },
+          data: { status: JobStatus.IN_PROGRESS },
+        });
+        return { activated: true, contract: activated };
+      }
+
+      return { activated: false, contract };
     });
   }
 

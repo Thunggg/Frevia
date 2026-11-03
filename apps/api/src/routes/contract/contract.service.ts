@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   CreateContractBodyType,
   GetContractListQueryType,
@@ -23,10 +23,16 @@ import {
   ProposalNotHiredException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
+import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 
 @Injectable()
 export class ContractService {
-  constructor(private readonly contractRepository: ContractRepository) {}
+  private readonly logger = new Logger(ContractService.name);
+
+  constructor(
+    private readonly contractRepository: ContractRepository,
+    private readonly contractPdfService: ContractPdfService,
+  ) {}
 
   async createContract(clientId: number, body: CreateContractBodyType) {
     try {
@@ -102,7 +108,23 @@ export class ContractService {
         throw AlreadySignedException();
 
       const role = isClient ? 'client' : 'freelancer';
-      return await this.contractRepository.signContract(contractId, role);
+      const signed = await this.contractRepository.signContract(
+        contractId,
+        role,
+      );
+
+      if (signed.status === ContractStatus.ACTIVE) {
+        try {
+          await this.contractPdfService.generateAndSaveContractPdf(contractId);
+        } catch (pdfErr) {
+          this.logger.error(
+            `Failed to generate contract PDF on activation for contract #${contractId}:`,
+            pdfErr,
+          );
+        }
+      }
+
+      return signed;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
@@ -187,6 +209,25 @@ export class ContractService {
     try {
       const contract =
         await this.contractRepository.getContractDetail(contractId);
+
+      if (!contract) throw ContractNotFoundException();
+
+      const isAdmin = roleName === RoleName.ADMIN;
+      const isOwner =
+        contract.clientId === userId || contract.freelancerId === userId;
+
+      if (!isAdmin && !isOwner) throw ContractForbiddenException();
+
+      return contract;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw FailedToLoadContractException();
+    }
+  }
+
+  async getContractBySlug(userId: number, roleName: string, slug: string) {
+    try {
+      const contract = await this.contractRepository.findContractBySlug(slug);
 
       if (!contract) throw ContractNotFoundException();
 

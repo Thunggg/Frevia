@@ -5,6 +5,7 @@ import { PlatformFeeStatusEnum } from "../constants/payment.constant";
 
 export const ContractSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   jobId: z.number(),
   proposalId: z.number(),
   clientId: z.number(),
@@ -15,6 +16,10 @@ export const ContractSchema = z.object({
   platformFee: z.coerce.number().optional().default(10),
   platformFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
   platformFeePaidAt: z.coerce.date().nullable().optional(),
+  clientFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
+  clientFeePaidAt: z.coerce.date().nullable().optional(),
+  freelancerFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
+  freelancerFeePaidAt: z.coerce.date().nullable().optional(),
   signedByClient: z.boolean(),
   signedByFreelancer: z.boolean(),
   createdAt: z.coerce.date(),
@@ -23,6 +28,14 @@ export const ContractSchema = z.object({
   expiresAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
 });
+
+export const CreateContractMilestoneSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  amount: z.number().positive(),
+  dueDate: z.string().datetime().optional(),
+});
+export type CreateContractMilestoneType = z.infer<typeof CreateContractMilestoneSchema>;
 
 export const CreateContractBodySchema = z.object({
   proposalId: z
@@ -43,6 +56,8 @@ export const CreateContractBodySchema = z.object({
       message: ManageContractMessage.EXPIRES_AT_FUTURE,
     })
     .optional(),
+
+  milestones: z.array(CreateContractMilestoneSchema).optional(),
 });
 
 export const UpdateContractBodySchema = z.object({

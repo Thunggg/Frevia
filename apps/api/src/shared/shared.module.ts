@@ -14,6 +14,7 @@ import { AiCvAnalyzerService } from './services/ai-cv-analyzer.service';
 import { IdentityAiService } from './services/identity-ai.service';
 import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
+import { ContractPdfService } from './services/contract-pdf.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { TokenService } from './services/token.service';
     CloudinaryService,
     SharedRoleRepository,
     SharedPermissionRepository,
+    ContractPdfService,
   ],
   exports: [
     PrismaService,
@@ -54,6 +56,7 @@ import { TokenService } from './services/token.service';
     SharedRoleRepository,
     SharedPermissionRepository,
     TokenService,
+    ContractPdfService,
   ],
 })
 export class SharedModule {}

@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ContractStatus, Prisma } from '@prisma/client';
+import { ContractStatus, MilestoneStatus, Prisma } from '@prisma/client';
 import {
   CreateContractBodyType,
   GetContractListQueryType,
   UpdateContractBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { createContractSlug } from './contract.slug';
 
 const contractDetailSelect = {
   id: true,
+  slug: true,
   jobId: true,
   proposalId: true,
   clientId: true,
@@ -19,6 +21,10 @@ const contractDetailSelect = {
   platformFee: true,
   platformFeeStatus: true,
   platformFeePaidAt: true,
+  clientFeeStatus: true,
+  clientFeePaidAt: true,
+  freelancerFeeStatus: true,
+  freelancerFeePaidAt: true,
   signedByClient: true,
   signedByFreelancer: true,
   createdAt: true,
@@ -61,7 +67,7 @@ export class ContractRepository {
         status: true,
         freelancerId: true,
         job: {
-          select: { id: true, clientId: true },
+          select: { id: true, clientId: true, title: true },
         },
       },
     });
@@ -79,14 +85,36 @@ export class ContractRepository {
       where: { id: contractId },
       select: {
         id: true,
+        slug: true,
         jobId: true,
         clientId: true,
         freelancerId: true,
         status: true,
+        totalAmount: true,
+        platformFee: true,
+        platformFeeStatus: true,
+        clientFeeStatus: true,
+        freelancerFeeStatus: true,
         signedByClient: true,
         signedByFreelancer: true,
       },
     });
+  }
+
+  async findContractBySlug(slug: string) {
+    const contract = await this.prisma.contract.findUnique({
+      where: { slug, deletedAt: null },
+      select: contractDetailSelect,
+    });
+
+    if (!contract) return null;
+
+    return {
+      ...contract,
+      totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
+    };
   }
 
   async createContract(
@@ -95,22 +123,60 @@ export class ContractRepository {
     freelancerId: number,
     jobId: number,
   ) {
-    const contract = await this.prisma.contract.create({
-      data: {
-        jobId,
-        proposalId: data.proposalId,
-        clientId,
-        freelancerId,
-        totalAmount: data.totalAmount,
-        terms: data.terms ?? null,
-        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
-      },
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+      select: { title: true },
     });
+    const slug = createContractSlug(job?.title);
+    const platformFee = Math.round(Number(data.totalAmount) * 0.01 * 100) / 100;
 
-    return {
-      ...contract,
-      totalAmount: Number(contract.totalAmount),
-    };
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.create({
+        data: {
+          slug,
+          jobId,
+          proposalId: data.proposalId,
+          clientId,
+          freelancerId,
+          totalAmount: data.totalAmount,
+          platformFee,
+          terms: data.terms ?? null,
+          expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+        },
+      });
+
+      const milestonesData =
+        data.milestones && data.milestones.length > 0
+          ? data.milestones.map((m) => ({
+              contractId: contract.id,
+              title: m.title,
+              description: m.description ?? null,
+              amount: m.amount,
+              dueDate: m.dueDate ? new Date(m.dueDate) : null,
+              status: MilestoneStatus.PENDING,
+            }))
+          : [
+              {
+                contractId: contract.id,
+                title: `${job?.title ?? 'Contract'} - Milestone 1`,
+                description: 'Initial milestone for contract',
+                amount: data.totalAmount,
+                dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+                status: MilestoneStatus.PENDING,
+              },
+            ];
+
+      await tx.milestone.createMany({
+        data: milestonesData,
+      });
+
+      return {
+        ...contract,
+        totalAmount: Number(contract.totalAmount),
+        platformFee:
+          contract.platformFee != null ? Number(contract.platformFee) : 0,
+      };
+    });
   }
 
   async updateContract(contractId: number, data: UpdateContractBodyType) {
@@ -119,6 +185,7 @@ export class ContractRepository {
       data: {
         ...(data.totalAmount !== undefined && {
           totalAmount: data.totalAmount,
+          platformFee: Math.round(Number(data.totalAmount) * 0.01 * 100) / 100,
         }),
         ...(data.terms !== undefined && { terms: data.terms }),
         ...(data.expiresAt !== undefined && {
@@ -132,6 +199,8 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
   }
 
@@ -147,14 +216,26 @@ export class ContractRepository {
       });
 
       if (signedContract.signedByClient && signedContract.signedByFreelancer) {
-        await tx.job.update({
-          where: { id: signedContract.jobId },
-          data: { status: 'IN_PROGRESS' },
-        });
-        return tx.contract.update({
+        const bothFeesPaid =
+          signedContract.clientFeeStatus === 'PAID' &&
+          signedContract.freelancerFeeStatus === 'PAID';
+
+        const updated = await tx.contract.update({
           where: { id: contractId },
-          data: { status: ContractStatus.ACTIVE, signedAt: new Date() },
+          data: {
+            signedAt: new Date(),
+            ...(bothFeesPaid ? { status: ContractStatus.ACTIVE } : {}),
+          },
         });
+
+        if (bothFeesPaid) {
+          await tx.job.update({
+            where: { id: signedContract.jobId },
+            data: { status: 'IN_PROGRESS' },
+          });
+        }
+
+        return updated;
       }
 
       return signedContract;
@@ -163,6 +244,8 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
   }
 
@@ -185,6 +268,8 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
   }
 
@@ -200,6 +285,8 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
   }
 
@@ -235,6 +322,7 @@ export class ContractRepository {
       data: contracts.map((c) => ({
         ...c,
         totalAmount: Number(c.totalAmount),
+        platformFee: c.platformFee != null ? Number(c.platformFee) : 0,
       })),
       totalItems,
       totalPages: Math.ceil(totalItems / limit),
@@ -254,6 +342,8 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
   }
 }
