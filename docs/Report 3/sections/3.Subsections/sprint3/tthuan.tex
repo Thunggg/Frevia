@@ -1,0 +1,1079 @@
+% =================================================================
+% Sprint 3 - User Management (tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{User Management}
+
+% -----------------------------------------------------------------
+% UC-28.01: View User List
+% -----------------------------------------------------------------
+\subsubsection{Function: View User List}
+
+\fnhead{Function Trigger}
+An administrator navigates to the Users management page from the admin dashboard sidebar navigation.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ User Management $\rightarrow$ Users (\texttt{/admin/users}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view, search, filter, and sort all registered user accounts in the system. The catalog displays key account attributes including user ID, email address, display name, account ban/active status, creation timestamp, and assigned system or custom roles.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User management screen at \texttt{/admin/users}.
+    \item Filter bar component (\texttt{UsersFilterBar}) containing search input, role filter selector, sort column dropdown, and sort direction toggle.
+    \item Data table component (\texttt{UsersTable}) rendering user rows, avatar badges, status indicators, role tags, and contextual action menus.
+    \item Numbered pagination component at the bottom for page navigation.
+    \item ``Create User'' action button in the page header.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends an HTTP request: \texttt{GET /api/users} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{role}, \texttt{sortBy}, \texttt{sortOrder}).
+    \item The backend \texttt{AuthGuard} validates the administrator's JWT access token, and \texttt{PermissionGuard} verifies permission to access the endpoint.
+    \item \texttt{UsersController.getUsers()} parses query parameters via \texttt{AdminUserQueryDto}.
+    \item \texttt{UsersRepository.getUsers()} queries \texttt{prisma.user.findMany} where \texttt{deletedAt = null}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item If \texttt{search} is provided, searches \texttt{email} or \texttt{profile.displayName} case-insensitively.
+            \item If \texttt{role} is provided (and not \texttt{'all'}), filters users whose assigned roles match the role name.
+            \item Orders records by the requested column (\texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, or \texttt{displayName}) and direction.
+        \end{itemize}
+    \item The repository executes \texttt{prisma.user.count()} to compute total matching records in parallel.
+    \item The system returns HTTP 200 with the users array and pagination metadata.
+    \item The frontend renders user cards/rows, applies ban badges (Active / Banned), and maps assigned roles to visual badges.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/ViewUserList.png}{User list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Page header displaying ``Users'' title, summary count, and a ``Create User'' button.
+    \item Filter bar including search box, role filter dropdown (All, Client, Freelancer, Admin, Custom), and sort selector.
+    \item Table columns: \textbf{User} (Avatar, Display Name, and Email), \textbf{Roles} (Colored badges for assigned roles), \textbf{Status} (Green ``Active'' or Red ``Banned''), \textbf{Created Date}, and \textbf{Actions}.
+    \item Action menu on each row offering: ``View detail'', ``Edit user'', and quick actions.
+    \item Pagination footer indicating total count and page selection buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum records returned per page (defaults to 10).\\ \hline
+search & Optional text query matching user email or display name.\\ \hline
+role & Optional role filter string (e.g., \texttt{CLIENT}, \texttt{FREELANCER}, \texttt{ADMIN}, \texttt{CUSTOM}, or specific custom role name).\\ \hline
+sortBy & Sort column field (\texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, or \texttt{displayName}; defaults to \texttt{id}).\\ \hline
+sortOrder & Sort direction sequence (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters; whitespace trimmed.\\ \hline
+role & String, optional, max length 50 characters.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, \texttt{displayName}.\\ \hline
+sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-USER-01: Only active user accounts with \texttt{deletedAt = null} shall be returned. Soft-deleted accounts are excluded.
+    \item BR-USER-02: Default sort order is by \texttt{id} in descending order, displaying newly registered users first.
+    \item BR-USER-03: The maximum page size is 100 records; if \texttt{limit} exceeds 100, the server caps it at 100.
+    \item BR-USER-04: Search on \texttt{email} and \texttt{displayName} is case-insensitive with partial contains matching.
+    \item BR-USER-05: Role filtering supports built-in roles, \texttt{CUSTOM} (matching any custom role), and specific custom role names.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator opens the \texttt{/admin/users} page.
+    \item The frontend sends \texttt{GET /api/users} with default parameters (\texttt{page=1\&limit=10\&sortBy=id\&sortOrder=desc}).
+    \item The backend validates administrator authentication and permissions.
+    \item The repository queries active users and counts total matching records.
+    \item The backend returns HTTP 200 with the users array and pagination metadata.
+    \item The frontend renders the user list table and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client clears authentication cookies and redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The backend throws \texttt{UserForbiddenException} (HTTP 403 Forbidden). The UI displays: ``You do not have permission to access this page.''\\ \hline
+Invalid pagination parameter values & The DTO validator rejects non-integer or negative values with HTTP 400 Bad Request. The client resets to page 1.\\ \hline
+Unsupported sort column parameter & The system rejects invalid sort keys with HTTP 400 Bad Request. The client defaults to \texttt{id desc}.\\ \hline
+Database query error or timeout & The service catches the Prisma error and throws \texttt{FailedToGetUsersException} (HTTP 500). The UI displays: ``Couldn't load users. Try again.''\\ \hline
+No users match search or role filters & The query returns \texttt{users: []} and \texttt{total: 0}. The table displays: ``No users match your filters.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+users & Array of user objects: \texttt{id}, \texttt{email}, \texttt{isBanned}, \texttt{createdAt}, \texttt{updatedAt}, \texttt{displayName}, \texttt{avatarUrl}, and \texttt{roles}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current limit per page.\\ \hline
+pagination.total & Total active users matching the query.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user list table is rendered with role badges and account statuses.
+    \item The administrator can filter by role, search, sort, or select a user to view full details (UC-28.02) or edit (UC-28.04).
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.02: View User Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View User Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks ``View detail'' on a user row in the user table or navigates directly to \texttt{/admin/users/:id}.\newline
+\textbf{Navigation path:} User Management (\texttt{/admin/users}) $\rightarrow$ Click user row or view icon (\texttt{/admin/users/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Retrieves consolidated, comprehensive account information for a specific user. Along with general profile data, social links, and activity metrics, the interface provides dedicated tab panels for each role profile the user holds: Client Profile, Freelancer Profile, Expert Profile, and Custom Role Profiles.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Detailed user overview page at \texttt{/admin/users/:id}.
+    \item Page header component (\texttt{UserDetailHeader}) showing avatar, display name, email, ban badge, and edit button.
+    \item General information card (\texttt{UserGeneralInfo}) displaying account ID, verification status, join date, last update, bio, and activity statistics.
+    \item Role tabs component (\texttt{UserRoleTabs}) rendering separate tabs for Client Profile, Freelancer Profile, Expert Profile, and Admin \& Custom Roles.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client sends \texttt{GET /api/users/:id}.
+    \item \texttt{ParseIntPipe} validates that \texttt{id} is a positive integer.
+    \item Backend verifies Admin role permissions.
+    \item \texttt{UsersRepository.getUserById(id)} queries \texttt{prisma.user.findFirst} where \texttt{id = id} and \texttt{deletedAt = null}.
+    \item The query includes profile data, assigned roles, social links, activity counts (jobs posted, contracts, proposals, reviews), client profile, freelancer profile (with skills and active portfolio items), expert profile, and custom role profiles.
+    \item If user is not found or soft-deleted, throws \texttt{UserNotFoundException} (HTTP 404).
+    \item The server responds with HTTP 200 and the complete consolidated detail object.
+    \item The frontend renders the header, general info, and populates role-specific tabs.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/ViewUserDetail.png}{User detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Top navigation button ``Back to users'' allowing return to the catalog.
+    \item Header containing user avatar, display name, email, ID badge, ban status badge, and ``Edit User'' button.
+    \item Card section for **General Information**: Bio, Online status, Availability status, Profile completion percentage, and Activity stats (Jobs, Contracts, Proposals, Reviews).
+    \item Tab navigation bar with tabs: **Client Profile**, **Freelancer Profile**, **Expert Profile**, and **Admin \& Custom Roles**.
+    \item Each active tab renders dedicated profile data and management action buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric system identifier of the user in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-USER-06: The \texttt{clientProfile}, \texttt{freelancerProfile}, and \texttt{expertProfile} fields may be \texttt{null} if the user does not possess the corresponding role or has not initialized that profile.
+    \item BR-USER-07: The \texttt{customRoleProfiles} array contains only roles outside the built-in Client, Freelancer, and Admin roles.
+    \item BR-USER-08: Each assigned role includes an \texttt{isPrimary} flag indicating whether it serves as the user's default active role.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to \texttt{/admin/users/:id}.
+    \item The frontend sends \texttt{GET /api/users/:id}.
+    \item The backend validates Admin authorization and queries the database for the user record.
+    \item The repository compiles general information, role profiles, and activity statistics.
+    \item The server responds with HTTP 200 and the consolidated user detail payload.
+    \item The frontend renders \texttt{UserDetailHeader}, \texttt{UserGeneralInfo}, and \texttt{UserRoleTabs}.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Invalid user ID format (non-numeric string) & \texttt{ParseIntPipe} rejects the call with HTTP 400 Bad Request. The client displays an invalid parameter error page.\\ \hline
+User ID does not exist in database & The repository throws \texttt{UserNotFoundException} (HTTP 404). The frontend displays: ``User not found.''\\ \hline
+User has been soft-deleted (\texttt{deletedAt != null}) & The query filters out soft-deleted users and throws HTTP 404 Not Found. The UI displays the not found notice.\\ \hline
+User lacks Admin privileges & The backend throws \texttt{UserForbiddenException} (HTTP 403 Forbidden). Access is denied.\\ \hline
+Caller token expired or revoked & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+Database query error during retrieval & The service throws \texttt{FailedToGetUserException} (HTTP 500). The UI displays a retry prompt.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric user ID.\\ \hline
+email & User email address.\\ \hline
+isBanned & Boolean indicating account suspension status.\\ \hline
+profile & Nested general profile: \texttt{displayName}, \texttt{avatarUrl}, \texttt{bio}, \texttt{profileCompletionPercent}.\\ \hline
+roles & Array of assigned roles with \texttt{id}, \texttt{name}, \texttt{description}, and \texttt{isPrimary}.\\ \hline
+clientProfile & Client company details or null.\\ \hline
+freelancerProfile & Freelancer skills, credentials, and portfolio items or null.\\ \hline
+expertProfile & Expert qualifications, experience, and certifications or null.\\ \hline
+stats & Activity counts: jobs posted, active contracts, proposals, and reviews.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The complete account profile and role tabs are displayed to the administrator.
+    \item The administrator can switch between role tabs and edit role-specific details directly.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.03: Create User
+% -----------------------------------------------------------------
+\subsubsection{Function: Create User}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create User'' button on the user list page.\newline
+\textbf{Navigation path:} User Management (\texttt{/admin/users}) $\rightarrow$ Click ``Create User'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), bcrypt hashing library, Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to manually provision a new user account by specifying full name, email address, secure password, and selecting an initial role to activate (Client, Freelancer, or a custom role). The system automatically provisions the user, general profile, and primary role association.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Create User'' button in the user list header.
+    \item Modal dialog component (\texttt{CreateUserDialog}) with input fields: Full Name, Email, Password, Confirm Password, and Initial Role Select.
+    \item Action buttons: ``Cancel'' and ``Create User''.
+    \item Success toast notification upon account provisioning.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator fills the form and submits the modal dialog.
+    \item The client sends \texttt{POST /api/users} with body \texttt{\{ email, fullName, password, confirmPassword, roleId \}}.
+    \item The backend validates schema constraints via \texttt{AdminCreateUserBodyDto}.
+    \item \texttt{UsersService.createUser()} validates:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Email uniqueness among active accounts; if taken, throws \texttt{EmailAlreadyExistsException} (HTTP 409).
+            \item Role validity: target role must exist and be active; if missing, throws \texttt{CreateUserRoleNotFoundException} (HTTP 404).
+            \item Role restriction: role cannot be the Admin role; if selected, throws \texttt{CannotAssignAdminRoleException} (HTTP 403).
+        \end{itemize}
+    \item In an atomic database transaction:
+        \begin{enumerate}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Hashes password with bcrypt (10 salt rounds).
+            \item Creates User record with lowercased email, password hash, and \texttt{isEmailVerified = true}.
+            \item Creates Profile record with \texttt{displayName = fullName}.
+            \item Creates UserRole record assigning the role with \texttt{isPrimary = true}.
+        \end{enumerate}
+    \item The server responds with HTTP 201 Created and the new user summary.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the user list.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/CreateUser.png}{Create user modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Create user'' with subtitle ``Add a new user account to the platform.''.
+    \item Field: \textbf{Full name} (required, placeholder: ``e.g., Alex Johnson'').
+    \item Field: \textbf{Email address} (required, placeholder: ``alex@example.com'').
+    \item Field: \textbf{Password} (required, 8--32 characters, uppercase and number required).
+    \item Field: \textbf{Confirm password} (required, matching password).
+    \item Field: \textbf{Initial role} (Select dropdown displaying Client, Freelancer, and active Custom roles; Admin role is excluded).
+    \item Dialog footer with ``Cancel'' and ``Create user'' action buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+fullName & Full display name of the user (required).\\ \hline
+email & Email address for authentication (required).\\ \hline
+password & Password for local credential login (required).\\ \hline
+confirmPassword & Password confirmation string (required).\\ \hline
+roleId & Numeric ID of the initial role to assign (required).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+fullName & String, required, 1 to 100 characters; whitespace trimmed.\\ \hline
+email & String, required, valid RFC 5322 email format, max 254 characters; lowercased.\\ \hline
+password & String, required, 8 to 32 characters; must contain at least one uppercase letter and one number.\\ \hline
+confirmPassword & String, required; must match \texttt{password} exactly.\\ \hline
+roleId & Positive integer; must correspond to an active non-Admin role.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-USER-09: The email address is automatically converted to lowercase before storage and must be at most 254 characters.
+    \item BR-USER-10: Email uniqueness is enforced among all active accounts (\texttt{deletedAt = null}).
+    \item BR-USER-11: Passwords must be hashed with bcrypt prior to storage; plaintext passwords are never persisted.
+    \item BR-USER-12: The Admin role cannot be assigned during manual user creation to prevent privilege escalation; only Client, Freelancer, or custom roles are permitted.
+    \item BR-USER-13: The selected role must exist and be active in the system.
+    \item BR-USER-14: The newly assigned role is automatically designated as the user's primary role (\texttt{isPrimary = true}).
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Create User'' on the user management screen.
+    \item The dialog opens. The administrator inputs name, email, password, and selects an initial role.
+    \item The administrator clicks ``Create user''.
+    \item The frontend validates the fields and issues \texttt{POST /api/users}.
+    \item The backend validates email uniqueness, role validity, and absence of Admin role assignment.
+    \item The backend hashes the password and provisions the User, Profile, and UserRole records in a transaction.
+    \item The server responds with HTTP 201 Created and the new user summary.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the user list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Password and Confirm Password do not match & Client-side validation and backend DTO reject submission. The form displays: ``Passwords do not match.''\\ \hline
+Password fails complexity rules (< 8 chars, no uppercase/number) & Backend validation rejects with HTTP 400 Bad Request. The UI displays password requirements.\\ \hline
+Email is already registered to an active user & The backend throws \texttt{EmailAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Email already exists.''\\ \hline
+Selected role does not exist or was deleted & The backend throws \texttt{CreateUserRoleNotFoundException} (HTTP 404). The UI displays: ``Role not found.''\\ \hline
+Administrator attempts to assign Admin role & The backend throws \texttt{CannotAssignAdminRoleException} (HTTP 403 Forbidden). The UI displays: ``Cannot assign Admin role.''\\ \hline
+User lacks Admin privileges & The backend throws \texttt{UserForbiddenException} (HTTP 403). Access is denied.\\ \hline
+Database transaction failure & The transaction rolls back and the backend throws \texttt{FailedToCreateUserException} (HTTP 500). The UI displays: ``Failed to create user.''\\ \hline
+Administrator cancels dialog & The modal closes and discarded form data is cleared without network activity.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric ID of the created user.\\ \hline
+email & Stored email address.\\ \hline
+displayName & Display name set on the profile.\\ \hline
+roles & Array containing the assigned primary role.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item A new active user record is inserted with verified email status.
+    \item A linked profile record and primary role association are created.
+    \item The user appears in the user list and can authenticate immediately.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.04: Update User
+% -----------------------------------------------------------------
+\subsubsection{Function: Update User}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Edit'' on a user row in the table or clicks ``Edit User'' on the user detail screen.\newline
+\textbf{Navigation path:} User Management (\texttt{/admin/users}) $\rightarrow$ Click ``Edit'' icon on a user row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to edit the general account credentials and administrative status of an existing user, including changing their email address, updating their display name, or toggling their account ban/suspension status.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Edit action trigger on table rows and user detail header.
+    \item Modal dialog component (\texttt{EditUserDialog}) pre-filled with current email, full name, and ban switch.
+    \item Action buttons: ``Cancel'' and ``Save Changes''.
+    \item Toast notification confirming successful account updates.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator modifies fields in the dialog and submits the form.
+    \item The client sends \texttt{PATCH /api/users/:id} with body containing modified attributes (\texttt{email}, \texttt{fullName}, \texttt{isBanned}).
+    \item \texttt{UserActive('userId')} extracts the administrator's ID (\texttt{actorId}).
+    \item \texttt{UsersService.updateUser()} validates:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Target user exists and has \texttt{deletedAt = null}.
+            \item Self-ban protection: if \texttt{isBanned = true} and \texttt{id === actorId}, throws \texttt{CannotBanSelfException} (HTTP 403).
+            \item Email uniqueness: if email is modified, ensures no other active user uses it; otherwise throws \texttt{EmailAlreadyExistsException} (HTTP 409).
+        \end{itemize}
+    \item In a transaction, updates \texttt{user.email}, \texttt{user.isBanned}, and upserts \texttt{profile.displayName}.
+    \item The server responds with HTTP 200 and the updated user summary.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the user view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateUser.png}{Update user modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit user'' with description ``Update general account information.''.
+    \item Field: \textbf{Email address} (pre-filled with current email).
+    \item Field: \textbf{Full name} (pre-filled with current display name).
+    \item Toggle switch: \textbf{Banned} (Switch component allowing immediate suspension of account access).
+    \item Dialog footer with ``Cancel'' and ``Save changes'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric identifier of the user in the URL path.\\ \hline
+email & Updated email address (optional, string).\\ \hline
+fullName & Updated display name (optional, string or null).\\ \hline
+isBanned & Boolean account suspension toggle (optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+email & String, optional, valid email format, max 254 characters; lowercased.\\ \hline
+fullName & String, optional, max 100 characters, nullable.\\ \hline
+isBanned & Boolean, optional.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-USER-15: An administrator is strictly prohibited from banning their own account (\texttt{isBanned = true} is rejected when \texttt{targetUserId == actorId}).
+    \item BR-USER-16: Email uniqueness is enforced across all non-deleted users, excluding the target user being edited.
+    \item BR-USER-17: At least one updatable field must be provided in the request payload.
+    \item BR-USER-18: The email address is automatically converted to lowercase before updating.
+    \item BR-USER-19: Setting \texttt{fullName} to null or empty string clears the user's display name.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator opens the ``Edit User'' dialog for a selected user.
+    \item The administrator modifies email, display name, or toggles the ban switch.
+    \item The administrator clicks ``Save changes''.
+    \item The client sends \texttt{PATCH /api/users/:id}.
+    \item The backend validates authorization, verifies self-ban constraints, and checks email uniqueness.
+    \item The repository updates user and profile records in a database transaction.
+    \item The API returns HTTP 200 with the updated user data.
+    \item The frontend displays a success toast and refreshes the user information.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Administrator attempts to ban their own account & The backend detects \texttt{id === actorId} and throws \texttt{CannotBanSelfException} (HTTP 403 Forbidden). The UI displays: ``You cannot ban your own account.''\\ \hline
+New email is already in use by another account & The backend detects conflict and throws \texttt{EmailAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Email already exists.''\\ \hline
+No fields provided in update payload & The backend rejects the request with HTTP 400 Bad Request (\texttt{Nothing to update}). The UI highlights required fields.\\ \hline
+User ID does not exist or is soft-deleted & The service throws \texttt{UserNotFoundException} (HTTP 404). The UI displays: ``User not found.''\\ \hline
+User lacks Admin privileges & The backend throws \texttt{UserForbiddenException} (HTTP 403). Access is denied.\\ \hline
+Database transaction failure & The service catches the Prisma error and throws \texttt{FailedToUpdateUserException} (HTTP 500). The UI displays: ``Failed to update user.''\\ \hline
+Administrator cancels dialog & The modal closes and unsaved modifications are discarded without network calls.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric user identifier.\\ \hline
+email & Updated email address.\\ \hline
+displayName & Updated display name string.\\ \hline
+isBanned & Updated ban status boolean.\\ \hline
+roles & Array of assigned roles.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user's account details and ban status are updated in PostgreSQL.
+    \item If banned, the user's active sessions are immediately rejected on next access attempt.
+    \item The changes are visible across administrative tables and user detail views.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.05: Update Client Profile
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Client Profile}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Edit Client Profile'' on the Client Profile tab of the user detail page.\newline
+\textbf{Navigation path:} User Detail (\texttt{/admin/users/:id}) $\rightarrow$ Tab ``Client Profile'' $\rightarrow$ Click ``Edit Client Profile'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to edit the client organization profile of a user holding the Client role. The administrator can update company name, company description, and corporate website URL.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Edit Client Profile'' button on the Client Profile tab panel.
+    \item Modal dialog pre-filled with current company name, description, and website URL.
+    \item Action buttons: ``Cancel'' and ``Save Changes''.
+    \item Toast notification confirming successful update.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator submits the updated client profile form.
+    \item The client sends \texttt{PATCH /api/users/:id/client-profile} with \texttt{\{ companyName, companyDescription, website \}}.
+    \item \texttt{UsersService.updateClientProfile()} verifies that the target user exists, has not been soft-deleted, and possesses the \texttt{CLIENT} role (or an existing client profile record); otherwise throws \texttt{NoClientRoleForClientProfileException} (HTTP 403).
+    \item The service trims string inputs and converts empty strings to \texttt{null}.
+    \item \texttt{UsersRepository.upsertClientProfileByAdmin()} upserts the record in \texttt{prisma.clientProfile.upsert}.
+    \item The API returns HTTP 200 with the updated client profile object.
+    \item The frontend displays a success toast and refreshes the Client Profile tab content.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateClientProfile.png}{Update client profile modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit client profile'' with subtitle ``Update client organization and company details.''.
+    \item Field: \textbf{Company name} (input, max 255 characters, optional).
+    \item Field: \textbf{Company description} (multi-line textarea, max 5000 characters, optional).
+    \item Field: \textbf{Website URL} (input with URL format validation, optional).
+    \item Dialog footer with ``Cancel'' and ``Save changes'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric user identifier in the URL path.\\ \hline
+companyName & Updated company name string (optional, nullable).\\ \hline
+companyDescription & Detailed description of company activities (optional, nullable).\\ \hline
+website & Corporate website URL (optional, nullable).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+companyName & String, optional, max 255 characters, nullable.\\ \hline
+companyDescription & String, optional, max 5000 characters, nullable.\\ \hline
+website & String, optional, valid URL format (e.g., \texttt{https://example.com}), nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-CLT-01: The target user must possess the Client role or have an existing client profile record; otherwise, the update is rejected with HTTP 403 Forbidden.
+    \item BR-CLT-02: Company name is limited to a maximum of 255 characters.
+    \item BR-CLT-03: Company description is limited to a maximum of 5000 characters.
+    \item BR-CLT-04: The website field must conform to standard URL format if supplied.
+    \item BR-CLT-05: Empty string values are automatically converted to \texttt{null} to allow clearing field content.
+    \item BR-CLT-06: The client profile record is upserted, creating the profile record if it does not yet exist.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the Client Profile tab and clicks ``Edit Client Profile''.
+    \item The dialog opens pre-filled with current company data.
+    \item The administrator modifies company name, description, or website and clicks ``Save changes''.
+    \item The frontend sends \texttt{PATCH /api/users/:id/client-profile}.
+    \item The backend verifies permissions and confirms the user has the Client role.
+    \item The repository upserts the client profile record in PostgreSQL.
+    \item The backend returns HTTP 200 with the updated client profile data.
+    \item The frontend displays a success toast and refreshes the tab.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target user does not have Client role & The backend throws \texttt{NoClientRoleForClientProfileException} (HTTP 403 Forbidden). The UI displays: ``User does not have a Client role.''\\ \hline
+Website format is invalid & Client-side validation and backend DTO reject with HTTP 400 Bad Request. The UI displays: ``Invalid URL format.''\\ \hline
+Company name exceeds 255 characters & Backend validation returns HTTP 400 Bad Request. The UI notifies of character limit violation.\\ \hline
+Company description exceeds 5000 characters & Backend validation returns HTTP 400 Bad Request. The UI notifies of character limit violation.\\ \hline
+User ID does not exist or is soft-deleted & The service throws \texttt{UserNotFoundException} (HTTP 404). The UI displays: ``User not found.''\\ \hline
+Database upsert failure & The service catches the Prisma error and throws \texttt{FailedToUpdateClientProfileException} (HTTP 500). The UI displays: ``Failed to update client profile.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric client profile identifier.\\ \hline
+userId & Numeric ID of the associated user.\\ \hline
+companyName & Updated company name or null.\\ \hline
+companyDescription & Updated company description or null.\\ \hline
+website & Updated website URL or null.\\ \hline
+updatedAt & Timestamp indicating last update.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The client profile record is saved in the database.
+    \item The updated company information is reflected in the Client Profile tab and public job postings by this client.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.06: Update Freelancer Basic Info
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Freelancer Basic Info}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Edit Freelancer Profile'' on the Freelancer Profile tab of the user detail page.\newline
+\textbf{Navigation path:} User Detail (\texttt{/admin/users/:id}) $\rightarrow$ Tab ``Freelancer Profile'' $\rightarrow$ Click ``Edit Freelancer Profile'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to edit the basic introductory and credential information of a user holding the Freelancer role, including professional title, overview biography, spoken languages, educational history, and professional certifications.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Edit Freelancer Profile'' button on the Freelancer Profile tab.
+    \item Modal dialog with text inputs for Professional Title, Biography textarea, and dynamic tag lists for Languages, Education, and Certifications.
+    \item Action buttons: ``Cancel'' and ``Save Changes''.
+    \item Toast notification confirming successful update.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator submits changes in the modal dialog.
+    \item The client sends \texttt{PATCH /api/users/:id/freelancer-profile} with \texttt{\{ title, bio, languages, education, certifications \}}.
+    \item \texttt{UsersService.updateFreelancerProfile()} verifies that target user exists, is active, and possesses the \texttt{FREELANCER} role (or an existing freelancer profile); otherwise throws \texttt{NoFreelancerRoleForProfileException} (HTTP 403).
+    \item The service cleans string lists, converting empty strings to \texttt{null} and empty/null arrays to \texttt{[]}.
+    \item \texttt{UsersRepository.updateFreelancerProfileByAdmin()} upserts the freelancer profile record in PostgreSQL.
+    \item The API returns HTTP 200 with \texttt{\{ message: 'Freelancer profile updated successfully' \}}.
+    \item The frontend displays a success toast and refreshes the Freelancer Profile tab.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateFreelancerBasicInfo.png}{Update freelancer basic info modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit freelancer profile'' with subtitle ``Update professional title, biography, and credentials.''.
+    \item Field: \textbf{Professional title} (input, max 255 characters, placeholder: ``e.g., Senior Full-Stack Engineer'').
+    \item Field: \textbf{Biography} (textarea, max 5000 characters).
+    \item Dynamic string lists: \textbf{Languages}, \textbf{Education}, and \textbf{Certifications} with input field and ``Add'' button, rendering removable badges for each entry.
+    \item Action buttons: ``Cancel'' and ``Save changes''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric user identifier in the URL path.\\ \hline
+title & Professional headline or title (optional, nullable).\\ \hline
+bio & Professional summary biography (optional, nullable).\\ \hline
+languages & Array of spoken languages (optional, string array).\\ \hline
+education & Array of education entries (optional, string array).\\ \hline
+certifications & Array of certification entries (optional, string array).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+title & String, optional, max 255 characters, nullable.\\ \hline
+bio & String, optional, max 5000 characters, nullable.\\ \hline
+languages & Array of strings, max 100 items, each item max 255 characters.\\ \hline
+education & Array of strings, max 100 items, each item max 255 characters.\\ \hline
+certifications & Array of strings, max 100 items, each item max 255 characters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FLR-01: The target user must possess the Freelancer role or have an existing freelancer profile record; otherwise, the update is rejected with HTTP 403 Forbidden.
+    \item BR-FLR-02: Professional title is limited to a maximum of 255 characters.
+    \item BR-FLR-03: Biography is limited to a maximum of 5000 characters.
+    \item BR-FLR-04: Credential arrays (languages, education, certifications) may each contain at most 100 items, with each entry limited to 255 characters.
+    \item BR-FLR-05: Empty string values are converted to \texttt{null}; empty or null arrays are normalized to \texttt{[]}.
+    \item BR-FLR-06: The freelancer profile and parent Profile are upserted if not already present.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the Freelancer Profile tab and clicks ``Edit Freelancer Profile''.
+    \item The modal opens pre-filled with current title, bio, and credential lists.
+    \item The administrator edits the fields, adds/removes credentials, and clicks ``Save changes''.
+    \item The client sends \texttt{PATCH /api/users/:id/freelancer-profile}.
+    \item The backend validates authorization and confirms Freelancer role eligibility.
+    \item The repository upserts the freelancer profile record in PostgreSQL.
+    \item The API returns HTTP 200 with a success message.
+    \item The frontend displays a success toast and refreshes the tab.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target user does not have Freelancer role & The backend throws \texttt{NoFreelancerRoleForProfileException} (HTTP 403 Forbidden). The UI displays: ``User does not have a Freelancer role.''\\ \hline
+Credential entry exceeds 255 characters & Backend validation returns HTTP 400 Bad Request. The UI notifies of item length violation.\\ \hline
+Credential array exceeds 100 items & Backend validation returns HTTP 400 Bad Request. The UI notifies that at most 100 entries are allowed.\\ \hline
+Title exceeds 255 characters & Backend validation returns HTTP 400 Bad Request. The UI displays a field length error.\\ \hline
+User ID does not exist or is soft-deleted & The service throws \texttt{UserNotFoundException} (HTTP 404). The UI displays: ``User not found.''\\ \hline
+Database update failure & The service catches the Prisma error and throws \texttt{FailedToUpdateFreelancerProfileException} (HTTP 500). The UI displays: ``Failed to update freelancer profile.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Freelancer profile updated successfully}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The freelancer profile title, bio, and credentials are saved in PostgreSQL.
+    \item The updated information appears in the Freelancer Profile tab and public freelancer directory.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.07: Update Freelancer Skills
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Freelancer Skills}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Manage Freelancer Skills'' on the Freelancer Profile tab of the user detail page.\newline
+\textbf{Navigation path:} User Detail (\texttt{/admin/users/:id}) $\rightarrow$ Tab ``Freelancer Profile'' $\rightarrow$ Click ``Manage Freelancer Skills'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to manage and completely replace the skill set of a freelancer. Skills are selected from the system skill catalog with an assigned proficiency level between 1 and 10. The update operates as an atomic full-replacement operation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Manage Freelancer Skills'' button on the Freelancer Profile tab.
+    \item Skill management modal dialog listing current skills with Select catalog dropdowns, numeric proficiency level sliders/inputs (1--10), and delete row buttons.
+    \item ``Add skill'' button to append additional skill rows.
+    \item Action buttons: ``Cancel'' and ``Save Skills''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client fetches active catalog skills via \texttt{GET /api/users/skills-catalog} to populate the selection dropdown.
+    \item Administrator configures skill names and proficiency levels, then submits.
+    \item The client sends \texttt{PUT /api/users/:id/freelancer-profile/skills} with body \texttt{\{ skills: [ \{ skillName, proficiencyLevel \} ] \}}.
+    \item \texttt{UsersService.replaceFreelancerSkills()} verifies user existence and Freelancer role.
+    \item In an atomic database transaction:
+        \begin{enumerate}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Deletes all existing \texttt{FreelancerSkill} records for this freelancer profile.
+            \item For each skill item, searches the skill catalog case-insensitively; if absent, creates a new catalog skill with an auto-generated unique slug.
+            \item Inserts a new \texttt{FreelancerSkill} record linking the freelancer profile to the catalog skill with the designated proficiency level.
+        \end{enumerate}
+    \item The server responds with HTTP 200: \texttt{\{ message: 'Freelancer skills updated successfully' \}}.
+    \item The frontend displays a success toast and refreshes the skills list on the tab.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateFreelancerSkills.png}{Update freelancer skills modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Manage freelancer skills'' with description ``Select skills from the catalog and assign proficiency levels (1--10).''.
+    \item Dynamic list of skill rows, each containing:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item **Skill name Select:** Dropdown displaying available catalog skills.
+            \item **Proficiency level:** Number input or slider from 1 (Beginner) to 10 (Master).
+            \item **Remove button:** Trash icon to delete the skill row.
+        \end{itemize}
+    \item ``Add skill'' outline button at the bottom of the list.
+    \item Dialog footer with ``Cancel'' and ``Save skills'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric user identifier in the URL path.\\ \hline
+skills & Array of skill objects: \texttt{skillName} (string) and \texttt{proficiencyLevel} (integer 1--10).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+skills & Array, max 100 items.\\ \hline
+skills[].skillName & String, required, 1 to 100 characters; whitespace trimmed.\\ \hline
+skills[].proficiencyLevel & Integer, required, between 1 and 10 inclusive.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FLR-07: Skill updating uses full-replacement semantics (\texttt{PUT}): all pre-existing skills are removed and replaced by the submitted array.
+    \item BR-FLR-08: Proficiency levels must strictly be integers between 1 and 10 inclusive.
+    \item BR-FLR-09: A freelancer may possess a maximum of 100 skills.
+    \item BR-FLR-10: Skill catalog lookup is case-insensitive; if a submitted skill does not exist in the master catalog, a new catalog entry is automatically provisioned.
+    \item BR-FLR-11: Submitting an empty skills array effectively clears all skills for the freelancer.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the Freelancer Profile tab and clicks ``Manage Freelancer Skills''.
+    \item The frontend loads the skill catalog and opens the dialog with existing skills pre-populated.
+    \item The administrator adds, removes, or adjusts skill names and proficiency levels.
+    \item The administrator clicks ``Save skills''.
+    \item The client sends \texttt{PUT /api/users/:id/freelancer-profile/skills}.
+    \item The backend validates inputs, clears old skills, and creates new skill links in a transaction.
+    \item The backend returns HTTP 200 with a success confirmation message.
+    \item The frontend closes the dialog, shows a success toast, and refreshes the skills list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Proficiency level out of bounds (< 1 or > 10) & Backend DTO validation rejects with HTTP 400 Bad Request. The UI notifies of invalid proficiency range.\\ \hline
+Skills array exceeds 100 items & Backend validation rejects with HTTP 400 Bad Request. The UI displays an item limit notice.\\ \hline
+Skill name is blank or exceeds 100 characters & Backend validation returns HTTP 400 Bad Request. The UI highlights the offending row.\\ \hline
+Target user does not have Freelancer role & The backend throws \texttt{NoFreelancerRoleForProfileException} (HTTP 403 Forbidden). Access is denied.\\ \hline
+User ID does not exist or is soft-deleted & The service throws \texttt{UserNotFoundException} (HTTP 404). The UI displays: ``User not found.''\\ \hline
+Database transaction failure & The transaction rolls back and the service throws \texttt{FailedToSaveSkillsException} (HTTP 500). The UI displays: ``Failed to save skills.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Freelancer skills updated successfully}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Pre-existing freelancer skills are removed and replaced with the new skill associations.
+    \item Any newly introduced skill is registered in the master catalog.
+    \item The updated skill badges and proficiency levels appear on the user profile.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.08: Update Freelancer Portfolio
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Freelancer Portfolio}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Manage Freelancer Portfolio'' on the Freelancer Profile tab of the user detail page.\newline
+\textbf{Navigation path:} User Detail (\texttt{/admin/users/:id}) $\rightarrow$ Tab ``Freelancer Profile'' $\rightarrow$ Click ``Manage Freelancer Portfolio'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to manage portfolio project items for a freelancer by creating new items, editing existing items, or soft-deleting items. Each portfolio item documents completed project work with title, description, technology stack tags, and project URL.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Manage Freelancer Portfolio'' button on the Freelancer Profile tab.
+    \item Portfolio management modal listing existing portfolio cards with Edit and Delete action buttons.
+    \item ``Add Portfolio Item'' button opening item creation form.
+    \item Edit item sub-dialog with inputs for Title, Description, Technologies, and Project URL.
+    \item Delete confirmation dialog for soft-deleting items.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item **Create Item:** Client sends \texttt{POST /api/users/:id/freelancer-profile/portfolio-items}. \texttt{UsersRepository.createPortfolioItem()} inserts into \texttt{prisma.portfolioItem.create}. Returns HTTP 201.
+    \item **Update Item:** Client sends \texttt{PATCH /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.updatePortfolioItemByAdmin()} verifies item ownership and \texttt{deletedAt = null}, then updates fields. Returns HTTP 200.
+    \item **Delete Item:** Client sends \texttt{DELETE /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.softDeletePortfolioItem()} verifies item ownership and sets \texttt{deletedAt = new Date()}. Returns HTTP 200.
+    \item The client displays success toasts and refreshes the portfolio list.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateFreelancerPortfolio.png}{Update freelancer portfolio modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Manage freelancer portfolio'' with an ``Add portfolio item'' header button.
+    \item List of existing portfolio item cards displaying:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item **Project title** in bold with external link icon if URL is provided.
+            \item **Project description** summary.
+            \item **Technologies used:** Small badges for each technology tag.
+            \item **Action buttons:** Edit (pencil icon) and Delete (trash icon).
+        \end{itemize}
+    \item Nested add/edit dialog with fields: Title, Description, Technologies input, and Project URL.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric user identifier in the URL path.\\ \hline
+itemId & Numeric portfolio item identifier in URL path (for edit/delete).\\ \hline
+title & Project display title (required, string).\\ \hline
+description & Detailed project description (optional, string or null).\\ \hline
+technologies & Array of technology names used (optional, string array).\\ \hline
+projectUrl & Live project or repository URL (optional, nullable).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+itemId & Must be a positive integer greater than 0.\\ \hline
+title & String, required, 1 to 255 characters; whitespace trimmed.\\ \hline
+description & String, optional, max 5000 characters, nullable.\\ \hline
+technologies & Array of strings, max 50 items, each item max 100 characters.\\ \hline
+projectUrl & String, optional, valid URL format, nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FLR-12: Portfolio item deletion is implemented as a soft delete by setting \texttt{deletedAt = new Date()}; items are never permanently purged.
+    \item BR-FLR-13: Project title is mandatory and limited to a maximum of 255 characters.
+    \item BR-FLR-14: Project description is limited to a maximum of 5000 characters.
+    \item BR-FLR-15: Technologies list may contain at most 50 items, each limited to 100 characters.
+    \item BR-FLR-16: The project URL must conform to standard URL format if provided.
+    \item BR-FLR-17: Edit and delete operations strictly verify item ownership: the target item must belong to the specified freelancer profile.
+    \item BR-FLR-18: Soft-deleted portfolio items are excluded from active profile queries.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the Freelancer Profile tab and clicks ``Manage Freelancer Portfolio''.
+    \item The dialog displays existing portfolio items with action buttons.
+    \item To add an item, the administrator clicks ``Add portfolio item'', fills in title, description, technologies, and URL, and submits.
+    \item The client sends \texttt{POST /api/users/:id/freelancer-profile/portfolio-items}.
+    \item The backend creates the item record and returns HTTP 201.
+    \item The dialog refreshes and displays the newly created portfolio card.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Portfolio item ID does not exist or belongs to another user & The backend throws \texttt{PortfolioItemNotFoundException} (HTTP 404). The UI displays: ``Portfolio item not found.''\\ \hline
+Project title is empty & Client-side validation and backend DTO return HTTP 400 Bad Request. The UI highlights title as required.\\ \hline
+Project URL format is invalid & Backend validation returns HTTP 400 Bad Request. The UI indicates invalid URL.\\ \hline
+Technologies array exceeds 50 items & Backend validation returns HTTP 400 Bad Request. The UI notifies of maximum technology count.\\ \hline
+Database error during portfolio item creation & The service throws \texttt{FailedToCreatePortfolioItemException} (HTTP 500). The UI displays: ``Failed to create portfolio item.''\\ \hline
+Database error during portfolio item update & The service throws \texttt{FailedToUpdatePortfolioItemException} (HTTP 500). The UI displays: ``Failed to update portfolio item.''\\ \hline
+Database error during portfolio item deletion & The service throws \texttt{FailedToDeletePortfolioItemException} (HTTP 500). The UI displays: ``Failed to delete portfolio item.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The portfolio item is created, modified, or soft-deleted in the database.
+    \item Active portfolio items are displayed on the freelancer's public showcase page.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-28.09: Update Expert Profile
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Expert Profile}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Edit Expert Profile'' on the Expert Profile tab of the user detail page.\newline
+\textbf{Navigation path:} User Detail (\texttt{/admin/users/:id}) $\rightarrow$ Tab ``Expert Profile'' $\rightarrow$ Click ``Edit Expert Profile'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to edit the verified Expert profile of a user holding the Expert role directly from the admin page. The administrator can update display name, professional title, years of experience, expertise areas, educational degrees, professional certifications, corporate website, active visibility toggle, and biography. Unlike expert self-edits, administrative changes take effect immediately without requiring moderation queue review.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Edit Expert Profile'' button on the Expert Profile tab panel.
+    \item Modal dialog component (\texttt{EditExpertProfileButton}) containing structured fields: Display Name, Title, Years of Experience, Website, Active Toggle switch, Expertise tag input, Education tag input, Certifications tag input, and Biography textarea.
+    \item Action buttons: ``Cancel'' and ``Save Changes''.
+    \item Toast notification confirming successful update.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator modifies expert profile fields and submits the modal dialog.
+    \item The client sends an HTTP request: \texttt{PATCH /api/users/:id/expert-profile} with \texttt{AdminUpdateExpertProfileDto}.
+    \item \texttt{AdminExpertProfileController.update()} extracts \texttt{adminId} and calls \texttt{ExpertProfileService.updateByAdmin(userId, adminId, input)}.
+    \item The service verifies target user existence and confirms the user holds the \texttt{EXPERT} role; if not, throws \texttt{NotAnExpertAccountException} (HTTP 403).
+    \item The service sanitizes inputs: trims strings, deduplicates arrays case-insensitively, and calculates updated expert profile strength score.
+    \item \texttt{ExpertProfileRepository.updateDirect()} updates the expert profile, user profile display name, and bio directly in PostgreSQL.
+    \item The API returns HTTP 200 with \texttt{\{ message: 'Expert profile updated successfully' \}}.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the Expert Profile tab.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/tthuan/UpdateExpertProfile.png}{Update expert profile modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit expert profile'' with description ``Direct administrative edit for expert qualifications and showcase status.''.
+    \item Field: \textbf{Display name} (required, max 255 characters).
+    \item Field: \textbf{Professional title} (input, max 255 characters, optional).
+    \item Field: \textbf{Years of experience} (number input, 0 to 80 years).
+    \item Field: \textbf{Website URL} (URL format, optional).
+    \item Toggle switch: \textbf{Public visibility} (Switch controlling whether the expert appears on the public \texttt{/experts} directory).
+    \item Dynamic string lists: \textbf{Areas of expertise}, \textbf{Education}, and \textbf{Certifications} with ``Add entry'' buttons and badge tags.
+    \item Field: \textbf{Biography} (multi-line textarea, max 5000 characters).
+    \item Action buttons: ``Cancel'' and ``Save changes''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric user identifier in the URL path.\\ \hline
+displayName & Display name of the expert (required, string).\\ \hline
+title & Professional title or headline (optional, string or null).\\ \hline
+yearsOfExperience & Total years of industry experience (optional, integer 0--80 or null).\\ \hline
+expertise & Array of primary expertise domains (optional, string array).\\ \hline
+education & Array of academic degrees (optional, string array).\\ \hline
+certifications & Array of professional certifications (optional, string array).\\ \hline
+website & Personal or firm website URL (optional, string or null).\\ \hline
+isActive & Boolean switch controlling public showcase visibility.\\ \hline
+bio & Comprehensive biography summary (optional, string or null).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+displayName & String, required, 1 to 255 characters; whitespace trimmed.\\ \hline
+title & String, optional, max 255 characters, nullable.\\ \hline
+yearsOfExperience & Integer, optional, between 0 and 80 inclusive, nullable.\\ \hline
+expertise & Array of strings, max 20 items, each item max 100 characters.\\ \hline
+education & Array of strings, max 20 items, each item max 500 characters.\\ \hline
+certifications & Array of strings, max 20 items, each item max 500 characters.\\ \hline
+website & String, optional, valid URL format, max 255 characters, nullable.\\ \hline
+isActive & Boolean flag (true/false).\\ \hline
+bio & String, optional, max 5000 characters, nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-EXP-01: The target user must possess the Expert role; attempting to edit a non-expert user throws HTTP 403 Forbidden (\texttt{NOT\_AN\_EXPERT\_ACCOUNT}).
+    \item BR-EXP-02: Administrative updates apply directly to the database without requiring review approval or revision tickets.
+    \item BR-EXP-03: Years of experience must be an integer between 0 and 80.
+    \item BR-EXP-04: Credential arrays (expertise, education, certifications) are deduplicated case-insensitively and sanitized on submission.
+    \item BR-EXP-05: The \texttt{isActive} toggle controls whether the expert is searchable and listed on the public platform directory (\texttt{/experts}).
+    \item BR-EXP-06: The expert's profile strength score is recalculated automatically upon each update.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the Expert Profile tab and clicks ``Edit Expert Profile''.
+    \item The modal dialog opens pre-populated with current expert credentials and visibility status.
+    \item The administrator modifies desired fields and clicks ``Save changes''.
+    \item The client sends \texttt{PATCH /api/users/:id/expert-profile}.
+    \item The backend validates authorization, verifies Expert role assignment, and sanitizes input data.
+    \item The repository commits updates directly to the expert profile and updates profile strength.
+    \item The backend returns HTTP 200 with \texttt{\{ message: 'Expert profile updated successfully' \}}.
+    \item The frontend closes the dialog, shows a success toast, and refreshes the Expert Profile tab.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target user does not possess Expert role & The backend throws \texttt{NotAnExpertAccountException} (HTTP 403 Forbidden). The UI displays: ``User does not have an Expert role.''\\ \hline
+Display name is empty & Client-side validation and backend DTO return HTTP 400 Bad Request. The UI highlights display name as required.\\ \hline
+Years of experience exceeds 80 or is negative & Backend validation returns HTTP 400 Bad Request. The UI notifies that years must be between 0 and 80.\\ \hline
+Expertise array exceeds 20 items & Backend validation returns HTTP 400 Bad Request. The UI notifies of maximum expertise count.\\ \hline
+Website format is invalid & Backend validation returns HTTP 400 Bad Request. The UI indicates invalid URL format.\\ \hline
+User ID does not exist or profile is missing & The backend throws \texttt{ExpertProfileNotFoundException} (HTTP 404). The UI displays: ``Expert profile not found.''\\ \hline
+User lacks Admin privileges & The backend throws HTTP 403 Forbidden. Access is denied.\\ \hline
+Database update failure & The backend catches the Prisma exception and returns HTTP 500. The UI displays: ``Failed to update expert profile.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Confirmation message string (\texttt{Expert profile updated successfully}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The expert profile and linked user profile fields are updated directly in PostgreSQL.
+    \item The updated qualifications and public visibility status take effect immediately.
+    \item The Expert Profile tab reflects the changes.
+\end{enumerate}
