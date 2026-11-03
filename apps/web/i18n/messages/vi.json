@@ -2542,7 +2542,8 @@
       "disputes": "Tranh chấp",
       "bookmarks": "Đã lưu",
       "myProposals": "Đề xuất của tôi",
-      "savedSearches": "Tìm kiếm đã lưu"
+      "savedSearches": "Tìm kiếm đã lưu",
+      "payments": "Thanh toán"
     },
     "searchPlaceholder": "Tìm kiếm...",
     "contact": "Liên hệ",
@@ -2653,13 +2654,27 @@
       "positions": "Số lượng tuyển"
     },
     "proposal": {
-      "DRAFT": { "message": "Bạn có bản nháp đã lưu cho công việc này." },
-      "SUBMITTED": { "message": "Bạn đã gửi đề xuất cho công việc này." },
-      "INTERVIEWING": { "message": "Khách hàng đang phỏng vấn bạn cho công việc này." },
-      "HIRED": { "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu." },
-      "REJECTED": { "message": "Đề xuất của bạn cho công việc này không được chọn." },
-      "WITHDRAWN": { "message": "" },
-      "EXPIRED": { "message": "Đề xuất đã quá hạn vì khách hàng không phản hồi." }
+      "DRAFT": {
+        "message": "Bạn có bản nháp đã lưu cho công việc này."
+      },
+      "SUBMITTED": {
+        "message": "Bạn đã gửi đề xuất cho công việc này."
+      },
+      "INTERVIEWING": {
+        "message": "Khách hàng đang phỏng vấn bạn cho công việc này."
+      },
+      "HIRED": {
+        "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu."
+      },
+      "REJECTED": {
+        "message": "Đề xuất của bạn cho công việc này không được chọn."
+      },
+      "WITHDRAWN": {
+        "message": ""
+      },
+      "EXPIRED": {
+        "message": "Đề xuất đã quá hạn vì khách hàng không phản hồi."
+      }
     },
     "positionsBadge": "Đã tuyển {filled}/{required} vị trí",
     "positionsFilled": "Đã tuyển {filled}/{required}",

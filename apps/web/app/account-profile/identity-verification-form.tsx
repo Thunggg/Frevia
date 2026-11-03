@@ -65,7 +65,8 @@ export function IdentityVerificationForm({
       toastError({ message: t("selectFrontFirst") });
       return;
     }
-    if (!frames.length) {
+    const selfie = frames[0];
+    if (!frames.length || !selfie) {
       toastError({ message: t("livenessRequired") });
       return;
     }
@@ -75,7 +76,7 @@ export function IdentityVerificationForm({
         documentType,
         front,
         back,
-        selfie: frames[0],
+        selfie,
         liveness: frames,
       });
       const document = response.data;

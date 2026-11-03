@@ -2550,7 +2550,8 @@
       "disputes": "Disputes",
       "bookmarks": "Bookmarks",
       "myProposals": "My Proposals",
-      "savedSearches": "Saved searches"
+      "savedSearches": "Saved searches",
+      "payments": "Payments"
     },
     "searchPlaceholder": "Search products...",
     "contact": "Contact",
@@ -2661,13 +2662,27 @@
       "positions": "Positions"
     },
     "proposal": {
-      "DRAFT": { "message": "You have a saved draft for this job." },
-      "SUBMITTED": { "message": "You already submitted a proposal for this job." },
-      "INTERVIEWING": { "message": "The client is interviewing you for this job." },
-      "HIRED": { "message": "You have been hired for this job. Sign the contract to start." },
-      "REJECTED": { "message": "Your proposal for this job was not selected." },
-      "WITHDRAWN": { "message": "" },
-      "EXPIRED": { "message": "Your proposal expired because the client did not respond in time." }
+      "DRAFT": {
+        "message": "You have a saved draft for this job."
+      },
+      "SUBMITTED": {
+        "message": "You already submitted a proposal for this job."
+      },
+      "INTERVIEWING": {
+        "message": "The client is interviewing you for this job."
+      },
+      "HIRED": {
+        "message": "You have been hired for this job. Sign the contract to start."
+      },
+      "REJECTED": {
+        "message": "Your proposal for this job was not selected."
+      },
+      "WITHDRAWN": {
+        "message": ""
+      },
+      "EXPIRED": {
+        "message": "Your proposal expired because the client did not respond in time."
+      }
     },
     "positionsBadge": "{filled}/{required} positions filled",
     "positionsFilled": "{filled}/{required} hired",

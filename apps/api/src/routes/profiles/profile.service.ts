@@ -7,7 +7,10 @@ import {
 } from '@shared/types';
 import { ProfileRepository } from './profile.repo';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
-import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
+import {
+  AiCvAnalyzerService,
+  type AiCvExtractedSkill,
+} from '../../shared/services/ai-cv-analyzer.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { randomUUID } from 'crypto';
@@ -145,7 +148,7 @@ export class ProfileService {
       cv.cvFileName ?? 'cv.pdf',
     );
 
-    let extracted;
+    let extracted: AiCvExtractedSkill[];
     try {
       extracted = await this.aiCvAnalyzer.extractSkills(buffer, fileName);
     } catch {

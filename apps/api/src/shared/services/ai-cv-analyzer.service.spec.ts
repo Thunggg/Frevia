@@ -5,7 +5,7 @@ const pdfBuffer = Buffer.from('%PDF-1.4\nfake pdf');
 function mockFetchOnce(body: unknown, ok = true) {
   global.fetch = jest.fn().mockResolvedValue({
     ok,
-    json: async () => body,
+    json: () => Promise.resolve(body),
     status: ok ? 200 : 500,
   }) as unknown as typeof fetch;
 }
