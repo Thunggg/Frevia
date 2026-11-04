@@ -30,13 +30,11 @@ Descriptions** (1.2) và **Table Descriptions** (2.1) để dạng tiêu đề k
 | Mục | File | Nội dung |
 |---|---|---|
 | 1 | `sections/1.System_Design.tex` | **1.1 System Architecture** (3-tier + layered + bảng 31 route module + 2 hình), **1.2 Package Diagram** (+ hình + bảng *Package Descriptions*), **1.3** Assumptions & Risks, **1.4** Design Constraints, **1.5** Technology Stack (+ hình REST) |
-| 2 | `sections/2.Database_Design.tex` | **2.1 Table Relationships** (9 nhóm bảng), nhãn **Table Descriptions** (64 bảng Prisma: mô tả + *Primary keys* + *Foreign keys*) + ERD (`images/database/erd.pdf`) |
+| 2 | `sections/2.Database_Design.tex` | **2.1 Table Relationships** (9 nhóm bảng), nhãn **Table Descriptions** (64 bảng Prisma: mô tả + *Primary keys* + *Foreign keys*), **2.2 Module Entity--Relationship Diagrams** (ERD toàn bộ + ERD1 … ERD22, `images/database/`) |
 | 3 | `sections/3.Detailed_Design.tex` | **Detailed Design** — điều hướng vào `sections/<member>/2/sprint<N>.tex` |
 | 3.1 | `sections/kvy/2/sprint1.tex` | **Sprint 1 — Forum Management (UC-14)**: 1 class diagram + 17 sequence diagram |
 | 3.7 | `sections/kvy/2/sprint2.tex` | **Sprint 2 — Manage Conversation (UC-27)**: 1 class diagram + 8 sequence diagram |
 | 3.13 | `sections/kvy/2/sprint3.tex` | **Sprint 3 — Manage Moderation (UC-34), Manage ID Verification (UC-35), Manage Forum Trash (UC-36)**: mỗi module 1 class diagram + các sequence diagram |
-| 4 | `sections/4.Class_Specification.tex` | Quy ước class, class spec module forum, entity catalog (64 model Prisma) — chương bổ sung ngoài sample |
-
 Thứ tự và cách đánh số chương bám theo `sample/Report4_Software Design Document.docx`
 (1 System Design → 1.1 / 1.2, 2 Database Design, 3 Detailed Design → 3.x.1 Class Diagram,
 3.x.2/.3 … sequence diagram). Phần Assumptions, Design Constraints, Technology Stack
@@ -131,7 +129,36 @@ Muốn sửa nội dung/chữ của hình thì sửa trong `tools/arch_diagrams.
 hàm, toạ độ tính theo lưới 1000 đơn vị) rồi chạy lại hai lệnh trên. Không sửa trực tiếp
 file `.svg`/`.pdf` vì lần sinh sau sẽ ghi đè.
 
-`images/database/erd.pdf` là ERD toàn bộ schema, copy từ `Report 3/image/ERD/ERD-ALL.drawio.pdf`.
+### ERD (chương 2)
+
+`images/database/` chứa ERD toàn bộ schema (`erd`) và 22 ERD theo module (`erd-01` …
+`erd-22`, tương ứng ERD1 … ERD22 của Report 3). Nguồn là 23 file `.drawio` trong
+`database_design/` ở gốc repo, sinh tự động từ `apps/api/prisma/schema.prisma` bằng
+`database_design/gen_erd.js` (đọc model/`@relation` của Prisma rồi dựng layout, không
+sửa tay file `.drawio`):
+
+```powershell
+# 0. (tuỳ chọn) sinh lại 23 file .drawio từ schema.prisma -- chạy ở gốc repo
+node database_design/gen_erd.js
+
+# 1. draw.io -> SVG (theme sáng, cắt sát nội dung)
+$exe = "C:\Program Files\draw.io\draw.io.exe"
+& $exe -x -f svg --theme light --size diagram -o "docs\Report 4\images\database\erd.svg" "database_design\ERD-ALL.drawio"
+1..22 | ForEach-Object {
+    $n = $_.ToString("00")
+    & $exe -x -f svg --theme light --size diagram `
+        -o "docs\Report 4\images\database\erd-$n.svg" "database_design\ERD-ERD$($_.ToString()).drawio"
+}
+
+# 2. SVG -> PDF vector (Chrome headless, đúng kích thước, không lề)
+cd "docs\Report 4"
+node tools/svg2pdf.js (Get-ChildItem "images\database" -Filter *.svg | ForEach-Object FullName)
+```
+
+Trang PDF có kích thước đúng bằng SVG (px × 0,75 = pt), nên hình chỉ cần đặt
+`width=0.95\textwidth` trong LaTeX mà không bị lệch tỉ lệ. ERD dùng ký hiệu chân vịt
+(crow's foot) ở phía nhiều và gạch đơn ở phía một; mỗi bảng là một khung không viền,
+cột khoá được đánh dấu `PK` / `FK`.
 
 ## Thêm sprint của thành viên khác
 

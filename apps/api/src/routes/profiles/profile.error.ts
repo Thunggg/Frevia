@@ -36,9 +36,19 @@ export const CvFileRequiredException = () =>
     { message: 'Please select a CV file.', path: 'file' },
   ]);
 
+export const CvFileTypeException = () =>
+  new BadRequestException([
+    { message: 'Only PDF CV files are accepted.', path: 'file' },
+  ]);
+
+export const CvFileTooLargeException = () =>
+  new BadRequestException([
+    { message: 'The CV must be 10 MB or smaller.', path: 'file' },
+  ]);
+
 export const CvFileInvalidException = () =>
   new BadRequestException([
-    { message: 'Only PDF CV files up to 10 MB are accepted.', path: 'file' },
+    { message: 'The selected file is not a valid PDF.', path: 'file' },
   ]);
 
 export const CvNotFoundException = () =>
@@ -51,4 +61,19 @@ export const CvAiUnavailableException = () =>
         'The AI CV analysis service is unavailable. Please try again later.',
       path: 'cv',
     },
+  ]);
+
+export const CvAnalysisNotFoundException = () =>
+  new NotFoundException([
+    { message: ProfileMessage.CV_ANALYSIS_NOT_FOUND, path: 'analysisId' },
+  ]);
+
+export const CvAnalysisNotPendingException = () =>
+  new BadRequestException([
+    { message: ProfileMessage.CV_ANALYSIS_NOT_PENDING, path: 'analysisId' },
+  ]);
+
+export const CvAnalysisStaleException = () =>
+  new BadRequestException([
+    { message: ProfileMessage.CV_ANALYSIS_STALE, path: 'analysisId' },
   ]);

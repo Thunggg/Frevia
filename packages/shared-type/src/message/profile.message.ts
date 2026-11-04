@@ -14,4 +14,11 @@ export const ProfileMessage = {
   SKILL_DELETE_FORBIDDEN: "You can only delete your own skills.",
   PROFILE_UPDATED: "Success.ProfileUpdated",
   PROFILE_REVISION_SUBMITTED: "Success.ProfileRevisionSubmitted",
+  CV_ANALYSIS_NOT_FOUND: "CV analysis draft not found.",
+  CV_ANALYSIS_NOT_PENDING:
+    "This CV analysis has already been confirmed or discarded.",
+  CV_ANALYSIS_STALE:
+    "This analysis is outdated because the CV has changed. Please analyze the CV again.",
+  CV_ANALYSIS_CONFIRMED: "Success.CvAnalysisConfirmed",
+  CV_ANALYSIS_DISCARDED: "Success.CvAnalysisDiscarded",
 } as const;

@@ -112,7 +112,7 @@ export class JobCategoriesAdminService {
     }
   }
 
-  // Khôi phục danh mục đã xoá
+  // Khôi phục danh mục đã xoá (UC-46.06)
   async restoreJobCategory(
     id: number,
   ): Promise<JobCategoryAdminDetailResponseType> {

@@ -1,0 +1,703 @@
+% =================================================================
+% Sprint 5 - Job Category Management (tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Job Category Management}
+
+% -----------------------------------------------------------------
+% UC-46.01: View Job Category List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Category List}
+
+\fnhead{Function Trigger}
+An administrator navigates to the Job Categories management page from the admin dashboard sidebar navigation.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories (\texttt{/admin/job-categories}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to retrieve and manage the list of job categories in the system, supporting paginated navigation, multi-field search, operational status filtering (\texttt{ACTIVE} or \texttt{INACTIVE}), soft-deletion status filtering, and sorting.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job category management screen at \texttt{/admin/job-categories}.
+    \item Filter bar component (\texttt{JobCategoriesFilterBar}) with search box, status dropdown (All, Active, Inactive), soft-delete filter dropdown (All, Active Only, Deleted Only), sort column dropdown (\texttt{id}, \texttt{createdAt}, \texttt{name}), and sort direction toggle.
+    \item Data table component (\texttt{JobCategoriesTable}) rendering category rows, slugs, descriptions, operational status badges, active job count badges, created dates, and action controls.
+    \item Standard pagination footer displaying total category count and page selection buttons.
+    \item ``Create Job Category'' action button in the page header.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client initiates an HTTP request: \texttt{GET /api/admin/job-categories} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{status}, \texttt{deleted}, \texttt{sortBy}, \texttt{sortOrder}).
+    \item The backend \texttt{AuthGuard} validates the administrator's JWT token, and \texttt{PermissionGuard} verifies administrative route authorization.
+    \item \texttt{JobCategoriesAdminController.listJobCategories()} parses query parameters via \texttt{JobCategoryAdminQueryDto}.
+    \item \texttt{JobCategoriesAdminRepository.listJobCategories()} queries \texttt{prisma.jobCategory.findMany} with:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Multi-field case-insensitive search matching on \texttt{name}, \texttt{slug}, or \texttt{description} if \texttt{search} is provided.
+            \item Exact filter on \texttt{status} (\texttt{ACTIVE} or \texttt{INACTIVE}) if selected.
+            \item Soft-deletion filter on \texttt{deletedAt}: if \texttt{deleted === 'true'}, filters \texttt{deletedAt != null}; if \texttt{deleted === 'false'}, filters \texttt{deletedAt = null}.
+            \item Aggregated job count via \texttt{\_count: \{ select: \{ jobs: \{ where: \{ job: \{ deletedAt: null \} \} \} \} \}}, counting only non-deleted active jobs linked via \texttt{JobJobCategory}.
+            \item Sorting on the requested field (\texttt{id}, \texttt{createdAt}, or \texttt{name}) in specified direction (\texttt{asc} or \texttt{desc}).
+        \end{itemize}
+    \item Executes \texttt{prisma.jobCategory.count()} in parallel to determine total matching records.
+    \item Returns HTTP 200 with the array of job categories and pagination metadata.
+    \item The frontend renders the category table, badges, and contextual action menus.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/ViewJobCategoryList.png}{Job category list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Page header displaying ``Job Categories'' title with folder tree icon, total count summary, and ``Create Job Category'' button.
+    \item Filter bar including search box, status dropdown (All, Active, Inactive), deleted status dropdown (All, Active, Deleted), and sort direction buttons.
+    \item Table columns: \textbf{Name} (with clickable detail link), \textbf{Slug}, \textbf{Description}, \textbf{Status} (Green ``Active'' or Gray ``Inactive''), \textbf{In Use} (Badge showing count of active jobs using this category), \textbf{Created Date}, and \textbf{Actions}.
+    \item Contextual action buttons: Update (pencil) and Delete (trash) for active categories; Restore (rotate-ccw) for deleted categories.
+    \item Pagination footer indicating total count and page navigation controls.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum records returned per page (defaults to 10).\\ \hline
+search & Optional text query matching name, slug, or description.\\ \hline
+status & Optional operational status filter (\texttt{ACTIVE} or \texttt{INACTIVE}).\\ \hline
+deleted & Optional soft-deletion filter: \texttt{"true"} (deleted only) or \texttt{"false"} (active only).\\ \hline
+sortBy & Sort column field (\texttt{id}, \texttt{createdAt}, or \texttt{name}; defaults to \texttt{id}).\\ \hline
+sortOrder & Sort direction sequence (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters; whitespace trimmed.\\ \hline
+status & Optional string, must strictly match one of: \texttt{ACTIVE}, \texttt{INACTIVE}.\\ \hline
+deleted & Optional string, must strictly match one of: \texttt{"true"}, \texttt{"false"}.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{createdAt}, \texttt{name}.\\ \hline
+sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-01: Admin Authorization: Access to the administrative job category catalog is strictly restricted to authenticated administrators.
+    \item BR-JCAT-02: Multi-Field Case-Insensitive Search: Searches across \texttt{name}, \texttt{slug}, and \texttt{description} case-insensitively using partial substring matching.
+    \item BR-JCAT-03: Active Job Count Link Filtering: Counts only jobs that are not soft-deleted (\texttt{job.deletedAt = null}) linked via the \texttt{JobJobCategory} relation table.
+    \item BR-JCAT-04: Operational Status and Soft-Delete Filtering: Supports orthogonal filtering by operational state (\texttt{ACTIVE} or \texttt{INACTIVE}) and lifecycle deletion state (\texttt{deleted=true} or \texttt{deleted=false}).
+    \item BR-JCAT-05: Contextual Action Buttons: Active categories display green badges with Edit and Delete action buttons; soft-deleted categories display red badges with a Restore button.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator opens the \texttt{/admin/job-categories} page from the admin dashboard.
+    \item The client issues \texttt{GET /api/admin/job-categories} with default query parameters.
+    \item The backend validates administrative token and route permissions.
+    \item The repository queries job categories, counting active linked jobs and total matching records.
+    \item The server returns HTTP 200 with the categories array and pagination metadata.
+    \item The frontend renders the job category table and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The backend throws HTTP 403 Forbidden. The UI displays: ``You do not have permission to access this page.''\\ \hline
+Invalid pagination parameter values & The DTO validator rejects non-integer values with HTTP 400 Bad Request. The client defaults to page 1.\\ \hline
+Invalid operational status parameter & The validator rejects unknown status values with HTTP 400 Bad Request. The UI clears invalid status filter.\\ \hline
+Invalid deleted filter parameter value & The validator rejects unknown values with HTTP 400 Bad Request. The UI clears invalid filter.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoadJobCategoryListException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryList''.\\ \hline
+No categories match search or status & The query returns \texttt{jobCategories: []} and \texttt{total: 0}. The table displays an empty placeholder: ``No job categories found.''\\ \hline
+Network connection timeout & The client displays an error toast notification and offers a reload button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+jobCategories & Array of category objects: \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{status}, \texttt{deletedAt}, \texttt{createdAt}, \texttt{updatedAt}, \texttt{jobCount}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current limit per page.\\ \hline
+pagination.total & Total job categories matching the query.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator inspects the job category catalog, views job usage metrics, and can initiate creation, inspection, editing, deletion, or restoration.
+
+% -----------------------------------------------------------------
+% UC-46.02: View Job Category Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Category Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks on a job category row or name in the category list, navigating to \texttt{/admin/job-categories/[id]}.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories $\rightarrow$ Category Details (\texttt{/admin/job-categories/[id]}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view comprehensive metadata of a specific job category, including its generated slug, full description, operational status, total count of active linked jobs, and a list of recently associated active jobs.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job category detail screen at \texttt{/admin/job-categories/[id]}.
+    \item Navigation back button (``Back to Job Categories'').
+    \item Header card displaying category name, slug, ID, status badge (\texttt{ACTIVE} or \texttt{INACTIVE}), deleted badge (if applicable), and action buttons (\texttt{JobCategoryActions}).
+    \item Description card displaying the full category description or a placeholder if empty.
+    \item Metrics cards displaying total jobs using this category, creation timestamp, and last updated timestamp.
+    \item Related jobs data table displaying up to 10 latest active jobs linked to this category (columns: ID, Title, Slug, Job Status, and Created Date).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends an HTTP request: \texttt{GET /api/admin/job-categories/:id}.
+    \item The backend validates administrative token and route permissions.
+    \item \texttt{JobCategoriesAdminController.getJobCategoryDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{JobCategoriesAdminRepository.getJobCategoryDetail(id)} queries \texttt{prisma.jobCategory.findUnique} by \texttt{id}.
+    \item If the category record is not found, the service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404).
+    \item The repository queries \texttt{prisma.jobJobCategory.findMany} where \texttt{categoryId = id} and \texttt{job.deletedAt = null}, ordered by \texttt{job.createdAt desc}, taking up to 10 records.
+    \item Returns HTTP 200 with the category detail object including \texttt{jobCount} and \texttt{jobs} array.
+    \item The frontend renders the comprehensive detail layout, metric cards, and associated jobs table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/ViewJobCategoryDetail.png}{Job category detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Navigation header with ``Back to Job Categories'' button, category name with folder tree icon, and status badge.
+    \item Action toolbar containing Edit (pencil) and Delete (trash) buttons if active, or Restore (rotate-ccw) button if soft-deleted.
+    \item Summary card showing: \textbf{Slug} (e.g., \texttt{software-development}), \textbf{Status} (Active or Inactive), and \textbf{ID}.
+    \item Description card displaying the category overview text.
+    \item Metric cards: \textbf{Jobs Using This Category} (large number with briefcase icon), \textbf{Created Date}, and \textbf{Last Updated Date}.
+    \item Associated Jobs table: Lists up to 10 latest active jobs with ID badge, Title, Slug, Status badge, and Created Date.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the job category (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-06: Identifier Format Validation: The URL path parameter \texttt{id} must parse strictly as a valid positive integer.
+    \item BR-JCAT-07: Job Category Existence Check: The targeted job category must exist in the database; returns HTTP 404 (\texttt{Error.JobCategoryNotFound}) if missing.
+    \item BR-JCAT-08: Associated Job Retrieval Limit: Returns up to 10 latest non-deleted active jobs linked to this category through \texttt{JobJobCategory}.
+    \item BR-JCAT-09: Contextual Action Toolbar: Shows Edit and Delete actions if category is active; shows Restore action if category is soft-deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to \texttt{/admin/job-categories/[id]}.
+    \item The client issues \texttt{GET /api/admin/job-categories/:id}.
+    \item The backend validates administrative authentication and permissions.
+    \item The repository queries the category entity and fetches related active jobs.
+    \item The server returns HTTP 200 with the category detail object and related jobs.
+    \item The frontend renders the comprehensive job category detail page and associated jobs table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid category ID format (e.g., non-numeric) & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI displays an ``Invalid Category ID'' message and back button.\\ \hline
+Category ID does not exist in database & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI renders a ``Category Not Found'' screen with navigation back to catalog.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoadJobCategoryDetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryDetail''.\\ \hline
+Category description is empty or null & The UI gracefully displays ``No description provided'' in muted text.\\ \hline
+No jobs associated with this category & The associated jobs table displays an empty row stating: ``No jobs found in this category.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric identifier of the job category.\\ \hline
+name & Category name string.\\ \hline
+slug & Generated URL-friendly slug.\\ \hline
+description & Detailed description text or null.\\ \hline
+status & Operational status enum (\texttt{ACTIVE} or \texttt{INACTIVE}).\\ \hline
+deletedAt & Soft-deletion timestamp or null.\\ \hline
+createdAt & Timestamp of category creation.\\ \hline
+updatedAt & Timestamp of last modification.\\ \hline
+jobCount & Total count of active jobs associated with this category.\\ \hline
+jobs & Array of up to 10 latest active jobs: \texttt{id}, \texttt{title}, \texttt{slug}, \texttt{status}, \texttt{deletedAt}, \texttt{createdAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator reviews category details, operational status, and associated jobs, and can initiate editing, deletion, or restoration.
+
+% -----------------------------------------------------------------
+% UC-46.03: Create Job Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Job Category}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create Job Category'' button on the category catalog page (\texttt{/admin/job-categories}), opening the creation dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories $\rightarrow$ [Create Job Category Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to register a new job category by providing its name, optional description, and operational status, with automated unique slug generation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job category creation dialog modal (\texttt{CreateJobCategoryDialog}).
+    \item Text input for Category Name (mandatory).
+    \item Textarea input for Description (optional).
+    \item Select dropdown for Status (\texttt{ACTIVE} or \texttt{INACTIVE}, defaults to \texttt{ACTIVE}).
+    \item Action buttons: ``Cancel'' and ``Create Job Category'' submit button with loading indicator.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client submits an HTTP request: \texttt{POST /api/admin/job-categories} with JSON payload conforming to \texttt{AdminCreateJobCategoryBodySchema}.
+    \item \texttt{JobCategoriesAdminRepository.createJobCategory()}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Strips leading and trailing whitespace from \texttt{name}.
+            \item Queries \texttt{prisma.jobCategory.findFirst} to check if an active category (\texttt{deletedAt = null}) with the same name exists (case-insensitive mode).
+            \item If an active duplicate exists, throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409).
+            \item Generates a unique slug via \texttt{generateUniqueSlug()}: strips Vietnamese diacritics, converts to lowercase, replaces non-alphanumeric characters with hyphens, and appends sequential numeric suffixes (\texttt{-2}, \texttt{-3}) if a slug collision occurs.
+            \item Inserts the category record via \texttt{prisma.jobCategory.create()}.
+            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{JobCategoryNameAlreadyExistsException}.
+        \end{itemize}
+    \item Returns HTTP 201 with the created category entity.
+    \item The frontend displays a success toast, closes the modal, and refreshes the category table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/CreateJobCategory.png}{Create job category modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog header with ``Create Job Category'' title and descriptive prompt.
+    \item Form fields: \textbf{Name} (Required input field with asterisk), \textbf{Description} (Textarea), and \textbf{Status} (Select dropdown: Active / Inactive).
+    \item Dialog footer with ``Cancel'' button and green ``Create Job Category'' button with loading spinner when submitting.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+name & Job category name string (mandatory).\\ \hline
+description & Optional text description of the category.\\ \hline
+status & Operational status enum (\texttt{ACTIVE} or \texttt{INACTIVE}, defaults to \texttt{ACTIVE}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+name & String, trimmed, min 1 char (\texttt{Error.JobCategoryNameRequired}), max 100 chars (\texttt{Error.JobCategoryNameTooLong}).\\ \hline
+description & Optional string, max 500 chars (\texttt{Error.JobCategoryDescriptionTooLong}); nullable.\\ \hline
+status & Optional enum, must strictly match one of: \texttt{ACTIVE}, \texttt{INACTIVE} (defaults to \texttt{ACTIVE}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-10: Name Uniqueness Among Active Categories: Job category name must be unique among active categories (\texttt{deletedAt = null}), evaluated case-insensitively; throws HTTP 409 (\texttt{Error.JobCategoryNameAlreadyExists}) if conflict occurs.
+    \item BR-JCAT-11: Automated Unique Slug Generation: Automatically generates a URL-friendly slug with diacritics stripping, hyphen replacement, and automatic numeric collision resolution (\texttt{-2}, \texttt{-3}).
+    \item BR-JCAT-12: Default Operational Status: Newly created job categories default to \texttt{ACTIVE} status unless explicitly set to \texttt{INACTIVE}.
+    \item BR-JCAT-13: Concurrency Race-Condition Guard: Catches database \texttt{P2002} unique constraint violations and converts them gracefully to HTTP 409 conflict errors.
+    \item BR-JCAT-14: Modal Reset and Table Invalidation: Clears input values, closes modal dialog, and triggers Next.js router refresh upon success.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Create Job Category'' on the categories catalog page.
+    \item The dialog modal opens with empty input fields and status set to Active.
+    \item The administrator enters the category name, optional description, and chooses operational status.
+    \item The administrator clicks ``Create Job Category''.
+    \item The client submits \texttt{POST /api/admin/job-categories}.
+    \item The backend validates data, checks for duplicate active names, generates a slug, and inserts the record.
+    \item The server returns HTTP 201 with the created category entity.
+    \item The client displays a success toast notification, closes the modal, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing mandatory category name & Form validation blocks submission; backend throws HTTP 400 with \texttt{Error.JobCategoryNameRequired}.\\ \hline
+Category name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryNameTooLong}). The UI highlights the name field.\\ \hline
+Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryDescriptionTooLong}). The UI highlights the description field.\\ \hline
+Active category with identical name already exists & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Concurrent request creates duplicate name & Database catches \texttt{P2002} constraint violation; backend converts to HTTP 409 Conflict. The UI alerts the administrator.\\ \hline
+Invalid status enum parameter & Validator rejects invalid status strings with HTTP 400 Bad Request. The UI flags the status field.\\ \hline
+Unauthorized or unauthenticated request & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database insert failure & The service throws \texttt{FailedToCreateJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToCreateJobCategory''.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Auto-generated unique identifier of the created category.\\ \hline
+name & Stored category name string.\\ \hline
+slug & Auto-generated unique slug.\\ \hline
+description & Stored description string or null.\\ \hline
+status & Operational status (\texttt{ACTIVE} or \texttt{INACTIVE}).\\ \hline
+deletedAt & Null for newly created categories.\\ \hline
+createdAt & Timestamp of creation.\\ \hline
+updatedAt & Timestamp of creation.\\ \hline
+jobCount & Zero for newly created categories.\\ \hline
+jobs & Empty array for newly created categories.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent A new job category record is stored in the database, indexed for search, and immediately available for classification of new job postings.
+
+% -----------------------------------------------------------------
+% UC-46.04: Update Job Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Job Category}
+
+\fnhead{Function Trigger}
+An administrator clicks the Edit icon (pencil) on a category table row or detail page, opening the category edit dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories $\rightarrow$ [Edit Action Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to modify the name, description, and operational status (\texttt{ACTIVE} or \texttt{INACTIVE}) of an existing job category, automatically synchronizing its unique slug if the name is altered.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job category update dialog modal (\texttt{UpdateJobCategoryDialog}) pre-populated with current category name, description, and status.
+    \item Text input for Category Name.
+    \item Textarea input for Description.
+    \item Select dropdown for Status (\texttt{ACTIVE} or \texttt{INACTIVE}).
+    \item Action buttons: ``Cancel'' and ``Save Changes'' submit button with loading indicator.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client pre-fills the form with the category's current values.
+    \item The client issues an HTTP request: \texttt{PATCH /api/admin/job-categories/:id} with updated fields.
+    \item \texttt{JobCategoriesAdminRepository.updateJobCategory(id, data)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategoryAdminNotFoundException} if missing or soft-deleted (soft-deleted categories must be restored before editing).
+            \item If \texttt{name} is modified, checks if another active category (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{JobCategoryNameAlreadyExistsException} if conflict exists.
+            \item If \texttt{name} is modified, regenerates the unique slug via \texttt{generateUniqueSlug()}.
+            \item Updates the record in \texttt{prisma.jobCategory.update()}. If description is empty string, converts it to \texttt{null}.
+        \end{itemize}
+    \item The backend returns HTTP 200 with the updated category entity.
+    \item The frontend displays a success toast, closes the modal, and refreshes the view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/UpdateJobCategory.png}{Update job category modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog header with ``Edit Job Category'' title.
+    \item Form pre-populated with current values: \textbf{Name} (Text input), \textbf{Description} (Textarea), and \textbf{Status} (Select dropdown: Active / Inactive).
+    \item Footer action buttons: ``Cancel'' and ``Save Changes'' button with pending spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the category (passed in URL path).\\ \hline
+name & Updated category name string (optional).\\ \hline
+description & Updated description string or null (optional).\\ \hline
+status & Updated operational status enum (\texttt{ACTIVE} or \texttt{INACTIVE}, optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+name & Optional string, trimmed, min 1 char (\texttt{Error.JobCategoryNameRequired}), max 100 chars (\texttt{Error.JobCategoryNameTooLong}).\\ \hline
+description & Optional string, max 500 chars (\texttt{Error.JobCategoryDescriptionTooLong}); nullable.\\ \hline
+status & Optional enum, must strictly match one of: \texttt{ACTIVE}, \texttt{INACTIVE}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-15: Target Category Active State Requirement: Only active categories (\texttt{deletedAt = null}) can be updated; soft-deleted categories must be restored first.
+    \item BR-JCAT-16: Name Conflict Detection on Modification: If name is altered, verifies no other active category shares the same case-insensitive name; throws HTTP 409 if conflict detected.
+    \item BR-JCAT-17: Automatic Slug Regeneration: If the name is changed, automatically regenerates a new unique URL-friendly slug based on the updated name.
+    \item BR-JCAT-18: Status Transition Freedom: Administrators can freely switch status between \texttt{ACTIVE} and \texttt{INACTIVE} at any time to temporarily suspend new job associations without deleting data.
+    \item BR-JCAT-19: Synchronized UI Updates: Closes modal dialog, triggers success toast, and refreshes category table or detail screen upon completion.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks the Edit icon on a category row or detail page.
+    \item The dialog modal opens pre-filled with the current category name, description, and status.
+    \item The administrator modifies the name, description, or status.
+    \item The administrator clicks ``Save Changes''.
+    \item The client submits \texttt{PATCH /api/admin/job-categories/:id}.
+    \item The backend validates fields, checks for duplicate active names, regenerates slug if name changed, and updates the database.
+    \item The backend returns HTTP 200 with the updated category entity.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target category does not exist or is soft-deleted & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Updated name conflicts with active category & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Name is set to empty or whitespace & Form validation blocks submission; backend returns HTTP 400 Bad Request with \texttt{Error.JobCategoryNameRequired}.\\ \hline
+Name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryNameTooLong}). The UI highlights the name field.\\ \hline
+Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryDescriptionTooLong}). The UI highlights the description field.\\ \hline
+Unauthorized or unauthenticated session & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database update failure & The service throws \texttt{FailedToUpdateJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToUpdateJobCategory''.\\ \hline
+Network timeout & The client catches the network error, displays an error toast, and preserves dialog state.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the updated category.\\ \hline
+name & Updated category name.\\ \hline
+slug & Updated or preserved unique slug.\\ \hline
+description & Updated description or null.\\ \hline
+status & Updated operational status (\texttt{ACTIVE} or \texttt{INACTIVE}).\\ \hline
+deletedAt & Preserved soft-deletion status.\\ \hline
+updatedAt & Updated modification timestamp.\\ \hline
+jobCount & Count of active jobs using this category.\\ \hline
+jobs & Array of related jobs.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The category record and its generated slug are updated in the database, with immediate propagation across search queries and job submission forms.
+
+% -----------------------------------------------------------------
+% UC-46.05: Delete Job Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Job Category}
+
+\fnhead{Function Trigger}
+An administrator clicks the Delete action icon (trash can) on a category table row or detail page, opening the deletion confirmation dialog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories $\rightarrow$ [Delete Action Icon].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to soft-delete a job category after verifying that no active jobs are currently associated with it, preventing accidental breaking of active job listings.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete job category confirmation dialog (\texttt{DeleteJobCategoryDialog}) powered by Shadcn \texttt{AlertDialog}.
+    \item Header displaying category name and warning icon if currently utilized by jobs.
+    \item Dependent jobs warning banner if \texttt{jobCount > 0}, displaying exact number of linked active jobs.
+    \item In-dialog conflict notification banner when HTTP 409 occurs, suggesting the administrator change the category status to \texttt{INACTIVE} instead.
+    \item Action buttons: ``Cancel'' and destructive ``Delete'' button with pending spinner.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The administrator confirms deletion in the dialog.
+    \item The client sends an HTTP request: \texttt{DELETE /api/admin/job-categories/:id}.
+    \item \texttt{JobCategoriesAdminController.deleteJobCategory(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{JobCategoriesAdminRepository.deleteJobCategory(id)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategoryAdminNotFoundException} if missing.
+            \item Checks count of active associated jobs: \texttt{\_count: \{ select: \{ jobs: \{ where: \{ job: \{ deletedAt: null \} \} \} \} \}}.
+            \item If \texttt{\_count.jobs > 0}, throws \texttt{JobCategoryHasJobsException} (HTTP 409 Conflict with message \texttt{Error.JobCategoryHasJobs}). Deletion is strictly blocked.
+            \item If \texttt{\_count.jobs === 0}, executes soft delete: \texttt{prisma.jobCategory.update(\{ where: \{ id \}, data: \{ deletedAt: new Date() \} \})}.
+        \end{itemize}
+    \item The backend returns HTTP 200 with \texttt{\{ message: "Success.JobCategoryDeleted" \}}.
+    \item The frontend shows a success toast, closes the dialog, and refreshes the category table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/DeleteJobCategory.png}{Delete job category confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog header with ``Delete Job Category'' title and target category name.
+    \item Warning alert banner (when \texttt{jobCount > 0}) stating: ``Category in use: This category is currently used by X jobs.''
+    \item Inline conflict callout (when deletion blocked) explaining that active jobs prevent deletion and advising switching status to Inactive instead.
+    \item Soft-deletion explanation text stating that the category can be restored at any time.
+    \item Footer action buttons: ``Cancel'' button and red ``Delete'' button with loading spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the category to delete (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-20: Active Job Dependency Deletion Guard: Deleting a job category is strictly blocked if one or more active jobs are linked to it (\texttt{\_count.jobs > 0}); the system throws HTTP 409 (\texttt{Error.JobCategoryHasJobs}).
+    \item BR-JCAT-21: Inactive Status Recommendation: If active jobs are attached, the UI advises administrators to set category status to \texttt{INACTIVE} instead of deleting it.
+    \item BR-JCAT-22: Soft-Deletion Lifecycle: Categories without active jobs are soft-deleted by setting \texttt{deletedAt = new Date()} without purging relational records.
+    \item BR-JCAT-23: Explicit Confirmation Modal: Deletion requires explicit confirmation via modal alert dialog to prevent accidental catalog damage.
+    \item BR-JCAT-24: Immediate List Synchronization: Purges the category from default active views immediately upon successful soft deletion.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks the Delete icon on a category table row or detail screen.
+    \item The deletion confirmation dialog appears, displaying job usage warning if applicable.
+    \item The administrator reviews the warning and confirms by clicking ``Delete''.
+    \item The client issues \texttt{DELETE /api/admin/job-categories/:id}.
+    \item The backend validates administrative authentication and checks for active linked jobs.
+    \item Since active job count is 0, the repository updates \texttt{deletedAt = new Date()}.
+    \item The backend returns HTTP 200 with \texttt{\{ message: "Success.JobCategoryDeleted" \}}.
+    \item The frontend displays a success toast, closes the dialog, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Category has active linked jobs & The service throws \texttt{JobCategoryHasJobsException} (HTTP 409 Conflict). The dialog renders an inline callout advising switching to Inactive.\\ \hline
+Target category does not exist & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Category is already soft-deleted & The service throws HTTP 404. The UI displays that the category is no longer active.\\ \hline
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid category ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
+Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
+Database update failure & The service throws \texttt{FailedToDeleteJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToDeleteJobCategory''.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Success.JobCategoryDeleted}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The category is marked as soft-deleted (\texttt{deletedAt != null}), hidden from default active listings, and can be restored if needed.
+
+% -----------------------------------------------------------------
+% UC-46.06: Restore Job Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Restore Job Category}
+
+\fnhead{Function Trigger}
+An administrator viewing soft-deleted job categories (via the ``Deleted'' status filter or detail page) clicks the Restore icon (rotate-ccw), opening the restore confirmation dialog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Job Taxonomy $\rightarrow$ Job Categories $\rightarrow$ [Restore Action Icon].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to restore a previously soft-deleted job category by resetting its \texttt{deletedAt} timestamp to null, making it active and selectable again across the platform.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Restore job category confirmation dialog (\texttt{RestoreJobCategoryDialog}) powered by Shadcn \texttt{AlertDialog}.
+    \item Header displaying ``Restore Job Category'' title and target category name.
+    \item Descriptive body explaining that restoring will make the category available again for job classification.
+    \item Action buttons: ``Cancel'' and green ``Restore'' button with pending spinner.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The administrator confirms restoration in the dialog.
+    \item The client sends an HTTP request: \texttt{PATCH /api/admin/job-categories/:id/restore}.
+    \item \texttt{JobCategoriesAdminController.restoreJobCategory(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{JobCategoriesAdminRepository.restoreJobCategory(id)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Finds the category verifying that \texttt{deletedAt != null}; throws \texttt{JobCategoryAdminNotFoundException} if missing or already active.
+            \item Checks if another active category has been created with the same name during the deletion period (\texttt{deletedAt = null, id != currentId, name equals category.name}).
+            \item If a name collision occurs, throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409).
+            \item Sets \texttt{deletedAt = null} via \texttt{prisma.jobCategory.updateMany(\{ where: \{ id, deletedAt: \{ not: null \} \}, data: \{ deletedAt: null \} \})}.
+            \item Queries the updated category entity with job count aggregation.
+        \end{itemize}
+    \item The backend returns HTTP 200 with the restored category entity.
+    \item The frontend shows a success toast notification, closes the dialog, and refreshes the view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/tthuan/RestoreJobCategory.png}{Restore job category confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog header displaying ``Restore Job Category'' title with rotate-counterclockwise icon.
+    \item Confirmation description stating: ``Are you sure you want to restore job category [Category Name]? It will become active and available for users again.''
+    \item Footer controls: ``Cancel'' button and green ``Restore'' button with loading spinner when executing.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the soft-deleted category (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-JCAT-25: Restoration Eligibility Requirement: Target category must currently be soft-deleted with \texttt{deletedAt != null}; returns HTTP 404 if not found or already active.
+    \item BR-JCAT-26: Conflict Prevention Against Interim Duplicates: If another active category with the same name was created while this category was deleted, restoration is blocked with HTTP 409 (\texttt{Error.JobCategoryNameAlreadyExists}).
+    \item BR-JCAT-27: Soft-Deletion Timestamp Reset: Clears \texttt{deletedAt = null}, fully restoring the category to active catalog availability.
+    \item BR-JCAT-28: Real-Time UI Re-indexing: Returns restored category data, displays success toast, and updates table view immediately.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator filters the catalog by ``Deleted'' job categories.
+    \item The administrator locates the soft-deleted category and clicks the Restore icon.
+    \item The restore confirmation dialog appears.
+    \item The administrator confirms restoration by clicking ``Restore''.
+    \item The client sends \texttt{PATCH /api/admin/job-categories/:id/restore}.
+    \item The backend verifies the category is soft-deleted, checks for name conflicts with active categories, and clears \texttt{deletedAt}.
+    \item The backend returns HTTP 200 with the restored category data.
+    \item The client displays a success toast, closes the dialog, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target category does not exist or is already active & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Another active category now shares the same name & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid category ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
+Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
+Database update failure & The service throws \texttt{FailedToRestoreJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToRestoreJobCategory''.\\ \hline
+Network failure during request & The client catches the network error, displays an unexpected error toast, and preserves dialog state.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the restored category.\\ \hline
+name & Category name string.\\ \hline
+slug & Preserved or updated unique slug.\\ \hline
+description & Description text or null.\\ \hline
+status & Operational status (\texttt{ACTIVE} or \texttt{INACTIVE}).\\ \hline
+deletedAt & Null indicating active status.\\ \hline
+createdAt & Timestamp of original creation.\\ \hline
+updatedAt & Timestamp of restoration.\\ \hline
+jobCount & Count of active jobs referencing this category.\\ \hline
+jobs & Array of associated jobs.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The job category is restored to active status (\texttt{deletedAt = null}), displayed in the active category catalog, and available for selection when posting and filtering jobs.
+

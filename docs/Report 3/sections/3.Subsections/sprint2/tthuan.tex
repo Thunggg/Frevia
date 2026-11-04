@@ -1,0 +1,1237 @@
+% =================================================================
+% Sprint 2 - Permission, Session, and Forum Category Management (tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+% =================================================================
+% Module 1: Permission Management
+% =================================================================
+\subsection{Permission Management}
+
+% -----------------------------------------------------------------
+% UC-15.01: View Permission List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Permission List}
+
+\fnhead{Function Trigger}
+An administrator accesses the Permission Management screen from the administrator console sidebar.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Settings $\rightarrow$ Permissions (\texttt{/admin/permissions}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to retrieve and inspect the complete catalog of route-level system permissions defined in the application. This provides transparent visibility into available endpoints, HTTP methods, and module groupings necessary for configuring custom role-based access control (RBAC) policies.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin portal screen at \texttt{/admin/permissions}.
+    \item Top filter bar featuring keyword search input, HTTP method filter dropdown, and module filter dropdown.
+    \item Data table displaying permission ID, endpoint name, route path, HTTP method badge, module badge, creation date, and row action links.
+    \item Pagination footer indicating total count and page selection controls.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client initiates an HTTP request: \texttt{GET /api/permissions} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{method}, \texttt{module}, \texttt{sortBy}, \texttt{order}).
+    \item The backend guard verifies the caller's JWT access token and ensures the caller possesses \texttt{ADMIN} role privileges.
+    \item \texttt{PermissionsController.getPermissions()} parses and validates the filter parameters through \texttt{PermissionFilterDto}.
+    \item \texttt{PermissionsService.getPermissions()} invokes \texttt{PermissionsRepository.findAll(filter)}.
+    \item The repository executes a database transaction retrieving active records (\texttt{deletedAt = null}), counting the matching records, and fetching distinct module names.
+    \item The service formats the payload into a \texttt{PermissionListResponseDto} containing the items array, pagination metadata, and active module list.
+    \item The frontend renders the data table, applies color badges per HTTP method (GET: outline, POST: secondary, PUT/PATCH: outline, DELETE: destructive), and renders pagination buttons.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewPermissionList.png}{Permission list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The top header displays the section title ``Permissions'' alongside a brief summary description.
+    \item A filter bar contains a search input box with an icon, an HTTP method selector, and a module category dropdown.
+    \item The table columns include: \textbf{ID}, \textbf{Name}, \textbf{Path}, \textbf{Method}, \textbf{Module}, \textbf{Created Date}, and \textbf{Actions}.
+    \item Each HTTP method is visually differentiated with a dedicated colored badge for immediate visual recognition.
+    \item A ``View detail'' icon button on each row directs the administrator to the detailed permission inspection view.
+    \item The pagination toolbar displays the current page interval, total records found, and previous/next page navigation buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number for paginated retrieval (defaults to 1).\\ \hline
+limit & Maximum number of permission records returned per page (defaults to 10).\\ \hline
+search & Optional text query matching permission name, API route path, or module name.\\ \hline
+method & Optional filter matching HTTP method (\texttt{GET}, \texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE}).\\ \hline
+module & Optional filter matching functional module name (case-insensitive).\\ \hline
+sortBy & Sorting column field name (\texttt{id} or \texttt{createdAt}, defaults to \texttt{id}).\\ \hline
+order & Sorting sequence direction (\texttt{asc} or \texttt{desc}, defaults to \texttt{asc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters; whitespace is automatically trimmed.\\ \hline
+method & Must match one of the standard HTTP methods: \texttt{GET}, \texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE}.\\ \hline
+module & String, optional, max length 50 characters.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{createdAt}.\\ \hline
+order & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PERM-01: Only active permissions with \texttt{deletedAt = null} shall be returned to the administrator.
+    \item BR-PERM-02: Keyword search queries shall match \texttt{name}, \texttt{path}, or \texttt{module} case-insensitively using partial text matching.
+    \item BR-PERM-03: The method filter shall filter records by exact HTTP verb equality.
+    \item BR-PERM-04: The module filter shall perform case-insensitive exact matching against the permission module field.
+    \item BR-PERM-05: The response must return distinct existing module names to dynamically populate client filter options.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the ``Permissions'' page in the admin console.
+    \item The frontend issues \texttt{GET /api/permissions} with default query parameters (\texttt{page=1\&limit=10\&sortBy=id\&order=asc}).
+    \item The system verifies the administrator's JWT access token and validates query parameters.
+    \item \texttt{PermissionsService} queries \texttt{PermissionsRepository.findAll(filter)}.
+    \item The database returns matching permission rows, the total record count, and distinct module names.
+    \item The system returns HTTP 200 with the permission list, pagination metadata, and module list.
+    \item The frontend renders the data table, method badges, module badges, and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The API returns HTTP 401 Unauthorized. The client clears cached credentials and redirects the administrator to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The API returns HTTP 403 Forbidden. The interface displays an access denied toast: ``You do not have permission to access this page.''\\ \hline
+Invalid pagination parameter (\texttt{page < 1} or non-integer) & The DTO validator rejects the request with HTTP 400 Bad Request. The frontend resets to page 1 automatically.\\ \hline
+Invalid limit parameter (\texttt{limit > 100} or \texttt{limit < 1}) & The API rejects the request with HTTP 400 Bad Request. The client defaults to a safe limit value of 10.\\ \hline
+Unsupported HTTP method filter string & The system returns HTTP 400 Bad Request. The UI clears the invalid filter selection and reloads the default list.\\ \hline
+Database connection failure or query timeout & The backend logs the exception and throws \texttt{FailedToLoadPermissionsException} (HTTP 500). The UI displays: ``Couldn't load permissions. Try again.''\\ \hline
+No permissions match active search/filters & The repository returns an empty collection (\texttt{permissions: []}, \texttt{total: 0}). The table displays a friendly empty-state notice: ``No permissions match your filters.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+permissions & Array of permission objects containing \texttt{id}, \texttt{name}, \texttt{path}, \texttt{method}, \texttt{module}, and \texttt{createdAt}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current page size limit.\\ \hline
+pagination.total & Total count of matching permissions.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+modules & Array of unique module names available across active permissions.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The permission catalog table is displayed with accurate HTTP badges and module tags.
+    \item The module filter dropdown is populated with distinct module names retrieved from the server.
+    \item The administrator can sort, filter, or select any permission row to view its details.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-15.02: View Permission Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Permission Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks ``View detail'' on a permission row in the permission table or navigates directly to a permission detail URL.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Settings $\rightarrow$ Permissions $\rightarrow$ Click ``View detail'' icon on a row (\texttt{/admin/permissions/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view comprehensive technical details of a specific system permission, including its full route path, allowed HTTP method verb, associated functional module, system identifier, and exact creation timestamp.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Detailed permission overview page at \texttt{/admin/permissions/:id}.
+    \item Top navigation breadcrumb with ``Back to permissions'' button.
+    \item Header displaying the permission endpoint name and an HTTP verb badge.
+    \item Information card containing structured field entries: ID, Creation timestamp, HTTP Method, Module name, and Endpoint Route Path.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends an HTTP request: \texttt{GET /api/permissions/:id} with the numeric permission ID.
+    \item The NestJS \texttt{ParseIntPipe} validates that \texttt{id} is an integer.
+    \item The permission guard verifies valid Admin credentials.
+    \item \texttt{PermissionsController.getPermissionById(id)} delegates execution to \texttt{PermissionsService.getPermissionById(id)}.
+    \item \texttt{PermissionsRepository.findById(id)} queries \texttt{prisma.permission.findFirst} where \texttt{id = id} and \texttt{deletedAt = null}.
+    \item If no record is found, the repository throws \texttt{PermissionNotFoundException} (HTTP 404).
+    \item The server responds with HTTP 200 and the complete permission detail object.
+    \item The web application renders the information card and formats dates using localized formatters.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewPermissionDetail.png}{Permission detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A top ``Back to permissions'' navigation button with an arrow icon allows returning to the permission catalog.
+    \item The header section displays the permission name in prominent monospace typography alongside the colored HTTP method badge (e.g., \texttt{POST}).
+    \item A structured card contains labeled sections: \textbf{ID}, \textbf{Created Date}, \textbf{Method}, \textbf{Module}, and \textbf{Path}.
+    \item The API route path is formatted in a distinct highlighted monospace container for easy inspection.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the permission passed in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0; non-numeric inputs are rejected by \texttt{ParseIntPipe}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PERM-06: Only active permissions with \texttt{deletedAt = null} are retrievable. Soft-deleted permissions return HTTP 404 Not Found.
+    \item BR-PERM-07: The returned payload must include \texttt{id}, \texttt{name}, \texttt{path}, \texttt{method}, \texttt{module}, and \texttt{createdAt}.
+    \item BR-PERM-08: Direct URL access to permission details requires an active Admin session with proper authorization.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``View detail'' on a permission row or accesses \texttt{/admin/permissions/:id}.
+    \item The frontend validates the ID and sends \texttt{GET /api/permissions/:id}.
+    \item The system validates authorization and executes \texttt{PermissionsRepository.findById(id)}.
+    \item The database retrieves the permission record where \texttt{deletedAt = null}.
+    \item The server returns HTTP 200 with the permission detail payload.
+    \item The frontend renders the complete permission details and navigation controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Invalid ID format (non-numeric string in URL) & NestJS \texttt{ParseIntPipe} rejects the request with HTTP 400 Bad Request. The frontend renders an invalid parameter error page.\\ \hline
+Permission ID does not exist in database & The repository throws \texttt{PermissionNotFoundException} (HTTP 404). The client displays: ``Failed to load permission detail. The permission may not exist.''\\ \hline
+Permission was soft-deleted (\texttt{deletedAt != null}) & The database query filters out soft-deleted records and throws HTTP 404 Not Found. The UI displays the not found notice.\\ \hline
+Missing or expired administrator token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User account lacks Admin role privileges & The server returns HTTP 403 Forbidden. The client shows an access restriction notice.\\ \hline
+Database query failure during retrieval & The service catches the Prisma error and throws \texttt{FailedToLoadPermissionDetailException} (HTTP 500). The UI displays a retry button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric system identifier of the permission.\\ \hline
+name & Functional descriptive name of the permission.\\ \hline
+path & Exact API route path pattern (e.g., \texttt{/api/auth/login}).\\ \hline
+method & HTTP method verb (\texttt{GET}, \texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE}).\\ \hline
+module & Module grouping name to which the permission belongs.\\ \hline
+createdAt & Timestamp indicating when the permission was registered.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The complete details of the selected permission are presented to the administrator.
+    \item The administrator can navigate back to the permission list using the top navigation link.
+\end{enumerate}
+
+% =================================================================
+% Module 2: Session Management
+% =================================================================
+\subsection{Session Management}
+
+% -----------------------------------------------------------------
+% UC-16.01: View Session List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Session List}
+
+\fnhead{Function Trigger}
+An authenticated user accesses the active sessions management screen from their account settings.\newline
+\textbf{Navigation path:} User Avatar Menu $\rightarrow$ Settings $\rightarrow$ Active Sessions (\texttt{/sessions}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Any authenticated user (\texttt{Client}, \texttt{Freelancer}, \texttt{Expert}, or \texttt{Admin}).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows users to view all active authentication sessions associated with their account. This enables users to monitor which devices, browsers, and IP addresses have access to their account, verify when each session was initiated and when it will expire, and identify potentially suspicious or obsolete logins.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dedicated session management screen at \texttt{/sessions}.
+    \item Top control bar with keyword search input (supporting IP address or browser/device search) and sort selectors.
+    \item Responsive session list table showing Device Information, IP Address, Creation Date, Expiration Date, Status, and Action buttons.
+    \item Visual ``Current session'' badge highlighting the device currently being used.
+    \item Pagination bar at the bottom with page numbers and navigation links.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends \texttt{GET /api/sessions} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{sortBy}, \texttt{order}) and the user's Bearer JWT access token.
+    \item The authentication guard verifies the JWT token and extracts \texttt{userId} and \texttt{sessionId}.
+    \item \texttt{SessionsController.getMySessions()} invokes \texttt{SessionsService.getMySessions(userId, query, sessionId)}.
+    \item \texttt{SessionsRepository.findAllByUserId()} queries the database where \texttt{userId = userId}, applying optional search filters on \texttt{ipAddress} or \texttt{deviceInfo}.
+    \item The repository maps each record and dynamically sets \texttt{isCurrent = (row.id === sessionId)}.
+    \item The backend returns HTTP 200 with the sessions collection and pagination metadata.
+    \item The frontend renders the list, marking active sessions, indicating the current session, and providing detail inspection and revocation dialog triggers.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewSessionList.png}{Active sessions list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header section displaying ``Active sessions'' with a descriptive subtitle.
+    \item Search input box enabling instantaneous filtering by IP address or browser/device string.
+    \item Table columns: \textbf{Device}, \textbf{IP Address}, \textbf{Created}, \textbf{Expires}, \textbf{Status}, and \textbf{Actions}.
+    \item The currently active session displays a green ``Current'' badge, distinguishing it from remote sessions.
+    \item Action icons include an eye icon (view detail modal) and a trash/revoke icon for remote session termination.
+    \item A pagination component at the bottom provides direct page number navigation.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum session records per page (defaults to 10).\\ \hline
+search & Optional query matching client IP address or user-agent device string.\\ \hline
+sortBy & Sort column field (\texttt{id}, \texttt{createdAt}, or \texttt{expiresAt}; defaults to \texttt{createdAt}).\\ \hline
+order & Sort direction (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max 100 characters; whitespace trimmed.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{createdAt}, \texttt{expiresAt}.\\ \hline
+order & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SES-01: Users can only view sessions belonging strictly to their own authenticated \texttt{userId}. Cross-account session retrieval is forbidden.
+    \item BR-SES-02: The \texttt{isCurrent} indicator is true if and only if the session ID in the database matches the \texttt{sessionId} embedded in the caller's JWT access token.
+    \item BR-SES-03: Search queries must perform case-insensitive partial matching against both \texttt{ipAddress} and \texttt{deviceInfo}.
+    \item BR-SES-04: Session expiration status is evaluated dynamically: a session is active when \texttt{expiresAt > now}, and expired otherwise.
+    \item BR-SES-05: Pagination parameters must be strictly validated with a maximum limit of 100 records per page.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user navigates to the ``Active sessions'' section in account settings.
+    \item The client sends \texttt{GET /api/sessions} with authorization headers.
+    \item The backend validates the JWT token, extracts \texttt{userId} and \texttt{sessionId}, and executes \texttt{SessionsRepository.findAllByUserId()}.
+    \item The database retrieves all sessions belonging to the user and calculates total count.
+    \item The backend attaches \texttt{isCurrent} flags and returns HTTP 200 with the session list and pagination data.
+    \item The frontend renders the session list table, highlighting the current device with a badge.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or expired JWT access token & The server returns HTTP 401 Unauthorized. The client removes stored session tokens and redirects the user to \texttt{/login}.\\ \hline
+Current session was revoked remotely from another device & Token validation detects that the session ID no longer exists in the database. The system returns HTTP 401 Unauthorized and prompts the user to log in again.\\ \hline
+User account has been banned or deactivated & The authentication guard verifies account status, detects inactive status, and throws HTTP 403 Forbidden. The client redirects to a ban notification screen.\\ \hline
+Invalid pagination parameter values & The DTO validator rejects non-positive or malformed parameters with HTTP 400 Bad Request. The client falls back to page 1 and default limit.\\ \hline
+Unsupported sort column parameter & The API rejects the request with HTTP 400 Bad Request. The client resets the query to sort by \texttt{createdAt desc}.\\ \hline
+Database query failure during retrieval & The service catches the error, logs the failure, and throws \texttt{FailedToLoadSessionsException} (HTTP 500). The UI displays: ``Failed to load sessions.''\\ \hline
+No sessions match current search keyword & The query returns an empty collection (\texttt{sessions: []}, \texttt{total: 0}). The table displays: ``No sessions match your search.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+sessions & Array of session objects: \texttt{id}, \texttt{userId}, \texttt{deviceInfo}, \texttt{ipAddress}, \texttt{expiresAt}, \texttt{createdAt}, and \texttt{isCurrent}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current page size.\\ \hline
+pagination.total & Total active and stored sessions for the user.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user's active session list is displayed accurately.
+    \item The current device session is visibly demarcated from other remote logins.
+    \item The user can click to inspect session details (UC-16.02) or revoke remote sessions (UC-16.03).
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-16.02: View Session Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Session Detail}
+
+\fnhead{Function Trigger}
+An authenticated user clicks the ``View detail'' (eye icon) button on any session row in the session list.\newline
+\textbf{Navigation path:} Active Sessions (\texttt{/sessions}) $\rightarrow$ Click ``View detail'' icon on a session row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Any authenticated user (\texttt{Client}, \texttt{Freelancer}, \texttt{Expert}, or \texttt{Admin}).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays full, in-depth technical information regarding a specific login session in a modal dialog. This helps the user inspect the complete browser user-agent, full IP address, creation timestamp, expiration date, active/expired status, and whether the session represents their current terminal.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Interactive modal dialog titled ``Session details'' appearing over the sessions page.
+    \item Structured list displaying: Session ID, Device/Browser User-Agent, IP Address, Login Timestamp, Expiration Timestamp, and Status Badge.
+    \item Close button and direct action button to revoke the session if remote.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client triggers an API call: \texttt{GET /api/sessions/:id} passing the session ID and Bearer token.
+    \item The backend extracts \texttt{userId} and \texttt{sessionId} from the caller's JWT token.
+    \item \texttt{SessionsController.getMySessionById()} calls \texttt{SessionsService.getMySessionById(id, userId, sessionId)}.
+    \item \texttt{SessionsRepository.findByIdForUser()} queries \texttt{prisma.session.findFirst} where \texttt{id = id} and \texttt{userId = userId}.
+    \item If no record is found, the system throws \texttt{SessionNotFoundException} (HTTP 404).
+    \item The repository evaluates \texttt{isCurrent = (id === sessionId)} and returns the session object.
+    \item The client populates the dialog with formatted dates and status indicators.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewSessionDetail.png}{Session detail dialog interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A centered modal dialog titled ``Session \#\{id\}'' with description ``Detailed information about this login session.''
+    \item A top badge indicating either ``Current device'' (green) or ``Active'' / ``Expired''.
+    \item Detailed metadata fields displayed in a clean grid: \textbf{Device / Browser}, \textbf{IP Address}, \textbf{Signed In}, and \textbf{Expires At}.
+    \item A bottom ``Close'' button to dismiss the dialog.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric ID of the session passed as a URL route parameter.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer; non-numeric values are rejected by \texttt{ParseIntPipe}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SES-06: A user can strictly view only session records that they own (\texttt{session.userId == caller.userId}). Attempting to access another user's session returns HTTP 404 Not Found to prevent ID enumeration.
+    \item BR-SES-07: The returned payload must include \texttt{id}, \texttt{userId}, \texttt{deviceInfo}, \texttt{ipAddress}, \texttt{expiresAt}, \texttt{createdAt}, and \texttt{isCurrent}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user clicks the view detail icon on a session row.
+    \item The frontend opens the modal dialog and sends \texttt{GET /api/sessions/:id}.
+    \item The backend validates authentication and queries the database for the session matching \texttt{id} and \texttt{userId}.
+    \item The database returns the session record.
+    \item The backend marks \texttt{isCurrent} and responds with HTTP 200.
+    \item The frontend renders the complete session details in the dialog.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Invalid session ID format in URL & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The frontend displays an invalid parameter alert.\\ \hline
+Session does not exist or has been deleted & The service throws \texttt{SessionNotFoundException} (HTTP 404). The modal displays: ``Session not found.''\\ \hline
+Session belongs to another user account & The database query filters by caller \texttt{userId}; matching returns null and throws HTTP 404 Not Found, preventing cross-user session probing.\\ \hline
+Caller authentication token expired & The server returns HTTP 401 Unauthorized. The dialog closes and the user is redirected to \texttt{/login}.\\ \hline
+Database query error during lookup & The backend catches the Prisma exception and throws \texttt{FailedToLoadSessionDetailException} (HTTP 500). The modal shows: ``Failed to load session details.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric system identifier of the session.\\ \hline
+userId & Numeric identifier of the owning user.\\ \hline
+deviceInfo & Complete user-agent string describing the operating system and browser.\\ \hline
+ipAddress & Client IP address recorded at login or refresh time.\\ \hline
+expiresAt & Exact timestamp when the session's refresh token expires.\\ \hline
+createdAt & Exact timestamp when the session was initiated.\\ \hline
+isCurrent & Boolean flag indicating whether this is the caller's active terminal.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Detailed session information is visible to the user.
+    \item The user may proceed to revoke the session or close the dialog without side effects.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-16.03: Revoke Session
+% -----------------------------------------------------------------
+\subsubsection{Function: Revoke Session}
+
+\fnhead{Function Trigger}
+An authenticated user clicks the ``Revoke'' (trash or shield-off icon) button on an active session in the sessions list.\newline
+\textbf{Navigation path:} Active Sessions (\texttt{/sessions}) $\rightarrow$ Click ``Revoke'' button on a session row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Any authenticated user (\texttt{Client}, \texttt{Freelancer}, \texttt{Expert}, or \texttt{Admin}).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows users to remotely terminate an active login session on a specific device. Upon revocation, the stored refresh token record is deleted immediately from the database, preventing that device from obtaining new access tokens and forcing it to log out.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Revocation trigger button on session table rows.
+    \item Confirmation modal dialog titled ``Revoke session'' explaining that the target device will be signed out.
+    \item ``Cancel'' and destructive ``Revoke session'' confirmation buttons.
+    \item Toast notification confirming successful session revocation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User confirms revocation in the alert dialog.
+    \item The client issues an HTTP request: \texttt{DELETE /api/sessions/:id} with Bearer token.
+    \item \texttt{SessionsController.revokeMySession()} passes \texttt{id}, \texttt{userId}, and \texttt{sessionId} to \texttt{SessionsService.revokeMySession()}.
+    \item \texttt{SessionsRepository.deleteActiveByIdForUser()} verifies the session belongs to \texttt{userId} and is active (\texttt{expiresAt > now}).
+    \item The repository deletes the session row from the PostgreSQL \texttt{Session} table.
+    \item The service checks whether \texttt{id === sessionId}: if true, \texttt{loggedOut = true} is returned; otherwise \texttt{loggedOut = false}.
+    \item The server responds with HTTP 200: \texttt{\{ message: 'Session revoked successfully', loggedOut \}}.
+    \item If \texttt{loggedOut = true}, the client purges local tokens and redirects to \texttt{/login}; otherwise, the UI displays a success toast and refreshes the session table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/RevokeSession.png}{Revoke session confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item An alert dialog overlay displaying the title ``Revoke session?''.
+    \item A warning message: ``This device will be logged out immediately. Any unsaved progress on that device may be lost. Are you sure you want to proceed?''.
+    \item A neutral ``Cancel'' button to abort the action safely.
+    \item A red destructive ``Revoke session'' action button with loading spinner state during network execution.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric ID of the session to be revoked passed in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SES-08: Users can only revoke sessions belonging to their own user account.
+    \item BR-SES-09: Already-expired sessions (\texttt{expiresAt <= now}) cannot be revoked; attempting to do so returns HTTP 400 Bad Request (\texttt{SESSION\_ALREADY\_EXPIRED}).
+    \item BR-SES-10: Deletion of the session row immediately revokes the ability of the refresh token to issue new access tokens.
+    \item BR-SES-11: If the user revokes their currently active session, the backend sets \texttt{loggedOut: true}, prompting the client application to terminate the current session and redirect to the sign-in screen.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user clicks ``Revoke'' on a session row in the table.
+    \item The frontend presents the confirmation alert dialog.
+    \item The user clicks ``Revoke session'' in the dialog.
+    \item The frontend sends \texttt{DELETE /api/sessions/:id}.
+    \item The backend validates authentication and checks that the session belongs to \texttt{userId} and is active.
+    \item The repository deletes the session record from the database.
+    \item The backend returns HTTP 200 with \texttt{\{ message: 'Session revoked successfully', loggedOut: false \}}.
+    \item The frontend displays a success toast and refreshes the session list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Invalid session ID parameter & \texttt{ParseIntPipe} rejects the call with HTTP 400 Bad Request. The UI displays an invalid identifier toast.\\ \hline
+Session does not exist or was already deleted & The service throws \texttt{SessionNotFoundException} (HTTP 404). The UI displays: ``Session not found.''\\ \hline
+Session belongs to another user & The repository lookup fails to match \texttt{userId} and throws HTTP 404 Not Found, preventing unauthorized revocation.\\ \hline
+Session has already naturally expired & The repository detects \texttt{expiresAt <= now} and throws \texttt{SessionAlreadyExpiredException} (HTTP 400). The UI displays: ``Session has already expired.''\\ \hline
+Caller token expired or revoked & The server returns HTTP 401 Unauthorized. The client logs out immediately and redirects to \texttt{/login}.\\ \hline
+User revokes their own current session & The server executes deletion and returns \texttt{loggedOut: true}. The client application clears cookies/local storage and redirects to \texttt{/login}.\\ \hline
+Database deletion failure & The service catches the Prisma error and throws \texttt{FailedToRevokeSessionException} (HTTP 500). The UI shows: ``Failed to revoke session.''\\ \hline
+User cancels in confirmation dialog & The dialog closes without issuing an HTTP request; no database changes occur.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Session revoked successfully}).\\ \hline
+loggedOut & Boolean flag indicating whether the current client device was signed out.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The session row is permanently deleted from the PostgreSQL \texttt{Session} table.
+    \item The remote device's refresh token becomes invalid for any future token renewals.
+    \item The session list table updates to reflect the removed session.
+\end{enumerate}
+
+% =================================================================
+% Module 3: Forum Category Management
+% =================================================================
+\subsection{Forum Category Management}
+
+% -----------------------------------------------------------------
+% UC-17.01: Create Forum Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Forum Category}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create Category'' button on the forum category management screen.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Forum Categories (\texttt{/admin/categories}) $\rightarrow$ Click ``Create Category'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to establish a new discussion category in the forum. Categories provide structured classification for community discussions, professional topics, and questions posted by freelancers and clients.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Create Category'' trigger button on the category management screen.
+    \item Modal dialog containing text fields for Category Name (required) and Description (optional).
+    \item Action buttons: ``Cancel'' and ``Create Category'' (with loading state).
+    \item Toast notification confirming successful category creation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator fills in the name and description and submits the modal form.
+    \item The client sends an HTTP request: \texttt{POST /api/forums/admin/categories} with JSON body \texttt{\{ name, description \}}.
+    \item The backend guard verifies that caller has \texttt{ADMIN} role; otherwise, throws \texttt{ForumReportForbiddenException} (HTTP 403).
+    \item \texttt{CreateForumCategoryBodyDto} validates the payload schema.
+    \item \texttt{ForumAdminRepo.createAdminCategory()} checks whether an active category (\texttt{deletedAt = null}) with the same name already exists (case-insensitive). If found, throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409).
+    \item The system computes an automated SEO-friendly slug via \texttt{slugify(name)}. If a collision exists, a numeric counter suffix is appended.
+    \item The repository creates the record in \texttt{prisma.forumCategory.create} with \texttt{postCount = 0}.
+    \item The server responds with HTTP 201 Created and the new category object.
+    \item The client closes the dialog, shows a success toast, and refreshes the category table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/CreateForumCategory.png}{Create forum category modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Create Category'' with explanatory description ``Add a new discussion category to the community forum.''.
+    \item Form field: \textbf{Name} (marked with red required asterisk, placeholder: ``e.g., General Discussion'').
+    \item Form field: \textbf{Description} (multi-line textarea, optional, placeholder: ``Describe what this category is for...'').
+    \item Modal footer with ``Cancel'' button and dark primary ``Create Category'' button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+name & Display name of the forum category (required).\\ \hline
+description & Detailed description explaining the category purpose (optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+name & String, required, 1 to 100 characters; whitespace trimmed; must not be blank.\\ \hline
+description & String, optional, max 500 characters; nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-01: Only users authenticated with the \texttt{ADMIN} role can create forum categories.
+    \item BR-FCAT-02: Category name is required, max 100 characters, and must be unique among active categories (\texttt{deletedAt = null}) using case-insensitive comparison.
+    \item BR-FCAT-03: Description is optional with a maximum length of 500 characters.
+    \item BR-FCAT-04: A URL-friendly slug is generated automatically from the name. If the slug collides with an existing slug, a numeric suffix (e.g., \texttt{-2}) is appended.
+    \item BR-FCAT-05: Newly created categories start with an initial post count of 0.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Create Category'' on \texttt{/admin/categories}.
+    \item The modal dialog appears. The administrator inputs a unique name and optional description.
+    \item The administrator clicks ``Create Category''.
+    \item The frontend validates fields and issues \texttt{POST /api/forums/admin/categories}.
+    \item The backend validates Admin role and ensures the category name does not duplicate an active category.
+    \item The system computes a unique slug and inserts the category into PostgreSQL.
+    \item The API returns HTTP 201 Created with the created category object.
+    \item The frontend displays a success toast: ``Category created successfully!'', closes the dialog, and updates the list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Category name is empty or only whitespace & Client-side validation blocks submission; backend DTO validation returns HTTP 400 Bad Request. The UI highlights the name field in red.\\ \hline
+Category name exceeds 100 characters & Backend validation rejects with HTTP 400 Bad Request (\texttt{String must contain at most 100 character(s)}). The UI displays a field length error.\\ \hline
+Description exceeds 500 characters & Backend validation returns HTTP 400 Bad Request. The UI displays description length warning.\\ \hline
+Category name already exists among active categories & The repository detects a duplicate name and throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Category name already exists.''\\ \hline
+User lacks Admin privileges & The service throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). The UI displays: ``Forbidden: Account inactive or unauthorized.''\\ \hline
+Missing or expired administrator token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+Database insertion failure or constraint error & The backend catches the Prisma error and throws \texttt{FailedToCreateForumCategoryException} (HTTP 500). The UI displays: ``Failed to create category.''\\ \hline
+Administrator clicks Cancel in modal & The modal closes immediately and discarded input is purged without network requests.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric system identifier of the created category.\\ \hline
+name & Display name of the category.\\ \hline
+slug & Generated unique URL slug.\\ \hline
+description & Category description string or null.\\ \hline
+createdAt & Timestamp of category creation.\\ \hline
+updatedAt & Timestamp of category creation.\\ \hline
+postCount & Initial active post count (0).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item A new active category record is created in the database.
+    \item The category appears immediately in the forum categories list for administration and community discussions.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-17.02: Update Forum Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Forum Category}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Edit'' on a category row in the table or on the category detail screen.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Forum Categories $\rightarrow$ Click ``Edit'' icon on a category row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to modify the title and descriptive summary of an existing forum category. When the title changes, the system automatically regenerates the category slug while preserving thread associations.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Edit action icon button on category table rows and category detail views.
+    \item ``Edit Category'' modal pre-populated with current category data.
+    \item Form inputs for Name and Description.
+    \item ``Cancel'' and ``Save Changes'' action buttons.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator edits the name or description in the modal and submits the form.
+    \item The client issues an HTTP request: \texttt{PATCH /api/forums/admin/categories/:id} with updated attributes.
+    \item \texttt{ForumAdminService.updateAdminCategory()} verifies \texttt{ADMIN} role.
+    \item \texttt{ForumAdminRepo.updateAdminCategory()} checks that the category exists and is active (\texttt{deletedAt = null}). If missing, throws \texttt{ForumCategoryNotFoundException} (HTTP 404).
+    \item If the category name was changed, the repository checks for name collisions against other active categories (\texttt{id != currentId}). If a collision occurs, throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409).
+    \item The repository regenerates the slug if the name changed, and updates the record in PostgreSQL.
+    \item The API returns HTTP 200 with the updated category object.
+    \item The frontend displays a success toast and refreshes the category data.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/UpdateForumCategory.png}{Update forum category modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog titled ``Edit Category'' with description ``Update category details.''.
+    \item Pre-filled \textbf{Name} input field displaying the current category title.
+    \item Pre-filled \textbf{Description} textarea displaying the current description.
+    \item Action buttons at the bottom: ``Cancel'' and ``Save Changes''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric identifier of the category in the URL path.\\ \hline
+name & Updated category name (optional, string).\\ \hline
+description & Updated category description (optional, string or null).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+name & String, optional, 1 to 100 characters; whitespace trimmed.\\ \hline
+description & String, optional, max 500 characters; nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-06: Only Admin users can update forum categories.
+    \item BR-FCAT-07: Partial updates are supported; name and description can be updated independently or simultaneously.
+    \item BR-FCAT-08: If the category name is modified, it must be unique among active categories and its URL slug is regenerated automatically.
+    \item BR-FCAT-09: Soft-deleted categories cannot be updated. Attempting to update a deleted category returns HTTP 404 Not Found.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Edit'' on a category row.
+    \item The modal opens pre-filled with the current category data.
+    \item The administrator modifies the name and/or description and clicks ``Save Changes''.
+    \item The frontend sends \texttt{PATCH /api/forums/admin/categories/:id}.
+    \item The backend validates permissions, confirms the category exists and is active, and verifies name uniqueness.
+    \item The repository updates the category in PostgreSQL and regenerates the slug if the name changed.
+    \item The API returns HTTP 200 with the updated category payload.
+    \item The frontend closes the modal, displays ``Category updated successfully!'', and refreshes the category table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Category ID does not exist or is soft-deleted & The service throws \texttt{ForumCategoryNotFoundException} (HTTP 404). The UI displays: ``Category not found.''\\ \hline
+New name conflicts with another active category & The repository detects a duplicate name and throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Category name already exists.''\\ \hline
+Updated name is empty or only whitespace & Client-side and backend validation return HTTP 400 Bad Request. The UI displays an error on the name field.\\ \hline
+Updated name exceeds 100 characters & Backend validation returns HTTP 400 Bad Request. The UI notifies the user of character limit violation.\\ \hline
+Updated description exceeds 500 characters & Backend validation returns HTTP 400 Bad Request. The UI notifies the user of character limit violation.\\ \hline
+User lacks Admin privileges & The backend throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). The client shows an access restriction notice.\\ \hline
+Database update failure & The backend catches the Prisma exception and throws \texttt{FailedToUpdateForumCategoryException} (HTTP 500). The UI displays: ``Failed to update category.''\\ \hline
+Administrator cancels modal & The dialog closes without issuing network requests; original values remain unchanged.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric system identifier of the category.\\ \hline
+name & Updated category name.\\ \hline
+slug & Updated URL slug reflecting any name changes.\\ \hline
+description & Updated category description.\\ \hline
+createdAt & Timestamp of original creation.\\ \hline
+updatedAt & Timestamp indicating when the modification was committed.\\ \hline
+postCount & Current active post count.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The category record in the database is updated.
+    \item Associated forum posts continue to link to the category.
+    \item The updated details are reflected across both admin and client interfaces.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-17.03: Delete Forum Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Forum Category}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Delete'' (trash icon) on a category row or detail screen.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Forum Categories $\rightarrow$ Click ``Delete'' icon on a category row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to soft-delete an existing forum category. To ensure community discussion integrity, active posts previously classified under this category are safely reassigned to Uncategorized (\texttt{categoryId = null}) inside an atomic database transaction.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete action button on category rows and category detail header.
+    \item Confirmation alert dialog titled ``Delete category?'' providing clear notice of post detachment.
+    \item Action buttons: ``Cancel'' and destructive ``Delete''.
+    \item Toast notification confirming soft deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator confirms category deletion in the alert dialog.
+    \item The client issues an HTTP request: \texttt{DELETE /api/forums/admin/categories/:id}.
+    \item \texttt{ForumAdminService.deleteAdminCategory()} checks that caller has \texttt{ADMIN} role.
+    \item \texttt{ForumAdminRepo.deleteAdminCategory()} verifies that the category exists with \texttt{deletedAt = null}.
+    \item The repository executes a Prisma transaction:
+        \begin{enumerate}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Reassigns all active posts under the category: \texttt{prisma.forumPost.updateMany} where \texttt{categoryId = id} and \texttt{deletedAt = null}, setting \texttt{categoryId = null}.
+            \item Marks the category record as soft-deleted: \texttt{prisma.forumCategory.update} setting \texttt{deletedAt = new Date()}.
+        \end{enumerate}
+    \item The server responds with HTTP 200: \texttt{\{ message: 'Forum category deleted successfully' \}}.
+    \item The frontend displays a success toast and removes the category from the active view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/DeleteForumCategory.png}{Delete forum category confirmation modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog overlay titled ``Delete category?''.
+    \item Information notice: ``Are you sure you want to delete ``\{name\}''? Active posts in this category will become Uncategorized, and this category can be restored later from the trash tab.''.
+    \item Neutral ``Cancel'' button and red destructive ``Delete'' action button with loading spinner state.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric identifier of the category to delete passed in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-10: Only Admin users have authority to delete forum categories.
+    \item BR-FCAT-11: Deletion is implemented as a soft delete by setting \texttt{deletedAt} to the current timestamp.
+    \item BR-FCAT-12: In an atomic database transaction, active posts under this category are set to \texttt{categoryId = null} (Uncategorized) to preserve discussion history.
+    \item BR-FCAT-13: Soft-deleted categories are hidden from the active category list and public forum dropdowns, but can be viewed and restored by administrators.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Delete'' on a category row.
+    \item The confirmation dialog appears explaining the post detachment and restoration possibilities.
+    \item The administrator clicks ``Delete'' to confirm.
+    \item The client sends \texttt{DELETE /api/forums/admin/categories/:id}.
+    \item The backend verifies permissions, reassigns active posts to \texttt{categoryId = null}, and soft-deletes the category in a transaction.
+    \item The backend returns HTTP 200 with a success message.
+    \item The frontend shows ``Category deleted (soft delete)'' and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Category ID does not exist or is already deleted & The service throws \texttt{ForumCategoryNotFoundException} (HTTP 404). The UI displays: ``Category not found.''\\ \hline
+User lacks Admin privileges & The backend throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). The UI displays an authorization error.\\ \hline
+Caller token expired or missing & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+Database transaction fails during post detachment or category update & The transaction rolls back completely and the service throws \texttt{FailedToDeleteForumCategoryException} (HTTP 500). The UI displays: ``Delete category failed.''\\ \hline
+Administrator clicks Cancel in confirmation dialog & The dialog closes without issuing an HTTP request; no database records are modified.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Confirmation message string (\texttt{Forum category deleted successfully}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The category record has \texttt{deletedAt} populated with the deletion timestamp.
+    \item Active posts formerly in this category have \texttt{categoryId = null} and remain accessible as Uncategorized discussions.
+    \item The category is removed from the active category list and moves to the trash view.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-14.01: View Forum Category List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Forum Category List}
+
+\fnhead{Function Trigger}
+An administrator accesses the forum categories administration section from the sidebar navigation.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Forum Categories (\texttt{/admin/categories}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides administrators with a centralized overview of all discussion categories in the forum. Allows searching by category name, filtering between active categories and deleted categories (trash view), sorting by ID, name, or creation date, and viewing live post count statistics.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Management screen at \texttt{/admin/categories}.
+    \item Action toolbar containing search input, active/trash status filter toggle, sorting selector, and ``Create Category'' button.
+    \item Data table displaying ID, Name, Slug, Description, Post Count, Created Date, Status Badge, and contextual Action buttons.
+    \item Pagination footer with total record count and page controls.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client sends \texttt{GET /api/forums/admin/categories} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{deleted}, \texttt{sortBy}, \texttt{sortOrder}).
+    \item The backend guard verifies caller's JWT token and validates \texttt{ADMIN} role.
+    \item \texttt{ForumAdminService.getAdminCategoryLists()} delegates query execution to \texttt{ForumAdminRepo.getAdminCategoryLists()}.
+    \item The repository queries \texttt{prisma.forumCategory.findMany} with conditions:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item If \texttt{deleted === 'true'}, queries where \texttt{deletedAt != null}; otherwise, queries \texttt{deletedAt = null}.
+            \item If \texttt{search} is provided, filters \texttt{name} using case-insensitive contains.
+            \item Computes active post count: \texttt{\_count: \{ posts: \{ where: \{ deletedAt: null \} \} \}}.
+        \end{itemize}
+    \item The database returns matching categories and total count.
+    \item The server responds with HTTP 200: \texttt{\{ categories, total, pagination \}}.
+    \item The frontend renders the table with appropriate action buttons (Edit/Delete for active, Restore for deleted).
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewForumCategoryList.png}{Admin forum category list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Top section with title ``Categories'' and ``Create Category'' button.
+    \item Filter bar including search input, status tab filter (All Active vs. Trash), and sort dropdown.
+    \item Data table columns: \textbf{ID}, \textbf{Name}, \textbf{Slug}, \textbf{Description}, \textbf{Posts}, \textbf{Created}, and \textbf{Actions}.
+    \item Each category row features clickable links to view details, an edit icon, and a delete icon.
+    \item Pagination footer with previous/next page navigation buttons and current record count.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum categories per page (defaults to 10).\\ \hline
+search & Optional text query searching category name.\\ \hline
+deleted & Optional filter string (\texttt{'true'} for trash view, \texttt{'false'} or omitted for active categories).\\ \hline
+sortBy & Sort column field (\texttt{id}, \texttt{name}, or \texttt{createdAt}; defaults to \texttt{id}).\\ \hline
+sortOrder & Sort order direction (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters.\\ \hline
+deleted & Optional string, must be \texttt{'true'} or \texttt{'false'}.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{name}, \texttt{createdAt}.\\ \hline
+sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-14: Only users with the \texttt{ADMIN} role are authorized to access the category management catalog.
+    \item BR-FCAT-15: When the \texttt{deleted} query parameter is omitted or \texttt{'false'}, only active categories (\texttt{deletedAt = null}) are returned.
+    \item BR-FCAT-16: When \texttt{deleted = 'true'}, only soft-deleted categories (\texttt{deletedAt != null}) are returned.
+    \item BR-FCAT-17: Post counts are calculated strictly for active posts (\texttt{deletedAt = null}) under each category.
+    \item BR-FCAT-18: Sorting is supported on \texttt{id}, \texttt{name}, and \texttt{createdAt}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the ``Forum Categories'' section.
+    \item The frontend requests \texttt{GET /api/forums/admin/categories} with default query parameters.
+    \item The backend validates Admin authorization and executes the database query with active post counts.
+    \item The database returns category records and total count.
+    \item The server responds with HTTP 200 and the category list payload.
+    \item The frontend renders the category table with post counts, timestamps, and action buttons.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+User is not authenticated or token expired & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The service throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). The UI displays an access denied screen.\\ \hline
+Invalid pagination parameter & The API rejects invalid parameter values with HTTP 400 Bad Request. The client defaults to page 1.\\ \hline
+Invalid sortBy parameter & The system rejects invalid sort keys with HTTP 400 Bad Request. The client resets sorting to \texttt{id desc}.\\ \hline
+Database query error during retrieval & The service throws \texttt{FailedToLoadForumCategoriesException} (HTTP 500). The UI displays: ``Failed to load forum categories.''\\ \hline
+No categories match search or filter query & The repository returns an empty list (\texttt{categories: []}, \texttt{total: 0}). The table displays: ``No categories found.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+categories & Array of category objects: \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, \texttt{deletedAt}, and \texttt{postCount}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current limit per page.\\ \hline
+pagination.total & Total matching categories.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The forum category list is rendered with accurate live post count statistics.
+    \item The administrator can trigger create, edit, delete, detail view, or restore actions.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-14.02: View Forum Category Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Forum Category Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks ``View detail'' on a category row or accesses the category detail route directly.\newline
+\textbf{Navigation path:} Forum Categories (\texttt{/admin/categories}) $\rightarrow$ Click category title or row (\texttt{/admin/categories/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays full administrative details of a specific forum category, including its system ID, title, unique URL slug, detailed description, active discussion post count, creation timestamp, and last updated timestamp, with quick shortcuts to edit or delete the category.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dedicated category detail page at \texttt{/admin/categories/:id}.
+    \item Top navigation header with ``Back to categories'' link.
+    \item Header displaying category name and ID badge.
+    \item Action buttons: ``Edit Category'' and ``Delete Category''.
+    \item Structured information cards displaying: Description, Slug, Post count, Creation date, and Last update timestamp.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client sends \texttt{GET /api/forums/admin/categories/:id}.
+    \item \texttt{ParseIntPipe} ensures \texttt{id} is an integer.
+    \item The backend guard verifies \texttt{ADMIN} role.
+    \item \texttt{ForumAdminService.getAdminCategoryById()} calls \texttt{ForumAdminRepo.getAdminCategoryById(id)}.
+    \item The repository queries \texttt{prisma.forumCategory.findFirst} where \texttt{id = id} and \texttt{deletedAt = null}, including active post count.
+    \item If the category is not found, the service throws \texttt{ForumCategoryNotFoundException} (HTTP 404).
+    \item The server responds with HTTP 200 and the category detail payload.
+    \item The frontend renders the detail cards and navigation buttons.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/ViewForumCategoryDetail.png}{Forum category detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Top breadcrumb button ``Back to categories'' leading back to the category catalog.
+    \item Page header displaying the category name in bold typography with an ``ID: \#\{id\}'' outline badge.
+    \item Top right action buttons: ``Edit Category'' and destructive ``Delete Category''.
+    \item Information cards: \textbf{Category Information} (Description and Slug) and \textbf{Statistics \& Metadata} (Total Posts, Created timestamp, and Last Updated timestamp).
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric identifier of the category in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-19: Only active categories with \texttt{deletedAt = null} are accessible via the detail view. Deleted categories return HTTP 404 Not Found.
+    \item BR-FCAT-20: Detail payload includes \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}.
+    \item BR-FCAT-21: Access is restricted exclusively to authenticated users possessing the \texttt{ADMIN} role.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks a category row or accesses \texttt{/admin/categories/:id}.
+    \item The frontend sends \texttt{GET /api/forums/admin/categories/:id}.
+    \item The backend validates Admin authorization and queries the database for the active category.
+    \item The repository retrieves the category along with its active post count.
+    \item The server responds with HTTP 200 and the category detail data.
+    \item The frontend renders the complete category details, statistics, and action controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Invalid category ID format (non-integer) & \texttt{ParseIntPipe} rejects with HTTP 400 Bad Request. Next.js triggers the not found or bad request error view.\\ \hline
+Category ID does not exist in database & The service throws \texttt{ForumCategoryNotFoundException} (HTTP 404). The frontend displays: ``Category not found.''\\ \hline
+Category has been soft-deleted & Query filters \texttt{deletedAt = null}; returns null and throws HTTP 404 Not Found. The UI displays the not found notice.\\ \hline
+User lacks Admin privileges & The backend throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). Access is denied.\\ \hline
+Caller token expired or missing & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+Database query error during lookup & The backend catches the Prisma error and throws \texttt{FailedToLoadCategoryDetailException} (HTTP 500). The UI displays a retry button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the category.\\ \hline
+name & Display title of the category.\\ \hline
+slug & Unique URL slug.\\ \hline
+description & Detailed description or null.\\ \hline
+createdAt & Timestamp of category creation.\\ \hline
+updatedAt & Timestamp of last update.\\ \hline
+postCount & Number of active discussion threads in this category.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Category details and post statistics are presented to the administrator.
+    \item The administrator can trigger edit, delete, or return to the category list.
+\end{enumerate}
+
+% -----------------------------------------------------------------
+% UC-17.06: Restore Forum Category
+% -----------------------------------------------------------------
+\subsubsection{Function: Restore Forum Category}
+
+\fnhead{Function Trigger}
+An administrator clicks ``Restore'' on a soft-deleted category in the trash view of the category catalog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Forum Categories $\rightarrow$ Filter ``Trash'' $\rightarrow$ Click ``Restore'' icon.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to recover a soft-deleted forum category by clearing its \texttt{deletedAt} field back to \texttt{null}. This restores the category to the active list and enables users to create new discussion posts within it again.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Restore action icon button on deleted category rows in the Trash view.
+    \item Confirmation modal dialog titled ``Restore category?''.
+    \item Action buttons: ``Cancel'' and ``Restore''.
+    \item Toast notification confirming successful category restoration.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Administrator clicks ``Restore'' on a deleted category and confirms in the dialog.
+    \item The client issues an HTTP request: \texttt{PATCH /api/forums/admin/categories/:id/restore}.
+    \item \texttt{ForumAdminService.restoreAdminCategory()} verifies \texttt{ADMIN} role.
+    \item \texttt{ForumAdminRepo.restoreAdminCategory()} verifies that the category exists and is currently deleted (\texttt{deletedAt != null}). If missing, throws \texttt{ForumCategoryNotFoundException} (HTTP 404).
+    \item The repository checks whether an active category (\texttt{deletedAt = null}) already exists with the same name. If a duplicate exists, throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409 Conflict).
+    \item The repository executes \texttt{prisma.forumCategory.updateMany} setting \texttt{deletedAt = null}.
+    \item The API returns HTTP 200 with the restored category object.
+    \item The frontend displays a success toast and refreshes the category table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/tthuan/RestoreForumCategory.png}{Restore forum category modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog overlay titled ``Restore category?''.
+    \item Descriptive prompt: ``Are you sure you want to restore ``\{name\}''? This category will reappear in the active categories list and be available for community discussions.''.
+    \item Action buttons at the bottom: ``Cancel'' and primary ``Restore''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Numeric identifier of the soft-deleted category passed in the URL path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than 0.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-FCAT-22: Only users with the \texttt{ADMIN} role can restore forum categories.
+    \item BR-FCAT-23: The category must currently be soft-deleted (\texttt{deletedAt != null}) to be eligible for restoration.
+    \item BR-FCAT-24: Before restoration, the system must verify that no active category currently exists with the same name. If a naming collision is detected, restoration is rejected with HTTP 409 Conflict.
+    \item BR-FCAT-25: Restoring resets \texttt{deletedAt = null}; previously detached posts remain in Uncategorized unless individually reclassified.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to the ``Trash'' view of the category catalog.
+    \item The administrator clicks ``Restore'' on a deleted category row.
+    \item The confirmation dialog appears. The administrator confirms restoration.
+    \item The frontend sends \texttt{PATCH /api/forums/admin/categories/:id/restore}.
+    \item The backend validates Admin authorization and confirms the category is currently soft-deleted.
+    \item The repository checks for name conflicts against active categories.
+    \item The repository updates the category setting \texttt{deletedAt = null}.
+    \item The server returns HTTP 200 with the restored category details.
+    \item The frontend displays ``Category restored successfully'' and updates the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Category ID does not exist or was not deleted & The service throws \texttt{ForumCategoryNotFoundException} (HTTP 404). The UI displays: ``Category not found or not deleted.''\\ \hline
+Another active category now uses the same name & The repository detects a duplicate name among active categories and throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Cannot restore category: an active category with the same name already exists.''\\ \hline
+User lacks Admin privileges & The backend throws \texttt{ForumReportForbiddenException} (HTTP 403 Forbidden). Access is denied.\\ \hline
+Caller token expired or missing & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+Database update failure during restoration & The backend catches the Prisma error and throws \texttt{FailedToRestoreForumCategoryException} (HTTP 500). The UI displays: ``Restore category failed.''\\ \hline
+Administrator cancels restoration dialog & The dialog closes without issuing an HTTP request; the category remains soft-deleted.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the restored category.\\ \hline
+name & Display title of the restored category.\\ \hline
+slug & URL slug of the category.\\ \hline
+description & Description string or null.\\ \hline
+createdAt & Timestamp of original creation.\\ \hline
+updatedAt & Timestamp indicating restoration time.\\ \hline
+postCount & Current post count.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The category's \texttt{deletedAt} field is reset to \texttt{null}.
+    \item The category reappears in the active forum category catalog.
+    \item Users can create new discussion posts under this category.
+\end{enumerate}
