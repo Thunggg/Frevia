@@ -112,7 +112,10 @@ describe('Forum posts (UF-03 to UF-07)', () => {
 
     // Schema từ chối page = 0.
     it('rejects page=0 through ForumPostFilterSchema', () => {
-      const parsed = ForumPostFilterSchema.safeParse({ page: '0', limit: '10' });
+      const parsed = ForumPostFilterSchema.safeParse({
+        page: '0',
+        limit: '10',
+      });
 
       expect(parsed.success).toBe(false);
     });

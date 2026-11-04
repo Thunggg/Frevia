@@ -1,4 +1,7 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ForumRepository } from '../../src/routes/forums/forums-post/forums.repo';
 import { ForumService } from '../../src/routes/forums/forums-post/forums.service';
 import { ForumCategoryNotFoundException } from '../../src/routes/forums/forums-post/forums.error';
@@ -9,9 +12,7 @@ describe('Forum categories (UF-01, UF-02)', () => {
     getForumCategoryById: jest.fn(),
   };
 
-  const service = new ForumService(
-    repository as unknown as ForumRepository,
-  );
+  const service = new ForumService(repository as unknown as ForumRepository);
 
   const createdAt = new Date('2026-01-01T00:00:00.000Z');
   const updatedAt = new Date('2026-01-02T00:00:00.000Z');

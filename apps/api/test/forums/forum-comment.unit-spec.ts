@@ -385,9 +385,9 @@ describe('Forum comments (UF-11 to UF-16)', () => {
         postId: 2,
       });
 
-      await expect(
-        service.toggleLikeComment(10, 1, 5),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.toggleLikeComment(10, 1, 5)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
       expect(repository.createCommentLike).not.toHaveBeenCalled();
     });
   });
@@ -435,9 +435,9 @@ describe('Forum comments (UF-11 to UF-16)', () => {
         postId: 2,
       });
 
-      await expect(
-        service.toggleLikeComment(10, 1, 5),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.toggleLikeComment(10, 1, 5)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 });
