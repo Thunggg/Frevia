@@ -11,6 +11,7 @@ import {
   Send,
   Trash2,
 } from "@/components/icons";
+import { toast } from "@repo/ui/components/shadcn/sonner";
 
 import {
   AlertDialog,
@@ -59,12 +60,35 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
     createComment.mutate(
       { postId, content: newComment.trim() },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          // Bình luận bị REJECTED -> giữ form, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            toast.error(msg);
+            return;
+          }
+          // Xóa form sau khi PENDING hoặc APPROVED
           setNewComment("");
+          if (result?.moderationStatus === "PENDING") {
+            const msg = (result as any).moderationMessage || t("pendingModeration");
+            toast.info(msg);
+            return;
+          }
+          if (result?.moderationStatus === "APPROVED") {
+            const msg = (result as any).moderationMessage;
+            if (msg) {
+              toast.success(msg);
+            }
+          }
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : t("genericError"),
+          );
         },
       },
     );
-  }, [postId, newComment, isSubmitting, createComment]);
+  }, [postId, newComment, isSubmitting, createComment, t]);
 
   const comments: ForumCommentType[] = commentsData?.comments ?? [];
   const pagination = commentsData?.pagination;
@@ -232,12 +256,35 @@ function CommentItem({
     updateComment.mutate(
       { postId, commentId: comment.id, content: editContent.trim() },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          // Bình luận edit bị REJECTED -> giữ edit mode, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            toast.error(msg);
+            return;
+          }
+          // PENDING hoặc APPROVED -> thoát edit mode
           setIsEditing(false);
+          if (result?.moderationStatus === "PENDING") {
+            const msg = (result as any).moderationMessage || t("pendingModeration");
+            toast.info(msg);
+            return;
+          }
+          if (result?.moderationStatus === "APPROVED") {
+            const msg = (result as any).moderationMessage;
+            if (msg) {
+              toast.success(msg);
+            }
+          }
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : t("genericError"),
+          );
         },
       },
     );
-  }, [postId, comment.id, editContent, updateComment]);
+  }, [postId, comment.id, editContent, updateComment, t]);
 
   const handleDelete = useCallback(() => {
     deleteComment.mutate({ postId, commentId: comment.id });

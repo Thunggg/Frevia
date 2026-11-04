@@ -26,11 +26,14 @@ import {
 } from './forums.error';
 import { RoleName } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { AIModerationService } from '../../../shared/services/ai-moderation.service';
 
 @Injectable()
 export class ForumService {
-  // Inject ForumRepository để Service có thể lấy dữ liệu từ database
-  constructor(private readonly forumRepository: ForumRepository) {}
+  constructor(
+    private readonly forumRepository: ForumRepository,
+    private readonly aiModerationService: AIModerationService,
+  ) {}
 
   // Lấy danh sách tất cả forum categories
   async getForumCategories(): Promise<ForumCategoryListResponseType> {
@@ -169,13 +172,21 @@ export class ForumService {
         }
       }
 
-      // Tạo post (kèm moderation do AI proxy nhúng vào, nếu có)
+      // AI Moderation cho post mới (chỉ nếu không có sẵn moderation data)
+      let moderation = body.moderation;
+      if (!moderation) {
+        moderation = await this.aiModerationService.moderateContent({
+          text: `${body.title || ''} ${body.content || ''}`,
+          context: 'forum-post',
+        });
+      }
+
       return await this.forumRepository.createForumPost(
         body.categoryId ?? null,
         userId,
         body.title,
         body.content,
-        body.moderation,
+        moderation,
       );
     } catch (error) {
       // Nếu là lỗi HttpException thì ném lỗi ra ngoài
@@ -221,7 +232,16 @@ export class ForumService {
         throw ForumPostNotOwnedException();
       }
 
-      return this.forumRepository.updateForumPost(id, body);
+      // AI Moderation cho post update (chỉ nếu không có sẵn moderation data)
+      let moderation = body.moderation;
+      if (!moderation) {
+        moderation = await this.aiModerationService.moderateContent({
+          text: `${body.title || ''} ${body.content || ''}`,
+          context: 'forum-post',
+        });
+      }
+
+      return this.forumRepository.updateForumPost(id, body, moderation);
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError ||

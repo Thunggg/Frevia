@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { envConfig } from '../config/validate-env';
 
 import { aiInternalAuthHeaders } from './ai-internal-auth';
 
-const AI_SERVICE_URL =
-  process.env.FREVIA_AI_URL?.replace(/\/+$/, '') ?? 'http://localhost:8000';
-const REQUEST_TIMEOUT_MS = 20_000;
+const AI_SERVICE_URL = envConfig.AI_MODERATION_URL.replace(/\/+$/, '');
+const REQUEST_TIMEOUT_MS = envConfig.AI_MODERATION_TIMEOUT_MS;
 
 export type AiVector = number[];
 
