@@ -22,6 +22,8 @@ export const ForumPostSchema = z.object({
   moderationStatus: ForumPostStatusEnum,
   moderationScore: z.number().nullable(),
   moderationCategories: z.array(z.string()).nullable(),
+  moderationMessage: z.string().nullable().optional(),
+  moderationLanguage: z.string().nullable().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -51,6 +53,8 @@ export const ForumModerationSchema = z.object({
   matches: z.array(z.unknown()).optional(),
   risk: z.string().optional(),
   recommendation: z.string().optional(),
+  message: z.string().optional(),
+  language: z.string().optional(),
 });
 
 export type ForumModerationType = z.infer<typeof ForumModerationSchema>;
@@ -68,6 +72,7 @@ export const UpdateForumPostSchema = z.object({
   categoryId: z.coerce.number().int().positive().optional(),
   title: z.string(ManageForumPostMessage.FORUM_POST_TITLE_REQUIRED).min(1),
   content: z.string(ManageForumPostMessage.FORUM_POST_CONTENT_REQUIRED).min(1),
+  moderation: ForumModerationSchema.optional(),
 });
 
 // --- Response Schemas ---
@@ -110,6 +115,8 @@ export const ViewForumPostDetailResponseSchema = z.object({
   moderationStatus: ForumPostStatusEnum,
   moderationScore: z.number().nullable(),
   moderationCategories: z.array(z.string()).nullable(),
+  moderationMessage: z.string().nullable().optional(),
+  moderationLanguage: z.string().nullable().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   category: z

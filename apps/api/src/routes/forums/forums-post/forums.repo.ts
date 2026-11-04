@@ -281,6 +281,8 @@ export class ForumRepository {
           moderationStatus: true,
           moderationScore: true,
           moderationCategories: true,
+          moderationMessage: true,
+          moderationLanguage: true,
           createdAt: true,
           updatedAt: true,
           user: {
@@ -322,6 +324,8 @@ export class ForumRepository {
         moderationStatus: p.moderationStatus,
         moderationScore: p.moderationScore,
         moderationCategories: castJsonStringArray(p.moderationCategories),
+        moderationMessage: p.moderationMessage,
+        moderationLanguage: p.moderationLanguage,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
         likeCount: p._count.likes,
@@ -353,6 +357,8 @@ export class ForumRepository {
         moderationCategories: moderation?.categories?.length
           ? moderation.categories
           : undefined,
+        moderationMessage: moderation?.message ?? null,
+        moderationLanguage: moderation?.language ?? null,
       },
       select: {
         id: true,
@@ -364,6 +370,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -392,6 +400,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
 
@@ -445,6 +455,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -478,6 +490,7 @@ export class ForumRepository {
   async updateForumPost(
     id: number,
     data: UpdateForumPostType,
+    moderation?: ForumModerationType,
   ): Promise<ForumPostType> {
     const forumPost = await this.prisma.forumPost.update({
       where: {
@@ -491,6 +504,15 @@ export class ForumRepository {
         title: data.title,
         slug: createPostSlug(data.title),
         content: data.content,
+        ...(moderation && {
+          moderationStatus: moderation.status,
+          moderationScore: moderation.score ?? null,
+          moderationCategories: moderation.categories?.length
+            ? moderation.categories
+            : undefined,
+          moderationMessage: moderation.message ?? null,
+          moderationLanguage: moderation.language ?? null,
+        }),
       },
       select: {
         id: true,
@@ -502,6 +524,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -532,6 +556,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -567,6 +593,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -612,6 +640,8 @@ export class ForumRepository {
       moderationStatus: p.moderationStatus,
       moderationScore: p.moderationScore,
       moderationCategories: castJsonStringArray(p.moderationCategories),
+      moderationMessage: p.moderationMessage,
+      moderationLanguage: p.moderationLanguage,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       likeCount: p._count.likes,

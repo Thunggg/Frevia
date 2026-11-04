@@ -61,20 +61,31 @@ export class IdentityAiService {
     form: FormData,
   ): Promise<T | undefined> {
     let response: Response;
+    const url = `${this.baseUrl}${path}`;
+    console.log(`[IdentityAiService] POST ${url}`);
     try {
-      response = await fetch(`${this.baseUrl}${path}`, {
+      response = await fetch(url, {
         method: 'POST',
         body: form,
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch (error) {
+      console.error(`[IdentityAiService] Request failed to ${url}:`, error);
       if ((error as Error)?.name === 'TimeoutError') {
         throw AiServiceTimeoutException();
       }
       throw AiServiceUnavailableException();
     }
 
-    if (!response.ok) throw AiServiceFailedException();
+    console.log(`[IdentityAiService] Response ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      const text = await response.text().catch(() => 'No body');
+      console.error(
+        `[IdentityAiService] AI service error: ${response.status} ${response.statusText}`,
+        text,
+      );
+      throw AiServiceFailedException();
+    }
 
     let payload: { result?: T } | T | null;
     try {

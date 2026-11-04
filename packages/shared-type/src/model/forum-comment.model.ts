@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PaginationSchema } from "./forum-post.model";
+import { PaginationSchema, ForumPostStatusEnum } from "./forum-post.model";
 import { ReportStatus } from "../constants/report-status.constant";
 
 // Schema cơ bản của ForumComment
@@ -16,6 +16,11 @@ export const ForumCommentSchema = z.object({
       .nullable(),
   }),
   content: z.string().min(1),
+  moderationStatus: ForumPostStatusEnum,
+  moderationScore: z.number().nullable(),
+  moderationCategories: z.array(z.string()).nullable(),
+  moderationMessage: z.string().nullable().optional(),
+  moderationLanguage: z.string().nullable().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   likeCount: z.number(),
@@ -52,6 +57,16 @@ export type ForumCommentListResponseType = z.infer<
 
 export const CreateForumCommentSchema = z.object({
   content: z.string().min(1),
+  moderation: z.object({
+    status: ForumPostStatusEnum,
+    score: z.number().min(0).max(1).optional(),
+    categories: z.array(z.string()).optional(),
+    matches: z.array(z.unknown()).optional(),
+    risk: z.string().optional(),
+    recommendation: z.string().optional(),
+    message: z.string().optional(),
+    language: z.string().optional(),
+  }).optional(),
 });
 
 export type CreateForumCommentType = z.infer<typeof CreateForumCommentSchema>;
@@ -60,6 +75,16 @@ export const CreateForumCommentResponseSchema = ForumCommentSchema;
 
 export const EditForumCommentSchema = z.object({
   content: z.string().min(1),
+  moderation: z.object({
+    status: ForumPostStatusEnum,
+    score: z.number().min(0).max(1).optional(),
+    categories: z.array(z.string()).optional(),
+    matches: z.array(z.unknown()).optional(),
+    risk: z.string().optional(),
+    recommendation: z.string().optional(),
+    message: z.string().optional(),
+    language: z.string().optional(),
+  }).optional(),
 });
 
 export type EditForumCommentType = z.infer<typeof EditForumCommentSchema>;

@@ -1,4 +1,7 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ForumLikeRepository } from '../../src/routes/forums/forums-like/forums-like.repo';
 import { ForumLikeService } from '../../src/routes/forums/forums-like/forums-like.service';
 

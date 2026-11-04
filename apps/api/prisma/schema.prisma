@@ -135,6 +135,7 @@ model User {
   // --- Forum ---
   forumPosts          ForumPost[]
   forumPostsReviewed  ForumPost[]    @relation("ForumPostReviewedBy")
+  forumCommentsReviewed ForumComment[] @relation("ForumCommentReviewedBy")
   forumComments       ForumComment[]
   forumLikes          ForumLike[]
   forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
@@ -1196,6 +1197,8 @@ model ForumPost {
   moderationStatus     ForumPostStatus @default(PENDING)
   moderationScore      Float?
   moderationCategories Json?
+  moderationMessage    String?
+  moderationLanguage   String?
   reviewedById         Int?
   reviewedAt           DateTime?
   createdAt            DateTime        @default(now())
@@ -1220,17 +1223,30 @@ model ForumComment {
   postId    Int
   userId    Int
   content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  // ============================
+  // Moderation (nhúng bởi AI proxy SensitiveAI)
+  // ============================
+  moderationStatus     ForumPostStatus @default(PENDING)
+  moderationScore      Float?
+  moderationCategories Json?
+  moderationMessage    String?
+  moderationLanguage   String?
+  reviewedById         Int?
+  reviewedAt           DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  deletedAt            DateTime?
 
-  post    ForumPost     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  user    User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  likes   ForumLike[]
-  reports ForumReport[]
+  post       ForumPost     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user       User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewedBy User?         @relation("ForumCommentReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  likes      ForumLike[]
+  reports    ForumReport[]
 
   @@index([postId])
   @@index([userId])
+  @@index([moderationStatus])
+  @@index([reviewedById])
 }
 
 model ForumLike {
