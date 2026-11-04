@@ -1,8 +1,9 @@
 import type {
-  ChangeJobStatusBodyType,
-  ChangeJobStatusResponseType,
   CreateJobBodyType,
   JobType,
+  PublishJobResponseType,
+  CloseJobResponseType,
+  ReopenJobResponseType,
   UpdateJobBodyType,
   UpdateJobResponseType,
 } from "@shared/types";
@@ -22,10 +23,24 @@ const jobApiRequest = {
     return http.delete<void>(`/api/manage-jobs/${jobId}`);
   },
 
-  changeJobStatus(jobId: number, body: ChangeJobStatusBodyType) {
-    return http.patch<ChangeJobStatusResponseType>(
-      `/api/manage-jobs/${jobId}/status`,
-      body,
+  publishJob(jobId: number) {
+    return http.patch<PublishJobResponseType>(
+      `/api/manage-jobs/${jobId}/publish`,
+      {},
+    );
+  },
+
+  closeJob(jobId: number) {
+    return http.patch<CloseJobResponseType>(
+      `/api/manage-jobs/${jobId}/close`,
+      {},
+    );
+  },
+
+  reopenJob(jobId: number) {
+    return http.patch<ReopenJobResponseType>(
+      `/api/manage-jobs/${jobId}/reopen`,
+      {},
     );
   },
 

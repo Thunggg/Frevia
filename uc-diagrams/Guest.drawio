@@ -1,0 +1,106 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Guest 1/1" id="Guest_1">
+    <mxGraphModel dx="1895" dy="1225" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="swimlane_frevia" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Frevia" vertex="1">
+          <mxGeometry height="620" width="740" x="140" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Register&#xa;UC-04" vertex="1">
+          <mxGeometry height="55" width="145" x="50" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=0;fillColor=#ffffff;strokeColor=#000000;" value="Login with Google&#xa;UC-01" vertex="1">
+          <mxGeometry height="55" width="150" x="50" y="282.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_mod_8" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Job Browsing&#xa;UC-10" vertex="1">
+          <mxGeometry height="55" width="150" x="50" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_10" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job List&#xa;UC-10.01" vertex="1">
+          <mxGeometry height="46" width="150" x="200" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_11" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Detail&#xa;UC-10.02" vertex="1">
+          <mxGeometry height="46" width="150" x="380" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_mod_14" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Forum Management&#xa;UC-14" vertex="1">
+          <mxGeometry height="55" width="150" x="50" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_18" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Forum Category Detail&#xa;UC-14.02" vertex="1">
+          <mxGeometry height="46" width="160" x="400" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_20" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Post List&#xa;UC-14.03" vertex="1">
+          <mxGeometry height="46" width="160" x="520" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_22" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Post Detail&#xa;UC-14.04" vertex="1">
+          <mxGeometry height="46" width="160" x="200" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_24" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Post Likes&#xa;UC-14.10" vertex="1">
+          <mxGeometry height="46" width="160" x="400" y="556" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_26" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Post Comments&#xa;UC-14.11" vertex="1">
+          <mxGeometry height="46" width="160" x="520" y="492" as="geometry" />
+        </mxCell>
+        <mxCell id="m_19" edge="1" parent="swimlane_frevia" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_16" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Forum Category List&#xa;UC-14.01" vertex="1">
+          <mxGeometry height="46" width="160" x="200" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="m_17" edge="1" parent="swimlane_frevia" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sagIJ77AukEcuvWHXgxa-1" edge="1" parent="swimlane_frevia" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_16" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="179" y="429" as="sourcePoint" />
+            <mxPoint x="499" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Guest" vertex="1">
+          <mxGeometry height="70" width="35" x="40" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="m_3" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_5" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="360" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_6" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontFamily=Tahoma;" value="Google Authentication Service" vertex="1">
+          <mxGeometry height="70" width="35" x="960" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="m_7" edge="1" parent="1" source="act_6" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_9" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_mod_8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="75" y="350" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_12" edge="1" parent="1" source="uc_mod_8" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_13" edge="1" parent="1" source="uc_mod_8" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_15" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=-0.02;entryY=0.538;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_mod_14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="75" y="382" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_21" edge="1" parent="1" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_23" edge="1" parent="1" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_25" edge="1" parent="1" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_27" edge="1" parent="1" source="uc_mod_14" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

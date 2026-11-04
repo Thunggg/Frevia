@@ -74,6 +74,8 @@ export * from "./message/manage-dispute.message";
 export * from "./model/dispute.model";
 export * from "./constants/payment.constant";
 export * from "./message/manage-payment.message";
+export * from "./model/recommendation.model";
+export * from "./message/recommendation.message";
 export * from "./model/payment.model";
 export * from "./message/manage-skill-admin.message";
 export * from "./model/job-category.model";

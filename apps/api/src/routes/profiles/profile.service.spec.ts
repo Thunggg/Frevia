@@ -4,6 +4,7 @@ import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { AiCvAnalyzerService } from '../../shared/services/ai-cv-analyzer.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
+import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 import { ProfileRepository } from './profile.repo';
 import { ProfileService } from './profile.service';
 
@@ -32,6 +33,9 @@ describe('ProfileService', () => {
     {} as AiCvAnalyzerService,
     {} as SkillResolverService,
     {} as ProfileRevisionService,
+    {
+      enqueueAndProcess: jest.fn().mockResolvedValue(undefined),
+    } as unknown as EmbeddingOutboxService,
   );
 
   beforeEach(() => jest.clearAllMocks());

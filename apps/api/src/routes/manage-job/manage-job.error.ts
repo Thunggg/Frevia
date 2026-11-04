@@ -21,6 +21,14 @@ export const BookmarkJobOnlyForFreelancerException = () =>
     },
   ]);
 
+export const JobOnlyForClientException = () =>
+  new ForbiddenException([
+    {
+      message: ManageJobMessage.JOB_ONLY_FOR_CLIENT,
+      path: 'roleName',
+    },
+  ]);
+
 export const JobNotFoundException = () =>
   new NotFoundException(ManageJobMessage.JOB_NOT_FOUND);
 
@@ -59,7 +67,34 @@ export const FailedToDeleteJobException = () =>
     message: ManageJobMessage.FAILED_TO_DELETE_JOB,
   });
 
-export const FailedToChangeJobStatusException = () =>
+export const JobCannotBePublishedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_PUBLISHED);
+
+export const JobCannotBeDeletedWithActiveContractException = () =>
+  new BadRequestException(
+    ManageJobMessage.JOB_CANNOT_BE_DELETED_WITH_ACTIVE_CONTRACT,
+  );
+
+export const JobReopenPeriodExpiredException = () =>
+  new BadRequestException(ManageJobMessage.JOB_REOPEN_PERIOD_EXPIRED);
+
+export const FailedToPublishJobException = () =>
   new InternalServerErrorException({
-    message: ManageJobMessage.FAILED_TO_CHANGE_JOB_STATUS,
+    message: ManageJobMessage.FAILED_TO_PUBLISH_JOB,
+  });
+
+export const JobCannotBeClosedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_CLOSED);
+
+export const FailedToCloseJobException = () =>
+  new InternalServerErrorException({
+    message: ManageJobMessage.FAILED_TO_CLOSE_JOB,
+  });
+
+export const JobCannotBeReopenedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_REOPENED);
+
+export const FailedToReopenJobException = () =>
+  new InternalServerErrorException({
+    message: ManageJobMessage.FAILED_TO_REOPEN_JOB,
   });
