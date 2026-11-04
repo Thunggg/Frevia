@@ -25,6 +25,7 @@ import {
   JobCannotBeDeletedWithActiveContractException,
   JobReopenPeriodExpiredException,
   JobCategoriesNotFoundException,
+  JobCategoryOnlyOneException,
   JobNotFoundException,
   PositionsRequiredBelowFilledException,
 } from './manage-job.error';
@@ -582,6 +583,10 @@ export class ManageJobRepository {
   ): Promise<void> {
     const uniqueIds = [...new Set(categoryIds)];
 
+    if (uniqueIds.length > 1) {
+      throw JobCategoryOnlyOneException();
+    }
+
     if (uniqueIds.length === 0) {
       return;
     }
@@ -605,6 +610,10 @@ export class ManageJobRepository {
     categoryIds: number[],
   ): Promise<void> {
     const uniqueIds = [...new Set(categoryIds)];
+
+    if (uniqueIds.length > 1) {
+      throw JobCategoryOnlyOneException();
+    }
 
     if (uniqueIds.length === 0) {
       return;

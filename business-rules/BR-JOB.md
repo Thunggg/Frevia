@@ -1,6 +1,9 @@
-# Business Rule - Job (BR-J01 – BR-J46)
+# Business Rule - Job (BR-J01 – BR-J54)
 
 Business rule quản lý Job theo **thực tế thông dụng của các nền tảng freelance** (Upwork, Freelancer.com, Fiverr, Toptal). Mỗi rule giữ nguyên ID BR-Jxx để đối chiếu.
+
+> [!TIP]
+> **Xem nhanh**: Bảng đối chiếu Use Case (Trần Phát Tài - `Frevia_BACKLOG.xlsx`) sang các Business Rules tương ứng đã được tổng hợp riêng tại file [UC-JOB-BR.md](./UC-JOB-BR.md) hoặc xem ở cuối tài liệu này tại [Mục S: Ánh xạ Use Case & Business Rules](#s-ánh-xạ-use-case-trần-phát-tài--business-rules).
 
 ## Trạng thái Job
 
@@ -66,7 +69,7 @@ Trong trạng thái `DRAFT`, chủ Job được cập nhật mọi trường (ti
 <summary><strong>BR-J05: Chỉ publish được khi mọi trường bắt buộc đã hợp lệ</strong></summary>
 
 Điều kiện `DRAFT → OPEN`:
-- title (10–100 ký tự, không spam/URL), description đủ dài, ≥1 category, ≥1 skill
+- title (10–100 ký tự, không spam/URL), description đủ dài, đúng 1 category (Job chỉ thuộc duy nhất 1 danh mục, BR-J53), ≥1 skill
 - budget hợp lệ (`budgetMin >= 0`, `budgetMin <= budgetMax`), duration, experience level
 - `deadline`/`expiryDate` (nếu có) > thời điểm publish
 - Tài khoản Client đã xác minh email/thanh toán, không bị giới hạn đăng bài
@@ -112,7 +115,7 @@ Không giới hạn số proposal cho một Job mở — mỗi Freelancer gửi 
 Khi Job ở trạng thái `OPEN`, việc cho phép chỉnh sửa và phạm vi áp dụng được phân thành 2 trường hợp cụ thể:
 
 1. **Trường hợp 1: Job OPEN nhưng CHƯA CÓ Proposal nào ($0$ proposal)**:
-   - Client được tự do sửa đổi các thông tin nội dung: `title` (nhưng `slug` giữ nguyên theo BR-J42), `description`, `skills` (1–10 skills theo BR-J43), `jobCategories`, `budgetMin`, `budgetMax` (≥ $10 theo BR-J41), `deadline`, `expiryDate` (> now), và `hiringType` (`SINGLE` ↔ `MULTIPLE`).
+   - Client được tự do sửa đổi các thông tin nội dung: `title` (nhưng `slug` giữ nguyên theo BR-J42), `description`, `skills` (1–10 skills theo BR-J43), `categoryId` (chỉ chọn duy nhất 1 danh mục theo BR-J53), `budgetMin`, `budgetMax` (≥ $10 theo BR-J41), `deadline`, `expiryDate` (> now), và `hiringType` (`SINGLE` ↔ `MULTIPLE`).
    - Thao tác này không gây xung đột quyền lợi vì chưa có ứng viên nào nộp hồ sơ.
 
 2. **Trường hợp 2: Job OPEN và ĐÃ CÓ Proposal nộp vào ($ge 1$ proposal)**:
@@ -128,7 +131,7 @@ Khi Job ở trạng thái `OPEN`, việc cho phép chỉnh sửa và phạm vi �
 | `title` | Có | Sửa được tên hiển thị; `slug` định danh URL giữ nguyên (BR-J42). |
 | `description` | Có | Tối đa 5.000 ký tự. |
 | `skills` | Có | Tối thiểu 1, tối đa 10 kỹ năng (BR-J43). |
-| `jobCategories` | Có | Phải thuộc danh mục đang hoạt động (`ACTIVE`). |
+| `categoryId` / `jobCategory` | Có | Phải thuộc danh mục đang hoạt động (`ACTIVE`) (BR-J53). Mỗi Job chỉ thuộc **duy nhất 1 danh mục**, cấm chọn nhiều. |
 | `budgetMin`, `budgetMax` | Có | Phải $ge $10$; không ảnh hưởng giá bid của proposal cũ (BR-J12). |
 | `deadline`, `expiryDate` | Có | Phải là thời điểm trong tương lai (`> now()`). |
 | `positionsRequired` | Có | Phải $ge positionsFilled$ (BR-J37). |
@@ -231,7 +234,7 @@ Mọi thay đổi thỏa thuận sau khi ký contract đi qua quy trình tách b
 <details>
 <summary><strong>BR-J22: Client đóng được Job OPEN khi chưa có proposal HIRED hay contract hiệu lực</strong></summary>
 
-Điều kiện `close`: chủ Job, Job `OPEN`, **chưa** có proposal `HIRED` và chưa có contract hiệu lực. Nếu đã có → phải đi qua luồng Contract (BR-J28).
+Điều kiện `close`: chủ Job, Job `OPEN`, **chưa** có proposal `HIRED` và chưa có contract hiệu lực. Nếu đã có → phải đi qua luồng Contract (BR-J28). *(Ngoại lệ: Đối với Job `MULTIPLE` đã tuyển được một phần và Client muốn dừng tuyển các vị trí còn lại, áp dụng cơ chế chốt tuyển sớm theo BR-J47)*.
 
 </details>
 
@@ -282,14 +285,14 @@ Các proposal chuyển `EXPIRED` ở BR-J24 vẫn giữ nguyên — không quay 
 <details>
 <summary><strong>BR-J29: Job chuyển COMPLETED chỉ sau khi Contract được hoàn thành</strong></summary>
 
-Không có endpoint cho Client đặt Job `COMPLETED` trực tiếp. Trigger duy nhất: contract hoàn thành (đã thanh toán/xác nhận xong) → transaction set `job.status = COMPLETED`. Job `MULTIPLE` có nhiều Contract → chỉ khi **mọi** Contract của Job đã `COMPLETED` thì Job mới `COMPLETED`.
+Không có endpoint cho Client đặt Job `COMPLETED` trực tiếp. Trigger duy nhất: contract hoàn thành (đã thanh toán/xác nhận xong) → transaction set `job.status = COMPLETED`. Job `MULTIPLE` có nhiều Contract → chỉ khi **mọi** Contract của Job đã `COMPLETED` thì Job mới `COMPLETED`. *(Trường hợp kết quả hỗn hợp có cả hợp đồng hoàn tất và hợp đồng hủy, xem BR-J48)*.
 
 </details>
 
 <details>
 <summary><strong>BR-J30: Job chuyển CANCELLED khi contract bị hủy hoặc thỏa điều kiện hủy</strong></summary>
 
-- Contract bị hủy (cả hai bên đồng ý / điều khoản hủy / dispute kết thúc) → Job `CANCELLED`.
+- Contract bị hủy (cả hai bên đồng ý / điều khoản hủy / dispute kết thúc) → Job `CANCELLED`. *(Đối với Job `MULTIPLE`, hủy 1 contract riêng lẻ không tự động hủy toàn bộ Job: xem BR-J48)*.
 - Job chưa có contract → Client hủy trực tiếp được (`OPEN → CANCELLED`), cần lý do.
 
 </details>
@@ -457,6 +460,125 @@ Không được để trạng thái nửa vời (vd: Job đã IN_PROGRESS nhưng
 
 </details>
 
+## M. Tuyển nhiều vị trí & Xử lý Hợp đồng phức tạp (BR-J47 – BR-J48)
+
+<details>
+<summary><strong>BR-J47: Đóng tuyển sớm khi mới tuyển một phần cho Job tuyển nhiều vị trí (Stop Accepting Proposals / Partial Hire Close)</strong></summary>
+
+- **Bối cảnh**: Đối với Job `hiring_type = MULTIPLE` có `positions_required > 1`, Client đã tuyển được một phần (`0 < positions_filled < positions_required`) và không có nhu cầu tuyển thêm số vị trí còn lại.
+- **Cơ chế xử lý**: Hệ thống cho phép Client thực hiện thao tác **"Chốt tuyển dụng / Ngừng nhận đề xuất"** (`stop_recruitment` hoặc giảm `positions_required` về bằng `positions_filled`).
+- **Tác động trong cùng Database Transaction**:
+  - Cập nhật `positions_required = positions_filled`.
+  - Chuyển trạng thái Job: `OPEN → IN_PROGRESS` (vì số chỗ cần tuyển nay đã bằng số chỗ đã tuyển).
+  - Tự động chuyển toàn bộ Proposal còn lại đang ở trạng thái `SUBMITTED` hoặc `INTERVIEWING` sang `REJECTED` (với lý do: "Khách hàng đã chốt đủ số lượng cần tuyển").
+  - Gửi thông báo đến các Freelancer có đề xuất bị từ chối.
+  - Các hợp đồng đang có hiệu lực (`ACTIVE`, `PENDING_SIGN`) tiếp tục diễn ra bình thường, không bị xáo trộn.
+
+</details>
+
+<details>
+<summary><strong>BR-J48: Xử lý hủy hợp đồng riêng lẻ và kết thúc hỗn hợp trong Job MULTIPLE</strong></summary>
+
+- **Hủy hợp đồng riêng lẻ (Partial Contract Cancellation)**:
+  - Trong Job `MULTIPLE`, mỗi Freelancer ký một Contract độc lập. Việc một Contract bị hủy (`CANCELLED` do hai bên đồng ý, do hết hạn ký quỹ BR-J44, hoặc do phán quyết tranh chấp) **tuyệt đối không làm hủy toàn bộ Job và không ảnh hưởng đến các Contract khác đang hoạt động**.
+  - **Tùy chọn cho Client khi một hợp đồng bị hủy**:
+    1. *Tuyển bù (Reopen position)*: Giảm `positions_filled -= 1`. Nếu Job đang `IN_PROGRESS`, Job tự động chuyển ngược lại `OPEN` để tiếp tục nhận Proposal tuyển ứng viên thay thế.
+    2. *Không tuyển bù*: Giảm đồng thời cả `positions_required -= 1` và `positions_filled -= 1`. Job giữ nguyên trạng thái `IN_PROGRESS` (nếu vẫn còn $\ge 1$ hợp đồng hoạt động).
+- **Trường hợp hủy toàn bộ (All Contracts Cancelled)**: Job chỉ chuyển sang trạng thái `CANCELLED` khi **toàn bộ** các Contract của Job đều bị hủy và Client không có nhu cầu tuyển tiếp (`positions_filled == 0` và không còn hợp đồng nào hiệu lực).
+- **Kết thúc hỗn hợp (Mixed Final Status)**: Khi tất cả các Contract liên quan đến Job đã kết thúc (không còn Contract nào ở `ACTIVE`/`DISPUTED`):
+  - Nếu có **ít nhất 1 Contract** đạt `COMPLETED` thành công: Job được chuyển sang trạng thái `COMPLETED` (ghi nhận hoàn tất dự án/hoàn tất một phần).
+  - Chỉ khi **100% Contract** bị `CANCELLED`: Job mới chuyển sang `CANCELLED`.
+
+</details>
+
+## N. Tin nổi bật & Quản trị hiển thị ưu tiên (BR-J49)
+
+<details>
+<summary><strong>BR-J49: Quy chuẩn Tin nổi bật (Featured Job) và bảo toàn hiển thị ưu tiên</strong></summary>
+
+- **Cấp phát cờ `featured`**: Trường `featured` (`true`/`false`) không thể được Client gán tự do qua API cập nhật thông thường (`updateJob`). Cờ này chỉ được hệ thống bật (`featured = true`) khi Client hoàn tất thanh toán gói nâng cấp tin nổi bật hoặc do Admin phê duyệt.
+- **Phạm vi hiệu lực**:
+  - Nhãn `featured` chỉ phát huy tác dụng hiển thị (ưu tiên lên đầu trang kết quả tìm kiếm, gắn huy hiệu nổi bật, ưu tiên trong Job Alert) khi Job ở trạng thái `OPEN`.
+  - Khi Job chuyển sang các trạng thái kết thúc hoặc ngừng nhận đơn (`CLOSED`, `IN_PROGRESS`, `CANCELLED`, `COMPLETED`), nhãn nổi bật tự động mất hiệu lực ưu tiên trên các giao diện tìm việc làm công khai.
+- **Bản nháp (DRAFT)**: Job `DRAFT` có thể lưu trạng thái đã mua quyền featured trước, nhưng thời hạn kích hoạt nổi bật chỉ bắt đầu tính từ thời điểm Job được chuyển sang `OPEN`.
+
+</details>
+
+## O. Thời hạn & Ràng buộc tiến độ (BR-J50)
+
+<details>
+<summary><strong>BR-J50: Phân định thời hạn nhận hồ sơ (expiryDate) và thời hạn bàn giao dự án (deadline)</strong></summary>
+
+- **Ngữ nghĩa tách biệt**:
+  - `expiryDate` (Hạn đăng bài tuyển dụng): Thời điểm cuối cùng Job mở nhận Proposal. Sau thời điểm này, Job tự động đóng sang `CLOSED` (theo BR-J40) và ngưng nhận đề xuất mới.
+  - `deadline` (Hạn bàn giao dự án): Thời hạn mong muốn hoàn thành toàn bộ khối lượng công việc của dự án/hợp đồng.
+- **Ràng buộc logic thời gian**:
+  - Tại thời điểm Publish hoặc Update Job, nếu Client cung cấp cả hai trường thì bắt buộc: `now() < expiryDate <= deadline`. Thời hạn kết thúc tuyển dụng không được xảy ra sau ngày dự án phải hoàn thành bàn giao.
+  - Khi ký hợp đồng (Contract): `deadline` của Job đóng vai trò làm mốc tham chiếu trần cho các mốc giao việc (Milestones) hoặc thời gian cam kết giao hàng (`deliveryDays`) của Proposal.
+
+</details>
+
+## P. Kiểm duyệt độc lập & An toàn nội dung (BR-J51)
+
+<details>
+<summary><strong>BR-J51: Kiểm duyệt độc lập bài đăng Job và chế tài chống lộ thông tin liên lạc ngoài (Job Moderation & Anti-disintermediation)</strong></summary>
+
+- **Kiểm duyệt độc lập (Job-level Moderation)**:
+  - Khi một bài đăng Job bị người dùng báo cáo (Report qua UC-34) hoặc bị hệ thống quét thấy dấu hiệu gian lận, Admin có quyền xử lý độc lập đối với chính Job đó (Takedown / Suspend) mà không nhất thiết phải khóa toàn bộ tài khoản Client:
+    - Nếu Job đang `OPEN`: Tức thì ẩn khỏi kết quả tìm kiếm công khai, đóng băng không cho nhận thêm Proposal và tạm dừng quyền chấp nhận/thuê của Client.
+    - Nếu Job đang `IN_PROGRESS`: Kích hoạt cơ chế kiểm tra an toàn ký quỹ (Escrow freeze) để bảo vệ quyền lợi thù lao của Freelancer trước khi Admin đưa ra kết luận xử lý.
+- **Chống giao dịch chui ngoài sàn (Anti-disintermediation Scanning)**:
+  - Hệ thống kiểm tra tự động nội dung `title` và `description` của Job:
+    - Nếu phát hiện số điện thoại, chuỗi định dạng email cá nhân, đường dẫn mạng xã hội ngoài sàn (Zalo, Telegram, WhatsApp, Facebook...), hệ thống sẽ từ chối Publish/Update và yêu cầu Client gỡ bỏ thông tin liên hệ trực tiếp.
+    - Mọi trao đổi và thỏa thuận trước hợp đồng bắt buộc phải thực hiện thông qua hệ thống tin nhắn nội bộ của Frevia.
+
+</details>
+
+## Q. Thông báo & Tính toàn vẹn Danh mục (BR-J52 – BR-J53)
+
+<details>
+<summary><strong>BR-J52: Chống spam Job Alert khi cập nhật tin và quy tắc gợi ý việc làm (Job Alert & Recommendation Rules)</strong></summary>
+
+- **Tần suất phát Job Alert (UC-23)**:
+  - Sự kiện phát thông báo việc làm phù hợp (Job Alert Notification / Email) **chỉ được kích hoạt một lần duy nhất** khi Job chuyển trạng thái `DRAFT → OPEN` (lần đầu Publish hoặc sau khi Reopen).
+  - Thao tác chỉnh sửa nội dung Job (`updateJob`) **tuyệt đối không được kích hoạt lại Job Alert** nhằm ngăn chặn hành vi Client liên tục chỉnh sửa để spam thông báo vào hòm thư Freelancer.
+- **Điều kiện gợi ý việc làm (Recommendation Engine - UC-42)**:
+  - Hệ thống gợi ý chỉ đề xuất các Job thỏa mãn: trạng thái `OPEN`, chưa hết hạn, còn chỗ trống tuyển (`positions_filled < positions_required`), Client có độ tin cậy tốt (`client.isBanned === false`).
+  - Tự động loại trừ không gợi ý Job cho những Freelancer đã nộp đề xuất hoặc đã từng bị Client từ chối (`REJECTED`) ở chính Job đó.
+
+</details>
+
+<details>
+<summary><strong>BR-J53: Mỗi Job thuộc duy nhất 1 Danh mục & Tính toàn vẹn của Danh mục việc làm (Single Job Category & Category Usability - UC-46)</strong></summary>
+
+- **Quy tắc danh mục duy nhất (Single Category Rule)**:
+  - Mỗi Job **chỉ thuộc duy nhất 1 Job Category** (`categoryId`). Hệ thống **tuyệt đối không cho phép** chọn nhiều danh mục cho cùng một bài đăng việc làm.
+  - Dữ liệu đầu vào khi tạo (`createJob`) hoặc cập nhật (`updateJob`) chỉ nhận một mã định danh danh mục đơn lẻ (`categoryId: number`).
+- **Ràng buộc trạng thái hoạt động (Active Status Constraint)**:
+  - Khi thực hiện tạo mới (`createJob`), chỉnh sửa (`updateJob`) hoặc công khai (`publishJob`), danh mục được gán vào Job bắt buộc phải tồn tại và đang ở trạng thái hoạt động (`status = ACTIVE`, `deletedAt === null`).
+- **Ứng xử khi danh mục bị vô hiệu hóa hoặc xóa mềm**:
+  - Nếu danh mục của Job bị Admin chuyển sang `INACTIVE` hoặc xóa mềm:
+    - Các Job đã ở trạng thái `OPEN` trước đó vẫn hiển thị bình thường để không làm gián đoạn tiến trình tuyển dụng hiện tại.
+    - Khi Client sửa Job (`updateJob`), hệ thống sẽ từ chối lưu nếu danh mục của Job không còn hoạt động; Client buộc phải chọn 1 danh mục `ACTIVE` hợp lệ khác để thay thế.
+    - Đối với Job `DRAFT`: Không thể Publish cho đến khi Job được gán đúng 1 danh mục đang `ACTIVE` (bảo toàn BR-J05).
+
+</details>
+
+## R. Tương tác cá nhân & Theo dõi (BR-J54)
+
+<details>
+<summary><strong>BR-J54: Quy tắc Đánh dấu tin (Bookmark) và Toàn vẹn Lịch sử xem (View Counter Integrity)</strong></summary>
+
+- **Quy tắc Bookmark Job (UC-12)**:
+  - Chỉ người dùng có vai trò `FREELANCER` mới được quyền Bookmark Job (Client không Bookmark Job, kể cả của mình).
+  - Bookmark là liên kết theo dõi cá nhân: Khi Job chuyển sang trạng thái `CLOSED`, `CANCELLED` hoặc `COMPLETED`, Job đó vẫn được giữ trong danh sách Bookmark của Freelancer nhưng giao diện phải hiển thị huy hiệu trạng thái tương ứng để Freelancer nhận biết tin đã ngừng tuyển.
+  - Khi Job bị xóa mềm (`deletedAt !== null`) hoặc tài khoản Client bị cấm (`isBanned === true`), Job sẽ tự động ẩn khỏi danh sách Bookmark hiển thị của Freelancer.
+- **Toàn vẹn số liệu xem (View Analytics & Recently Viewed)**:
+  - Thao tác truy cập xem chi tiết Job chỉ được ghi nhận vào lịch sử xem (`RecentlyViewedJob`) và tăng lượt xem thống kê khi người xem khác với chủ sở hữu bài đăng (`viewerId !== clientId`).
+  - Lượt xem từ Client chủ bài đăng hoặc lượt xem khi Job còn ở trạng thái `DRAFT` không được tính vào số liệu thống kê mức độ quan tâm của Job.
+
+</details>
+
 ---
 
 ## Phân quyền tóm tắt
@@ -473,3 +595,168 @@ Không được để trạng thái nửa vời (vd: Job đã IN_PROGRESS nhưng
 - Giới hạn số Job đăng/ngày; Job trùng nội dung bị chặn.
 - Job viết chứa thông tin liên hệ trực tiếp (email/điện thoại/link ngoài) → chặn hoặc duyệt thủ công.
 - Job có contract hiệu lực không được hạ ngân sách dưới `totalAmount` của contract (bảo đảm nhất quán với BR-J20/J21).
+
+---
+
+## S. Ánh xạ Use Case (Trần Phát Tài) & Business Rules
+
+Bảng đối chiếu toàn bộ các Use Case liên quan đến phần Job do **Trần Phát Tài** phụ trách (theo dữ liệu từ `Frevia_BACKLOG.xlsx`) với các Business Rules tương ứng trong hệ thống:
+
+### 1. Ma trận tổng hợp (Use Case ↔ Business Rules)
+
+| Use Case ID | Screen / Function | Module | Actor | Business Rules áp dụng |
+|---|---|---|---|---|
+| **UC-10.01** | View Job List | Job Browsing | Guest, Client, Freelancer | BR-J04, BR-J25, BR-J31, BR-J32, BR-J33, BR-J45, BR-J49, BR-J51 |
+| **UC-10.02** | View Job Detail | Job Browsing | Guest, Client, Freelancer | BR-J04, BR-J07, BR-J19, BR-J25, BR-J31, BR-J32, BR-J37, BR-J42, BR-J43, BR-J50, BR-J54 |
+| **UC-11.01** | View My Jobs | Job Management | Client | BR-J01, BR-J14, BR-J33 |
+| **UC-11.02** | Create Job | Job Management | Client | BR-J01, BR-J02, BR-J37, BR-J41, BR-J42, BR-J43, BR-J50, BR-J51, BR-J53 |
+| **UC-11.03** | Publish Job | Job Management | Client | BR-J05, BR-J06, BR-J14, BR-J35, BR-J41, BR-J42, BR-J50, BR-J52, BR-J53 |
+| **UC-11.04** | Update Job | Job Management | Client | BR-J03, BR-J10, BR-J11, BR-J12, BR-J13, BR-J14, BR-J20, BR-J21, BR-J31, BR-J32, BR-J37, BR-J41, BR-J42, BR-J49, BR-J52, BR-J53 |
+| **UC-11.05** | Delete Job | Job Management | Client | BR-J14, BR-J33, BR-J34, BR-J38, BR-J39 |
+| **UC-11.06** | Close Job | Job Management | Client | BR-J14, BR-J22, BR-J23, BR-J24, BR-J25, BR-J28, BR-J36, BR-J47 |
+| **UC-11.07** | Reopen Job | Job Management | Client | BR-J14, BR-J26, BR-J27, BR-J46, BR-J52 |
+| **UC-12.01** | View Bookmarked Job List | Bookmarked Jobs Management | Freelancer | BR-J54 |
+| **UC-12.02** | Bookmark Job | Bookmarked Jobs Management | Freelancer | BR-J54 |
+| **UC-12.03** | Remove Bookmark | Bookmarked Jobs Management | Freelancer | BR-J54 |
+| **UC-22.01 – 22.05** | Saved Search Management | Saved Search Management | Freelancer | BR-J04, BR-J25, BR-J33, BR-J41, BR-J43, BR-J53 |
+| **UC-23.01 – 23.05** | Job Alert Management | Job Alert Management | Freelancer | BR-J37, BR-J52 |
+| **UC-46.06 – 46.07** | Job Category Browsing | Job Category | Freelancer | BR-J04, BR-J25, BR-J33, BR-J53 |
+| **UC-42.01** | Recommend Jobs / Freelancers | Job Recommendation | AI / System | BR-J37, BR-J52 |
+
+---
+
+### 2. Chi tiết ràng buộc nghiệp vụ cho từng Use Case
+
+#### Nhóm UC-10: Job Browsing (Duyệt tin việc làm)
+- **UC-10.01: View Job List**
+  - `BR-J04`: Không bao giờ hiển thị Job có trạng thái `DRAFT` trên kết quả tìm kiếm/lọc công khai.
+  - `BR-J25`: Job `CLOSED` tự động ẩn khỏi danh sách tìm việc làm đang mở.
+  - `BR-J31`, `BR-J32`: Job `COMPLETED` và `CANCELLED` không hiển thị ở danh sách việc làm thông thường (chỉ xem ở lịch sử giao dịch).
+  - `BR-J33`: Loại trừ toàn bộ các Job đã bị xóa mềm (`deletedAt !== null`).
+  - `BR-J45`: Toàn bộ Job của Client bị khóa tài khoản (`client.isBanned = true`) lập tức bị ẩn.
+  - `BR-J49`: Tin nổi bật (`featured = true`) được ưu tiên đưa lên đầu kết quả khi còn `OPEN`.
+  - `BR-J51`: Job bị Admin kiểm duyệt gỡ bỏ (`SUSPENDED`/`FLAGGED`) bị ẩn khỏi kết quả tìm kiếm.
+
+- **UC-10.02: View Job Detail**
+  - `BR-J04`: Chi tiết Job `DRAFT` chỉ duy nhất chủ sở hữu bài đăng (hoặc Admin kiểm duyệt) mới xem được; các user khác bị từ chối 403/404.
+  - `BR-J07`, `BR-J19`, `BR-J25`, `BR-J31`: Nút ứng tuyển ("Submit Proposal") chỉ kích hoạt khi Job `OPEN` và còn chỗ trống; các trạng thái `IN_PROGRESS`, `CLOSED`, `COMPLETED`, `CANCELLED` tự động vô hiệu hóa nút ứng tuyển.
+  - `BR-J37`: Hiển thị minh bạch hình thức tuyển (`hiringType`: `SINGLE`/`MULTIPLE`), số chỗ cần tuyển (`positionsRequired`) và số chỗ đã tuyển (`positionsFilled`).
+  - `BR-J42`: Truy cập chi tiết định danh qua đường dẫn `slug` bất biến.
+  - `BR-J43`: Hiển thị kỹ năng (1–10 skills) và danh sách tệp đính kèm an toàn hợp lệ (tối đa 5 tệp, $\le 10$MB/file).
+  - `BR-J50`: Hiển thị phân biệt rõ thời hạn kết thúc nhận hồ sơ (`expiryDate`) và thời hạn bàn giao dự án (`deadline`).
+  - `BR-J54`: Lịch sử xem (`RecentlyViewedJob`) và lượt xem thống kê chỉ ghi nhận khi người xem khác với chủ Job (`userId !== clientId`); không ghi nhận view khi Job là `DRAFT`.
+
+---
+
+#### Nhóm UC-11: Job Management (Quản lý việc làm - Phía Client)
+- **UC-11.01: View My Jobs**
+  - `BR-J01`: Chỉ tài khoản mang vai trò `CLIENT` mới có quyền truy cập.
+  - `BR-J14`: Server-side check `job.clientId === currentUserId`, chỉ hiển thị các Job do chính mình tạo ra (chống IDOR).
+  - Hiển thị đầy đủ mọi trạng thái Job của Client (`DRAFT`, `OPEN`, `IN_PROGRESS`, `CLOSED`, `COMPLETED`, `CANCELLED`); tự động loại trừ Job đã bị xóa mềm (`deletedAt !== null`).
+
+- **UC-11.02: Create Job**
+  - `BR-J01`: Chỉ tài khoản vai trò `CLIENT` mới được phép tạo Job.
+  - `BR-J02`: Job mới tạo luôn luôn khởi tạo với trạng thái `status = DRAFT`; không cho phép gán thẳng ra `OPEN`.
+  - `BR-J37`: Khởi tạo tuyển dụng: `hiring_type` (`SINGLE` mặc định hoặc `MULTIPLE`), `positions_required` ($\ge 1$, SINGLE luôn = 1), `positions_filled = 0`.
+  - `BR-J41`: Ràng buộc ngân sách hợp lệ: `budgetMin >= 0`, `budgetMin <= budgetMax`, đạt mức sàn tối thiểu ($10 Fixed Price); loại ngân sách mặc định `FIXED_PRICE`.
+  - `BR-J42`: Tự động khởi tạo `slug` định danh duy nhất từ `title`.
+  - `BR-J43`: Bắt buộc từ 1 đến 10 kỹ năng; tệp đính kèm tối đa 5 file, dung lượng $\le 10$MB/file, đúng định dạng cho phép.
+  - `BR-J50`: Ràng buộc thời gian: nếu có nhập `expiryDate` và `deadline` thì bắt buộc `now() < expiryDate <= deadline`.
+  - `BR-J51`: Tự động quét và chặn thông tin liên hệ ngoài sàn (SĐT, Email, Telegram, Zalo) trong tiêu đề và mô tả.
+  - `BR-J53`: Mỗi Job chỉ được chọn **duy nhất 1 danh mục** (`categoryId`), không cho phép chọn nhiều danh mục. Danh mục được chọn bắt buộc phải đang ở trạng thái `ACTIVE` và chưa bị xóa.
+
+- **UC-11.03: Publish Job**
+  - `BR-J05`: Kiểm tra hợp lệ toàn bộ trường bắt buộc: `title` (10–100 ký tự), `description` đủ dài, đúng 1 category `ACTIVE` (BR-J53), $\ge 1$ skill, ngân sách hợp lệ, Client đã xác thực email/không bị phạt.
+  - `BR-J06`: Chuyển trạng thái `DRAFT → OPEN`, thiết lập mốc `publishedAt`, đưa Job vào chỉ mục tìm kiếm. Chỉ cho phép publish Job đang là `DRAFT`.
+  - `BR-J14`: Kiểm tra server-side quyền sở hữu của Client (`job.clientId === currentUserId`).
+  - `BR-J35`: Chuyển đổi trạng thái phải được whitelist và validate tại server.
+  - `BR-J41`: Đơn vị tiền tệ và loại ngân sách trở thành bất biến sau khi Publish.
+  - `BR-J42`: `slug` URL bị đóng băng cố định, không thể thay đổi sau khi đã Publish.
+  - `BR-J50`: Hạn đăng bài `expiryDate` phải lớn hơn thời điểm hiện tại và $\le deadline$.
+  - `BR-J52`: Kích hoạt sự kiện phát Job Alert (UC-23) một lần duy nhất.
+
+- **UC-11.04: Update Job**
+  - `BR-J03`: Khi Job còn là `DRAFT`, được tự do sửa đổi mọi trường dữ liệu không hạn chế.
+  - `BR-J10`: Khi Job ở trạng thái `OPEN`, áp dụng phân loại:
+    - *Chưa có Proposal:* Client tự do sửa đổi nội dung, kỹ năng, ngân sách.
+    - *Đã có Proposal:* Cho phép sửa nội dung, nhưng **tuyệt đối không làm đổi giá trị `bidAmount` và `deliveryDays`** của Proposal cũ (BR-J11, BR-J12).
+    - **Các trường bị khóa:** `slug` (BR-J42), `budgetType`/`currency` (BR-J41), `positionsFilled`, `status`, `clientId`.
+  - `BR-J13`: Thay đổi trọng yếu của Job không tự sửa Proposal hiện có; Freelancer tự rút và nộp lại nếu muốn.
+  - `BR-J14`: Chỉ chủ Job (`clientId`) mới có quyền thực hiện.
+  - `BR-J20`, `BR-J21`: Job `IN_PROGRESS` bị khóa các điều khoản cốt lõi, thay đổi phải qua quy trình Amendment/Change Request riêng.
+  - `BR-J31`, `BR-J32`: Job `COMPLETED` và `CANCELLED` bị cấm chỉnh sửa hoàn toàn.
+  - `BR-J37`: Không được giảm `positionsRequired` xuống thấp hơn `positionsFilled`.
+  - `BR-J49`: Cấm sửa đổi cờ `featured` qua form update thông thường.
+  - `BR-J52`: Thao tác cập nhật Job **tuyệt đối không** kích hoạt lại Job Alert.
+  - `BR-J53`: Cập nhật danh mục duy nhất của Job (`categoryId`), bắt buộc phải đang ở trạng thái `ACTIVE`. Không cho phép chọn nhiều danh mục.
+
+- **UC-11.05: Delete Job**
+  - `BR-J14`: Kiểm tra nghiêm ngặt quyền sở hữu `job.clientId === currentUserId`.
+  - `BR-J33`: Job đã từng `OPEN` chỉ được xóa mềm (`deletedAt = now()`), không xóa cứng để bảo vệ toàn vẹn dữ liệu phụ thuộc.
+  - `BR-J34`: Job `DRAFT` chưa có bản ghi phụ thuộc được phép xóa.
+  - `BR-J38`: **Chặn xóa Job** nếu Job đang ở `IN_PROGRESS` hoặc có hợp đồng (`Contract`) đang hoạt động (`PENDING_SIGN`, `ACTIVE`, `DISPUTED`).
+  - `BR-J39`: Khi xóa Job đang `OPEN` mà đã có Proposal: trong cùng 1 transaction, tự động hủy toàn bộ Proposal sang `EXPIRED`, hoàn lại connects/lượt nộp cho Freelancer và gửi thông báo.
+
+- **UC-11.06: Close Job**
+  - `BR-J14`: Kiểm tra quyền sở hữu bài đăng (`job.clientId === currentUserId`).
+  - `BR-J22`, `BR-J28`: Chỉ đóng được Job đang `OPEN` và **chưa có hợp đồng hiệu lực**. Nếu đã có Contract thì phải kết thúc qua luồng Contract.
+  - `BR-J23`: Chuyển trạng thái `OPEN → CLOSED`, ghi nhận thời gian `closedAt` và lý do đóng.
+  - `BR-J24`: Trong cùng transaction: toàn bộ Proposal đang `SUBMITTED`/`INTERVIEWING` của Job tự động chuyển sang `EXPIRED` (terminal) và thông báo cho Freelancer.
+  - `BR-J25`: Job `CLOSED` lập tức bị ẩn khỏi tìm kiếm và không nhận thêm Proposal mới.
+  - `BR-J36`: Đóng Job và hết hạn Proposal phải thực thi nguyên tử trong 1 Database Transaction.
+  - `BR-J47`: Đối với Job tuyển nhiều vị trí (`MULTIPLE`) đã tuyển được 1 phần, Client áp dụng thao tác chốt tuyển sớm để đóng các vị trí còn lại (Job chuyển `IN_PROGRESS`, auto-reject các proposal còn lại).
+
+- **UC-11.07: Reopen Job**
+  - `BR-J14`: Kiểm tra quyền sở hữu của Client.
+  - `BR-J26`: Chuyển trạng thái `CLOSED → OPEN` khi chưa có hợp đồng hiệu lực; ghi nhận audit log `reopenedAt`.
+  - `BR-J27`: Mở lại Job **tuyệt đối không hồi sinh** các Proposal đã `EXPIRED`; Freelancer phải nộp proposal mới nếu muốn ứng tuyển lại.
+  - `BR-J46`: Thời hạn tối đa cho phép Reopen là **60 ngày** kể từ khi đóng. Quá 60 ngày Job chuyển sang lưu trữ (Archived) và Client buộc phải clone ra bản thảo `DRAFT` mới. Job `CANCELLED` hoặc `COMPLETED` không bao giờ được phép Reopen.
+  - `BR-J52`: Khi Reopen, hệ thống có thể phát thông báo Job Alert lại 1 lần nếu Job vẫn còn hạn.
+
+---
+
+#### Nhóm UC-12: Bookmarked Jobs Management (Quản lý việc làm đã lưu)
+- **UC-12.01: View Bookmarked Job List**
+  - `BR-J54`: Chỉ trả về danh sách bookmark thuộc sở hữu của chính Freelancer đăng nhập (`userId`).
+  - `BR-J54`: Tự động loại trừ các Job đã bị xóa mềm (`deletedAt !== null`) hoặc thuộc Client bị cấm (`client.isBanned = true`).
+  - `BR-J54`: Các Job đã chuyển sang `CLOSED`, `IN_PROGRESS`, `COMPLETED` vẫn hiển thị trong Bookmark kèm nhãn trạng thái để Freelancer theo dõi tiến độ.
+
+- **UC-12.02: Bookmark Job**
+  - `BR-J54`: Chỉ tài khoản `FREELANCER` mới được phép bookmark. Client không được bookmark Job (đặc biệt cấm bookmark job của chính mình).
+  - `BR-J54`: Job phải tồn tại, chưa bị xóa và Client không bị cấm.
+  - Ràng buộc duy nhất (Unique Constraint): Mỗi Freelancer chỉ bookmark 1 Job tối đa 1 lần `(userId, jobId)`.
+
+- **UC-12.03: Remove Bookmark**
+  - `BR-J54`: Chỉ xóa bookmark của chính mình. Xóa cứng (hard delete) bản ghi `JobBookmark`.
+  - Trả ngoại lệ nếu bản ghi bookmark không tồn tại (`BookmarkNotFoundException`).
+
+---
+
+#### Nhóm UC-22: Saved Search Management (Bộ lọc tìm kiếm đã lưu)
+*(Bao gồm UC-22.01 đến UC-22.05: Xem danh sách, Chi tiết, Tạo, Cập nhật, Xóa bộ lọc)*
+- `BR-J41`: Tiêu chí lọc ngân sách `budgetMin`, `budgetMax` phải hợp lệ.
+- `BR-J43`: Bộ lọc kỹ năng (`skills`) phải khớp với các kỹ năng hợp lệ trong hệ thống.
+- `BR-J53`: Danh mục lưu trong bộ lọc (`categoryId`) phải thuộc danh mục đang hoạt động (`ACTIVE`).
+- Khi áp dụng tìm kiếm từ bộ lọc đã lưu: Áp dụng đầy đủ quy tắc ẩn Job DRAFT (BR-J04), ẩn Job đã đóng (BR-J25) và ẩn Job bị xóa/banned (BR-J33, BR-J45).
+
+---
+
+#### Nhóm UC-23: Job Alert Management (Quản lý thông báo việc làm)
+*(Bao gồm UC-23.01 đến UC-23.05: Xem danh sách, Chi tiết, Tạo, Cập nhật, Xóa cảnh báo việc làm)*
+- `BR-J37`: Chỉ quét và gửi thông báo cho các Job còn chỗ tuyển (`positions_filled < positions_required`).
+- `BR-J52`: **Chống spam Job Alert**: Hệ thống chỉ kích hoạt gửi thông báo Job Alert **đúng một lần duy nhất** khi Job chuyển từ `DRAFT → OPEN` (lúc Publish hoặc Reopen). Khi Client chỉnh sửa bài (`UC-11.04`), tuyệt đối không kích hoạt lại Job Alert.
+- `BR-J52`: Chỉ gửi alert cho các Job đang `OPEN`, chưa hết hạn, và Client không bị phạt (`client.isBanned = false`).
+
+---
+
+#### Nhóm UC-46: Job Category Browsing (Phía Freelancer)
+*(UC-46.06: View Job Category List & UC-46.07: View Job Category Detail)*
+- `BR-J53`: Phía người dùng chỉ xem được các danh mục công việc đang ở trạng thái `ACTIVE` và chưa bị xóa mềm (`deletedAt === null`).
+- Khi xem danh sách công việc thuộc một danh mục: Chỉ hiển thị các Job có trạng thái `OPEN`, chưa hết hạn và chưa bị xóa mềm (BR-J04, BR-J25, BR-J33).
+
+---
+
+#### Nhóm UC-42: Job / Freelancer Recommendation (AI)
+*(UC-42.01: Gợi ý việc làm phù hợp với Freelancer)*
+- `BR-J37`: Chỉ gợi ý các Job còn vị trí tuyển dụng trống (`positions_filled < positions_required`).
+- `BR-J52`: Thuật toán gợi ý chỉ lấy các Job có trạng thái `OPEN`, chưa hết hạn, Client không bị khóa tài khoản; tự động loại trừ không đề xuất những Job mà Freelancer đó đã nộp Proposal hoặc đã từng bị Client từ chối (`REJECTED`).

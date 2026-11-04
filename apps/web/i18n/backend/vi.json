@@ -163,6 +163,7 @@
   "Error.InvalidWebsite": "Website không hợp lệ",
   "Error.JobAlreadyBookmarked": "Công việc này đã được lưu",
   "Error.JobCategoriesNotFound": "Một hoặc nhiều danh mục công việc đã chọn không còn tồn tại hoặc đã bị vô hiệu hoá",
+  "Error.JobCategoryOnlyOne": "Mỗi công việc chỉ thuộc duy nhất một danh mục",
   "Error.JobCategoryDescriptionTooLong": "Mô tả danh mục công việc quá dài",
   "Error.JobCategoryHasJobs": "Không thể xoá: danh mục vẫn còn công việc đang hoạt động. Hãy chuyển danh mục sang trạng thái tạm ngưng.",
   "Error.JobCategoryInvalid": "Danh mục công việc không hợp lệ",

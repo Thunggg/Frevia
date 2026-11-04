@@ -51,6 +51,7 @@ export const ManageJobMessage = {
 
   JOB_CATEGORY_INVALID: "Error.JobCategoryInvalid",
   JOB_CATEGORIES_NOT_FOUND: "Error.JobCategoriesNotFound",
+  JOB_CATEGORY_ONLY_ONE: "Error.JobCategoryOnlyOne",
 
   POSITIONS_REQUIRED_INVALID: "Error.PositionsRequiredInvalid",
   POSITIONS_REQUIRED_MUST_BE_ONE_FOR_SINGLE:

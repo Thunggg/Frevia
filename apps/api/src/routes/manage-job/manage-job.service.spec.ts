@@ -1,4 +1,9 @@
-import { RoleName, type JobType } from '@shared/types';
+import {
+  CreateJobBodySchema,
+  ManageJobMessage,
+  RoleName,
+  type JobType,
+} from '@shared/types';
 import type { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 import type { ManageJobRepository } from './manage-job.repo';
 import { ManageJobService } from './manage-job.service';
@@ -9,6 +14,7 @@ import {
   JobCannotBeReopenedException,
   JobOnlyForClientException,
   JobReopenPeriodExpiredException,
+  JobCategoryOnlyOneException,
 } from './manage-job.error';
 
 const mockJob = { id: 5, status: 'OPEN' } as unknown as JobType;
@@ -193,6 +199,51 @@ describe('ManageJobService', () => {
       await expect(service.reopenJob(1, RoleName.CLIENT, 5)).rejects.toThrow(
         JobReopenPeriodExpiredException(),
       );
+    });
+  });
+  describe('CreateJobBodySchema single category validation (BR-J53)', () => {
+    it('fails when more than 1 category is selected', () => {
+      const result = CreateJobBodySchema.safeParse({
+        title: 'Backend Developer Position',
+        description: 'We need a senior NestJS engineer',
+        budgetMin: 500,
+        budgetMax: 1000,
+        budgetType: 'FIXED_PRICE',
+        skills: [1, 2],
+        jobCategories: [1, 2],
+        hiringType: 'SINGLE',
+        positionsRequired: 1,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some(
+            (issue) => issue.message === ManageJobMessage.JOB_CATEGORY_ONLY_ONE,
+          ),
+        ).toBe(true);
+      }
+    });
+
+    it('succeeds when at most 1 category is selected', () => {
+      const result = CreateJobBodySchema.safeParse({
+        title: 'Backend Developer Position',
+        description: 'We need a senior NestJS engineer',
+        budgetMin: 500,
+        budgetMax: 1000,
+        budgetType: 'FIXED_PRICE',
+        skills: [1, 2],
+        jobCategories: [1],
+        hiringType: 'SINGLE',
+        positionsRequired: 1,
+      });
+
+      expect(result.success).toBe(true);
+    });
+
+    it('JobCategoryOnlyOneException returns proper message', () => {
+      const exception = JobCategoryOnlyOneException();
+      expect(exception.message).toBe(ManageJobMessage.JOB_CATEGORY_ONLY_ONE);
     });
   });
 });

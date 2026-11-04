@@ -125,10 +125,10 @@ export const CreateJobBodySchema = z
       .min(1, ManageJobMessage.SKILLS_REQUIRED)
       .max(10, ManageJobMessage.SKILLS_MAX_EXCEEDED),
 
-    // Danh mục công việc gắn vào job (BR-CAT-03): freelancer dùng danh mục để tìm/lọc job.
-    // Có thể chọn nhiều danh mục; bỏ trống nghĩa là job không thuộc danh mục nào.
+    // Danh mục công việc gắn vào job (BR-CAT-03, BR-J53): mỗi job chỉ thuộc duy nhất 1 danh mục.
     jobCategories: z
       .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
+      .max(1, ManageJobMessage.JOB_CATEGORY_ONLY_ONE)
       .optional()
       .default([]),
 

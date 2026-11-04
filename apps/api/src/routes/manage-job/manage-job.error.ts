@@ -36,6 +36,10 @@ export const JobNotFoundException = () =>
 export const JobCategoriesNotFoundException = () =>
   new BadRequestException(ManageJobMessage.JOB_CATEGORIES_NOT_FOUND);
 
+// Mỗi công việc chỉ thuộc duy nhất một danh mục (BR-J53).
+export const JobCategoryOnlyOneException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CATEGORY_ONLY_ONE);
+
 // Không thể giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
 export const PositionsRequiredBelowFilledException = () =>
   new BadRequestException([

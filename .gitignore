@@ -39,6 +39,10 @@ yarn-error.log*
 
 # Business rules (local only)
 business-rules/
+sequence-diagrams/
+uc-diagrams/
+data/
+Frevia_BACKLOG.xlsx
 
 backup/
 # Drawio temp files
