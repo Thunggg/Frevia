@@ -1,0 +1,131 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{hhline}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptblue}{RGB}{46,117,181}
+\definecolor{hdrfill}{RGB}{255,232,225}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
+\renewcommand{\arraystretch}{1.6}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\titleformat{\section}{\Large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.5em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\newcommand{\hd}[1]{\textbf{#1}}
+\newcommand{\guide}[1]{{\itshape #1\par}}
+
+\begin{document}
+
+%================ COVER =================
+\begin{titlepage}
+  \thispagestyle{empty}
+  \centering
+  \vspace*{1cm}
+  \includegraphics[width=0.4\textwidth]{fpt_logo_r6.png}\\[4.5cm]
+  {\fontsize{27}{32}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[1cm]
+  {\fontsize{19}{23}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}
+  \vfill
+  {\large -- Hanoi, August 2019 --}\\[1cm]
+\end{titlepage}
+
+%================ TOC =================
+\renewcommand{\contentsname}{\color{fptblue}Table of Contents}
+\tableofcontents
+\newpage
+
+%================ I. RECORD OF CHANGES =================
+\section*{\color{fptred} I. Record of Changes}
+\addcontentsline{toc}{section}{I. Record of Changes}
+
+\begin{center}
+\begin{tabular}{|p{2.6cm}|p{1.8cm}|p{2.6cm}|p{6.2cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Date} & \hd{A* M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+\end{tabular}
+\end{center}
+
+\textit{*A - Added \quad M - Modified \quad D - Deleted}
+
+\newpage
+
+%================ II. RELEASE PACKAGE & USER GUIDES =================
+\section*{\color{fptred} II. Release Package \& User Guides}
+\addcontentsline{toc}{section}{II. Release Package \& User Guides}
+\setcounter{section}{0}
+
+\section{Deliverable Package}
+
+\guide{[The section will list all source programs, scripts, documents with version number in this release. You can see the example following table for reference, can customize or delete if not using belong to each project characteristics]}
+
+\begin{center}
+\begin{tabular}{|p{1.4cm}|p{5.5cm}|p{7.5cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description} \\ \hline
+1 & Project Schedule/Tracking & \\ \hline
+2 & Project Backlog & \\ \hline
+3 & Source Codes & \\ \hline
+4 & Database Script(s) & \\ \hline
+5 & Final Report Document & \\ \hline
+6 & Test Cases Document & \\ \hline
+7 & Defects List & \\ \hline
+8 & Issues List & \\ \hline
+9 & Slide & \\ \hline
+\end{tabular}
+\end{center}
+
+\section{Installation Guides}
+
+\subsection{System Requirements}
+
+\guide{[Define any system requirements necessary to support the application, including the software and relevant configurations]}
+
+\subsection{Installation Instruction}
+
+\guide{[Includes installation instructions and configuration guidelines]}
+
+\section{User Manual}
+
+\subsection{Overview}
+
+\guide{[Descript the overview of the application and if could, insert the features workflow to help user has the overview of all the features in this application]}
+
+\subsection{Workflow 1}
+
+\guide{[Describe the purpose of this workflow, draw workflow diagram and other relevant diagrams]}
+
+\guide{[Describe the detailed guides for the workflow by providing the brief description, step by step guides (attached with user interface) of how to use that function]}
+
+\subsection{Workflow 2}
+
+\dots
+
+\end{document}
