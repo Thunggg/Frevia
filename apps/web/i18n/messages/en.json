@@ -2965,5 +2965,31 @@
       "failed": "Reset password failed",
       "sendOtpFailed": "Send OTP failed"
     }
+  },
+  "recommendation": {
+    "tabBestMatches": "Best Matches",
+    "tabAllJobs": "Most Recent",
+    "matchScore": "{score}% Match",
+    "viewMatchDetails": "View match details",
+    "details": "Details",
+    "matchDetailsTitle": "Profile Match Details",
+    "matchDetailsDesc": "Evaluation of how well your skills and experience match the project requirements.",
+    "skillsMatch": "Skills",
+    "experienceMatch": "Experience",
+    "budgetMatch": "Budget",
+    "semanticMatch": "Relevance",
+    "summaryTitle": "Match Overview",
+    "matchedRequirements": "Matched Requirements",
+    "missingRequirements": "Additional Requirements",
+    "evidence": "From your profile:",
+    "loadingRecommendations": "Finding projects that match your profile...",
+    "emptyRecommendationsTitle": "No matching projects yet",
+    "emptyRecommendationsDesc": "Update your profile with your skills and experience to receive tailored project recommendations.",
+    "updateProfile": "Update Profile",
+    "feedbackHelpful": "Is this match accurate?",
+    "feedbackThanks": "Thank you for your feedback!",
+    "refreshRecommendations": "Refresh",
+    "helpful": "Helpful",
+    "notHelpful": "Not Relevant"
   }
 }

@@ -2957,5 +2957,31 @@
       "failed": "Đặt lại mật khẩu thất bại",
       "sendOtpFailed": "Gửi mã OTP thất bại"
     }
+  },
+  "recommendation": {
+    "tabBestMatches": "Phù hợp nhất",
+    "tabAllJobs": "Mới nhất",
+    "matchScore": "{score}% phù hợp",
+    "viewMatchDetails": "Xem chi tiết mức độ phù hợp",
+    "details": "Chi tiết",
+    "matchDetailsTitle": "Chi tiết mức độ phù hợp",
+    "matchDetailsDesc": "Đánh giá mức độ tương thích giữa kỹ năng, kinh nghiệm của bạn và yêu cầu dự án.",
+    "skillsMatch": "Kỹ năng chuyên môn",
+    "experienceMatch": "Kinh nghiệm làm việc",
+    "budgetMatch": "Ngân sách & Mức giá",
+    "semanticMatch": "Định hướng dự án",
+    "summaryTitle": "Tổng quan đánh giá",
+    "matchedRequirements": "Kỹ năng & yêu cầu tương thích",
+    "missingRequirements": "Yêu cầu có thể cần bổ sung",
+    "evidence": "Từ hồ sơ của bạn:",
+    "loadingRecommendations": "Đang tìm kiếm dự án phù hợp với hồ sơ của bạn...",
+    "emptyRecommendationsTitle": "Chưa có dự án phù hợp",
+    "emptyRecommendationsDesc": "Hãy cập nhật đầy đủ kỹ năng và kinh nghiệm trong hồ sơ cá nhân để nhận được các gợi ý dự án sát nhất.",
+    "updateProfile": "Cập nhật hồ sơ",
+    "feedbackHelpful": "Đánh giá này có chuẩn xác với bạn không?",
+    "feedbackThanks": "Cảm ơn phản hồi của bạn!",
+    "refreshRecommendations": "Làm mới",
+    "helpful": "Hữu ích",
+    "notHelpful": "Chưa phù hợp"
   }
 }
