@@ -193,7 +193,12 @@ export class ManageJobService {
     }
   }
 
-  async createJob(userId: number, body: CreateJobBodyType): Promise<JobType> {
+  async createJob(
+    userId: number,
+    roleName: string,
+    body: CreateJobBodyType,
+  ): Promise<JobType> {
+    this.assertClientRole(roleName);
     try {
       const job = await this.manageJobRepository.createJob(userId, body);
       await this.embeddingOutbox.enqueueAndProcess({
@@ -213,9 +218,12 @@ export class ManageJobService {
 
   async updateJob(
     userId: number,
+    roleName: string,
     jobId: number,
     body: UpdateJobBodyType,
   ): Promise<JobType> {
+    this.assertClientRole(roleName);
+
     try {
       const job = await this.manageJobRepository.updateJob(userId, jobId, body);
       await this.embeddingOutbox.enqueueAndProcess({
@@ -233,7 +241,12 @@ export class ManageJobService {
     }
   }
 
-  async deleteJob(userId: number, jobId: number): Promise<void> {
+  async deleteJob(
+    userId: number,
+    roleName: string,
+    jobId: number,
+  ): Promise<void> {
+    this.assertClientRole(roleName);
     try {
       await this.manageJobRepository.deleteJob(userId, jobId);
       await this.embeddingOutbox.enqueueAndProcess({

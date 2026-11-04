@@ -62,8 +62,13 @@ describe('ManageJobService', () => {
   });
 
   describe('createJob', () => {
+    it('throws if role is not CLIENT', async () => {
+      await expect(
+        service.createJob(1, RoleName.FREELANCER, {} as never),
+      ).rejects.toThrow(JobOnlyForClientException());
+    });
     it('queues an upsert after creating a job', async () => {
-      await service.createJob(1, {} as never);
+      await service.createJob(1, RoleName.CLIENT, {} as never);
 
       expect(embeddingOutbox.enqueueAndProcess).toHaveBeenCalledWith({
         eventType: 'UPSERT',
@@ -74,8 +79,13 @@ describe('ManageJobService', () => {
   });
 
   describe('updateJob', () => {
+    it('throws if role is not CLIENT', async () => {
+      await expect(
+        service.updateJob(1, RoleName.FREELANCER, 5, {} as never),
+      ).rejects.toThrow(JobOnlyForClientException());
+    });
     it('queues an upsert after updating a job', async () => {
-      await service.updateJob(1, 5, {} as never);
+      await service.updateJob(1, RoleName.CLIENT, 5, {} as never);
 
       expect(embeddingOutbox.enqueueAndProcess).toHaveBeenCalledWith({
         eventType: 'UPSERT',
@@ -86,8 +96,13 @@ describe('ManageJobService', () => {
   });
 
   describe('deleteJob', () => {
+    it('throws if role is not CLIENT', async () => {
+      await expect(
+        service.deleteJob(1, RoleName.FREELANCER, 5),
+      ).rejects.toThrow(JobOnlyForClientException());
+    });
     it('queues a delete after removing a job', async () => {
-      await service.deleteJob(1, 5);
+      await service.deleteJob(1, RoleName.CLIENT, 5);
 
       expect(embeddingOutbox.enqueueAndProcess).toHaveBeenCalledWith({
         eventType: 'DELETE',
@@ -101,7 +116,7 @@ describe('ManageJobService', () => {
         JobCannotBeDeletedWithActiveContractException(),
       );
 
-      await expect(service.deleteJob(1, 5)).rejects.toThrow(
+      await expect(service.deleteJob(1, RoleName.CLIENT, 5)).rejects.toThrow(
         JobCannotBeDeletedWithActiveContractException(),
       );
     });
