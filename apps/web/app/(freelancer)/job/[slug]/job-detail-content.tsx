@@ -419,11 +419,6 @@ export function JobDetailContent({
             <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="min-w-0 max-w-3xl">
                 <div className="mb-4 flex flex-wrap items-center gap-2">
-                  {job.featured ? (
-                    <Badge className="bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
-                      {t("featured")}
-                    </Badge>
-                  ) : null}
                   {job.hiringType === "MULTIPLE" ? (
                     <Badge
                       variant="outline"

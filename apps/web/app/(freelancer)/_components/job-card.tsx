@@ -104,11 +104,6 @@ export function JobCard({
         {/* Top Header Row: Status, Badges & Bookmark Button */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            {job.featured ? (
-              <span className="inline-flex items-center rounded-full bg-[#4fae2e] text-white px-3 py-0.5 text-xs font-semibold">
-                {t("featured")}
-              </span>
-            ) : null}
             <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
               {tStatus(job.status)}
             </span>
