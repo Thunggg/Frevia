@@ -10,17 +10,69 @@
 \usepackage{titlesec}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
 
 \definecolor{fptred}{RGB}{192,0,0}
 \definecolor{fptblue}{RGB}{46,117,181}
 \definecolor{hdrfill}{RGB}{255,232,225}
+\definecolor{codebg}{RGB}{248,249,250}
+\definecolor{codeframe}{RGB}{210,215,220}
+\definecolor{uibg}{RGB}{250,251,252}
+
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
-\renewcommand{\arraystretch}{1.6}
+\renewcommand{\arraystretch}{1.5}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{2em}
+\setlist{nosep,leftmargin=1.4em,topsep=3pt}
 
 \titleformat{\section}{\Large\bfseries}{\thesection.}{0.5em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+
+\captionsetup[table]{labelsep=period,font=bf,position=above,skip=6pt}
+\captionsetup[figure]{labelsep=period,font=it,position=below,skip=6pt}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=6pt,
+  belowskip=6pt
+}
+
+\tikzset{
+  wfstep/.style={
+    rectangle, rounded corners=3pt, minimum width=2.7cm, minimum height=0.85cm,
+    text width=2.5cm, align=center, draw=fptblue, fill=hdrfill!45,
+    font=\footnotesize\bfseries, inner sep=4pt
+  },
+  wfdec/.style={
+    diamond, aspect=2.1, minimum width=2.4cm, minimum height=0.85cm,
+    text width=2.0cm, align=center, draw=fptred, fill=hdrfill,
+    font=\footnotesize\bfseries, inner sep=2pt
+  },
+  wfactor/.style={
+    rectangle, rounded corners=2pt, minimum width=2.5cm, minimum height=0.75cm,
+    text width=2.3cm, align=center, draw=fptred, fill=hdrfill,
+    font=\footnotesize\bfseries, inner sep=3pt
+  },
+  wfarrow/.style={
+    -{Stealth[length=2.4mm,width=1.8mm]}, thick, draw=black!75
+  }
+}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -29,6 +81,27 @@
 
 \newcommand{\hd}[1]{\textbf{#1}}
 \newcommand{\guide}[1]{{\itshape #1\par}}
+
+% Helper macro for UI screenshots: loads figures/<file> if present, otherwise renders a clean framed UI placeholder
+\newcommand{\uifig}[4]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{figures/#1}{%
+      \includegraphics[width=0.88\linewidth]{figures/#1}%
+    }{%
+      \fcolorbox{codeframe}{uibg}{%
+        \parbox[c][3.6cm][c]{0.88\linewidth}{%
+          \centering
+          {\bfseries\color{fptblue} [User Interface Screen: #2]}\\[6pt]
+          {\small Route / Screen: \texttt{\detokenize{#3}}}\\[4pt]
+          {\footnotesize\itshape Image path: \texttt{figures/\detokenize{#1}}}
+        }%
+      }%
+    }%
+    \caption{#2}
+    \label{#4}
+  \end{figure}
+}
 
 \begin{document}
 
@@ -41,37 +114,43 @@
   {\fontsize{27}{32}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[1cm]
   {\fontsize{19}{23}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}
   \vfill
-  {\large -- Hanoi, August 2019 --}\\[1cm]
+  {\large -- Can Tho, November 2026 --}\\[1cm]
 \end{titlepage}
 
-%================ TOC =================
+%================ TOC / LOT / LOF =================
 \renewcommand{\contentsname}{\color{fptblue}Table of Contents}
 \tableofcontents
+\newpage
+
+\renewcommand{\listtablename}{\color{fptblue}Table of Tables}
+\addcontentsline{toc}{section}{Table of Tables}
+\listoftables
+\newpage
+
+\renewcommand{\listfigurename}{\color{fptblue}Table of Figures}
+\addcontentsline{toc}{section}{Table of Figures}
+\listoffigures
 \newpage
 
 %================ I. RECORD OF CHANGES =================
 \section*{\color{fptred} I. Record of Changes}
 \addcontentsline{toc}{section}{I. Record of Changes}
 
-\begin{center}
-\begin{tabular}{|p{2.6cm}|p{1.8cm}|p{2.6cm}|p{6.2cm}|}
+\begin{table}[H]
+\caption{Record of changes}
+\label{tab:record-of-changes}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\centering\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{6.8cm}|}
 \hline\noalign{\vskip0.4pt}
 \rowcolor{hdrfill}\hd{Date} & \hd{A* M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
+15/09/2026 & A & Pham Kha Vy & Created initial structure for Report 6: Deliverable Package and System Requirements. \\ \hline
+05/10/2026 & A & Nguyen Tien Thuan & Added Installation Instructions for Docker Compose, PNPM monorepo, Prisma migrations, and Infisical secrets. \\ \hline
+19/10/2026 & M & Tran Phat Tai & Documented User Manual workflows for Authentication, Sessions, Job Posting, and Proposal Submission. \\ \hline
+26/10/2026 & M & Nguyen Lu Nhat Huy & Documented workflows for Real-time Messaging, Notifications, Community Forum, and Content Moderation. \\ \hline
+01/11/2026 & M & Vo Nhut Tin & Documented workflows for Contract Creation, Stripe Escrow Payment, Milestone Deliverables, and Dispute Resolution. \\ \hline
+04/11/2026 & M & Pham Kha Vy, Nguyen Tien Thuan & Added workflows for eKYC Identity Verification, Expert Profile, and Admin Master Data Management; finalized Release v1.0. \\ \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 \textit{*A - Added \quad M - Modified \quad D - Deleted}
 
@@ -82,50 +161,804 @@
 \addcontentsline{toc}{section}{II. Release Package \& User Guides}
 \setcounter{section}{0}
 
+%======================================================================
+% 1. DELIVERABLE PACKAGE
+%======================================================================
 \section{Deliverable Package}
 
-\guide{[The section will list all source programs, scripts, documents with version number in this release. You can see the example following table for reference, can customize or delete if not using belong to each project characteristics]}
+This section lists all project documents, source code repositories, database migration and seed scripts, test suites, and presentation materials included in the final release package of the \textbf{Frevia -- Verified Freelance Marketplace Platform} (Project Code: \texttt{SEP490\_04}).
 
-\begin{center}
-\begin{tabular}{|p{1.4cm}|p{5.5cm}|p{7.5cm}|}
+\begin{table}[H]
+\caption{Release deliverable package items}
+\label{tab:deliverable-package}
+\centering
+\begin{tabular}{|>{\centering\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{4.6cm}|>{\raggedright\arraybackslash}p{8.8cm}|}
 \hline\noalign{\vskip0.4pt}
 \rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description} \\ \hline
-1 & Project Schedule/Tracking & \\ \hline
-2 & Project Backlog & \\ \hline
-3 & Source Codes & \\ \hline
-4 & Database Script(s) & \\ \hline
-5 & Final Report Document & \\ \hline
-6 & Test Cases Document & \\ \hline
-7 & Defects List & \\ \hline
-8 & Issues List & \\ \hline
-9 & Slide & \\ \hline
+1 & Project Schedule \& Tracking (\texttt{v2.0}) & Master work breakdown structure (WBS), 16-week sprint schedule across 5 sprints, resource allocation for 5 team members (372 man-days), and milestone tracking documented in \texttt{docs/Report 2/}. \\ \hline
+2 & Project Backlog (\texttt{v2.0}) & Complete product and sprint backlog covering 14 functional modules, 84 use-case features, and 214 SMAR items documented in \texttt{docs/Report 2/} and \texttt{docs/Report 3/}. \\ \hline
+3 & Source Codes (\texttt{v1.0.0}) & Full Turborepo/PNPM monorepo source code including \texttt{apps/api} (NestJS 11 REST API \& Socket.IO Gateway), \texttt{apps/web} (Next.js 16 App Router Frontend), and \texttt{packages/types} (Shared Zod validation schemas \& TypeScript contracts). \\ \hline
+4 & Database Script(s) (\texttt{v1.0.0}) & Prisma relational schema (\texttt{apps/api/prisma/schema.prisma}), 31 SQL migration scripts (\texttt{apps/api/prisma/migrations/}), and deterministic TypeScript seed scripts (\texttt{apps/api/src/seed-datas/}). \\ \hline
+5 & Final Report Documents (\texttt{v2.0}) & Complete Capstone Project documentation suite: Report 1 (Project Introduction), Report 2 (Project Management Plan), Report 3 (Software Requirement Specification), Report 4 (Software Design Document), Report 5 (Software Test Documentation), and Report 6 (Software User Guides). \\ \hline
+6 & Test Cases Document (\texttt{v2.0}) & Unit test workbook \texttt{Report5\_Unit Test.xls} (84 service functions, 507 unit test cases) and system test workbook \texttt{Report5\_Test Report.xlsx} (14 modules, 411 system test cases) in \texttt{docs/Report 5/}. \\ \hline
+7 & Defects List (\texttt{v1.0}) & Sprint defect tracking log recording 17 identified defects (2 Critical, 6 Major, 9 Minor) with root cause analysis and 100\% verification closure in \texttt{docs/Report 5/}. \\ \hline
+8 & Issues List (\texttt{v1.0}) & Project risk and technical issue register covering third-party webhook idempotency, RBAC session synchronization, and cloud storage configuration. \\ \hline
+9 & Deployment Configuration (\texttt{v1.0.0}) & Production and staging container orchestration files (\texttt{docker-compose.yml}, \texttt{apps/api/Dockerfile}, \texttt{apps/web/Dockerfile}) and environment templates. \\ \hline
+10 & Capstone Presentation Slide (\texttt{v1.0}) & Final Capstone Defense slide deck summarizing business value, system architecture, test results, and live demonstration scenarios. \\ \hline
 \end{tabular}
-\end{center}
+\end{table}
 
+%======================================================================
+% 2. INSTALLATION GUIDES
+%======================================================================
 \section{Installation Guides}
 
 \subsection{System Requirements}
 
-\guide{[Define any system requirements necessary to support the application, including the software and relevant configurations]}
+\subsubsection{Client Requirements}
+End users (Clients, Freelancers, Experts, Moderators, and Administrators) access the Frevia platform through a standard web browser without installing proprietary client software.
+
+\begin{table}[H]
+\caption{Client hardware and software requirements}
+\label{tab:client-requirements}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{5.6cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Category} & \hd{Minimum Requirement} & \hd{Recommended Specification} \\ \hline
+Processor (CPU) & Dual-core 1.8~GHz (x64 or ARM64) & Quad-core 2.4~GHz or higher \\ \hline
+Memory (RAM) & 4~GB RAM & 8~GB RAM or higher \\ \hline
+Display Resolution & $1280 \times 720$ pixels (HD) & $1920 \times 1080$ pixels (Full HD) \\ \hline
+Operating System & Windows 10, macOS 12, Ubuntu 20.04, iOS 16, or Android 12 & Windows 11, macOS 14+, Ubuntu 22.04+ \\ \hline
+Web Browser & Google Chrome 120+, Mozilla Firefox 120+, Microsoft Edge 120+, Safari 16+ & Latest stable Google Chrome or Microsoft Edge with JavaScript and Cookies enabled \\ \hline
+Network Connection & Broadband 10~Mbps & Broadband 25~Mbps+ (low latency for real-time WebSocket chat) \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Server Requirements}
+The backend API, Next.js frontend server, PostgreSQL database, and optional Ollama AI container can be deployed on a single host using Docker Compose or distributed across cloud instances.
+
+\begin{table}[H]
+\caption{Server hardware requirements}
+\label{tab:server-requirements}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{5.6cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Component} & \hd{Minimum (Local / Staging)} & \hd{Recommended (Production)} \\ \hline
+Processor (CPU) & 4 vCPUs (x86\_64 / ARM64) & 8 vCPUs (Dedicated cloud instance) \\ \hline
+Memory (RAM) & 8~GB RAM & 16~GB RAM (especially when running Ollama AI locally) \\ \hline
+Disk Storage & 30~GB SSD free space & 100~GB NVMe SSD with automated daily snapshots \\ \hline
+Operating System & Ubuntu Server 22.04 LTS / Windows 11 with WSL2 & Ubuntu Server 24.04 LTS (64-bit) \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Software Requirements}
+Table~\ref{tab:software-requirements} lists the required runtime engines, frameworks, and CLI tools to build and run the platform.
+
+\begin{table}[H]
+\caption{Server software and runtime dependencies}
+\label{tab:software-requirements}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{7.6cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Software / Tool} & \hd{Version} & \hd{Purpose} \\ \hline
+Node.js & \texttt{>= 20.x LTS} & JavaScript/TypeScript runtime for NestJS and Next.js \\ \hline
+PNPM & \texttt{9.0.0+} & Workspace package manager for the monorepo \\ \hline
+Turborepo & \texttt{2.10.0} & Monorepo build system and task orchestrator \\ \hline
+PostgreSQL & \texttt{16.x} & Primary relational database engine \\ \hline
+Prisma ORM & \texttt{7.8.0} & Type-safe database client and migration engine \\ \hline
+Docker \& Docker Compose & \texttt{24.0+ / v2.24+} & Containerization for frontend, backend, and Ollama services \\ \hline
+Infisical CLI (Optional) & \texttt{0.28+} & Centralized environment secret injection (\texttt{infisical run}) \\ \hline
+Stripe CLI (Optional) & \texttt{1.20+} & Forwarding local Stripe webhook events during testing \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Network and Configuration Requirements}
+Table~\ref{tab:port-mapping} specifies the default network ports used by each component in both containerized (\texttt{docker-compose.yml}) and local development modes.
+
+\begin{table}[H]
+\caption{Default component ports and production exposure}
+\label{tab:port-mapping}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{6.0cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Component} & \hd{Port (Docker / Dev)} & \hd{Production Exposure} & \hd{Description} \\ \hline
+Next.js Web Portal (\texttt{frontend}) & \texttt{3003} / \texttt{3001} & Public (HTTPS 443 via Reverse Proxy) & Serves Client, Freelancer, Forum, and Admin web interfaces. Maps host port \texttt{3003} to container port \texttt{3000}. \\ \hline
+NestJS Backend API (\texttt{backend}) & \texttt{3002} / \texttt{3000} & Public via API Gateway / Proxy & Serves REST endpoints (\texttt{/api/*}) and Socket.IO namespaces (\texttt{/chat}, \texttt{/notifications}). Maps host port \texttt{3002} to container port \texttt{3000}. \\ \hline
+PostgreSQL Database & \texttt{5432} & Internal Only (Private VPC) & Primary relational store accessed via Prisma connection pool (\texttt{DIRECT\_URL}). \\ \hline
+Ollama AI Engine (\texttt{ollama}) & \texttt{11434} / \texttt{8000} & Internal Only (Docker Network) & Local LLM inference service used for AI CV skill extraction. \\ \hline
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:env-variables} summarizes the mandatory environment variables configured in \texttt{apps/api/.env} and \texttt{apps/web/.env}.
+
+\begin{table}[H]
+\caption{Core environment variables configuration}
+\label{tab:env-variables}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.6cm}|>{\centering\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{7.8cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Variable Name} & \hd{Service} & \hd{Description} \\ \hline
+\texttt{DIRECT\_URL} & API & PostgreSQL connection string for Prisma Client and migrations. \\ \hline
+\texttt{PORT} & API & Internal HTTP listening port for NestJS (default: \texttt{3000}). \\ \hline
+\texttt{NEXT\_URL} & API & Allowed frontend origin URL for CORS and OAuth redirects. \\ \hline
+\texttt{ACCESS\_TOKEN\_SECRET} & API & HMAC secret key for signing short-lived JWT access tokens. \\ \hline
+\texttt{REFRESH\_TOKEN\_SECRET} & API & HMAC secret key for signing persisted JWT refresh tokens. \\ \hline
+\texttt{ACCESS\_TOKEN\_EXPIRES\_IN} & API & Access token validity window (e.g., \texttt{15m} or \texttt{1h}). \\ \hline
+\texttt{REFRESH\_TOKEN\_EXPIRES\_IN} & API & Refresh token validity window (e.g., \texttt{7d}). \\ \hline
+\texttt{OTP\_EXPIRES\_IN} & API & Verification OTP expiration window (e.g., \texttt{5m}). \\ \hline
+\texttt{EMAIL\_USERNAME} / \texttt{EMAIL\_PASSWORD} & API & SMTP credentials used by Nodemailer to send registration and password recovery OTP emails. \\ \hline
+\texttt{GOOGLE\_CLIENT\_ID} / \texttt{GOOGLE\_CLIENT\_SECRET} & API & Google Cloud OAuth 2.0 credentials for social login. \\ \hline
+\texttt{CLOUDINARY\_CLOUD\_NAME} / \texttt{API\_KEY} / \texttt{API\_SECRET} & API & Cloudinary credentials for uploading avatars, portfolios, CVs, and eKYC identity images. \\ \hline
+\texttt{STRIPE\_SECRET\_KEY} / \texttt{STRIPE\_WEBHOOK\_SECRET} & API & Stripe API secret key and webhook signature verification key for milestone escrow payments. \\ \hline
+\texttt{APP\_URL} / \texttt{NESTJS\_API\_URL} & Web & Public web URL and backend API base URL consumed by Next.js server and client components. \\ \hline
+\end{tabular}
+\end{table}
 
 \subsection{Installation Instruction}
 
-\guide{[Includes installation instructions and configuration guidelines]}
+This section provides a complete, step-by-step installation guide starting from a clean machine with no pre-installed development tools through to launching and verifying the Frevia platform. Every interactive step on the screen is highlighted with a numbered red box corresponding to the instructions below.
 
+\textbf{Step 1: Download and Install Git}
+\begin{enumerate}
+  \item Open a web browser, navigate to \texttt{https://git-scm.com/downloads/win}, and click \textbf{Click here to download (64-bit Git for Windows Setup)} \textbf{(1)}.
+  \item Run the downloaded \texttt{Git-2.47.x-64-bit.exe} installer, select \textbf{Git from the command line and also from 3rd-party software} \textbf{(2)}, and click \textbf{Next / Install} \textbf{(3)}.
+  \item Open \textbf{Windows PowerShell} and execute \texttt{git --version} and \texttt{git config --global} to verify the installation \textbf{(4)}:
+\end{enumerate}
+\begin{lstlisting}
+git --version
+git config --global user.name "Nguyen Tien Thuan"
+git config --global user.email "thuanntce181024@fpt.edu.vn"
+\end{lstlisting}
+\uifig{inst_01_git_download.png}{Downloading Git for Windows, configuring PATH in Setup Wizard, and verifying git version}{https://git-scm.com/downloads/win}{fig:inst-git}
+
+\textbf{Step 2: Download and Install Node.js LTS and PNPM}
+\begin{enumerate}
+  \item Navigate to \texttt{https://nodejs.org/en/download/prebuilt-installer}, select \textbf{Node.js v22.x (LTS)} for Windows x64, and click \textbf{Download Node.js LTS (.msi)} \textbf{(1)}.
+  \item Launch the MSI installer, check the option to install necessary tools, and click \textbf{Next / Install} \textbf{(2)}.
+  \item Open PowerShell, verify \texttt{node -v} and \texttt{npm -v} \textbf{(3)}, then install the \textbf{PNPM} workspace package manager globally and verify \texttt{pnpm -v} \textbf{(4)}:
+\end{enumerate}
+\begin{lstlisting}
+node -v
+npm -v
+npm install -g pnpm@9.0.0
+pnpm -v
+\end{lstlisting}
+\uifig{inst_02_nodejs_pnpm.png}{Installing Node.js v22 LTS via MSI Wizard and installing PNPM globally in PowerShell}{https://nodejs.org/en/download}{fig:inst-node-pnpm}
+
+\textbf{Step 3: Install PostgreSQL 16 and Create the \texttt{frevia\_db} Database}
+\begin{enumerate}
+  \item Download the PostgreSQL 16.x Windows x86-64 installer from \texttt{https://www.postgresql.org/download/windows/} and complete the wizard using port \texttt{5432} and superuser \texttt{postgres} \textbf{(2)}.
+  \item Launch \textbf{pgAdmin 4}, expand \textbf{Servers $\rightarrow$ PostgreSQL 16}, right-click \textbf{Databases}, and select \textbf{Create $\rightarrow$ Database...} \textbf{(1)}.
+  \item Enter \texttt{frevia\_db} in the \textbf{Database} field \textbf{(3)} and click \textbf{Save} \textbf{(4)}.
+\end{enumerate}
+\uifig{inst_03_postgresql_pgadmin.png}{Installing PostgreSQL 16 on port 5432 and creating frevia\_db in pgAdmin 4}{pgAdmin 4 (localhost:5432)}{fig:inst-postgres}
+
+\textbf{Step 4: Install Docker Desktop and Visual Studio Code}
+\begin{enumerate}
+  \item Navigate to \texttt{https://www.docker.com/products/docker-desktop/}, click \textbf{Download for Windows - AMD64} \textbf{(1)}, install Docker Desktop with the WSL~2 backend, and confirm the engine status shows \textbf{Engine running}.
+  \item Navigate to \texttt{https://code.visualstudio.com/}, click \textbf{Download VS Code for Windows x64} \textbf{(2)}, and complete the installation.
+  \item Open PowerShell and verify \texttt{docker --version}, \texttt{docker compose version}, and \texttt{code --version} \textbf{(3)}:
+\end{enumerate}
+\begin{lstlisting}
+docker --version
+docker compose version
+code --version
+\end{lstlisting}
+\uifig{inst_04_docker_vscode.png}{Installing Docker Desktop and Visual Studio Code and verifying CLI versions}{https://www.docker.com/products/docker-desktop/}{fig:inst-docker-vscode}
+
+\textbf{Step 5: Clone the Repository and Install Monorepo Dependencies}
+\begin{enumerate}
+  \item Open Visual Studio Code, open the Integrated Terminal (\texttt{Ctrl + \textasciitilde}), and verify the workspace directory structure (\texttt{apps/api}, \texttt{apps/web}, \texttt{packages/types}, \texttt{packages/ui}) \textbf{(1)}.
+  \item Clone the Frevia repository and change into the project root directory \textbf{(2)}.
+  \item Run \texttt{pnpm install} to install all workspace dependencies \textbf{(3)}:
+\end{enumerate}
+\begin{lstlisting}
+git clone https://github.com/frevia-platform/frevia.git
+cd frevia
+pnpm install
+\end{lstlisting}
+\uifig{inst_05_clone_pnpm_install.png}{Cloning the Frevia repository and running pnpm install in VS Code Integrated Terminal}{VS Code Integrated Terminal}{fig:inst-clone-install}
+
+\textbf{Step 6: Configure Environment Variables, Run Prisma Migrations, and Seed Data}
+\begin{enumerate}
+  \item Create \texttt{apps/api/.env} and \texttt{apps/web/.env} in VS Code and configure the PostgreSQL connection string (\texttt{DIRECT\_URL}), JWT secrets, Stripe keys, and Cloudinary credentials \textbf{(1)}:
+\end{enumerate}
+\begin{lstlisting}
+# Backend environment (apps/api/.env)
+NODE_ENV=development
+PORT=3000
+NEXT_URL=http://localhost:3001
+DIRECT_URL="postgresql://postgres:postgres@localhost:5432/frevia_db?schema=public"
+ACCESS_TOKEN_SECRET="replace-with-strong-access-secret"
+REFRESH_TOKEN_SECRET="replace-with-strong-refresh-secret"
+ACCESS_TOKEN_EXPIRES_IN="1h"
+REFRESH_TOKEN_EXPIRES_IN="7d"
+OTP_EXPIRES_IN="5m"
+OTP_ATTEMPT_WINDOW="15m"
+EMAIL_USERNAME="your-smtp-email@gmail.com"
+EMAIL_PASSWORD="your-google-app-password"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GOOGLE_REDIRECT_URL="http://localhost:3000/api/auth/google/callback"
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-cloudinary-key"
+CLOUDINARY_API_SECRET="your-cloudinary-secret"
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+\end{lstlisting}
+\begin{lstlisting}
+# Frontend environment (apps/web/.env)
+NODE_ENV=development
+APP_URL=http://localhost:3001
+NESTJS_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000
+\end{lstlisting}
+\begin{enumerate}[resume]
+  \item Generate the Prisma client and apply all 31 relational migrations to \texttt{frevia\_db} \textbf{(2)}.
+  \item Execute the seed scripts to populate default roles, 142 RBAC permissions, job categories, skills, and demo user accounts \textbf{(3)}:
+\end{enumerate}
+\begin{lstlisting}
+cd apps/api
+npx prisma generate
+npx prisma migrate deploy
+pnpm seed:permissions
+pnpm seed:job-categories
+pnpm seed
+cd ../..
+\end{lstlisting}
+\uifig{inst_06_env_prisma_seed.png}{Configuring .env files, applying Prisma migrations, and seeding RBAC permissions and demo data}{apps/api/.env and apps/web/.env}{fig:inst-env-seed}
+
+\textbf{Step 7: Launch the Application and Verify in Browser}
+\begin{enumerate}
+  \item \textbf{Option A -- Docker Compose Mode:} Run \texttt{docker compose up -d --build} to launch the backend (\texttt{:3002}), frontend (\texttt{:3003}), and Ollama AI containers \textbf{(1)}.
+  \item \textbf{Option B -- Local Development Mode:} Run \texttt{pnpm --filter api run dev:local} (port \texttt{3000}) and \texttt{pnpm --filter web exec next dev --port 3001} \textbf{(2)}.
+  \item Open a web browser at \texttt{http://localhost:3003} (or \texttt{http://localhost:3001}) \textbf{(3)} and click \textbf{Get Started / Register} or \textbf{Sign In with Demo Account} \textbf{(4)} using the credentials in Table~\ref{tab:demo-accounts}.
+\end{enumerate}
+\begin{lstlisting}
+# Option A: Docker Compose Production / Staging Stack
+docker compose up -d --build
+docker compose ps
+
+# Option B: Local Development Mode
+pnpm --filter api run dev:local
+pnpm --filter web exec next dev --port 3001
+\end{lstlisting}
+\uifig{inst_07_launch_verify.png}{Launching backend and frontend services and verifying the Frevia homepage in browser}{http://localhost:3003}{fig:inst-launch}
+
+\begin{table}[H]
+\caption{Seeded demo accounts for verification}
+\label{tab:demo-accounts}
+\centering
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{4.8cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
+\hline\noalign{\vskip0.4pt}
+\rowcolor{hdrfill}\hd{Role} & \hd{Email Address} & \hd{Password} & \hd{Default Workspace} \\ \hline
+Administrator & {\small\texttt{admin@frevia.local}} & {\small\texttt{Admin@123456}} & {\small\texttt{/admin/users}} \\ \hline
+Moderator & {\small\texttt{moderator@frevia.local}} & {\small\texttt{Mod@123456}} & {\small\texttt{/admin/moderation}} \\ \hline
+Client & {\small\texttt{client.demo@frevia.local}} & {\small\texttt{Client@123456}} & {\small\texttt{/client/jobs}} \\ \hline
+Freelancer & {\small\texttt{freelancer.demo@frevia.local}} & {\small\texttt{Freelancer@123456}} & {\small\texttt{/freelancer/find-work}} \\ \hline
+\end{tabular}
+\end{table}
+
+%======================================================================
+% 3. USER MANUAL
+%======================================================================
 \section{User Manual}
 
 \subsection{Overview}
 
-\guide{[Descript the overview of the application and if could, insert the features workflow to help user has the overview of all the features in this application]}
+\textbf{Frevia} is a verified freelance marketplace platform that connects \textbf{Clients} (employers and businesses seeking specialized talent) with verified \textbf{Freelancers / Experts} under the governance of \textbf{Administrators} and \textbf{Moderators}. The platform organizes its features into four dedicated role workspaces:
 
-\subsection{Workflow 1}
+\begin{itemize}
+  \item \textbf{Identity \& Profile Layer:} Multi-role JWT authentication, active session control, eKYC Citizen ID/Passport verification, freelancer portfolio management, and AI-assisted CV skill extraction.
+  \item \textbf{Marketplace \& Bidding Layer:} Job posting with category/skill taxonomy and screening questions, advanced job search, saved searches, and milestone-based proposal bidding.
+  \item \textbf{Contract, Escrow \& Dispute Layer:} Contract generation from accepted proposals, Stripe escrow milestone funding, deliverable submission and approval, automated fund release, two-way star ratings, and administrative dispute resolution.
+  \item \textbf{Community \& Governance Layer:} Real-time WebSocket 1-on-1 messaging, instant notifications, community discussion forum with content moderation, and back-office master data management (Users, Roles, Permissions, Banners, Skills, and Job Categories).
+\end{itemize}
 
-\guide{[Describe the purpose of this workflow, draw workflow diagram and other relevant diagrams]}
+Figure~\ref{fig:system-overview-workflow} illustrates the end-to-end functional workflow across all platform roles.
 
-\guide{[Describe the detailed guides for the workflow by providing the brief description, step by step guides (attached with user interface) of how to use that function]}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 1.1cm]
+  \node[wfactor] (auth) {1. Auth \& Multi-Role Switch};
+  \node[wfstep, right=of auth] (ekyc) {2. eKYC ID Verification};
+  \node[wfstep, right=of ekyc] (profile) {3. Expert Profile \& AI CV};
+  \node[wfstep, right=of profile] (job) {4. Job Posting \& Search};
 
-\subsection{Workflow 2}
+  \node[wfstep, below=0.9cm of job] (proposal) {5. Proposal \& Hiring};
+  \node[wfstep, left=of proposal] (escrow) {6. Contract \& Stripe Escrow};
+  \node[wfstep, left=of escrow] (milestone) {7. Deliverable \& Release};
+  \node[wfdec, left=of milestone] (dispute) {8. Dispute / Review?};
 
-\dots
+  \node[wfstep, below=0.9cm of dispute] (rating) {9. Two-Way Rating};
+  \node[wfstep, right=of rating] (chat) {10. Real-Time Chat \& Alerts};
+  \node[wfstep, right=of chat] (forum) {11. Community Forum};
+  \node[wfactor, right=of forum] (admin) {12. Admin Governance};
+
+  \draw[wfarrow] (auth) -- (ekyc);
+  \draw[wfarrow] (ekyc) -- (profile);
+  \draw[wfarrow] (profile) -- (job);
+  \draw[wfarrow] (job) -- (proposal);
+  \draw[wfarrow] (proposal) -- (escrow);
+  \draw[wfarrow] (escrow) -- (milestone);
+  \draw[wfarrow] (milestone) -- (dispute);
+  \draw[wfarrow] (dispute) -- (rating);
+  \draw[wfarrow] (rating) -- (chat);
+  \draw[wfarrow] (chat) -- (forum);
+  \draw[wfarrow] (forum) -- (admin);
+\end{tikzpicture}
+\caption{Overall end-to-end feature workflow of the Frevia platform}
+\label{fig:system-overview-workflow}
+\end{figure}
+
+%----------------------------------------------------------------------
+% WORKFLOW 1
+%----------------------------------------------------------------------
+\subsection{Workflow 1: Authentication \& Session Management}
+
+\textbf{Purpose and Roles:} This workflow guides users through registering an account, verifying their email via a 6-digit OTP code, signing in via email/password or Google OAuth, switching between active roles (\texttt{CLIENT} and \texttt{FREELANCER}), and revoking active device sessions. \textbf{Involved Roles:} Guest, Client, Freelancer, Moderator, Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (reg) {Submit Registration Form};
+  \node[wfstep, right=of reg] (otp) {Verify 6-Digit Email OTP};
+  \node[wfstep, right=of otp] (login) {Sign In (JWT / Google)};
+  \node[wfstep, right=of login] (switch) {Switch Role / Manage Sessions};
+  \draw[wfarrow] (reg) -- (otp);
+  \draw[wfarrow] (otp) -- (login);
+  \draw[wfarrow] (login) -- (switch);
+\end{tikzpicture}
+\caption{Authentication and session management workflow diagram}
+\label{fig:wf1-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Register Account:} Navigate to \texttt{/register}. Select the initial primary role (\textbf{Client} or \textbf{Freelancer}), enter \textbf{Full Name}, \textbf{Email Address}, \textbf{Password} (minimum 8 characters), and \textbf{Confirm Password}, then click \textbf{Create Account}.
+  \item \textbf{Step 2 -- Verify Email OTP:} Check your inbox for the 6-digit verification code sent by Frevia. Enter the 6 digits into the OTP verification prompt and click \textbf{Verify OTP}.
+  \item \textbf{Step 3 -- Log In:} Navigate to \texttt{/login}. Enter your registered \textbf{Email} and \textbf{Password} and click \textbf{Sign In}, or click \textbf{Continue with Google} to authenticate via Google OAuth 2.0.
+  \item \textbf{Step 4 -- Join or Switch Role:} Click the profile menu in the top-right navigation bar. Select \textbf{Switch to Freelancer} or \textbf{Switch to Client} (or click \textbf{Join Role} if activating the secondary role for the first time). The workspace navigation updates immediately.
+  \item \textbf{Step 5 -- Manage Device Sessions:} Navigate to \texttt{/sessions}. Review the table of active sessions displaying browser user-agent, IP address, creation time, and expiry time. Click \textbf{Revoke} next to any unrecognized device to invalidate its refresh token immediately.
+\end{enumerate}
+
+\uifig{wf1_register_login.png}{User registration, OTP verification, and login interface}{/register and /login}{fig:wf1-login}
+\uifig{wf1_sessions.png}{Active device session management and role switching screen}{/sessions}{fig:wf1-sessions}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Expired OTP Code:} Each OTP code expires after 5 minutes. Click \textbf{Resend OTP} if the timer expires.
+  \item \textbf{OTP Rate Limit:} Exceeding the maximum OTP verification attempts within 15 minutes temporarily locks OTP submission; wait for the cooldown window before retrying.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 2
+%----------------------------------------------------------------------
+\subsection{Workflow 2: Freelancer Identity Verification (eKYC)}
+
+\textbf{Purpose and Roles:} This workflow enables users to verify their legal identity by uploading government-issued identification documents for administrative inspection, earning a verified trust badge on their profile. \textbf{Involved Roles:} Freelancer / Client (Requester) and Administrator (Reviewer).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (upload) {Upload Front/Back ID \& Selfie};
+  \node[wfstep, right=of upload] (pending) {Status Set to PENDING};
+  \node[wfdec, right=of pending] (review) {Admin Inspects ID};
+  \node[wfstep, right=of review] (result) {VERIFIED or REJECTED};
+  \draw[wfarrow] (upload) -- (pending);
+  \draw[wfarrow] (pending) -- (review);
+  \draw[wfarrow] (review) -- (result);
+\end{tikzpicture}
+\caption{Freelancer identity verification (eKYC) workflow diagram}
+\label{fig:wf2-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Identity Verification Panel:} Sign in and navigate to \texttt{/account-profile}. Scroll to the \textbf{Identity Verification (eKYC)} section.
+  \item \textbf{Step 2 -- Upload Identity Images:} Select the document type (\textbf{Citizen ID Card} or \textbf{Passport}), upload a clear image of the \textbf{Front Side}, \textbf{Back Side}, and a \textbf{Selfie Holding ID} (JPEG/PNG/WebP, maximum 5~MB per file).
+  \item \textbf{Step 3 -- Submit Verification Request:} Click \textbf{Submit Verification}. The verification status badge changes to \texttt{PENDING}.
+  \item \textbf{Step 4 -- Admin Inspection:} Sign in as an Administrator and navigate to \texttt{/admin/identity-verifications}. Filter the queue by \textbf{Pending} status and click \textbf{View Details} on a submission.
+  \item \textbf{Step 5 -- Approve or Reject:} Inspect the uploaded images. Click \textbf{Approve} to grant the \texttt{VERIFIED} badge, or click \textbf{Reject}, enter a mandatory rejection reason (e.g., blurred ID number), and confirm.
+\end{enumerate}
+
+\uifig{wf2_ekyc_upload.png}{Identity verification document upload interface}{/account-profile}{fig:wf2-upload}
+\uifig{wf2_admin_ekyc.png}{Admin identity verification review queue and inspection modal}{/admin/identity-verifications}{fig:wf2-admin}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Duplicate Pending Request:} Users cannot submit a second eKYC request while an existing request is in \texttt{PENDING} status or already \texttt{VERIFIED}.
+  \item \textbf{Re-submission After Rejection:} If an Administrator rejects a submission, the user sees the rejection reason on \texttt{/account-profile} and can upload corrected images immediately.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 3
+%----------------------------------------------------------------------
+\subsection{Workflow 3: Expert Profile \& Portfolio Setup}
+
+\textbf{Purpose and Roles:} This workflow explains how freelancers configure their professional profile, extract skills from a PDF curriculum vitae using AI, add portfolio projects, and submit profile revisions for administrative approval. \textbf{Involved Roles:} Freelancer, Expert, Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (edit) {Edit Bio, Rate \& Experience};
+  \node[wfstep, right=of edit] (cv) {Upload PDF CV for AI Analysis};
+  \node[wfstep, right=of cv] (port) {Add Portfolio Projects};
+  \node[wfstep, right=of port] (rev) {Admin Approves Revision};
+  \draw[wfarrow] (edit) -- (cv);
+  \draw[wfarrow] (cv) -- (port);
+  \draw[wfarrow] (port) -- (rev);
+\end{tikzpicture}
+\caption{Freelancer profile, AI CV analysis, and portfolio setup workflow diagram}
+\label{fig:wf3-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Freelancer Profile Editor:} Switch to the \textbf{Freelancer} role and navigate to \texttt{/freelancer/profile}.
+  \item \textbf{Step 2 -- Update Professional Details:} Enter your \textbf{Professional Title}, \textbf{Hourly Rate}, \textbf{Availability Status}, \textbf{Overview Bio}, \textbf{Education}, \textbf{Certifications}, \textbf{Languages}, and \textbf{Work Experience}.
+  \item \textbf{Step 3 -- Select Skills \& Proficiency:} Search the master skill list, attach relevant skills, and set the proficiency level (\texttt{1} to \texttt{10}) for each skill.
+  \item \textbf{Step 4 -- Upload CV for AI Analysis:} In the \textbf{Resume / CV} panel, upload a PDF file (up to 10~MB) and click \textbf{Analyze CV with AI}. Review the extracted skills and experience summary and click \textbf{Apply Suggestions}.
+  \item \textbf{Step 5 -- Add Portfolio Item:} In the \textbf{Portfolio} tab, click \textbf{Add Project}, enter the \textbf{Project Title}, \textbf{Description}, \textbf{Project URL}, and cover thumbnail, then click \textbf{Save Project}.
+  \item \textbf{Step 6 -- Admin Revision Approval:} If profile revision moderation is required, an Administrator navigates to \texttt{/admin/profile-revisions}, inspects the diff, and clicks \textbf{Approve Revision}.
+\end{enumerate}
+
+\uifig{wf3_freelancer_profile.png}{Freelancer profile editor, skill proficiency selector, and AI CV upload}{/freelancer/profile}{fig:wf3-profile}
+\uifig{wf3_portfolio.png}{Portfolio project editor and public expert showcase}{/freelancer/profile and /experts/[id]}{fig:wf3-portfolio}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{CV File Format:} Only valid \texttt{application/pdf} files up to 10~MB are accepted for CV upload and AI analysis.
+  \item \textbf{Profile Strength Meter:} Completing bio, skills, portfolio items, and eKYC verification raises the profile strength score toward 100\%, improving ranking in client talent searches.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 4
+%----------------------------------------------------------------------
+\subsection{Workflow 4: Job Posting \& Search}
+
+\textbf{Purpose and Roles:} This workflow covers how Clients create and publish structured job posts and how Freelancers discover, filter, bookmark, and save job searches. \textbf{Involved Roles:} Client, Freelancer.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (create) {Client Fills Job Details};
+  \node[wfstep, right=of create] (pub) {Publish Job to Marketplace};
+  \node[wfstep, right=of pub] (search) {Freelancer Filters Jobs};
+  \node[wfstep, right=of search] (save) {Bookmark or Save Search};
+  \draw[wfarrow] (create) -- (pub);
+  \draw[wfarrow] (pub) -- (search);
+  \draw[wfarrow] (search) -- (save);
+\end{tikzpicture}
+\caption{Job posting and marketplace search workflow diagram}
+\label{fig:wf4-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Job Creation Form (Client):} In the \textbf{Client} workspace, navigate to \texttt{/client/jobs/new}.
+  \item \textbf{Step 2 -- Configure Job Post:} Enter the \textbf{Job Title}, select a \textbf{Job Category}, write the detailed \textbf{Description}, choose \textbf{Experience Level} (\texttt{ENTRY}, \texttt{INTERMEDIATE}, \texttt{EXPERT}), select \textbf{Payment Type} (\texttt{FIXED} or \texttt{HOURLY}), enter the \textbf{Budget} amount, attach required \textbf{Skills}, and optionally add \textbf{Screening Questions}.
+  \item \textbf{Step 3 -- Publish Job:} Click \textbf{Publish Job} to make the listing live immediately (or \textbf{Save as Draft} to edit later at \texttt{/client/jobs}).
+  \item \textbf{Step 4 -- Search and Filter Jobs (Freelancer):} Switch to the \textbf{Freelancer} workspace and navigate to \texttt{/freelancer/find-work}. Enter keywords or filter by \textbf{Job Category}, \textbf{Skills}, \textbf{Budget Range}, and \textbf{Experience Level}.
+  \item \textbf{Step 5 -- Bookmark Job or Save Search:} Click the \textbf{Bookmark} icon on any job card to save it to \texttt{/freelancer/bookmarks}, or click \textbf{Save Search} to store the current filter combination in \texttt{/freelancer/saved-searches}.
+\end{enumerate}
+
+\uifig{wf4_post_job.png}{Client job creation wizard with category, budget, and screening questions}{/client/jobs/new}{fig:wf4-post-job}
+\uifig{wf4_find_work.png}{Freelancer job marketplace search, filters, and bookmarks}{/freelancer/find-work}{fig:wf4-find-work}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Minimum Budget Validation:} Fixed-price and hourly budgets must be positive numeric values greater than zero, and the maximum budget must be greater than or equal to the minimum budget.
+  \item \textbf{Closing a Job:} Clients can close an open job at any time from \texttt{/client/jobs/[jobId]}, preventing new proposal submissions.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 5
+%----------------------------------------------------------------------
+\subsection{Workflow 5: Proposal Submission \& Candidate Hiring}
+
+\textbf{Purpose and Roles:} This workflow describes how a Freelancer submits a competitive proposal with proposed milestones for an open job and how a Client reviews candidates and accepts a proposal to automatically create a contract. \textbf{Involved Roles:} Freelancer, Client.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (view) {Open Job Detail Page};
+  \node[wfstep, right=of view] (bid) {Submit Bid \& Milestones};
+  \node[wfstep, right=of bid] (short) {Client Reviews \& Shortlists};
+  \node[wfstep, right=of short] (hire) {Accept Proposal $\rightarrow$ Contract};
+  \draw[wfarrow] (view) -- (bid);
+  \draw[wfarrow] (bid) -- (short);
+  \draw[wfarrow] (short) -- (hire);
+\end{tikzpicture}
+\caption{Proposal submission and candidate hiring workflow diagram}
+\label{fig:wf5-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Job Details (Freelancer):} From \texttt{/freelancer/find-work}, click a job title to open \texttt{/freelancer/jobs/[slug]} and click \textbf{Apply Now / Submit Proposal}.
+  \item \textbf{Step 2 -- Fill Proposal Details:} Enter your \textbf{Bid Amount}, select \textbf{Estimated Duration}, write a tailored \textbf{Cover Letter}, answer any client \textbf{Screening Questions}, define the proposed \textbf{Milestones} (title, amount, due date), and upload supporting attachments.
+  \item \textbf{Step 3 -- Submit Proposal:} Click \textbf{Submit Proposal}. You can track, edit, or withdraw pending proposals at \texttt{/freelancer/proposals}.
+  \item \textbf{Step 4 -- Review Proposals (Client):} In the \textbf{Client} workspace, navigate to \texttt{/client/jobs/[jobId]/proposals}. Inspect each candidate's bid, cover letter, verified status, and portfolio.
+  \item \textbf{Step 5 -- Shortlist, Reject, or Accept:} Click \textbf{Shortlist} to mark top candidates, \textbf{Message} to start an interview chat, or \textbf{Accept \& Hire} on the winning proposal. Accepting a proposal automatically transitions it to \texttt{ACCEPTED} and generates the corresponding contract and milestones.
+\end{enumerate}
+
+\uifig{wf5_submit_proposal.png}{Freelancer proposal submission form with milestone breakdown}{/freelancer/jobs/[slug]}{fig:wf5-submit}
+\uifig{wf5_review_proposals.png}{Client proposal comparison and candidate hiring screen}{/client/jobs/[jobId]/proposals}{fig:wf5-review}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{One Active Proposal per Job:} A freelancer can submit only one active proposal per job post.
+  \item \textbf{Self-Bidding Restriction:} Users cannot submit a proposal to a job post that they created themselves under their Client role.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 6
+%----------------------------------------------------------------------
+\subsection{Workflow 6: Contract Creation \& Escrow Payment}
+
+\textbf{Purpose and Roles:} This workflow guides Clients through reviewing the generated contract, funding project milestones into Stripe Escrow, and activating the milestone for the Freelancer to begin work. \textbf{Involved Roles:} Client, Freelancer.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (cont) {Open Active Contract};
+  \node[wfstep, right=of cont] (init) {Click Fund Milestone};
+  \node[wfstep, right=of init] (stripe) {Complete Stripe Checkout};
+  \node[wfstep, right=of stripe] (escrow) {Funds Held in Escrow};
+  \draw[wfarrow] (cont) -- (init);
+  \draw[wfarrow] (init) -- (stripe);
+  \draw[wfarrow] (stripe) -- (escrow);
+\end{tikzpicture}
+\caption{Contract creation and Stripe escrow payment workflow diagram}
+\label{fig:wf6-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Contract Workspace (Client):} Navigate to \texttt{/client/contracts} and click on the newly created contract to open \texttt{/client/contracts/[contractId]}.
+  \item \textbf{Step 2 -- Initiate Milestone Funding:} Locate the target milestone in the \textbf{Milestones} list and click \textbf{Fund Milestone (Escrow)}.
+  \item \textbf{Step 3 -- Complete Stripe Payment:} In the Stripe payment modal, enter valid payment card details (e.g., Stripe test card \texttt{4242 4242 4242 4242}, future expiry date, any 3-digit CVC) and click \textbf{Pay \& Deposit to Escrow}.
+  \item \textbf{Step 4 -- Verify Escrow Status:} Upon Stripe webhook confirmation (\texttt{payment\_intent.succeeded}), the payment status updates to \texttt{ESCAPED / HELD\_IN\_ESCROW} and the milestone becomes active for deliverable submission. Clients can view all transaction records at \texttt{/client/payments}.
+\end{enumerate}
+
+\uifig{wf6_contract_escrow.png}{Contract milestone list and Stripe escrow funding checkout}{/client/contracts/[contractId] and /client/payments}{fig:wf6-escrow}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Unfunded Milestone Protection:} Freelancers are advised to wait until a milestone displays the \textbf{Funded in Escrow} status before delivering final work.
+  \item \textbf{Payment Failure Handling:} If a card is declined, the milestone remains unfunded and the Client can retry payment immediately without duplicating the contract.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 7
+%----------------------------------------------------------------------
+\subsection{Workflow 7: Milestone Deliverable Submission \& Fund Release}
+
+\textbf{Purpose and Roles:} This workflow details how Freelancers submit completed milestone deliverables and how Clients inspect the work, request revisions if needed, or approve the milestone to release escrow funds. \textbf{Involved Roles:} Freelancer, Client.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (sub) {Freelancer Submits Work};
+  \node[wfstep, right=of sub] (insp) {Client Inspects Deliverable};
+  \node[wfdec, right=of insp] (app) {Approved?};
+  \node[wfstep, right=of app] (rel) {Release Escrow Funds};
+  \draw[wfarrow] (sub) -- (insp);
+  \draw[wfarrow] (insp) -- (app);
+  \draw[wfarrow] (app) -- node[above,font=\scriptsize]{Yes} (rel);
+\end{tikzpicture}
+\caption{Milestone deliverable submission and escrow fund release workflow diagram}
+\label{fig:wf7-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Contract (Freelancer):} Navigate to \texttt{/freelancer/contracts/[contractId]} and select the funded milestone.
+  \item \textbf{Step 2 -- Submit Deliverable:} Click \textbf{Submit Deliverable}, enter a detailed summary of the completed work, attach deliverable files or repository links, and click \textbf{Confirm Submission}. The milestone status changes to \texttt{SUBMITTED}.
+  \item \textbf{Step 3 -- Inspect Deliverable (Client):} The Client receives a real-time notification and opens \texttt{/client/contracts/[contractId]} to download and review the submitted deliverables.
+  \item \textbf{Step 4 -- Request Revision or Approve:}
+  \begin{itemize}
+    \item If adjustments are required, click \textbf{Request Revision}, provide specific feedback notes, and submit. The milestone returns to \texttt{IN\_PROGRESS}.
+    \item If the deliverable satisfies all requirements, click \textbf{Approve \& Release Funds}.
+  \end{itemize}
+  \item \textbf{Step 5 -- Escrow Fund Release:} Upon approval, the milestone transitions to \texttt{APPROVED / COMPLETED} and the escrowed funds are released to the Freelancer.
+\end{enumerate}
+
+\uifig{wf7_milestone_delivery.png}{Freelancer deliverable upload and Client milestone approval screen}{/freelancer/contracts/[contractId] and /client/contracts/[contractId]}{fig:wf7-delivery}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Irreversible Fund Release:} Approving a milestone permanently releases the escrowed payment for that milestone and cannot be undone.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 8
+%----------------------------------------------------------------------
+\subsection{Workflow 8: Contract Dispute Resolution}
+
+\textbf{Purpose and Roles:} This workflow explains how either party opens a formal dispute when a contract disagreement occurs and how an Administrator investigates evidence and issues a binding financial resolution. \textbf{Involved Roles:} Client, Freelancer, Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (open) {File Dispute \& Evidence};
+  \node[wfstep, right=of open] (freeze) {Escrow Funds Frozen};
+  \node[wfstep, right=of freeze] (admin) {Admin Reviews Case};
+  \node[wfstep, right=of admin] (res) {Refund / Release / Split};
+  \draw[wfarrow] (open) -- (freeze);
+  \draw[wfarrow] (freeze) -- (admin);
+  \draw[wfarrow] (admin) -- (res);
+\end{tikzpicture}
+\caption{Contract dispute filing and administrative resolution workflow diagram}
+\label{fig:wf8-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Dispute Modal:} From the contract detail page (\texttt{/client/contracts/[contractId]} or \texttt{/freelancer/contracts/[contractId]}), click \textbf{Open Dispute} on the contested milestone.
+  \item \textbf{Step 2 -- Submit Dispute Details:} Select the \textbf{Dispute Reason}, enter a comprehensive description of the issue, attach supporting evidence, and click \textbf{Submit Dispute}. Both parties can track the case at \texttt{/client/disputes} or \texttt{/freelancer/disputes}.
+  \item \textbf{Step 3 -- Admin Investigation:} Sign in as an Administrator and navigate to \texttt{/admin/disputes}. Select the open dispute case to review the contract terms, milestone submissions, uploaded evidence, and conversation history.
+  \item \textbf{Step 4 -- Execute Resolution:} Click \textbf{Resolve Dispute}, select the decision outcome (\textbf{Refund Client}, \textbf{Release to Freelancer}, or \textbf{Split Settlement}), enter the official resolution note, and click \textbf{Confirm Resolution}.
+\end{enumerate}
+
+\uifig{wf8_dispute_resolution.png}{Contract dispute submission form and Admin dispute resolution console}{/client/disputes and /admin/disputes}{fig:wf8-dispute}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Escrow Freeze:} While a dispute is in \texttt{OPEN} or \texttt{UNDER\_REVIEW} status, milestone funds are locked and cannot be released or refunded until the Administrator resolves the case or the initiator cancels the dispute.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 9
+%----------------------------------------------------------------------
+\subsection{Workflow 9: Ratings \& Feedback}
+
+\textbf{Purpose and Roles:} This workflow guides Clients and Freelancers through submitting mutual star ratings and written reviews upon completing a contract. \textbf{Involved Roles:} Client, Freelancer.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (comp) {Contract Completed};
+  \node[wfstep, right=of comp] (rate) {Select 1--5 Star Rating};
+  \node[wfstep, right=of rate] (comm) {Write Public Review};
+  \node[wfstep, right=of comm] (pub) {Update Profile Rating};
+  \draw[wfarrow] (comp) -- (rate);
+  \draw[wfarrow] (rate) -- (comm);
+  \draw[wfarrow] (comm) -- (pub);
+\end{tikzpicture}
+\caption{Two-way contract rating and feedback workflow diagram}
+\label{fig:wf9-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Completed Contract:} Navigate to \texttt{/client/contracts/[contractId]} or \texttt{/freelancer/contracts/[contractId]} once all milestones are completed and the contract status is \texttt{COMPLETED}.
+  \item \textbf{Step 2 -- Rate Counterparty:} Click \textbf{Leave Review}, select a star rating from \textbf{1 Star} to \textbf{5 Stars}, and enter your written feedback describing quality, communication, and adherence to schedule.
+  \item \textbf{Step 3 -- Submit Review:} Click \textbf{Submit Review}. The review is recorded and the counterparty's average rating and total review count are recalculated on their public profile (\texttt{/profiles/[id]}).
+\end{enumerate}
+
+\uifig{wf9_reviews.png}{Two-way star rating and contract feedback submission modal}{/client/contracts/[contractId]}{fig:wf9-reviews}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Single Review Constraint:} Each party can submit at most one review per completed contract.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 10
+%----------------------------------------------------------------------
+\subsection{Workflow 10: Real-time Messaging \& Notifications}
+
+\textbf{Purpose and Roles:} This workflow demonstrates how users communicate in real time via WebSocket chat rooms, share files, and manage live platform notifications. \textbf{Involved Roles:} Client, Freelancer, Moderator, Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (open) {Open Conversation};
+  \node[wfstep, right=of open] (send) {Send Text / Attachment};
+  \node[wfstep, right=of send] (ws) {Socket.IO Real-Time Sync};
+  \node[wfstep, right=of ws] (notif) {Read / Manage Alerts};
+  \draw[wfarrow] (open) -- (send);
+  \draw[wfarrow] (send) -- (ws);
+  \draw[wfarrow] (ws) -- (notif);
+\end{tikzpicture}
+\caption{Real-time WebSocket messaging and notification workflow diagram}
+\label{fig:wf10-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Open Conversations Workspace:} Navigate to \texttt{/conversations} (or \texttt{/client/conversations} / \texttt{/freelancer/conversations}) and select a conversation thread from the left sidebar.
+  \item \textbf{Step 2 -- Send Messages and Attachments:} Type your message in the composer, optionally click the \textbf{Attachment} icon to upload images or documents, and press \textbf{Enter} or click \textbf{Send}.
+  \item \textbf{Step 3 -- Reply, Edit, or Delete Message:} Hover over any message bubble to click \textbf{Reply} (threaded quote), or click \textbf{Edit} / \textbf{Delete} on your own sent messages.
+  \item \textbf{Step 4 -- Manage Real-Time Notifications:} Click the \textbf{Bell} icon in the top header or navigate to \texttt{/notifications}. Click any notification to jump directly to the associated proposal, contract, or message, or click \textbf{Mark All as Read}.
+\end{enumerate}
+
+\uifig{wf10_chat_notifications.png}{Real-time WebSocket conversation workspace and notification panel}{/conversations and /notifications}{fig:wf10-chat}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Participant Authorization:} Only verified participants of a conversation thread can view or send messages in that room.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 11
+%----------------------------------------------------------------------
+\subsection{Workflow 11: Community Forum \& Content Moderation}
+
+\textbf{Purpose and Roles:} This workflow covers how community members publish discussion posts and comments in the forum, report inappropriate content, and how Moderators/Administrators review reports and manage soft-deleted items in the Forum Trash. \textbf{Involved Roles:} Client, Freelancer, Moderator, Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (post) {Publish Forum Post};
+  \node[wfstep, right=of post] (inter) {Comment, React \& Report};
+  \node[wfstep, right=of inter] (mod) {Moderator Reviews Report};
+  \node[wfstep, right=of mod] (trash) {Move to Trash / Restore};
+  \draw[wfarrow] (post) -- (inter);
+  \draw[wfarrow] (inter) -- (mod);
+  \draw[wfarrow] (mod) -- (trash);
+\end{tikzpicture}
+\caption{Community forum posting and content moderation workflow diagram}
+\label{fig:wf11-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Create Forum Post:} Navigate to \texttt{/forum}, click \textbf{Create Post}, select a \textbf{Forum Category}, enter the \textbf{Post Title}, write the content, add optional tags, and click \textbf{Publish Post}.
+  \item \textbf{Step 2 -- Interact and Report:} Open any thread at \texttt{/forum/[categorySlug]/[postSlug]} to upvote/react, bookmark, or post a nested comment. If a post or comment violates community guidelines, click \textbf{Report}, select a reason, and submit.
+  \item \textbf{Step 3 -- Moderate Posts and Reports (Moderator/Admin):} Navigate to \texttt{/admin/moderation} and \texttt{/admin/reports}. Inspect flagged posts or comments, approve pending posts, toggle \textbf{Pin}, or click \textbf{Delete (Move to Trash)} on violating content.
+  \item \textbf{Step 4 -- Manage Forum Trash:} Navigate to \texttt{/admin/trash} to view soft-deleted posts and comments. Click \textbf{Restore} to recover an item back to the public forum, or click \textbf{Delete Permanently} to purge it from the database.
+\end{enumerate}
+
+\uifig{wf11_forum_post.png}{Community forum category view, discussion thread, and post editor}{/forum and /forum/[categorySlug]/[postSlug]}{fig:wf11-forum}
+\uifig{wf11_moderation_trash.png}{Admin/Moderator content moderation queue and forum trash management}{/admin/moderation and /admin/trash}{fig:wf11-moderation}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Soft-Delete Recovery:} Posts and comments deleted by authors or moderators are soft-deleted (\texttt{deletedAt} timestamped) and can be restored from \texttt{/admin/trash} until permanently purged.
+\end{itemize}
+
+%----------------------------------------------------------------------
+% WORKFLOW 12
+%----------------------------------------------------------------------
+\subsection{Workflow 12: Admin System \& Master Data Management}
+
+\textbf{Purpose and Roles:} This workflow guides Administrators through managing platform user accounts, dynamic RBAC roles and permissions, master skills, job categories, forum categories, and homepage advertisement banners. \textbf{Involved Roles:} Administrator.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 0.9cm]
+  \node[wfstep] (users) {Manage Users \& Ban State};
+  \node[wfstep, right=of users] (rbac) {Configure Roles \& RBAC};
+  \node[wfstep, right=of rbac] (tax) {Manage Skills \& Categories};
+  \node[wfstep, right=of tax] (ban) {Publish Ad Banners};
+  \draw[wfarrow] (users) -- (rbac);
+  \draw[wfarrow] (rbac) -- (tax);
+  \draw[wfarrow] (tax) -- (ban);
+\end{tikzpicture}
+\caption{Administrative system and master data governance workflow diagram}
+\label{fig:wf12-diagram}
+\end{figure}
+
+\textbf{Step-by-Step Instructions:}
+\begin{enumerate}
+  \item \textbf{Step 1 -- Manage Users \& Assign Roles (\texttt{/admin/users} \& \texttt{/admin/assign-role}):} Search users by name or email, filter by role or ban status, click \textbf{Create User} to provision an account, click \textbf{Ban / Unban} to restrict or restore platform access, or assign/remove roles for any user.
+  \item \textbf{Step 2 -- Configure RBAC Roles \& Permissions (\texttt{/admin/roles} \& \texttt{/admin/permissions}):} Create custom administrative roles, inspect HTTP endpoint permissions (\texttt{method}, \texttt{path}, \texttt{module}), and check/uncheck permissions assigned to each role.
+  \item \textbf{Step 3 -- Manage Master Skills (\texttt{/admin/skills}):} View active and soft-deleted skills. Click \textbf{Create Skill} to add a new skill (\textbf{Name}, \textbf{Slug}, \textbf{Description}), click \textbf{Edit} to update details, click \textbf{Delete} to soft-delete, or click \textbf{Restore} to reactivate a deleted skill.
+  \item \textbf{Step 4 -- Manage Job Categories (\texttt{/admin/job-categories}):} Create, update, soft-delete, or restore marketplace job categories (\textbf{Name}, \textbf{Slug}, \textbf{Description}) after verifying associated jobs.
+  \item \textbf{Step 5 -- Manage Forum Categories (\texttt{/admin/categories}):} Create, edit, reorder, or delete community forum categories.
+  \item \textbf{Step 6 -- Manage Advertisement Banners (\texttt{/admin/banners}):} Click \textbf{Create Banner}, enter the \textbf{Banner Title}, upload or specify the \textbf{Image URL}, set the target \textbf{Link URL}, configure \textbf{Start Date}, \textbf{End Date}, and \textbf{Active} toggle, and click \textbf{Save Banner}.
+\end{enumerate}
+
+\uifig{wf12_admin_users_rbac.png}{Admin user management directory and RBAC role-permission matrix}{/admin/users and /admin/roles}{fig:wf12-users-rbac}
+\uifig{wf12_admin_master_data.png}{Admin management consoles for skills, job categories, and advertisement banners}{/admin/skills, /admin/job-categories, and /admin/banners}{fig:wf12-master-data}
+
+\textbf{Notes and Common Errors:}
+\begin{itemize}
+  \item \textbf{Unique Slug Enforcement:} Skill slugs, job category slugs, and forum category slugs must be unique in lowercase kebab-case format (e.g., \texttt{web-development}).
+  \item \textbf{Self-Deletion Protection:} Administrators cannot delete or ban their own currently authenticated administrator account.
+\end{itemize}
 
 \end{document}
