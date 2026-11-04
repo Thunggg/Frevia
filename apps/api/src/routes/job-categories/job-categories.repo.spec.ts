@@ -115,7 +115,6 @@ describe('JobCategoriesRepository', () => {
         budgetType: 'FIXED_PRICE',
         deadline: null,
         status: JobStatus.OPEN,
-        featured: false,
         expiryDate: null,
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),

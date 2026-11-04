@@ -41,7 +41,6 @@ const jobSelect = {
   budgetType: true,
   deadline: true,
   status: true,
-  featured: true,
   expiryDate: true,
   hiringType: true,
   positionsRequired: true,

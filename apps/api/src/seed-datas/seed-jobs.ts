@@ -187,7 +187,6 @@ async function main() {
         deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         status: 'OPEN',
-        featured: false,
         skills: {
           create: job.skills.map((slug) => ({
             skillId: skillMap.get(slug)!,

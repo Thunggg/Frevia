@@ -9,12 +9,6 @@ import {
 } from "./job-category.model";
 import { JobSkillSchema } from "./job-skill.model";
 
-const QueryBooleanSchema = z.preprocess((value) => {
-  if (value === "true") return true;
-  if (value === "false") return false;
-
-  return value;
-}, z.boolean());
 
 export const JobStatusSchema = z.enum([
   "DRAFT",
@@ -51,8 +45,6 @@ export const JobSchema = z.object({
   deadline: z.date().nullable(),
 
   status: JobStatusSchema,
-
-  featured: z.boolean(),
 
   expiryDate: z.date().nullable(),
 
@@ -247,8 +239,6 @@ export const ViewListJobFilterSchema = z
       .max(120)
       .optional()
       .transform((value) => value || undefined),
-
-    featured: QueryBooleanSchema.optional(),
 
     clientId: z.coerce.number().int().positive().optional(),
 

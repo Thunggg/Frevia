@@ -634,7 +634,6 @@ model Job {
   budgetType  BudgetType
   deadline    DateTime?
   status      JobStatus  @default(DRAFT)
-  featured    Boolean    @default(false)
   expiryDate  DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

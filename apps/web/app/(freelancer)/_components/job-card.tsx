@@ -24,7 +24,6 @@ export type JobCardJob = Pick<
   | "budgetMax"
   | "budgetType"
   | "status"
-  | "featured"
   | "createdAt"
   | "hiringType"
   | "positionsRequired"
