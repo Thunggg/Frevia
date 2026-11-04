@@ -10,7 +10,7 @@ import {
 } from './job-categories.dto';
 import { JobCategoriesService } from './job-categories.service';
 
-// UC-46.06 + UC-46.07 — Người dùng xem danh mục công việc khi tìm kiếm/lọc job.
+// UC-46.07 + UC-46.08 — Người dùng xem danh mục công việc khi tìm kiếm/lọc job.
 // Dữ liệu công khai (BR-CAT-02) nên không yêu cầu đăng nhập.
 @Controller('job-categories')
 export class JobCategoriesController {

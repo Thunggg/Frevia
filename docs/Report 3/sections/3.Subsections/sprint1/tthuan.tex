@@ -1,0 +1,1098 @@
+% =================================================================
+% Sprint 1 - User Authentication & Role Management (tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{User Authentication}
+
+% -----------------------------------------------------------------
+% UC-01: Login with Google
+% -----------------------------------------------------------------
+\subsubsection{Function: Login with Google}
+
+\fnhead{Function Trigger}
+A guest clicks the ``Google'' authentication button on the sign-in screen or the registration screen.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Login (\texttt{/login}) $\rightarrow$ Click ``Google'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest (unauthenticated visitor).
+    \item \textbf{Secondary Actor:} Google OAuth 2.0 Authorization Server.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF authentication proxy (\texttt{/api/auth/google}), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a visitor to authenticate or register an account instantly using their existing Google account via OAuth 2.0. This eliminates the need to remember credentials or manually verify an email address, significantly reducing onboarding friction while ensuring verified identity data.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Sign-in screen at \texttt{/login} presenting the prominent ``Google'' single sign-on action.
+    \item External Google OAuth 2.0 consent window prompted by Google Identity services.
+    \item Automatic redirect to role-specific workspace upon authentication completion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client initiates authentication by requesting \texttt{GET /api/auth/google-link}.
+    \item The backend generates the Google OAuth consent URL configured with client ID, callback URI, and identity scopes (\texttt{openid email profile}).
+    \item The guest grants permission on Google's consent dialog, and Google redirects to the callback endpoint with an authorization code.
+    \item The backend exchanges the code for Google tokens and fetches profile information (email, full name, avatar URL).
+    \item The system queries the database: if no account exists with the email, a new account is automatically provisioned with verified email status and assigned the default \texttt{Client} role.
+    \item The system creates an active session, issues signed JWT access and refresh tokens, stores them in secure \texttt{httpOnly} cookies, and redirects the user to their designated dashboard.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/LoginWithGoogle.png}{Login with Google interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The login container displays a greeting title ``Welcome back'' and an email/password form for standard authentication.
+    \item A divider labeled ``OR CONTINUE WITH'' separates local credential inputs from social login providers.
+    \item The ``Google'' button is prominent, featuring the official multi-colored Google logo, clean responsive styling, and clear action labeling.
+    \item A footer link allows users without an account to switch to the registration screen.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+OAuth Code & Temporary authorization code returned by Google OAuth Server via redirect URI.\\ \hline
+State Token & Cryptographic anti-CSRF state token validated by the authentication handler.\\ \hline
+Session Headers & IP address and User-Agent captured from request headers for session tracking.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The OAuth code must be valid, non-expired, and verifiable against Google OAuth endpoints.
+    \item The email address retrieved from Google profile must be non-empty and marked as verified by Google.
+    \item The matched user account must have \texttt{status = ACTIVE}; suspended or banned accounts are rejected.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-UA-01: Google OAuth shall follow standard OAuth 2.0 authorization code grant with secure PKCE/state verification.
+    \item BR-UA-02: New users authenticated via Google OAuth shall be automatically registered with the \texttt{Client} role and \texttt{isEmailVerified = true}.
+    \item BR-UA-03: Suspended or banned accounts shall be denied access and notified with an administrative contact notice.
+    \item BR-UA-04: Issued JWT tokens shall be stored exclusively in secure, \texttt{httpOnly}, \texttt{SameSite=Lax} cookies.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The guest clicks the ``Google'' button on the login screen.
+    \item The browser receives the Google authorization URL from \texttt{/api/auth/google-link} and redirects to Google.
+    \item The guest authenticates with their Google account and authorizes Frevia.
+    \item Google redirects to \texttt{/api/auth/google/callback} with code and state parameters.
+    \item The backend exchanges the code for profile tokens and extracts identity details.
+    \item The backend finds or provisions the user record and initializes an active session.
+    \item The system writes authentication cookies and redirects the user to their role dashboard.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Guest denies permission or cancels the Google OAuth consent prompt. Google redirects with \texttt{error=access\_denied}; the system redirects back to \texttt{/login} with notification ``Google login was cancelled.''\\ \hline
+A2 & The authorization code has expired, was malformed, or was replayed. The token exchange fails; system displays ``Authentication with Google failed. Please try again.''\\ \hline
+A3 & Anti-CSRF \texttt{state} token mismatch or missing session state. The backend rejects the callback with HTTP 400 Bad Request to protect against cross-site request forgery.\\ \hline
+A4 & The account linked to the retrieved Google email has been suspended or banned by administrators. Access is rejected with HTTP 403: ``Your account has been suspended. Please contact support.''\\ \hline
+A5 & Google OAuth service is temporarily unreachable due to network outage or timeout. The backend catches \texttt{FetchError} and prompts the user to try standard email login.\\ \hline
+A6 & Database connection failure occurs during user auto-provisioning or session persistence. The transaction rolls back and returns HTTP 500: ``Login failed due to a server error.''\\ \hline
+A7 & The browser blocks the external OAuth redirect due to strict popup/redirect blocker policies. The client displays an explicit fallback hyperlink to proceed with authentication.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{accessToken} & Signed JWT containing user ID, email, active roles, and expiration timestamp (15 minutes).\\ \hline
+\texttt{refreshToken} & Opaque or long-lived JWT token (7 days) persisted in the database session table.\\ \hline
+User Object & User profile record including \texttt{id}, \texttt{email}, \texttt{name}, \texttt{avatarUrl}, and primary role.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The user is authenticated with active session cookies.
+    \item An audit record is created in the database session log.
+    \item The browser is navigated to the dashboard appropriate for the user's primary role.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-02: Login
+% -----------------------------------------------------------------
+\subsubsection{Function: Login}
+
+\fnhead{Function Trigger}
+A registered user enters their email and password into the sign-in form and submits.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Login (\texttt{/login}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest (unauthenticated registered user).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/auth/login}), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Authenticates users using traditional email and password credentials, verifying identity against hashed passwords in the database, establishing an active session, and issuing JWT tokens.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Login screen at \texttt{/login} with Email Address input and Password input.
+    \item Toggle visibility button (eye icon) to show or hide entered password.
+    \item ``Remember me'' checkbox and ``Forgot password?'' navigation link.
+    \item Primary ``Log in'' button with loading spinner state during submission.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The web client validates input schema with Zod (\texttt{LoginBodySchema}) before sending.
+    \item The client posts credentials to BFF \texttt{/api/auth/login}, which forwards to NestJS API.
+    \item The API queries the user by email including associated roles and profiles.
+    \item The system verifies the supplied password against the stored bcrypt hash.
+    \item The system verifies that the account is active and the email address is confirmed.
+    \item Upon success, a new session record is written into the database, JWT access/refresh tokens are generated and attached as \texttt{httpOnly} cookies, and user metadata is returned.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/Login.png}{User login screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Left branded imagery panel showcases workspace lifestyle graphics with the Frevia slogan.
+    \item Right form card provides fields for ``Email address'' and ``Password'' with subtle placeholder hints.
+    \item Password input includes an embedded visibility toggle icon on the right edge.
+    \item Action row features ``Remember me'' checkbox alongside ``Forgot password?'' link in primary green.
+    \item Solid green ``Log in'' submit button spans full container width.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{email} & Registered email address string; must be a valid RFC 5322 format.\\ \hline
+\texttt{password} & User account password string; required, minimum 6 characters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{email} is trimmed and validated as a syntactically valid email address.
+    \item \texttt{password} cannot be empty and must match the stored bcrypt hash.
+    \item The account must not have \texttt{deletedAt} set and must have \texttt{status = ACTIVE}.
+    \item The user must have verified their email address (\texttt{isEmailVerified = true}).
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-UA-05: Passwords must be verified using bcrypt comparison with salted hashes.
+    \item BR-UA-06: Error responses shall use a generic message ``Invalid email or password'' to mitigate account enumeration.
+    \item BR-UA-07: Unverified accounts shall be rejected with a notice prompting verification completion.
+    \item BR-UA-08: Suspended accounts shall be denied access across all client interfaces.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Guest navigates to \texttt{/login} and inputs valid registered email and password.
+    \item Guest clicks ``Log in'' button.
+    \item Form resolver executes schema validation and initiates HTTP POST request.
+    \item NestJS API retrieves user record, compares bcrypt hash, and verifies account active status.
+    \item The system records the session in the database and creates JWT tokens.
+    \item The BFF proxy serializes \texttt{httpOnly} cookies and responds with HTTP 200.
+    \item The frontend detects user roles and redirects to the appropriate dashboard (Admin, Client, or Freelancer).
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Required field is missing (empty email or password). Form resolver intercepts input and renders inline errors before sending any network request.\\ \hline
+A2 & Email is not registered in the system. The API returns HTTP 401 with generic error \texttt{AuthMessage.INCORRECT\_EMAIL} mapped to ``Invalid email or password.''\\ \hline
+A3 & Incorrect password provided. Bcrypt comparison fails; API returns HTTP 422 with \texttt{AuthMessage.INCORRECT\_PASSWORD} mapped to ``Invalid email or password.''\\ \hline
+A4 & Account email is unconfirmed (\texttt{isEmailVerified = false}). System returns HTTP 403: ``Please verify your email before logging in. Resend verification email?''\\ \hline
+A5 & Account is marked as \texttt{status = BANNED} or \texttt{SUSPENDED}. System throws \texttt{UserBannedException} (HTTP 403): ``Your account has been suspended. Please contact support.''\\ \hline
+A6 & Excessive consecutive failed login attempts detected. Rate limiter triggers HTTP 429: ``Too many login attempts. Please wait 15 minutes before trying again.''\\ \hline
+A7 & Database connection times out or pool is exhausted. API returns HTTP 500; frontend alerts ``Login failed. Please try again later.''\\ \hline
+A8 & Network connectivity drops during form submission. Client request fails with network error; frontend displays offline alert toast.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{accessToken} & 15-minute validity JWT stored in \texttt{accessToken} cookie.\\ \hline
+\texttt{refreshToken} & 7-day validity token stored in \texttt{refreshToken} cookie.\\ \hline
+\texttt{user} & Sanitized user object containing ID, email, name, avatar, and roles list.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User authentication state is initialized.
+    \item A new session row is created in the database containing client device metadata.
+    \item Client redirects to the dashboard.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-03: Logout
+% -----------------------------------------------------------------
+\subsubsection{Function: Logout}
+
+\fnhead{Function Trigger}
+An authenticated user clicks the ``Log out'' button from the main navigation sidebar or user profile menu.\newline
+\textbf{Navigation path:} Any authenticated screen $\rightarrow$ Sidebar bottom $\rightarrow$ Click ``Log out''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Expert, Freelancer, Administrator (all authenticated users).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/auth/logout}), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Terminates the current active session on both the client application and server database, revoking the validity of issued tokens and protecting user accounts from unauthorized session reuse.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Sidebar bottom control labeled ``Log out'' with logout icon.
+    \item Header profile popover menu containing secondary sign-out trigger.
+    \item Immediate redirection back to the public sign-in screen upon termination.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client dispatches a POST request to \texttt{/api/auth/logout}.
+    \item The backend extracts the session token from the request cookies or authorization headers.
+    \item The API locates the matching session row in the \texttt{Session} table and soft-deletes or purges it.
+    \item The BFF proxy expires the \texttt{accessToken} and \texttt{refreshToken} cookies by setting their \texttt{Max-Age} to 0.
+    \item The web client clears local client-side caches (TanStack Query, session store) and redirects the visitor to \texttt{/login}.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/Logout.png}{User logout interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Navigation sidebar includes workspace navigation links and administrative sections.
+    \item The bottom section of the sidebar features the ``Log out'' command with a distinct exit glyph.
+    \item Visual feedback indicates hover state, alerting the user to session termination.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Session Cookies & Active \texttt{accessToken} and \texttt{refreshToken} supplied via HTTP request.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The request must supply a valid authentication cookie or bearer token.
+    \item Session must correspond to an active record in the database.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-UA-09: Logout must invalidate the database session record before clearing browser cookies.
+    \item BR-UA-10: Terminated sessions shall be rejected on all subsequent API requests.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User clicks ``Log out'' in the application sidebar.
+    \item Frontend invokes \texttt{POST /api/auth/logout}.
+    \item Server deletes active session record from the database.
+    \item Response sets expired cookie headers (\texttt{Max-Age=0}).
+    \item Client resets in-memory cache and state.
+    \item Browser transitions to the public login page.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & The session token in the cookie has already expired prior to clicking logout. The backend returns HTTP 200/204; the client cleans up remaining cookies and finishes redirect.\\ \hline
+A2 & The session record was deleted remotely (e.g. via Revoke Session UC-16.03 on another device). System acknowledges logout request without error and purges local credentials.\\ \hline
+A3 & Database failure occurs during session row removal. The BFF proxy forcefully clears client \texttt{httpOnly} cookies regardless, guaranteeing the user is locally signed out.\\ \hline
+A4 & The user clicks the ``Log out'' button rapidly multiple times. The first call succeeds; subsequent calls encounter no active session and redirect gracefully.\\ \hline
+A5 & Client network drops during the logout dispatch. The browser client detects the failure, purges in-memory auth tokens, and forces navigation to \texttt{/login}.\\ \hline
+A6 & The token provided carries an invalid or tampered cryptographic signature. Backend rejects the token with 401, clears invalid cookies, and routes to login.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Cookie Headers & Set-Cookie headers invalidating \texttt{accessToken} and \texttt{refreshToken}.\\ \hline
+Response Body & JSON acknowledgment: \texttt{\{ success: true, message: "Logged out successfully" \}}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Database session is terminated.
+    \item Authentication cookies are eliminated from the browser.
+    \item Protected routes are no longer accessible without re-authenticating.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-04: Register
+% -----------------------------------------------------------------
+\subsubsection{Function: Register}
+
+\fnhead{Function Trigger}
+A new visitor clicks the ``Sign up'' link and completes the registration form.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Login (\texttt{/login}) $\rightarrow$ ``Sign up'' link (\texttt{/register}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest.
+    \item \textbf{Secondary Actor:} Mail Delivery Service (Nodemailer / SMTP Server).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a new user to create a Frevia account with credentials, select an initial platform role (Client or Freelancer), and verify their email via a single-use OTP code.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Registration page at \texttt{/register} with Full Name, Email, Password, and Password Confirmation fields.
+    \item Role selection cards allowing user to choose between ``Client'' (hire talent) or ``Freelancer'' (find work).
+    \item Inline OTP verification section with ``Send OTP'' button and 6-digit verification code input.
+    \item Checkbox for accepting Terms of Service and Privacy Policy.
+    \item Primary submit button labeled ``Continue to Profile''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User inputs email and clicks ``Send OTP''. Backend validates email uniqueness and generates a 6-digit OTP code stored with a 10-minute expiration timestamp.
+    \item The mailer sends the OTP to the specified email address.
+    \item User fills credentials, chooses role, inputs OTP, checks terms, and submits \texttt{POST /api/auth/register}.
+    \item Backend verifies OTP validity, hashes the password using bcrypt with 10 salt rounds, and writes user account to the database.
+    \item A role profile (Client or Freelancer) is initialized, tokens are issued, and the user is redirected into onboarding.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/Register.png}{User registration screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header displays ``Create an account'' and role choice selector.
+    \item Two distinct selection cards allow choosing between ``Join as Client'' or ``Join as Freelancer''.
+    \item Form inputs collect Full Name, Email Address, Password, and Confirm Password with real-time strength feedback.
+    \item OTP input field includes an integrated ``Send OTP'' trigger button.
+    \item Terms of Service acceptance checkbox with active hyperlink references.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{name} & User's full display name string (2 to 50 characters).\\ \hline
+\texttt{email} & Valid email address string; must be unique across the platform.\\ \hline
+\texttt{password} & Strong password (minimum 8 characters with letters, numbers, and symbols).\\ \hline
+\texttt{role} & Selected initial platform role: \texttt{CLIENT} or \texttt{FREELANCER}.\\ \hline
+\texttt{otp} & 6-digit verification code delivered to the user's email.\\ \hline
+\texttt{agreeTerms} & Boolean flag indicating user accepted terms and policies.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Email must conform to RFC 5322 format and not already exist in the database.
+    \item Password must be at least 8 characters and match \texttt{confirmPassword}.
+    \item OTP must match the unexpired code recorded for that email address.
+    \item \texttt{agreeTerms} must be strictly \texttt{true}.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-UA-11: Email addresses must be globally unique across all accounts.
+    \item BR-UA-12: The user must explicitly choose an initial role; default assignment is forbidden.
+    \item BR-UA-13: Passwords must be hashed with bcrypt prior to persistence.
+    \item BR-UA-14: OTP codes expire after 10 minutes and can only be validated once.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Visitor opens \texttt{/register} and inputs name, email, and password.
+    \item Visitor selects preferred role (Client or Freelancer).
+    \item Visitor clicks ``Send OTP''; system sends verification email and starts countdown.
+    \item Visitor inputs 6-digit code received in email and checks terms agreement.
+    \item Visitor clicks ``Continue to Profile''.
+    \item System validates OTP, creates account and profile, issues tokens, and navigates to onboarding.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & One or more mandatory fields are omitted. Form resolver blocks request and surfaces inline error messages.\\ \hline
+A2 & The email entered does not match standard RFC 5322 format. Form displays ``Please enter a valid email address.''\\ \hline
+A3 & The email is already registered by another account. Backend returns HTTP 422 with \texttt{AuthMessage.EMAIL\_ALREADY\_EXISTS}: ``This email is already registered.''\\ \hline
+A4 & The password does not satisfy complexity constraints (less than 8 chars, missing uppercase/number). Form displays requirement indicators.\\ \hline
+A5 & Password confirmation does not match the entered password. Form highlights confirm field with ``Passwords do not match.''\\ \hline
+A6 & The submitted OTP does not match the generated code. Backend throws \texttt{InvalidVerificationCodeException} (HTTP 422): ``Invalid verification code.''\\ \hline
+A7 & The submitted OTP code has exceeded its 10-minute lifetime. Backend throws \texttt{OTPExpiredException} (HTTP 422): ``OTP has expired. Please request a new one.''\\ \hline
+A8 & Guest repeatedly clicks ``Send OTP'' within a short timeframe. Rate limiter triggers \texttt{TooManyAttemptsException} (HTTP 422): ``Too many attempts. Please try again later.''\\ \hline
+A9 & Mail server fails during OTP dispatch. Backend throws \texttt{FailedToSendOTPException} (HTTP 422): ``Unable to send OTP. Please try again later.''\\ \hline
+A10 & Guest fails to check the Terms of Service box. System disables final submission with ``You must accept the Terms of Service and Privacy Policy.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{user} & Created user record with ID, email, name, role, and verification timestamp.\\ \hline
+Auth Cookies & Newly issued \texttt{accessToken} and \texttt{refreshToken} stored in httpOnly cookies.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item New user row and role relationship written to the database.
+    \item User is immediately logged in and guided to role profile setup.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-05: Forgot Password
+% -----------------------------------------------------------------
+\subsubsection{Function: Forgot Password}
+
+\fnhead{Function Trigger}
+A user clicks ``Forgot password?'' on the login screen and submits their email address.\newline
+\textbf{Navigation path:} Login (\texttt{/login}) $\rightarrow$ ``Forgot password?'' (\texttt{/forgot-password}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest (registered user who lost access).
+    \item \textbf{Secondary Actor:} Mail Delivery Service (Nodemailer / SMTP Server).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides a secure self-service mechanism for users to reset their forgotten passwords via email verification links, preventing account lockout while safeguarding against credential enumeration attacks.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Forgot password page at \texttt{/forgot-password} with email input and submit button.
+    \item Confirmation feedback screen informing user to check their email inbox.
+    \item Secure reset password screen accessed through the unique tokenized email link.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User enters email and submits \texttt{POST /api/auth/forgot-password}.
+    \item Backend looks up user record; if found, generates a cryptographically random token with 1-hour expiration.
+    \item An email containing the password reset URL is dispatched.
+    \item Regardless of whether the email exists, the API returns the identical generic message to prevent account enumeration.
+    \item When user opens the link and submits a new password, backend validates token, hashes new password, updates database, invalidates the token, and revokes all active sessions.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/ForgotPassword.png}{Forgot password screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Card heading reads ``Forgot password?'' with descriptive subtitle explaining the recovery process.
+    \item Email input field with placeholder ``you@company.com''.
+    \item Solid green button ``Send reset link''.
+    \item Navigation link ``Back to login'' at the bottom of the card.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{email} & Registered email address string.\\ \hline
+\texttt{token} & Secret reset token received in URL parameter (during password update).\\ \hline
+\texttt{newPassword} & Replacement password meeting platform strength criteria.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{email} must be a valid email string.
+    \item Reset token must exist, not be expired, and have not been previously consumed.
+    \item \texttt{newPassword} must meet minimum length (8 chars) and complexity rules.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-UA-15: System must return identical confirmation text whether the email is registered or not (anti-enumeration).
+    \item BR-UA-16: Reset tokens expire exactly 1 hour following issuance.
+    \item BR-UA-17: Successful reset terminates all existing sessions for the target account.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User navigates to \texttt{/forgot-password} and enters registered email.
+    \item User clicks ``Send reset link''.
+    \item Backend generates token, sends email, and returns generic confirmation.
+    \item User clicks the link in email to reach the reset screen.
+    \item User inputs new password and submits.
+    \item System updates password, revokes active sessions, and redirects to login with success toast.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Email field left blank or submitted with invalid syntax. Client validation displays ``Please enter a valid email address.''\\ \hline
+A2 & The email entered is not associated with any account in the database. The system returns the identical success message to prevent user enumeration.\\ \hline
+A3 & The account exists but was registered purely via Google OAuth (no local password). System sends an advisory email guiding the user to sign in via Google OAuth.\\ \hline
+A4 & The password reset token in the link has exceeded its 1-hour expiration window. The reset page displays ``This reset link has expired. Please request a new one.''\\ \hline
+A5 & The token has already been consumed or carries an invalid cryptographic signature. System surfaces ``This reset link is invalid or has already been used.''\\ \hline
+A6 & The replacement password fails strength constraints or confirmation mismatch occurs. Form highlights the fields inline with guidance text.\\ \hline
+A7 & Mail server failure during email dispatch. System logs error internally and returns standard response to protect user privacy.\\ \hline
+A8 & Database connection drops during password update and session revocation. System returns HTTP 500; old password remains active.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Email Dispatch & HTML email containing secure reset link with query token.\\ \hline
+Status Message & Informational confirmation indicating reset link dispatch.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Account password is updated to new hashed value.
+    \item Reset token is destroyed.
+    \item Prior authentication sessions are revoked.
+\end{itemize}
+
+% =================================================================
+% Role Management Section
+% =================================================================
+\subsection{Role Management}
+
+% -----------------------------------------------------------------
+% UC-06.01: View Role List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Role List}
+
+\fnhead{Function Trigger}
+An administrator accesses the Role Management section from the admin portal sidebar.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Roles \& Permissions $\rightarrow$ Roles (\texttt{/admin/roles}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides administrators with a centralized overview of all configured system access roles, displaying role names, descriptions, assigned permission sets, and action triggers for configuration.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Table view displaying roles with columns: ID, Name, Description, Permissions, Created At, and Actions.
+    \item Action toolbar containing ``Create Role'' button.
+    \item Row-level action buttons: Edit Role, Delete Role, and View Details.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues \texttt{GET /api/roles} upon rendering.
+    \item The backend queries the database for all roles where \texttt{deletedAt = null}.
+    \item Each role includes its associated permissions joined through the \texttt{RolePermission} relation.
+    \item Results are returned ordered by creation date and rendered in the interactive table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/ViewRoleList.png}{Role list screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Top header shows page title ``Role Management'' and total count subtitle.
+    \item ``Create Role'' button positioned on the top right in green accent.
+    \item Data table shows system roles (Admin, Client, Freelancer, Expert) and custom roles with permission badges.
+    \item Actions column provides edit, delete, and detail view buttons for each record.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Admin Session & Valid JWT authentication cookie with Administrator authorization.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User must possess the \texttt{Admin} role.
+    \item Only active roles with \texttt{deletedAt = null} are returned.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-01: Role management is strictly restricted to authenticated Administrators.
+    \item BR-RM-02: Soft-deleted roles shall be excluded from the active list.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin clicks ``Roles'' in the admin sidebar.
+    \item Browser sends \texttt{GET /api/roles}.
+    \item API queries active roles and joined permissions.
+    \item Table renders all roles with their assigned permission badges and action controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Unauthenticated or non-admin user navigates to the URL. The route middleware blocks access and redirects to \texttt{/login} or returns HTTP 403 Forbidden.\\ \hline
+A2 & Database connection drops or query times out. The API throws \texttt{FailedToLoadRolesException} (HTTP 500); client displays ``Unable to load role list. Please try again later.''\\ \hline
+A3 & No active roles found in the database. The table renders a clean placeholder ``No roles available'' with a call-to-action to create a role.\\ \hline
+A4 & Elevated network latency slows data arrival. TanStack Query displays skeleton placeholders across table rows, preventing layout jump.\\ \hline
+A5 & Admin session token expires while viewing the list. A background query receives HTTP 401; the application clears cookies and redirects to sign-in.\\ \hline
+A6 & A role title or description contains exceptionally long text. The table cell applies CSS truncation with hover tooltip, preventing column overflow.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{roles[]} & Array of role records containing \texttt{id}, \texttt{name}, \texttt{description}, \texttt{permissions[]}, and \texttt{createdAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only operation; system data remains unchanged.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-06.02: View Role Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Role Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``View details'' button (eye icon) on a role row or navigates to \texttt{/admin/roles/:id}.\newline
+\textbf{Navigation path:} \texttt{/admin/roles} $\rightarrow$ Click View Details icon on a row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Presents detailed information regarding a specific role, including its identifier, name, description, assigned permissions, and user counts.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Role detail screen showing Role ID, Name, Description, and Metadata cards.
+    \item Permissions catalog panel showing assigned route permissions grouped by category.
+    \item Navigation back-button to return to the role table.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client dispatches \texttt{GET /api/roles/:id}.
+    \item Backend fetches role matching \texttt{id} with \texttt{deletedAt = null}.
+    \item Backend joins permissions through the relation model and returns role details.
+    \item Client renders role attributes and permission badges.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/ViewRoleDetail.png}{Role detail screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header card presents role title with action buttons (Edit, Delete).
+    \item Information section details Role ID, Creation Timestamp, and Description.
+    \item Lower container displays full assigned permissions breakdown.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Numeric identifier of the target role passed in route path.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target role must exist and not be soft deleted.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-03: Soft-deleted roles cannot be viewed in detail mode.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin clicks view icon on a role in the role list.
+    \item Application requests \texttt{GET /api/roles/:id}.
+    \item API returns role object with permissions.
+    \item Screen displays full role specifications and assigned routes.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Non-numeric or invalid ID format in URL path (e.g., \texttt{/admin/roles/abc}). Router fails validation and shows 404 Not Found page.\\ \hline
+A2 & Role ID does not exist or has already been soft-deleted. API throws \texttt{RoleNotFoundException} (HTTP 404); page displays ``Role not found'' with return button.\\ \hline
+A3 & Database query failure during role retrieval. API throws \texttt{FailedToLoadRoleDetailException} (HTTP 500); client shows error notification toast.\\ \hline
+A4 & The role currently has zero permissions assigned. The permissions section displays an informative empty card ``No permissions assigned to this role yet.''\\ \hline
+A5 & Unauthenticated visitor attempts to access direct detail URL. Middleware intercepts and redirects to \texttt{/login}.\\ \hline
+A6 & The role is deleted by another administrator concurrently while being viewed. Subsequent edits or page refreshes reflect the deletion and navigate back.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Role Record & Comprehensive role object with permissions list.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only operation.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-06.03: Create Role
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Role}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create Role'' button on the Role Management page.\newline
+\textbf{Navigation path:} \texttt{/admin/roles} $\rightarrow$ Click ``Create Role'' button.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to establish a new custom RBAC role with defined title, description, and initial permission bindings.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog with fields for Role Name and Description.
+    \item Cancel button and solid green ``Create Role'' submit button.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin enters details and submits \texttt{POST /api/roles}.
+    \item Backend checks for duplicate role names and prevents collision with reserved system roles.
+    \item System persists new role record in PostgreSQL.
+    \item Table view refreshes immediately to display the created role.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/CreateRole.png}{Create role dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog modal overlays the page with dark backdrop.
+    \item Header reads ``Create Role'' with descriptive instruction text.
+    \item Name input marked with required asterisk (*).
+    \item Description textarea for functional documentation.
+    \item Footer provides ``Cancel'' and ``Create Role'' actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{name} & Unique role name string (required, 2 to 50 characters).\\ \hline
+\texttt{description} & Optional role purpose description string.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Role name must be non-empty and unique among active roles.
+    \item Role name must not match system keywords: \texttt{Admin}, \texttt{Client}, \texttt{Freelancer}, \texttt{Expert}.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-04: System role names are immutable and reserved.
+    \item BR-RM-05: Duplicate active role names are strictly rejected.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin clicks ``Create Role'' button.
+    \item Admin inputs role name and description in dialog.
+    \item Admin clicks ``Create Role'' button to submit.
+    \item Backend creates record and returns HTTP 201.
+    \item Dialog closes, success toast appears, and table updates.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Role name field submitted empty or consisting only of whitespace. Frontend validation halts request: ``Name is required.''\\ \hline
+A2 & Role name already in use by another active role. API throws \texttt{RoleAlreadyExistsException} (HTTP 409): ``A role with this name already exists.''\\ \hline
+A3 & Admin enters a reserved system role name (\texttt{Admin}, \texttt{Client}, \texttt{Freelancer}). API throws \texttt{CannotModifySystemRoleException} (HTTP 403): ``Cannot use a reserved system role name.''\\ \hline
+A4 & Name exceeds maximum allowed character length (50 characters). Client enforces limit and shows character limit indicator.\\ \hline
+A5 & Database error occurs during insertion. API throws \texttt{FailedToCreateRoleException} (HTTP 500); system shows error toast and retains entered text in dialog.\\ \hline
+A6 & Admin clicks ``Cancel'' or presses Escape key. Dialog closes immediately and unsaved data is discarded.\\ \hline
+A7 & Rapid double-clicking on submit button. Button disables into loading state on first click, preventing duplicate records.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Created Role & Newly persisted role entity with assigned ID and timestamps.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item New role record exists in database and is visible in role list.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-06.04: Update Role
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Role}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Edit'' icon (pencil) on a role row in the Role Management table.\newline
+\textbf{Navigation path:} \texttt{/admin/roles} $\rightarrow$ Click Edit icon on row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to modify the display name and descriptive notes of an existing role.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Edit Role dialog prefilled with the role's current name and description.
+    \item Save Changes button and Cancel button.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin modifies fields and clicks ``Save Changes''.
+    \item Request sent via \texttt{PATCH /api/roles/:id} or \texttt{PUT /api/roles/:id}.
+    \item Backend validates name uniqueness against other active roles.
+    \item Updates database row and returns updated entity.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/UpdateRole.png}{Update role dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog title states ``Update Role'' with explanation.
+    \item Name input pre-populated with current role title.
+    \item Description area pre-populated with existing text.
+    \item Action buttons: Cancel and Save Changes.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Target role identifier.\\ \hline
+\texttt{name} & Updated role title string.\\ \hline
+\texttt{description} & Updated description string.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Name must be non-empty and unique among active roles.
+    \item System role names cannot be reassigned to other roles.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-06: Role ID remains unchanged throughout update.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin clicks edit icon on desired role row.
+    \item Modal opens with existing values prefilled.
+    \item Admin updates fields and clicks ``Save Changes''.
+    \item Server updates record, closes dialog, and refreshes view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Target role was deleted or no longer exists. API throws \texttt{RoleNotFoundException} (HTTP 404): ``Role not found.''\\ \hline
+A2 & Admin erases name field. Client validation rejects submission: ``Role name is required.''\\ \hline
+A3 & Updated name conflicts with another existing active role. API throws \texttt{RoleAlreadyExistsException} (HTTP 409): ``A role with this name already exists.''\\ \hline
+A4 & Admin attempts to rename a protected system role. API throws \texttt{CannotModifySystemRoleException} (HTTP 403): ``System roles cannot be renamed.''\\ \hline
+A5 & Database update query fails. API throws \texttt{FailedToUpdateRoleException} (HTTP 500); error toast is shown and form retains modified values.\\ \hline
+A6 & Admin clicks ``Cancel'' or backdrop. Dialog dismisses and values revert to database state without persisting.\\ \hline
+A7 & Network disconnects while submitting. Form indicates network failure and allows retry without re-typing.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Updated Entity & Modified role row with updated timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Updated role information is reflected across all administrative screens.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-06.05: Delete Role
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Role}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Delete'' icon (trash can) on a custom role row.\newline
+\textbf{Navigation path:} \texttt{/admin/roles} $\rightarrow$ Click Delete icon on row.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Soft-deletes a custom role from the platform, verifying that it is not assigned to active users and protecting core system roles from accidental deletion.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete confirmation alert dialog with warning message.
+    \item ``Cancel'' action and destructive red ``Delete Role'' button.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin confirms deletion in dialog modal.
+    \item Client dispatches \texttt{DELETE /api/roles/:id}.
+    \item Backend verifies role is not a protected system role and is not currently held by active users.
+    \item Backend sets \texttt{deletedAt = new Date()} to soft-delete the record.
+    \item Table updates and excludes the deleted role from the active list.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/DeleteRole.png}{Delete role confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog heading ``Delete Role'' with role name.
+    \item Confirmation warning text explaining the implications of removal.
+    \item Action buttons: Cancel and Delete Role in red destructive styling.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & Target role identifier to be soft-deleted.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Role must exist and not already be deleted.
+    \item Role must not be a protected system role (\texttt{Admin}, \texttt{Client}, \texttt{Freelancer}).
+    \item Role must not have active assigned users.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-07: Deletion must be executed as a soft delete via \texttt{deletedAt}.
+    \item BR-RM-08: Roles assigned to active users cannot be deleted until users are reassigned.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin clicks delete icon on a custom role row.
+    \item Confirmation alert dialog appears.
+    \item Admin confirms deletion by clicking ``Delete Role''.
+    \item Backend performs soft delete and returns HTTP 200.
+    \item Table view removes row and shows success toast.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Role does not exist or has already been soft-deleted. API throws \texttt{RoleNotFoundException} (HTTP 404): ``This role has already been deleted.''\\ \hline
+A2 & Role is currently assigned to one or more active users in \texttt{UserRole}. API throws \texttt{RoleInUseException} (HTTP 409): ``This role cannot be deleted while assigned to active users.''\\ \hline
+A3 & Admin attempts to delete a protected system role (\texttt{Admin}, \texttt{Client}, \texttt{Freelancer}, \texttt{Expert}). API throws \texttt{CannotModifySystemRoleException} (HTTP 403): ``System roles cannot be deleted.''\\ \hline
+A4 & Admin clicks ``Cancel'' or presses Escape. The dialog dismisses without dispatching any deletion request.\\ \hline
+A5 & Database error during soft-delete execution. API throws \texttt{FailedToDeleteRoleException} (HTTP 500); client notifies ``Unable to delete role. Please try again later.''\\ \hline
+A6 & The role was concurrently deleted by another admin session. Table refreshes and informs user the role is already removed.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result Status & Success confirmation with soft-deleted timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target role has \texttt{deletedAt != null}.
+    \item Role is omitted from all standard role selectors and lists.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-06.06: Update Role Permissions
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Role Permissions}
+
+\fnhead{Function Trigger}
+An administrator navigates to the Assign Role screen, selects a role, modifies permission checkboxes, and saves.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Roles \& Permissions $\rightarrow$ Assign Role (\texttt{/admin/roles/assign}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Administrator.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Configures granular API route access permissions for any system or custom role by selecting or unchecking individual permissions grouped by functional module.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Role selector dropdown at the top of the interface.
+    \item Permission matrix grouped by module cards (AUTH, ROLES, USERS, FORUMS, DISPUTES, etc.).
+    \item Checkbox controls for individual permissions and module-level ``Select All'' toggles.
+    \item Save permissions button fixed at bottom or header.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Selecting a role fetches its current permissions via \texttt{GET /api/roles/:id}.
+    \item Checkboxes automatically pre-populate with existing assigned permissions.
+    \item Admin modifies selections and clicks ``Save permissions''.
+    \item Client dispatches \texttt{PUT /api/roles/:id/permissions} with array of selected permission IDs.
+    \item Backend executes a transaction: purges existing \texttt{RolePermission} associations for this role and inserts new bindings for all selected IDs.
+    \item Cache is refreshed and permission changes take effect immediately.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/tthuan/UpdateRolePermissions.png}{Assign permissions to role screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header displays ``Assign Role Permissions'' and the role selection dropdown.
+    \item Main area renders permission module cards with HTTP method badges (GET, POST, PUT, DELETE).
+    \item Checkboxes next to each permission indicate active access rights.
+    \item ``Save permissions'' button triggers atomic database updates.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{roleId} & Target role identifier.\\ \hline
+\texttt{permissionIds[]} & Array of selected integer permission IDs.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target role must exist and not be soft deleted.
+    \item All passed \texttt{permissionIds} must match existing active permissions in the database.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-RM-09: Permission updates replace the role's entire permission mapping set.
+    \item BR-RM-10: Permission changes take effect immediately across all active user sessions with that role.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Admin opens the Assign Role page and selects a role from the dropdown.
+    \item System loads permissions and pre-checks currently assigned rights.
+    \item Admin checks or unchecks desired route permissions.
+    \item Admin clicks ``Save permissions''.
+    \item Backend replaces role permission mappings in an atomic transaction.
+    \item Success notification confirms update and new access rights are live.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Admin attempts to save without selecting a role. UI disables button and prompts ``Choose a role to start assigning permissions.''\\ \hline
+A2 & Target role does not exist or was soft-deleted. API throws \texttt{RoleNotFoundException} (HTTP 404): ``Role not found.''\\ \hline
+A3 & Admin deselects all checkboxes. System prompts confirmation for empty permissions set, then clears all route access upon confirmation.\\ \hline
+A4 & One or more permission IDs no longer exist in database. API throws \texttt{InvalidPermissionIdsException} (HTTP 400): ``One or more selected permissions are invalid.''\\ \hline
+A5 & Database transaction failure during batch update. API throws \texttt{FailedToSetRolePermissionsException} (HTTP 500); prior bindings remain unchanged.\\ \hline
+A6 & Admin attempts to revoke critical access rights from the core Administrator role. System performs security check to prevent total admin lockout.\\ \hline
+A7 & Network disconnects during save request. Checkbox selection state is preserved in client memory, and an alert toast offers immediate retry.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Updated Role & Role record containing updated list of assigned permission IDs.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{RolePermission} table rows are synchronized with the selected set.
+    \item Authorization guards apply new permissions upon subsequent user requests.
+\end{itemize}
