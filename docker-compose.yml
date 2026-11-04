@@ -1,7 +1,67 @@
 services:
+  # ========================================================
+  # 1. AI SERVICE: ID VERIFICATION (CCCD eKYC & Liveness)
+  # Repo: ivakavych-kartoshka/IDVerification
+  # ========================================================
+  id-verification:
+    build:
+      context: ./ai-services/id-verification/ai
+      dockerfile: Dockerfile
+    container_name: frevia-id-verification
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+    volumes:
+      - id_models_cache:/home/user/.cache/huggingface
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8001/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ========================================================
+  # 2. AI SERVICE: SECTION-AWARE CV & JOB MATCHING
+  # Repo: tptai1314/section-aware-cv-job-matching
+  # ========================================================
+  cv-matching:
+    build:
+      context: ./ai-services/cv-matching
+      dockerfile: apps/ai/Dockerfile
+    container_name: frevia-cv-matching
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      ollama:
+        condition: service_started
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=qwen3:4b
+      - INTERNAL_API_KEY=frevia_ai_internal_secret_token
+      - INTERNAL_API_KEY_REQUIRED=0
+      - CHROMA_PATH=/app/data/chroma
+    volumes:
+      - cv_data:/app/data
+      - cv_models_cache:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ========================================================
+  # 3. OLLAMA LLM SERVICE
+  # ========================================================
   ollama:
     image: ollama/ollama:latest
+    container_name: frevia-ollama
     restart: unless-stopped
+    ports:
+      - "11434:11434"
     volumes:
       - ollama:/root/.ollama
     healthcheck:
@@ -11,20 +71,35 @@ services:
       retries: 5
       start_period: 60s
 
+  # ========================================================
+  # 4. BACKEND API: NESTJS
+  # ========================================================
   backend:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+    container_name: frevia-backend
     restart: unless-stopped
     ports:
       - "3002:3000"
+    depends_on:
+      id-verification:
+        condition: service_started
+      cv-matching:
+        condition: service_started
+      ollama:
+        condition: service_started
     env_file:
       - apps/api/.env
     environment:
       NODE_ENV: production
       NEXT_URL: http://localhost:3003
       GOOGLE_REDIRECT_URL: http://localhost:3002/api/auth/google/callback
-      FREVIA_AI_URL: http://ai:8000
+      # Trỏ đến các container AI qua DNS nội bộ Docker
+      AI_SERVICE_URL: http://id-verification:8001
+      AI_SERVICE_TIMEOUT_MS: 60000
+      FREVIA_AI_URL: http://cv-matching:8000
+      FREVIA_AI_TOKEN: frevia_ai_internal_secret_token
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api || exit 1"]
       interval: 10s
@@ -32,10 +107,14 @@ services:
       retries: 5
       start_period: 30s
 
+  # ========================================================
+  # 5. FRONTEND: NEXT.JS
+  # ========================================================
   frontend:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+    container_name: frevia-frontend
     restart: unless-stopped
     ports:
       - "3003:3000"
@@ -51,3 +130,6 @@ services:
 
 volumes:
   ollama:
+  id_models_cache:
+  cv_models_cache:
+  cv_data:
