@@ -7,6 +7,7 @@
  *   dựa trên `Job Title` và `job_simp`.
  * - Budget = 20% lương năm trong CSV (budgetType ch�?có FIXED_PRICE).
  * - Tạo user Client + ClientProfile cho mỗi công ty trong dataset.
+ * - Email client dạng thật `contact@cong-ty.com` (client cũ duoc doi sang email moi).
  * - Idempotent: chạy lại s�?update theo slug, không tạo trùng.
  *
  * Chạy: npm run seed:jobs-dataset
@@ -179,6 +180,30 @@ function hash36(value: string): string {
     hash = Math.imul(hash, 0x01000193) >>> 0;
   }
   return hash.toString(36);
+}
+
+/** Local part email client, chọn tất định theo tên công ty. */
+const CLIENT_EMAIL_LOCALS = ['contact', 'hr', 'careers', 'recruiting', 'info'];
+
+/**
+ * Email client dạng thật `contact@cong-ty.com` (local part chọn theo tên công
+ * ty, trùng thì thêm số). Tất định theo thứ tự công ty nên chạy lại không đổi.
+ */
+function buildCompanyEmail(company: string, usedEmails: Set<string>): string {
+  const domain = slugify(company).slice(0, 40) || 'company';
+  const local =
+    CLIENT_EMAIL_LOCALS[
+      Number.parseInt(hash36(company), 36) % CLIENT_EMAIL_LOCALS.length
+    ];
+
+  let candidate = `${local}@${domain}.com`;
+  let suffix = 2;
+  while (usedEmails.has(candidate)) {
+    candidate = `${local}${suffix}@${domain}.com`;
+    suffix += 1;
+  }
+  usedEmails.add(candidate);
+  return candidate;
 }
 
 /** Mulberry32: shuffle ổn định đ�?seed chạy lại vẫn chọn đúng tập job. */
@@ -461,9 +486,11 @@ async function ensureClients(
   passwordHash: string,
 ): Promise<Map<string, number>> {
   const clientIds = new Map<string, number>();
+  const usedEmails = new Set<string>();
 
   for (const company of companies) {
-    const email = `${slugify(company).slice(0, 50) || 'company'}-${hash36(company)}@seed.local`;
+    const legacyEmail = `${slugify(company).slice(0, 50) || 'company'}-${hash36(company)}@seed.local`;
+    const email = buildCompanyEmail(company, usedEmails);
     const sample = rowsByCompany.get(company)!;
 
     const user = await prisma.user.findUnique({
@@ -473,6 +500,22 @@ async function ensureClients(
 
     if (user) {
       clientIds.set(company, user.id);
+      continue;
+    }
+
+    // Đổi email client seed cũ (`<slug>-<hash>@seed.local`) sang email dạng thật.
+    const legacy = await prisma.user.findUnique({
+      where: { email: legacyEmail },
+      select: { id: true },
+    });
+
+    if (legacy) {
+      const renamed = await prisma.user.update({
+        where: { id: legacy.id },
+        data: { email },
+        select: { id: true },
+      });
+      clientIds.set(company, renamed.id);
       continue;
     }
 
@@ -685,7 +728,7 @@ async function main() {
   console.log(`Jobs updated: ${stats.updated}`);
   console.log(`Categories: ${formatCount(stats.categoryCount)}`);
   console.log(`Top states: ${formatCount(stats.stateCount)}`);
-  console.log(`Sample client login: <company-slug>-<hash>@seed.local`);
+  console.log(`Sample client login: contact@cong-ty.com`);
   console.log('Seed dataset jobs completed!');
 }
 

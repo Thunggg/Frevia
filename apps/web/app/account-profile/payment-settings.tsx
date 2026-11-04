@@ -60,7 +60,6 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
   const {
     data: paymentMethodsData,
     isLoading: paymentMethodsLoading,
-    refetch: refetchPaymentMethods,
   } = useQuery({
     queryKey: ["saved-payment-methods"],
     queryFn: async () => {

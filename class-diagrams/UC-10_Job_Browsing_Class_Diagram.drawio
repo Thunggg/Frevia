@@ -1,0 +1,450 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram id="d" name="Class Diagram">
+    <mxGraphModel dx="716" dy="1498" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="route" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="BrowseJobRoutes" vertex="1">
+          <mxGeometry height="132" width="300" x="1860" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="route_r0" parent="route" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+GET /jobs (Public)" vertex="1">
+          <mxGeometry height="38" width="300" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="route_r1" parent="route" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+GET /jobs/:slug (Public)" vertex="1">
+          <mxGeometry height="38" width="300" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="BrowseJobController" vertex="1">
+          <mxGeometry height="130" width="324" x="1860" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_r0" parent="ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-browseJobService: BrowseJobService" vertex="1">
+          <mxGeometry height="30" width="324" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_sep" parent="ctrl" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="324" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_m0" parent="ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+viewListJob(query: ViewListJobQueryDto)" vertex="1">
+          <mxGeometry height="30" width="324" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_m1" parent="ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+viewJobDetail(slug: string)" vertex="1">
+          <mxGeometry height="30" width="324" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;dto&gt;&gt;&#xa;ViewListJobQueryDto" vertex="1">
+          <mxGeometry height="452" width="640" x="2294" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r0" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+page: number" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r1" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+limit: number" vertex="1">
+          <mxGeometry height="30" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r2" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+search?: string" vertex="1">
+          <mxGeometry height="30" width="640" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r3" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status?: JobStatus" vertex="1">
+          <mxGeometry height="30" width="640" y="122" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r4" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetType?: BudgetType" vertex="1">
+          <mxGeometry height="30" width="640" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r5" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetMin?: number" vertex="1">
+          <mxGeometry height="30" width="640" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r6" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetMax?: number" vertex="1">
+          <mxGeometry height="30" width="640" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r7" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAfter?: Date" vertex="1">
+          <mxGeometry height="30" width="640" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r8" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+skill?: string" vertex="1">
+          <mxGeometry height="30" width="640" y="272" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r9" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+category?: string" vertex="1">
+          <mxGeometry height="30" width="640" y="302" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r10" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+featured?: boolean" vertex="1">
+          <mxGeometry height="30" width="640" y="332" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r11" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+clientId?: number" vertex="1">
+          <mxGeometry height="30" width="640" y="362" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r12" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+sortBy: &quot;createdAt&quot; | &quot;updatedAt&quot; | &quot;title&quot; | &quot;budgetMin&quot; | &quot;budgetMax&quot; | &quot;deadline&quot; | &quot;expiryDate&quot;" vertex="1">
+          <mxGeometry height="30" width="640" y="392" as="geometry" />
+        </mxCell>
+        <mxCell id="d1_r13" parent="d1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+order: &quot;asc&quot; | &quot;desc&quot;" vertex="1">
+          <mxGeometry height="30" width="640" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;type&gt;&gt;&#xa;ViewListJobResponseType" vertex="1">
+          <mxGeometry height="92" width="640" x="2294" y="1302" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_r0" parent="t1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+data: JobType[]" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_r1" parent="t1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+pagination: JobPaginationType" vertex="1">
+          <mxGeometry height="30" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;type&gt;&gt;&#xa;JobPaginationType" vertex="1">
+          <mxGeometry height="152" width="640" x="2294" y="1474" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_r0" parent="t2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+page: number" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_r1" parent="t2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+limit: number" vertex="1">
+          <mxGeometry height="30" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_r2" parent="t2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+total: number" vertex="1">
+          <mxGeometry height="30" width="640" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_r3" parent="t2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalPages: number" vertex="1">
+          <mxGeometry height="30" width="640" y="122" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;type&gt;&gt;&#xa;ViewJobDetailResType" vertex="1">
+          <mxGeometry height="92" width="640" x="2294" y="1706" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_r0" parent="t3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+skills: JobSkillType[]" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_r1" parent="t3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+jobCategories: JobCategoryRefType[]" vertex="1">
+          <mxGeometry height="30" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="svc" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="BrowseJobService" vertex="1">
+          <mxGeometry height="130" width="640" x="1634" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_r0" parent="svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-browseJobRepository: BrowseJobRepository" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_sep" parent="svc" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_m0" parent="svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+viewListJob(filter: ViewListJobParsedFilterType): Promise&lt;ViewListJobResponseType&gt;" vertex="1">
+          <mxGeometry height="30" width="640" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_m1" parent="svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+viewJobDetail(slug: string): Promise&lt;ViewJobDetailResType&gt;" vertex="1">
+          <mxGeometry height="30" width="640" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="BrowseJobRepository" vertex="1">
+          <mxGeometry height="160" width="640" x="2384" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_r0" parent="repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-prisma: PrismaService" vertex="1">
+          <mxGeometry height="30" width="640" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_sep" parent="repo" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="640" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_m0" parent="repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getJobLists(filter: ViewListJobParsedFilterType): Promise&lt;{ jobs: JobType[]; total: number }&gt;" vertex="1">
+          <mxGeometry height="30" width="640" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_m1" parent="repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+viewJobDetail(slug: string): Promise&lt;ViewJobDetailResType&gt;" vertex="1">
+          <mxGeometry height="30" width="640" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_m2" parent="repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-normalizeJob&lt;T&gt;(job: T)" vertex="1">
+          <mxGeometry height="30" width="640" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="Job" vertex="1">
+          <mxGeometry height="554" width="300" x="3134" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r0" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r1" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+clientId: number" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r2" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+title: string" vertex="1">
+          <mxGeometry height="28" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r3" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+slug: string" vertex="1">
+          <mxGeometry height="28" width="300" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r4" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+description: string | null" vertex="1">
+          <mxGeometry height="28" width="300" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r5" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetMin: Decimal | null" vertex="1">
+          <mxGeometry height="28" width="300" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r6" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetMax: Decimal | null" vertex="1">
+          <mxGeometry height="28" width="300" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r7" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+budgetType: BudgetType" vertex="1">
+          <mxGeometry height="28" width="300" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r8" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deadline: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r9" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status: JobStatus" vertex="1">
+          <mxGeometry height="28" width="300" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r10" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+featured: boolean" vertex="1">
+          <mxGeometry height="28" width="300" y="322" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r11" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+expiryDate: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r12" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+hiringType: HiringType" vertex="1">
+          <mxGeometry height="28" width="300" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r13" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+positionsRequired: number" vertex="1">
+          <mxGeometry height="28" width="300" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r14" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+positionsFilled: number" vertex="1">
+          <mxGeometry height="28" width="300" y="434" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r15" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="462" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r16" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updatedAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_r17" parent="sJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="518" as="geometry" />
+        </mxCell>
+        <mxCell id="sJob_sep" parent="sJob" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="546" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobSkill" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="JobSkill" vertex="1">
+          <mxGeometry height="106" width="300" x="3134" y="794" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobSkill_r0" parent="sJobSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+jobId: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobSkill_r1" parent="sJobSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+skillId: number" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobSkill_sep" parent="sJobSkill" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="Skill" vertex="1">
+          <mxGeometry height="246" width="300" x="3134" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r0" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r1" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+name: string" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r2" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+slug: string" vertex="1">
+          <mxGeometry height="28" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r3" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+description: string | null" vertex="1">
+          <mxGeometry height="28" width="300" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r4" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r5" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_r6" parent="sSkill" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updatedAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="sSkill_sep" parent="sSkill" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="JobCategory" vertex="1">
+          <mxGeometry height="274" width="300" x="3134" y="1306" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r0" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r1" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+name: string" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r2" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+slug: string" vertex="1">
+          <mxGeometry height="28" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r3" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+description: string | null" vertex="1">
+          <mxGeometry height="28" width="300" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r4" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status: JobCategoryStatus" vertex="1">
+          <mxGeometry height="28" width="300" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r5" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r6" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_r7" parent="sJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updatedAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobCategory_sep" parent="sJobCategory" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobJobCategory" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="JobJobCategory" vertex="1">
+          <mxGeometry height="106" width="300" x="3134" y="1660" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobJobCategory_r0" parent="sJobJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+jobId: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobJobCategory_r1" parent="sJobJobCategory" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+categoryId: number" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sJobJobCategory_sep" parent="sJobJobCategory" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="User" vertex="1">
+          <mxGeometry height="190" width="300" x="3134" y="1846" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_r0" parent="sUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="300" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_r1" parent="sUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+email: string" vertex="1">
+          <mxGeometry height="28" width="300" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_r2" parent="sUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+isBanned: boolean" vertex="1">
+          <mxGeometry height="28" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_r3" parent="sUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="300" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_r4" parent="sUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="300" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="sUser_sep" parent="sUser" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#xa;JobStatus" vertex="1">
+          <mxGeometry height="232" width="300" x="3544" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r0" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="DRAFT" vertex="1">
+          <mxGeometry height="30" width="300" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r1" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="OPEN" vertex="1">
+          <mxGeometry height="30" width="300" y="74" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r2" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="IN_PROGRESS" vertex="1">
+          <mxGeometry height="30" width="300" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r3" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="COMPLETED" vertex="1">
+          <mxGeometry height="30" width="300" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r4" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="CLOSED" vertex="1">
+          <mxGeometry height="30" width="300" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_r5" parent="eJobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="CANCELLED" vertex="1">
+          <mxGeometry height="30" width="300" y="194" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobStatus_sep" parent="eJobStatus" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="224" as="geometry" />
+        </mxCell>
+        <mxCell id="eBudgetType" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#xa;BudgetType" vertex="1">
+          <mxGeometry height="82" width="300" x="3544" y="472" as="geometry" />
+        </mxCell>
+        <mxCell id="eBudgetType_r0" parent="eBudgetType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="FIXED_PRICE" vertex="1">
+          <mxGeometry height="30" width="300" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="eBudgetType_sep" parent="eBudgetType" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="74" as="geometry" />
+        </mxCell>
+        <mxCell id="eHiringType" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#xa;HiringType" vertex="1">
+          <mxGeometry height="112" width="300" x="3544" y="634" as="geometry" />
+        </mxCell>
+        <mxCell id="eHiringType_r0" parent="eHiringType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="SINGLE" vertex="1">
+          <mxGeometry height="30" width="300" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="eHiringType_r1" parent="eHiringType" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="MULTIPLE" vertex="1">
+          <mxGeometry height="30" width="300" y="74" as="geometry" />
+        </mxCell>
+        <mxCell id="eHiringType_sep" parent="eHiringType" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobCategoryStatus" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#xa;JobCategoryStatus" vertex="1">
+          <mxGeometry height="112" width="300" x="3544" y="826" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobCategoryStatus_r0" parent="eJobCategoryStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="ACTIVE" vertex="1">
+          <mxGeometry height="30" width="300" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobCategoryStatus_r1" parent="eJobCategoryStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="INACTIVE" vertex="1">
+          <mxGeometry height="30" width="300" y="74" as="geometry" />
+        </mxCell>
+        <mxCell id="eJobCategoryStatus_sep" parent="eJobCategoryStatus" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" edge="1" parent="1" source="route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;" target="ctrl" value="maps to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1960" y="980" />
+              <mxPoint x="2022" y="980" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.1600;entryX=0;entryY=0.5000;" target="d1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.6133;entryX=0;entryY=0.5000;" target="t1" value="returns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.8400;entryX=0;entryY=0.5000;" target="t3" value="returns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="t1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="t2" value="uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="ctrl" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;" target="svc" value="calls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;exitX=1;exitY=0.5000;entryX=0;entryY=0.5000;" target="repo" value="calls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5000;entryX=0;entryY=0.1600;" target="sJob" value="maps to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="sUser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" target="sJob" value="1..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3094" y="1941" />
+              <mxPoint x="3094" y="437" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="sJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="sJobSkill" value="1..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="sJobSkill" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="sSkill" value="*..1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="sJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" target="sJobJobCategory" value="1..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3064" y="437" />
+              <mxPoint x="3064" y="1713" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="sJobJobCategory" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="sJobCategory" value="*..1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="sJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.1600;entryX=0;entryY=0.5000;" target="eJobStatus" value="status">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3456" y="248.64" />
+              <mxPoint x="3456" y="276" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="sJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.3300;entryX=0;entryY=0.5000;" target="eBudgetType" value="budgetType">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3471" y="342.82000000000005" />
+              <mxPoint x="3471" y="513" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="sJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5000;entryX=0;entryY=0.5000;" target="eHiringType" value="hiringType">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3486" y="437" />
+              <mxPoint x="3486" y="690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="sJobCategory" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1;exitY=0.5000;entryX=0;entryY=0.5000;" target="eJobCategoryStatus" value="status">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3501" y="1443" />
+              <mxPoint x="3501" y="882" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
