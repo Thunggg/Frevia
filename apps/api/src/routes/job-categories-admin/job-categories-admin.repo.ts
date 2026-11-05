@@ -243,7 +243,7 @@ export class JobCategoriesAdminRepository {
     return { message: ManageJobCategoryAdminMessage.JOB_CATEGORY_DELETED };
   }
 
-  // Khôi phục danh mục đã soft-delete (kiểm tra trùng tên với danh mục đang hoạt động)
+  // Khôi phục danh mục đã soft-delete (UC-46.06) (kiểm tra trùng tên với danh mục đang hoạt động)
   async restoreJobCategory(
     id: number,
   ): Promise<JobCategoryAdminDetailResponseType> {

@@ -1,0 +1,1282 @@
+% =================================================================
+% Sprint 4 - Banner Management and Skill Management (tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Banner Management}
+
+% -----------------------------------------------------------------
+% UC-37.01: View Banner List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Banner List}
+
+\fnhead{Function Trigger}
+An administrator navigates to the Banners management page from the admin dashboard sidebar navigation.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Marketing \& Banners $\rightarrow$ Banners (\texttt{/admin/banners}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view, search, filter, and sort all promotional and advertisement banners registered in the system. The catalog displays essential banner attributes including ID, title, target position slot, publication schedule, active status, thumbnail preview, and destination URL.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Banner management screen at \texttt{/admin/banners}.
+    \item Filter bar component (\texttt{BannersFilterBar}) containing search input, position slot dropdown, sort column selector, and sort direction toggle.
+    \item Data table component (\texttt{BannersTable}) rendering banner rows, thumbnail image previews, position badges, active status toggles, schedule ranges, and contextual action menus.
+    \item Standard pagination footer displaying total banners and page navigation controls.
+    \item ``Create Banner'' action button in the page header.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client initiates an HTTP request: \texttt{GET /api/admin/banners} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{position}, \texttt{sortBy}, \texttt{sortOrder}).
+    \item The backend \texttt{AuthGuard} validates the administrator's JWT access token, and \texttt{PermissionGuard} verifies administrative route authorization.
+    \item \texttt{BannersAdminController.listBanners()} parses query parameters via \texttt{BannerAdminQueryDto}.
+    \item \texttt{BannersAdminRepository.listBanners()} executes \texttt{prisma.advertisementBanner.findMany} with:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Substring search on \texttt{title} using case-insensitive mode if \texttt{search} is provided.
+            \item Exact filter on \texttt{position} if a specific position slot is selected.
+            \item Sorting on the requested field (\texttt{id} or \texttt{createdAt}) with specified order (\texttt{asc} or \texttt{desc}).
+        \end{itemize}
+    \item The repository executes \texttt{prisma.advertisementBanner.count()} in parallel to obtain total matching records.
+    \item The system returns HTTP 200 with the banners array and pagination metadata.
+    \item The frontend renders the data table, applies position badge styling, and displays schedule ranges.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/ViewBannerList.png}{Advertisement banner list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Page header displaying ``Banners'' title with megaphone icon, summary count, and ``Create Banner'' button.
+    \item Filter bar including search box, position dropdown selector (All Positions, Global Header, Home Hero, Home Body, Search Results, Footer), and sort order controls.
+    \item Table columns: \textbf{Banner} (Thumbnail, Title, and ID), \textbf{Position} (Colored badge), \textbf{Status} (Green ``Active'' or Gray ``Inactive''), \textbf{Schedule} (Start date to End date), \textbf{Destination Link}, and \textbf{Actions}.
+    \item Row-level action buttons providing quick access to view detail, edit, and delete banner.
+    \item Pagination footer indicating total count and page navigation buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum records returned per page (defaults to 10).\\ \hline
+search & Optional text query matching banner title.\\ \hline
+position & Optional position filter (\texttt{GLOBAL\_HEADER}, \texttt{HOME\_HERO}, \texttt{HOME\_BODY}, \texttt{SEARCH\_RESULTS}, \texttt{FOOTER}).\\ \hline
+sortBy & Sort column field (\texttt{id} or \texttt{createdAt}; defaults to \texttt{id}).\\ \hline
+sortOrder & Sort direction sequence (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters; whitespace trimmed.\\ \hline
+position & Optional string, must strictly match one of the defined \texttt{BannerPositionEnum} values.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{createdAt}.\\ \hline
+sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-BAN-01: Admin Permission Verification: Only authenticated users with role \texttt{ADMIN} and matching route permission can query the administrative banner catalog.
+    \item BR-BAN-02: Search and Position Filter Matching: Text search performs case-insensitive substring matching on \texttt{title}, while position filtering performs exact equality matching.
+    \item BR-BAN-03: Default Pagination and Ordering: Default page size is 10 records, ordered by \texttt{id} in descending order so newly created banners appear first.
+    \item BR-BAN-04: Active and Schedule Range Representation: Displays visual badges for active/inactive state along with formatted publication date intervals (\texttt{startDate} to \texttt{endDate}).
+    \item BR-BAN-05: Direct Detail and Modification Actions: Each table row provides direct triggers to view detail, open update form modal, or initiate hard deletion.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator opens the \texttt{/admin/banners} page from the admin dashboard.
+    \item The client issues \texttt{GET /api/admin/banners} with query parameters (\texttt{page=1\&limit=10\&sortBy=id\&sortOrder=desc}).
+    \item The backend validates administrative authentication and route permissions.
+    \item The repository queries advertisement banners and counts total matching records.
+    \item The backend returns HTTP 200 with the banners array and pagination metadata.
+    \item The frontend renders the banner table and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client clears authentication cookies and redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The backend throws HTTP 403 Forbidden. The UI displays: ``You do not have permission to access this page.''\\ \hline
+Invalid pagination parameter values & The DTO validator rejects non-integer or negative values with HTTP 400 Bad Request. The client resets to page 1.\\ \hline
+Invalid position filter parameter & The validator rejects unknown position strings with HTTP 400 Bad Request. The UI clears invalid position filter.\\ \hline
+Unsupported sort column parameter & The validator rejects invalid sort keys with HTTP 400 Bad Request. The client defaults to sorting by \texttt{id desc}.\\ \hline
+Database query error or timeout & The service catches the Prisma error and throws \texttt{FailedToLoadBannerListException} (HTTP 500). The UI displays: ``Error.FailedToLoadBanners''.\\ \hline
+No banners match search or position filter & The query returns \texttt{banners: []} and \texttt{total: 0}. The table displays an empty placeholder: ``No banners found.''\\ \hline
+Network connection failure & The client displays a connection failure toast notification and offers a ``Try again'' button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+banners & Array of banner objects: \texttt{id}, \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}, \texttt{createdAt}, \texttt{updatedAt}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current limit per page.\\ \hline
+pagination.total & Total advertisement banners matching the query.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator views the paginated list of advertisement banners, inspects status and positions, and can initiate creation, inspection, modification, or deletion actions.
+
+% -----------------------------------------------------------------
+% UC-37.02: View Banner Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Banner Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks on a banner row or the ``View detail'' action on the banner list page, navigating to \texttt{/admin/banners/[id]}.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Marketing \& Banners $\rightarrow$ Banners $\rightarrow$ Banner Details (\texttt{/admin/banners/[id]}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view comprehensive attributes and publication configuration of a specific advertisement banner, including full-size image preview, destination link, target position slot, scheduling timeline, and creation/update timestamps.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Banner detail screen at \texttt{/admin/banners/[id]}.
+    \item Back navigation button (``Back to Banners'').
+    \item Header summary displaying banner title, position badge, ID, and an ``Edit Banner'' action trigger.
+    \item Banner media preview card rendering the full banner image or placeholder if no image is uploaded.
+    \item Configuration grid displaying position slot, active status badge, target destination URL with clickable link, start date, end date, and audit timestamps.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends an HTTP request: \texttt{GET /api/admin/banners/:id}.
+    \item The backend validates administrative token and route permissions.
+    \item \texttt{BannersAdminController.getBannerDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{BannersAdminRepository.getBannerDetail(id)} queries \texttt{prisma.advertisementBanner.findUnique} by primary key \texttt{id}.
+    \item If the banner record is not found, the service throws \texttt{BannerAdminNotFoundException} (HTTP 404).
+    \item If found, returns the complete banner entity with HTTP 200.
+    \item The frontend renders the banner details layout, full image preview, and action controls.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/ViewBannerDetail.png}{Banner detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Navigation header with ``Back to Banners'' button and banner title with megaphone icon.
+    \item Action toolbar containing ``Edit Banner'' button triggering the edit form modal.
+    \item Banner Image preview panel displaying uploaded advertisement graphic with aspect ratio preservation.
+    \item Information cards: \textbf{Display Position} (e.g., Global Header), \textbf{Destination Link} (clickable external URL), \textbf{Active Status} (Green active badge), \textbf{Start Date}, \textbf{End Date}, \textbf{Created At}, and \textbf{Last Updated}.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the advertisement banner (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-BAN-06: Numeric Identifier Validation: The URL parameter \texttt{id} must parse strictly as a valid positive integer.
+    \item BR-BAN-07: Advertisement Banner Existence: The requested banner must exist in the database; returns HTTP 404 (\texttt{Error.BannerNotFound}) if missing.
+    \item BR-BAN-08: Complete Attribute Presentation: Displays all banner configuration data, responsive image asset preview, and external target link.
+    \item BR-BAN-09: Direct Modification Access: Provides an ``Edit Banner'' trigger pre-populating current banner attributes into the form dialog.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to \texttt{/admin/banners/[id]}.
+    \item The client issues \texttt{GET /api/admin/banners/:id}.
+    \item The backend validates administrative authentication and permissions.
+    \item The repository queries \texttt{prisma.advertisementBanner.findUnique({ where: { id } })}.
+    \item The server returns HTTP 200 with the banner object.
+    \item The frontend renders the comprehensive banner detail page.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid banner ID format (e.g., non-numeric) & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI displays an ``Invalid Banner ID'' message and back button.\\ \hline
+Banner ID does not exist in database & The service throws \texttt{BannerAdminNotFoundException} (HTTP 404). The UI renders a ``Banner Not Found'' screen with navigation back to list.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoadBannerDetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadBannerDetail''.\\ \hline
+Destination link is empty or null & The UI gracefully displays ``No destination link configured'' in muted text instead of a broken link.\\ \hline
+Image asset URL broken or unreachable & The UI falls back to rendering a placeholder graphic container with a broken image indicator.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric identifier of the banner.\\ \hline
+title & Banner title string.\\ \hline
+imageUrl & Absolute image URL or relative path on server.\\ \hline
+linkUrl & External or internal redirect target URL.\\ \hline
+position & Display slot enum value.\\ \hline
+startDate & Scheduled activation timestamp or null.\\ \hline
+endDate & Scheduled deactivation timestamp or null.\\ \hline
+isActive & Boolean indicating whether banner is enabled.\\ \hline
+createdAt & Timestamp when banner was created.\\ \hline
+updatedAt & Timestamp of last modification.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator reviews complete banner configuration, image assets, schedule boundaries, and can initiate editing.
+
+% -----------------------------------------------------------------
+% UC-37.03: Create Banner
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Banner}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create Banner'' button on the banner list page (\texttt{/admin/banners}), opening the banner creation dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Marketing \& Banners $\rightarrow$ Banners $\rightarrow$ [Create Banner Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Cloudinary media storage service, Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to register a new advertisement banner, specifying title, position slot, optional graphic image upload, target redirect link, publication date range, and initial active status.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Banner form dialog modal (\texttt{BannerFormDialog}).
+    \item Text input for Title (mandatory).
+    \item Dropdown selector for Position slot (\texttt{GLOBAL\_HEADER}, \texttt{HOME\_HERO}, \texttt{HOME\_BODY}, \texttt{SEARCH\_RESULTS}, \texttt{FOOTER}).
+    \item File upload input with preview for banner image (supports drag-and-drop or file browser, max 10MB).
+    \item Text input for Destination Link URL.
+    \item Date picker inputs for Start Date and End Date.
+    \item Checkbox toggle for ``Active'' status (defaults to checked).
+    \item ``Cancel'' and ``Create Banner'' submission buttons with loading indicator.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item If a local image file is chosen, the client first issues a multipart/form-data request: \texttt{POST /api/admin/banners/upload-image}.
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item The service validates file presence, MIME type (\texttt{image/jpeg}, \texttt{image/png}, \texttt{image/gif}, \texttt{image/webp}, \texttt{image/bmp}, \texttt{image/tiff}), and file size ($\le 10$MB).
+            \item If Cloudinary is configured, uploads file to Cloudinary under folder \texttt{frevia/banners} and obtains \texttt{secure\_url}; otherwise saves file to local directory \texttt{uploads/banners/}.
+            \item Returns \texttt{\{ imageUrl, publicId \}}.
+        \end{itemize}
+    \item The client issues an HTTP request: \texttt{POST /api/admin/banners} with JSON payload conforming to \texttt{BannerCreateBodySchema}.
+    \item \texttt{BannersAdminRepository.createBanner()} checks whether an active banner already occupies the selected position slot (\texttt{prisma.advertisementBanner.findFirst({ where: { position } })}).
+    \item If position is already occupied, the service throws \texttt{BannerPositionTakenException} (HTTP 409).
+    \item The repository inserts the new banner record via \texttt{prisma.advertisementBanner.create()}.
+    \item The backend returns HTTP 201 with the created banner entity.
+    \item The frontend shows a success toast notification, closes the dialog modal, and refreshes the banner list table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/CreateBanner.png}{Create banner modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog header with ``Create Banner'' title and brief descriptive subtitle.
+    \item Form fields: \textbf{Title} (Required text input), \textbf{Position} (Select dropdown: Global Header, Home Hero, Home Body, Search Results, Footer), \textbf{Banner Image} (Upload zone with image preview and remove button), \textbf{Destination Link} (URL input), \textbf{Schedule} (Start Date and End Date date pickers), and \textbf{Active} (Checkbox toggle).
+    \item Dialog footer with ``Cancel'' button and ``Create Banner'' submit button with loading spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+title & Banner title string (mandatory).\\ \hline
+imageUrl & Direct image URL string or uploaded file URL (optional).\\ \hline
+file & Binary image file for upload (optional, multipart/form-data).\\ \hline
+linkUrl & Target destination URL string (optional).\\ \hline
+position & Target display position slot enum (defaults to \texttt{GLOBAL\_HEADER}).\\ \hline
+startDate & Scheduled start publication date (optional).\\ \hline
+endDate & Scheduled end publication date (optional).\\ \hline
+isActive & Boolean activation flag (defaults to \texttt{true}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+title & String, trimmed, min 1 char (\texttt{Error.BannerTitleRequired}), max 255 chars (\texttt{Error.BannerTitleTooLong}).\\ \hline
+imageUrl & Optional string, must be valid URL format, max 500 chars (\texttt{Error.BannerImageUrlTooLong}).\\ \hline
+file & Must be valid image MIME type; size must not exceed 10MB (\texttt{Error.BannerImageTooLarge}).\\ \hline
+linkUrl & Optional string, must be valid URL format, max 500 chars (\texttt{Error.BannerLinkUrlTooLong}).\\ \hline
+position & Must match one of \texttt{BannerPositionEnum} values (defaults to \texttt{GLOBAL\_HEADER}).\\ \hline
+startDate, endDate & Coerced to valid Date. Refinement: if both present, \texttt{startDate <= endDate} (\texttt{Error.BannerInvalidDateRange}).\\ \hline
+isActive & Boolean value (defaults to \texttt{true}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-BAN-10: Single Active Banner Per Position: Each position slot can only be occupied by one banner; if the position is already taken, creation is rejected with HTTP 409 (\texttt{Error.BannerPositionTaken}).
+    \item BR-BAN-11: Mandatory Title Trimming: Title is mandatory and leading/trailing whitespace is stripped before validation and database persistence.
+    \item BR-BAN-12: Target and Image URL Validation: If provided, URLs must be strictly valid URI formats with a maximum length of 500 characters.
+    \item BR-BAN-13: Valid Schedule Range: When both dates are specified, \texttt{startDate} must be earlier than or equal to \texttt{endDate}.
+    \item BR-BAN-14: Image Upload Constraints: Image uploads are strictly limited to valid image MIME formats and maximum size of 10MB.
+    \item BR-BAN-15: Auto-refresh and Feedback: Shows a success toast notification and refreshes the banner catalog upon successful creation.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Create Banner'' on the banner management page.
+    \item The dialog modal opens with an empty form and default position (\texttt{GLOBAL\_HEADER}).
+    \item The administrator fills in the title, selects a position slot, optionally attaches an image file, enters a link URL, selects date bounds, and checks ``Active''.
+    \item If a file was attached, the client uploads it to \texttt{POST /api/admin/banners/upload-image} and receives the image URL.
+    \item The client submits the form data via \texttt{POST /api/admin/banners}.
+    \item The backend validates the payload and verifies the position slot is available.
+    \item The repository inserts the new banner record into the database.
+    \item The backend returns HTTP 201 with the created banner data.
+    \item The frontend closes the modal, displays a success toast, and refreshes the banner list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing mandatory title & The form prevents submission; backend returns HTTP 400 Bad Request with \texttt{Error.BannerTitleRequired}.\\ \hline
+Selected position already occupied & The service throws \texttt{BannerPositionTakenException} (HTTP 409 Conflict). The UI displays: ``Error.BannerPositionTaken''.\\ \hline
+Uploaded file exceeds 10MB & The upload endpoint throws \texttt{BannerImageTooLargeException} (HTTP 400). The UI displays: ``Error.BannerImageTooLarge''.\\ \hline
+Uploaded file is not a supported image format & The upload endpoint throws \texttt{BannerImageInvalidTypeException} (HTTP 400). The UI displays: ``Error.BannerImageInvalidType''.\\ \hline
+End date is earlier than start date & Zod refinement rejects payload with HTTP 400 Bad Request (\texttt{Error.BannerInvalidDateRange}). The UI flags the End Date field.\\ \hline
+Invalid URL syntax in image or link URL & Validator returns HTTP 400 Bad Request. The UI highlights the offending URL input field.\\ \hline
+Unauthorized or unauthenticated request & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database insert failure & The service throws \texttt{FailedToCreateBannerException} (HTTP 500). The UI displays: ``Error.FailedToCreateBanner''.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Auto-generated unique identifier of the created banner.\\ \hline
+title & Stored banner title string.\\ \hline
+imageUrl & Image asset URL or null.\\ \hline
+linkUrl & Destination URL or null.\\ \hline
+position & Assigned position slot enum.\\ \hline
+startDate & Activation date or null.\\ \hline
+endDate & Deactivation date or null.\\ \hline
+isActive & Active boolean status.\\ \hline
+createdAt & Timestamp of creation.\\ \hline
+updatedAt & Timestamp of last update.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent A new advertisement banner is stored in the database, assigned to the selected position slot, and immediately rendered on the admin table.
+
+% -----------------------------------------------------------------
+% UC-37.04: Update Banner
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Banner}
+
+\fnhead{Function Trigger}
+An administrator clicks the Edit icon in the banner table row or the ``Edit Banner'' button on the banner detail page, opening the edit dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Marketing \& Banners $\rightarrow$ Banners $\rightarrow$ [Edit Action Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Cloudinary media storage service, Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to modify an existing advertisement banner's title, display position, image graphic, destination link, validity period, and active status.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Banner form dialog modal (\texttt{BannerFormDialog}) pre-populated with existing banner data.
+    \item Text input for Title.
+    \item Select dropdown for Position slot.
+    \item File upload input with current image preview and remove button.
+    \item Text input for Destination Link URL.
+    \item Date pickers for Start Date and End Date.
+    \item Checkbox toggle for ``Active'' status.
+    \item ``Cancel'' and ``Save Changes'' action buttons.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client pre-fills the form with existing banner fields.
+    \item If a new replacement image is selected, the client uploads it via \texttt{POST /api/admin/banners/upload-image} before submitting changes.
+    \item The client issues an HTTP request: \texttt{PATCH /api/admin/banners/:id} with updated attributes.
+    \item \texttt{BannersAdminRepository.updateBanner(id, data)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Verifies target banner exists; throws \texttt{BannerAdminNotFoundException} if not found.
+            \item If \texttt{position} is changed, checks if another banner already occupies the new position slot (\texttt{id != currentId}). Throws \texttt{BannerPositionTakenException} if taken.
+            \item Updates modified fields in \texttt{prisma.advertisementBanner.update()}.
+        \end{itemize}
+    \item The backend returns HTTP 200 with the updated banner entity.
+    \item The frontend displays a success toast, closes the dialog, and refreshes the banner list or detail screen.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/UpdateBanner.png}{Update banner modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog header with ``Edit Banner'' title.
+    \item Form pre-populated with current values: \textbf{Title}, \textbf{Position}, \textbf{Banner Image} (with existing preview), \textbf{Destination Link}, \textbf{Schedule} (Start/End dates), and \textbf{Active} toggle.
+    \item Footer buttons: ``Cancel'' and ``Save Changes'' button with pending spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the banner (passed in URL path).\\ \hline
+title & Updated banner title string (optional).\\ \hline
+imageUrl & Updated image URL or null (optional).\\ \hline
+file & Binary replacement image file (optional).\\ \hline
+linkUrl & Updated destination URL or null (optional).\\ \hline
+position & Updated position slot enum (optional).\\ \hline
+startDate & Updated start publication date or null (optional).\\ \hline
+endDate & Updated end publication date or null (optional).\\ \hline
+isActive & Updated active boolean flag (optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+title & Optional string, trimmed, min 1 char, max 255 chars (\texttt{Error.BannerTitleTooLong}).\\ \hline
+imageUrl & Optional string, must be valid URL format, max 500 chars.\\ \hline
+file & Must be valid image MIME type; size must not exceed 10MB.\\ \hline
+linkUrl & Optional string, must be valid URL format, max 500 chars.\\ \hline
+position & Must match one of \texttt{BannerPositionEnum} values.\\ \hline
+startDate, endDate & Coerced to valid Date. Refinement: \texttt{startDate <= endDate} (\texttt{Error.BannerInvalidDateRange}).\\ \hline
+isActive & Optional boolean value.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-BAN-16: Target Banner Existence: The targeted banner ID must exist in the database; returns HTTP 404 (\texttt{Error.BannerNotFound}) if not found.
+    \item BR-BAN-17: Position Conflict Protection on Update: If updating the \texttt{position} slot, the new position must not be occupied by another banner; excludes current banner ID.
+    \item BR-BAN-18: Date Range Consistency: If both dates are present after update, \texttt{startDate} must be earlier than or equal to \texttt{endDate}.
+    \item BR-BAN-19: Partial Update Preservation: Unchanged fields retain their current values in the database.
+    \item BR-BAN-20: Cache Invalidation and UI Synchronization: Immediately invalidates cached queries and triggers view refresh upon successful update.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks the Edit button on a banner row or detail view.
+    \item The dialog modal opens pre-filled with the banner's current data.
+    \item The administrator updates one or more fields (e.g., changes destination link or toggles active status).
+    \item The administrator clicks ``Save Changes''.
+    \item If a replacement image was uploaded, it is uploaded to Cloudinary/local storage first.
+    \item The client sends \texttt{PATCH /api/admin/banners/:id} with updated attributes.
+    \item The backend validates data, checks for position conflicts, and updates the record.
+    \item The server returns HTTP 200 with the updated banner object.
+    \item The frontend closes the dialog, shows a success toast, and refreshes the view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target banner does not exist & The service throws \texttt{BannerAdminNotFoundException} (HTTP 404). The UI displays: ``Error.BannerNotFound''.\\ \hline
+New position slot already occupied & The service throws \texttt{BannerPositionTakenException} (HTTP 409). The UI alerts: ``Error.BannerPositionTaken''.\\ \hline
+End date earlier than start date & Validator rejects payload with HTTP 400 Bad Request (\texttt{Error.BannerInvalidDateRange}). The UI highlights the date field.\\ \hline
+Replacement image exceeds 10MB & Upload endpoint throws \texttt{BannerImageTooLargeException} (HTTP 400). The UI displays: ``Error.BannerImageTooLarge''.\\ \hline
+Invalid URL syntax in linkUrl & Validator returns HTTP 400 Bad Request. The UI highlights the link URL field.\\ \hline
+Unauthorized or unauthenticated session & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database update failure & The service throws \texttt{FailedToUpdateBannerException} (HTTP 500). The UI displays: ``Error.FailedToUpdateBanner''.\\ \hline
+Network failure during submission & The client displays an error toast notification and leaves the modal open for retry.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the updated banner.\\ \hline
+title & Updated banner title.\\ \hline
+imageUrl & Updated image URL or null.\\ \hline
+linkUrl & Updated destination URL or null.\\ \hline
+position & Updated position slot enum.\\ \hline
+startDate & Updated start publication date or null.\\ \hline
+endDate & Updated end publication date or null.\\ \hline
+isActive & Updated active status flag.\\ \hline
+updatedAt & Updated modification timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The modified banner attributes are committed to the database and immediately reflected across the administrative console.
+
+% -----------------------------------------------------------------
+% UC-37.05: Delete Banner
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Banner}
+
+\fnhead{Function Trigger}
+An administrator clicks the Delete action icon (trash can) on a banner table row on the banner list page, triggering the deletion confirmation alert dialog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Marketing \& Banners $\rightarrow$ Banners $\rightarrow$ [Delete Action Icon].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to permanently remove an obsolete or unwanted advertisement banner from the system via hard deletion.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete banner confirmation dialog (\texttt{DeleteBannerDialog}) powered by Shadcn \texttt{AlertDialog}.
+    \item Modal header with warning title displaying the targeted banner title.
+    \item Descriptive body explaining that this action will permanently remove the banner.
+    \item Modal action buttons: ``Cancel'' and destructive ``Delete'' button with pending spinner.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The administrator confirms the deletion in the modal dialog.
+    \item The client sends an HTTP request: \texttt{DELETE /api/admin/banners/:id}.
+    \item \texttt{BannersAdminController.deleteBanner(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{BannersAdminRepository.deleteBanner(id)} executes \texttt{prisma.advertisementBanner.deleteMany({ where: { id } })}.
+    \item If \texttt{result.count === 0}, the service throws \texttt{BannerAdminNotFoundException} (HTTP 404).
+    \item Returns HTTP 200 with \texttt{\{ message: "Success.BannerDeleted" \}}.
+    \item The frontend displays a success toast, closes the confirmation dialog, and triggers \texttt{router.refresh()} to remove the row from the table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/DeleteBanner.png}{Delete banner confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog displaying ``Delete Banner'' title including target banner name.
+    \item Warning explanation text: ``Are you sure you want to delete this banner? This action cannot be undone.''
+    \item Footer controls: ``Cancel'' button and red ``Delete'' button with loading spinner when executing.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the banner to delete (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-BAN-21: Permanent Hard Deletion: Advertisement banners are permanently removed from the \texttt{advertisement\_banners} table via hard deletion.
+    \item BR-BAN-22: Existence Verification: Throws HTTP 404 (\texttt{Error.BannerNotFound}) if the banner record does not exist or was already removed.
+    \item BR-BAN-23: Explicit Confirmation Gate: Destruction requires explicit confirmation from the administrator via modal alert to prevent accidental deletion.
+    \item BR-BAN-24: Immediate List Synchronization: The deleted banner row is purged from the UI table immediately upon successful response.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator locates the banner in the table and clicks the Delete icon.
+    \item The deletion confirmation dialog modal appears.
+    \item The administrator reviews the banner title and confirms by clicking ``Delete''.
+    \item The client sends \texttt{DELETE /api/admin/banners/:id}.
+    \item The backend validates administrative token and route permissions.
+    \item The repository deletes the record from \texttt{advertisementBanner}.
+    \item The backend returns HTTP 200 with \texttt{\{ message: "Success.BannerDeleted" \}}.
+    \item The client displays a success toast, closes the modal, and refreshes the banner list table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target banner does not exist & The service throws \texttt{BannerAdminNotFoundException} (HTTP 404). The UI displays: ``Error.BannerNotFound''.\\ \hline
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The UI displays an access denied notification.\\ \hline
+Invalid banner ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
+Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
+Database deletion failure & The service throws \texttt{FailedToDeleteBannerException} (HTTP 500). The UI displays: ``Error.FailedToDeleteBanner''.\\ \hline
+Network failure during request & The client catches the network error, displays an unexpected error toast, and leaves the modal open.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Success.BannerDeleted}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The banner record is permanently deleted from the database and removed from public and administrative views.
+
+
+% =================================================================
+% Skill Management
+% =================================================================
+\subsection{Skill Management}
+
+% -----------------------------------------------------------------
+% UC-38.01: View Skill List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Skill List}
+
+\fnhead{Function Trigger}
+An administrator navigates to the Skills management page from the admin dashboard sidebar navigation.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills (\texttt{/admin/skills}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view, search, filter, and sort the master catalog of professional skills used by freelancer profiles and job postings. The catalog displays skill name, generated unique slug, description, active job count, soft-delete state, and audit dates.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill management screen at \texttt{/admin/skills}.
+    \item Filter bar component (\texttt{SkillsFilterBar}) with search input, status filter dropdown (All, Active Only, Deleted Only), sort column dropdown, and sort direction toggle.
+    \item Data table component (\texttt{SkillsTable}) rendering skill name, slug, description, job usage count badge, status badge, creation date, and contextual action menus.
+    \item Standard pagination footer displaying total skills and page selection buttons.
+    \item ``Create Skill'' action button in the page header.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client initiates an HTTP request: \texttt{GET /api/admin/skills} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{deleted}, \texttt{sortBy}, \texttt{sortOrder}).
+    \item The backend \texttt{AuthGuard} and \texttt{PermissionGuard} verify the administrator's credentials and permissions.
+    \item \texttt{SkillsAdminController.listSkills()} parses query parameters via \texttt{SkillAdminQueryDto}.
+    \item \texttt{SkillsAdminRepository.listSkills()} queries \texttt{prisma.skill.findMany}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item If \texttt{search} is provided, executes case-insensitive \texttt{OR} query matching on \texttt{name}, \texttt{slug}, or \texttt{description}.
+            \item If \texttt{deleted === 'true'}, filters records where \texttt{deletedAt != null}; if \texttt{deleted === 'false'}, filters records where \texttt{deletedAt = null}.
+            \item Includes count of related jobs via \texttt{\_count: \{ select: \{ jobs: true \} \}}.
+            \item Sorts records by \texttt{id} or \texttt{createdAt} in requested direction.
+        \end{itemize}
+    \item Executes \texttt{prisma.skill.count()} in parallel to determine total matching records.
+    \item Maps database records into response objects including \texttt{jobCount}.
+    \item The backend returns HTTP 200 with the skills array and pagination metadata.
+    \item The frontend renders the data table, applies green active badges or red deleted badges, and provides action buttons.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/ViewSkillList.png}{Skill catalog list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Page header displaying ``Skills'' title with tag icon, summary count of total skills, and ``Create Skill'' button.
+    \item Filter bar including search box, deleted status filter selector (All, Active, Deleted), and sort direction buttons.
+    \item Table columns: \textbf{Skill Name} (with clickable detail link), \textbf{Slug}, \textbf{Description}, \textbf{In Use} (Badge showing number of jobs using this skill), \textbf{Status} (Active or Deleted badge), \textbf{Created Date}, and \textbf{Actions}.
+    \item Contextual action buttons: Update (pencil) and Delete (trash) for active skills; Restore (rotate-ccw) for deleted skills.
+    \item Pagination footer indicating total count and page navigation buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+page & Target page number (defaults to 1).\\ \hline
+limit & Maximum records returned per page (defaults to 10).\\ \hline
+search & Optional text query matching name, slug, or description.\\ \hline
+deleted & Optional status filter: \texttt{"true"} (deleted only) or \texttt{"false"} (active only).\\ \hline
+sortBy & Sort column field (\texttt{id} or \texttt{createdAt}; defaults to \texttt{id}).\\ \hline
+sortOrder & Sort direction sequence (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+page & Must be an integer greater than or equal to 1.\\ \hline
+limit & Must be an integer between 1 and 100.\\ \hline
+search & String, optional, max length 100 characters; whitespace trimmed.\\ \hline
+deleted & Optional string, must strictly match one of: \texttt{"true"}, \texttt{"false"}.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{createdAt}.\\ \hline
+sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-01: Admin Authorization: Access to the master skill catalog is strictly restricted to authenticated administrators.
+    \item BR-SKL-02: Substring Multi-Field Search: Search performs case-insensitive substring matching across \texttt{name}, \texttt{slug}, and \texttt{description}.
+    \item BR-SKL-03: Soft-Deletion State Filtering: Setting \texttt{deleted=true} filters for \texttt{deletedAt != null}, \texttt{deleted=false} filters for \texttt{deletedAt = null}, and omitting it lists all skills.
+    \item BR-SKL-04: Associated Job Count Aggregation: Automatically aggregates and displays the exact count of job postings utilizing each skill via \texttt{\_count.jobs}.
+    \item BR-SKL-05: Dynamic Status Badge and Action Switching: Active skills display green badges with Edit/Delete buttons; soft-deleted skills display muted badges with a Restore button.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator opens the \texttt{/admin/skills} page from the admin dashboard.
+    \item The client issues \texttt{GET /api/admin/skills} with default query parameters.
+    \item The backend validates administrative token and route permissions.
+    \item The repository queries master skills with job count aggregation.
+    \item The server returns HTTP 200 with the skills array and pagination metadata.
+    \item The frontend renders the skill table and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The backend throws HTTP 403 Forbidden. The UI displays: ``You do not have permission to access this page.''\\ \hline
+Invalid pagination parameter values & The DTO validator rejects non-integer values with HTTP 400 Bad Request. The client defaults to page 1.\\ \hline
+Invalid deleted filter parameter value & The validator rejects unknown values with HTTP 400 Bad Request. The UI clears invalid filter.\\ \hline
+Unsupported sort column parameter & The validator rejects invalid sort keys with HTTP 400 Bad Request. The client defaults to sorting by \texttt{id desc}.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoadSkillListException} (HTTP 500). The UI displays: ``Error.FailedToLoadSkillList''.\\ \hline
+No skills match search or status filter & The query returns \texttt{skills: []} and \texttt{total: 0}. The table displays an empty placeholder: ``No skills found.''\\ \hline
+Network connection timeout & The client displays an error toast notification and offers a ``Try again'' button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+skills & Array of skill objects: \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{deletedAt}, \texttt{createdAt}, \texttt{updatedAt}, \texttt{jobCount}.\\ \hline
+pagination.page & Current page number.\\ \hline
+pagination.limit & Current limit per page.\\ \hline
+pagination.total & Total skills matching the query.\\ \hline
+pagination.totalPages & Total calculated pages available.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator inspects the master skill catalog, views job usage metrics, and can initiate creation, editing, deletion, or restoration.
+
+% -----------------------------------------------------------------
+% UC-38.02: View Skill Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Skill Detail}
+
+\fnhead{Function Trigger}
+An administrator clicks on a skill row or name in the skill list, navigating to \texttt{/admin/skills/[id]}.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills $\rightarrow$ Skill Details (\texttt{/admin/skills/[id]}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to view detailed metadata of a specific skill, including its generated slug, full description, total count of linked jobs, deletion status, and audit timestamps.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill detail screen at \texttt{/admin/skills/[id]}.
+    \item Navigation back button (``Back to Skills'').
+    \item Header card displaying skill name, slug, ID, and action buttons (\texttt{SkillActions}).
+    \item Metrics card displaying the number of active jobs utilizing this skill.
+    \item Description card displaying the full skill description or a placeholder if empty.
+    \item Lifecycle timestamps card (Created date, Last updated date, and Deletion date if soft-deleted).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client sends an HTTP request: \texttt{GET /api/admin/skills/:id}.
+    \item The backend validates administrative token and route permissions.
+    \item \texttt{SkillsAdminController.getSkillDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{SkillsAdminRepository.getSkillDetail(id)} queries \texttt{prisma.skill.findUnique} by \texttt{id}, including \texttt{\_count: \{ select: \{ jobs: true \} \}}.
+    \item If the skill record is not found, the service throws \texttt{SkillAdminNotFoundException} (HTTP 404).
+    \item Returns HTTP 200 with the skill object including \texttt{jobCount}.
+    \item The frontend renders the skill details view and contextual action buttons based on whether \texttt{deletedAt} is null.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/ViewSkillDetail.png}{Skill detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Navigation header with ``Back to Skills'' button and skill name with tag icon.
+    \item Action toolbar containing Edit (pencil) and Delete (trash) buttons if active, or Restore (rotate-ccw) button if soft-deleted.
+    \item Summary card showing: \textbf{Slug} (e.g., \texttt{reactjs}), \textbf{Status} (Active or Deleted badge), and \textbf{ID}.
+    \item Usage metrics card displaying \textbf{Active Jobs Count} with a briefcase icon.
+    \item Content card displaying the \textbf{Description} of the skill.
+    \item Audit card displaying \textbf{Created Date}, \textbf{Last Updated Date}, and \textbf{Deleted At} (if applicable).
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the skill (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-06: Numeric Skill ID Validation: The URL parameter \texttt{id} must parse strictly as a valid positive integer.
+    \item BR-SKL-07: Skill Record Existence: The requested skill must exist in the database; returns HTTP 404 (\texttt{Error.SkillNotFound}) if missing.
+    \item BR-SKL-08: Complete Detail and Usage Metrics: Displays name, generated slug, description, creation date, update date, deletion timestamp, and total jobs utilizing this skill.
+    \item BR-SKL-09: Contextual Action Toolbar: Shows Edit and Delete actions if skill is active; shows Restore action if skill is soft-deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator navigates to \texttt{/admin/skills/[id]}.
+    \item The client issues \texttt{GET /api/admin/skills/:id}.
+    \item The backend validates administrative authentication and permissions.
+    \item The repository queries \texttt{prisma.skill.findUnique} with job count aggregation.
+    \item The server returns HTTP 200 with the skill object.
+    \item The frontend renders the comprehensive skill detail view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid skill ID format (e.g., non-numeric) & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI displays an ``Invalid Skill ID'' message and back button.\\ \hline
+Skill ID does not exist in database & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI renders a ``Skill Not Found'' screen with navigation back to catalog.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoadSkillDetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadSkillDetail''.\\ \hline
+Skill description is empty or null & The UI gracefully displays ``No description provided'' in muted text.\\ \hline
+Network connection failure & The client displays an error toast notification and offers a reload button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Unique numeric identifier of the skill.\\ \hline
+name & Skill name string.\\ \hline
+slug & Generated URL-friendly slug.\\ \hline
+description & Detailed description or null.\\ \hline
+deletedAt & Soft-deletion timestamp or null.\\ \hline
+createdAt & Timestamp of skill creation.\\ \hline
+updatedAt & Timestamp of last modification.\\ \hline
+jobCount & Total number of jobs referencing this skill.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The administrator reviews skill details and usage metrics, and can initiate editing, deletion, or restoration.
+
+% -----------------------------------------------------------------
+% UC-38.03: Create Skill
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Skill}
+
+\fnhead{Function Trigger}
+An administrator clicks the ``Create Skill'' button on the skill catalog page (\texttt{/admin/skills}), opening the skill creation dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills $\rightarrow$ [Create Skill Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to register a new professional skill in the master catalog by providing its name and optional description, with automated unique slug generation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill creation dialog modal (\texttt{CreateSkillDialog}).
+    \item Text input for Skill Name (mandatory).
+    \item Textarea input for Description (optional).
+    \item Action buttons: ``Cancel'' and ``Create Skill'' submit button with loading indicator.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client submits an HTTP request: \texttt{POST /api/admin/skills} with JSON payload conforming to \texttt{AdminCreateSkillBodySchema}.
+    \item \texttt{SkillsAdminRepository.createSkill()}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Strips leading and trailing whitespace from \texttt{name}.
+            \item Queries \texttt{prisma.skill.findFirst} to check if an active skill (\texttt{deletedAt = null}) with the same name exists (case-insensitive mode).
+            \item If an active duplicate exists, throws \texttt{SkillNameAlreadyExistsException} (HTTP 409).
+            \item Generates a unique slug via \texttt{generateUniqueSlug()}: normalizes Vietnamese diacritics, converts to lowercase, replaces non-alphanumeric characters with hyphens, and appends sequential numeric suffixes (\texttt{-2}, \texttt{-3}) if a slug collision occurs.
+            \item Inserts the skill record via \texttt{prisma.skill.create()}.
+            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{SkillNameAlreadyExistsException}.
+        \end{itemize}
+    \item Returns HTTP 201 with the created skill entity.
+    \item The frontend displays a success toast, closes the modal, and refreshes the skill table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/CreateSkill.png}{Create skill modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog header with ``Create Skill'' title and descriptive prompt.
+    \item Form fields: \textbf{Name} (Required input field with asterisk) and \textbf{Description} (Multi-line textarea).
+    \item Dialog footer with ``Cancel'' button and green ``Create Skill'' button with loading spinner when submitting.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+name & Skill name string (mandatory).\\ \hline
+description & Optional text description of the skill.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+name & String, trimmed, min 1 char (\texttt{Error.SkillNameRequired}), max 100 chars (\texttt{Error.SkillNameTooLong}).\\ \hline
+description & Optional string, max 500 chars (\texttt{Error.SkillDescriptionTooLong}); nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-10: Case-Insensitive Name Uniqueness: Skill name must be unique among active skills; throws HTTP 409 (\texttt{Error.SkillNameAlreadyExists}) if conflict occurs.
+    \item BR-SKL-11: Automated Unique Slug Generation: Automatically generates a URL-friendly slug by stripping diacritics, replacing special characters with hyphens, and suffixing numbers if collisions occur.
+    \item BR-SKL-12: Name and Description Constraints: Name is mandatory trimmed 1 to 100 characters; description is optional up to 500 characters.
+    \item BR-SKL-13: Concurrency Race-Condition Guard: Catches database \texttt{P2002} unique constraint violations and converts them gracefully to HTTP 409 conflict errors.
+    \item BR-SKL-14: Dialog Reset and List Invalidation: Clears input values, closes modal dialog, and triggers Next.js router refresh upon success.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks ``Create Skill'' on the skills catalog page.
+    \item The dialog modal opens with empty input fields.
+    \item The administrator enters the skill name and optional description.
+    \item The administrator clicks ``Create Skill''.
+    \item The client submits \texttt{POST /api/admin/skills}.
+    \item The backend validates data, checks for duplicate active names, generates a slug, and inserts the record.
+    \item The server returns HTTP 201 with the created skill entity.
+    \item The client displays a success toast notification, closes the modal, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing mandatory skill name & Form validation blocks submission; backend throws HTTP 400 with \texttt{Error.SkillNameRequired}.\\ \hline
+Skill name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillNameTooLong}). The UI highlights the name field.\\ \hline
+Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillDescriptionTooLong}). The UI highlights the description field.\\ \hline
+Active skill with identical name already exists & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Error.SkillNameAlreadyExists''.\\ \hline
+Concurrent request creates duplicate name & Database catches \texttt{P2002} constraint violation; backend converts to HTTP 409 Conflict. The UI alerts the administrator.\\ \hline
+Unauthorized or unauthenticated request & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database insert failure & The service throws \texttt{FailedToCreateSkillException} (HTTP 500). The UI displays: ``Error.FailedToCreateSkill''.\\ \hline
+Network timeout & The client catches the network failure, displays an error toast, and leaves the modal open for retry.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Auto-generated unique identifier of the created skill.\\ \hline
+name & Stored skill name string.\\ \hline
+slug & Auto-generated unique slug.\\ \hline
+description & Stored description string or null.\\ \hline
+deletedAt & Null for newly created skills.\\ \hline
+createdAt & Timestamp of creation.\\ \hline
+updatedAt & Timestamp of creation.\\ \hline
+jobCount & Zero for newly created skills.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent A new skill record is added to the master catalog, indexed for search, and immediately selectable by freelancers and clients.
+
+% -----------------------------------------------------------------
+% UC-38.04: Update Skill
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Skill}
+
+\fnhead{Function Trigger}
+An administrator clicks the Edit icon (pencil) on a skill table row or detail page, opening the skill edit dialog modal.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills $\rightarrow$ [Edit Action Button].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to modify the name and description of an existing master skill, automatically synchronizing its unique slug if the name is altered.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill update dialog modal (\texttt{UpdateSkillDialog}) pre-populated with current skill name and description.
+    \item Text input for Skill Name.
+    \item Textarea input for Description.
+    \item Action buttons: ``Cancel'' and ``Save Changes'' submit button with loading indicator.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client pre-fills the form with the skill's current name and description.
+    \item The client issues an HTTP request: \texttt{PATCH /api/admin/skills/:id} with updated fields.
+    \item \texttt{SkillsAdminRepository.updateSkill(id, data)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Verifies target skill exists; throws \texttt{SkillAdminNotFoundException} if missing.
+            \item If \texttt{name} is modified, checks if another active skill (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{SkillNameAlreadyExistsException} if conflict exists.
+            \item If \texttt{name} is modified, regenerates the unique slug via \texttt{generateUniqueSlug()}.
+            \item Updates the record in \texttt{prisma.skill.update()}. If description is empty string, converts it to \texttt{null}.
+        \end{itemize}
+    \item The backend returns HTTP 200 with the updated skill entity.
+    \item The frontend displays a success toast, closes the modal, and refreshes the view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/UpdateSkill.png}{Update skill modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog header with ``Edit Skill'' title.
+    \item Form pre-populated with current values: \textbf{Name} (Text input) and \textbf{Description} (Textarea).
+    \item Footer action buttons: ``Cancel'' and ``Save Changes'' button with pending spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the skill (passed in URL path).\\ \hline
+name & Updated skill name string (optional).\\ \hline
+description & Updated description string or null (optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+name & Optional string, trimmed, min 1 char (\texttt{Error.SkillNameRequired}), max 100 chars (\texttt{Error.SkillNameTooLong}).\\ \hline
+description & Optional string, max 500 chars (\texttt{Error.SkillDescriptionTooLong}); nullable.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-15: Skill Existence Verification: Target skill must exist in the database; returns HTTP 404 (\texttt{Error.SkillNotFound}) if missing.
+    \item BR-SKL-16: Name Modification and Conflict Detection: If name is altered, verifies no other active skill shares the same case-insensitive name; throws HTTP 409 if conflict detected.
+    \item BR-SKL-17: Automatic Slug Regeneration: If the name is changed, automatically regenerates a new unique URL-friendly slug based on the updated name.
+    \item BR-SKL-18: Optional Description Nullability: Submitting an empty description string sets the description attribute to null in the database.
+    \item BR-SKL-19: Synchronized UI Updates: Closes modal dialog, triggers success toast, and refreshes table or detail screen upon completion.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks the Edit icon on a skill row or detail page.
+    \item The dialog modal opens pre-filled with the current skill name and description.
+    \item The administrator modifies the name or description.
+    \item The administrator clicks ``Save Changes''.
+    \item The client submits \texttt{PATCH /api/admin/skills/:id}.
+    \item The backend validates fields, checks for duplicate active names, regenerates slug if name changed, and updates the database.
+    \item The backend returns HTTP 200 with the updated skill entity.
+    \item The frontend closes the dialog, displays a success toast, and refreshes the view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target skill does not exist & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Updated name conflicts with active skill & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
+Name is set to empty or whitespace & Form validation blocks submission; backend returns HTTP 400 Bad Request with \texttt{Error.SkillNameRequired}.\\ \hline
+Name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillNameTooLong}). The UI highlights the name field.\\ \hline
+Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillDescriptionTooLong}). The UI highlights the description field.\\ \hline
+Unauthorized or unauthenticated session & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
+Database update failure & The service throws \texttt{FailedToUpdateSkillException} (HTTP 500). The UI displays: ``Error.FailedToUpdateSkill''.\\ \hline
+Network timeout & The client catches the network error, displays an error toast, and preserves dialog state.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the updated skill.\\ \hline
+name & Updated skill name.\\ \hline
+slug & Updated or preserved unique slug.\\ \hline
+description & Updated description or null.\\ \hline
+deletedAt & Preserved soft-deletion status.\\ \hline
+updatedAt & Updated modification timestamp.\\ \hline
+jobCount & Count of active jobs using this skill.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The skill record and its generated slug are updated in the database, with immediate propagation across search queries and profile forms.
+
+% -----------------------------------------------------------------
+% UC-38.05: Delete Skill
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Skill}
+
+\fnhead{Function Trigger}
+An administrator clicks the Delete action icon (trash can) on a skill table row or detail page, opening the deletion confirmation dialog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills $\rightarrow$ [Delete Action Icon].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to soft-delete a skill from the active catalog by setting its \texttt{deletedAt} timestamp, automatically detaching it from freelancer profiles while preserving historical job associations.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete skill confirmation dialog (\texttt{DeleteSkillDialog}) powered by Shadcn \texttt{AlertDialog}.
+    \item Header displaying skill name and warning icon if currently utilized by jobs.
+    \item Dependent jobs warning banner if \texttt{jobCount > 0}, displaying exact number of linked jobs.
+    \item Explanation note detailing soft deletion behavior.
+    \item Action buttons: ``Cancel'' and destructive ``Delete'' button with pending spinner.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The administrator confirms deletion in the dialog.
+    \item The client sends an HTTP request: \texttt{DELETE /api/admin/skills/:id}.
+    \item \texttt{SkillsAdminController.deleteSkill(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{SkillsAdminRepository.deleteSkill(id)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Verifies target skill exists; throws \texttt{SkillAdminNotFoundException} if missing.
+            \item Executes an atomic transaction via \texttt{prisma.\$transaction}:
+                \begin{enumerate}
+                    \item Deletes all freelancer associations referencing this skill: \texttt{prisma.freelancerSkill.deleteMany({ where: { skillId: id } })}.
+                    \item Sets soft-deletion timestamp on the skill: \texttt{prisma.skill.update({ where: { id }, data: { deletedAt: new Date() } })}.
+                \end{enumerate}
+            \item Leaves \texttt{job\_skills} records intact so existing historical job postings remain accurate.
+        \end{itemize}
+    \item The backend returns HTTP 200 with \texttt{\{ message: "Success.SkillDeleted" \}}.
+    \item The frontend shows a success toast, closes the dialog, and refreshes the skill table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/DeleteSkill.png}{Delete skill confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog header with ``Delete Skill'' title and target skill name.
+    \item Amber warning alert banner (when \texttt{jobCount > 0}) stating: ``Skill in use: This skill is currently used by X jobs. Soft-deleting it will preserve job references.''
+    \item Soft-deletion explanation text stating that the skill can be restored at any time.
+    \item Footer action buttons: ``Cancel'' button and red ``Delete'' button with loading spinner.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the skill to delete (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-20: Soft-Deletion Principle: Skills are not permanently purged from the database; the system marks them soft-deleted by setting \texttt{deletedAt = new Date()}.
+    \item BR-SKL-21: Automatic Freelancer Association Detachment: All associations in \texttt{freelancer\_skills} referencing this skill ID are deleted in the same atomic transaction.
+    \item BR-SKL-22: Preservation of Historical Job Associations: Associations in \texttt{job\_skills} are preserved so existing job postings continue to render their legacy skill requirements accurately.
+    \item BR-SKL-23: Dependent Job Warning in UI: The deletion dialog prominently displays an alert warning with the exact number of jobs currently linked to the skill.
+    \item BR-SKL-24: Confirmation Modal Guard: Requires explicit confirmation from the administrator before executing soft deletion.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator clicks the Delete icon on a skill table row or detail screen.
+    \item The deletion confirmation dialog appears, showing job usage warnings if applicable.
+    \item The administrator reviews the warning and confirms by clicking ``Delete''.
+    \item The client issues \texttt{DELETE /api/admin/skills/:id}.
+    \item The backend validates administrative authentication and permissions.
+    \item The repository executes an atomic transaction detaching freelancer skills and setting \texttt{deletedAt}.
+    \item The backend returns HTTP 200 with \texttt{\{ message: "Success.SkillDeleted" \}}.
+    \item The frontend displays a success toast, closes the dialog, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target skill does not exist & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid skill ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
+Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
+Database transaction failure & The service throws \texttt{FailedToDeleteSkillException} (HTTP 500). The UI displays: ``Error.FailedToDeleteSkill''.\\ \hline
+Network failure during request & The client catches the network error, displays an unexpected error toast, and leaves the modal open.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+message & Success confirmation message string (\texttt{Success.SkillDeleted}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The skill is marked as soft-deleted (\texttt{deletedAt != null}), removed from freelancer profiles, hidden from default active listings, and preserved for historical jobs.
+
+% -----------------------------------------------------------------
+% UC-38.06: Restore Skill
+% -----------------------------------------------------------------
+\subsubsection{Function: Restore Skill}
+
+\fnhead{Function Trigger}
+An administrator viewing soft-deleted skills (via the ``Deleted'' status filter or detail page) clicks the Restore icon (rotate-ccw), opening the restore confirmation dialog.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Master Catalog $\rightarrow$ Skills $\rightarrow$ [Restore Action Icon].
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+    \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API service (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows administrators to restore a previously soft-deleted skill by resetting its \texttt{deletedAt} timestamp to null, making it active and selectable again across the platform.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Restore skill confirmation dialog (\texttt{RestoreSkillDialog}) powered by Shadcn \texttt{AlertDialog}.
+    \item Header displaying ``Restore Skill'' title and target skill name.
+    \item Descriptive body explaining that restoring will make the skill available again for freelancers and clients.
+    \item Action buttons: ``Cancel'' and green ``Restore'' button with pending spinner.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The administrator confirms restoration in the dialog.
+    \item The client sends an HTTP request: \texttt{PATCH /api/admin/skills/:id/restore}.
+    \item \texttt{SkillsAdminController.restoreSkill(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{SkillsAdminRepository.restoreSkill(id)}:
+        \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+            \item Finds the skill verifying that \texttt{deletedAt != null}; throws \texttt{SkillAdminNotFoundException} if missing or already active.
+            \item Checks if another active skill has been created with the same name during the deletion period (\texttt{deletedAt = null, id != currentId, name equals skill.name}).
+            \item If a name collision occurs, throws \texttt{SkillNameAlreadyExistsException} (HTTP 409).
+            \item Sets \texttt{deletedAt = null} via \texttt{prisma.skill.updateMany({ where: { id, deletedAt: { not: null } }, data: { deletedAt: null } })}.
+            \item Queries the updated skill entity with job count aggregation.
+        \end{itemize}
+    \item The backend returns HTTP 200 with the restored skill entity.
+    \item The frontend shows a success toast notification, closes the dialog, and refreshes the view.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/tthuan/RestoreSkill.png}{Restore skill confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Alert dialog header displaying ``Restore Skill'' title with rotate-counterclockwise icon.
+    \item Confirmation description stating: ``Are you sure you want to restore skill [Skill Name]? It will become active and available for users again.''
+    \item Footer controls: ``Cancel'' button and green ``Restore'' button with loading spinner when executing.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+id & Unique numeric identifier of the soft-deleted skill (passed in URL path).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{specdatatable}{Data Name}{Validation Rule}
+id & Must be a positive integer greater than or equal to 1.\\ \hline
+\end{specdatatable}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-SKL-25: Restoration Eligibility: Target skill must currently be soft-deleted with \texttt{deletedAt != null}; returns HTTP 404 if not found or already active.
+    \item BR-SKL-26: Conflict Prevention Against Interim Duplicates: If another active skill with the same name was created while this skill was deleted, restoration is blocked with HTTP 409 (\texttt{Error.SkillNameAlreadyExists}).
+    \item BR-SKL-27: Soft-Deletion Flag Clearing: Sets \texttt{deletedAt = null}, fully restoring the skill to active catalog availability.
+    \item BR-SKL-28: Immediate Status Synchronization: Returns restored skill data, displays success toast, and updates table view immediately.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The administrator filters the catalog by ``Deleted'' skills.
+    \item The administrator locates the soft-deleted skill and clicks the Restore icon.
+    \item The restore confirmation dialog appears.
+    \item The administrator confirms restoration by clicking ``Restore''.
+    \item The client sends \texttt{PATCH /api/admin/skills/:id/restore}.
+    \item The backend verifies the skill is soft-deleted, checks for name conflicts with active skills, and clears \texttt{deletedAt}.
+    \item The backend returns HTTP 200 with the restored skill data.
+    \item The client displays a success toast, closes the dialog, and refreshes the table.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Target skill does not exist or is already active & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Another active skill now shares the same name & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
+Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
+User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
+Invalid skill ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
+Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
+Database update failure & The service throws \texttt{FailedToRestoreSkillException} (HTTP 500). The UI displays: ``Error.FailedToRestoreSkill''.\\ \hline
+Network failure during request & The client catches the network error, displays an unexpected error toast, and preserves dialog state.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Output Field}{Description}
+id & Numeric identifier of the restored skill.\\ \hline
+name & Skill name string.\\ \hline
+slug & Preserved or updated unique slug.\\ \hline
+description & Description text or null.\\ \hline
+deletedAt & Null indicating active status.\\ \hline
+createdAt & Timestamp of original creation.\\ \hline
+updatedAt & Timestamp of restoration.\\ \hline
+jobCount & Count of jobs referencing this skill.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\noindent The skill is restored to active status (\texttt{deletedAt = null}), displayed in the active skill catalog, and available for selection in freelancer profiles and job postings.

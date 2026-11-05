@@ -75,7 +75,7 @@ export function IdentityVerificationForm({
         documentType,
         front,
         back,
-        selfie: frames[0],
+        selfie: frames[0] as File,
         liveness: frames,
       });
       const document = response.data;

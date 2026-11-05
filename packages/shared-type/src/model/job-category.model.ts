@@ -1,5 +1,5 @@
-// ====== Schema dùng cho trang Admin: quản lý danh mục công việc (Job Category — UC-46.01 → UC-46.05) ======
-// Schema cho người dùng xem danh mục (UC-46.06, UC-46.07) nằm ở cuối file.
+// ====== Schema dùng cho trang Admin: quản lý danh mục công việc (Job Category — UC-46.01 → UC-46.06) ======
+// Schema cho người dùng xem danh mục (UC-46.07, UC-46.08) nằm ở cuối file.
 import { z } from "zod";
 import { PaginationSchema } from "./forum-post.model";
 import { MessageResSchema } from "./response.model";
@@ -111,7 +111,7 @@ export type JobCategoryAdminDeleteResponseType = z.infer<
   typeof JobCategoryAdminDeleteResponseSchema
 >;
 
-// ====== Schema dùng cho phía người dùng (Freelancer): xem danh mục công việc (UC-46.06, UC-46.07) ======
+// ====== Schema dùng cho phía người dùng (Freelancer): xem danh mục công việc (UC-46.07, UC-46.08) ======
 // Danh mục công việc là dữ liệu công khai (BR-CAT-02): không cần đăng nhập để xem.
 
 // Tham chiếu danh mục được nhúng vào mỗi công việc (JobSchema.jobCategories)

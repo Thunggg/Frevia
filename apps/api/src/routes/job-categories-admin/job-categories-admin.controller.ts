@@ -21,7 +21,7 @@ import {
 } from './job-categories-admin.dto';
 import { JobCategoriesAdminService } from './job-categories-admin.service';
 
-// Trang Admin quản lý danh mục công việc (Job Category — UC-46.01 → UC-46.05):
+// Trang Admin quản lý danh mục công việc (Job Category — UC-46.01 → UC-46.06):
 // danh sách + chi tiết + tạo mới + cập nhật + xoá (soft delete) + khôi phục.
 // Bảo mật: PermissionGuard tự chặn theo method+path; mặc định chỉ Admin có quyền.
 @Controller('admin/job-categories')
@@ -49,6 +49,7 @@ export class JobCategoriesAdminController {
     return this.service.updateJobCategory(id, body);
   }
 
+  // UC-46.06: Khôi phục danh mục đã xoá
   @Patch(':id/restore')
   @ZodSerializerDto(JobCategoryAdminDetailResponseDto)
   restoreJobCategory(@Param('id', ParseIntPipe) id: number) {

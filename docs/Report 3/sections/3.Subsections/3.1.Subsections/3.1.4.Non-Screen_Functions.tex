@@ -509,5 +509,49 @@ The Advertisement Banner feature manages promotional banners displayed on the pl
 The Skill Management feature allows administrators to maintain the master skill catalog used by freelancer profiles and job postings. Administrators can list skills, view the detail of a skill, create a new skill, update its name or category, soft-delete a skill, and restore a previously deleted skill.
 \\ \hline
 
+29
+&
+\textbf{AI Job \& Freelancer Recommendation Engine}
+&
+[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}recommendations/\allowbreak{}jobs \newline
+[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}recommendations/\allowbreak{}freelancers \newline
+[GET] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}matching-score/\allowbreak{}\string{jobId\string}/\allowbreak{}\string{freelancerId\string}
+&
+The AI Recommendation Engine computes contextual matching scores between job postings and freelancer profiles using natural language embeddings and cosine similarity. It analyzes required skills, experience levels, budget constraints, and historical contract ratings to recommend optimal jobs to freelancers and qualified candidates to clients without manual keyword searching.
+\\ \hline
+
+30
+&
+\textbf{AI Content Moderation}
+&
+[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}moderation/\allowbreak{}check-text \newline
+[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}moderation/\allowbreak{}filter-spam \newline
+[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}moderation/\allowbreak{}ai-logs
+&
+The AI Content Moderation service processes user-generated text asynchronously across forum posts, thread comments, and direct chat messages. It analyzes submissions for profanity, toxic sentiment, hate speech, and spam. Content exceeding policy violation thresholds is automatically quarantined, flagged with high severity, and queued for administrator intervention while notifying the submitter.
+\\ \hline
+
+31
+&
+\textbf{AI Face Scan \& Duplicate Identity Detection}
+&
+[POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}ai-check \newline
+[POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}liveness-pose \newline
+[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}biometrics/\allowbreak{}duplicate-check
+&
+The AI Biometric Verification pipeline automates eKYC validation for freelancer identity onboarding. It extracts personal data from identity documents via optical character recognition (OCR), verifies head poses and face liveness via computer vision, and generates biometric facial feature vectors. The system cross-checks biometric signatures against existing verified profiles to prevent fraudulent account duplication.
+\\ \hline
+
+32
+&
+\textbf{Automated Payment Processing \& Webhook Synchronization}
+&
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}\string{paymentIntentId\string}/\allowbreak{}sync \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-sessions/\allowbreak{}\string{sessionId\string}/\allowbreak{}sync
+&
+The Automated Payment Processing service reliably handles asynchronous webhook callbacks emitted by Stripe. It processes payment intent confirmations, escrow funding authorizations, payout transfers, and dispute chargebacks. In addition, automated reconciliation routines synchronize transient payment intent statuses, resolve interrupted checkout sessions, and update contract ledger balances in real time.
+\\ \hline
+
 \end{longtable}
 \endgroup

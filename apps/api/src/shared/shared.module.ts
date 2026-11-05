@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { envConfig } from './config/validate-env';
 import { AuthGuard } from './guards/access-token.guard';
 import { PermissionGuard } from './guards/permission.guard';
+import { AiRecommendationService } from './services/ai-recommendation.service';
 import { SharedPermissionRepository } from './repositories/shared-permission.repo';
 import { SharedRoleRepository } from './repositories/shared-role.repo';
 import { CloudinaryService } from './services/cloudinary.service';
@@ -14,6 +15,7 @@ import { AiCvAnalyzerService } from './services/ai-cv-analyzer.service';
 import { IdentityAiService } from './services/identity-ai.service';
 import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
+import { AIModerationService } from './services/ai-moderation.service';
 
 @Module({
   imports: [
@@ -32,9 +34,11 @@ import { TokenService } from './services/token.service';
       provide: APP_GUARD,
       useClass: PermissionGuard,
     },
+    AiRecommendationService,
     PrismaService,
     AiCvAnalyzerService,
     IdentityAiService,
+    AIModerationService,
     SkillResolverService,
     HashingService,
     EmailService,
@@ -47,6 +51,8 @@ import { TokenService } from './services/token.service';
     PrismaService,
     AiCvAnalyzerService,
     IdentityAiService,
+    AiRecommendationService,
+    AIModerationService,
     SkillResolverService,
     HashingService,
     EmailService,

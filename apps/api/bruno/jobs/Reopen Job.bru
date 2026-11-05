@@ -1,0 +1,19 @@
+meta {
+  name: Reopen Job
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/manage-jobs/{{jobId}}/reopen
+  body: none
+  auth: bearer
+}
+
+vars:pre-request {
+  jobId: 1
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
