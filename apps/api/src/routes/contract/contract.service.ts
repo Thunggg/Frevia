@@ -248,6 +248,10 @@ export class ContractService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error(`Failed to get contract detail #${contractId}:`, error);
+      this.logger.error(
+        `Failed to get contract detail #${contractId}:`,
+        error,
+      );
       throw FailedToLoadContractException();
     }
   }
@@ -268,6 +272,10 @@ export class ContractService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error(`Failed to get contract by slug "${slug}":`, error);
+      this.logger.error(
+        `Failed to get contract by slug "${slug}":`,
+        error,
+      );
       throw FailedToLoadContractException();
     }
   }

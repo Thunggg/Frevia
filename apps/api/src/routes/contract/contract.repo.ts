@@ -13,91 +13,8 @@ import {
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { createContractSlug } from './contract.slug';
-import { HiringType, JobStatus } from '@prisma/client';
+import { activateContractLifecycle } from '../../shared/helper/contract-activation.helper';
 
-export async function activateContractLifecycle(
-  tx: Prisma.TransactionClient,
-  contractId: number,
-) {
-  const contract = await tx.contract.findUnique({
-    where: { id: contractId },
-    select: {
-      id: true,
-      jobId: true,
-      proposalId: true,
-      status: true,
-    },
-  });
-
-  if (!contract) return null;
-
-  const activatedContract = await tx.contract.update({
-    where: { id: contractId },
-    data: {
-      status: ContractStatus.ACTIVE,
-    },
-  });
-
-  const job = await tx.job.findUnique({
-    where: { id: contract.jobId },
-    select: {
-      id: true,
-      hiringType: true,
-      positionsFilled: true,
-      positionsRequired: true,
-    },
-  });
-
-  if (job) {
-    const now = new Date();
-    if (job.hiringType === HiringType.SINGLE) {
-      await tx.proposal.updateMany({
-        where: {
-          jobId: job.id,
-          id: { not: contract.proposalId },
-          deletedAt: null,
-          status: {
-            in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
-          },
-        },
-        data: {
-          status: ProposalStatus.REJECTED,
-          rejectedAt: now,
-          expiresAt: null,
-        },
-      });
-
-      await tx.job.update({
-        where: { id: job.id },
-        data: { status: JobStatus.IN_PROGRESS },
-      });
-    } else if (job.hiringType === HiringType.MULTIPLE) {
-      if (job.positionsFilled >= job.positionsRequired) {
-        await tx.proposal.updateMany({
-          where: {
-            jobId: job.id,
-            id: { not: contract.proposalId },
-            deletedAt: null,
-            status: {
-              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
-            },
-          },
-          data: {
-            status: ProposalStatus.EXPIRED,
-            expiresAt: null,
-          },
-        });
-
-        await tx.job.update({
-          where: { id: job.id },
-          data: { status: JobStatus.IN_PROGRESS },
-        });
-      }
-    }
-  }
-
-  return activatedContract;
-}
 
 const contractDetailSelect = {
   id: true,
@@ -148,7 +65,7 @@ const contractDetailSelect = {
 
 @Injectable()
 export class ContractRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findProposalWithJob(proposalId: number) {
     return this.prisma.proposal.findUnique({
@@ -250,23 +167,23 @@ export class ContractRepository {
       const milestonesData =
         data.milestones && data.milestones.length > 0
           ? data.milestones.map((m) => ({
-              contractId: contract.id,
-              title: m.title,
-              description: m.description ?? null,
-              amount: m.amount,
-              dueDate: m.dueDate ? new Date(m.dueDate) : null,
-              status: MilestoneStatus.PENDING,
-            }))
+            contractId: contract.id,
+            title: m.title,
+            description: m.description ?? null,
+            amount: m.amount,
+            dueDate: m.dueDate ? new Date(m.dueDate) : null,
+            status: MilestoneStatus.PENDING,
+          }))
           : [
-              {
-                contractId: contract.id,
-                title: `${job?.title ?? 'Contract'} - Milestone 1`,
-                description: 'Initial milestone for contract',
-                amount: data.totalAmount,
-                dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
-                status: MilestoneStatus.PENDING,
-              },
-            ];
+            {
+              contractId: contract.id,
+              title: `${job?.title ?? 'Contract'} - Milestone 1`,
+              description: 'Initial milestone for contract',
+              amount: data.totalAmount,
+              dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+              status: MilestoneStatus.PENDING,
+            },
+          ];
 
       await tx.milestone.createMany({
         data: milestonesData,
