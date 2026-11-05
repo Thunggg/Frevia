@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ContractStatus, MilestoneStatus, Prisma } from '@prisma/client';
+import {
+  ContractStatus,
+  MilestoneStatus,
+  NotificationType,
+  Prisma,
+  ProposalStatus,
+} from '@prisma/client';
 import {
   CreateContractBodyType,
   GetContractListQueryType,
@@ -7,6 +13,91 @@ import {
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { createContractSlug } from './contract.slug';
+import { HiringType, JobStatus } from '@prisma/client';
+
+export async function activateContractLifecycle(
+  tx: Prisma.TransactionClient,
+  contractId: number,
+) {
+  const contract = await tx.contract.findUnique({
+    where: { id: contractId },
+    select: {
+      id: true,
+      jobId: true,
+      proposalId: true,
+      status: true,
+    },
+  });
+
+  if (!contract) return null;
+
+  const activatedContract = await tx.contract.update({
+    where: { id: contractId },
+    data: {
+      status: ContractStatus.ACTIVE,
+    },
+  });
+
+  const job = await tx.job.findUnique({
+    where: { id: contract.jobId },
+    select: {
+      id: true,
+      hiringType: true,
+      positionsFilled: true,
+      positionsRequired: true,
+    },
+  });
+
+  if (job) {
+    const now = new Date();
+    if (job.hiringType === HiringType.SINGLE) {
+      await tx.proposal.updateMany({
+        where: {
+          jobId: job.id,
+          id: { not: contract.proposalId },
+          deletedAt: null,
+          status: {
+            in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+          },
+        },
+        data: {
+          status: ProposalStatus.REJECTED,
+          rejectedAt: now,
+          expiresAt: null,
+        },
+      });
+
+      await tx.job.update({
+        where: { id: job.id },
+        data: { status: JobStatus.IN_PROGRESS },
+      });
+    } else if (job.hiringType === HiringType.MULTIPLE) {
+      if (job.positionsFilled >= job.positionsRequired) {
+        await tx.proposal.updateMany({
+          where: {
+            jobId: job.id,
+            id: { not: contract.proposalId },
+            deletedAt: null,
+            status: {
+              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+            },
+          },
+          data: {
+            status: ProposalStatus.EXPIRED,
+            expiresAt: null,
+          },
+        });
+
+        await tx.job.update({
+          where: { id: job.id },
+          data: { status: JobStatus.IN_PROGRESS },
+        });
+      }
+    }
+  }
+
+  return activatedContract;
+}
 
 const contractDetailSelect = {
   id: true,
@@ -67,7 +158,14 @@ export class ContractRepository {
         status: true,
         freelancerId: true,
         job: {
-          select: { id: true, clientId: true, title: true },
+          select: {
+            id: true,
+            clientId: true,
+            title: true,
+            hiringType: true,
+            positionsFilled: true,
+            positionsRequired: true,
+          },
         },
       },
     });
@@ -129,8 +227,10 @@ export class ContractRepository {
     });
     const slug = createContractSlug(job?.title);
     const platformFee = Math.round(Number(data.totalAmount) * 0.01 * 100) / 100;
+    const now = new Date();
 
     return this.prisma.$transaction(async (tx) => {
+      // 1. Tạo hợp đồng
       const contract = await tx.contract.create({
         data: {
           slug,
@@ -142,9 +242,11 @@ export class ContractRepository {
           platformFee,
           terms: data.terms ?? null,
           expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+          status: ContractStatus.PENDING_SIGN,
         },
       });
 
+      // 2. Tạo milestones
       const milestonesData =
         data.milestones && data.milestones.length > 0
           ? data.milestones.map((m) => ({
@@ -168,6 +270,42 @@ export class ContractRepository {
 
       await tx.milestone.createMany({
         data: milestonesData,
+      });
+
+      // 3. Chuyển trạng thái proposal được chọn sang HIRED
+      await tx.proposal.update({
+        where: { id: data.proposalId },
+        data: {
+          status: ProposalStatus.HIRED,
+          acceptedAt: now,
+          expiresAt: null,
+        },
+      });
+
+      // 4. Tăng positionsFilled cho Job
+      await tx.job.update({
+        where: { id: jobId },
+        data: {
+          positionsFilled: { increment: 1 },
+        },
+      });
+
+      // 5. Gửi thông báo cho freelancer
+      await tx.notification.create({
+        data: {
+          userId: freelancerId,
+          type: NotificationType.PROPOSAL_ACCEPTED,
+          title: 'Your proposal was accepted',
+          message: `You have been hired for ${job?.title ?? 'a job'}. Review and sign the contract to begin work.`,
+          data: {
+            href: `/freelancer/contracts/${contract.slug}`,
+            contractId: contract.id,
+            contractSlug: contract.slug,
+            proposalId: data.proposalId,
+            jobId,
+            jobTitle: job?.title ?? '',
+          },
+        },
       });
 
       return {
@@ -224,15 +362,12 @@ export class ContractRepository {
           where: { id: contractId },
           data: {
             signedAt: new Date(),
-            ...(bothFeesPaid ? { status: ContractStatus.ACTIVE } : {}),
           },
         });
 
         if (bothFeesPaid) {
-          await tx.job.update({
-            where: { id: signedContract.jobId },
-            data: { status: 'IN_PROGRESS' },
-          });
+          const activated = await activateContractLifecycle(tx, contractId);
+          return activated ?? updated;
         }
 
         return updated;

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   ContractStatus,
-  JobStatus,
   DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
@@ -13,6 +12,7 @@ import {
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { activateContractLifecycle } from '../contract/contract-activation.helper';
 
 @Injectable()
 export class PaymentRepository {
@@ -111,17 +111,8 @@ export class PaymentRepository {
         bothSigned &&
         contract.status !== ContractStatus.ACTIVE
       ) {
-        const activated = await tx.contract.update({
-          where: { id: contractId },
-          data: {
-            status: ContractStatus.ACTIVE,
-          },
-        });
-        await tx.job.update({
-          where: { id: contract.jobId },
-          data: { status: JobStatus.IN_PROGRESS },
-        });
-        return { activated: true, contract: activated };
+        const activated = await activateContractLifecycle(tx, contractId);
+        return { activated: true, contract: activated ?? contract };
       }
 
       return { activated: false, contract };

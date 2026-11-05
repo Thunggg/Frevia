@@ -6,16 +6,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  CalendarDays,
   CheckCircle2,
-  Clock,
   CreditCard,
   ExternalLink,
   FileText,
   Flag,
-  Lightbulb,
   Loader2,
-  MessageSquare,
   MoreHorizontal,
   Plus,
   RotateCcw,
@@ -72,6 +68,7 @@ import { EditContractSheet } from "./edit-contract-sheet";
 import { MilestoneCard } from "./milestone-card";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { SharedFilesSection } from "./shared-files-section";
+import { PaperContractCard } from "./paper-contract-card";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { DisputeDialog } from "./dispute-dialog";
 import { useCreateConversation } from "@/hooks/use-conversation";
@@ -109,10 +106,10 @@ export function ContractDetail({
   const formatDate = (date: string | Date | null) =>
     date
       ? format.dateTime(new Date(date), {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
       : t("notSpecified");
 
   const isFreelancer = basePath === "/freelancer";
@@ -259,8 +256,6 @@ export function ContractDetail({
           .then((res) => res.data),
     });
 
-  const contractTransactions = contractTransactionsRes?.data ?? [];
-
   const milestones = useMemo(
     () => milestonesRes?.data ?? initialMilestones?.data ?? [],
     [milestonesRes, initialMilestones],
@@ -286,17 +281,26 @@ export function ContractDetail({
         ),
     [milestones],
   );
-
-  const percentPaid =
-    totalContractAmount > 0
-      ? Math.min(100, Math.round((paidAmount / totalContractAmount) * 100))
-      : 0;
-  const remainingPaidAmount = Math.max(0, totalContractAmount - paidAmount);
   const remainingBudget = Math.max(0, totalContractAmount - allocatedAmount);
   const hasAnyInProgressMilestone = useMemo(
     () => milestones.some((m: MilestoneType) => m.status === "IN_PROGRESS"),
     [milestones],
   );
+
+  const { data: sharedFilesList = [] } = useQuery<GetSharedFilesResponseType>({
+    queryKey: ["contract-shared-files", contract.id],
+    queryFn: () =>
+      contractApiRequest.getSharedFiles(contract.id).then(extractContractData),
+    initialData: initialSharedFiles ?? undefined,
+  });
+
+  const contractPdfFile = useMemo(() => {
+    return (
+      sharedFilesList.find(
+        (f) => f.fileName && f.fileName.toLowerCase().endsWith(".pdf"),
+      ) || null
+    );
+  }, [sharedFilesList]);
 
   const freelancer = contract.freelancer;
   const freelancerName = freelancer?.profile?.displayName || tRole("FREELANCER");
@@ -442,40 +446,6 @@ export function ContractDetail({
       });
     } finally {
       setIsDeletingMilestone(false);
-    }
-  };
-
-  // Payment Handlers (1-Click with Saved Card or Stripe Checkout)
-  const handlePayPlatformFee = async () => {
-    const savedCards = savedCardsData?.paymentMethods || [];
-    if (savedCards.length > 0) {
-      const defaultCard = savedCards.find((p) => p.isDefault) || savedCards[0];
-      setSelectedPmId(defaultCard?.id || "");
-      setOneClickModal({
-        open: true,
-        type: "PLATFORM_FEE",
-        amount: Number(contract.platformFee) || 10.0,
-        title: "Platform Activation Fee",
-      });
-      return;
-    }
-
-    setIsInitiatingPayment(true);
-    try {
-      const res = await paymentApiRequest.createPlatformFeeCheckoutSession(
-        contract.id,
-      );
-      if (res.data.checkoutUrl) {
-        window.location.href = res.data.checkoutUrl;
-      }
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : "Failed to initiate platform fee payment.",
-      });
-      setIsInitiatingPayment(false);
     }
   };
 
@@ -743,8 +713,8 @@ export function ContractDetail({
           error instanceof Error
             ? error.message
             : t("chatFailed", {
-                role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
-              }),
+              role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
+            }),
       });
       router.push(`${basePath}/conversations`);
     } finally {
@@ -838,15 +808,16 @@ export function ContractDetail({
         <div className="lg:col-span-8 space-y-6">
           {/* Card 1: Contract Details */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
-            <div className="flex items-center justify-between pb-4 border-b border-border/60">
-              <div className="flex items-center gap-2.5 text-foreground">
-                <div className="flex size-8 items-center justify-center text-foreground">
-                  <FileText className="size-5" />
+            {/* Header: Title, Slug, & Edit Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border/60 gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-foreground">
+                    {t("detailsTitle")}
+                  </h2>
                 </div>
-                <h2 className="text-base font-semibold">
-                  {t("detailsTitle")}
-                </h2>
               </div>
+
               {!isFreelancer &&
                 contract.status === "PENDING_SIGN" &&
                 !contract.signedByClient && (
@@ -854,7 +825,7 @@ export function ContractDetail({
                     variant="outline"
                     size="sm"
                     onClick={() => setEditContractOpen(true)}
-                    className="rounded-full text-xs gap-1.5 h-8 border-border hover:bg-accent"
+                    className="rounded-full text-xs gap-1.5 h-8 border-border hover:bg-accent self-start sm:self-auto"
                   >
                     <FileText className="size-3.5 text-[#0069D3]" />
                     {t("editContract")}
@@ -862,11 +833,13 @@ export function ContractDetail({
                 )}
             </div>
 
+            {/* Grid of Details: clean, monochrome, well-structured */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-5">
               {/* Left Subcolumn */}
               <div className="space-y-4">
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                {/* Job Link */}
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                     {t("jobLabel")}
                   </span>
                   <Link
@@ -875,170 +848,151 @@ export function ContractDetail({
                         ? `/freelancer/jobs/${contract.job?.slug || contract.jobId}`
                         : `/client/jobs/${contract.jobId}`
                     }
-                    className="text-sm font-semibold text-[#0069D3] hover:underline mt-0.5 inline-block"
+                    className="text-sm font-bold text-[#0069D3] hover:underline mt-1 inline-block line-clamp-2"
                   >
                     {contract.job?.title || t("viewJobPosting")}
                   </Link>
                 </div>
 
-                {isFreelancer ? (
-                  <div>
-                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                {/* Counterparty & Parties info */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Client Info */}
+                  <div className="rounded-xl border border-border/60 p-3 bg-card">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                       {tRole("CLIENT")}
                     </span>
                     <Link
                       href={`/clients/${contract.clientId}`}
-                      className="flex items-center gap-2.5 mt-1 cursor-pointer group"
+                      className="flex items-center gap-2 mt-2 group"
                     >
-                      <Avatar className="size-8 border border-border">
+                      <Avatar className="size-7 border border-border">
                         <AvatarImage src={clientAvatarUrl || undefined} />
-                        <AvatarFallback className="text-xs font-bold">
+                        <AvatarFallback className="text-[10px] font-bold">
                           {clientName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors block">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate block">
                           {clientName}
                         </span>
-                        <span className="text-[11px] text-muted-foreground block">
-                          {t("viewClientProfile")}
+                        <span className="text-[10px] text-muted-foreground truncate block">
+                          ID #{contract.clientId}
                         </span>
                       </div>
                     </Link>
                   </div>
-                ) : (
-                  <div>
-                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+
+                  {/* Freelancer Info */}
+                  <div className="rounded-xl border border-border/60 p-3 bg-card">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                       {tRole("FREELANCER")}
                     </span>
                     <div
                       onClick={() => setProfileSheetOpen(true)}
-                      className="flex items-center gap-2.5 mt-1 cursor-pointer group"
+                      className="flex items-center gap-2 mt-2 cursor-pointer group"
                     >
-                      <Avatar className="size-8 border border-border">
+                      <Avatar className="size-7 border border-border">
                         <AvatarImage src={avatarUrl || undefined} />
-                        <AvatarFallback className="text-xs font-bold">
+                        <AvatarFallback className="text-[10px] font-bold">
                           {freelancerName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <span className="text-xs font-bold text-foreground group-hover:text-[#0069D3] transition-colors block">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold text-foreground group-hover:text-[#0069D3] transition-colors truncate block">
                           {freelancerName}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground truncate block">
+                          ID #{contract.freelancerId}
                         </span>
                       </div>
                     </div>
                   </div>
-                )}
-
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    {t("totalAmount")}
-                  </span>
-                  <span className="text-sm font-bold text-foreground mt-0.5 block">
-                    {money(totalContractAmount)}
-                  </span>
                 </div>
 
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    {t("paymentMethod")}
-                  </span>
-                  <span className="text-xs font-medium text-foreground mt-0.5 block">
-                    {t("escrowMethod")}
-                  </span>
+                {/* Total Budget & Payment Method */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-border/60 p-3 bg-card">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                      {t("totalAmount")}
+                    </span>
+                    <span className="text-base font-extrabold text-foreground mt-1 block font-mono">
+                      {money(totalContractAmount)}
+                    </span>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 p-3 bg-card">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                      {t("paymentMethod")}
+                    </span>
+                    <span className="text-xs font-semibold text-foreground mt-1 block">
+                      {t("escrowMethod")}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="pt-2 border-t border-border/50">
+                {/* Platform Fee Breakdown (1% each) */}
+                <div className="rounded-xl border border-border/60 p-3.5 bg-muted/20 space-y-2">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                        Platform Fee
-                      </span>
-                      <span className="text-xs font-semibold text-foreground mt-0.5 block">
-                        $10.00 USD
-                      </span>
-                    </div>
-                    {contract.platformFeeStatus === "PAID" ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
-                        <CheckCircle2 className="size-3 text-emerald-600" />
-                        Paid
-                      </span>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full">
+                    <span className="text-xs font-bold text-foreground">
+                      Platform Fee (1% each)
+                    </span>
+                    <span className="text-xs font-bold font-mono text-foreground">
+                      {money(Number(contract.totalAmount) * 0.01)} / party
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                    <div className="flex items-center justify-between border rounded-lg p-2 bg-card">
+                      <span className="text-[11px] text-muted-foreground">(Client):</span>
+                      {contract.clientFeeStatus === "PAID" ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
+                          <CheckCircle2 className="size-3" /> Paid
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
                           Unpaid
                         </span>
-                        {!isFreelancer && contract.status !== "CANCELLED" && (
-                          <Button
-                            size="sm"
-                            disabled={isInitiatingPayment}
-                            onClick={() => void handlePayPlatformFee()}
-                            className="h-7 text-xs rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3 font-medium shadow-xs"
-                          >
-                            <CreditCard className="mr-1 size-3" />
-                            Pay Fee ($10)
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between border rounded-lg p-2 bg-card">
+                      <span className="text-[11px] text-muted-foreground">(Freelancer):</span>
+                      {contract.freelancerFeeStatus === "PAID" ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
+                          <CheckCircle2 className="size-3" /> Paid
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
+                          Unpaid
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right Subcolumn */}
-              <div className="flex flex-col justify-between space-y-4">
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
-                    {t("descriptionScope")}
-                  </span>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-1 line-clamp-5 whitespace-pre-wrap">
+              {/* Right Subcolumn: Terms, Dates & Signing Info */}
+              <div className="space-y-4 flex flex-col justify-between">
+                {/* Terms / Scope */}
+                <div className="rounded-xl border border-border/60 p-3.5 bg-card space-y-1.5 flex-1 flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                      {t("descriptionScope")}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFullContractOpen(true)}
+                      className="text-[11px] font-medium text-[#0069D3] hover:underline"
+                    >
+                      {t("viewFullAgreement")}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-6 whitespace-pre-wrap flex-1">
                     {contract.terms || t("defaultTerms")}
                   </p>
                 </div>
-                {/* Top Dates Row */}
-                <div className="flex flex-wrap items-center gap-6 pt-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="flex size-7 items-center justify-center text-muted-foreground">
-                      <CalendarDays className="size-5" />
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-muted-foreground block">
-                        {t("created")}
-                      </span>
-                      <span className="text-foreground">
-                        {formatDate(contract.createdAt)}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex size-7 items-center justify-center text-muted-foreground">
-                      <Clock className="size-5" />
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-muted-foreground block">
-                        {t("startDate")}
-                      </span>
-                      <span className="text-foreground">
-                        {formatDate(contract.signedAt || contract.createdAt)}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex size-7 items-center justify-center text-muted-foreground">
-                      <CalendarDays className="size-5" />
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-muted-foreground block">
-                        {t("dueDate")}
-                      </span>
-                      <span className="text-foreground">
-                        {formatDate(contract.expiresAt)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -1120,60 +1074,60 @@ export function ContractDetail({
                     onEdit={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToEdit(m);
-                            setCreateMilestoneOpen(true);
-                          }
+                          setMilestoneToEdit(m);
+                          setCreateMilestoneOpen(true);
+                        }
                         : undefined
                     }
                     onDelete={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToDelete(m);
-                          }
+                          setMilestoneToDelete(m);
+                        }
                         : undefined
                     }
                     onReview={
                       !isFreelancer
                         ? (m, sub) => {
-                            setActiveReviewMilestone(m);
-                            setActiveSubmission(sub);
-                            setReviewOpen(true);
-                          }
+                          setActiveReviewMilestone(m);
+                          setActiveSubmission(sub);
+                          setReviewOpen(true);
+                        }
                         : undefined
                     }
                     onSubmitWork={
                       isFreelancer
                         ? (m) => {
-                            setMilestoneToSubmit(m);
-                          }
+                          setMilestoneToSubmit(m);
+                        }
                         : undefined
                     }
                     onStartWork={
                       isFreelancer
                         ? (m) => {
-                            void handleStartMilestone(m);
-                          }
+                          void handleStartMilestone(m);
+                        }
                         : undefined
                     }
                     onFund={
                       !isFreelancer
                         ? (m) => {
-                            void handleFundMilestone(m);
-                          }
+                          void handleFundMilestone(m);
+                        }
                         : undefined
                     }
                     onRelease={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToRelease(m);
-                          }
+                          setMilestoneToRelease(m);
+                        }
                         : undefined
                     }
                     onRefund={
                       !isFreelancer
                         ? (m) => {
-                            setMilestoneToRefund(m);
-                          }
+                          setMilestoneToRefund(m);
+                        }
                         : undefined
                     }
                     onOpenDispute={(m) => {
@@ -1190,232 +1144,19 @@ export function ContractDetail({
                 ))}
               </div>
             )}
-
-            {/* Contract Payment & Escrow History Card */}
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0069D3]">
-                    <CreditCard className="size-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-foreground">
-                      Contract Payment & Escrow History
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      All platform fee, escrow deposit, release, and refund records for this contract
-                    </p>
-                  </div>
-                </div>
-
-                {!isFreelancer && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="rounded-full text-xs h-8 px-3.5 self-start sm:self-center"
-                  >
-                    <Link href="/client/payments">
-                      All Transactions
-                      <ExternalLink className="ml-1.5 size-3" />
-                    </Link>
-                  </Button>
-                )}
-              </div>
-
-              {isTransactionsLoading ? (
-                <div className="py-8 text-center text-muted-foreground">
-                  <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
-                  <span className="text-xs">Loading contract transactions...</span>
-                </div>
-              ) : contractTransactions.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border/70 p-6 text-center">
-                  <p className="text-xs text-muted-foreground">
-                    No transactions recorded for this contract yet.
-                  </p>
-                  <span className="text-[11px] text-muted-foreground/80 mt-1 block">
-                    When you pay the platform fee or fund milestones, transaction records will appear here.
-                  </span>
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-xl border border-border/80">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-muted/40 text-muted-foreground border-b border-border/80">
-                      <tr>
-                        <th className="px-3.5 py-2.5 font-semibold">Date</th>
-                        <th className="px-3.5 py-2.5 font-semibold">Type</th>
-                        <th className="px-3.5 py-2.5 font-semibold text-right">Amount</th>
-                        <th className="px-3.5 py-2.5 font-semibold">Status</th>
-                        <th className="px-3.5 py-2.5 font-semibold">Reference ID</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/60">
-                      {contractTransactions.map((tx) => (
-                        <tr key={tx.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-3.5 py-2.5 text-muted-foreground whitespace-nowrap">
-                            {new Intl.DateTimeFormat("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }).format(new Date(tx.createdAt))}
-                          </td>
-                          <td className="px-3.5 py-2.5 whitespace-nowrap font-medium">
-                            {tx.type.replace(/_/g, " ")}
-                          </td>
-                          <td className="px-3.5 py-2.5 text-right font-bold whitespace-nowrap">
-                            {money(tx.amount, tx.currency)}
-                          </td>
-                          <td className="px-3.5 py-2.5 whitespace-nowrap">
-                            <span
-                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                                tx.status === "SUCCEEDED"
-                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-                                  : tx.status === "PENDING"
-                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                                    : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-                              }`}
-                            >
-                              {tx.status}
-                            </span>
-                          </td>
-                          <td className="px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
-                            {tx.stripePaymentIntentId || tx.stripeTransferId || tx.stripeRefundId || `TX-${tx.id}`}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
         {/* Right Column (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Card 1: Contract Summary */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
-            <h3 className="text-base font-bold text-foreground">
-              {t("summaryTitle")}
-            </h3>
+          {/* Paper Contract View Card */}
+          <PaperContractCard
+            contract={contract}
+            pdfFile={contractPdfFile}
+            onViewFullTerms={() => setFullContractOpen(true)}
+          />
 
-            <div className="mt-4">
-              <span className="text-3xl font-extrabold text-foreground tracking-tight block">
-                {money(totalContractAmount)}
-              </span>
-              <span className="text-xs text-muted-foreground block mt-0.5">
-                {t("totalAmount")}
-              </span>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-5 space-y-2">
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[#0069D3] transition-all"
-                  style={{ width: `${percentPaid}%` }}
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
-                <span>
-                  {t("paidAmount", {
-                    amount: money(paidAmount),
-                    percent: percentPaid,
-                  })}
-                </span>
-                <span>
-                  {t("remainingAmount", {
-                    amount: money(remainingPaidAmount),
-                  })}
-                </span>
-              </div>
-            </div>
-
-            {/* Platform Fee Notice Banner for Client */}
-            {!isFreelancer &&
-              contract.platformFeeStatus !== "PAID" &&
-              contract.status !== "CANCELLED" && (
-                <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 space-y-2.5">
-                  <div className="flex items-start gap-2">
-                    <ShieldCheck className="size-4 text-amber-600 shrink-0 mt-0.5" />
-                    <div className="space-y-0.5">
-                      <p className="text-xs font-bold text-foreground">
-                        Platform Fee ($10.00) Required
-                      </p>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        Pay the platform activation fee to secure your contract with Frevia Escrow protection.
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => void handlePayPlatformFee()}
-                    disabled={isInitiatingPayment}
-                    className="w-full h-8 rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold shadow-xs"
-                  >
-                    <CreditCard className="mr-1.5 size-3.5" />
-                    Pay Platform Fee ($10.00)
-                  </Button>
-                </div>
-              )}
-
-            {/* Action Buttons */}
-            <div className="mt-6 space-y-2.5">
-              {contract.status === "PENDING_SIGN" ? (
-                !isSignedByMe ? (
-                  <Button
-                    onClick={() => setConfirmSign(true)}
-                    className="w-full rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold py-2.5 shadow-xs"
-                  >
-                    <ShieldCheck className="mr-1.5 size-4" />
-                    {t("signAction")}
-                  </Button>
-                ) : (
-                  <Button
-                    disabled
-                    className="w-full rounded-xl bg-[#F1F0F5] border border-border text-muted-foreground text-xs font-semibold py-2.5 opacity-80"
-                  >
-                    <Clock className="mr-1.5 size-4" />
-                    {isFreelancer
-                      ? t("awaitingClient")
-                      : t("awaitingFreelancer")}
-                  </Button>
-                )
-              ) : !isFreelancer ? (
-                <Button
-                  onClick={() => {
-                    setMilestoneToEdit(null);
-                    setCreateMilestoneOpen(true);
-                  }}
-                  className="w-full rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold py-2.5 shadow-xs"
-                >
-                  {t("addPayment")}
-                </Button>
-              ) : null}
-
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isStartingChat}
-                onClick={() => void handleMessageCounterparty()}
-                className="w-full rounded-xl border-border text-foreground hover:bg-muted text-xs font-semibold py-2.5 cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                {isStartingChat ? (
-                  <Loader2 className="size-3.5 animate-spin text-[#0069D3]" />
-                ) : (
-                  <MessageSquare className="size-3.5 text-muted-foreground" />
-                )}
-                <span>
-                  {t("messageRole", {
-                    role: isFreelancer ? tRole("CLIENT") : tRole("FREELANCER"),
-                  })}
-                </span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Card 2: Shared Project Files */}
+          {/* Shared Project Files */}
           <SharedFilesSection
             contractId={contract.id}
             initialFiles={initialSharedFiles}
@@ -1428,31 +1169,6 @@ export function ContractDetail({
             freelancerName={freelancerName}
             isFreelancer={isFreelancer}
           />
-
-          {/* Card 3: How milestones work? */}
-          <div className="p-6 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="flex size-7 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3]">
-                <Lightbulb className="size-4" />
-              </div>
-              <h4 className="text-sm font-bold text-foreground">
-                {t("howTitle")}
-              </h4>
-            </div>
-
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {isFreelancer ? t("howFreelancer") : t("howClient")}
-            </p>
-
-            <div className="pt-1">
-              <button
-                type="button"
-                className="text-xs font-semibold text-[#0069D3] hover:underline inline-flex items-center gap-1 cursor-pointer"
-              >
-                {t("learnMore")}
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -1589,15 +1305,7 @@ export function ContractDetail({
                 )}
                 {t("confirmSign")}
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isSigning}
-                  className="w-full rounded-full text-xs"
-                >
-                  {tCommon("cancel")}
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isSigning} className="w-full rounded-full text-xs">{tCommon("cancel")}</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1626,15 +1334,7 @@ export function ContractDetail({
                 )}
                 {t("markCompleted")}
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isCompleting}
-                  className="w-full rounded-full text-xs"
-                >
-                  {tCommon("cancel")}
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isCompleting} className="w-full rounded-full text-xs">{tCommon("cancel")}</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1663,15 +1363,7 @@ export function ContractDetail({
                 )}
                 {t("confirmCancel")}
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isCancelling}
-                  className="w-full rounded-full text-xs"
-                >
-                  {t("goBack")}
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isCancelling} className="w-full rounded-full text-xs">{t("goBack")}</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1705,15 +1397,7 @@ export function ContractDetail({
                 )}
                 {t("deleteMilestone")}
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isDeletingMilestone}
-                  className="w-full rounded-full text-xs"
-                >
-                  {tCommon("cancel")}
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeletingMilestone} className="w-full rounded-full text-xs">{tCommon("cancel")}</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1814,15 +1498,7 @@ export function ContractDetail({
                 )}
                 Confirm & Release Payment
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isReleasingMilestone}
-                  className="w-full rounded-full text-xs"
-                >
-                  Cancel
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isReleasingMilestone} className="w-full rounded-full text-xs">Cancel</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1861,15 +1537,7 @@ export function ContractDetail({
                 )}
                 Confirm Refund to Card
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isRefundingMilestone}
-                  className="w-full rounded-full text-xs"
-                >
-                  Cancel
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isRefundingMilestone} className="w-full rounded-full text-xs">Cancel</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>
@@ -1924,11 +1592,10 @@ export function ContractDetail({
                           key={card.id}
                           type="button"
                           onClick={() => setSelectedPmId(card.id)}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
-                            isSelected
-                              ? "border-[#0069D3] bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-[#0069D3]"
-                              : "border-border/80 hover:border-border bg-white dark:bg-zinc-950"
-                          }`}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${isSelected
+                            ? "border-[#0069D3] bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-[#0069D3]"
+                            : "border-border/80 hover:border-border bg-white dark:bg-zinc-950"
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <CreditCard className="size-4 text-foreground/80 shrink-0" />

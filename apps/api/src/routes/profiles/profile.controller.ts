@@ -1,3 +1,4 @@
+import { CvNotFoundException } from './profile.error';
 import {
   Body,
   Controller,
@@ -31,7 +32,7 @@ import {
   ProfileRevisionSubmissionDto,
 } from './profile.dto';
 import { UseInterceptors } from '@nestjs/common';
-import { createReadStream } from 'fs';
+import { createReadStream, existsSync } from 'fs';
 import type { Response } from 'express';
 
 @Controller('profiles')
@@ -82,8 +83,8 @@ export class ProfileController {
     if (file.remoteUrl) {
       return response.redirect(file.remoteUrl);
     }
-    if (!file.absolutePath) {
-      throw new Error('CV file path is unavailable.');
+    if (!file.absolutePath || !existsSync(file.absolutePath)) {
+      throw CvNotFoundException();
     }
     response.setHeader(
       'Content-Disposition',

@@ -18,7 +18,7 @@ import {
   DISPUTE_STATUS_KEYS,
   getDisputeStatusBadgeClass,
 } from "@/lib/dispute-status";
-import { DisputeDialog } from "@/app/(client)/client/contracts/[contractId]/_components/dispute-dialog";
+import { DisputeDialog } from "@/app/(client)/client/contracts/[slug]/_components/dispute-dialog";
 import type { DisputeDetailType, MilestoneType } from "@shared/types";
 
 interface UserDisputesListProps {

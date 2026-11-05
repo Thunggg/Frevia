@@ -583,14 +583,15 @@ export class PaymentService {
     const amountInCents = Math.round(feeAmount * 100);
 
     const rolePath = isClient ? 'client' : 'freelancer';
+    const contractSlug = contract.slug || String(contractId);
     const session = await this.stripeService.createCheckoutSession({
       amountInCents,
       currency: 'usd',
       customerId,
       title: 'Contract Platform Activation Fee',
       description: `One-time platform fee (1%) to activate contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractId}?payment=cancelled`,
+      successUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractSlug}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractSlug}?payment=cancelled`,
       metadata: {
         type: TransactionType.PLATFORM_FEE,
         contractId: String(contractId),
@@ -716,8 +717,8 @@ export class PaymentService {
       customerId,
       title: `Fund Milestone: ${milestone.title}`,
       description: `Escrow deposit for milestone #${milestoneId} on contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=cancelled`,
+      successUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=cancelled`,
       metadata: {
         type: TransactionType.ESCROW_DEPOSIT,
         contractId: String(contractId),

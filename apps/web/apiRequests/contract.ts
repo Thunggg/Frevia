@@ -37,6 +37,8 @@ export const contractApi = {
     ),
   detail: (contractId: number) =>
     http.get<ContractDetailType>(`/contracts/${contractId}`),
+  bySlug: (slug: string) =>
+    http.get<ContractDetailType>(`/contracts/slug/${encodeURIComponent(slug)}`),
   sign: (contractId: number) =>
     http.patch<ContractType>(`/contracts/${contractId}/sign`, {}),
   complete: (contractId: number) =>
@@ -58,6 +60,10 @@ export const contractApiRequest = {
 
   getContractDetail(contractId: number) {
     return http.get<ContractDetailType>(`/api/contracts/${contractId}`);
+  },
+
+  getContractBySlug(slug: string) {
+    return http.get<ContractDetailType>(`/api/contracts/slug/${encodeURIComponent(slug)}`);
   },
 
   create(body: CreateContractBodyType) {

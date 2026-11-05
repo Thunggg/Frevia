@@ -163,13 +163,12 @@ export function ContractList({
                 : t("emptyClient")}
           </p>
           <div className="mt-5">
-            <Button asChild size="sm" className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs">
-              {basePath === "/freelancer" ? (
-                <Link href="/freelancer/find-work">{t("findWork")}</Link>
-              ) : (
-                <Link href="/client/jobs">{t("viewJobProposals")}</Link>
-              )}
-            </Button>
+            <Link
+                href={basePath === "/freelancer" ? "/freelancer/find-work" : "/client/jobs"}
+                className="inline-flex items-center justify-center rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium h-8 px-4 transition-colors"
+              >
+                {basePath === "/freelancer" ? t("findWork") : t("viewJobProposals")}
+              </Link>
           </div>
         </div>
       ) : (
@@ -215,7 +214,7 @@ export function ContractList({
                   {/* Job Title */}
                   <h3 className="text-base font-bold text-foreground line-clamp-1">
                     <Link
-                      href={`${basePath}/contracts/${contract.id}`}
+                      href={`${basePath}/contracts/${contract.slug || contract.id}`}
                       className="hover:text-[#0069D3] transition-colors"
                     >
                       {contract.job?.title || t("agreementFallback")}
@@ -309,16 +308,13 @@ export function ContractList({
                     </span>
                   </div>
 
-                  <Button
-                    asChild
-                    size="sm"
-                    className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium px-4 h-8"
-                  >
-                    <Link href={`${basePath}/contracts/${contract.id}`}>
+                  <Link
+                      href={`${basePath}/contracts/${contract.slug || contract.id}`}
+                      className="inline-flex items-center justify-center rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-medium px-4 h-8 transition-colors"
+                    >
                       {t("viewDetails")}
                       <ChevronRight className="ml-1 size-3.5" />
                     </Link>
-                  </Button>
                 </div>
               </div>
             );

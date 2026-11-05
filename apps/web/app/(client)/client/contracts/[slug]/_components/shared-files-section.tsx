@@ -368,15 +368,7 @@ export function SharedFilesSection({
                 )}
                 {t("confirmDelete")}
               </Button>
-              <AlertDialogCancel asChild>
-                <Button
-                  variant="outline"
-                  disabled={isDeleting}
-                  className="w-full rounded-full text-xs"
-                >
-                  {tCommon("cancel")}
-                </Button>
-              </AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeleting} className="w-full rounded-full text-xs">{tCommon("cancel")}</AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>

@@ -149,6 +149,12 @@ const contractServerRequest = {
     );
   },
 
+  getContractBySlug(slug: string) {
+    return contractServerFetch<ContractDetailType>(
+      `/api/contracts/slug/${encodeURIComponent(slug)}`,
+    );
+  },
+
   getMilestones(
     contractId: number,
     params: Partial<GetMilestoneListQueryType> = {},

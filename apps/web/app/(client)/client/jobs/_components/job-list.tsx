@@ -39,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { ApiFail } from "@/lib/http";
 import type { JobStatusType, JobType } from "@shared/types";
 
 import { PostJobForm } from "./post-job-form";
@@ -459,9 +460,13 @@ export function JobList({
     try {
       await jobApiRequest.changeJobStatus(id, { status });
       toastSuccess({ message: t("statusUpdated") });
-    } catch {
+    } catch (error) {
       setJobs(prev);
-      toastError({ message: t("statusUpdateFailed") });
+      const message =
+        error instanceof ApiFail
+          ? error.response.error.message
+          : t("statusUpdateFailed");
+      toastError({ message });
     }
   };
 
@@ -682,20 +687,13 @@ export function JobList({
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
 
-              <AlertDialogCancel asChild>
-                <button
-                  type="button"
-                  className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0"
-                >
-                  <div className="flex items-center gap-2.5">
+              <AlertDialogCancel className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"><div className="flex items-center gap-2.5">
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
                     <span className="text-xs font-medium">{t("cancel")}</span>
                   </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-                </button>
-              </AlertDialogCancel>
+                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" /></AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>

@@ -510,14 +510,11 @@ export function ProposalDetailSheet({
                 <ChevronRight className="size-3.5 opacity-60" />
               </button>
 
-              <AlertDialogCancel asChild>
-                <button
-                  type="button"
-                  disabled={isRejecting}
-                  className="flex w-full items-center justify-center rounded-full px-4 py-2 bg-muted/60 hover:bg-muted text-foreground text-xs font-medium cursor-pointer transition-colors outline-none border-0"
-                >
-                  {tCommon("cancel")}
-                </button>
+              <AlertDialogCancel
+                disabled={isRejecting}
+                className="flex w-full items-center justify-center rounded-full px-4 py-2 bg-muted/60 hover:bg-muted text-foreground text-xs font-medium cursor-pointer transition-colors outline-none border-0 m-0 h-auto"
+              >
+                {tCommon("cancel")}
               </AlertDialogCancel>
             </div>
           </div>

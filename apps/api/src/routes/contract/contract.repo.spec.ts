@@ -24,8 +24,25 @@ describe('ContractRepository', () => {
           .fn()
           .mockResolvedValueOnce(signedContract)
           .mockResolvedValueOnce(activeContract),
+        findUnique: jest.fn().mockResolvedValue({
+          id: 6,
+          jobId: 10,
+          proposalId: 1,
+          status: ContractStatus.PENDING_SIGN,
+        }),
       },
-      job: { update: jest.fn().mockResolvedValue({ id: 10 }) },
+      proposal: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      job: {
+        update: jest.fn().mockResolvedValue({ id: 10 }),
+        findUnique: jest.fn().mockResolvedValue({
+          id: 10,
+          hiringType: 'SINGLE',
+          positionsFilled: 1,
+          positionsRequired: 1,
+        }),
+      },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -48,7 +65,6 @@ describe('ContractRepository', () => {
       where: { id: 6 },
       data: {
         status: ContractStatus.ACTIVE,
-        signedAt: expect.any(Date),
       },
     });
   });

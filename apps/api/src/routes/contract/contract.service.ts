@@ -19,11 +19,15 @@ import {
   FailedToCreateContractException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
+  MilestoneAmountMismatchException,
+  ProposalJobPositionsFilledException,
+  ProposalNotActionableException,
   ProposalNotFoundException,
-  ProposalNotHiredException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
+
+const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
 
 @Injectable()
 export class ContractService {
@@ -41,10 +45,31 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      // Hợp đồng chỉ lập được cho đề xuất đã được tuyển (HIRED).
-      if (proposal.status !== 'HIRED') throw ProposalNotHiredException();
-      if (proposal.job.clientId !== clientId)
+
+      // Cho phép lập hợp đồng khi proposal ở trạng thái SUBMITTED, INTERVIEWING hoặc HIRED
+      if (!ALLOWED_PROPOSAL_STATUSES.includes(proposal.status)) {
+        throw ProposalNotActionableException();
+      }
+
+      if (proposal.job.clientId !== clientId) {
         throw ContractForbiddenException();
+      }
+
+      // Kiểm tra xem số lượng vị trí tuyển đã đủ chưa
+      if (proposal.job.positionsFilled >= proposal.job.positionsRequired) {
+        throw ProposalJobPositionsFilledException();
+      }
+
+      // Nếu có danh sách milestone, tổng tiền các milestone phải khớp với tổng tiền hợp đồng
+      if (body.milestones && body.milestones.length > 0) {
+        const milestonesTotal = body.milestones.reduce(
+          (sum, m) => sum + Number(m.amount),
+          0,
+        );
+        if (Math.abs(milestonesTotal - Number(body.totalAmount)) > 0.01) {
+          throw MilestoneAmountMismatchException();
+        }
+      }
 
       const existing = await this.contractRepository.findContractByProposalId(
         body.proposalId,
@@ -222,6 +247,7 @@ export class ContractService {
       return contract;
     } catch (error) {
       if (error instanceof HttpException) throw error;
+      this.logger.error(`Failed to get contract detail #${contractId}:`, error);
       throw FailedToLoadContractException();
     }
   }
@@ -241,6 +267,7 @@ export class ContractService {
       return contract;
     } catch (error) {
       if (error instanceof HttpException) throw error;
+      this.logger.error(`Failed to get contract by slug "${slug}":`, error);
       throw FailedToLoadContractException();
     }
   }
