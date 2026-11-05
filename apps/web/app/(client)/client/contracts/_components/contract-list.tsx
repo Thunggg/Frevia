@@ -11,8 +11,6 @@ import {
   ChevronRight,
   Clock,
   FileText,
-  LayoutGrid,
-  List,
   Search,
 } from "@/components/icons";
 import {
@@ -33,7 +31,6 @@ const CONTRACT_STATUSES = [
   "PENDING_SIGN",
   "COMPLETED",
   "CANCELLED",
-  "DISPUTED",
 ] as const satisfies readonly ContractStatus[];
 
 function getStatusBadgeConfig(status: ContractStatus) {
@@ -41,37 +38,26 @@ function getStatusBadgeConfig(status: ContractStatus) {
     case "ACTIVE":
       return {
         badgeClass:
-          "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
-        dotClass: "bg-emerald-500",
+          "text-emerald-700 dark:text-emerald-400",
       };
     case "PENDING_SIGN":
       return {
         badgeClass:
-          "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-        dotClass: "bg-amber-500",
+          "text-amber-700 dark:text-amber-400",
       };
     case "COMPLETED":
       return {
         badgeClass:
-          "bg-blue-500/10 text-[#0069D3] dark:text-blue-400 border-blue-500/20",
-        dotClass: "bg-[#0069D3]",
+          "text-[#0069D3] dark:text-blue-400 ",
       };
     case "CANCELLED":
       return {
         badgeClass:
-          "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20",
-        dotClass: "bg-zinc-400",
-      };
-    case "DISPUTED":
-      return {
-        badgeClass:
-          "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
-        dotClass: "bg-rose-500",
+          "text-zinc-600 dark:text-zinc-400",
       };
     default:
       return {
-        badgeClass: "bg-muted text-muted-foreground border-border",
-        dotClass: "bg-muted-foreground",
+        badgeClass: "text-muted-foreground",
       };
   }
 }
@@ -97,7 +83,7 @@ function ContractCard({
   tStatus,
   index,
 }: ContractCardProps) {
-  const { badgeClass, dotClass } = getStatusBadgeConfig(contract.status);
+  const { badgeClass } = getStatusBadgeConfig(contract.status);
   const statusLabel = (CONTRACT_STATUSES as readonly string[]).includes(
     contract.status,
   )
@@ -123,64 +109,60 @@ function ContractCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index * 0.04, 0.25) }}
-      className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 transition-all duration-200 hover:border-[#0069D3]/40 hover:shadow-lg hover:-translate-y-0.5"
+      className="group relative flex h-full flex-col justify-between rounded-xl border border-border/80 bg-card p-3 transition-all duration-200 hover:border-[#0069D3]/40 hover:shadow-md hover:-translate-y-0.5"
     >
       <div>
         {/* Top Bar: Status Badge + Contract ID */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="">
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeClass}`}
+            className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] ${badgeClass}`}
           >
-            <span className={`size-1.5 rounded-full ${dotClass}`} />
             {statusLabel}
-          </span>
-          <span className="font-mono text-[11px] font-medium text-muted-foreground/70">
-            #{contract.id}
           </span>
         </div>
 
         {/* Job Title */}
-        <h3 className="mt-3 line-clamp-2 min-h-[2.85rem] text-base font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-[#0069D3]">
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2.1rem] text-[13px] font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-[#0069D3]">
           <Link href={contractHref} className="focus:outline-none">
             {contract.job?.title || t("agreementFallback")}
           </Link>
         </h3>
 
         {/* Counterparty Row */}
-        <div className="mt-2.5 flex items-center gap-2.5">
-          <Avatar className="size-8 shrink-0 border border-border/80">
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <Avatar className="size-6 shrink-0 border border-border/80">
             <AvatarImage src={counterpartyAvatar || undefined} />
-            <AvatarFallback className="bg-primary/10 text-[11px] font-semibold text-primary">
+            <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">
               {counterpartyName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-foreground">
+            <p className="truncate text-[11px] font-semibold text-foreground">
               {counterpartyName}
             </p>
-            <p className="text-[11px] font-normal text-muted-foreground">
+            <p className="text-[10px] font-normal text-muted-foreground">
               {counterpartyRole}
             </p>
           </div>
         </div>
 
         {/* Financial & Fee Box */}
-        <div className="my-3.5 rounded-xl border border-border/60 bg-muted/30 p-3">
+        <div className="my-2 rounded-lg border border-border/60 p-2">
           <div className="flex items-baseline justify-between gap-2">
             <div>
-              <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className="block text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("totalBudget")}
               </span>
-              <span className="text-lg font-bold text-foreground">
+              <span className="text-sm font-bold text-foreground">
                 {money(contract.totalAmount)}
               </span>
             </div>
             {contract.platformFee > 0 && (
               <div className="text-right">
-                <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="block text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
                   {t("platformFeeLabel")}
                 </span>
-                <span className="text-xs font-semibold text-muted-foreground">
+                <span className="text-[11px] font-semibold text-muted-foreground">
                   {money(contract.platformFee)}
                 </span>
               </div>
@@ -188,13 +170,13 @@ function ContractCard({
           </div>
 
           {/* Signatures Status */}
-          <div className="mt-2.5 grid grid-cols-2 gap-2 border-t border-border/40 pt-2.5 text-[11px]">
+          <div className="mt-1.5 grid grid-cols-2 gap-1 border-t border-border/40 pt-1.5 text-[9px]">
             {/* Client Signature */}
-            <div className="flex items-center gap-1.5 truncate">
+            <div className="flex items-center gap-1 truncate">
               {contract.signedByClient ? (
-                <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <CheckCircle2 className="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <Clock className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                <Clock className="size-3 shrink-0 text-amber-600 dark:text-amber-400" />
               )}
               <span className="truncate">
                 <span className="text-muted-foreground">
@@ -213,11 +195,11 @@ function ContractCard({
             </div>
 
             {/* Freelancer Signature */}
-            <div className="flex items-center gap-1.5 truncate">
+            <div className="flex items-center gap-1 truncate">
               {contract.signedByFreelancer ? (
-                <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <CheckCircle2 className="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <Clock className="size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                <Clock className="size-3 shrink-0 text-amber-600 dark:text-amber-400" />
               )}
               <span className="truncate">
                 <span className="text-muted-foreground">
@@ -242,150 +224,18 @@ function ContractCard({
       </div>
 
       {/* Card Footer: Date + Action Link */}
-      <div className="mt-auto flex items-center justify-between border-t border-border/60 pt-3.5">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Calendar className="size-3.5 shrink-0 text-muted-foreground/80" />
+      <div className="mt-2 flex items-center justify-between gap-1.5 border-t border-border/60 pt-2">
+        <div className="flex min-w-0 items-center gap-1 text-[9px] text-muted-foreground">
+          <Calendar className="size-3 shrink-0 text-muted-foreground/80" />
           <span>{formatDate(contract.createdAt)}</span>
         </div>
 
         <Link
           href={contractHref}
-          className="inline-flex items-center gap-1 rounded-full bg-[#0069D3] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:gap-1.5 hover:bg-[#005bb8] focus:outline-none"
+          className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-[#0069D3] px-2 py-0.5 text-[9px] font-semibold text-white shadow-xs transition-all hover:bg-[#005bb8] focus:outline-none"
         >
           <span>{t("viewDetails")}</span>
-          <ChevronRight className="size-3.5" />
-        </Link>
-      </div>
-    </motion.div>
-  );
-}
-
-function ContractRow({
-  contract,
-  basePath,
-  isFreelancerView,
-  formatDate,
-  money,
-  t,
-  tStatus,
-  index,
-}: ContractCardProps) {
-  const { badgeClass, dotClass } = getStatusBadgeConfig(contract.status);
-  const statusLabel = (CONTRACT_STATUSES as readonly string[]).includes(
-    contract.status,
-  )
-    ? tStatus(contract.status)
-    : contract.status;
-
-  const counterpartyName = isFreelancerView
-    ? contract.client?.profile?.displayName ?? t("counterpartyClient")
-    : contract.freelancer?.profile?.displayName ?? t("counterpartyFreelancer");
-
-  const counterpartyAvatar = isFreelancerView
-    ? contract.client?.profile?.avatarUrl
-    : contract.freelancer?.profile?.avatarUrl;
-
-  const contractHref = `${basePath}/contracts/${contract.slug || contract.id}`;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.2) }}
-      className="group relative flex flex-col justify-between gap-4 rounded-2xl border border-border/80 bg-card p-4 transition-all duration-200 hover:border-[#0069D3]/40 hover:shadow-md sm:flex-row sm:items-center sm:p-5"
-    >
-      {/* Main Info */}
-      <div className="min-w-0 flex-1 space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeClass}`}
-          >
-            <span className={`size-1.5 rounded-full ${dotClass}`} />
-            {statusLabel}
-          </span>
-          <span className="text-xs text-muted-foreground/60">•</span>
-          <span className="font-mono text-xs text-muted-foreground">
-            #{contract.id}
-          </span>
-          <span className="text-xs text-muted-foreground/60">•</span>
-          <span className="text-xs text-muted-foreground">
-            {t("createdAt", {
-              date: formatDate(contract.createdAt),
-            })}
-          </span>
-        </div>
-
-        {/* Job Title */}
-        <h3 className="line-clamp-1 text-base font-bold text-foreground transition-colors group-hover:text-[#0069D3]">
-          <Link href={contractHref}>
-            {contract.job?.title || t("agreementFallback")}
-          </Link>
-        </h3>
-
-        {/* Counterparty & Signatures */}
-        <div className="flex flex-wrap items-center gap-4 text-xs">
-          <div className="flex items-center gap-2">
-            <Avatar className="size-6 border border-border">
-              <AvatarImage src={counterpartyAvatar || undefined} />
-              <AvatarFallback className="text-[10px] font-semibold">
-                {counterpartyName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="font-medium text-foreground">
-              {counterpartyName}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span>
-              {isFreelancerView ? t("counterpartyClient") : t("youLabel")}:{" "}
-              <span
-                className={
-                  contract.signedByClient
-                    ? "font-medium text-emerald-600 dark:text-emerald-400"
-                    : "text-amber-600 dark:text-amber-400"
-                }
-              >
-                {contract.signedByClient ? t("signed") : t("waiting")}
-              </span>
-            </span>
-            <span>•</span>
-            <span>
-              {isFreelancerView
-                ? t("youLabel")
-                : t("counterpartyFreelancer")}
-              :{" "}
-              <span
-                className={
-                  contract.signedByFreelancer
-                    ? "font-medium text-emerald-600 dark:text-emerald-400"
-                    : "text-amber-600 dark:text-amber-400"
-                }
-              >
-                {contract.signedByFreelancer ? t("signed") : t("waiting")}
-              </span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right: Budget & Action */}
-      <div className="flex shrink-0 items-center justify-between gap-4 border-t border-border/60 pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
-        <div className="text-left sm:text-right">
-          <span className="block text-[11px] text-muted-foreground">
-            {t("totalBudget")}
-          </span>
-          <span className="text-lg font-bold text-foreground">
-            {money(contract.totalAmount)}
-          </span>
-        </div>
-
-        <Link
-          href={contractHref}
-          className="inline-flex h-8 items-center justify-center rounded-full bg-[#0069D3] px-4 text-xs font-semibold text-white transition-colors hover:bg-[#005bb8]"
-        >
-          {t("viewDetails")}
-          <ChevronRight className="ml-1 size-3.5" />
+          <ChevronRight className="size-3" />
         </Link>
       </div>
     </motion.div>
@@ -404,7 +254,6 @@ export function ContractList({
   const format = useFormatter();
   const [selectedTab, setSelectedTab] = useState<ContractStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const statusTabs: { label: string; value: ContractStatus | "ALL" }[] = [
     { label: t("tabAll"), value: "ALL" },
@@ -424,10 +273,10 @@ export function ContractList({
   const formatDate = (date: string | Date | null) =>
     date
       ? format.dateTime(new Date(date), {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
       : t("notAvailable");
 
   const { data: contractListRes } = useQuery<GetContractListResponseType>({
@@ -442,7 +291,10 @@ export function ContractList({
     initialData: selectedTab === "ALL" && initialData ? initialData : undefined,
   });
 
-  const allContracts = contractListRes?.data ?? initialData?.data ?? [];
+  const allContracts = useMemo(
+    () => contractListRes?.data ?? initialData?.data ?? [],
+    [contractListRes?.data, initialData?.data],
+  );
 
   const counts = useMemo(() => {
     return {
@@ -475,7 +327,7 @@ export function ContractList({
   const isFreelancerView = basePath === "/freelancer";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Control Bar: Filter Tabs + Search + View Switcher */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         {/* Status Tabs with counts */}
@@ -488,20 +340,18 @@ export function ContractList({
                 key={tab.value}
                 type="button"
                 onClick={() => setSelectedTab(tab.value)}
-                className={`inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition-all ${
-                  isActive
-                    ? "bg-background font-semibold text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition-all ${isActive
+                  ? "bg-background font-semibold text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 <span>{tab.label}</span>
                 {count !== undefined && count > 0 && (
                   <span
-                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${
-                      isActive
-                        ? "bg-[#0069D3]/10 text-[#0069D3]"
-                        : "bg-muted-foreground/15 text-muted-foreground"
-                    }`}
+                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${isActive
+                      ? "bg-[#0069D3]/10 text-[#0069D3]"
+                      : "bg-muted-foreground/15 text-muted-foreground"
+                      }`}
                   >
                     {count}
                   </span>
@@ -511,7 +361,7 @@ export function ContractList({
           })}
         </div>
 
-        {/* Right Section: Search & View Switcher */}
+        {/* Search */}
         <div className="flex items-center gap-2">
           {/* Search Input */}
           <div className="relative w-full sm:w-64">
@@ -524,38 +374,10 @@ export function ContractList({
               className="w-full rounded-full border border-border bg-background py-1.5 pr-3 pl-8 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:ring-1 focus:ring-[#0069D3] focus:outline-none"
             />
           </div>
-
-          {/* View Toggle: Card Grid vs List */}
-          <div className="flex items-center rounded-full border border-border bg-muted/30 p-0.5">
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              className={`cursor-pointer rounded-full p-1.5 transition-colors ${
-                viewMode === "grid"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              title="Card view"
-            >
-              <LayoutGrid className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("list")}
-              className={`cursor-pointer rounded-full p-1.5 transition-colors ${
-                viewMode === "list"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              title="List view"
-            >
-              <List className="size-3.5" />
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Contract Items: Cards or List */}
+      {/* Contract Cards */}
       {contracts.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center">
           <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
@@ -586,26 +408,10 @@ export function ContractList({
             </Link>
           </div>
         </div>
-      ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      ) : (
+        <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {contracts.map((contract: ContractDetailType, index: number) => (
             <ContractCard
-              key={contract.id}
-              contract={contract}
-              basePath={basePath}
-              isFreelancerView={isFreelancerView}
-              formatDate={formatDate}
-              money={money}
-              t={t}
-              tStatus={tStatus}
-              index={index}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-3">
-          {contracts.map((contract: ContractDetailType, index: number) => (
-            <ContractRow
               key={contract.id}
               contract={contract}
               basePath={basePath}

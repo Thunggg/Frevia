@@ -36,17 +36,13 @@ export default async function ClientContractDetailPage({
 
   if (!contract) notFound();
 
-  const [milestones, sharedFiles] = await Promise.all([
-    contractServerRequest.getMilestones(contract.id, { limit: 50 }),
-    contractServerRequest.getSharedFiles(contract.id),
-  ]);
+  const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
 
   return (
     <div className="min-h-full bg-background font-sans">
       <div className="px-6 py-8 lg:px-8 max-w-7xl mx-auto">
         <ContractDetail
           initialContract={contract}
-          initialMilestones={milestones}
           initialSharedFiles={sharedFiles}
         />
       </div>

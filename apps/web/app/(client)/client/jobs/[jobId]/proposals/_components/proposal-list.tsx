@@ -203,7 +203,6 @@ export function ProposalList({
   const [page, setPage] = useState(1);
   const [rejecting, setRejecting] = useState<ClientProposal | null>(null);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [acceptingId, setAcceptingId] = useState<number | null>(null);
   const [interviewingId, setInterviewingId] = useState<number | null>(null);
   const [contractingProposal, setContractingProposal] = useState<ClientProposal | null>(null);
 
@@ -346,26 +345,6 @@ export function ProposalList({
       });
     } finally {
       setInterviewingId(null);
-    }
-  };
-
-  const acceptProposal = async (proposalId: number) => {
-    setAcceptingId(proposalId);
-    try {
-      await proposalApiRequest.accept(proposalId);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-job-proposals", jobId],
-      });
-      toastSuccess({ message: t("hired") });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("acceptFailed"),
-      });
-    } finally {
-      setAcceptingId(null);
     }
   };
 

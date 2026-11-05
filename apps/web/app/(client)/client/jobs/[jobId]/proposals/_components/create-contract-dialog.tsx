@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -22,15 +22,10 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
-  AlertTriangle,
   Calendar,
-  CheckCircle2,
   DollarSign,
   FileText,
   Loader2,
-  Plus,
-  Trash2,
-  User,
 } from "@/components/icons";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { ApiFail } from "@/lib/http";
@@ -48,14 +43,6 @@ export interface ProposalForContract {
     avatarUrl?: string | null;
     title?: string | null;
   };
-}
-
-interface MilestoneInputItem {
-  id: string;
-  title: string;
-  description: string;
-  amount: number | "";
-  dueDate: string;
 }
 
 interface CreateContractDialogProps {
@@ -76,12 +63,10 @@ export function CreateContractDialog({
   const router = useRouter();
   const queryClient = useQueryClient();
   const format = useFormatter();
-  const t = useTranslations("clientProposals");
 
   const [totalAmount, setTotalAmount] = useState<number | "">(0);
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [terms, setTerms] = useState<string>("");
-  const [milestones, setMilestones] = useState<MilestoneInputItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Khởi tạo dữ liệu form khi proposal thay đổi hoặc dialog mở
@@ -93,64 +78,11 @@ export function CreateContractDialog({
         `Scope of work based on proposal for "${jobTitle}". All deliverables are subject to client review and approval.`,
       );
       setExpiresAt("");
-
-      // Mặc định tạo 1 milestone đầu tiên ứng với toàn bộ số tiền đề xuất
-      setMilestones([
-        {
-          id: `m-${Date.now()}-1`,
-          title: `${jobTitle} - Milestone 1`,
-          description: "Project deliverables and completion",
-          amount: bid,
-          dueDate: "",
-        },
-      ]);
     }
   }, [proposal, jobTitle, open]);
 
-  // Tính tổng số tiền các milestones
-  const milestonesTotal = useMemo(() => {
-    return milestones.reduce((sum, item) => {
-      const val = typeof item.amount === "number" ? item.amount : 0;
-      return sum + val;
-    }, 0);
-  }, [milestones]);
-
   const targetAmount = typeof totalAmount === "number" ? totalAmount : 0;
   const isBudgetValid = targetAmount > 0;
-  const isAmountMatch = Math.abs(milestonesTotal - targetAmount) < 0.01;
-  const amountDiff = Math.round((targetAmount - milestonesTotal) * 100) / 100;
-
-  const handleAddMilestone = () => {
-    const nextIndex = milestones.length + 1;
-    // Gợi ý số tiền còn thiếu cho milestone mới (nếu có)
-    const remaining = amountDiff > 0 ? amountDiff : 0;
-
-    setMilestones((prev) => [
-      ...prev,
-      {
-        id: `m-${Date.now()}-${nextIndex}`,
-        title: `Milestone ${nextIndex}`,
-        description: "",
-        amount: remaining > 0 ? remaining : 0,
-        dueDate: "",
-      },
-    ]);
-  };
-
-  const handleRemoveMilestone = (id: string) => {
-    if (milestones.length <= 1) return;
-    setMilestones((prev) => prev.filter((m) => m.id !== id));
-  };
-
-  const handleMilestoneChange = (
-    id: string,
-    field: keyof MilestoneInputItem,
-    value: any,
-  ) => {
-    setMilestones((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
-    );
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,28 +93,6 @@ export function CreateContractDialog({
       return;
     }
 
-    if (!isAmountMatch) {
-      toastError({
-        message: `Total milestone amount ($${milestonesTotal}) must equal contract total budget ($${targetAmount})`,
-      });
-      return;
-    }
-
-    for (let i = 0; i < milestones.length; i++) {
-      const m = milestones[i];
-      if (!m) continue;
-      if (!m.title.trim()) {
-        toastError({ message: `Please enter a title for Milestone ${i + 1}` });
-        return;
-      }
-      if (typeof m.amount !== "number" || m.amount <= 0) {
-        toastError({
-          message: `Milestone ${i + 1} must have an amount greater than 0`,
-        });
-        return;
-      }
-    }
-
     setIsSubmitting(true);
     try {
       const payload = {
@@ -190,12 +100,6 @@ export function CreateContractDialog({
         totalAmount: targetAmount,
         terms: terms.trim() || undefined,
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
-        milestones: milestones.map((m) => ({
-          title: m.title.trim(),
-          description: m.description.trim() || undefined,
-          amount: Number(m.amount),
-          dueDate: m.dueDate ? new Date(m.dueDate).toISOString() : undefined,
-        })),
       };
 
       const res = await contractApiRequest.create(payload);
@@ -234,33 +138,30 @@ export function CreateContractDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-border bg-card p-6 shadow-2xl font-sans">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto rounded-[24px] border border-border bg-card p-6 shadow-2xl font-sans">
         <DialogHeader className="border-b border-border/60 pb-4">
           <DialogTitle className="text-xl font-bold text-foreground">
             Create Contract & Hire Freelancer
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-1">
-            Setup contract terms and define project milestones for{" "}
+            Setup contract terms and budget for{" "}
             <span className="font-semibold text-foreground">{jobTitle}</span>.
           </DialogDescription>
         </DialogHeader>
 
         {proposal ? (
-          <form onSubmit={handleSubmit} className="space-y-6 pt-2">
+          <form onSubmit={handleSubmit} className="space-y-5 pt-2">
             {/* Freelancer & Proposal Summary Card */}
-            <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/40 p-3.5">
+            <div className="flex items-center justify-between rounded-2xl border border-border/80 bg-muted/30 p-4">
               <div className="flex items-center gap-3">
-                <Avatar size="default" className="size-10 rounded-full border border-border">
-                  <AvatarImage
-                    src={proposal.freelancer.avatarUrl ?? undefined}
-                    alt={proposal.freelancer.displayName}
-                  />
-                  <AvatarFallback className="font-semibold text-xs">
-                    {proposal.freelancer.displayName.slice(0, 2).toUpperCase()}
+                <Avatar className="size-11 border border-border">
+                  <AvatarImage src={proposal.freelancer.avatarUrl || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+                    {proposal.freelancer.displayName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="text-sm font-bold text-foreground">
+                  <h4 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                     {proposal.freelancer.displayName}
                   </h4>
                   <p className="text-xs text-muted-foreground">
@@ -270,12 +171,15 @@ export function CreateContractDialog({
               </div>
 
               <div className="text-right">
-                <div className="text-sm font-bold text-foreground">
-                  ${proposal.bidAmount.toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Estimated {proposal.deliveryDays} day(s)
-                </div>
+                <span className="text-[11px] text-muted-foreground block">
+                  Proposal Bid
+                </span>
+                <span className="text-base font-extrabold text-foreground font-mono">
+                  ${format.number(proposal.bidAmount)}
+                </span>
+                <span className="text-[11px] text-muted-foreground block">
+                  Est. {proposal.deliveryDays} days
+                </span>
               </div>
             </div>
 
@@ -332,7 +236,7 @@ export function CreateContractDialog({
                 Contract Terms & Scope of Work
               </label>
               <Textarea
-                rows={3}
+                rows={4}
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
                 className="text-xs rounded-xl resize-none leading-relaxed"
@@ -340,185 +244,29 @@ export function CreateContractDialog({
               />
             </div>
 
-            {/* Milestones Section */}
-            <div className="space-y-3 pt-2 border-t border-border/60">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                    Contract Milestones
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                      {milestones.length}
-                    </span>
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    Break down project deliverables into funded stages.
-                  </p>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddMilestone}
-                  className="rounded-full h-8 px-3 text-xs font-semibold gap-1.5 border-dashed hover:border-foreground transition-colors cursor-pointer"
-                >
-                  <Plus className="size-3.5" />
-                  Add Milestone
-                </Button>
-              </div>
-
-              {/* Milestones List */}
-              <div className="space-y-3">
-                {milestones.map((m, idx) => (
-                  <div
-                    key={m.id}
-                    className="rounded-xl border border-border/80 bg-card p-3.5 space-y-3 shadow-2xs transition-all"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-bold text-muted-foreground">
-                          {idx + 1}
-                        </span>
-                        <Input
-                          type="text"
-                          required
-                          value={m.title}
-                          onChange={(e) =>
-                            handleMilestoneChange(m.id, "title", e.target.value)
-                          }
-                          placeholder={`Milestone ${idx + 1} Title`}
-                          className="h-8 text-xs font-semibold rounded-lg flex-1"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <div className="relative w-28">
-                          <DollarSign className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
-                          <Input
-                            type="number"
-                            min={1}
-                            step="0.01"
-                            required
-                            value={m.amount}
-                            onChange={(e) =>
-                              handleMilestoneChange(
-                                m.id,
-                                "amount",
-                                e.target.value === ""
-                                  ? ""
-                                  : Number(e.target.value),
-                              )
-                            }
-                            placeholder="Amount"
-                            className="pl-7 h-8 text-xs font-semibold rounded-lg text-right"
-                          />
-                        </div>
-
-                        {milestones.length > 1 ? (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveMilestone(m.id)}
-                            className="size-8 text-muted-foreground hover:text-red-500 rounded-lg cursor-pointer transition-colors"
-                          >
-                            <Trash2 className="size-3.5" />
-                          </Button>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      <div className="sm:col-span-2">
-                        <Input
-                          type="text"
-                          value={m.description}
-                          onChange={(e) =>
-                            handleMilestoneChange(
-                              m.id,
-                              "description",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="Deliverables description (optional)"
-                          className="h-8 text-xs rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="date"
-                          value={m.dueDate}
-                          onChange={(e) =>
-                            handleMilestoneChange(
-                              m.id,
-                              "dueDate",
-                              e.target.value,
-                            )
-                          }
-                          className="h-8 text-xs rounded-lg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Milestones vs Budget Balance Status */}
-              <div
-                className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-medium transition-colors ${
-                  isAmountMatch
-                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                    : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {isAmountMatch ? (
-                    <CheckCircle2 className="size-4 shrink-0" />
-                  ) : (
-                    <AlertTriangle className="size-4 shrink-0" />
-                  )}
-                  <span>
-                    {isAmountMatch
-                      ? "Milestone amounts match total budget perfectly"
-                      : amountDiff > 0
-                        ? `Remaining to allocate: $${amountDiff.toLocaleString()}`
-                        : `Milestones exceed budget by: $${Math.abs(amountDiff).toLocaleString()}`}
-                  </span>
-                </div>
-                <div className="font-bold">
-                  ${milestonesTotal.toLocaleString()} / $
-                  {targetAmount.toLocaleString()}
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <DialogFooter className="pt-4 border-t border-border/60 flex items-center justify-between sm:justify-between gap-3">
+            {/* Dialog Footer Actions */}
+            <DialogFooter className="gap-2 sm:gap-0 pt-3 border-t border-border/60">
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
-                onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
-                className="rounded-full px-5 h-9 text-xs font-semibold cursor-pointer"
+                onClick={() => onOpenChange(false)}
+                className="rounded-full text-xs font-medium h-9"
               >
                 Cancel
               </Button>
 
               <Button
                 type="submit"
-                size="sm"
-                disabled={isSubmitting || !isBudgetValid || !isAmountMatch}
-                className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-6 h-9 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+                disabled={isSubmitting || !isBudgetValid}
+                className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-9 px-5 shadow-xs cursor-pointer"
               >
                 {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    Creating Contract...
-                  </>
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
                 ) : (
-                  <>Create Contract & Hire</>
+                  <FileText className="mr-1.5 size-3.5" />
                 )}
+                Create & Hire Freelancer
               </Button>
             </DialogFooter>
           </form>
@@ -527,4 +275,3 @@ export function CreateContractDialog({
     </Dialog>
   );
 }
-

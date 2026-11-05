@@ -16,7 +16,6 @@ export function PaperContractCard({
   pdfFile,
   onViewFullTerms,
 }: PaperContractCardProps) {
-  const t = useTranslations("contractDetail");
   const tRole = useTranslations("roleName");
   const format = useFormatter();
 
