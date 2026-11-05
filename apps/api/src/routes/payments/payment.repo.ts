@@ -12,11 +12,11 @@ import {
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { activateContractLifecycle } from '../contract/contract-activation.helper';
+import { activateContractLifecycle } from '../../shared/helper/contract-activation.helper';
 
 @Injectable()
 export class PaymentRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findUserById(userId: number) {
     return this.prisma.user.findUnique({
@@ -75,9 +75,9 @@ export class PaymentRepository {
       data: isClient
         ? { clientFeeStatus: PlatformFeeStatus.PAID, clientFeePaidAt: now }
         : {
-            freelancerFeeStatus: PlatformFeeStatus.PAID,
-            freelancerFeePaidAt: now,
-          },
+          freelancerFeeStatus: PlatformFeeStatus.PAID,
+          freelancerFeePaidAt: now,
+        },
     });
   }
 
