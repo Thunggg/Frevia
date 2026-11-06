@@ -11,8 +11,10 @@ import {
   ContractAlreadyCancelledException,
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
+  ContractAwaitingPaymentException,
   ContractDisputedException,
   ContractForbiddenException,
+  ContractNotActionableForRejectionException,
   ContractNotActiveException,
   ContractNotFoundException,
   ContractNotPendingSignException,
@@ -26,6 +28,7 @@ import {
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
+import { PaymentService } from '../payments/payment.service';
 
 const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
 
@@ -36,6 +39,7 @@ export class ContractService {
   constructor(
     private readonly contractRepository: ContractRepository,
     private readonly contractPdfService: ContractPdfService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   async createContract(clientId: number, body: CreateContractBodyType) {
@@ -83,6 +87,7 @@ export class ContractService {
         proposal.job.id,
       );
     } catch (error) {
+      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -109,6 +114,7 @@ export class ContractService {
 
       return await this.contractRepository.updateContract(contractId, body);
     } catch (error) {
+      this.logger.error(`Failed to update contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -125,8 +131,13 @@ export class ContractService {
       const isFreelancer = contract.freelancerId === userId;
       if (!isClient && !isFreelancer) throw ContractForbiddenException();
 
-      if (contract.status !== 'PENDING_SIGN')
+      if (contract.status === ContractStatus.AWAITING_PAYMENT) {
+        throw ContractAwaitingPaymentException();
+      }
+
+      if (contract.status !== ContractStatus.PENDING_SIGN) {
         throw ContractNotPendingSignException();
+      }
 
       if (isClient && contract.signedByClient) throw AlreadySignedException();
       if (isFreelancer && contract.signedByFreelancer)
@@ -151,6 +162,47 @@ export class ContractService {
 
       return signed;
     } catch (error) {
+      this.logger.error(`Failed to sign contract #${contractId}:`, error);
+      if (error instanceof HttpException) throw error;
+      throw FailedToUpdateContractException();
+    }
+  }
+
+  async rejectContract(userId: number, contractId: number, reason?: string) {
+    try {
+      const contract =
+        await this.contractRepository.findContractById(contractId);
+
+      if (!contract) throw ContractNotFoundException();
+
+      const isFreelancer = contract.freelancerId === userId;
+      if (!isFreelancer) throw ContractForbiddenException();
+
+      if (
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
+      ) {
+        throw ContractNotActionableForRejectionException();
+      }
+
+      const rejected = await this.contractRepository.rejectContract(
+        contractId,
+        reason,
+      );
+
+      // Auto refund escrow deposit if any
+      try {
+        await this.paymentService.refundContractEscrow(contractId);
+      } catch (refundErr) {
+        this.logger.error(
+          `Failed to auto-refund deposit on contract reject for #${contractId}:`,
+          refundErr,
+        );
+      }
+
+      return rejected;
+    } catch (error) {
+      this.logger.error(`Failed to reject contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -172,6 +224,7 @@ export class ContractService {
         contract.jobId,
       );
     } catch (error) {
+      this.logger.error(`Failed to complete contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -196,6 +249,7 @@ export class ContractService {
 
       return await this.contractRepository.cancelContract(contractId);
     } catch (error) {
+      this.logger.error(`Failed to cancel contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -246,12 +300,10 @@ export class ContractService {
 
       return contract;
     } catch (error) {
+      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
       this.logger.error(`Failed to get contract detail #${contractId}:`, error);
-      this.logger.error(
-        `Failed to get contract detail #${contractId}:`,
-        error,
-      );
+      this.logger.error(`Failed to get contract detail #${contractId}:`, error);
       throw FailedToLoadContractException();
     }
   }
@@ -270,12 +322,10 @@ export class ContractService {
 
       return contract;
     } catch (error) {
+      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
       this.logger.error(`Failed to get contract by slug "${slug}":`, error);
-      this.logger.error(
-        `Failed to get contract by slug "${slug}":`,
-        error,
-      );
+      this.logger.error(`Failed to get contract by slug "${slug}":`, error);
       throw FailedToLoadContractException();
     }
   }

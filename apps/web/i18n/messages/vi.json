@@ -1083,9 +1083,12 @@
   "contractStatus": {
     "ACTIVE": "Đang thực hiện",
     "PENDING_SIGN": "Chờ ký",
+    "AWAITING_PAYMENT": "Chờ thanh toán",
     "COMPLETED": "Đã hoàn thành",
     "CANCELLED": "Đã huỷ",
-    "DISPUTED": "Đang tranh chấp"
+    "DISPUTED": "Đang tranh chấp",
+    "REJECTED": "Đã từ chối",
+    "EXPIRED": "Đã hết hạn"
   },
   "contracts": {
     "metaTitle": "Hợp đồng của tôi | Frevia",

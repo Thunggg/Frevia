@@ -1091,9 +1091,12 @@
   "contractStatus": {
     "ACTIVE": "Active",
     "PENDING_SIGN": "Pending Signature",
+    "AWAITING_PAYMENT": "Awaiting Payment",
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled",
-    "DISPUTED": "In Dispute"
+    "DISPUTED": "In Dispute",
+    "REJECTED": "Rejected",
+    "EXPIRED": "Expired"
   },
   "contracts": {
     "metaTitle": "My Contracts | Frevia",

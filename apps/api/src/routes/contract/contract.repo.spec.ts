@@ -13,6 +13,7 @@ describe('ContractRepository', () => {
       freelancerFeeStatus: 'PAID',
       totalAmount: 700,
       platformFee: 7,
+      clientPlatformFee: 0,
     };
     const activeContract = {
       ...signedContract,
@@ -69,30 +70,24 @@ describe('ContractRepository', () => {
     });
   });
 
-  it('records signature but does not activate contract if platform fees are unpaid', async () => {
-    const signedContract = {
+  it('records signature but does not activate contract if only one party signed', async () => {
+    const partiallySignedContract = {
       id: 6,
       jobId: 10,
-      signedByClient: true,
+      signedByClient: false,
       signedByFreelancer: true,
       clientFeeStatus: 'UNPAID',
       freelancerFeeStatus: 'UNPAID',
+      clientPlatformFee: 0,
       status: ContractStatus.PENDING_SIGN,
       totalAmount: 700,
       platformFee: 7,
     };
-    const updatedContract = {
-      ...signedContract,
-      signedAt: new Date(),
-    };
     const transaction = {
       contract: {
-        update: jest
-          .fn()
-          .mockResolvedValueOnce(signedContract)
-          .mockResolvedValueOnce(updatedContract),
+        update: jest.fn().mockResolvedValue(partiallySignedContract),
       },
-      job: { update: jest.fn().mockResolvedValue({ id: 10 }) },
+      job: { update: jest.fn() },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -107,10 +102,11 @@ describe('ContractRepository', () => {
     const result = await repository.signContract(6, 'freelancer');
     expect(result.status).toEqual(ContractStatus.PENDING_SIGN);
     expect(transaction.job.update).not.toHaveBeenCalled();
-    expect(transaction.contract.update).toHaveBeenLastCalledWith({
+    expect(transaction.contract.update).toHaveBeenCalledWith({
       where: { id: 6 },
       data: {
-        signedAt: expect.any(Date),
+        signedByFreelancer: true,
+        freelancerSignedAt: expect.any(Date),
       },
     });
   });

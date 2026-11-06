@@ -72,6 +72,24 @@ export const ContractNotPendingSignException = () =>
     { message: ManageContractMessage.CONTRACT_NOT_PENDING_SIGN, path: 'id' },
   ]);
 
+export const ContractAwaitingPaymentException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract is awaiting initial payment. Client must fund Milestone 1 and 3% platform fee before signing.',
+      path: 'id',
+    },
+  ]);
+
+export const ContractNotActionableForRejectionException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract can only be rejected while awaiting payment or pending signature.',
+      path: 'id',
+    },
+  ]);
+
 export const ContractDisputedException = () =>
   new UnprocessableEntityException([
     { message: ManageContractMessage.CONTRACT_DISPUTED, path: 'id' },

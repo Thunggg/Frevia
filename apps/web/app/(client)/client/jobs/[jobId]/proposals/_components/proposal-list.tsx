@@ -52,7 +52,7 @@ import type {
 } from "@shared/types";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
-import { CreateContractDialog } from "./create-contract-dialog";
+import { CreateContractDialog } from "../../../../contracts/_components/create-contract-dialog";
 import { VerifiedBadge } from "@/components/verified-badge";
 
 type ProposalStatus = SubmittedProposalStatusType;
@@ -746,7 +746,7 @@ export function ProposalList({
         }}
       />
 
-            {/* Modal create contract & hire */}
+      {/* Modal create contract & hire */}
       <CreateContractDialog
         open={!!contractingProposal}
         onOpenChange={(open) => !open && setContractingProposal(null)}

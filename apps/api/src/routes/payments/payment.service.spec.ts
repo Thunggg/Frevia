@@ -90,6 +90,8 @@ describe('PaymentService', () => {
       findEscrowDepositTransaction: jest.fn(),
       updateTransactionStatus: jest.fn(),
       getTransactions: jest.fn(),
+      checkAndCompleteFreelancerFee: jest.fn(),
+      handleEscrowDepositSuccess: jest.fn(),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -290,7 +292,7 @@ describe('PaymentService', () => {
       expect(result).toEqual({
         clientSecret: 'pi_secret_456',
         paymentIntentId: 'pi_milestone_fund',
-        amount: 250,
+        amount: 280,
         currency: 'usd',
       });
       expect(repo.createTransaction).toHaveBeenCalledWith(
@@ -333,7 +335,7 @@ describe('PaymentService', () => {
       expect(result.success).toBe(true);
       expect(result.transferId).toBe('tr_payout_123');
       expect(stripeService.createTransfer).toHaveBeenCalledWith({
-        amountInCents: 25000,
+        amountInCents: 23750,
         currency: 'usd',
         destination: 'acct_freelancer_123',
         transferGroup: 'contract_10',

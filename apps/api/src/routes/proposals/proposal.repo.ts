@@ -22,11 +22,11 @@ import {
 } from '@shared/types';
 
 import { PrismaService } from '../../shared/services/prisma.service';
-import { createContractSlug } from '../contract/contract.slug';
 import {
   ProposalJobPositionsFilledException,
   ProposalNotSubmittedException,
 } from './proposal.error';
+import { createContractSlug } from '../../shared/helper/contract.slug';
 
 // Trạng thái khách hàng còn có thể phỏng vấn / từ chối / tuyển.
 const ACTIONABLE_STATUSES = [
@@ -81,7 +81,7 @@ const proposalDetailSelect = {
 
 @Injectable()
 export class ProposalRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findJobForProposal(jobId: number) {
     return this.prisma.job.findUnique({

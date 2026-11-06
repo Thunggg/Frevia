@@ -46,8 +46,11 @@ export class ContractPdfService {
     slug: string;
     totalAmount: number;
     platformFee: number;
+    clientPlatformFee?: number | null;
     terms?: string | null;
     signedAt?: Date | null;
+    clientSignedAt?: Date | null;
+    freelancerSignedAt?: Date | null;
     createdAt: Date;
     client: { email: string; profile?: { displayName?: string | null } | null };
     freelancer: {
@@ -286,9 +289,13 @@ export class ContractPdfService {
     );
     currentY -= 14;
 
-    const feePerParty = contract.platformFee;
+    const clientFee =
+      contract.clientPlatformFee ??
+      Math.round(Number(contract.totalAmount) * 0.03 * 100) / 100;
+    const freelancerFee =
+      Math.round(Number(contract.totalAmount) * 0.05 * 100) / 100;
     page.drawText(
-      `Platform Fee (1%): ${formatMoney(feePerParty)} per party (Client Fee: PAID, Freelancer Fee: PAID)`,
+      `Platform Service Fees: Client 3% (${formatMoney(clientFee)}) | Freelancer 5% (${formatMoney(freelancerFee)})`,
       {
         x: margin,
         y: currentY,
@@ -460,7 +467,7 @@ export class ContractPdfService {
       color: rgb(0.2, 0.2, 0.2),
     });
     page.drawText(
-      `Date: ${formatDate(contract.signedAt ?? contract.createdAt)}`,
+      `Date: ${formatDate(contract.clientSignedAt ?? contract.signedAt ?? contract.createdAt)}`,
       {
         x: margin + 10,
         y: currentY - 44,
@@ -494,7 +501,7 @@ export class ContractPdfService {
       color: rgb(0.2, 0.2, 0.2),
     });
     page.drawText(
-      `Date: ${formatDate(contract.signedAt ?? contract.createdAt)}`,
+      `Date: ${formatDate(contract.freelancerSignedAt ?? contract.signedAt ?? contract.createdAt)}`,
       {
         x: margin + sigBoxWidth + 25,
         y: currentY - 44,
@@ -569,14 +576,18 @@ export class ContractPdfService {
 
       const totalAmount = Number(contract.totalAmount);
       const platformFee = Number(contract.platformFee);
+      const clientPlatformFee = Number(contract.clientPlatformFee);
 
       const pdfBuffer = await this.buildContractPdfBuffer({
         id: contract.id,
         slug: contract.slug,
         totalAmount,
         platformFee,
+        clientPlatformFee,
         terms: contract.terms,
         signedAt: contract.signedAt,
+        clientSignedAt: contract.clientSignedAt,
+        freelancerSignedAt: contract.freelancerSignedAt,
         createdAt: contract.createdAt,
         client: contract.client,
         freelancer: contract.freelancer,

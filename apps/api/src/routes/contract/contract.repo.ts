@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   ContractStatus,
+  JobStatus,
   MilestoneStatus,
   NotificationType,
   Prisma,
@@ -12,9 +13,8 @@ import {
   UpdateContractBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { createContractSlug } from './contract.slug';
 import { activateContractLifecycle } from '../../shared/helper/contract-activation.helper';
-
+import { createContractSlug } from '../../shared/helper/contract.slug';
 
 const contractDetailSelect = {
   id: true,
@@ -26,6 +26,7 @@ const contractDetailSelect = {
   terms: true,
   totalAmount: true,
   status: true,
+  clientPlatformFee: true,
   platformFee: true,
   platformFeeStatus: true,
   platformFeePaidAt: true,
@@ -35,6 +36,10 @@ const contractDetailSelect = {
   freelancerFeePaidAt: true,
   signedByClient: true,
   signedByFreelancer: true,
+  clientSignedAt: true,
+  freelancerSignedAt: true,
+  rejectedAt: true,
+  rejectReason: true,
   createdAt: true,
   signedAt: true,
   completedAt: true,
@@ -60,6 +65,20 @@ const contractDetailSelect = {
   },
   job: {
     select: { id: true, title: true, slug: true },
+  },
+  milestones: {
+    select: {
+      id: true,
+      contractId: true,
+      title: true,
+      description: true,
+      amount: true,
+      status: true,
+      paymentStatus: true,
+      dueDate: true,
+      completedAt: true,
+    },
+    orderBy: { id: 'asc' },
   },
 } satisfies Prisma.ContractSelect;
 
@@ -102,16 +121,26 @@ export class ContractRepository {
         id: true,
         slug: true,
         jobId: true,
+        proposalId: true,
         clientId: true,
         freelancerId: true,
         status: true,
         totalAmount: true,
         platformFee: true,
+        clientPlatformFee: true,
         platformFeeStatus: true,
+        platformFeePaidAt: true,
         clientFeeStatus: true,
+        clientFeePaidAt: true,
         freelancerFeeStatus: true,
+        freelancerFeePaidAt: true,
         signedByClient: true,
         signedByFreelancer: true,
+        clientSignedAt: true,
+        freelancerSignedAt: true,
+        expiresAt: true,
+        rejectedAt: true,
+        rejectReason: true,
       },
     });
   }
@@ -127,8 +156,16 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
       platformFee:
         contract.platformFee != null ? Number(contract.platformFee) : 0,
+      milestones: contract.milestones?.map((m) => ({
+        ...m,
+        amount: Number(m.amount),
+      })),
     };
   }
 
@@ -143,7 +180,8 @@ export class ContractRepository {
       select: { title: true },
     });
     const slug = createContractSlug(job?.title);
-    const platformFee = Math.round(Number(data.totalAmount) * 0.01 * 100) / 100;
+    const total = Number(data.totalAmount);
+    const clientPlatformFee = Math.round(total * 0.03 * 100) / 100;
     const now = new Date();
 
     return this.prisma.$transaction(async (tx) => {
@@ -156,10 +194,11 @@ export class ContractRepository {
           clientId,
           freelancerId,
           totalAmount: data.totalAmount,
-          platformFee,
+          clientPlatformFee,
+          platformFee: clientPlatformFee,
           terms: data.terms ?? null,
           expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
-          status: ContractStatus.PENDING_SIGN,
+          status: ContractStatus.AWAITING_PAYMENT,
         },
       });
 
@@ -213,7 +252,7 @@ export class ContractRepository {
           userId: freelancerId,
           type: NotificationType.PROPOSAL_ACCEPTED,
           title: 'Your proposal was accepted',
-          message: `You have been hired for ${job?.title ?? 'a job'}. Review and sign the contract to begin work.`,
+          message: `You have been offered a contract for ${job?.title ?? 'a job'}. Once the initial deposit is funded by the client, you will be invited to sign.`,
           data: {
             href: `/freelancer/contracts/${contract.slug}`,
             contractId: contract.id,
@@ -228,6 +267,7 @@ export class ContractRepository {
       return {
         ...contract,
         totalAmount: Number(contract.totalAmount),
+        clientPlatformFee: Number(contract.clientPlatformFee),
         platformFee:
           contract.platformFee != null ? Number(contract.platformFee) : 0,
       };
@@ -261,33 +301,27 @@ export class ContractRepository {
 
   async signContract(contractId: number, role: 'client' | 'freelancer') {
     const isClientSigning = role === 'client';
+    const now = new Date();
 
     const contract = await this.prisma.$transaction(async (tx) => {
       const signedContract = await tx.contract.update({
         where: { id: contractId },
         data: isClientSigning
-          ? { signedByClient: true }
-          : { signedByFreelancer: true },
+          ? { signedByClient: true, clientSignedAt: now }
+          : { signedByFreelancer: true, freelancerSignedAt: now },
       });
 
       if (signedContract.signedByClient && signedContract.signedByFreelancer) {
-        const bothFeesPaid =
-          signedContract.clientFeeStatus === 'PAID' &&
-          signedContract.freelancerFeeStatus === 'PAID';
-
         const updated = await tx.contract.update({
           where: { id: contractId },
           data: {
-            signedAt: new Date(),
+            signedAt: now,
+            status: ContractStatus.ACTIVE,
           },
         });
 
-        if (bothFeesPaid) {
-          const activated = await activateContractLifecycle(tx, contractId);
-          return activated ?? updated;
-        }
-
-        return updated;
+        const activated = await activateContractLifecycle(tx, contractId);
+        return activated ?? updated;
       }
 
       return signedContract;
@@ -296,6 +330,65 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
+      platformFee:
+        contract.platformFee != null ? Number(contract.platformFee) : 0,
+    };
+  }
+
+  async rejectContract(contractId: number, reason?: string) {
+    const now = new Date();
+    const contract = await this.prisma.$transaction(async (tx) => {
+      const rejectedContract = await tx.contract.update({
+        where: { id: contractId },
+        data: {
+          status: ContractStatus.REJECTED,
+          rejectedAt: now,
+          rejectReason: reason ?? null,
+        },
+      });
+
+      await tx.proposal.update({
+        where: { id: rejectedContract.proposalId },
+        data: {
+          status: ProposalStatus.REJECTED,
+        },
+      });
+
+      await tx.job.update({
+        where: { id: rejectedContract.jobId },
+        data: {
+          positionsFilled: { decrement: 1 },
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: rejectedContract.clientId,
+          type: NotificationType.JOB_ALERT,
+          title: 'Contract offer declined',
+          message: `The freelancer declined the contract offer for contract #${rejectedContract.id}.${reason ? ` Reason: ${reason}` : ''} Any escrow deposit will be refunded automatically.`,
+          data: {
+            href: `/client/contracts/${rejectedContract.slug}`,
+            contractId: rejectedContract.id,
+            contractSlug: rejectedContract.slug,
+          },
+        },
+      });
+
+      return rejectedContract;
+    });
+
+    return {
+      ...contract,
+      totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
       platformFee:
         contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
@@ -312,7 +405,7 @@ export class ContractRepository {
       });
       await tx.job.update({
         where: { id: jobId },
-        data: { status: 'COMPLETED' },
+        data: { status: JobStatus.COMPLETED },
       });
       return completedContract;
     });
@@ -376,7 +469,13 @@ export class ContractRepository {
       data: contracts.map((c) => ({
         ...c,
         totalAmount: Number(c.totalAmount),
+        clientPlatformFee:
+          c.clientPlatformFee != null ? Number(c.clientPlatformFee) : 0,
         platformFee: c.platformFee != null ? Number(c.platformFee) : 0,
+        milestones: c.milestones?.map((m) => ({
+          ...m,
+          amount: Number(m.amount),
+        })),
       })),
       totalItems,
       totalPages: Math.ceil(totalItems / limit),
@@ -396,8 +495,16 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
       platformFee:
         contract.platformFee != null ? Number(contract.platformFee) : 0,
+      milestones: contract.milestones?.map((m) => ({
+        ...m,
+        amount: Number(m.amount),
+      })),
     };
   }
 }
