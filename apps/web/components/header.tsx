@@ -65,8 +65,8 @@ type NavLinkKey =
   | "forum"
   | "myJobs"
   | "contracts"
-  | "disputes"
   | "payments"
+  | "disputes"
   | "bookmarks"
   | "myProposals"
   | "savedSearches";

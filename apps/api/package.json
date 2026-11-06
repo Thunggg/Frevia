@@ -19,6 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:unit": "jest --config ./test/jest-unit.json",
+    "test:report": "node ./test/export-test-report.mjs",
     "seed": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/index.ts",
     "seed:permissions": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-permissions.ts",
     "seed:profile-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-profile-demo.ts",
@@ -26,6 +28,7 @@
     "seed:relationships-demo": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-relationships-demo.ts",
     "seed:jobs": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-jobs.ts",
     "seed:jobs-dataset": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-jobs-dataset.ts",
+    "seed:freelancers-dataset": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-freelancers-dataset.ts",
     "seed:job-categories": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-job-categories.ts",
     "seed:proposals": "infisical run --env=dev --path=/api --project-config-dir=../.. -- tsx ./src/seed-datas/seed-proposals.ts"
   },

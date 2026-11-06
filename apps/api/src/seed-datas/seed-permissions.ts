@@ -51,6 +51,7 @@ const freelancerModules = [
   'DISPUTES',
   'PROFILE-REVISIONS',
   'PAYMENTS',
+  'RECOMMENDATIONS',
 ];
 
 const clientModules = [
@@ -73,6 +74,7 @@ const clientModules = [
   'REVIEWS',
   'PROFILE-REVISIONS',
   'PAYMENTS',
+  'RECOMMENDATIONS',
 ];
 
 const expertModules = [
@@ -272,7 +274,8 @@ async function bootstrap() {
     .filter(
       (item) =>
         freelancerModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
 
@@ -280,7 +283,8 @@ async function bootstrap() {
     .filter(
       (item) =>
         clientModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/'),
+        !(item.path ?? '').startsWith('/api/admin/') &&
+        !(item.module === 'MANAGE-JOBS' && item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
 

@@ -23,8 +23,8 @@ const accountProfileServerRequest = {
     let accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
-    const apiUrl = envConfig?.NESTJS_API_URL;
-    if (!apiUrl || (!accessToken && !refreshToken)) {
+    const baseUrl = envConfig?.NESTJS_API_URL;
+    if (!baseUrl || (!accessToken && !refreshToken)) {
       return null;
     }
 
@@ -40,7 +40,7 @@ const accountProfileServerRequest = {
     }
 
     const doFetch = () =>
-      fetch(`${apiUrl}/api/identity-verifications/status`, {
+      fetch(`${baseUrl}/api/identity-verifications/status`, {
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: "no-store",
       });

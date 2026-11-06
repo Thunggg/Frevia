@@ -12,9 +12,10 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 
 import {
-  ChangeJobStatusBodyDto,
-  ChangeJobStatusResponseDto,
+  CloseJobResponseDto,
   CreateJobBodyDto,
+  PublishJobResponseDto,
+  ReopenJobResponseDto,
   UpdateJobBodyDto,
   UpdateJobResponseDto,
   ViewBookmarkedJobQueryDto,
@@ -135,18 +136,33 @@ export class ManageJobController {
     return this.manageJobService.deleteJob(userId, id);
   }
 
-  @Patch(':id/status')
-  @ZodSerializerDto(ChangeJobStatusResponseDto)
-  changeJobStatus(
-    @Param('id', ParseIntPipe)
-    id: number,
-
-    @UserActive('userId')
-    userId: number,
-
-    @Body()
-    body: ChangeJobStatusBodyDto,
+  @Patch(':id/publish')
+  @ZodSerializerDto(PublishJobResponseDto)
+  publishJob(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
   ) {
-    return this.manageJobService.changeJobStatus(userId, id, body);
+    return this.manageJobService.publishJob(userId, roleName, id);
+  }
+
+  @Patch(':id/close')
+  @ZodSerializerDto(CloseJobResponseDto)
+  closeJob(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+  ) {
+    return this.manageJobService.closeJob(userId, roleName, id);
+  }
+
+  @Patch(':id/reopen')
+  @ZodSerializerDto(ReopenJobResponseDto)
+  reopenJob(
+    @Param('id', ParseIntPipe) id: number,
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+  ) {
+    return this.manageJobService.reopenJob(userId, roleName, id);
   }
 }

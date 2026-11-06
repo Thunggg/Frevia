@@ -59,19 +59,34 @@ export function CreatePostDialog({
       },
       {
         onSuccess: (result) => {
-          setOpen(false);
-          setTitle("");
-          setContent("");
-          // Bài bị AI đưa vào trạng thái PENDING -> chưa hiển thị công khai,
-          // không điều hướng tới chi tiết (sẽ 404), chỉ báo cho người dùng.
-          if (result?.moderationStatus === "PENDING") {
-            toast.success(t("pendingModeration"));
+          // Bài bị AI từ chối -> giữ form, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            toast.error(msg);
             return;
           }
-          if (result?.id && result?.slug) {
-            router.push(
-              `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,
-            );
+          // Bài chờ duyệt -> đóng form, báo thông tin
+          if (result?.moderationStatus === "PENDING") {
+            const msg = (result as any).moderationMessage || t("pendingModeration");
+            setOpen(false);
+            setTitle("");
+            setContent("");
+            toast.info(msg);
+            return;
+          }
+          // Bài được duyệt -> đóng form, điều hướng
+          if (result?.moderationStatus === "APPROVED") {
+            const msg = (result as any).moderationMessage || t("approvedModeration");
+            setOpen(false);
+            setTitle("");
+            setContent("");
+            toast.success(msg);
+            if (result?.id && result?.slug) {
+              router.push(
+                `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,
+              );
+            }
+            return;
           }
         },
         onError: (error) => {

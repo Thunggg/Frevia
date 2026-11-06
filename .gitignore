@@ -46,3 +46,7 @@ backup/
 .*.drawio*
 *.drawio.bkp
 *.drawio.dtmp
+
+# AI microservices repos (managed separately or as submodules)
+ai-services/*
+!ai-services/README.md

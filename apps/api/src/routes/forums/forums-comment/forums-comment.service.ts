@@ -20,11 +20,13 @@ import {
   ForumPostNotFoundException,
 } from './forums-comment.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { AIModerationService } from '../../../shared/services/ai-moderation.service';
 
 @Injectable()
 export class ForumCommentService {
   constructor(
     private readonly forumCommentRepository: ForumCommentRepository,
+    private readonly aiModerationService: AIModerationService,
   ) {}
 
   async createForumComment(
@@ -38,10 +40,20 @@ export class ForumCommentService {
         throw ForumPostNotFoundException();
       }
 
+      // AI Moderation cho comment mới
+      let moderation = body.moderation;
+      if (!moderation) {
+        moderation = await this.aiModerationService.moderateContent({
+          text: body.content,
+          context: 'forum-comment',
+        });
+      }
+
       return await this.forumCommentRepository.createForumComment(
         postId,
         userId,
         body.content,
+        moderation,
       );
     } catch (error) {
       if (error instanceof HttpException) {
@@ -76,7 +88,20 @@ export class ForumCommentService {
         throw ForumCommentNotOwnedException();
       }
 
-      return this.forumCommentRepository.updateForumComment(id, body);
+      // AI Moderation cho comment edit
+      let moderation = body.moderation;
+      if (!moderation) {
+        moderation = await this.aiModerationService.moderateContent({
+          text: body.content,
+          context: 'forum-comment',
+        });
+      }
+
+      return this.forumCommentRepository.updateForumComment(
+        id,
+        body,
+        moderation,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

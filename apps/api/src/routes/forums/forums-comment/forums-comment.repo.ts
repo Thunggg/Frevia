@@ -3,8 +3,17 @@ import {
   EditForumCommentType,
   ForumCommentFilterType,
   ForumCommentType,
+  ForumModerationType,
 } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
+
+// PUBLIC_MODERATION_STATUSES constant like in forums.repo.ts
+const PUBLIC_MODERATION_STATUSES: 'APPROVED'[] = ['APPROVED'];
+
+// Cast helper like in forums.repo.ts
+function castJsonStringArray(value: unknown): string[] | null {
+  return Array.isArray(value) ? (value as string[]) : null;
+}
 
 @Injectable()
 export class ForumCommentRepository {
@@ -31,8 +40,12 @@ export class ForumCommentRepository {
       select: {
         id: true,
         postId: true,
-
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -54,17 +67,30 @@ export class ForumCommentRepository {
     postId: number,
     userId: number,
     content: string,
+    moderation?: ForumModerationType,
   ): Promise<ForumCommentType> {
     const comment = await this.prisma.forumComment.create({
       data: {
         postId,
         userId,
         content,
+        moderationStatus: moderation?.status ?? 'PENDING',
+        moderationScore: moderation?.score ?? null,
+        moderationCategories: moderation?.categories?.length
+          ? moderation.categories
+          : undefined,
+        moderationMessage: moderation?.message ?? null,
+        moderationLanguage: moderation?.language ?? null,
       },
       select: {
         id: true,
         postId: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -80,13 +106,19 @@ export class ForumCommentRepository {
         },
       },
     });
-    return { ...comment, likeCount: 0, likedByMe: false };
+    return {
+      ...comment,
+      moderationCategories: castJsonStringArray(comment.moderationCategories),
+      likeCount: 0,
+      likedByMe: false,
+    };
   }
 
   // Sửa comment
   async updateForumComment(
     id: number,
     data: EditForumCommentType,
+    moderation?: ForumModerationType,
   ): Promise<ForumCommentType> {
     const comment = await this.prisma.forumComment.update({
       where: {
@@ -95,11 +127,25 @@ export class ForumCommentRepository {
       },
       data: {
         content: data.content,
+        ...(moderation && {
+          moderationStatus: moderation.status,
+          moderationScore: moderation.score ?? null,
+          moderationCategories: moderation.categories?.length
+            ? moderation.categories
+            : undefined,
+          moderationMessage: moderation.message ?? null,
+          moderationLanguage: moderation.language ?? null,
+        }),
       },
       select: {
         id: true,
         postId: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -115,7 +161,12 @@ export class ForumCommentRepository {
         },
       },
     });
-    return { ...comment, likeCount: 0, likedByMe: false };
+    return {
+      ...comment,
+      moderationCategories: castJsonStringArray(comment.moderationCategories),
+      likeCount: 0,
+      likedByMe: false,
+    };
   }
 
   async softDeleteForumComment(id: number): Promise<ForumCommentType> {
@@ -131,6 +182,11 @@ export class ForumCommentRepository {
         id: true,
         postId: true,
         content: true,
+        moderationStatus: true,
+        moderationScore: true,
+        moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -146,7 +202,12 @@ export class ForumCommentRepository {
         },
       },
     });
-    return { ...comment, likeCount: 0, likedByMe: false };
+    return {
+      ...comment,
+      moderationCategories: castJsonStringArray(comment.moderationCategories),
+      likeCount: 0,
+      likedByMe: false,
+    };
   }
 
   async getForumCommentLists(filter: ForumCommentFilterType) {
@@ -155,6 +216,7 @@ export class ForumCommentRepository {
     const where = {
       postId,
       deletedAt: null,
+      moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
     };
 
     //$transaction dùng để chạy 2 query cùng lúc để tối ưu hiệu năng
@@ -165,6 +227,11 @@ export class ForumCommentRepository {
           id: true,
           postId: true,
           content: true,
+          moderationStatus: true,
+          moderationScore: true,
+          moderationCategories: true,
+          moderationMessage: true,
+          moderationLanguage: true,
           createdAt: true,
           updatedAt: true,
           user: {
@@ -206,6 +273,11 @@ export class ForumCommentRepository {
         id: c.id,
         postId: c.postId,
         content: c.content,
+        moderationStatus: c.moderationStatus,
+        moderationScore: c.moderationScore,
+        moderationCategories: castJsonStringArray(c.moderationCategories),
+        moderationMessage: c.moderationMessage,
+        moderationLanguage: c.moderationLanguage,
         createdAt: c.createdAt,
         updatedAt: c.updatedAt,
         user: c.user,

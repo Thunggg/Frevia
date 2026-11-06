@@ -43,6 +43,7 @@ import { DisputeModule } from './routes/disputes/dispute.module';
 import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
 import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
 import { PaymentModule } from './routes/payments/payment.module';
+import { RecommendationModule } from './routes/recommendations/recommendation.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { PaymentModule } from './routes/payments/payment.module';
     ProfileRevisionModule,
     ExpertProfileModule,
     PaymentModule,
+    RecommendationModule,
   ],
   controllers: [AppController],
   providers: [

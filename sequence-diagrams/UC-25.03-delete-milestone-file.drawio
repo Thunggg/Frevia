@@ -1,0 +1,400 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram id="milestone-file-03-delete" name="Milestone-File-03-delete">
+    <mxGraphModel dx="2249" dy="358" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="3230" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="opt_data_label" value="[cancelled confirmation]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="120" y="460" width="160" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_data_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="10" y="460" width="350" height="105" as="geometry"/>
+    </mxCell>
+    <mxCell id="ref_frame" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="420" y="640" width="280" height="56" as="geometry"/>
+    </mxCell>
+    <mxCell id="ref_label" value="3.1. Verify jwt" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="515" y="653" width="175" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_token_label" value="[invalid token]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="120" y="720" width="120" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="opt_token_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="10" y="720" width="550" height="145" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="-10" y="1720" width="1530" height="1310" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_l1" value="[not uploader or file not found / already deleted]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="120" y="1720" width="300" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt1_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="20" y="2005" as="sourcePoint"/>
+        <mxPoint x="1520" y="2005" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt1_l2" value="[user is uploader and file is active]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="120" y="2005" width="240" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
+      <mxGeometry x="20" y="2440" width="1470" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_l1" value="[delete file failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="150" y="2440" width="180" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="alt2_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="50" y="2710" as="sourcePoint"/>
+        <mxPoint x="1490" y="2710" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt2_l2" value="[delete file success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="150" y="2710" width="180" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor" value="Freelancer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="85" y="200" width="30" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="100" y="282" as="sourcePoint"/>
+        <mxPoint x="100" y="3070" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="bar_actor_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="95" y="340" width="10" height="2630" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_view" value=":MilestoneFileView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="225" y="240" width="150" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_view_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_view" vertex="1">
+      <mxGeometry x="70" y="100" width="10" height="2630" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_route" value=":MilestoneFileRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="430" y="240" width="140" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_route_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_route" vertex="1">
+      <mxGeometry x="65" y="370" width="10" height="2300" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_controller" value=":MilestoneFileController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="635" y="240" width="170" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_controller_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_controller" vertex="1">
+      <mxGeometry x="80" y="655" width="10" height="1960" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_service" value=":MilestoneFileService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="850" y="240" width="150" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_service_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_service" vertex="1">
+      <mxGeometry x="70" y="710" width="10" height="1850" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_repo" value=":MilestoneFileRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1065" y="240" width="140" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_model" value=":MilestoneFileModel" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1250" y="240" width="140" height="2890" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_icon" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="220" width="60" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_label" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="292" width="60" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1480" y="322" as="sourcePoint"/>
+        <mxPoint x="1480" y="3070" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="bar_repo_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
+      <mxGeometry x="65" y="770" width="10" height="285" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_repo_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
+      <mxGeometry x="65" y="1100" width="10" height="285" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_repo_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
+      <mxGeometry x="65" y="1820" width="10" height="285" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_model_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
+      <mxGeometry x="65" y="825" width="10" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_model_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
+      <mxGeometry x="65" y="1155" width="10" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_model_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
+      <mxGeometry x="65" y="1875" width="10" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_db_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="1475" y="1120" width="10" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_db_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="1475" y="1450" width="10" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="bar_db_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+      <mxGeometry x="1475" y="2170" width="10" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="1. Click &amp;quot;Delete&amp;quot; on file and confirm" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="105" y="340" as="sourcePoint"/>
+        <mxPoint x="295" y="340" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="val" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="365" y="400"/>
+          <mxPoint x="365" y="436"/>
+        </Array>
+        <mxPoint x="305" y="400" as="sourcePoint"/>
+        <mxPoint x="305" y="436" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="val_label" value="2. Check confirmation&lt;br&gt;dialog input" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="372" y="400" width="140" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="valmsg" value="2.1. Close deletion modal" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="530" as="sourcePoint"/>
+        <mxPoint x="105" y="530" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="rt" value="3. DELETE /contracts/:contractId/&lt;br&gt;milestones/:milestoneId/files/:fileId" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="305" y="610" as="sourcePoint"/>
+        <mxPoint x="495" y="610" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="inv1" value="3.1.1. Return error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;fontSize=12;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="780" as="sourcePoint"/>
+        <mxPoint x="305" y="780" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="inv2" value="3.1.2. Return&lt;br&gt;error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;fontSize=12;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="835" as="sourcePoint"/>
+        <mxPoint x="105" y="835" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c1" value="4. deleteMilestoneFile(req, res)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="505" y="895" as="sourcePoint"/>
+        <mxPoint x="715" y="895" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c2" value="5. deleteMilestoneFile(userId,&lt;br&gt;contractId, milestoneId, fileId)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="725" y="950" as="sourcePoint"/>
+        <mxPoint x="920" y="950" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c3" value="6. findContractById(contractId) &amp;&lt;br&gt;findMilestoneById(milestoneId)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="930" y="1010" as="sourcePoint"/>
+        <mxPoint x="1130" y="1010" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c4" value="7. prisma.contract.findUnique(...) &amp;&lt;br&gt;prisma.milestone.findFirst(...)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1140" y="1065" as="sourcePoint"/>
+        <mxPoint x="1315" y="1065" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="c5" value="8. Execute query to check contract" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1325" y="1120" as="sourcePoint"/>
+        <mxPoint x="1475" y="1120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r1" value="9. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1475" y="1175" as="sourcePoint"/>
+        <mxPoint x="1325" y="1175" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r2" value="10. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1315" y="1225" as="sourcePoint"/>
+        <mxPoint x="1140" y="1225" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="r3" value="11. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1130" y="1275" as="sourcePoint"/>
+        <mxPoint x="930" y="1275" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="12. findFileById(fileId)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="930" y="1340" as="sourcePoint"/>
+        <mxPoint x="1130" y="1340" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m13" value="13. prisma.milestoneFile.findUnique(&lt;br&gt;{where: {id}})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1140" y="1395" as="sourcePoint"/>
+        <mxPoint x="1315" y="1395" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m14" value="14. Execute query to check file record" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1325" y="1450" as="sourcePoint"/>
+        <mxPoint x="1475" y="1450" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m15" value="15. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1475" y="1505" as="sourcePoint"/>
+        <mxPoint x="1325" y="1505" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m16" value="16. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1315" y="1555" as="sourcePoint"/>
+        <mxPoint x="1140" y="1555" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m17" value="17. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1130" y="1605" as="sourcePoint"/>
+        <mxPoint x="930" y="1605" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="990" y="1655"/>
+          <mxPoint x="990" y="1691"/>
+        </Array>
+        <mxPoint x="930" y="1655" as="sourcePoint"/>
+        <mxPoint x="930" y="1691" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk_label" value="18. Check uploader eligibility&lt;br&gt;(file.uploaderId === userId)" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="998" y="1655" width="180" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="b11" value="18.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="1775" as="sourcePoint"/>
+        <mxPoint x="725" y="1775" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b12" value="18.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="1830" as="sourcePoint"/>
+        <mxPoint x="505" y="1830" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b13" value="18.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="1885" as="sourcePoint"/>
+        <mxPoint x="305" y="1885" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b14" value="18.1.4. Show message&lt;br&gt;&amp;quot;Cannot delete file (file not found&lt;br&gt;or not file owner)&amp;quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="1945" as="sourcePoint"/>
+        <mxPoint x="105" y="1945" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b21" value="18.2.1. cloudinary.deleteFile(publicId) &amp;&lt;br&gt;softDeleteFile(fileId)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="930" y="2060" as="sourcePoint"/>
+        <mxPoint x="1130" y="2060" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b22" value="18.2.2. prisma.milestoneFile.update({&lt;br&gt;where: {id}, data: {deletedAt}})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1140" y="2115" as="sourcePoint"/>
+        <mxPoint x="1315" y="2115" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b23" value="18.2.3. Execute soft delete query&lt;br&gt;on milestone file" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1325" y="2170" as="sourcePoint"/>
+        <mxPoint x="1475" y="2170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b24" value="18.2.4. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1475" y="2225" as="sourcePoint"/>
+        <mxPoint x="1325" y="2225" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b25" value="18.2.5. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1315" y="2275" as="sourcePoint"/>
+        <mxPoint x="1140" y="2275" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="b26" value="18.2.6. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1130" y="2325" as="sourcePoint"/>
+        <mxPoint x="930" y="2325" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk2" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="990" y="2375"/>
+          <mxPoint x="990" y="2411"/>
+        </Array>
+        <mxPoint x="930" y="2375" as="sourcePoint"/>
+        <mxPoint x="930" y="2411" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="chk2_label" value="18.2.7. Check&lt;br&gt;query database" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="998" y="2375" width="120" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="18.2.7.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="2495" as="sourcePoint"/>
+        <mxPoint x="725" y="2495" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n12" value="18.2.7.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="2550" as="sourcePoint"/>
+        <mxPoint x="505" y="2550" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n13" value="18.2.7.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="2605" as="sourcePoint"/>
+        <mxPoint x="305" y="2605" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n14" value="18.2.7.1.4. Show message&lt;br&gt;&amp;quot;Delete milestone file failed&amp;quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="2665" as="sourcePoint"/>
+        <mxPoint x="105" y="2665" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n21" value="18.2.7.2.1. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="920" y="2775" as="sourcePoint"/>
+        <mxPoint x="725" y="2775" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n22" value="18.2.7.2.2. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="715" y="2830" as="sourcePoint"/>
+        <mxPoint x="505" y="2830" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n23" value="18.2.7.2.3. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="495" y="2885" as="sourcePoint"/>
+        <mxPoint x="305" y="2885" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n24" value="18.2.7.2.4. Show message &amp;quot;File deleted successfully&amp;quot;&lt;br&gt;and update files list" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="295" y="2950" as="sourcePoint"/>
+        <mxPoint x="105" y="2950" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>
+  </diagram>
+</mxfile>
