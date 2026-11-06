@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 import { IsPublic } from '../../../shared/decorators/auth.decorator';
@@ -21,9 +22,15 @@ import {
   CreateForumPostResponseDto,
   ViewForumPostDetailResponseDto,
   ForumTopPostListResponseDto,
+  UpdateForumPostDto,
+  UpdateForumPostResponseDto,
 } from './forums.dto';
 import { ForumService } from './forums.service';
-import type { ForumPostFilterType, CreateForumPostType } from '@shared/types';
+import type {
+  ForumPostFilterType,
+  CreateForumPostType,
+  UpdateForumPostType,
+} from '@shared/types';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import { z } from 'zod';
 
@@ -127,17 +134,16 @@ export class ForumController {
     return this.forumService.createForumPost(userId, body);
   }
 
-  // @Patch('posts/:id')
-  // @ZodSerializerDto(UpdateForumPostResponseDto)
-  // updateForumPost(
-  //   @UserActive('userId') userId: number,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   // Lấy Body và Validate theo schema UpdateForumPostSchema
-  //   @Body(new ZodValidationnPipe(UpdateForumPostDto))
-  //   body: UpdateForumPostType,
-  // ) {
-  //   return this.forumService.updateForumPost(id, userId, body);
-  // }
+  @Patch('posts/:id')
+  @ZodSerializerDto(UpdateForumPostResponseDto)
+  updateForumPost(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(UpdateForumPostDto))
+    body: UpdateForumPostType,
+  ) {
+    return this.forumService.updateForumPost(id, userId, body);
+  }
 
   @Delete('posts/:id')
   deleteForumPost(

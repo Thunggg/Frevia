@@ -8,6 +8,7 @@ import {
 import { ForumRepository } from '../../src/routes/forums/forums-post/forums.repo';
 import { ForumService } from '../../src/routes/forums/forums-post/forums.service';
 import { ForumPostNotFoundException } from '../../src/routes/forums/forums-post/forums.error';
+import { AIModerationService } from '../../src/shared/services/ai-moderation.service';
 
 describe('Forum posts (UF-03 to UF-07)', () => {
   const repository = {
@@ -20,7 +21,20 @@ describe('Forum posts (UF-03 to UF-07)', () => {
     softDeleteForumPost: jest.fn(),
   };
 
-  const service = new ForumService(repository as unknown as ForumRepository);
+  const aiModerationService = {
+    moderateContent: jest.fn(),
+  };
+
+  const moderationResult = {
+    status: 'PENDING',
+    score: 0.1,
+    categories: ['safe'],
+  };
+
+  const service = new ForumService(
+    repository as unknown as ForumRepository,
+    aiModerationService as unknown as AIModerationService,
+  );
 
   const createdAt = new Date('2026-01-01T00:00:00.000Z');
   const updatedAt = new Date('2026-01-02T00:00:00.000Z');
@@ -48,7 +62,10 @@ describe('Forum posts (UF-03 to UF-07)', () => {
     },
   };
 
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    aiModerationService.moderateContent.mockResolvedValue(moderationResult);
+  });
 
   describe('UF-03 getForumPostLists', () => {
     // UF-03: Trả về trang đầu danh sách bài viết kèm metadata phân trang.
@@ -262,7 +279,7 @@ describe('Forum posts (UF-03 to UF-07)', () => {
         10,
         'No category',
         'Post body',
-        undefined,
+        moderationResult,
       );
       expect(result.categoryId).toBeNull();
     });
@@ -311,7 +328,11 @@ describe('Forum posts (UF-03 to UF-07)', () => {
       await expect(
         service.updateForumPost(1, 10, body as never),
       ).resolves.toEqual(updated);
-      expect(repository.updateForumPost).toHaveBeenCalledWith(1, body);
+      expect(repository.updateForumPost).toHaveBeenCalledWith(
+        1,
+        body,
+        moderationResult,
+      );
     });
 
     // Schema từ chối tiêu đề rỗng khi cập nhật.

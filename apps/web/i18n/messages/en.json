@@ -2496,6 +2496,8 @@
     "cancel": "Cancel",
     "post": "Post",
     "pendingModeration": "Your post has been saved and is awaiting moderator review.",
+    "rejectedModeration": "Your content contains inappropriate language and has been rejected.",
+    "approvedModeration": "Your content has been approved.",
     "genericError": "Something went wrong. Please try again.",
     "unexpectedError": "Unexpected response from the server. Please try again.",
     "postNotFound": "Post not found",
