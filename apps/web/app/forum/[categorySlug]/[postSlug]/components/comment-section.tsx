@@ -63,19 +63,24 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
         onSuccess: (result) => {
           // Bình luận bị REJECTED -> giữ form, hiện lỗi
           if (result?.moderationStatus === "REJECTED") {
-            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
             toast.error(msg);
             return;
           }
           // Xóa form sau khi PENDING hoặc APPROVED
           setNewComment("");
           if (result?.moderationStatus === "PENDING") {
-            const msg = (result as any).moderationMessage || t("pendingModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
             toast.info(msg);
             return;
           }
           if (result?.moderationStatus === "APPROVED") {
-            const msg = (result as any).moderationMessage;
+            const msg = (result as { moderationMessage?: string | null })
+              ?.moderationMessage;
             if (msg) {
               toast.success(msg);
             }
@@ -259,19 +264,24 @@ function CommentItem({
         onSuccess: (result) => {
           // Bình luận edit bị REJECTED -> giữ edit mode, hiện lỗi
           if (result?.moderationStatus === "REJECTED") {
-            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
             toast.error(msg);
             return;
           }
           // PENDING hoặc APPROVED -> thoát edit mode
           setIsEditing(false);
           if (result?.moderationStatus === "PENDING") {
-            const msg = (result as any).moderationMessage || t("pendingModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
             toast.info(msg);
             return;
           }
           if (result?.moderationStatus === "APPROVED") {
-            const msg = (result as any).moderationMessage;
+            const msg = (result as { moderationMessage?: string | null })
+              ?.moderationMessage;
             if (msg) {
               toast.success(msg);
             }
