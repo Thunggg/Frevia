@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   ArrowRight,
@@ -51,12 +51,18 @@ const JOB_STATUS_KEYS = [
 const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
 
 function getAvailability(job: ViewBookmarkedJobResponseType["data"][number]) {
-  if (!job.expiryDate) return { key: "available", isExpiring: false };
+  if (job.status !== "OPEN") {
+    return { key: "closed", isExpiring: false, isClosed: true };
+  }
+  if (!job.expiryDate) return { key: "available", isExpiring: false, isClosed: false };
   const hoursUntilExpiry =
     (new Date(job.expiryDate).getTime() - Date.now()) / 3_600_000;
+  if (hoursUntilExpiry <= 0) {
+    return { key: "expired", isExpiring: false, isClosed: true };
+  }
   return hoursUntilExpiry <= 24
-    ? { key: "expiringSoon", isExpiring: true }
-    : { key: "available", isExpiring: false };
+    ? { key: "expiringSoon", isExpiring: true, isClosed: false }
+    : { key: "available", isExpiring: false, isClosed: false };
 }
 
 export function BookmarksContent({
@@ -71,6 +77,38 @@ export function BookmarksContent({
   const tBudgetType = useTranslations("jobBudgetType");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+
+  const [jobs, setJobs] = useState(initialJobs);
+  const [totalCount, setTotalCount] = useState(pagination.total);
+
+  useEffect(() => {
+    setJobs(initialJobs);
+    setTotalCount(pagination.total);
+  }, [initialJobs, pagination.total]);
+
+  // Đồng bộ trạng thái bookmark đa màn hình (UC-12.03)
+  useEffect(() => {
+    const handleBookmarkUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        slug: string;
+        isBookmarked: boolean;
+      }>;
+      if (!customEvent.detail) return;
+      const { slug, isBookmarked } = customEvent.detail;
+      if (!isBookmarked) {
+        setJobs((current) => current.filter((j) => j.slug !== slug));
+        setTotalCount((current) => Math.max(0, current - 1));
+      }
+    };
+
+    window.addEventListener("frevia:bookmark-updated", handleBookmarkUpdated);
+    return () => {
+      window.removeEventListener(
+        "frevia:bookmark-updated",
+        handleBookmarkUpdated,
+      );
+    };
+  }, []);
 
   const formatBudget = (job: ViewBookmarkedJobResponseType["data"][number]) => {
     if (job.budgetMin === null || job.budgetMax === null) return t("negotiable");
@@ -110,10 +148,22 @@ export function BookmarksContent({
     setIsRemoving(true);
     try {
       await jobApiRequest.removeBookmark(slug);
+      // Cập nhật danh sách ngay lập tức không cần chờ reload toàn trang
+      setJobs((current) => current.filter((j) => j.slug !== slug));
+      setTotalCount((current) => Math.max(0, current - 1));
       toastSuccess({ message: t("removed") });
       setPendingRemoveJobSlug(null);
+      // Phát sự kiện đồng bộ trạng thái bookmark
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("frevia:bookmark-updated", {
+            detail: { slug, isBookmarked: false },
+          }),
+        );
+      }
       router.refresh();
     } catch {
+      // Khi thất bại: giữ nguyên trạng thái danh sách và báo lỗi
       toastError({ message: t("removeFailed") });
     } finally {
       setIsRemoving(false);
@@ -167,7 +217,7 @@ export function BookmarksContent({
 
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3.5 py-1 text-xs font-medium text-muted-foreground">
-                  {t("count", { count: pagination.total })}
+                  {t("count", { count: totalCount })}
                 </span>
               </div>
             </div>
@@ -176,10 +226,12 @@ export function BookmarksContent({
 
         {/* Content Area */}
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          {initialJobs.length ? (
+          {jobs.length ? (
             <div className="space-y-3">
-              {initialJobs.map((job, index) => {
+              {jobs.map((job, index) => {
                 const availability = getAvailability(job);
+                const isAvailableToApply =
+                  job.status === "OPEN" && !availability.isClosed;
                 return (
                   <motion.div
                     key={job.id}
@@ -197,9 +249,13 @@ export function BookmarksContent({
                         <div className="flex flex-wrap items-center gap-2">
                           <span
                             className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${
-                              availability.isExpiring
-                                ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
-                                : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
+                              availability.key === "closed"
+                                ? "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                                : availability.key === "expired"
+                                  ? "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300"
+                                  : availability.isExpiring
+                                    ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
+                                    : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
                             }`}
                           >
                             {t(availability.key)}
@@ -278,14 +334,29 @@ export function BookmarksContent({
                         )}
                       </div>
 
-                      <Link
-                        href={`${jobBaseUrl}/${job.slug}`}
-                        className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
-                      >
-                        <BriefcaseBusiness className="size-3.5" />
-                        <span>{t("viewJob")}</span>
-                        <ArrowRight className="size-3.5" />
-                      </Link>
+                      {isAvailableToApply ? (
+                        <Link
+                          href={`${jobBaseUrl}/${job.slug}`}
+                          className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
+                        >
+                          <BriefcaseBusiness className="size-3.5" />
+                          <span>{t("viewJob")}</span>
+                          <ArrowRight className="size-3.5" />
+                        </Link>
+                      ) : (
+                        <div className="flex items-center gap-2 self-start sm:self-auto">
+                          <span className="text-xs text-muted-foreground font-medium italic">
+                            {t("applicationsClosed")}
+                          </span>
+                          <Link
+                            href={`${jobBaseUrl}/${job.slug}`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background hover:bg-muted text-foreground/80 px-3.5 py-1.5 text-xs font-semibold shadow-xs transition-all"
+                          >
+                            <span>{t("viewJob")}</span>
+                            <ArrowRight className="size-3" />
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 );

@@ -29,6 +29,8 @@
   "Error.BudgetTypeInvalid": "Loại ngân sách không hợp lệ",
   "Error.CannotAssignAdminRole": "Không thể gán vai trò quản trị viên",
   "Error.CannotBanSelf": "Bạn không thể khoá tài khoản của chính mình",
+  "Error.CannotBookmarkOwnJob": "Bạn không thể lưu công việc do chính mình đăng",
+  "Error.CannotBookmarkUnavailableJob": "Công việc này đã đóng hoặc không còn khả dụng để lưu",
   "Error.CannotModifySystemRole": "Không thể thay đổi vai trò hệ thống",
   "Error.CannotProposeOwnJob": "Bạn không thể gửi đề xuất cho công việc của chính mình",
   "Error.CompanyDescriptionTooLong": "Mô tả công ty quá dài",

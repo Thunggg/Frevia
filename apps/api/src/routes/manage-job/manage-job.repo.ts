@@ -69,7 +69,6 @@ export class ManageJobRepository {
       userId,
       job: {
         deletedAt: null,
-        status: JobStatus.OPEN,
         client: {
           isBanned: false,
           deletedAt: null,
@@ -185,12 +184,13 @@ export class ManageJobRepository {
     return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
-  async findJobBySlug(slug: string): Promise<Pick<JobType, 'id'> | null> {
+  async findJobBySlug(
+    slug: string,
+  ): Promise<Pick<JobType, 'id' | 'clientId' | 'status' | 'expiryDate'> | null> {
     return this.prisma.job.findFirst({
       where: {
         slug,
         deletedAt: null,
-        status: JobStatus.OPEN,
         client: {
           isBanned: false,
           deletedAt: null,
@@ -199,6 +199,9 @@ export class ManageJobRepository {
 
       select: {
         id: true,
+        clientId: true,
+        status: true,
+        expiryDate: true,
       },
     });
   }

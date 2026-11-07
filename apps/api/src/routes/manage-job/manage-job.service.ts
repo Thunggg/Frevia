@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JobStatus } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 import {
@@ -16,6 +17,9 @@ import {
 import {
   BookmarkJobOnlyForFreelancerException,
   BookmarkNotFoundException,
+  CannotBookmarkOwnJobException,
+  CannotBookmarkUnavailableJobException,
+  FailedToBookmarkJobException,
   FailedToCreateJobException,
   FailedToDeleteJobException,
   FailedToRemoveBookmarkException,
@@ -84,6 +88,17 @@ export class ManageJobService {
       throw JobNotFoundException();
     }
 
+    if (job.clientId === userId) {
+      throw CannotBookmarkOwnJobException();
+    }
+
+    const isExpired = job.expiryDate
+      ? new Date(job.expiryDate) < new Date()
+      : false;
+    if (job.status !== JobStatus.OPEN || isExpired) {
+      throw CannotBookmarkUnavailableJobException();
+    }
+
     const bookmark = await this.manageJobRepository.findBookmark(
       userId,
       job.id,
@@ -93,7 +108,17 @@ export class ManageJobService {
       throw JobAlreadyBookmarkedException();
     }
 
-    await this.manageJobRepository.bookmarkJob(userId, job.id);
+    try {
+      await this.manageJobRepository.bookmarkJob(userId, job.id);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw JobAlreadyBookmarkedException();
+      }
+      throw FailedToBookmarkJobException();
+    }
   }
 
   async viewClientJobs(

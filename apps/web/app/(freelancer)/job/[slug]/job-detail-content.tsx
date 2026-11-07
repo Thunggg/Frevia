@@ -48,6 +48,7 @@ type JobDetailContentProps = {
   existingProposal: ProposalType | null;
   embedded?: boolean;
   basePath?: string;
+  currentUserId?: number;
 };
 
 function looksLikeHtml(value: string) {
@@ -120,6 +121,7 @@ export function JobDetailContent({
   existingProposal,
   embedded = false,
   basePath = embedded ? "/freelancer/find-work" : "/find-work",
+  currentUserId,
 }: JobDetailContentProps) {
   const router = useRouter();
   const t = useTranslations("jobDetail");
@@ -135,7 +137,35 @@ export function JobDetailContent({
   const [clientName, setClientName] = useState<string | null>(null);
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
   const [clientLoading, setClientLoading] = useState(true);
-  const canBookmark = role === "FREELANCER";
+
+  const isOwnJob = currentUserId != null && job.clientId === currentUserId;
+  const canBookmark = role === "FREELANCER" && !isOwnJob;
+
+  useEffect(() => {
+    setIsBookmarked(initialIsBookmarked);
+  }, [initialIsBookmarked]);
+
+  // Đồng bộ trạng thái bookmark đa màn hình (UC-12.03)
+  useEffect(() => {
+    const handleBookmarkUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        slug: string;
+        isBookmarked: boolean;
+      }>;
+      if (!customEvent.detail) return;
+      if (customEvent.detail.slug === job.slug) {
+        setIsBookmarked(customEvent.detail.isBookmarked);
+      }
+    };
+
+    window.addEventListener("frevia:bookmark-updated", handleBookmarkUpdated);
+    return () => {
+      window.removeEventListener(
+        "frevia:bookmark-updated",
+        handleBookmarkUpdated,
+      );
+    };
+  }, [job.slug]);
   const activeProposalQuery = useQuery({
     queryKey: ["proposals", "job", job.id, "mine"],
     queryFn: () => proposalApiRequest.getMyProposalForJob(job.id),
@@ -235,8 +265,18 @@ export function JobDetailContent({
 
   const toggleBookmark = () => {
     requireFreelancer(() => {
+      if (isOwnJob) {
+        toastError({ message: t("cannotProposeOwn") });
+        return;
+      }
+
       if (isBookmarked) {
         setIsRemoveDialogOpen(true);
+        return;
+      }
+
+      if (!canReceiveProposals) {
+        toastError({ message: t("notAccepting") });
         return;
       }
 
@@ -246,6 +286,13 @@ export function JobDetailContent({
           await jobApiRequest.bookmarkJob(job.slug);
           setIsBookmarked(true);
           toastSuccess({ message: tBookmark("added") });
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("frevia:bookmark-updated", {
+                detail: { slug: job.slug, isBookmarked: true },
+              }),
+            );
+          }
         } catch {
           toastError({
             message: tBookmark("updateFailed"),
@@ -264,6 +311,13 @@ export function JobDetailContent({
       setIsBookmarked(false);
       setIsRemoveDialogOpen(false);
       toastSuccess({ message: tBookmark("removed") });
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("frevia:bookmark-updated", {
+            detail: { slug: job.slug, isBookmarked: false },
+          }),
+        );
+      }
     } catch {
       toastError({ message: tBookmark("removeFailed") });
     } finally {

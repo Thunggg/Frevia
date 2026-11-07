@@ -1,3 +1,4 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateJobBodySchema,
   ManageJobMessage,
@@ -8,10 +9,16 @@ import type { EmbeddingOutboxService } from '../recommendations/embedding-outbox
 import type { ManageJobRepository } from './manage-job.repo';
 import { ManageJobService } from './manage-job.service';
 import {
+  BookmarkJobOnlyForFreelancerException,
+  BookmarkNotFoundException,
+  CannotBookmarkOwnJobException,
+  CannotBookmarkUnavailableJobException,
+  JobAlreadyBookmarkedException,
   JobCannotBeClosedException,
   JobCannotBeDeletedWithActiveContractException,
   JobCannotBePublishedException,
   JobCannotBeReopenedException,
+  JobNotFoundException,
   JobOnlyForClientException,
   JobReopenPeriodExpiredException,
   JobCategoryOnlyOneException,
@@ -259,6 +266,188 @@ describe('ManageJobService', () => {
     it('JobCategoryOnlyOneException returns proper message', () => {
       const exception = JobCategoryOnlyOneException();
       expect(exception.message).toBe(ManageJobMessage.JOB_CATEGORY_ONLY_ONE);
+    });
+  });
+
+  describe('viewBookmarkedJob (UC-12.01)', () => {
+    it('throws if role is not FREELANCER', async () => {
+      await expect(
+        service.viewBookmarkedJob(1, RoleName.CLIENT, { page: 1, limit: 10 }),
+      ).rejects.toThrow(BookmarkJobOnlyForFreelancerException());
+    });
+
+    it('returns bookmarked jobs with pagination including closed jobs', async () => {
+      const mockJobs = [
+        { id: 1, title: 'Job 1', status: 'CLOSED' },
+        { id: 2, title: 'Job 2', status: 'OPEN' },
+      ];
+      repository.getBookmarkedJobLists.mockResolvedValueOnce({
+        jobs: mockJobs,
+        total: 2,
+      });
+
+      const result = await service.viewBookmarkedJob(1, RoleName.FREELANCER, {
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.data).toHaveLength(2);
+      expect(result.pagination).toEqual({
+        page: 1,
+        limit: 10,
+        total: 2,
+        totalPages: 1,
+      });
+      expect(repository.getBookmarkedJobLists).toHaveBeenCalledWith(1, {
+        page: 1,
+        limit: 10,
+      });
+    });
+  });
+
+  describe('bookmarkJob (UC-12.02)', () => {
+    it('throws if role is not FREELANCER', async () => {
+      await expect(
+        service.bookmarkJob(1, RoleName.CLIENT, 'slug-1'),
+      ).rejects.toThrow(BookmarkJobOnlyForFreelancerException());
+    });
+
+    it('throws JobNotFoundException if job does not exist', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce(null);
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'non-existent-slug'),
+      ).rejects.toThrow(JobNotFoundException());
+    });
+
+    it('throws CannotBookmarkOwnJobException if user is the job owner', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 1,
+        status: 'OPEN',
+        expiryDate: null,
+      });
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'own-job-slug'),
+      ).rejects.toThrow(CannotBookmarkOwnJobException());
+    });
+
+    it('throws CannotBookmarkUnavailableJobException if job is not OPEN', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'CLOSED',
+        expiryDate: null,
+      });
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'closed-job-slug'),
+      ).rejects.toThrow(CannotBookmarkUnavailableJobException());
+    });
+
+    it('throws CannotBookmarkUnavailableJobException if job is expired', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'OPEN',
+        expiryDate: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+      });
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'expired-job-slug'),
+      ).rejects.toThrow(CannotBookmarkUnavailableJobException());
+    });
+
+    it('throws JobAlreadyBookmarkedException if already bookmarked', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'OPEN',
+        expiryDate: null,
+      });
+      repository.findBookmark.mockResolvedValueOnce({ userId: 1, jobId: 10 });
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'job-slug'),
+      ).rejects.toThrow(JobAlreadyBookmarkedException());
+    });
+
+    it('handles concurrency duplicate by catching P2002 error', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'OPEN',
+        expiryDate: null,
+      });
+      repository.findBookmark.mockResolvedValueOnce(null);
+      const prismaError = new PrismaClientKnownRequestError(
+        'Unique constraint failed',
+        { code: 'P2002', clientVersion: '6.0.0' },
+      );
+      repository.bookmarkJob.mockRejectedValueOnce(prismaError);
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'job-slug'),
+      ).rejects.toThrow(JobAlreadyBookmarkedException());
+    });
+
+    it('successfully bookmarks an open job', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'OPEN',
+        expiryDate: null,
+      });
+      repository.findBookmark.mockResolvedValueOnce(null);
+      repository.bookmarkJob.mockResolvedValueOnce({ userId: 1, jobId: 10 });
+
+      await expect(
+        service.bookmarkJob(1, RoleName.FREELANCER, 'job-slug'),
+      ).resolves.toBeUndefined();
+
+      expect(repository.bookmarkJob).toHaveBeenCalledWith(1, 10);
+    });
+  });
+
+  describe('removeBookmark (UC-12.03)', () => {
+    it('throws JobNotFoundException if job is not found', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce(null);
+
+      await expect(
+        service.removeBookmark(1, 'non-existent-slug'),
+      ).rejects.toThrow(JobNotFoundException());
+    });
+
+    it('throws BookmarkNotFoundException if not bookmarked', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'CLOSED',
+        expiryDate: null,
+      });
+      repository.findBookmark.mockResolvedValueOnce(null);
+
+      await expect(service.removeBookmark(1, 'job-slug')).rejects.toThrow(
+        BookmarkNotFoundException(),
+      );
+    });
+
+    it('successfully removes bookmark on any existing job (even CLOSED)', async () => {
+      repository.findJobBySlug.mockResolvedValueOnce({
+        id: 10,
+        clientId: 2,
+        status: 'CLOSED',
+        expiryDate: null,
+      });
+      repository.findBookmark.mockResolvedValueOnce({ userId: 1, jobId: 10 });
+      repository.removeBookmark.mockResolvedValueOnce({ userId: 1, jobId: 10 });
+
+      await expect(
+        service.removeBookmark(1, 'job-slug'),
+      ).resolves.toBeUndefined();
+
+      expect(repository.removeBookmark).toHaveBeenCalledWith(1, 10);
     });
   });
 });

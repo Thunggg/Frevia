@@ -29,6 +29,8 @@
   "Error.BudgetTypeInvalid": "Budget type is invalid",
   "Error.CannotAssignAdminRole": "The admin role cannot be assigned",
   "Error.CannotBanSelf": "You cannot ban your own account",
+  "Error.CannotBookmarkOwnJob": "You cannot save your own job",
+  "Error.CannotBookmarkUnavailableJob": "This job is closed or no longer available to save",
   "Error.CannotModifySystemRole": "System roles cannot be modified",
   "Error.CannotProposeOwnJob": "You cannot submit a proposal for your own job",
   "Error.CompanyDescriptionTooLong": "Company description is too long",

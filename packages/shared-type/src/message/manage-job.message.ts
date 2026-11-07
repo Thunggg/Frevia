@@ -10,6 +10,8 @@ export const ManageJobMessage = {
   BOOKMARK_NOT_FOUND: "Error.BookmarkNotFound",
   JOB_ALREADY_BOOKMARKED: "Error.JobAlreadyBookmarked",
   BOOKMARK_JOB_ONLY_FOR_FREELANCER: "Error.BookmarkJobOnlyForFreelancer",
+  CANNOT_BOOKMARK_OWN_JOB: "Error.CannotBookmarkOwnJob",
+  CANNOT_BOOKMARK_UNAVAILABLE_JOB: "Error.CannotBookmarkUnavailableJob",
 
   FAILED_TO_LOAD_BOOKMARKED_JOBS: "Error.FailedToLoadBookmarkedJobs",
   FAILED_TO_BOOKMARK_JOB: "Error.FailedToBookmarkJob",

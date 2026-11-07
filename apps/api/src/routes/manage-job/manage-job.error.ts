@@ -13,6 +13,12 @@ export const BookmarkNotFoundException = () =>
 export const JobAlreadyBookmarkedException = () =>
   new BadRequestException(ManageJobMessage.JOB_ALREADY_BOOKMARKED);
 
+export const CannotBookmarkOwnJobException = () =>
+  new BadRequestException(ManageJobMessage.CANNOT_BOOKMARK_OWN_JOB);
+
+export const CannotBookmarkUnavailableJobException = () =>
+  new BadRequestException(ManageJobMessage.CANNOT_BOOKMARK_UNAVAILABLE_JOB);
+
 export const BookmarkJobOnlyForFreelancerException = () =>
   new ForbiddenException([
     {

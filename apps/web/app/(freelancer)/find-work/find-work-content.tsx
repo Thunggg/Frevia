@@ -196,6 +196,35 @@ export function FindWorkContent({
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
   }, [initialBookmarkedSlugs]);
 
+  // Đồng bộ trạng thái bookmark đa màn hình (UC-12.03)
+  useEffect(() => {
+    const handleBookmarkUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        slug: string;
+        isBookmarked: boolean;
+      }>;
+      if (!customEvent.detail) return;
+      const { slug, isBookmarked } = customEvent.detail;
+      setBookmarkedSlugs((current) => {
+        const next = new Set(current);
+        if (isBookmarked) {
+          next.add(slug);
+        } else {
+          next.delete(slug);
+        }
+        return next;
+      });
+    };
+
+    window.addEventListener("frevia:bookmark-updated", handleBookmarkUpdated);
+    return () => {
+      window.removeEventListener(
+        "frevia:bookmark-updated",
+        handleBookmarkUpdated,
+      );
+    };
+  }, []);
+
   useEffect(() => {
     setSavedSearches(initialSavedSearches ?? []);
   }, [initialSavedSearches]);
@@ -351,10 +380,24 @@ export function FindWorkContent({
           return next;
         });
         toastSuccess({ message: tBookmark("removed") });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("frevia:bookmark-updated", {
+              detail: { slug, isBookmarked: false },
+            }),
+          );
+        }
       } else {
         await jobApiRequest.bookmarkJob(slug);
         setBookmarkedSlugs((current) => new Set(current).add(slug));
         toastSuccess({ message: tBookmark("added") });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("frevia:bookmark-updated", {
+              detail: { slug, isBookmarked: true },
+            }),
+          );
+        }
       }
     } catch {
       toastError({
