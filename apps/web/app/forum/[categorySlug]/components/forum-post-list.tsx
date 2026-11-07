@@ -160,13 +160,11 @@ export function ForumPostList({
     return pages;
   };
 
-  const showTrending = topPosts.length > 0 && !isMyPosts && !currentSearch;
-
   return (
     <div className="space-y-6">
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearchSubmit} className="w-full max-w-sm">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/50" strokeWidth={1.75} />
             <Input
@@ -174,7 +172,7 @@ export function ForumPostList({
               placeholder={t("searchPlaceholder")}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-9 rounded-lg border-border/60 bg-white/60 pl-9 pr-9 text-[13px] focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20 dark:bg-white/[0.03]"
+              className="h-11 rounded-lg border-border bg-transparent pl-9 pr-9 text-sm focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20"
             />
             {searchInput ? (
               <button
@@ -194,15 +192,15 @@ export function ForumPostList({
             <Button
               variant={isMyPosts ? "default" : "outline"}
               size="sm"
-              className={`h-8 gap-1.5 text-[13px] ${
+              className={`h-11 w-28 gap-1.5 text-sm ${
                 isMyPosts
-                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
-                  : "border-border/60 text-foreground/60 hover:border-[#4fae2e]/40 hover:text-foreground"
+                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
+                  : "border-border text-foreground/60 hover:border-[#4fae2e]/40 hover:text-foreground"
               }`}
               onClick={toggleMyPosts}
               aria-pressed={isMyPosts}
             >
-              <User className="size-3.5" />
+              <User className="size-4" />
               {t("myPosts")}
             </Button>
           ) : null}
@@ -213,7 +211,7 @@ export function ForumPostList({
             currentUserId={currentUserId}
           />
           <Select value={String(limit)} onValueChange={handleLimitChange}>
-            <SelectTrigger className="h-8 w-[90px] rounded-lg border-border/60 bg-transparent text-[13px] text-foreground/60">
+            <SelectTrigger className="h-11 w-[120px] rounded-lg border-border bg-transparent text-sm text-foreground/60">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -263,33 +261,33 @@ export function ForumPostList({
       ) : null}
 
       {/* Main grid */}
-      <div
-        className={`grid gap-8 ${
-          showTrending ? "lg:grid-cols-12" : "grid-cols-1"
-        }`}
-      >
+      <div className="grid gap-8 lg:grid-cols-12">
         {/* Trending sidebar */}
-        {showTrending ? (
-          <aside className="order-2 lg:order-1 lg:col-span-4">
-            <div className="sticky top-20 rounded-xl border border-border/40 bg-background p-5 sm:p-6">
-              <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">
-                {t("trendingIn", { category: categoryName })}
-              </h2>
-              <ul className="mt-4 space-y-1">
+        <aside className="order-2 lg:order-1 lg:col-span-4">
+          <div className="space-y-4 rounded-xl border border-border p-5 sm:p-6">
+            <h2 className="text-base font-semibold text-foreground">
+              {t("trendingIn", { category: categoryName })}
+            </h2>
+            {topPosts.length === 0 ? (
+              <p className="text-sm text-muted-foreground/60">
+                {t("noTrendingPosts")}
+              </p>
+            ) : (
+              <ul className="space-y-1">
                 {topPosts.map((post, index) => (
                   <li key={post.id}>
                     <Link
                       href={`/forum/${buildSlugId(categorySlug, post.categoryId ?? categoryId)}/${buildSlugId(post.slug, post.id)}`}
-                      className="group flex items-start gap-3 rounded-lg px-2.5 py-2.5 transition-colors hover:bg-[#f9fcf7]/60 dark:hover:bg-white/[0.02]"
+                      className="group flex items-start gap-3 rounded-lg px-1 py-2 transition-colors hover:bg-[#eaf8df]/30 dark:hover:bg-white/[0.02]"
                     >
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[#4fae2e]/8 text-[11px] font-semibold text-[#4fae2e]/70">
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#4fae2e]/10 text-[11px] font-semibold text-[#4fae2e]">
                         {index + 1}
                       </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-foreground/80 transition-colors group-hover:text-[#4fae2e]">
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground/80 transition-colors group-hover:text-[#4fae2e]">
                           {post.title}
                         </p>
-                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground/50">
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground/50">
                           <span className="inline-flex items-center gap-1">
                             <Heart className="size-3 text-[#4fae2e]/60" />
                             {post.likeCount}
@@ -304,16 +302,14 @@ export function ForumPostList({
                   </li>
                 ))}
               </ul>
-            </div>
-          </aside>
-        ) : null}
+            )}
+          </div>
+        </aside>
 
         {/* Post list */}
-        <div
-          className={`order-1 ${showTrending ? "lg:order-2 lg:col-span-8" : ""}`}
-        >
+        <div className="order-1 lg:order-2 lg:col-span-8">
           {pagination.total > 0 ? (
-            <p className="mb-4 text-[13px] text-muted-foreground/50">
+            <p className="mb-4 text-sm text-muted-foreground/50">
               {t("showing")}{" "}
               <span className="font-medium text-foreground/70">
                 {Math.min((currentPage - 1) * limit + 1, pagination.total)}–
@@ -355,7 +351,7 @@ export function ForumPostList({
                 {hasActiveFilters ? (
                   <Button
                     size="sm"
-                    className="mt-6 h-8 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
+                    className="mt-6 h-9 bg-[#4fae2e] text-sm text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
                     onClick={clearAllFilters}
                   >
                     {t("clearFilters")}
@@ -363,22 +359,22 @@ export function ForumPostList({
                 ) : null}
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="divide-y divide-border border-y border-border">
                 {posts.map((post) => (
                   <Link
                     key={post.id}
                     href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
-                    className="group block rounded-xl border border-border/40 bg-background px-5 py-5 transition-all hover:border-[#4fae2e]/20 hover:bg-[#f9fcf7]/60 hover:shadow-sm sm:py-6 dark:hover:bg-white/[0.02]"
+                    className="group block space-y-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/30 sm:px-5 sm:py-7 dark:hover:bg-white/[0.02]"
                   >
-                    <h3 className="text-[15px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e] sm:text-base">
+                    <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
                       {post.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground/60">
+                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground/60">
                       {stripHtml(post.content)}
                     </p>
-                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-muted-foreground/50">
+                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-muted-foreground/50">
                       <span className="inline-flex items-center gap-2">
-                        <Avatar size="sm">
+                        <Avatar>
                           <AvatarImage
                             src={
                               post.user?.profile?.avatarUrl ?? undefined

@@ -103,7 +103,7 @@ export function RelatedPostsSidebar({
       </div>
       <Link
         href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
-        className="mt-3 block rounded-lg py-2 text-center text-[12px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/5 hover:text-[#3f9225]"
+        className="mt-3 block rounded-lg py-2 text-center text-[12px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/5 hover:text-[#459928]"
       >
         {t("viewAllPosts")} →
       </Link>

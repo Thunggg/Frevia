@@ -5,11 +5,15 @@ import { RoleName } from "@shared/types";
 import { NewConversationView } from "../components/new-conversation-view";
 
 type NewConversationPageProps = {
-  searchParams: Promise<{ participantId?: string }>;
+  searchParams: Promise<{
+    participantId?: string;
+    initialMessage?: string;
+  }>;
 };
 
 const NewConversationPage = async ({ searchParams }: NewConversationPageProps) => {
-  const { participantId } = await searchParams;
+  const { participantId, initialMessage } = await searchParams;
+  const initMsg = initialMessage ? decodeURIComponent(initialMessage) : undefined;
   const participantIdNum = Number(participantId);
   const t = await getTranslations("chat");
 
@@ -39,6 +43,7 @@ const NewConversationPage = async ({ searchParams }: NewConversationPageProps) =
     <NewConversationView
       participantId={participantIdNum}
       currentUserId={currentUserId}
+      initialMessage={initMsg}
     />
   );
 };

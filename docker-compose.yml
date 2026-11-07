@@ -54,6 +54,27 @@ services:
       start_period: 30s
 
   # ========================================================
+  # 2. AI SERVICE: AIMODERATIONCONTENT (SensitiveAI Moderation API)
+  # Service chuyên chạy moderation nội dung (forum/job/etc) cho Frevia.
+  # ========================================================
+  ai-moderation:
+    build:
+      context: ./ai-services/ai-moderation
+      dockerfile: Dockerfile
+    container_name: frevia-ai-moderation
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8001/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ========================================================
   # 3. OLLAMA LLM SERVICE
   # ========================================================
   ollama:
@@ -83,6 +104,8 @@ services:
     ports:
       - "3002:3000"
     depends_on:
+      ai-moderation:
+        condition: service_healthy
       id-verification:
         condition: service_started
       cv-matching:
@@ -100,6 +123,8 @@ services:
       AI_SERVICE_TIMEOUT_MS: 60000
       FREVIA_AI_URL: http://cv-matching:8000
       FREVIA_AI_TOKEN: frevia_ai_internal_secret_token
+      AI_MODERATION_URL: http://ai-moderation:8001/api/v1
+      AI_MODERATION_TIMEOUT_MS: 30000
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api || exit 1"]
       interval: 10s

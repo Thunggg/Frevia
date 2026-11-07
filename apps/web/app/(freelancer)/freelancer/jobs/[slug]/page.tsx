@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
@@ -25,18 +25,17 @@ export default async function FreelancerJobDetailPage({
     jobServerRequest.getJobDetail(slug),
   ]);
 
-  if (!user) {
-    redirect(`/login?callbackUrl=/freelancer/jobs/${slug}`);
-  }
-
   if (!job) {
     notFound();
   }
 
+  const role = user ? "FREELANCER" : "GUEST";
   const relatedSearch = job.skills[0]?.skill.name;
 
-  const [bookmarkStatus, relatedResult, existingProposal] = await Promise.all([
-    jobServerRequest.getBookmarkStatus(slug),
+  const [bookmarkStatus, relatedResult] = await Promise.all([
+    role === "FREELANCER"
+      ? jobServerRequest.getBookmarkStatus(slug)
+      : Promise.resolve(null),
     relatedSearch
       ? jobServerRequest.getJobs({
           page: 1,
@@ -46,21 +45,25 @@ export default async function FreelancerJobDetailPage({
           order: "desc",
         })
       : Promise.resolve(null),
-    proposalServerRequest.getMyProposalForJob(job.id),
   ]);
 
   const relatedJobs: JobType[] = (relatedResult?.data ?? [])
     .filter((item) => item.slug !== job.slug)
     .slice(0, 3);
 
+  const existingProposal: ProposalType | null =
+    role === "FREELANCER"
+      ? await proposalServerRequest.getMyProposalForJob(job.id)
+      : null;
+
   return (
     <JobDetailContent
       job={job}
-      role="FREELANCER"
+      role={role}
       initialIsBookmarked={bookmarkStatus?.isBookmarked ?? false}
       relatedJobs={relatedJobs}
       relatedSkill={relatedSearch}
-      existingProposal={existingProposal as ProposalType | null}
+      existingProposal={existingProposal}
       embedded={true}
       basePath="/freelancer/find-work"
     />

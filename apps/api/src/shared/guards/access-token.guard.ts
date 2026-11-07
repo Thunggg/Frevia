@@ -27,6 +27,31 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (isPublic) {
+      const request = context.switchToHttp().getRequest<Request>();
+      const token = this.extractTokenFromHeader(request);
+      if (token) {
+        try {
+          const payload = await this.tokenService.verifyAccessToken(token);
+          if (payload.sessionId) {
+            const sessionWithUser = await this.prisma.session.findFirst({
+              where: { id: payload.sessionId, userId: payload.userId },
+              select: {
+                id: true,
+                user: { select: { isBanned: true, deletedAt: true } },
+              },
+            });
+            if (
+              sessionWithUser &&
+              !sessionWithUser.user.isBanned &&
+              !sessionWithUser.user.deletedAt
+            ) {
+              request[REQUEST_USER_KEY] = payload;
+            }
+          }
+        } catch {
+          // Bỏ qua lỗi token cho route public, tiếp tục dưới danh nghĩa guest
+        }
+      }
       return true;
     }
 

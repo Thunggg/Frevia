@@ -132,7 +132,7 @@ export class ForumRepository {
     }));
   }
 
-  // Lấy top người dùng hoạt động nhiều nhất (dựa trên số bài viết)
+  // Lấy top người dùng hoạt động nhiều nhất (dựa trên số bài viết đã được duyệt)
   async getTopActiveUsers(
     limit: number = 5,
   ): Promise<ForumTopActiveUserType[]> {
@@ -151,24 +151,29 @@ export class ForumRepository {
         },
         _count: {
           select: {
-            forumPosts: { where: { deletedAt: null } },
+            forumPosts: {
+              where: {
+                deletedAt: null,
+                moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
+                category: { deletedAt: null },
+              },
+            },
             forumComments: { where: { deletedAt: null } },
           },
         },
       },
-      orderBy: {
-        forumPosts: { _count: 'desc' },
-      },
-      take: limit,
     });
 
-    return users.map((u) => ({
-      id: u.id,
-      displayName: u.profile?.displayName ?? null,
-      avatarUrl: u.profile?.avatarUrl ?? null,
-      postCount: u._count.forumPosts,
-      commentCount: u._count.forumComments,
-    }));
+    return users
+      .map((u) => ({
+        id: u.id,
+        displayName: u.profile?.displayName ?? null,
+        avatarUrl: u.profile?.avatarUrl ?? null,
+        postCount: u._count.forumPosts,
+        commentCount: u._count.forumComments,
+      }))
+      .sort((a, b) => b.postCount - a.postCount)
+      .slice(0, limit);
   }
 
   // Tìm xem category hiện tại có tồn tại không trước khi tạo post
