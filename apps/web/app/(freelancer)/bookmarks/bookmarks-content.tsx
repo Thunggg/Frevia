@@ -393,13 +393,7 @@ export function BookmarksContent({
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
 
-              <AlertDialogCancel asChild>
-                <button
-                  type="button"
-                  disabled={isRemoving}
-                  className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50"
-                >
-                  <div className="flex items-center gap-2.5">
+              <AlertDialogCancel disabled={isRemoving} className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50 h-auto"><div className="flex items-center gap-2.5">
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
                       <X className="size-3.5" />
                     </div>
@@ -407,9 +401,7 @@ export function BookmarksContent({
                       {tCommon("cancel")}
                     </span>
                   </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-                </button>
-              </AlertDialogCancel>
+                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" /></AlertDialogCancel>
             </div>
           </div>
         </AlertDialogContent>

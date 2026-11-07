@@ -1,4 +1,9 @@
-import { HiringType, NotificationType, ProposalStatus } from '@prisma/client';
+import {
+  HiringType,
+  MilestoneStatus,
+  NotificationType,
+  ProposalStatus,
+} from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { ProposalRepository } from './proposal.repo';
 
@@ -37,6 +42,7 @@ function createHireTransaction(overrides: {
       update: jest.fn().mockResolvedValue({ id: 10 }),
     },
     contract: { create: jest.fn().mockResolvedValue({ id: 22 }) },
+    milestone: { create: jest.fn().mockResolvedValue({ id: 1 }) },
     notification: { create: jest.fn().mockResolvedValue({ id: 31 }) },
   };
 
@@ -93,13 +99,24 @@ describe('ProposalRepository', () => {
 
     expect(transaction.contract.create).toHaveBeenCalledWith({
       data: {
+        slug: expect.stringMatching(/^contract-/),
         jobId: 10,
         proposalId: 18,
         clientId: 4,
         freelancerId: 12,
         totalAmount: 700,
+        platformFee: 7,
       },
       select: { id: true },
+    });
+    expect(transaction.milestone.create).toHaveBeenCalledWith({
+      data: {
+        contractId: 22,
+        title: 'AI Dev App - Milestone 1',
+        description: 'Initial milestone for AI Dev App',
+        amount: 700,
+        status: MilestoneStatus.PENDING,
+      },
     });
     expect(transaction.notification.create).toHaveBeenCalledWith({
       data: {
