@@ -13,6 +13,7 @@ import {
   ProposalStatusType,
   RoleName,
   SaveProposalDraftBodyType,
+  UpdateProposalBodyType,
 } from '@shared/types';
 
 import {
@@ -85,6 +86,36 @@ export class ProposalService {
     this.assertFreelancer(roleName);
     const proposal = await this.getOwnedDraft(userId, proposalId);
     await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
+    try {
+      return await this.proposalRepository.updateDraft(proposal.id, body);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToUpdateProposalException();
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * UC-32.04 — Cập nhật đề xuất (DRAFT hoặc SUBMITTED).
+   */
+  async updateProposal(
+    userId: number,
+    roleName: string,
+    proposalId: number,
+    body: UpdateProposalBodyType,
+  ): Promise<ProposalType> {
+    this.assertFreelancer(roleName);
+    const proposal = await this.proposalRepository.findProposal(proposalId);
+    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
+    if (proposal.freelancerId !== userId) throw ProposalForbiddenException();
+
+    if (proposal.status !== 'DRAFT' && proposal.status !== 'SUBMITTED') {
+      throw ProposalNotSubmittedException();
+    }
+
+    await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
+
     try {
       return await this.proposalRepository.updateDraft(proposal.id, body);
     } catch (error) {

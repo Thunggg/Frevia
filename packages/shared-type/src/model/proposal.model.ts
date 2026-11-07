@@ -180,6 +180,8 @@ export const SaveProposalDraftBodySchema = z
     message: ManageProposalMessage.DRAFT_CONTENT_REQUIRED,
   });
 
+export const UpdateProposalBodySchema = SaveProposalDraftBodySchema;
+
 export type ProposalType = z.infer<typeof ProposalSchema>;
 export type ProposalStatusType = z.infer<typeof ProposalStatusSchema>;
 export type SubmittedProposalStatusType = z.infer<
@@ -192,6 +194,7 @@ export type CreateProposalBodyType = z.output<typeof CreateProposalBodySchema>;
 export type SaveProposalDraftBodyType = z.output<
   typeof SaveProposalDraftBodySchema
 >;
+export type UpdateProposalBodyType = z.output<typeof UpdateProposalBodySchema>;
 export type ProposalDetailType = z.infer<typeof ProposalDetailSchema>;
 export type ClientJobProposalType = z.infer<typeof ClientJobProposalSchema>;
 export type ClientJobProposalsResponseType = z.infer<
