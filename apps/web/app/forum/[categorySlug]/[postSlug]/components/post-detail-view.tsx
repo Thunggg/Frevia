@@ -65,7 +65,7 @@ export function PostDetailView({
   const resolvedCategoryId = post.category?.id ?? categoryId;
   const categoryName = post.category?.name ?? t("categoryFallback");
 
-  const { data: likes } = useForumPostLikes(post.id);
+  const { data: likes } = useForumPostLikes(post.id, !!currentUserId);
   const { data: commentsData } = useForumComments(post.id, 1, 50);
 
   const toggleLike = useTogglePostLike(post.id, currentUserId);
@@ -117,10 +117,6 @@ export function PostDetailView({
       <section className="border-b border-border/40 bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <nav className="text-[13px] text-muted-foreground/60">
-            <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-              {tCommon("home")}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
             <Link
               href="/forum"
               className="transition-colors hover:text-[#4fae2e]"
@@ -144,7 +140,7 @@ export function PostDetailView({
             {t("discussionIn")}{" "}
             <Link
               href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-              className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+              className="font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
             >
               {categoryName}
             </Link>
@@ -250,7 +246,7 @@ export function PostDetailView({
               disabled={toggleLike.isPending}
               className={
                 liked
-                  ? "gap-1.5 px-3 text-[#4fae2e] hover:bg-[#4fae2e]/5 hover:text-[#3f9225] dark:hover:bg-[#4fae2e]/10"
+                  ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
                   : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
               }
             >

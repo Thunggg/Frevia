@@ -30,7 +30,7 @@ type CreatePostDialogProps = {
 };
 
 const brandButtonClass =
-  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]";
+  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]";
 
 export function CreatePostDialog({
   categoryId,
@@ -169,7 +169,7 @@ export function CreatePostDialog({
             {t("cancel")}
           </Button>
           <Button
-            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >

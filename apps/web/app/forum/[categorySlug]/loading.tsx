@@ -3,10 +3,8 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 export default function ForumCategoryLoading() {
   return (
     <div className="min-h-dvh bg-background font-sans">
-      <div className="h-14 border-b border-border bg-[#eaf8df] dark:bg-[#161716]" />
-
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-zinc-950">
+        <div className="w-full px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <Skeleton className="mb-5 h-4 w-56 bg-[#4fae2e]/15" />
           <Skeleton className="h-10 w-72 max-w-full bg-[#4fae2e]/15" />
           <Skeleton className="mt-3 h-4 w-96 max-w-full bg-[#4fae2e]/10" />
@@ -14,7 +12,7 @@ export default function ForumCategoryLoading() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <div className="w-full px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <Skeleton className="h-11 w-full max-w-md rounded-lg" />
           <div className="flex gap-2">

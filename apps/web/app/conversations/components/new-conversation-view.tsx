@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, Send } from "@/components/icons";
 import Link from "next/link";
-import { useCreateConversation } from "@/hooks/use-conversation";
+import { useCreateConversation, useSendConversationMessage } from "@/hooks/use-conversation";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import {
   Avatar,
@@ -26,20 +26,23 @@ type NewConversationViewProps = {
    * khai. Mặc định rỗng để page shared giữ nguyên hành vi cũ.
    */
   basePath?: string;
+  initialMessage?: string;
 };
 
 export function NewConversationView({
   participantId,
   basePath = "",
+  initialMessage = "",
 }: NewConversationViewProps) {
   const router = useRouter();
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialMessage ?? "");
   const [participantName, setParticipantName] = useState<string | null>(null);
   const [participantAvatar, setParticipantAvatar] = useState<string | null>(null);
   const [loadingParticipant, setLoadingParticipant] = useState(true);
   const createConversation = useCreateConversation();
+  const sendConversationMessage = useSendConversationMessage();
 
   useEffect(() => {
     let active = true;
@@ -76,8 +79,16 @@ export function NewConversationView({
     if (!trimmed) return;
 
     createConversation.mutate(participantId, {
-      onSuccess: (conversation) => {
-        router.push(`${basePath}/conversations/${conversation.id}`);
+      onSuccess: async (conversation) => {
+        try {
+          await sendConversationMessage.mutateAsync({
+            conversationId: conversation.id,
+            message: trimmed,
+          });
+          router.push(`${basePath}/conversations/${conversation.id}`);
+        } catch {
+          router.push(`${basePath}/conversations/${conversation.id}`);
+        }
       },
       onError: (error) => {
         toastError({
