@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   ArrowUpDown,
-  Bell,
   BookmarkCheck,
   ChevronLeft,
   ChevronRight,
@@ -16,7 +15,6 @@ import {
   X,
 } from "@/components/icons";
 
-import jobAlertApiRequest from "@/apiRequests/job-alert";
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
@@ -190,37 +188,6 @@ export function SavedSearchesContent({
       toastError({ message: t("deleteFailed") });
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleCreateAlertFromSavedSearch = async (savedSearch: SavedSearchType) => {
-    try {
-      const keyword =
-        typeof savedSearch.searchParams.keyword === "string"
-          ? savedSearch.searchParams.keyword
-          : undefined;
-      const skills = Array.isArray(savedSearch.searchParams.skills)
-        ? (savedSearch.searchParams.skills as string[])
-        : [];
-
-      if (!keyword && skills.length === 0) {
-        toastError({
-          message: "Bộ lọc này không có từ khoá hoặc kỹ năng để tạo thông báo.",
-        });
-        return;
-      }
-
-      await jobAlertApiRequest.create({
-        name: savedSearch.name,
-        keywords: keyword || null,
-        skills,
-        frequency: "DAILY",
-        channels: ["IN_APP"],
-      });
-      toastSuccess({ message: "Đã tạo thông báo việc làm từ bộ lọc này!" });
-    } catch (err: unknown) {
-      const msg = (err as { message?: string })?.message;
-      toastError({ message: msg || "Không thể tạo thông báo việc làm." });
     }
   };
 
@@ -417,17 +384,6 @@ export function SavedSearchesContent({
                               date: formatDate(savedSearch.createdAt),
                             })}
                           </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
-                            aria-label="Tạo thông báo việc làm"
-                            title="Tạo thông báo việc làm từ bộ lọc này"
-                            onClick={() => handleCreateAlertFromSavedSearch(savedSearch)}
-                          >
-                            <Bell className="size-3.5" />
-                          </Button>
                           <Button
                             type="button"
                             variant="ghost"

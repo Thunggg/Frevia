@@ -32,7 +32,6 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
 |:---:|---|---|---|
 | **UC-23.02** | **View Job Alert Detail** | **Xem các Job khớp gần đây** | Truy vấn xem trước 3–5 công việc `OPEN` khớp với tiêu chí của alert để Freelancer kiểm tra độ chính xác của bộ lọc. |
 | **UC-23.03** | **Create Job Alert** | **Chống trùng Alert (Duplicate Prevention)** | Cùng một Freelancer không được tạo 2 alert có cùng tập tiêu chí (`keywords` và danh sách `skills` giống hệt nhau). |
-| **UC-23.03** | **Create Job Alert** | **Tạo Alert từ Saved Search có sẵn** | Tích hợp nút "Tạo Job Alert từ bộ lọc này" trong Saved Search, tự động bóc tách từ khóa và kỹ năng sang form Job Alert. |
 
 ---
 
@@ -71,3 +70,4 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
 
 5. **BR-JA05 (Không gửi trùng Job - Idempotency)**:
    * Hệ thống ghi nhận các Job ID đã gửi cho từng alert. Khi quét job mới, loại trừ các job ID đã từng thông báo trước đó.
+
