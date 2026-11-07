@@ -1091,9 +1091,12 @@
   "contractStatus": {
     "ACTIVE": "Active",
     "PENDING_SIGN": "Pending Signature",
+    "AWAITING_PAYMENT": "Awaiting Payment",
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled",
-    "DISPUTED": "In Dispute"
+    "DISPUTED": "In Dispute",
+    "REJECTED": "Rejected",
+    "EXPIRED": "Expired"
   },
   "contracts": {
     "metaTitle": "My Contracts | Frevia",
@@ -1117,6 +1120,10 @@
     "waiting": "Waiting",
     "youLabel": "You",
     "totalBudget": "Total Budget",
+    "platformFeeLabel": "Platform fee",
+    "signatures": "Signatures",
+    "contractId": "Contract #{id}",
+    "dueDate": "Due {date}",
     "viewDetails": "View Details",
     "notAvailable": "N/A",
     "metaTitleFreelancer": "My Contracts | Freelancer Dashboard | Frevia",
@@ -2505,6 +2512,11 @@
     "noCategoriesTitle": "No categories yet",
     "noCategoriesDescription": "Categories will show up here once they are created.",
     "noCategoryDescription": "No description provided.",
+    "search": "Search",
+    "searchCategoriesPlaceholder": "Search categories...",
+    "categories": "{count, plural, one {category} other {categories}}",
+    "noCategoriesFoundTitle": "No categories found",
+    "noCategoriesFoundDescription": "Try a different keyword or clear the search.",
     "mostActive": "Most Active",
     "topContributors": "Top Contributors",
     "anonymous": "Anonymous",
@@ -2518,6 +2530,7 @@
     "clearFilters": "Clear filters",
     "perPage": "{count} / page",
     "trendingIn": "Trending in {category}",
+    "noTrendingPosts": "No trending posts yet",
     "showing": "Showing",
     "of": "of",
     "yours": "(yours)",
@@ -2603,7 +2616,8 @@
       "disputes": "Disputes",
       "bookmarks": "Bookmarks",
       "myProposals": "My Proposals",
-      "savedSearches": "Saved searches"
+      "savedSearches": "Saved searches",
+      "payments": "Payments"
     },
     "searchPlaceholder": "Search products...",
     "contact": "Contact",

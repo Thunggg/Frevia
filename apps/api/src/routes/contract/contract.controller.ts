@@ -18,6 +18,8 @@ import {
   GetContractDetailResponseDTO,
   GetContractListQueryDTO,
   GetContractListResponseDTO,
+  RejectContractBodyDTO,
+  RejectContractResponseDTO,
   SignContractResponseDTO,
   UpdateContractBodyDTO,
   UpdateContractResponseDTO,
@@ -45,6 +47,16 @@ export class ContractController {
       roleName,
       query as GetContractListQueryType,
     );
+  }
+
+  @Get('slug/:slug')
+  @ZodSerializerDto(GetContractDetailResponseDTO)
+  getContractBySlug(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('slug') slug: string,
+  ) {
+    return this.contractService.getContractBySlug(userId, roleName, slug);
   }
 
   @Get(':id')
@@ -90,6 +102,20 @@ export class ContractController {
     @Param('id', ParseIntPipe) contractId: number,
   ) {
     return this.contractService.signContract(userId, contractId);
+  }
+
+  @Patch(':id/reject')
+  @ZodSerializerDto(RejectContractResponseDTO)
+  rejectContract(
+    @UserActive('userId') userId: number,
+    @Param('id', ParseIntPipe) contractId: number,
+    @Body() body?: RejectContractBodyDTO,
+  ) {
+    return this.contractService.rejectContract(
+      userId,
+      contractId,
+      body?.reason,
+    );
   }
 
   @Patch(':id/complete')

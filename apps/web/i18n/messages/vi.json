@@ -1083,9 +1083,12 @@
   "contractStatus": {
     "ACTIVE": "Đang thực hiện",
     "PENDING_SIGN": "Chờ ký",
+    "AWAITING_PAYMENT": "Chờ thanh toán",
     "COMPLETED": "Đã hoàn thành",
     "CANCELLED": "Đã huỷ",
-    "DISPUTED": "Đang tranh chấp"
+    "DISPUTED": "Đang tranh chấp",
+    "REJECTED": "Đã từ chối",
+    "EXPIRED": "Đã hết hạn"
   },
   "contracts": {
     "metaTitle": "Hợp đồng của tôi | Frevia",
@@ -1109,6 +1112,10 @@
     "waiting": "Đang chờ",
     "youLabel": "Bạn",
     "totalBudget": "Tổng ngân sách",
+    "platformFeeLabel": "Phí nền tảng",
+    "signatures": "Chữ ký",
+    "contractId": "Hợp đồng #{id}",
+    "dueDate": "Hạn {date}",
     "viewDetails": "Xem chi tiết",
     "notAvailable": "Không có",
     "metaTitleFreelancer": "Hợp đồng của tôi | Bảng điều khiển Freelancer | Frevia",
@@ -2497,6 +2504,11 @@
     "noCategoriesTitle": "Chưa có danh mục nào",
     "noCategoriesDescription": "Các danh mục sẽ xuất hiện ở đây sau khi được tạo.",
     "noCategoryDescription": "Chưa có mô tả.",
+    "search": "Tìm kiếm",
+    "searchCategoriesPlaceholder": "Tìm kiếm danh mục...",
+    "categories": "{count, plural, other {danh mục}}",
+    "noCategoriesFoundTitle": "Không tìm thấy danh mục",
+    "noCategoriesFoundDescription": "Thử từ khoá khác hoặc xoá tìm kiếm.",
     "mostActive": "Sôi nổi nhất",
     "topContributors": "Đóng góp nhiều nhất",
     "anonymous": "Ẩn danh",
@@ -2510,6 +2522,7 @@
     "clearFilters": "Xoá bộ lọc",
     "perPage": "{count} / trang",
     "trendingIn": "Nổi bật trong {category}",
+    "noTrendingPosts": "Chưa có bài viết nổi bật",
     "showing": "Hiển thị",
     "of": "trong",
     "yours": "(của bạn)",
@@ -2595,7 +2608,8 @@
       "disputes": "Tranh chấp",
       "bookmarks": "Đã lưu",
       "myProposals": "Đề xuất của tôi",
-      "savedSearches": "Tìm kiếm đã lưu"
+      "savedSearches": "Tìm kiếm đã lưu",
+      "payments": "Thanh toán"
     },
     "searchPlaceholder": "Tìm kiếm...",
     "contact": "Liên hệ",

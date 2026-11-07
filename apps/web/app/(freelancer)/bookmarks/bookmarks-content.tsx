@@ -22,6 +22,7 @@ import {
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
+import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import {
   AlertDialog,
@@ -889,43 +890,66 @@ export function BookmarksContent({
         </DialogContent>
       </Dialog>
 
-      {/* Remove Confirmation Alert Dialog */}
+      {/* Modern Capsule Remove Alert Dialog */}
       <AlertDialog
-        open={Boolean(pendingRemoveJobSlug)}
+        open={pendingRemoveJobSlug !== null}
         onOpenChange={(open) => !open && setPendingRemoveJobSlug(null)}
       >
-        <AlertDialogContent className="max-w-md rounded-[24px] border border-border p-6 shadow-xl">
-          <AlertDialogTitle className="text-lg font-bold text-foreground">
-            {t("removeTitle")}
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-            {t("removeHint")}
-          </AlertDialogDescription>
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                {t("removeTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                {t("removeHint")}
+              </AlertDialogDescription>
+            </div>
 
-          <div className="mt-6 flex items-center justify-end gap-2">
-            <AlertDialogCancel
-              disabled={isRemoving}
-              className="rounded-full border border-border px-4 text-xs font-semibold hover:bg-muted"
-            >
-              {tCommon("cancel")}
-            </AlertDialogCancel>
-            <Button
-              variant="destructive"
-              disabled={isRemoving}
-              onClick={() =>
-                pendingRemoveJobSlug && void removeBookmark(pendingRemoveJobSlug)
-              }
-              className="rounded-full px-4 text-xs font-semibold cursor-pointer"
-            >
-              {isRemoving ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                t("removeBookmark")
-              )}
-            </Button>
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={isRemoving}
+                onClick={() =>
+                  pendingRemoveJobSlug && void removeBookmark(pendingRemoveJobSlug)
+                }
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 cursor-pointer transition-all duration-200 outline-none disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
+                    {isRemoving ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3.5" />
+                    )}
+                  </div>
+                  <span className="text-xs font-semibold">
+                    {t("removeBookmark")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel
+                disabled={isRemoving}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50 h-auto"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <X className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">
+                    {tCommon("cancel")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+              </AlertDialogCancel>
+            </div>
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {!embedded && <Footer />}
     </div>
   );
 }

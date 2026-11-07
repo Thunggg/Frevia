@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   CreateContractBodyType,
   GetContractListQueryType,
@@ -11,22 +11,36 @@ import {
   ContractAlreadyCancelledException,
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
+  ContractAwaitingPaymentException,
   ContractDisputedException,
   ContractForbiddenException,
+  ContractNotActionableForRejectionException,
   ContractNotActiveException,
   ContractNotFoundException,
   ContractNotPendingSignException,
   FailedToCreateContractException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
+  MilestoneAmountMismatchException,
+  ProposalJobPositionsFilledException,
+  ProposalNotActionableException,
   ProposalNotFoundException,
-  ProposalNotHiredException,
 } from './contract.error';
 import { ContractStatus, Prisma } from '@prisma/client';
+import { ContractPdfService } from '../../shared/services/contract-pdf.service';
+import { PaymentService } from '../payments/payment.service';
+
+const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
 
 @Injectable()
 export class ContractService {
-  constructor(private readonly contractRepository: ContractRepository) {}
+  private readonly logger = new Logger(ContractService.name);
+
+  constructor(
+    private readonly contractRepository: ContractRepository,
+    private readonly contractPdfService: ContractPdfService,
+    private readonly paymentService: PaymentService,
+  ) {}
 
   async createContract(clientId: number, body: CreateContractBodyType) {
     try {
@@ -35,10 +49,31 @@ export class ContractService {
       );
 
       if (!proposal) throw ProposalNotFoundException();
-      // Hợp đồng chỉ lập được cho đề xuất đã được tuyển (HIRED).
-      if (proposal.status !== 'HIRED') throw ProposalNotHiredException();
-      if (proposal.job.clientId !== clientId)
+
+      // Cho phép lập hợp đồng khi proposal ở trạng thái SUBMITTED, INTERVIEWING hoặc HIRED
+      if (!ALLOWED_PROPOSAL_STATUSES.includes(proposal.status)) {
+        throw ProposalNotActionableException();
+      }
+
+      if (proposal.job.clientId !== clientId) {
         throw ContractForbiddenException();
+      }
+
+      // Kiểm tra xem số lượng vị trí tuyển đã đủ chưa
+      if (proposal.job.positionsFilled >= proposal.job.positionsRequired) {
+        throw ProposalJobPositionsFilledException();
+      }
+
+      // Nếu có danh sách milestone, tổng tiền các milestone phải khớp với tổng tiền hợp đồng
+      if (body.milestones && body.milestones.length > 0) {
+        const milestonesTotal = body.milestones.reduce(
+          (sum, m) => sum + Number(m.amount),
+          0,
+        );
+        if (Math.abs(milestonesTotal - Number(body.totalAmount)) > 0.01) {
+          throw MilestoneAmountMismatchException();
+        }
+      }
 
       const existing = await this.contractRepository.findContractByProposalId(
         body.proposalId,
@@ -52,6 +87,7 @@ export class ContractService {
         proposal.job.id,
       );
     } catch (error) {
+      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -78,6 +114,7 @@ export class ContractService {
 
       return await this.contractRepository.updateContract(contractId, body);
     } catch (error) {
+      this.logger.error(`Failed to update contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -94,16 +131,78 @@ export class ContractService {
       const isFreelancer = contract.freelancerId === userId;
       if (!isClient && !isFreelancer) throw ContractForbiddenException();
 
-      if (contract.status !== 'PENDING_SIGN')
+      if (contract.status === ContractStatus.AWAITING_PAYMENT) {
+        throw ContractAwaitingPaymentException();
+      }
+
+      if (contract.status !== ContractStatus.PENDING_SIGN) {
         throw ContractNotPendingSignException();
+      }
 
       if (isClient && contract.signedByClient) throw AlreadySignedException();
       if (isFreelancer && contract.signedByFreelancer)
         throw AlreadySignedException();
 
       const role = isClient ? 'client' : 'freelancer';
-      return await this.contractRepository.signContract(contractId, role);
+      const signed = await this.contractRepository.signContract(
+        contractId,
+        role,
+      );
+
+      if (signed.status === ContractStatus.ACTIVE) {
+        try {
+          await this.contractPdfService.generateAndSaveContractPdf(contractId);
+        } catch (pdfErr) {
+          this.logger.error(
+            `Failed to generate contract PDF on activation for contract #${contractId}:`,
+            pdfErr,
+          );
+        }
+      }
+
+      return signed;
     } catch (error) {
+      this.logger.error(`Failed to sign contract #${contractId}:`, error);
+      if (error instanceof HttpException) throw error;
+      throw FailedToUpdateContractException();
+    }
+  }
+
+  async rejectContract(userId: number, contractId: number, reason?: string) {
+    try {
+      const contract =
+        await this.contractRepository.findContractById(contractId);
+
+      if (!contract) throw ContractNotFoundException();
+
+      const isFreelancer = contract.freelancerId === userId;
+      if (!isFreelancer) throw ContractForbiddenException();
+
+      if (
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
+      ) {
+        throw ContractNotActionableForRejectionException();
+      }
+
+      const rejected = await this.contractRepository.rejectContract(
+        contractId,
+        reason,
+      );
+
+      // Auto refund escrow deposit if any
+      try {
+        await this.paymentService.refundContractEscrow(contractId);
+      } catch (refundErr) {
+        this.logger.error(
+          `Failed to auto-refund deposit on contract reject for #${contractId}:`,
+          refundErr,
+        );
+      }
+
+      return rejected;
+    } catch (error) {
+      this.logger.error(`Failed to reject contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -125,6 +224,7 @@ export class ContractService {
         contract.jobId,
       );
     } catch (error) {
+      this.logger.error(`Failed to complete contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -149,6 +249,7 @@ export class ContractService {
 
       return await this.contractRepository.cancelContract(contractId);
     } catch (error) {
+      this.logger.error(`Failed to cancel contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
       throw FailedToUpdateContractException();
     }
@@ -174,6 +275,7 @@ export class ContractService {
 
       return await this.contractRepository.getContractList(query, filter);
     } catch (error) {
+      this.logger.error('Failed to get contract list:', error);
       if (error instanceof HttpException) throw error;
       throw FailedToLoadContractException();
     }
@@ -198,7 +300,32 @@ export class ContractService {
 
       return contract;
     } catch (error) {
+      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
+      this.logger.error(`Failed to get contract detail #${contractId}:`, error);
+      this.logger.error(`Failed to get contract detail #${contractId}:`, error);
+      throw FailedToLoadContractException();
+    }
+  }
+
+  async getContractBySlug(userId: number, roleName: string, slug: string) {
+    try {
+      const contract = await this.contractRepository.findContractBySlug(slug);
+
+      if (!contract) throw ContractNotFoundException();
+
+      const isAdmin = roleName === RoleName.ADMIN;
+      const isOwner =
+        contract.clientId === userId || contract.freelancerId === userId;
+
+      if (!isAdmin && !isOwner) throw ContractForbiddenException();
+
+      return contract;
+    } catch (error) {
+      this.logger.error('Failed to create contract:', error);
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Failed to get contract by slug "${slug}":`, error);
+      this.logger.error(`Failed to get contract by slug "${slug}":`, error);
       throw FailedToLoadContractException();
     }
   }

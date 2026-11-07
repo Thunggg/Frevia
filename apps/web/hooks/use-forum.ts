@@ -84,13 +84,13 @@ export function useForumComments(
 /**
  * Lấy danh sách likes của 1 post.
  */
-export function useForumPostLikes(postId: number) {
+export function useForumPostLikes(postId: number, enabled = true) {
   const extractData = useApiDataExtractor("forum");
 
   return useQuery({
     queryKey: forumKeys.likes(postId),
     queryFn: () => forumApiRequest.getPostLikes(postId).then(extractData),
-    enabled: postId > 0,
+    enabled: postId > 0 && enabled,
     staleTime: 1 * 60 * 1000,
   });
 }

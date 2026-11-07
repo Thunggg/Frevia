@@ -817,19 +817,29 @@ model ProposalAttachment {
 // 6. Contracts
 // ============================
 model Contract {
-  id                 Int            @id @default(autoincrement())
-  jobId              Int
-  proposalId         Int            @unique
-  clientId           Int
-  freelancerId       Int
-  terms              String?
-  totalAmount        Decimal        @db.Decimal(10, 2)
-  status             ContractStatus @default(PENDING_SIGN)
-  signedByClient     Boolean        @default(false)
-  signedByFreelancer Boolean        @default(false)
-  platformFee        Decimal        @default(10.00) @db.Decimal(10, 2)
-  platformFeeStatus  PlatformFeeStatus @default(UNPAID)
-  platformFeePaidAt  DateTime?
+  id                  Int               @id @default(autoincrement())
+  slug                String            @unique @db.VarChar(255)
+  jobId               Int
+  proposalId          Int               @unique
+  clientId            Int
+  freelancerId        Int
+  terms               String?
+  totalAmount         Decimal           @db.Decimal(10, 2)
+  status              ContractStatus    @default(AWAITING_PAYMENT)
+  signedByClient      Boolean           @default(false)
+  signedByFreelancer  Boolean           @default(false)
+  clientSignedAt      DateTime?
+  freelancerSignedAt  DateTime?
+  clientPlatformFee   Decimal           @default(0.00) @db.Decimal(10, 2)
+  platformFee         Decimal           @default(10.00) @db.Decimal(10, 2)
+  platformFeeStatus   PlatformFeeStatus @default(UNPAID)
+  platformFeePaidAt   DateTime?
+  clientFeeStatus     PlatformFeeStatus @default(UNPAID)
+  clientFeePaidAt     DateTime?
+  freelancerFeeStatus PlatformFeeStatus @default(UNPAID)
+  freelancerFeePaidAt DateTime?
+  rejectedAt          DateTime?
+  rejectReason        String?
   createdAt          DateTime       @default(now())
   signedAt           DateTime?
   completedAt        DateTime?
@@ -1552,11 +1562,14 @@ enum ProposalStatus {
 }
 
 enum ContractStatus {
+  AWAITING_PAYMENT
   PENDING_SIGN
   ACTIVE
   COMPLETED
   DISPUTED
   CANCELLED
+  REJECTED
+  EXPIRED
 }
 
 enum MilestoneStatus {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   HiringType,
   JobStatus,
+  MilestoneStatus,
   NotificationType,
   Prisma,
   ProposalStatus,
@@ -25,6 +26,7 @@ import {
   ProposalJobPositionsFilledException,
   ProposalNotSubmittedException,
 } from './proposal.error';
+import { createContractSlug } from '../../shared/helper/contract.slug';
 
 // Trạng thái khách hàng còn có thể phỏng vấn / từ chối / tuyển.
 const ACTIONABLE_STATUSES = [
@@ -79,7 +81,7 @@ const proposalDetailSelect = {
 
 @Injectable()
 export class ProposalRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findJobForProposal(jobId: number) {
     return this.prisma.job.findUnique({
@@ -567,15 +569,30 @@ export class ProposalRepository {
         });
       }
 
+      const slug = createContractSlug(jobTitle);
+      const platformFee = Math.round(Number(bidAmount) * 0.01 * 100) / 100;
+
       const contract = await tx.contract.create({
         data: {
+          slug,
           jobId,
           proposalId,
           clientId,
           freelancerId,
           totalAmount: bidAmount,
+          platformFee,
         },
         select: { id: true },
+      });
+
+      await tx.milestone.create({
+        data: {
+          contractId: contract.id,
+          title: `${jobTitle} - Milestone 1`,
+          description: `Initial milestone for ${jobTitle}`,
+          amount: bidAmount,
+          status: MilestoneStatus.PENDING,
+        },
       });
 
       await tx.notification.create({
