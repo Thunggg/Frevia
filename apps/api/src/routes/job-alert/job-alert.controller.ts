@@ -20,6 +20,7 @@ import {
   DeleteJobAlertResponseDto,
   GetJobAlertDetailResponseDto,
   GetJobAlertsResponseDto,
+  GetMatchingJobsResponseDto,
   UpdateJobAlertBodyDto,
   UpdateJobAlertResponseDto,
 } from './job-alert.dto';
@@ -36,6 +37,16 @@ export class JobAlertController {
     @UserActive('roleName') roleName: string,
   ) {
     return this.jobAlertService.getJobAlerts(userId, roleName);
+  }
+
+  @Get(':id/matching-jobs')
+  @ZodSerializerDto(GetMatchingJobsResponseDto)
+  getMatchingJobs(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.jobAlertService.getMatchingJobs(userId, roleName, id);
   }
 
   @Get(':id')

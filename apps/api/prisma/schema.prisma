@@ -746,7 +746,7 @@ model JobAlert {
   createdAt  DateTime              @default(now())
   updatedAt  DateTime              @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([userId, isActive])
 }

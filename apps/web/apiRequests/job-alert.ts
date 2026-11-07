@@ -2,6 +2,7 @@ import type {
   CreateJobAlertBodyType,
   DeleteJobAlertResponseType,
   JobAlertType,
+  MatchingJobItemType,
   UpdateJobAlertBodyType,
 } from "@shared/types";
 
@@ -13,6 +14,9 @@ const jobAlertApiRequest = {
   },
   getJobAlertDetail(id: number) {
     return http.get<JobAlertType>(`/api/job-alerts/${id}`);
+  },
+  getMatchingJobs(id: number) {
+    return http.get<MatchingJobItemType[]>(`/api/job-alerts/${id}/matching-jobs`);
   },
   create(body: CreateJobAlertBodyType) {
     return http.post<JobAlertType>("/api/job-alerts", body);
@@ -26,3 +30,4 @@ const jobAlertApiRequest = {
 };
 
 export default jobAlertApiRequest;
+

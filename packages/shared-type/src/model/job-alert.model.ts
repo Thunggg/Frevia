@@ -76,6 +76,18 @@ export const DeleteJobAlertResponseSchema = z.object({
   success: z.boolean(),
 });
 
+export const MatchingJobItemSchema = z.object({
+  id: z.number().int().positive(),
+  title: z.string(),
+  slug: z.string(),
+  budgetMin: z.number().nullable().optional(),
+  budgetMax: z.number().nullable().optional(),
+  budgetType: z.string(),
+  createdAt: z.date(),
+});
+
+export const GetMatchingJobsResponseSchema = z.array(MatchingJobItemSchema);
+
 export type JobAlertFrequencyType = z.infer<typeof JobAlertFrequencySchema>;
 export type NotificationChannelType = z.infer<typeof NotificationChannelSchema>;
 export type JobAlertType = z.infer<typeof JobAlertSchema>;
@@ -84,3 +96,4 @@ export type UpdateJobAlertBodyType = z.infer<typeof UpdateJobAlertBodySchema>;
 export type DeleteJobAlertResponseType = z.infer<
   typeof DeleteJobAlertResponseSchema
 >;
+export type MatchingJobItemType = z.infer<typeof MatchingJobItemSchema>;

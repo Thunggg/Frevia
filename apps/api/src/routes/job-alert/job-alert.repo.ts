@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import {
   CreateJobAlertBodyType,
   JobAlertType,
+  MatchingJobItemType,
   UpdateJobAlertBodyType,
 } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -132,5 +133,74 @@ export class JobAlertRepository {
       where: { id, userId },
     });
     return result.count > 0;
+  }
+
+  async findMatchingJobs(
+    userId: number,
+    keywords: string | null,
+    skills: string[],
+    limit = 5,
+  ): Promise<MatchingJobItemType[]> {
+    const where: Prisma.JobWhereInput = {
+      status: 'OPEN',
+      deletedAt: null,
+      OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
+      clientId: { not: userId },
+      client: { isBanned: false },
+      proposals: { none: { freelancerId: userId } },
+    };
+
+    const matchConditions: Prisma.JobWhereInput[] = [];
+
+    if (keywords && keywords.trim()) {
+      const trimmed = keywords.trim();
+      matchConditions.push({
+        OR: [
+          { title: { contains: trimmed, mode: 'insensitive' } },
+          { description: { contains: trimmed, mode: 'insensitive' } },
+        ],
+      });
+    }
+
+    if (skills && skills.length > 0) {
+      matchConditions.push({
+        skills: {
+          some: {
+            skill: {
+              name: { in: skills, mode: 'insensitive' },
+            },
+          },
+        },
+      });
+    }
+
+    if (matchConditions.length > 0) {
+      where.AND = [{ OR: matchConditions }];
+    }
+
+    const jobs = await this.prisma.job.findMany({
+      where,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        budgetMin: true,
+        budgetMax: true,
+        budgetType: true,
+        createdAt: true,
+      },
+    });
+
+    return jobs.map((job) => ({
+      id: job.id,
+      title: job.title,
+      slug: job.slug,
+      budgetMin: job.budgetMin === null ? null : Number(job.budgetMin),
+      budgetMax: job.budgetMax === null ? null : Number(job.budgetMax),
+      budgetType: job.budgetType,
+      createdAt: job.createdAt,
+    }));
   }
 }

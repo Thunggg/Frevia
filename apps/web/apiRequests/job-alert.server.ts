@@ -3,7 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 
 import { envConfig } from "@/configs/validate-env";
-import type { ApiResponse, JobAlertType } from "@shared/types";
+import type { ApiResponse, JobAlertType, MatchingJobItemType } from "@shared/types";
 
 async function jobAlertServerFetch<T>(url: string): Promise<T | null> {
   if (!envConfig?.NESTJS_API_URL) return null;
@@ -39,6 +39,13 @@ const jobAlertServerRequest = {
   getJobAlertDetail(id: number) {
     return jobAlertServerFetch<JobAlertType>(`/api/job-alerts/${id}`);
   },
+
+  getMatchingJobs(id: number) {
+    return jobAlertServerFetch<MatchingJobItemType[]>(
+      `/api/job-alerts/${id}/matching-jobs`
+    );
+  },
 };
 
 export default jobAlertServerRequest;
+

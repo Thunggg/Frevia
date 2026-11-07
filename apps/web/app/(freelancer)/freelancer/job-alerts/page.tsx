@@ -16,3 +16,4 @@ export default async function FreelancerJobAlertsPage() {
 
   return <JobAlertsContent initialJobAlerts={alerts ?? []} />;
 }
+

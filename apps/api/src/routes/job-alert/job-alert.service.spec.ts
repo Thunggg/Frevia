@@ -16,6 +16,7 @@ describe('JobAlertService (UC-23)', () => {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    findMatchingJobs: jest.fn(),
   };
 
   const service = new JobAlertService(
@@ -50,6 +51,10 @@ describe('JobAlertService (UC-23)', () => {
 
       await expect(
         service.getJobAlertDetail(10, RoleName.CLIENT, 1),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+
+      await expect(
+        service.getMatchingJobs(10, RoleName.CLIENT, 1),
       ).rejects.toBeInstanceOf(ForbiddenException);
 
       await expect(
@@ -102,6 +107,42 @@ describe('JobAlertService (UC-23)', () => {
       await expect(
         service.getJobAlertDetail(10, RoleName.FREELANCER, 999),
       ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('returns matching jobs preview for an alert (top 5, excluding self/applied jobs)', async () => {
+      repository.findByIdAndUserId.mockResolvedValue(mockAlert);
+      const mockJobs = [
+        {
+          id: 101,
+          title: 'Senior NestJS Developer',
+          slug: 'senior-nestjs-developer',
+          budgetMin: 500,
+          budgetMax: 1000,
+          budgetType: 'FIXED',
+          createdAt: new Date(),
+        },
+      ];
+      repository.findMatchingJobs.mockResolvedValue(mockJobs);
+
+      const result = await service.getMatchingJobs(10, RoleName.FREELANCER, 1);
+
+      expect(repository.findByIdAndUserId).toHaveBeenCalledWith(1, 10);
+      expect(repository.findMatchingJobs).toHaveBeenCalledWith(
+        10,
+        mockAlert.keywords,
+        mockAlert.skills,
+        5,
+      );
+      expect(result).toEqual(mockJobs);
+    });
+
+    it('throws NotFoundException when alert does not exist when fetching matching jobs', async () => {
+      repository.findByIdAndUserId.mockResolvedValue(null);
+
+      await expect(
+        service.getMatchingJobs(10, RoleName.FREELANCER, 999),
+      ).rejects.toBeInstanceOf(NotFoundException);
+      expect(repository.findMatchingJobs).not.toHaveBeenCalled();
     });
   });
 

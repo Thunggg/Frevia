@@ -46,28 +46,53 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
 
 ---
 
-## 2. Quy tắc nghiệp vụ cốt lõi đã chốt
+## 2. Quy tắc nghiệp vụ cốt lõi chi tiết
 
-1. **BR-JA01 (Giới hạn số lượng - Maximum Limit)**:
-   * Ngưỡng tối đa: **10 Job Alerts / Freelancer**.
-   * Backend kiểm tra: `prisma.jobAlert.count({ where: { userId } }) >= 10` -> Ném `JobAlertLimitExceededException` (HTTP 400).
-   * Giao diện hiển thị counter trực quan `[x/10]`. Khi chạm mốc 10, vô hiệu hóa nút tạo mới và nhắc xóa bớt alert cũ.
+### BR-JA01: Giới hạn số lượng tối đa (Maximum Limit)
+* Ngưỡng tối đa: **10 Job Alerts / Freelancer** (`MAX_JOB_ALERTS_PER_USER = 10`).
+* Backend kiểm tra: `prisma.jobAlert.count({ where: { userId } }) >= 10` $\rightarrow$ Ném lỗi `JobAlertLimitExceededException` (HTTP 400).
+* Giao diện hiển thị counter trực quan `[x/10]`. Khi chạm mốc 10, vô hiệu hóa nút tạo mới và nhắc xóa bớt alert cũ.
 
-2. **BR-JA02 (Chống trùng lặp tiêu chí - Duplicate Prevention)**:
-   * Trước khi tạo mới hoặc cập nhật, hệ thống chuẩn hóa chuỗi `keywords` (lowercase, trim) và sắp xếp mảng `skills`.
-   * So khớp với các alert hiện có của người dùng. Nếu phát hiện trùng lặp hoàn toàn, báo lỗi `JobAlertDuplicateCriteriaException` (HTTP 400) để ngăn việc gửi nhiều thông báo giống hệt nhau cho cùng một công việc.
+### BR-JA02: Chống trùng lặp tiêu chí (Duplicate Prevention)
+* Trước khi tạo mới hoặc cập nhật, hệ thống chuẩn hóa chuỗi `keywords` (lowercase, trim) và sắp xếp mảng `skills`.
+* So khớp với các alert hiện có của người dùng. Nếu phát hiện trùng lặp hoàn toàn, báo lỗi `JobAlertDuplicateCriteriaException` (HTTP 400) để ngăn việc gửi nhiều thông báo giống hệt nhau cho cùng một công việc.
 
-3. **BR-JA03 (Quyền truy cập & Bảo mật - Strict Ownership & Role Enforcement)**:
-   * Chỉ người dùng có vai trò `FREELANCER` mới được tạo và quản lý Job Alert (`roleName === 'FREELANCER'`).
-   * Ràng buộc quyền sở hữu chặt chẽ: Mọi thao tác xem, sửa, bật/tắt, xóa đều phải khớp `userId = currentUserId`. Trả về 404 nếu không khớp (Anti-IDOR).
+### BR-JA03: Quyền truy cập & Bảo mật (Strict Ownership & Role Enforcement)
+* Chỉ người dùng có vai trò `FREELANCER` mới được tạo và quản lý Job Alert (`roleName === 'FREELANCER'`).
+* Ràng buộc quyền sở hữu chặt chẽ: Mọi thao tác xem, sửa, bật/tắt, xóa đều phải khớp `userId = currentUserId`. Trả về 404 nếu không khớp (Anti-IDOR).
 
-4. **BR-JA04 (Quy tắc lọc Job gửi thông báo)**:
-   * Khi quét việc làm mới để gửi thông báo, chỉ lấy các Job thỏa mãn toàn bộ điều kiện:
-     * Trạng thái `status === 'OPEN'`.
-     * Chưa bị xóa mềm (`deletedAt === null`).
-     * Chưa hết hạn ứng tuyển (`expiryDate === null || expiryDate > now()`).
-     * Client đăng việc không bị khóa tài khoản (`client.isBanned === false`).
+### BR-JA04: Điều kiện lọc Job hợp lệ gửi thông báo
+Khi quét việc làm mới để gửi thông báo, chỉ lấy các Job thỏa mãn toàn bộ điều kiện:
+* Trạng thái `status === 'OPEN'`.
+* Chưa bị xóa mềm (`deletedAt === null`).
+* Chưa hết hạn ứng tuyển (`expiryDate === null || expiryDate > now()`).
+* Client đăng việc không bị khóa tài khoản (`client.isBanned === false`).
 
-5. **BR-JA05 (Không gửi trùng Job - Idempotency)**:
-   * Hệ thống ghi nhận các Job ID đã gửi cho từng alert. Khi quét job mới, loại trừ các job ID đã từng thông báo trước đó.
+### BR-JA05: Không gửi trùng Job (Idempotency)
+* Hệ thống ghi nhận các Job ID đã gửi cho từng alert. Khi quét job mới, loại trừ các job ID đã từng thông báo trước đó để đảm bảo mỗi công việc chỉ được gửi thông báo duy nhất một lần.
 
+### BR-JA06: Không gửi thông báo Job của chính mình (Self-Job Exclusion Rule)
+* **Quy tắc**: Tuyệt đối không gửi thông báo Job Alert cho người dùng nếu chính người dùng đó là Client tạo ra công việc (`job.clientId !== alert.userId`).
+* **Lý do**: Frevia hỗ trợ chuyển đổi vai trò (Role Switching). Người dùng vừa có thể đăng việc với tư cách Client, vừa tìm việc với tư cách Freelancer. Gửi thông báo tìm việc cho chính bài đăng của mình là phi logic.
+
+### BR-JA07: Loại trừ Job mà Freelancer đã ứng tuyển (Already Applied Exclusion Rule)
+* **Quy tắc**: Khi quét việc làm để gửi thông báo (đặc biệt là Daily/Weekly digest), hệ thống tự động loại trừ các Job mà Freelancer đã nộp đề xuất ứng tuyển (`Proposal.freelancerId === alert.userId && Proposal.jobId === job.id`).
+* **Lý do**: Tránh gửi thông báo nhắc nhở ứng tuyển cho công việc mà ứng viên đã nộp hồ sơ thành công.
+
+### BR-JA08: Khống chế số lượng Job tối đa trong 1 thông báo (Batch Size Limit: Top 5)
+* **Quy tắc**: Trong một thông báo In-App hoặc Email Digest, hệ thống **chỉ gửi tối đa Top 5 công việc phù hợp nhất** (ưu tiên Job mới nhất và có ngân sách tốt nhất).
+* Kèm theo đường dẫn: *"Xem tất cả việc làm phù hợp"* dẫn thẳng sang trang `/freelancer/find-work` với bộ lọc tương ứng để người dùng xem tiếp.
+* **Lý do**: Chống spam, tránh quá tải giao diện thông báo và bảo vệ hộp thư của Freelancer.
+
+### BR-JA09: Hành vi khi không có Job nào khớp (Zero-match Silent Rule)
+* **Quy tắc**: Nếu trong chu kỳ quét (ngày hoặc tuần) không có bất kỳ việc làm mới nào khớp với tiêu chí của alert, hệ thống **hoàn toàn im lặng, không gửi thông báo rỗng**.
+* **Lý do**: Không làm phiền người dùng bằng những thông báo vô nghĩa (*"Hôm nay không có việc làm nào"*), đồng thời tiết kiệm tài nguyên gửi mail.
+
+### BR-JA10: Ràng buộc trạng thái tài khoản (Account Status Constraint)
+* **Tài khoản bị khóa (`user.isBanned === true`)**: Tự động vô hiệu hóa toàn bộ Job Alerts của user đó (`isActive = false`), worker không quét gửi thông báo cho tài khoản vi phạm.
+* **Chưa kích hoạt Email (`user.emailVerified === false`)**: Nếu Freelancer chưa xác thực địa chỉ email, hệ thống chỉ cho phép gửi qua kênh `IN_APP`, tạm khóa kênh `EMAIL` cho đến khi xác thực xong.
+* **Lý do**: Bảo vệ danh tiếng gửi thư (Email Sender Reputation) và tuân thủ chính sách bảo mật.
+
+### BR-JA11: Dọn dẹp dữ liệu khi xóa tài khoản (Cascade Delete Lifecycle)
+* **Quy tắc**: Khi một tài khoản người dùng bị xóa vĩnh viễn khỏi hệ thống (`Hard Delete`), toàn bộ các bản ghi `JobAlert` của người đó phải được xóa tự động (`onDelete: Cascade`).
+* **Lý do**: Đảm bảo toàn vẹn dữ liệu, không để lại bản ghi rác mồ côi trong cơ sở dữ liệu.

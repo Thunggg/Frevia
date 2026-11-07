@@ -4,6 +4,7 @@ import {
   DeleteJobAlertResponseSchema,
   GetJobAlertDetailResponseSchema,
   GetJobAlertsResponseSchema,
+  GetMatchingJobsResponseSchema,
   UpdateJobAlertBodySchema,
   UpdateJobAlertResponseSchema,
 } from '@shared/types';
@@ -35,4 +36,8 @@ export class UpdateJobAlertResponseDto extends createZodDto(
 
 export class DeleteJobAlertResponseDto extends createZodDto(
   DeleteJobAlertResponseSchema,
+) {}
+
+export class GetMatchingJobsResponseDto extends createZodDto(
+  GetMatchingJobsResponseSchema,
 ) {}

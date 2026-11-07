@@ -5,6 +5,7 @@ import {
   DeleteJobAlertResponseType,
   JobAlertType,
   MAX_JOB_ALERTS_PER_USER,
+  MatchingJobItemType,
   RoleName,
   UpdateJobAlertBodyType,
 } from '@shared/types';
@@ -172,6 +173,32 @@ export class JobAlertService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToDeleteJobAlertException();
+      }
+      throw error;
+    }
+  }
+
+  async getMatchingJobs(
+    userId: number,
+    roleName: string,
+    id: number,
+  ): Promise<MatchingJobItemType[]> {
+    this.assertFreelancerRole(roleName);
+    const alert = await this.jobAlertRepository.findByIdAndUserId(id, userId);
+    if (!alert) {
+      throw JobAlertNotFoundException();
+    }
+
+    try {
+      return await this.jobAlertRepository.findMatchingJobs(
+        userId,
+        alert.keywords,
+        alert.skills,
+        5,
+      );
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw FailedToLoadJobAlertException();
       }
       throw error;
     }

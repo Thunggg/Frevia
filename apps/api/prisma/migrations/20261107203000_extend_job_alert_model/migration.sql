@@ -15,3 +15,8 @@ ALTER TABLE "JobAlert"
 
 -- CreateIndex
 CREATE INDEX "JobAlert_userId_isActive_idx" ON "JobAlert"("userId", "isActive");
+
+-- RedefineForeignKey
+ALTER TABLE "JobAlert" DROP CONSTRAINT "JobAlert_userId_fkey";
+ALTER TABLE "JobAlert" ADD CONSTRAINT "JobAlert_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+
