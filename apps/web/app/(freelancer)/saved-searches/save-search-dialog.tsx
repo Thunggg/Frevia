@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { BookmarkPlus, Pencil, Trash2 } from "@/components/icons";
+import { BookmarkPlus, Pencil, SlidersHorizontal, Trash2 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import {
@@ -114,6 +114,19 @@ export function SaveSearchDialog({
       toastSuccess({ message: t("updated") });
       setEditing(null);
       setName("");
+      onChanged?.();
+    } catch {
+      toastError({ message: t("updateFailed") });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateCriteria = async (savedSearch: SavedSearchType) => {
+    setIsSubmitting(true);
+    try {
+      await savedSearchApiRequest.update(savedSearch.id, { searchParams });
+      toastSuccess({ message: t("updated") });
       onChanged?.();
     } catch {
       toastError({ message: t("updateFailed") });
@@ -277,6 +290,20 @@ export function SaveSearchDialog({
                       {searchSummary(savedSearch.searchParams)}
                     </span>
                   </button>
+                  {!matchesSearch(searchParams, savedSearch) && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-9 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
+                      aria-label={t("editCriteria")}
+                      title={t("editCriteria")}
+                      disabled={isSubmitting}
+                      onClick={() => handleUpdateCriteria(savedSearch)}
+                    >
+                      <SlidersHorizontal className="size-4" />
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"

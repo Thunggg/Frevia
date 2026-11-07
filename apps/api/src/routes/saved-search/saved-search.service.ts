@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateSavedSearchBodyType,
+  GetSavedSearchesQueryType,
   SavedSearchType,
   UpdateSavedSearchBodyType,
 } from '@shared/types';
@@ -16,9 +17,12 @@ import { SavedSearchRepository } from './saved-search.repo';
 export class SavedSearchService {
   constructor(private readonly savedSearchRepository: SavedSearchRepository) {}
 
-  async getSavedSearches(userId: number): Promise<SavedSearchType[]> {
+  async getSavedSearches(
+    userId: number,
+    query?: GetSavedSearchesQueryType,
+  ): Promise<SavedSearchType[]> {
     try {
-      return await this.savedSearchRepository.findAllByUserId(userId);
+      return await this.savedSearchRepository.findAllByUserId(userId, query);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToLoadSavedSearchException();
