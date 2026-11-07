@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ContractStatus,
   DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
@@ -11,6 +12,7 @@ import {
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { activateContractLifecycle } from '../../shared/helper/contract-activation.helper';
 
 @Injectable()
 export class PaymentRepository {
@@ -53,11 +55,67 @@ export class PaymentRepository {
           select: {
             id: true,
             email: true,
+            stripeCustomerId: true,
             stripeAccountId: true,
             stripeOnboardingCompleted: true,
           },
         },
       },
+    });
+  }
+
+  async recordPartyPlatformFeePaid(
+    contractId: number,
+    party: 'client' | 'freelancer',
+  ) {
+    const isClient = party === 'client';
+    const now = new Date();
+    return this.prisma.contract.update({
+      where: { id: contractId },
+      data: isClient
+        ? { clientFeeStatus: PlatformFeeStatus.PAID, clientFeePaidAt: now }
+        : {
+            freelancerFeeStatus: PlatformFeeStatus.PAID,
+            freelancerFeePaidAt: now,
+          },
+    });
+  }
+
+  async activateContractIfReady(contractId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.findUnique({
+        where: { id: contractId },
+      });
+      if (!contract) return null;
+
+      const bothFeesPaid =
+        contract.clientFeeStatus === PlatformFeeStatus.PAID &&
+        contract.freelancerFeeStatus === PlatformFeeStatus.PAID;
+      const bothSigned = contract.signedByClient && contract.signedByFreelancer;
+
+      if (
+        bothFeesPaid &&
+        contract.platformFeeStatus !== PlatformFeeStatus.PAID
+      ) {
+        await tx.contract.update({
+          where: { id: contractId },
+          data: {
+            platformFeeStatus: PlatformFeeStatus.PAID,
+            platformFeePaidAt: new Date(),
+          },
+        });
+      }
+
+      if (
+        bothFeesPaid &&
+        bothSigned &&
+        contract.status !== ContractStatus.ACTIVE
+      ) {
+        const activated = await activateContractLifecycle(tx, contractId);
+        return { activated: true, contract: activated ?? contract };
+      }
+
+      return { activated: false, contract };
     });
   }
 
@@ -291,6 +349,84 @@ export class PaymentRepository {
       ...tx,
       amount: Number(tx.amount),
     };
+  }
+
+  async handleEscrowDepositSuccess(contractId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.findUnique({
+        where: { id: contractId },
+        select: { status: true, clientFeeStatus: true },
+      });
+
+      if (!contract) return null;
+
+      const dataToUpdate: Prisma.ContractUpdateInput = {};
+      if (contract.clientFeeStatus !== PlatformFeeStatus.PAID) {
+        dataToUpdate.clientFeeStatus = PlatformFeeStatus.PAID;
+        dataToUpdate.clientFeePaidAt = new Date();
+      }
+
+      if (contract.status === ContractStatus.AWAITING_PAYMENT) {
+        dataToUpdate.status = ContractStatus.PENDING_SIGN;
+      }
+
+      if (Object.keys(dataToUpdate).length > 0) {
+        return tx.contract.update({
+          where: { id: contractId },
+          data: dataToUpdate,
+        });
+      }
+
+      return contract;
+    });
+  }
+
+  async findContractEscrowDeposits(contractId: number) {
+    return this.prisma.transaction.findMany({
+      where: {
+        contractId,
+        type: TransactionType.ESCROW_DEPOSIT,
+        status: TransactionStatus.SUCCEEDED,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async updateAllContractMilestonesPaymentStatus(
+    contractId: number,
+    fromStatus: MilestonePaymentStatus,
+    toStatus: MilestonePaymentStatus,
+  ) {
+    return this.prisma.milestone.updateMany({
+      where: {
+        contractId,
+        paymentStatus: fromStatus,
+      },
+      data: {
+        paymentStatus: toStatus,
+      },
+    });
+  }
+
+  async checkAndCompleteFreelancerFee(contractId: number) {
+    const unreleasedMilestones = await this.prisma.milestone.count({
+      where: {
+        contractId,
+        paymentStatus: {
+          not: MilestonePaymentStatus.RELEASED,
+        },
+      },
+    });
+
+    if (unreleasedMilestones === 0) {
+      await this.prisma.contract.update({
+        where: { id: contractId },
+        data: {
+          freelancerFeeStatus: PlatformFeeStatus.PAID,
+          freelancerFeePaidAt: new Date(),
+        },
+      });
+    }
   }
 
   async getTransactions(

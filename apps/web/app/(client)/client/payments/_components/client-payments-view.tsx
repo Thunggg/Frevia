@@ -139,7 +139,7 @@ export function ClientPaymentsView() {
         };
       case "MILESTONE_PAYOUT":
         return {
-          label: "Milestone Payout",
+          label: "Payout",
           icon: ArrowUpRight,
           className:
             "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900",
@@ -268,7 +268,7 @@ export function ClientPaymentsView() {
                 Stripe Escrow Protection Enabled
               </h3>
               <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                When you fund a milestone, your money is securely locked in Stripe Escrow. Funds are never released until you inspect the work and click Release.
+                When you fund a contract, your money is securely locked in Stripe Escrow. Funds are never released until you inspect the work and click Release.
               </p>
             </div>
           </div>
@@ -356,10 +356,9 @@ export function ClientPaymentsView() {
           {[
             { id: "ALL", label: "All Types" },
             { id: "ESCROW_DEPOSIT", label: "Escrow Deposit" },
-            { id: "MILESTONE_PAYOUT", label: "Milestone Payout" },
+            { id: "MILESTONE_PAYOUT", label: "Payout" },
             { id: "PLATFORM_FEE", label: "Platform Fee" },
             { id: "REFUND", label: "Refunds" },
-            { id: "DISPUTE_FEE", label: "Dispute Fee" },
           ].map((type) => (
             <button
               key={type.id}
@@ -448,7 +447,7 @@ export function ClientPaymentsView() {
                       <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                         {selectedType !== "ALL" || selectedStatus !== "ALL" || contractIdFilter
                           ? "Try resetting your filter parameters to see all records."
-                          : "When you fund milestones or pay platform fees on contracts, they will appear here in your ledger."}
+                          : "When you fund contracts or pay platform fees on contracts, they will appear here in your ledger."}
                       </p>
                       <Button
                         size="sm"

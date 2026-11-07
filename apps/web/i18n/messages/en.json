@@ -1091,9 +1091,12 @@
   "contractStatus": {
     "ACTIVE": "Active",
     "PENDING_SIGN": "Pending Signature",
+    "AWAITING_PAYMENT": "Awaiting Payment",
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled",
-    "DISPUTED": "In Dispute"
+    "DISPUTED": "In Dispute",
+    "REJECTED": "Rejected",
+    "EXPIRED": "Expired"
   },
   "contracts": {
     "metaTitle": "My Contracts | Frevia",
@@ -1117,6 +1120,10 @@
     "waiting": "Waiting",
     "youLabel": "You",
     "totalBudget": "Total Budget",
+    "platformFeeLabel": "Platform fee",
+    "signatures": "Signatures",
+    "contractId": "Contract #{id}",
+    "dueDate": "Due {date}",
     "viewDetails": "View Details",
     "notAvailable": "N/A",
     "metaTitleFreelancer": "My Contracts | Freelancer Dashboard | Frevia",
@@ -2561,7 +2568,8 @@
       "disputes": "Disputes",
       "bookmarks": "Bookmarks",
       "myProposals": "My Proposals",
-      "savedSearches": "Saved searches"
+      "savedSearches": "Saved searches",
+      "payments": "Payments"
     },
     "searchPlaceholder": "Search products...",
     "contact": "Contact",

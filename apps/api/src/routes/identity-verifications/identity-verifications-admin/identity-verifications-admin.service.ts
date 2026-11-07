@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { existsSync } from 'fs';
 import { VerificationStatus } from '@prisma/client';
 import { isAbsolute, relative, resolve } from 'path';
 import {
@@ -109,6 +110,9 @@ export class IdentityVerificationsAdminService {
       isAbsolute(pathFromUploadsRoot)
     ) {
       throw IdentityVerificationFileInvalidException();
+    }
+    if (!existsSync(absolutePath)) {
+      throw IdentityVerificationNotFoundException();
     }
 
     return {
