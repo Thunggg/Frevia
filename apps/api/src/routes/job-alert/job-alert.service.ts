@@ -192,7 +192,7 @@ export class JobAlertService {
     try {
       return await this.jobAlertRepository.findMatchingJobs(
         userId,
-        alert.keywords,
+        alert.keywords ?? null,
         alert.skills,
         5,
       );

@@ -205,7 +205,10 @@ export class ManageJobRepository {
 
   async findJobBySlug(
     slug: string,
-  ): Promise<Pick<JobType, 'id' | 'clientId' | 'status' | 'expiryDate'> | null> {
+  ): Promise<Pick<
+    JobType,
+    'id' | 'clientId' | 'status' | 'expiryDate'
+  > | null> {
     return this.prisma.job.findFirst({
       where: {
         slug,

@@ -3,6 +3,7 @@ import {
   CreateJobBodySchema,
   ManageJobMessage,
   RoleName,
+  ViewBookmarkedJobFilterSchema,
   type JobType,
 } from '@shared/types';
 import type { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
@@ -272,7 +273,11 @@ describe('ManageJobService', () => {
   describe('viewBookmarkedJob (UC-12.01)', () => {
     it('throws if role is not FREELANCER', async () => {
       await expect(
-        service.viewBookmarkedJob(1, RoleName.CLIENT, { page: 1, limit: 10 }),
+        service.viewBookmarkedJob(
+          1,
+          RoleName.CLIENT,
+          ViewBookmarkedJobFilterSchema.parse({ page: 1, limit: 10 }),
+        ),
       ).rejects.toThrow(BookmarkJobOnlyForFreelancerException());
     });
 
@@ -286,10 +291,14 @@ describe('ManageJobService', () => {
         total: 2,
       });
 
-      const result = await service.viewBookmarkedJob(1, RoleName.FREELANCER, {
-        page: 1,
-        limit: 10,
-      });
+      const result = await service.viewBookmarkedJob(
+        1,
+        RoleName.FREELANCER,
+        ViewBookmarkedJobFilterSchema.parse({
+          page: 1,
+          limit: 10,
+        }),
+      );
 
       expect(result.data).toHaveLength(2);
       expect(result.pagination).toEqual({

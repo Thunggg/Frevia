@@ -167,4 +167,3 @@ describe('SavedSearchService (UC-22)', () => {
     });
   });
 });
-

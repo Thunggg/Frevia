@@ -1,5 +1,9 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
-import type { ViewJobDetailResType, ViewListJobParsedFilterType } from '@shared/types';
+import {
+  ViewListJobFilterSchema,
+  type ViewJobDetailResType,
+  type ViewListJobParsedFilterType,
+} from '@shared/types';
 import {
   FailedToLoadJobDetailException,
   FailedToLoadJobListException,
@@ -27,19 +31,28 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
   const mockJob = {
     id: 1,
     slug: 'senior-fullstack-engineer',
+    clientId: 10,
     title: 'Senior Fullstack Engineer',
-    description: 'Looking for a Senior Fullstack Engineer skilled in NestJS and React',
+    description:
+      'Looking for a Senior Fullstack Engineer skilled in NestJS and React',
     budgetMin: 1000,
     budgetMax: 2000,
     budgetType: 'FIXED_PRICE' as const,
     deadline: new Date('2026-12-31T00:00:00.000Z'),
+    expiryDate: new Date('2026-12-15T00:00:00.000Z'),
     status: 'OPEN' as const,
+    hiringType: 'SINGLE' as const,
     positionsRequired: 1,
     positionsFilled: 0,
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
     updatedAt: new Date('2026-01-02T00:00:00.000Z'),
-    skills: [{ id: 1, name: 'NestJS' }, { id: 2, name: 'React' }],
-    jobCategories: [{ id: 1, name: 'Web Development', slug: 'web-development' }],
+    skills: [
+      { id: 1, name: 'NestJS' },
+      { id: 2, name: 'React' },
+    ],
+    jobCategories: [
+      { id: 1, name: 'Web Development', slug: 'web-development' },
+    ],
     client: {
       id: 10,
       name: 'Acme Corp',
@@ -55,16 +68,18 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
   // UF-85: viewListJob
   // =========================================================================
   describe('UF-85 viewListJob', () => {
-    // UTCID01 (Normal): Default pagination (page=1, limit=10), query succeeds
-    it('UTCID01: returns paginated jobs with default pagination when query succeeds', async () => {
-      const filter: ViewListJobParsedFilterType = {
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt',
-        order: 'desc',
-      };
+    // UF-85: Trả về danh sách công việc công khai kèm phân trang mặc định khi query thành công.
+    it('returns paginated jobs with default pagination when query succeeds', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 10,
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
 
-      repository.getJobLists.mockResolvedValue({
+      repository.getJobLists.mockResolvedValueOnce({
         jobs: [mockJob],
         total: 1,
       });
@@ -83,17 +98,19 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.getJobLists).toHaveBeenCalledWith(filter);
     });
 
-    // UTCID02 (Normal): Keyword search over title/description/skill
-    it('UTCID02: forwards keyword search filter and returns matching jobs', async () => {
-      const filter: ViewListJobParsedFilterType = {
-        page: 1,
-        limit: 10,
-        search: 'NestJS',
-        sortBy: 'createdAt',
-        order: 'desc',
-      };
+    // Chuyển tiếp bộ lọc tìm kiếm theo từ khóa và trả về các công việc khớp kết quả.
+    it('forwards keyword search filter and returns matching jobs', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 10,
+          search: 'NestJS',
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
 
-      repository.getJobLists.mockResolvedValue({
+      repository.getJobLists.mockResolvedValueOnce({
         jobs: [mockJob],
         total: 1,
       });
@@ -105,20 +122,22 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.getJobLists).toHaveBeenCalledWith(filter);
     });
 
-    // UTCID03 (Normal): Category + budget + skill filters and sorting
-    it('UTCID03: applies category, budget and skill filters with custom sorting', async () => {
-      const filter: ViewListJobParsedFilterType = {
-        page: 1,
-        limit: 10,
-        category: 'web-development',
-        skill: 'React',
-        budgetMin: 500,
-        budgetMax: 2500,
-        sortBy: 'budgetMax',
-        order: 'asc',
-      };
+    // Áp dụng kết hợp các bộ lọc danh mục, kỹ năng, khoảng ngân sách và sắp xếp tùy chỉnh.
+    it('applies category, budget and skill filters with custom sorting', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 10,
+          category: 'web-development',
+          skill: 'React',
+          budgetMin: 500,
+          budgetMax: 2500,
+          sortBy: 'budgetMax',
+          order: 'asc',
+        },
+      );
 
-      repository.getJobLists.mockResolvedValue({
+      repository.getJobLists.mockResolvedValueOnce({
         jobs: [mockJob],
         total: 1,
       });
@@ -130,16 +149,18 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.getJobLists).toHaveBeenCalledWith(filter);
     });
 
-    // UTCID04 (Boundary): Page beyond the last page
-    it('UTCID04: returns empty data when requesting a page beyond total pages', async () => {
-      const filter: ViewListJobParsedFilterType = {
-        page: 999,
-        limit: 10,
-        sortBy: 'createdAt',
-        order: 'desc',
-      };
+    // Trả về mảng dữ liệu rỗng khi yêu cầu trang vượt quá tổng số trang.
+    it('returns empty data when requesting a page beyond total pages', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 999,
+          limit: 10,
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
 
-      repository.getJobLists.mockResolvedValue({
+      repository.getJobLists.mockResolvedValueOnce({
         jobs: [],
         total: 25,
       });
@@ -156,42 +177,99 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.getJobLists).toHaveBeenCalledWith(filter);
     });
 
-    // UTCID05 (Abnormal): Limit exceeds max limit (e.g., limit=21 handled or rejection)
-    it('UTCID05: handles limit exceeding boundary or invalid pagination parameter', async () => {
-      // In NestJS controller, limit=21 is rejected by Zod validation (max: 20).
-      // At the service layer, we verify pagination calculation handles edge limits cleanly.
-      const filter: ViewListJobParsedFilterType = {
-        page: 1,
-        limit: 21,
-        sortBy: 'createdAt',
-        order: 'desc',
-      };
+    // Trả về dữ liệu chính xác khi limit đạt mốc biên dưới là 1.
+    it('handles boundary min limit = 1 cleanly', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 1,
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
 
-      repository.getJobLists.mockResolvedValue({
-        jobs: [],
-        total: 0,
+      repository.getJobLists.mockResolvedValueOnce({
+        jobs: [mockJob],
+        total: 5,
       });
 
       const result = await service.viewListJob(filter);
 
-      expect(result.pagination.limit).toBe(21);
-      expect(repository.getJobLists).toHaveBeenCalledWith(filter);
+      expect(result.pagination.limit).toBe(1);
+      expect(result.pagination.totalPages).toBe(5);
     });
 
-    // UTCID06 (Abnormal): Database connection failure (Prisma error)
-    it('UTCID06: throws FailedToLoadJobListException on Prisma database failure', async () => {
-      const filter: ViewListJobParsedFilterType = {
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt',
-        order: 'desc',
-      };
+    // Trả về dữ liệu chính xác khi limit đạt mốc biên trên là 20.
+    it('handles boundary max limit = 20 cleanly', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 20,
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
 
-      repository.getJobLists.mockRejectedValue(prismaError());
+      repository.getJobLists.mockResolvedValueOnce({
+        jobs: [mockJob],
+        total: 1,
+      });
+
+      const result = await service.viewListJob(filter);
+
+      expect(result.pagination.limit).toBe(20);
+      expect(result.pagination.totalPages).toBe(1);
+    });
+
+    // Ném FailedToLoadJobListException khi cơ sở dữ liệu Prisma gặp sự cố.
+    it('throws FailedToLoadJobListException on Prisma database failure', async () => {
+      const filter: ViewListJobParsedFilterType = ViewListJobFilterSchema.parse(
+        {
+          page: 1,
+          limit: 10,
+          sortBy: 'createdAt',
+          order: 'desc',
+        },
+      );
+
+      repository.getJobLists.mockRejectedValueOnce(prismaError());
 
       await expect(service.viewListJob(filter)).rejects.toThrow(
         FailedToLoadJobListException(),
       );
+    });
+
+    // Schema bộ lọc từ chối khi số trang page <= 0.
+    it('rejects page <= 0 through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({ page: -1, limit: 10 });
+      expect(parsed.success).toBe(false);
+    });
+
+    // Schema bộ lọc từ chối khi limit vượt quá 20.
+    it('rejects limit > 20 through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({ page: 1, limit: 21 });
+      expect(parsed.success).toBe(false);
+    });
+
+    // Schema bộ lọc từ chối khi ngân sách tối thiểu budgetMin < 0.
+    it('rejects negative budgetMin through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({
+        page: 1,
+        limit: 10,
+        budgetMin: -1,
+      });
+      expect(parsed.success).toBe(false);
+    });
+
+    // Schema bộ lọc từ chối khi budgetMin lớn hơn budgetMax.
+    it('rejects budgetMin greater than budgetMax through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({
+        page: 1,
+        limit: 10,
+        budgetMin: 2000,
+        budgetMax: 100,
+      });
+      expect(parsed.success).toBe(false);
     });
   });
 
@@ -199,11 +277,13 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
   // UF-86: viewJobDetail
   // =========================================================================
   describe('UF-86 viewJobDetail', () => {
-    // UTCID01 (Normal): Valid OPEN job slug
-    it('UTCID01: returns full job detail with skills and categories for valid OPEN job', async () => {
+    // UF-86: Trả về chi tiết công việc đầy đủ kèm kỹ năng và danh mục khi slug hợp lệ và job đang OPEN.
+    it('returns full job detail with skills and categories for valid OPEN job', async () => {
       const slug = 'senior-fullstack-engineer';
 
-      repository.viewJobDetail.mockResolvedValue(mockJob as unknown as ViewJobDetailResType);
+      repository.viewJobDetail.mockResolvedValueOnce(
+        mockJob as unknown as ViewJobDetailResType,
+      );
 
       const result = await service.viewJobDetail(slug);
 
@@ -213,8 +293,8 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.viewJobDetail).toHaveBeenCalledWith(slug);
     });
 
-    // UTCID02 (Boundary): OPEN job with null optional fields and empty arrays
-    it('UTCID02: returns job detail when optional fields are null and lists are empty', async () => {
+    // Trả về chi tiết công việc khi các trường tùy chọn mang giá trị null và danh sách rỗng.
+    it('returns job detail when optional fields are null and lists are empty', async () => {
       const slug = 'minimal-job-posting';
       const minimalJob = {
         id: 2,
@@ -234,7 +314,9 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
         jobCategories: [],
       };
 
-      repository.viewJobDetail.mockResolvedValue(minimalJob as unknown as ViewJobDetailResType);
+      repository.viewJobDetail.mockResolvedValueOnce(
+        minimalJob as unknown as ViewJobDetailResType,
+      );
 
       const result = await service.viewJobDetail(slug);
 
@@ -245,11 +327,31 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.viewJobDetail).toHaveBeenCalledWith(slug);
     });
 
-    // UTCID03 (Abnormal): Non-existent slug -> JobNotFoundException (404)
-    it('UTCID03: throws JobNotFoundException when slug does not exist in database', async () => {
+    // Trả về chi tiết công việc thành công khi job tuyển nhiều vị trí MULTIPLE.
+    it('returns job detail for MULTIPLE hiring type job', async () => {
+      const slug = 'team-react-developers';
+      const multiJob = {
+        ...mockJob,
+        slug,
+        hiringType: 'MULTIPLE' as const,
+        positionsRequired: 5,
+      };
+
+      repository.viewJobDetail.mockResolvedValueOnce(
+        multiJob as unknown as ViewJobDetailResType,
+      );
+
+      const result = await service.viewJobDetail(slug);
+
+      expect(result.hiringType).toBe('MULTIPLE');
+      expect(result.positionsRequired).toBe(5);
+    });
+
+    // Ném JobNotFoundException khi slug không tồn tại trong cơ sở dữ liệu.
+    it('throws JobNotFoundException when slug does not exist in database', async () => {
       const slug = 'non-existent-job-slug';
 
-      repository.viewJobDetail.mockRejectedValue(JobNotFoundException());
+      repository.viewJobDetail.mockRejectedValueOnce(JobNotFoundException());
 
       await expect(service.viewJobDetail(slug)).rejects.toThrow(
         JobNotFoundException(),
@@ -257,11 +359,11 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.viewJobDetail).toHaveBeenCalledWith(slug);
     });
 
-    // UTCID04 (Abnormal): DRAFT / CLOSED / deleted / banned-client job -> JobNotFoundException (404)
-    it('UTCID04: throws JobNotFoundException when job is not OPEN or client is banned', async () => {
+    // Ném JobNotFoundException khi công việc không ở trạng thái OPEN hoặc tài khoản client bị khóa.
+    it('throws JobNotFoundException when job is not OPEN or client is banned', async () => {
       const slug = 'draft-or-closed-job';
 
-      repository.viewJobDetail.mockRejectedValue(JobNotFoundException());
+      repository.viewJobDetail.mockRejectedValueOnce(JobNotFoundException());
 
       await expect(service.viewJobDetail(slug)).rejects.toThrow(
         JobNotFoundException(),
@@ -269,11 +371,11 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(repository.viewJobDetail).toHaveBeenCalledWith(slug);
     });
 
-    // UTCID05 (Abnormal): Database query failure (Prisma error) -> FailedToLoadJobDetailException (500)
-    it('UTCID05: throws FailedToLoadJobDetailException on Prisma database failure', async () => {
+    // Ném FailedToLoadJobDetailException khi gặp sự cố kết nối cơ sở dữ liệu Prisma.
+    it('throws FailedToLoadJobDetailException on Prisma database failure', async () => {
       const slug = 'senior-fullstack-engineer';
 
-      repository.viewJobDetail.mockRejectedValue(prismaError());
+      repository.viewJobDetail.mockRejectedValueOnce(prismaError());
 
       await expect(service.viewJobDetail(slug)).rejects.toThrow(
         FailedToLoadJobDetailException(),
@@ -282,4 +384,3 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
     });
   });
 });
-
