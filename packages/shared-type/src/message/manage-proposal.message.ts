@@ -25,4 +25,11 @@ export const ManageProposalMessage = {
   FAILED_TO_CREATE: "Error.FailedToCreateProposal",
   FAILED_TO_UPDATE: "Error.FailedToUpdateProposal",
   FAILED_TO_LOAD: "Error.FailedToLoadProposal",
+  FREELANCER_BANNED: "Error.FreelancerBanned",
+  MAX_SUBMISSIONS_EXCEEDED: "Error.MaxProposalSubmissionsExceeded",
+  BID_AMOUNT_TOO_LOW: "Error.ProposalBidAmountTooLow",
+  EXTREME_BID_AMOUNT: "Error.ProposalExtremeBidAmount",
 } as const;
+
+export const MIN_PROPOSAL_BID_AMOUNT = 5;
+export const MAX_PROPOSALS_PER_JOB_PER_FREELANCER = 3;

@@ -88,6 +88,8 @@ export class ProposalRepository {
         id: true,
         clientId: true,
         status: true,
+        budgetMin: true,
+        budgetMax: true,
         deadline: true,
         expiryDate: true,
         deletedAt: true,
@@ -99,10 +101,45 @@ export class ProposalRepository {
     });
   }
 
+  async findFreelancerStatus(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { isBanned: true, deletedAt: true },
+    });
+  }
+
+  async countProposalsByFreelancerAndJob(
+    jobId: number,
+    freelancerId: number,
+  ): Promise<number> {
+    return this.prisma.proposal.count({
+      where: {
+        jobId,
+        freelancerId,
+        deletedAt: null,
+      },
+    });
+  }
+
+  async cancelPendingProposalsForJob(jobId: number): Promise<number> {
+    const result = await this.prisma.proposal.updateMany({
+      where: {
+        jobId,
+        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        deletedAt: null,
+      },
+      data: {
+        status: ProposalStatus.REJECTED,
+        rejectedAt: new Date(),
+      },
+    });
+    return result.count;
+  }
+
   async findJobForClientProposals(jobId: number) {
     return this.prisma.job.findUnique({
       where: { id: jobId },
-      select: { id: true, clientId: true, deletedAt: true },
+      select: { id: true, clientId: true, deletedAt: true, status: true },
     });
   }
 
@@ -115,6 +152,7 @@ export class ProposalRepository {
         deletedAt: null,
         submittedAt: { not: null },
         status: { not: ProposalStatus.DRAFT },
+        freelancer: { isBanned: false, deletedAt: null },
       },
       select: {
         ...proposalSelect,
@@ -153,6 +191,7 @@ export class ProposalRepository {
       deletedAt: null,
       submittedAt: { not: null },
       status: status ?? { not: ProposalStatus.DRAFT },
+      freelancer: { isBanned: false, deletedAt: null },
     };
     const [proposals, totalItems] = await Promise.all([
       this.prisma.proposal.findMany({

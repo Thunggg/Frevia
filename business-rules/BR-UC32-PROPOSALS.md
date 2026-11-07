@@ -129,3 +129,25 @@ Khi Client chấp nhận đề xuất (`UC-32.06: acceptProposal`):
 ### BR-PR10: Tính toàn vẹn dữ liệu khi xóa mềm (Soft-Delete Preservation)
 - Khi một đề xuất bị xóa mềm (`deletedAt IS NOT NULL`), đề xuất đó không xuất hiện trong các danh sách và không thể thực hiện bất kỳ hành động nào.
 
+### BR-PR11: Ràng buộc trạng thái tài khoản Freelancer (Account Standing & Banned Constraint)
+- Freelancer đang bị khóa tài khoản (`user.isBanned === true`) hoặc tài khoản đã bị xóa mềm (`user.deletedAt IS NOT NULL`) tuyệt đối **không được phép** tạo bản nháp, nộp đề xuất, chỉnh sửa hay rút đề xuất.
+- Khi vi phạm: Ném lỗi `403 Forbidden` (`Error.FreelancerBanned`).
+- Danh sách đề xuất hiển thị phía Khách hàng (`UC-32.08`): Tự động loại trừ các đề xuất từ những Freelancer bị khóa tài khoản (`freelancer.isBanned = false`).
+
+### BR-PR13: Quy tắc rút đề xuất & Giới hạn nộp lại (Withdrawal & Resubmission Policy)
+- Hành động rút đề xuất (`withdrawProposal`) là **bất khả nghịch** (không thể hoàn tác để khôi phục lại đề xuất cũ).
+- Sau khi rút, nếu bài đăng việc làm vẫn đang ở trạng thái `OPEN` và còn hạn, Freelancer được quyền tạo và nộp lại một đề xuất mới.
+- **Giới hạn số lần nộp lại**: Mỗi Freelancer chỉ được phép tạo và nộp tối đa **3 lần** cho cùng một bài đăng việc làm (`MAX_PROPOSALS_PER_JOB_PER_FREELANCER = 3`). Khi vượt quá số lần này: Ném lỗi `Error.MaxProposalSubmissionsExceeded`.
+
+### BR-PR14: Xử lý Cascade khi Job bị Hủy hoặc Đóng sớm (Job Cancellation Cascade)
+- Khi Khách hàng hủy bài đăng (`job.status === 'CANCELLED'`) hoặc việc làm bị xóa (`job.deletedAt IS NOT NULL`):
+  - Hệ thống tự động chuyển toàn bộ các đề xuất đang ở trạng thái chờ (`SUBMITTED` hoặc `INTERVIEWING`) của công việc đó sang trạng thái `REJECTED`, ghi nhận thời gian `rejectedAt = NOW()`.
+  - Không cho phép bất kỳ đề xuất nào bị treo vô thời hạn ở trạng thái chờ khi công việc không còn tồn tại.
+
+### BR-PR15: Giới hạn an toàn giá chào thầu (Extreme Bid Safeguard)
+- **Mức giá tối thiểu tuyệt đối**: `bidAmount` phải $\ge 5\$$ (`MIN_PROPOSAL_BID_AMOUNT = 5`). Nếu nhỏ hơn, ném lỗi `Error.ProposalBidAmountTooLow`.
+- **Ràng buộc tương quan ngân sách**:
+  - Nếu Job có thiết lập ngân sách tối thiểu (`budgetMin > 0`): `bidAmount` không được thấp hơn $1/10$ ngân sách tối thiểu (`bidAmount >= budgetMin / 10`).
+  - Nếu Job có thiết lập ngân sách tối đa (`budgetMax > 0`): `bidAmount` không được vượt quá $10$ lần ngân sách tối đa (`bidAmount <= budgetMax * 10`).
+  - Khi vi phạm mức chênh lệch cực đoan: Ném lỗi `422 Unprocessable Entity` (`Error.ProposalExtremeBidAmount`) để ngăn ngừa trường hợp người dùng nhập nhầm số tiền hoặc cố tình spam giá thầu ảo.
+

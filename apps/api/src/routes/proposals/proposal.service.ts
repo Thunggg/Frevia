@@ -14,11 +14,17 @@ import {
   RoleName,
   SaveProposalDraftBodyType,
   UpdateProposalBodyType,
+  MAX_PROPOSALS_PER_JOB_PER_FREELANCER,
+  MIN_PROPOSAL_BID_AMOUNT,
 } from '@shared/types';
 
 import {
   ActiveProposalExistsException,
+  BidAmountTooLowException,
   CannotProposeOwnJobException,
+  ExtremeBidAmountException,
+  FreelancerBannedException,
+  MaxProposalSubmissionsExceededException,
   ProposalClientOnlyException,
   FailedToCreateProposalException,
   FailedToLoadProposalException,
@@ -50,6 +56,12 @@ export class ProposalService {
     body: CreateProposalBodyType,
   ): Promise<ProposalType> {
     await this.assertCanPropose(userId, roleName, jobId);
+    const job = await this.proposalRepository.findJobForProposal(jobId);
+    this.assertBidSafeguard(
+      body.bidAmount,
+      job?.budgetMin ? Number(job.budgetMin) : null,
+      job?.budgetMax ? Number(job.budgetMax) : null,
+    );
     try {
       return await this.proposalRepository.createSubmitted(jobId, userId, body);
     } catch (error) {
@@ -116,6 +128,17 @@ export class ProposalService {
 
     await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
 
+    if (body.bidAmount !== undefined && body.bidAmount !== null) {
+      const job = await this.proposalRepository.findJobForProposal(
+        proposal.jobId,
+      );
+      this.assertBidSafeguard(
+        body.bidAmount,
+        job?.budgetMin ? Number(job.budgetMin) : null,
+        job?.budgetMax ? Number(job.budgetMax) : null,
+      );
+    }
+
     try {
       return await this.proposalRepository.updateDraft(proposal.id, body);
     } catch (error) {
@@ -147,6 +170,15 @@ export class ProposalService {
     ) {
       throw ProposalIncompleteException();
     }
+
+    const job = await this.proposalRepository.findJobForProposal(
+      proposal.jobId,
+    );
+    this.assertBidSafeguard(
+      proposal.bidAmount ? Number(proposal.bidAmount) : null,
+      job?.budgetMin ? Number(job.budgetMin) : null,
+      job?.budgetMax ? Number(job.budgetMax) : null,
+    );
 
     try {
       return await this.proposalRepository.submitDraft(proposal.id);
@@ -199,6 +231,10 @@ export class ProposalService {
     if (job.deletedAt) throw ProposalJobUnavailableException();
     if (job.clientId !== userId) throw ProposalForbiddenException();
 
+    if (job.status === 'CANCELLED') {
+      await this.proposalRepository.cancelPendingProposalsForJob(job.id);
+    }
+
     try {
       await this.expireStaleProposals();
       return await this.proposalRepository.findSubmittedProposalsForClientJob(
@@ -222,6 +258,10 @@ export class ProposalService {
     if (!job) throw ProposalJobNotFoundException();
     if (job.deletedAt) throw ProposalJobUnavailableException();
     if (job.clientId !== userId) throw ProposalForbiddenException();
+
+    if (job.status === 'CANCELLED') {
+      await this.proposalRepository.cancelPendingProposalsForJob(job.id);
+    }
 
     try {
       await this.expireStaleProposals();
@@ -432,6 +472,13 @@ export class ProposalService {
     // 1 is guaranteed by the global AuthGuard before the controller is reached.
     this.assertFreelancer(roleName); // 2
 
+    // BR-PR11: Kiểm tra trạng thái tài khoản Freelancer (không bị ban / xóa)
+    const freelancer =
+      await this.proposalRepository.findFreelancerStatus(userId);
+    if (!freelancer || freelancer.isBanned || freelancer.deletedAt) {
+      throw FreelancerBannedException();
+    }
+
     const job = await this.proposalRepository.findJobForProposal(jobId); // 3
     if (!job) throw ProposalJobNotFoundException();
     if (job.deletedAt) throw ProposalJobUnavailableException(); // 4
@@ -458,6 +505,49 @@ export class ProposalService {
       ignoredProposalId,
     );
     if (activeProposal) throw ActiveProposalExistsException(); // 10
+
+    // BR-PR13: Giới hạn tối đa 3 lần nộp cho cùng 1 công việc
+    if (!ignoredProposalId) {
+      const submissionCount =
+        await this.proposalRepository.countProposalsByFreelancerAndJob(
+          job.id,
+          userId,
+        );
+      if (submissionCount >= MAX_PROPOSALS_PER_JOB_PER_FREELANCER) {
+        throw MaxProposalSubmissionsExceededException();
+      }
+    }
+  }
+
+  // BR-PR15: Ràng buộc an toàn giá chào thầu
+  private assertBidSafeguard(
+    bidAmount?: number | null,
+    budgetMin?: number | null,
+    budgetMax?: number | null,
+  ): void {
+    if (bidAmount === undefined || bidAmount === null) return;
+    const bid = Number(bidAmount);
+    if (bid < MIN_PROPOSAL_BID_AMOUNT) {
+      throw BidAmountTooLowException();
+    }
+    if (
+      budgetMin !== null &&
+      budgetMin !== undefined &&
+      Number(budgetMin) > 0
+    ) {
+      if (bid < Number(budgetMin) / 10) {
+        throw ExtremeBidAmountException();
+      }
+    }
+    if (
+      budgetMax !== null &&
+      budgetMax !== undefined &&
+      Number(budgetMax) > 0
+    ) {
+      if (bid > Number(budgetMax) * 10) {
+        throw ExtremeBidAmountException();
+      }
+    }
   }
 
   private async getOwnedDraft(userId: number, proposalId: number) {

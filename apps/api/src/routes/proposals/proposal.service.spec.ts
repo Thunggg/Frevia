@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
@@ -12,6 +13,9 @@ describe('ProposalService (UC-32)', () => {
   const repository = {
     findJobForProposal: jest.fn(),
     findJobForClientProposals: jest.fn(),
+    findFreelancerStatus: jest.fn(),
+    countProposalsByFreelancerAndJob: jest.fn(),
+    cancelPendingProposalsForJob: jest.fn(),
     findActiveProposal: jest.fn(),
     findMyActiveProposal: jest.fn(),
     findProposal: jest.fn(),
@@ -40,6 +44,8 @@ describe('ProposalService (UC-32)', () => {
     id: 10,
     clientId: 99,
     status: 'OPEN',
+    budgetMin: 100,
+    budgetMax: 1000,
     deadline: null,
     expiryDate: new Date(Date.now() + 86400000), // ngày mai
     deletedAt: null,
@@ -78,6 +84,12 @@ describe('ProposalService (UC-32)', () => {
     jest.clearAllMocks();
     repository.findJobForProposal.mockResolvedValue(mockJob);
     repository.findJobForClientProposals.mockResolvedValue(mockJob);
+    repository.findFreelancerStatus.mockResolvedValue({
+      isBanned: false,
+      deletedAt: null,
+    });
+    repository.countProposalsByFreelancerAndJob.mockResolvedValue(0);
+    repository.cancelPendingProposalsForJob.mockResolvedValue(0);
     repository.findActiveProposal.mockResolvedValue(null);
     repository.expireOverdueProposals.mockResolvedValue(0);
   });
@@ -233,6 +245,53 @@ describe('ProposalService (UC-32)', () => {
       await expect(
         service.createProposal(12, RoleName.FREELANCER, 10, validBody),
       ).rejects.toBeInstanceOf(ConflictException);
+    });
+
+    it('throws ForbiddenException if freelancer is banned (BR-PR11)', async () => {
+      repository.findFreelancerStatus.mockResolvedValue({
+        isBanned: true,
+        deletedAt: null,
+      });
+
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, validBody),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('throws BadRequestException if freelancer exceeds 3 submissions for the same job (BR-PR13)', async () => {
+      repository.countProposalsByFreelancerAndJob.mockResolvedValue(3);
+
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, validBody),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('throws UnprocessableEntityException if bidAmount is below $5 (BR-PR15)', async () => {
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          bidAmount: 4,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+    });
+
+    it('throws UnprocessableEntityException if bidAmount is extreme compared to budget (BR-PR15)', async () => {
+      // Job budgetMin = 100, budgetMax = 1000
+      // Bid < budgetMin / 10 (< 10)
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          bidAmount: 8,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+
+      // Bid > budgetMax * 10 (> 10000)
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          bidAmount: 15000,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
     });
 
     it('creates and returns submitted proposal when valid', async () => {
@@ -527,6 +586,29 @@ describe('ProposalService (UC-32)', () => {
         repository.findSubmittedProposalsPageForClientJob,
       ).toHaveBeenCalledWith(10, { page: 1, limit: 10 });
       expect(result).toEqual(mockPage);
+    });
+
+    it('cancels pending proposals if job is CANCELLED (BR-PR14)', async () => {
+      repository.findJobForClientProposals.mockResolvedValue({
+        ...mockJob,
+        status: 'CANCELLED',
+      });
+      repository.findSubmittedProposalsPageForClientJob.mockResolvedValue({
+        data: [],
+        totalItems: 0,
+        totalPages: 0,
+        page: 1,
+        limit: 10,
+      });
+
+      await service.getSubmittedProposalsPageForClientJob(
+        99,
+        RoleName.CLIENT,
+        10,
+        { page: 1, limit: 10 },
+      );
+
+      expect(repository.cancelPendingProposalsForJob).toHaveBeenCalledWith(10);
     });
   });
 
