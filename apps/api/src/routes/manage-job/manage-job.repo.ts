@@ -63,9 +63,16 @@ export class ManageJobRepository {
     jobs: ViewJobDetailResType[];
     total: number;
   }> {
-    const { page, limit } = filter;
+    const {
+      page,
+      limit,
+      search,
+      status,
+      sortBy = 'createdAt',
+      order = 'desc',
+    } = filter;
 
-    const where = {
+    const where: Prisma.JobBookmarkWhereInput = {
       userId,
       job: {
         deletedAt: null,
@@ -73,8 +80,22 @@ export class ManageJobRepository {
           isBanned: false,
           deletedAt: null,
         },
+        ...(status ? { status } : {}),
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
       },
-    } satisfies Prisma.JobBookmarkWhereInput;
+    };
+
+    const orderBy: Prisma.JobBookmarkOrderByWithRelationInput =
+      sortBy === 'createdAt'
+        ? { createdAt: order }
+        : { job: { [sortBy]: order } };
 
     const [bookmarks, total] = await this.prisma.$transaction([
       this.prisma.jobBookmark.findMany({
@@ -98,9 +119,7 @@ export class ManageJobRepository {
         skip: (page - 1) * limit,
         take: limit,
 
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy,
       }),
 
       this.prisma.jobBookmark.count({
