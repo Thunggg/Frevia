@@ -1627,7 +1627,12 @@
     "editCriteria": "Update criteria",
     "errorTitle": "Unable to load saved searches",
     "errorDescription": "An error occurred while fetching your saved searches. Please try again.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "limitReached": "Maximum limit of 30 saved searches reached",
+    "manageTitle": "Manage saved searches",
+    "updateCriteriaTooltip": "Update current criteria into this saved search",
+    "saveAsNew": "Save as new search",
+    "limitIndicator": "{count}/30 saved"
   },
   "bookmarks": {
     "breadcrumb": "Bookmarks",

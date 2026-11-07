@@ -42,6 +42,12 @@ export class SavedSearchRepository {
     }) as Promise<SavedSearchType[]>;
   }
 
+  async countByUserId(userId: number): Promise<number> {
+    return this.prisma.savedSearch.count({
+      where: { userId },
+    });
+  }
+
   async findByIdAndUserId(
     id: number,
     userId: number,

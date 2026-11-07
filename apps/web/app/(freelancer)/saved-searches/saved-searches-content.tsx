@@ -237,9 +237,14 @@ export function SavedSearchesContent({
                   {t("subtitle")}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {t("count", { count: items.length })}
-              </p>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-black/5 dark:bg-white/10 px-2.5 py-1 text-xs font-semibold text-foreground">
+                  {items.length}/30
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  {t("count", { count: items.length })}
+                </p>
+              </div>
             </div>
           </div>
         </section>

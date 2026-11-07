@@ -346,5 +346,6 @@
   "Unsupported Media Type": "This file type is not supported",
   "You can only delete your own skills.": "You can only delete your own skills",
   "You can only edit your own portfolios.": "You can only edit your own portfolio items",
-  "You can only update your own profile.": "You can only update your own profile"
+  "You can only update your own profile.": "You can only update your own profile",
+  "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one."
 }

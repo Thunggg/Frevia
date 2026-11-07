@@ -1619,7 +1619,12 @@
     "editCriteria": "Cập nhật tiêu chí",
     "errorTitle": "Không thể tải danh sách tìm kiếm đã lưu",
     "errorDescription": "Đã có lỗi xảy ra trong quá trình lấy dữ liệu. Vui lòng thử lại.",
-    "retry": "Thử lại"
+    "retry": "Thử lại",
+    "limitReached": "Đã đạt giới hạn tối đa 30 tìm kiếm đã lưu",
+    "manageTitle": "Quản lý tìm kiếm đã lưu",
+    "updateCriteriaTooltip": "Cập nhật tiêu chí hiện tại vào bộ lọc này",
+    "saveAsNew": "Lưu thành bộ lọc mới",
+    "limitIndicator": "{count}/30 đã lưu"
   },
   "bookmarks": {
     "breadcrumb": "Việc đã lưu",

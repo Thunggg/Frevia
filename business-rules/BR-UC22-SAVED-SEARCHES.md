@@ -116,9 +116,14 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
      * Giao diện hiển thị trạng thái đánh dấu nhận biết (icon đã lưu, nút "Đã lưu bộ lọc này").
      * Ngăn chặn thao tác tạo trùng lặp không cần thiết.
 
-4. **Xử lý bất đồng bộ & Phản hồi (Feedback)**:
+4. **Giới hạn số lượng tối đa (BR-SS01 - Maximum Saved Searches Limit)**:
+   * Mỗi Freelancer chỉ được phép lưu tối đa **30 bộ lọc tìm kiếm** (`MAX_SAVED_SEARCHES = 30`).
+   * **Kiểm tra tại Backend**: Trước khi tạo mới bản ghi, hệ thống đếm số lượng bộ lọc hiện tại của người dùng (`prisma.savedSearch.count({ where: { userId } })`). Nếu `count >= 30`, ném lỗi `SavedSearchLimitExceededException` (HTTP 400 - `Error.SavedSearchLimitExceeded`).
+   * **Phản hồi giao diện**: Hiển thị badge số lượng (ví dụ `3/30`). Khi đạt giới hạn 30, vô hiệu hóa nút lưu mới kèm cảnh báo yêu cầu xóa bớt bộ lọc cũ.
+
+5. **Xử lý bất đồng bộ & Phản hồi (Feedback)**:
    * Khi tạo thành công: Bản ghi được lưu vào bảng `SavedSearch`, hiển thị Toast thông báo thành công và cập nhật ngay danh sách bộ lọc mà không cần tải lại toàn trang.
-   * Nếu có lỗi hệ thống: Báo lỗi `FailedToCreateSavedSearchException` (HTTP 500) và giữ nguyên form nhập liệu để người dùng thử lại.
+   * Nếu có lỗi hệ thống: Báo lỗi `FailedToCreateSavedSearchException` (HTTP 500) hoặc lỗi vượt hạn mức (HTTP 400) và giữ nguyên form nhập liệu để người dùng thử lại.
 
 ---
 
@@ -160,3 +165,33 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
 3. **Quy tắc xóa vĩnh viễn & Cập nhật tức thì (Hard Delete & Optimistic UI)**:
    * Gửi yêu cầu xóa, gỡ bỏ bộ lọc khỏi danh sách giao diện ngay lập tức (optimistic update), giảm số đếm tổng số bộ lọc và hiển thị thông báo thành công.
    * Nếu thao tác thất bại: Giữ nguyên bộ lọc trong danh sách và hiển thị thông báo lỗi.
+
+---
+
+## 4. Bài học thiết kế UX & Trải nghiệm thực tế (Đúc kết từ Upwork)
+
+Dựa trên phân tích hành vi và phản hồi thực tế từ người dùng trên các nền tảng Freelance hàng đầu (đặc biệt là Upwork):
+
+### 4.1. Nên học (Best Practices to Adopt)
+1. **Giới hạn số lượng lưu tối đa (30 bộ lọc)**:
+   * Thiết lập ngưỡng cứng **30 bộ lọc tìm kiếm** cho mỗi tài khoản Freelancer.
+   * *Mục đích*: Tránh tình trạng tích tụ bộ lọc rác gây phình to cơ sở dữ liệu, giảm áp lực truy vấn và thúc đẩy Freelancer duy trì danh sách bộ lọc chất lượng, phù hợp với định hướng tìm việc hiện tại.
+2. **Chạy lại bằng một cú bấm (One-click Re-run)**:
+   * Nhấp chuột trực tiếp vào tên bộ lọc tại thanh công cụ hoặc thẻ danh sách sẽ lập tức áp dụng và điều hướng sang trang kết quả tìm việc với các query params tương ứng mà không yêu cầu thêm thao tác xác nhận rườm rà.
+3. **Quản lý tập trung tại một nơi (Unified "Manage" Hub)**:
+   * Gom toàn bộ hành vi: Đổi tên (Rename), Xóa (Delete), Cập nhật tiêu chí (Update Criteria) và Kiểm tra thông số vào một modal / trung tâm quản lý "Manage" trực quan, minh bạch.
+
+### 4.2. Nên tránh (Pitfalls to Avoid)
+1. **Không giấu nút Quản lý ("Manage") trong menu con khó thấy**:
+   * *Vấn đề Upwork thường bị phàn nàn*: Người dùng khó tìm thấy vị trí quản lý hoặc chỉnh sửa khi bộ lọc bị giấu sâu trong dropdown menu phụ.
+   * *Giải pháp Frevia*: Đặt nút Quản lý ("Tìm kiếm đã lưu" / "Manage") trực tiếp trên thanh công cụ chính của trang Tìm việc (`Find Work`), hiển thị rõ ràng cùng counter badge (ví dụ: `3/30`) để người dùng luôn biết mình có bao nhiêu bộ lọc và truy cập quản lý chỉ với 1 cú click.
+2. **Không thiếu nút lưu rõ ràng khi sửa tiêu chí lọc**:
+   * *Vấn đề Upwork thường bị phàn nàn*: Khi người dùng đang duyệt việc làm theo một bộ lọc đã lưu và điều chỉnh một vài tiêu chí (ví dụ: thay đổi khoảng ngân sách), giao diện không cung cấp nút lưu rõ ràng khiến người dùng bối rối không biết làm thế nào để lưu đè lên bộ lọc cũ.
+   * *Giải pháp Frevia*: Cung cấp nút thao tác rõ ràng:
+     * Nút **"Cập nhật tiêu chí vào bộ lọc này"** (Update criteria) để ghi đè tập tham số mới.
+     * Nút **"Lưu thành bộ lọc mới"** (Save as new) để tạo thêm một bộ lọc độc lập.
+
+### 4.3. Đề xuất tính năng cộng thêm (Nice-to-have / Enhanced Features)
+* **Kéo thả sắp xếp thứ tự (Drag & Drop Reordering)**:
+  * Cho phép Freelancer tự do kéo thả để đưa những bộ lọc tìm kiếm thường xuyên sử dụng nhất lên vị trí đầu tiên, cá nhân hóa tối đa trải nghiệm tìm việc hàng ngày.
+

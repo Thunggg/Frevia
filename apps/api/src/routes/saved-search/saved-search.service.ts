@@ -3,12 +3,14 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateSavedSearchBodyType,
   GetSavedSearchesQueryType,
+  MAX_SAVED_SEARCHES_PER_USER,
   SavedSearchType,
   UpdateSavedSearchBodyType,
 } from '@shared/types';
 import {
   FailedToCreateSavedSearchException,
   FailedToLoadSavedSearchException,
+  SavedSearchLimitExceededException,
   SavedSearchNotFoundException,
 } from './saved-search.error';
 import { SavedSearchRepository } from './saved-search.repo';
@@ -54,6 +56,10 @@ export class SavedSearchService {
     userId: number,
     body: CreateSavedSearchBodyType,
   ): Promise<SavedSearchType> {
+    const currentCount = await this.savedSearchRepository.countByUserId(userId);
+    if (currentCount >= MAX_SAVED_SEARCHES_PER_USER) {
+      throw SavedSearchLimitExceededException();
+    }
     try {
       return await this.savedSearchRepository.create(userId, body);
     } catch (error) {

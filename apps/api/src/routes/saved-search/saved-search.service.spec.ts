@@ -3,6 +3,7 @@ import type { SavedSearchType } from '@shared/types';
 import {
   FailedToCreateSavedSearchException,
   FailedToLoadSavedSearchException,
+  SavedSearchLimitExceededException,
   SavedSearchNotFoundException,
 } from './saved-search.error';
 import type { SavedSearchRepository } from './saved-search.repo';
@@ -18,6 +19,7 @@ const mockSavedSearch: SavedSearchType = {
 
 describe('SavedSearchService (UC-22)', () => {
   let repository: {
+    countByUserId: jest.Mock;
     findAllByUserId: jest.Mock;
     findByIdAndUserId: jest.Mock;
     create: jest.Mock;
@@ -28,6 +30,7 @@ describe('SavedSearchService (UC-22)', () => {
 
   beforeEach(() => {
     repository = {
+      countByUserId: jest.fn().mockResolvedValue(0),
       findAllByUserId: jest.fn().mockResolvedValue([mockSavedSearch]),
       findByIdAndUserId: jest.fn().mockResolvedValue(mockSavedSearch),
       create: jest.fn().mockResolvedValue(mockSavedSearch),
@@ -104,6 +107,17 @@ describe('SavedSearchService (UC-22)', () => {
       expect(repository.create).toHaveBeenCalledWith(10, payload);
     });
 
+    it('throws SavedSearchLimitExceededException when user already has 30 saved searches', async () => {
+      repository.countByUserId.mockResolvedValue(30);
+      await expect(
+        service.createSavedSearch(10, {
+          name: 'Exceeding search',
+          searchParams: {},
+        }),
+      ).rejects.toThrow(SavedSearchLimitExceededException());
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+
     it('throws FailedToCreateSavedSearchException on database error', async () => {
       repository.create.mockRejectedValue(
         new PrismaClientKnownRequestError('db error', {
@@ -153,3 +167,4 @@ describe('SavedSearchService (UC-22)', () => {
     });
   });
 });
+
