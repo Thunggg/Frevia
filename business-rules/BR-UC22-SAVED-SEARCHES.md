@@ -16,23 +16,23 @@ Tài liệu đặc tả toàn bộ quy tắc nghiệp vụ (**Business Rules**) 
 
 ---
 
-## 2. Bảng chức năng bổ trợ và Mức độ ưu tiên
+## 2. Các chức năng nên bổ sung
 
-| Use Case | Chức năng bổ trợ | Mô tả chức năng | Mức độ ưu tiên |
-|---|---|---|:---:|
-| **View Saved Search List** | **Pagination** | Phân trang danh sách bộ lọc đã lưu (hỗ trợ chuyển trang, chọn số lượng hiển thị mỗi trang). | **Cao** |
-| **View Saved Search List** | **Sorting (Newest / Oldest)** | Sắp xếp danh sách bộ lọc theo thời gian lưu mới nhất (`createdAt DESC`) hoặc cũ nhất (`createdAt ASC`). | **Cao** |
-| **View Saved Search List** | **Search Saved Search by Name** | Tìm kiếm bộ lọc đã lưu theo tên bộ lọc (keyword matching). | **Trung bình** |
-| **View Saved Search List** | **Empty / Loading / Error State** | Trạng thái trực quan: Skeleton khi đang tải, Empty State khi chưa có bộ lọc hoặc khi tìm kiếm không có kết quả, Error State khi gọi API thất bại kèm nút thử lại. | **Cao** |
-| **View Saved Search Detail** | **Display Search Criteria** | Bóc tách và hiển thị trực quan toàn bộ các tiêu chí lọc (Từ khóa, Ngân sách, Thời gian đăng, Thứ tự sắp xếp, Kỹ năng, Danh mục). | **Cao** |
-| **View Saved Search Detail** | **Run Saved Search** | Nút bấm áp dụng bộ lọc và chuyển sang trang Tìm việc làm (/freelancer/find-work), tự động áp dụng các quy tắc lọc Job công khai. | **Cao** |
-| **Create Saved Search** | **Validate Search Name** | Kiểm tra tính hợp lệ của tên bộ lọc: bắt buộc, 1–100 ký tự (sau khi trim), không chỉ chứa khoảng trắng. Tự động đề xuất tên nếu để trống. | **Cao** |
-| **Create Saved Search** | **Validate Search Parameters** | Kiểm tra và chuẩn hóa dữ liệu tìm kiếm: chỉ nhận JSON hợp lệ, loại bỏ các tham số rỗng/mặc định/phân trang tạm thời. | **Cao** |
-| **Create Saved Search** | **Prevent Duplicate Saved Search** | Phát hiện bộ lọc có cùng tập tiêu chí đã lưu trước đó, hiển thị trạng thái đánh dấu và cảnh báo tránh lưu trùng lặp. | **Trung bình** |
-| **Update Saved Search** | **Rename Saved Search** | Cho phép đổi tên bộ lọc đã lưu (1–100 ký tự). | **Cao** |
-| **Update Saved Search** | **Edit Search Criteria** | Cho phép cập nhật lại các tiêu chí lọc (`searchParams`) của bộ lọc hiện có với các tiêu chí mới. | **Trung bình** |
-| **Delete Saved Search** | **Confirmation Dialog** | Hộp thoại xác nhận cảnh báo trước khi xóa vĩnh viễn bộ lọc (AlertDialog). | **Cao** |
-| **Delete Saved Search** | **Handle Deleted / Not Found Saved Search** | Xử lý lỗi an toàn khi bộ lọc không tồn tại hoặc đã bị xóa trước đó (HTTP 404), cập nhật giao diện mà không làm crash ứng dụng. | **Cao** |
+| Use Case | Chức năng bổ trợ | Ưu tiên |
+|---|---|:---:|
+| **View Saved Search List** | **Pagination** | **Cao** |
+| **View Saved Search List** | **Sorting (Newest / Oldest)** | **Cao** |
+| **View Saved Search List** | **Search Saved Search by Name** | **Trung bình** |
+| **View Saved Search List** | **Empty / Loading / Error State** | **Cao** |
+| **View Saved Search Detail** | **Display Search Criteria** | **Cao** |
+| **View Saved Search Detail** | **Run Saved Search** | **Cao** |
+| **Create Saved Search** | **Validate Search Name** | **Cao** |
+| **Create Saved Search** | **Validate Search Parameters** | **Cao** |
+| **Create Saved Search** | **Prevent Duplicate Saved Search (nếu có quy định chống trùng)** | **Trung bình** |
+| **Update Saved Search** | **Rename Saved Search** | **Cao** |
+| **Update Saved Search** | **Edit Search Criteria** | **Trung bình** |
+| **Delete Saved Search** | **Confirmation Dialog** | **Cao** |
+| **Delete Saved Search** | **Handle Deleted / Not Found Saved Search** | **Cao** |
 
 ---
 
