@@ -176,9 +176,9 @@
   "Error.InvalidUrl": "Đường dẫn không hợp lệ",
   "Error.InvalidVerificationCode": "Mã xác minh không hợp lệ",
   "Error.InvalidWebsite": "Website không hợp lệ",
-  "Error.JobAlertKeywordOrSkillRequired": "Phải cung cấp ít nhất từ khoá hoặc kỹ năng",
-  "Error.JobAlertNotFound": "Không tìm thấy thông báo công việc",
-  "Error.JobAlertOnlyForFreelancer": "Chỉ freelancer mới có thể quản lý thông báo công việc",
+  "Error.JobAlertKeywordOrSkillRequired": "Vui lòng nhập từ khoá hoặc chọn ít nhất một kỹ năng.",
+  "Error.JobAlertNotFound": "Không tìm thấy thông báo việc làm.",
+  "Error.JobAlertOnlyForFreelancer": "Chỉ freelancer mới có thể quản lý thông báo việc làm.",
   "Error.JobAlreadyBookmarked": "Công việc này đã được lưu",
   "Error.JobCannotBeClosed": "Chỉ có thể đóng công việc đang mở",
   "Error.JobCannotBeDeletedWithActiveContract": "Không thể xóa công việc đang có hợp đồng hoạt động hoặc tranh chấp",
@@ -347,5 +347,7 @@
   "You can only delete your own skills.": "Bạn chỉ có thể xoá kỹ năng của chính mình",
   "You can only edit your own portfolios.": "Bạn chỉ có thể sửa mục portfolio của chính mình",
   "You can only update your own profile.": "Bạn chỉ có thể cập nhật hồ sơ của chính mình",
-  "Error.SavedSearchLimitExceeded": "Bạn đã đạt giới hạn tối đa 30 tìm kiếm đã lưu. Vui lòng xóa bớt trước khi tạo mới."
+  "Error.SavedSearchLimitExceeded": "Bạn đã đạt giới hạn tối đa 30 tìm kiếm đã lưu. Vui lòng xóa bớt trước khi tạo mới.",
+  "Error.JobAlertLimitExceeded": "Bạn đã đạt giới hạn tối đa 10 thông báo việc làm. Vui lòng xóa bớt trước khi tạo mới.",
+  "Error.JobAlertDuplicateCriteria": "Bạn đã có một thông báo việc làm với tiêu chí tìm kiếm này."
 }

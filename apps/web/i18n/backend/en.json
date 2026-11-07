@@ -176,9 +176,9 @@
   "Error.InvalidUrl": "URL is invalid",
   "Error.InvalidVerificationCode": "Verification code is invalid",
   "Error.InvalidWebsite": "Website is invalid",
-  "Error.JobAlertKeywordOrSkillRequired": "At least keywords or skills must be provided",
-  "Error.JobAlertNotFound": "Job alert not found",
-  "Error.JobAlertOnlyForFreelancer": "Only freelancers can manage job alerts",
+  "Error.JobAlertKeywordOrSkillRequired": "Please enter a keyword or select at least one skill.",
+  "Error.JobAlertNotFound": "Job alert not found.",
+  "Error.JobAlertOnlyForFreelancer": "Only freelancers can manage job alerts.",
   "Error.JobAlreadyBookmarked": "This job is already saved",
   "Error.JobCannotBeClosed": "Job can only be closed when it is open",
   "Error.JobCannotBeDeletedWithActiveContract": "Cannot delete job with active contracts or ongoing disputes",
@@ -347,5 +347,7 @@
   "You can only delete your own skills.": "You can only delete your own skills",
   "You can only edit your own portfolios.": "You can only edit your own portfolio items",
   "You can only update your own profile.": "You can only update your own profile",
-  "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one."
+  "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one.",
+  "Error.JobAlertLimitExceeded": "You have reached the maximum limit of 10 job alerts. Please delete some before creating a new one.",
+  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria."
 }

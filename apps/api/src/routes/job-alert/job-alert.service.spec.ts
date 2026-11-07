@@ -1,10 +1,16 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RoleName } from '@shared/types';
 import { JobAlertRepository } from './job-alert.repo';
 import { JobAlertService } from './job-alert.service';
 
-describe('JobAlertService', () => {
+describe('JobAlertService (UC-23)', () => {
   const repository = {
+    countByUserId: jest.fn(),
+    findDuplicate: jest.fn(),
     findAllByUserId: jest.fn(),
     findByIdAndUserId: jest.fn(),
     create: jest.fn(),
@@ -19,13 +25,21 @@ describe('JobAlertService', () => {
   const mockAlert = {
     id: 1,
     userId: 10,
+    name: 'React Alert',
     keywords: 'NodeJS NestJS',
     skills: ['TypeScript', 'NodeJS'],
+    frequency: 'DAILY',
+    channels: ['IN_APP'],
+    isActive: true,
+    lastSentAt: null,
     createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    repository.countByUserId.mockResolvedValue(0);
+    repository.findDuplicate.mockResolvedValue(null);
   });
 
   describe('role checks', () => {
@@ -42,6 +56,8 @@ describe('JobAlertService', () => {
         service.createJobAlert(10, RoleName.CLIENT, {
           keywords: 'test',
           skills: [],
+          frequency: 'DAILY',
+          channels: ['IN_APP'],
         }),
       ).rejects.toBeInstanceOf(ForbiddenException);
 
@@ -55,7 +71,7 @@ describe('JobAlertService', () => {
     });
   });
 
-  describe('getJobAlerts', () => {
+  describe('UC-23.01: View Job Alert List', () => {
     it('returns job alerts for freelancer', async () => {
       repository.findAllByUserId.mockResolvedValue([mockAlert]);
 
@@ -66,7 +82,7 @@ describe('JobAlertService', () => {
     });
   });
 
-  describe('getJobAlertDetail', () => {
+  describe('UC-23.02: View Job Alert Detail', () => {
     it('returns alert detail when found', async () => {
       repository.findByIdAndUserId.mockResolvedValue(mockAlert);
 
@@ -89,9 +105,15 @@ describe('JobAlertService', () => {
     });
   });
 
-  describe('createJobAlert', () => {
-    it('creates and returns job alert', async () => {
-      const createData = { keywords: 'React', skills: ['Frontend'] };
+  describe('UC-23.03: Create Job Alert', () => {
+    it('creates and returns job alert with new fields', async () => {
+      const createData = {
+        name: 'Frontend Alert',
+        keywords: 'React',
+        skills: ['Frontend'],
+        frequency: 'INSTANT' as const,
+        channels: ['IN_APP' as const, 'EMAIL' as const],
+      };
       repository.create.mockResolvedValue({
         ...mockAlert,
         ...createData,
@@ -105,15 +127,50 @@ describe('JobAlertService', () => {
 
       expect(repository.create).toHaveBeenCalledWith(10, createData);
       expect(result.keywords).toBe('React');
+      expect(result.frequency).toBe('INSTANT');
+    });
+
+    it('throws BadRequestException when user has already reached 10 alerts limit', async () => {
+      repository.countByUserId.mockResolvedValue(10);
+
+      await expect(
+        service.createJobAlert(10, RoleName.FREELANCER, {
+          keywords: 'Over limit',
+          skills: [],
+          frequency: 'DAILY',
+          channels: ['IN_APP'],
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+
+    it('throws BadRequestException when alert criteria already exists', async () => {
+      repository.findDuplicate.mockResolvedValue(mockAlert);
+
+      await expect(
+        service.createJobAlert(10, RoleName.FREELANCER, {
+          keywords: 'NodeJS NestJS',
+          skills: ['TypeScript', 'NodeJS'],
+          frequency: 'DAILY',
+          channels: ['IN_APP'],
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(repository.create).not.toHaveBeenCalled();
     });
   });
 
-  describe('updateJobAlert', () => {
+  describe('UC-23.04: Update Job Alert', () => {
     it('updates and returns job alert when found', async () => {
-      const updateData = { keywords: 'Fullstack' };
+      repository.findByIdAndUserId.mockResolvedValue(mockAlert);
+      const updateData = {
+        name: 'Updated Name',
+        keywords: 'Fullstack',
+        frequency: 'WEEKLY' as const,
+        isActive: false,
+      };
       repository.update.mockResolvedValue({
         ...mockAlert,
-        keywords: 'Fullstack',
+        ...updateData,
       });
 
       const result = await service.updateJobAlert(
@@ -125,10 +182,11 @@ describe('JobAlertService', () => {
 
       expect(repository.update).toHaveBeenCalledWith(1, 10, updateData);
       expect(result.keywords).toBe('Fullstack');
+      expect(result.isActive).toBe(false);
     });
 
     it('throws NotFoundException if alert to update does not exist', async () => {
-      repository.update.mockResolvedValue(null);
+      repository.findByIdAndUserId.mockResolvedValue(null);
 
       await expect(
         service.updateJobAlert(10, RoleName.FREELANCER, 999, {
@@ -136,9 +194,21 @@ describe('JobAlertService', () => {
         }),
       ).rejects.toBeInstanceOf(NotFoundException);
     });
+
+    it('throws BadRequestException if updated criteria duplicates another alert', async () => {
+      repository.findByIdAndUserId.mockResolvedValue(mockAlert);
+      repository.findDuplicate.mockResolvedValue({ ...mockAlert, id: 2 });
+
+      await expect(
+        service.updateJobAlert(10, RoleName.FREELANCER, 1, {
+          keywords: 'Duplicate Keyword',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(repository.update).not.toHaveBeenCalled();
+    });
   });
 
-  describe('deleteJobAlert', () => {
+  describe('UC-23.05: Delete Job Alert', () => {
     it('deletes job alert and returns success', async () => {
       repository.delete.mockResolvedValue(true);
 

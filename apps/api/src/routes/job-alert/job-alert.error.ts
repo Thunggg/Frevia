@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
@@ -13,6 +14,16 @@ export const JobAlertNotFoundException = () =>
 export const JobAlertOnlyForFreelancerException = () =>
   new ForbiddenException([
     { message: ManageJobAlertMessage.ONLY_FOR_FREELANCER, path: 'roleName' },
+  ]);
+
+export const JobAlertLimitExceededException = () =>
+  new BadRequestException([
+    { message: ManageJobAlertMessage.LIMIT_EXCEEDED, path: 'limit' },
+  ]);
+
+export const JobAlertDuplicateCriteriaException = () =>
+  new BadRequestException([
+    { message: ManageJobAlertMessage.DUPLICATE_CRITERIA, path: 'keywords' },
   ]);
 
 export const FailedToCreateJobAlertException = () =>

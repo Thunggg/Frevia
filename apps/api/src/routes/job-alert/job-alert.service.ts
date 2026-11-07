@@ -4,6 +4,7 @@ import {
   CreateJobAlertBodyType,
   DeleteJobAlertResponseType,
   JobAlertType,
+  MAX_JOB_ALERTS_PER_USER,
   RoleName,
   UpdateJobAlertBodyType,
 } from '@shared/types';
@@ -12,6 +13,8 @@ import {
   FailedToDeleteJobAlertException,
   FailedToLoadJobAlertException,
   FailedToUpdateJobAlertException,
+  JobAlertDuplicateCriteriaException,
+  JobAlertLimitExceededException,
   JobAlertNotFoundException,
   JobAlertOnlyForFreelancerException,
 } from './job-alert.error';
@@ -25,6 +28,14 @@ export class JobAlertService {
     if (roleName !== RoleName.FREELANCER) {
       throw JobAlertOnlyForFreelancerException();
     }
+  }
+
+  private normalizeCriteria(keywords?: string | null, skills?: string[]) {
+    const normalizedKeyword = keywords?.trim().toLowerCase() || null;
+    const sortedSkills = [...(skills ?? [])]
+      .map((s) => s.trim().toLowerCase())
+      .sort();
+    return { normalizedKeyword, sortedSkills };
   }
 
   async getJobAlerts(
@@ -69,6 +80,27 @@ export class JobAlertService {
     body: CreateJobAlertBodyType,
   ): Promise<JobAlertType> {
     this.assertFreelancerRole(roleName);
+
+    // BR-JA01: Giới hạn tối đa 10 Job Alerts / Freelancer
+    const currentCount = await this.jobAlertRepository.countByUserId(userId);
+    if (currentCount >= MAX_JOB_ALERTS_PER_USER) {
+      throw JobAlertLimitExceededException();
+    }
+
+    // BR-JA02: Chống trùng lặp tiêu chí
+    const { normalizedKeyword, sortedSkills } = this.normalizeCriteria(
+      body.keywords,
+      body.skills,
+    );
+    const duplicate = await this.jobAlertRepository.findDuplicate(
+      userId,
+      normalizedKeyword,
+      sortedSkills,
+    );
+    if (duplicate) {
+      throw JobAlertDuplicateCriteriaException();
+    }
+
     try {
       return await this.jobAlertRepository.create(userId, body);
     } catch (error) {
@@ -86,6 +118,35 @@ export class JobAlertService {
     body: UpdateJobAlertBodyType,
   ): Promise<JobAlertType> {
     this.assertFreelancerRole(roleName);
+
+    const existing = await this.jobAlertRepository.findByIdAndUserId(
+      id,
+      userId,
+    );
+    if (!existing) throw JobAlertNotFoundException();
+
+    // Nếu có cập nhật tiêu chí tìm kiếm, kiểm tra xem có trùng với alert khác không
+    if (body.keywords !== undefined || body.skills !== undefined) {
+      const targetKeywords =
+        body.keywords !== undefined ? body.keywords : existing.keywords;
+      const targetSkills =
+        body.skills !== undefined ? body.skills : existing.skills;
+
+      const { normalizedKeyword, sortedSkills } = this.normalizeCriteria(
+        targetKeywords,
+        targetSkills,
+      );
+      const duplicate = await this.jobAlertRepository.findDuplicate(
+        userId,
+        normalizedKeyword,
+        sortedSkills,
+        id,
+      );
+      if (duplicate) {
+        throw JobAlertDuplicateCriteriaException();
+      }
+    }
+
     try {
       const jobAlert = await this.jobAlertRepository.update(id, userId, body);
       if (!jobAlert) throw JobAlertNotFoundException();
