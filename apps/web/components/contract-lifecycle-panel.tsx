@@ -34,9 +34,12 @@ type ContractAction = "sign" | "complete";
 const CONTRACT_STATUSES = [
   "ACTIVE",
   "PENDING_SIGN",
+  "AWAITING_PAYMENT",
   "COMPLETED",
   "CANCELLED",
   "DISPUTED",
+  "REJECTED",
+  "EXPIRED",
 ] as const;
 
 function errorMessage(error: unknown, fallback: string) {

@@ -9,6 +9,7 @@ import {
   ProposalDetailSchema,
   ProposalSchema,
   SaveProposalDraftBodySchema,
+  UpdateProposalBodySchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -18,6 +19,10 @@ export class CreateProposalBodyDto extends createZodDto(
 
 export class SaveProposalDraftBodyDto extends createZodDto(
   SaveProposalDraftBodySchema,
+) {}
+
+export class UpdateProposalBodyDto extends createZodDto(
+  UpdateProposalBodySchema,
 ) {}
 
 export class ProposalResponseDto extends createZodDto(ProposalSchema) {}

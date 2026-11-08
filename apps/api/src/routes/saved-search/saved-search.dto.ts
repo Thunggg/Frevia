@@ -2,6 +2,7 @@ import {
   CreateSavedSearchBodySchema,
   CreateSavedSearchResponseSchema,
   GetSavedSearchDetailResponseSchema,
+  GetSavedSearchesQuerySchema,
   GetSavedSearchesResponseSchema,
   UpdateSavedSearchBodySchema,
   UpdateSavedSearchResponseSchema,
@@ -14,6 +15,10 @@ export class CreateSavedSearchBodyDto extends createZodDto(
 
 export class CreateSavedSearchResponseDto extends createZodDto(
   CreateSavedSearchResponseSchema,
+) {}
+
+export class GetSavedSearchesQueryDto extends createZodDto(
+  GetSavedSearchesQuerySchema,
 ) {}
 
 export class GetSavedSearchesResponseDto extends createZodDto(

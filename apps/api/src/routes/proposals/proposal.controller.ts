@@ -13,6 +13,7 @@ import type {
   ClientJobProposalsResponseType,
   CreateProposalBodyType,
   SaveProposalDraftBodyType,
+  UpdateProposalBodyType,
 } from '@shared/types';
 import type { MyProposalsQueryType } from '@shared/types';
 
@@ -25,6 +26,7 @@ import {
   MyProposalsQueryDto,
   ProposalDetailResponseDto,
   SaveProposalDraftBodyDto,
+  UpdateProposalBodyDto,
 } from './proposal.dto';
 import { ProposalService } from './proposal.service';
 
@@ -193,5 +195,21 @@ export class ProposalController {
     @Param('id', ParseIntPipe) proposalId: number,
   ) {
     return this.proposalService.acceptProposal(userId, roleName, proposalId);
+  }
+
+  @Patch(':id')
+  @ZodSerializerDto(ProposalResponseDto)
+  updateProposal(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) proposalId: number,
+    @Body() body: UpdateProposalBodyDto,
+  ) {
+    return this.proposalService.updateProposal(
+      userId,
+      roleName,
+      proposalId,
+      body as UpdateProposalBodyType,
+    );
   }
 }

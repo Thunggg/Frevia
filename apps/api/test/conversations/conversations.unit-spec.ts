@@ -19,7 +19,7 @@ import {
 } from '../../src/routes/conversations/conversation-file.storage';
 
 jest.mock('../../src/routes/conversations/conversation-file.storage', () => {
-  const actual = jest.requireActual(
+  const actual = jest.requireActual<Record<string, unknown>>(
     '../../src/routes/conversations/conversation-file.storage',
   );
 
@@ -143,9 +143,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
       const result = await service.getConversations(10);
 
       expect(result.map((item) => item.id)).toEqual([1, 2]);
-      expect(result[0].pinnedAt).toEqual(
-        new Date('2026-01-01T00:00:00.000Z'),
-      );
+      expect(result[0].pinnedAt).toEqual(new Date('2026-01-01T00:00:00.000Z'));
       expect(result[0].unreadCount).toBe(2);
       expect(result[0].otherUser.id).toBe(20);
     });
@@ -298,9 +296,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
     // UF-20: Trả về lịch sử tin nhắn cho người tham gia hội thoại.
     it('returns the message history for a participant', async () => {
       const messages = [directMessage({ id: 1 }), directMessage({ id: 2 })];
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.getMessages.mockResolvedValue(messages);
 
       await expect(service.getMessages(10, 1)).resolves.toEqual(messages);
@@ -309,9 +305,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
     // Hội thoại chưa có tin nhắn trả về mảng rỗng.
     it('returns an empty history when the conversation has no messages', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.getMessages.mockResolvedValue([]);
 
       await expect(service.getMessages(10, 1)).resolves.toEqual([]);
@@ -341,14 +335,12 @@ describe('Conversations (UF-18 to UF-25)', () => {
     // UF-21: Lưu tin nhắn văn bản hợp lệ và mở lại hội thoại cho cả hai bên.
     it('saves a valid text message and reopens both sides', async () => {
       const saved = directMessage({ id: 30, message: 'Hello there' });
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.createMessage.mockResolvedValue(saved);
 
-      await expect(
-        service.sendMessage(10, 1, 'Hello there'),
-      ).resolves.toEqual(saved);
+      await expect(service.sendMessage(10, 1, 'Hello there')).resolves.toEqual(
+        saved,
+      );
       expect(repository.createMessage).toHaveBeenCalledWith(
         1,
         10,
@@ -365,9 +357,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
       expect(parsed.success).toBe(true);
 
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.createMessage.mockResolvedValue(directMessage({ message }));
 
       const result = await service.sendMessage(10, 1, message);
@@ -420,9 +410,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
   describe('UF-22 markAsRead', () => {
     // UF-22: Đánh dấu đã đọc trả về số tin nhắn đã cập nhật.
     it('returns the number of messages marked as read', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.markMessagesAsRead.mockResolvedValue({ count: 3 });
 
       await expect(service.markAsRead(10, 1)).resolves.toEqual({ count: 3 });
@@ -431,9 +419,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
     // Trả về count = 0 khi không có tin nhắn chưa đọc.
     it('returns {count: 0} when there are no unread messages', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.markMessagesAsRead.mockResolvedValue({ count: 0 });
 
       await expect(service.markAsRead(10, 1)).resolves.toEqual({ count: 0 });
@@ -462,9 +448,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
   describe('UF-23 deleteMessage', () => {
     // UF-23: Người gửi thu hồi được tin nhắn của chính mình.
     it('recalls a message owned by the sender', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.softDeleteMessage.mockResolvedValue(true);
 
       await expect(service.deleteMessage(10, 1, 30)).resolves.toEqual({
@@ -475,9 +459,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
     // Không thu hồi được tin nhắn của người khác (NotFound).
     it("raises NotFound when recalling another user's message", async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.softDeleteMessage.mockResolvedValue(false);
 
       await expect(service.deleteMessage(10, 1, 30)).rejects.toBeInstanceOf(
@@ -487,14 +469,12 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
     // Tin nhắn không tồn tại trả về NotFound.
     it('raises NotFound when the message is missing', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.softDeleteMessage.mockResolvedValue(false);
 
-      await expect(
-        service.deleteMessage(10, 1, 999999),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.deleteMessage(10, 1, 999999)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
 
     // Người không tham gia không được thu hồi tin nhắn.
@@ -512,9 +492,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
     // UF-24: Ghim hội thoại và trả về pinnedAt.
     it('pins a conversation and returns pinnedAt', async () => {
       const pinnedAt = new Date('2026-02-01T00:00:00.000Z');
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.setPinnedForUser.mockResolvedValue(pinnedAt);
 
       await expect(service.pinConversation(10, 1, true)).resolves.toEqual({
@@ -526,9 +504,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
 
     // Bỏ ghim hội thoại và trả về pinnedAt = null.
     it('unpins a conversation and returns pinnedAt = null', async () => {
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       repository.setPinnedForUser.mockResolvedValue(null);
 
       await expect(service.pinConversation(10, 1, false)).resolves.toEqual({
@@ -562,9 +538,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
     // UF-25: Tải lên tệp PDF 1 MB hợp lệ và trả về metadata đính kèm.
     it('accepts an allowed 1 MB PDF and returns attachment metadata', async () => {
       const file = multerFile({ size: 1024 * 1024 });
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       mockedUploadConversationFile.mockResolvedValue({
         secureUrl: 'https://cdn.example/document.pdf',
         bytes: file.size,
@@ -586,9 +560,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
         mimetype: 'image/png',
         size: MAX_CONVERSATION_FILE_SIZE,
       });
-      repository.findConversationByIdForUser.mockResolvedValue(
-        conversation(),
-      );
+      repository.findConversationByIdForUser.mockResolvedValue(conversation());
       mockedUploadConversationFile.mockResolvedValue({
         secureUrl: 'https://cdn.example/photo.png',
         bytes: file.size,
@@ -616,7 +588,10 @@ describe('Conversations (UF-18 to UF-25)', () => {
         callback,
       );
 
-      expect(callback).toHaveBeenCalledWith(expect.any(BadRequestException), false);
+      expect(callback).toHaveBeenCalledWith(
+        expect.any(BadRequestException),
+        false,
+      );
       expect(isAllowedFileType('application/x-msdownload')).toBe(false);
       expect(isAllowedFileType('application/pdf')).toBe(true);
     });

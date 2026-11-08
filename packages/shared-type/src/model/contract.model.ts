@@ -5,6 +5,7 @@ import { PlatformFeeStatusEnum } from "../constants/payment.constant";
 
 export const ContractSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   jobId: z.number(),
   proposalId: z.number(),
   clientId: z.number(),
@@ -13,16 +14,33 @@ export const ContractSchema = z.object({
   totalAmount: z.coerce.number(),
   status: ContractStatusEnum,
   platformFee: z.coerce.number().optional().default(10),
+  clientPlatformFee: z.coerce.number().optional().default(0),
   platformFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
   platformFeePaidAt: z.coerce.date().nullable().optional(),
+  clientFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
+  clientFeePaidAt: z.coerce.date().nullable().optional(),
+  freelancerFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
+  freelancerFeePaidAt: z.coerce.date().nullable().optional(),
   signedByClient: z.boolean(),
   signedByFreelancer: z.boolean(),
+  clientSignedAt: z.coerce.date().nullable().optional(),
+  freelancerSignedAt: z.coerce.date().nullable().optional(),
+  rejectedAt: z.coerce.date().nullable().optional(),
+  rejectReason: z.string().nullable().optional(),
   createdAt: z.coerce.date(),
   signedAt: z.coerce.date().nullable(),
   completedAt: z.coerce.date().nullable(),
   expiresAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
 });
+
+export const CreateContractMilestoneSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  amount: z.number().positive(),
+  dueDate: z.string().datetime().optional(),
+});
+export type CreateContractMilestoneType = z.infer<typeof CreateContractMilestoneSchema>;
 
 export const CreateContractBodySchema = z.object({
   proposalId: z
@@ -43,6 +61,8 @@ export const CreateContractBodySchema = z.object({
       message: ManageContractMessage.EXPIRES_AT_FUTURE,
     })
     .optional(),
+
+  milestones: z.array(CreateContractMilestoneSchema).optional(),
 });
 
 export const UpdateContractBodySchema = z.object({
@@ -83,6 +103,21 @@ export const ContractDetailSchema = ContractSchema.extend({
   client: ContractUserSchema,
   freelancer: ContractUserSchema,
   job: ContractJobSchema,
+  milestones: z
+    .array(
+      z.object({
+        id: z.number(),
+        contractId: z.number(),
+        title: z.string(),
+        description: z.string().nullable().optional(),
+        amount: z.coerce.number(),
+        status: z.string(),
+        paymentStatus: z.string(),
+        dueDate: z.coerce.date().nullable().optional(),
+        completedAt: z.coerce.date().nullable().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export const GetContractListQuerySchema = z.object({
@@ -105,11 +140,16 @@ export const UpdateContractResponseSchema = ContractSchema;
 export const SignContractResponseSchema = ContractSchema;
 export const CompleteContractResponseSchema = ContractSchema;
 export const CancelContractResponseSchema = ContractSchema;
+export const RejectContractBodySchema = z.object({
+  reason: z.string().optional(),
+});
+export const RejectContractResponseSchema = ContractSchema;
 
 export type ContractType = z.infer<typeof ContractSchema>;
 export type ContractDetailType = z.infer<typeof ContractDetailSchema>;
 export type CreateContractBodyType = z.infer<typeof CreateContractBodySchema>;
 export type UpdateContractBodyType = z.infer<typeof UpdateContractBodySchema>;
+export type RejectContractBodyType = z.infer<typeof RejectContractBodySchema>;
 export type CreateContractResponseType = z.infer<
   typeof CreateContractResponseSchema
 >;

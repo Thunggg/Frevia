@@ -19,6 +19,9 @@ import { StripeService } from './stripe.service';
 
 describe('PaymentService', () => {
   let service: PaymentService;
+  const mockContractPdfService = {
+    generateAndSaveContractPdf: jest.fn().mockResolvedValue({ id: 1 }),
+  };
   let repo: jest.Mocked<PaymentRepository>;
   let stripeService: jest.Mocked<StripeService>;
 
@@ -48,9 +51,12 @@ describe('PaymentService', () => {
     status: 'ACTIVE',
     signedByClient: true,
     signedByFreelancer: true,
+    totalAmount: new Prisma.Decimal(1000.0),
     platformFee: new Prisma.Decimal(10.0),
     platformFeeStatus: PlatformFeeStatus.UNPAID,
     platformFeePaidAt: null,
+    clientFeeStatus: PlatformFeeStatus.UNPAID,
+    freelancerFeeStatus: PlatformFeeStatus.UNPAID,
     client: { id: 1, email: 'client@example.com', stripeCustomerId: 'cus_123' },
     freelancer: mockFreelancer,
   };
@@ -70,6 +76,8 @@ describe('PaymentService', () => {
       findUserById: jest.fn(),
       updateUserStripe: jest.fn(),
       findContractById: jest.fn(),
+      recordPartyPlatformFeePaid: jest.fn(),
+      activateContractIfReady: jest.fn(),
       updateContractPlatformFee: jest.fn(),
       findMilestoneById: jest.fn(),
       updateMilestonePaymentStatus: jest.fn(),
@@ -82,6 +90,8 @@ describe('PaymentService', () => {
       findEscrowDepositTransaction: jest.fn(),
       updateTransactionStatus: jest.fn(),
       getTransactions: jest.fn(),
+      checkAndCompleteFreelancerFee: jest.fn(),
+      handleEscrowDepositSuccess: jest.fn(),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -95,7 +105,11 @@ describe('PaymentService', () => {
       constructWebhookEvent: jest.fn(),
     } as unknown as jest.Mocked<StripeService>;
 
-    service = new PaymentService(repo, stripeService);
+    service = new PaymentService(
+      repo,
+      stripeService,
+      mockContractPdfService as any,
+    );
   });
 
   describe('getOnboardingLink', () => {
@@ -255,6 +269,7 @@ describe('PaymentService', () => {
       repo.findContractById.mockResolvedValue({
         ...mockContract,
         platformFeeStatus: PlatformFeeStatus.PAID,
+        clientFeeStatus: PlatformFeeStatus.PAID,
       } as any);
 
       await expect(service.createPlatformFeeIntent(1, 10)).rejects.toThrow(
@@ -277,7 +292,7 @@ describe('PaymentService', () => {
       expect(result).toEqual({
         clientSecret: 'pi_secret_456',
         paymentIntentId: 'pi_milestone_fund',
-        amount: 250,
+        amount: 280,
         currency: 'usd',
       });
       expect(repo.createTransaction).toHaveBeenCalledWith(
@@ -320,7 +335,7 @@ describe('PaymentService', () => {
       expect(result.success).toBe(true);
       expect(result.transferId).toBe('tr_payout_123');
       expect(stripeService.createTransfer).toHaveBeenCalledWith({
-        amountInCents: 25000,
+        amountInCents: 23750,
         currency: 'usd',
         destination: 'acct_freelancer_123',
         transferGroup: 'contract_10',
@@ -496,6 +511,11 @@ describe('PaymentService', () => {
             },
           },
         },
+      } as any);
+      repo.findContractById.mockResolvedValue(mockContract as any);
+      repo.activateContractIfReady.mockResolvedValue({
+        activated: false,
+        contract: mockContract,
       } as any);
       repo.findTransactionByPaymentIntentId.mockResolvedValue({
         id: 101,

@@ -11,12 +11,6 @@ import {
  * "true"  -> true
  * "false" -> false
  */
-const QueryBooleanSchema = z.preprocess((value) => {
-  if (value === "true") return true;
-  if (value === "false") return false;
-
-  return value;
-}, z.boolean());
 
 export const JobBookmarkSchema = z.object({
   userId: z.number(),
@@ -53,8 +47,6 @@ export const ViewBookmarkedJobFilterSchema = z
       .max(100)
       .optional()
       .transform((value) => value || undefined),
-
-    featured: QueryBooleanSchema.optional(),
 
     sortBy: z
       .enum([

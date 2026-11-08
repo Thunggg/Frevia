@@ -30,7 +30,7 @@ type CreatePostDialogProps = {
 };
 
 const brandButtonClass =
-  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]";
+  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]";
 
 export function CreatePostDialog({
   categoryId,
@@ -61,13 +61,17 @@ export function CreatePostDialog({
         onSuccess: (result) => {
           // Bài bị AI từ chối -> giữ form, hiện lỗi
           if (result?.moderationStatus === "REJECTED") {
-            const msg = (result as any).moderationMessage || t("rejectedModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
             toast.error(msg);
             return;
           }
           // Bài chờ duyệt -> đóng form, báo thông tin
           if (result?.moderationStatus === "PENDING") {
-            const msg = (result as any).moderationMessage || t("pendingModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
             setOpen(false);
             setTitle("");
             setContent("");
@@ -76,7 +80,9 @@ export function CreatePostDialog({
           }
           // Bài được duyệt -> đóng form, điều hướng
           if (result?.moderationStatus === "APPROVED") {
-            const msg = (result as any).moderationMessage || t("approvedModeration");
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("approvedModeration");
             setOpen(false);
             setTitle("");
             setContent("");
@@ -163,7 +169,7 @@ export function CreatePostDialog({
             {t("cancel")}
           </Button>
           <Button
-            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >

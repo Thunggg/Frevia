@@ -14,6 +14,7 @@ import {
   type IdentityAiVerifyResult,
 } from '../../shared/services/identity-ai.service';
 import { randomUUID } from 'crypto';
+import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
 import { HashingService } from '../../shared/services/hashing.service';
@@ -226,6 +227,9 @@ export class AccountProfileService {
       pathFromUploadsRoot.startsWith('..') ||
       isAbsolute(pathFromUploadsRoot)
     ) {
+      throw AvatarNotFoundException();
+    }
+    if (!existsSync(absolutePath)) {
       throw AvatarNotFoundException();
     }
     return {
@@ -533,6 +537,9 @@ export class AccountProfileService {
       pathFromUploadsRoot.startsWith('..') ||
       isAbsolute(pathFromUploadsRoot)
     ) {
+      throw IdentityDocumentNotFoundException();
+    }
+    if (!existsSync(absolutePath)) {
       throw IdentityDocumentNotFoundException();
     }
     return {

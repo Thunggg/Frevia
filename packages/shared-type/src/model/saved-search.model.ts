@@ -19,9 +19,19 @@ export const CreateSavedSearchBodySchema = z
 
 export const UpdateSavedSearchBodySchema = z
   .object({
-    name: z.string().trim().min(1).max(100),
+    name: z.string().trim().min(1).max(100).optional(),
+    searchParams: SavedSearchParamsSchema.optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) => data.name !== undefined || data.searchParams !== undefined,
+    { message: "At least one of name or searchParams must be provided" },
+  );
+
+export const GetSavedSearchesQuerySchema = z.object({
+  search: z.string().trim().optional(),
+  order: z.enum(["asc", "desc"]).optional().default("desc"),
+});
 
 export const GetSavedSearchesResponseSchema = z.array(SavedSearchSchema);
 export const GetSavedSearchDetailResponseSchema = SavedSearchSchema;
@@ -34,4 +44,7 @@ export type CreateSavedSearchBodyType = z.infer<
 >;
 export type UpdateSavedSearchBodyType = z.infer<
   typeof UpdateSavedSearchBodySchema
+>;
+export type GetSavedSearchesQueryType = z.infer<
+  typeof GetSavedSearchesQuerySchema
 >;

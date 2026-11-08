@@ -52,6 +52,7 @@ import type {
 } from "@shared/types";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
+import { CreateContractDialog } from "../../../../contracts/_components/create-contract-dialog";
 import { VerifiedBadge } from "@/components/verified-badge";
 
 type ProposalStatus = SubmittedProposalStatusType;
@@ -202,8 +203,8 @@ export function ProposalList({
   const [page, setPage] = useState(1);
   const [rejecting, setRejecting] = useState<ClientProposal | null>(null);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [acceptingId, setAcceptingId] = useState<number | null>(null);
   const [interviewingId, setInterviewingId] = useState<number | null>(null);
+  const [contractingProposal, setContractingProposal] = useState<ClientProposal | null>(null);
 
   // Freelancer profile sheet
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
@@ -344,26 +345,6 @@ export function ProposalList({
       });
     } finally {
       setInterviewingId(null);
-    }
-  };
-
-  const acceptProposal = async (proposalId: number) => {
-    setAcceptingId(proposalId);
-    try {
-      await proposalApiRequest.accept(proposalId);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-job-proposals", jobId],
-      });
-      toastSuccess({ message: t("hired") });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("acceptFailed"),
-      });
-    } finally {
-      setAcceptingId(null);
     }
   };
 
@@ -620,15 +601,10 @@ export function ProposalList({
                             type="button"
                             size="sm"
                             className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-                            onClick={() => void acceptProposal(proposal.id)}
-                            disabled={acceptingId === proposal.id}
+                            onClick={() => setContractingProposal(proposal)}
                           >
-                            {acceptingId === proposal.id ? (
-                              <Loader2 className="mr-1 size-3 animate-spin" />
-                            ) : (
-                              <Check className="mr-1 size-3" />
-                            )}
-                            {t("accept")}
+                            <Check className="mr-1 size-3" />
+                            {t("hire")}
                           </Button>
 
                           <Button
@@ -724,22 +700,19 @@ export function ProposalList({
                 <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
               </button>
 
-              <AlertDialogCancel asChild>
-                <button
-                  type="button"
-                  disabled={isRejecting}
-                  className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 disabled:opacity-50"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
-                      <X className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium">
-                      {tCommon("cancel")}
-                    </span>
+              <AlertDialogCancel
+                disabled={isRejecting}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <X className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-                </button>
+                  <span className="text-xs font-medium">
+                    {tCommon("cancel")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
               </AlertDialogCancel>
             </div>
           </div>
@@ -753,9 +726,14 @@ export function ProposalList({
         open={proposalSheetOpen}
         onOpenChange={setProposalSheetOpen}
         initialProposal={selectedProposalData}
-        onAccept={async (id) => {
-          await acceptProposal(id);
-          setProposalSheetOpen(false);
+        onAccept={(id) => {
+          const p =
+            rawProposals.find((item) => item.id === id) ??
+            selectedProposalData;
+          if (p) {
+            setContractingProposal(p);
+            setProposalSheetOpen(false);
+          }
         }}
         onReject={async (id) => {
           const p =
@@ -766,6 +744,15 @@ export function ProposalList({
             setProposalSheetOpen(false);
           }
         }}
+      />
+
+      {/* Modal create contract & hire */}
+      <CreateContractDialog
+        open={!!contractingProposal}
+        onOpenChange={(open) => !open && setContractingProposal(null)}
+        proposal={contractingProposal}
+        jobId={jobId}
+        jobTitle={jobTitle}
       />
 
       {/* Slide-over full freelancer profile sheet */}
