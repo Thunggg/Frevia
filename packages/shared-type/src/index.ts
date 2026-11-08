@@ -82,3 +82,5 @@ export * from "./model/job-category.model";
 export * from "./message/manage-job-category.message";
 export * from "./message/job-category.message";
 export * from "./message/manage-profile-revision.message";
+export * from "./model/job-alert.model";
+export * from "./message/job-alert.message";

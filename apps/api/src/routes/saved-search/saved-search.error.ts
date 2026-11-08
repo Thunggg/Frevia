@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,6 +8,11 @@ import { ManageSavedSearchMessage } from '@shared/types';
 export const SavedSearchNotFoundException = () =>
   new NotFoundException([
     { message: ManageSavedSearchMessage.NOT_FOUND, path: 'id' },
+  ]);
+
+export const SavedSearchLimitExceededException = () =>
+  new BadRequestException([
+    { message: ManageSavedSearchMessage.LIMIT_EXCEEDED, path: 'limit' },
   ]);
 
 export const FailedToCreateSavedSearchException = () =>

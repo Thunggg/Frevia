@@ -52,7 +52,6 @@ const EXPIRY_DAYS = 30;
 /** Ngân sách d�?án = 20% lương năm trong CSV. */
 const BUDGET_RATE = 0.2;
 const DESCRIPTION_MAX_LENGTH = 6000;
-const FEATURED_EVERY = 10;
 const FALLBACK_PASSWORD = 'Password@123';
 
 // Danh mục dùng cho dataset (tra cứu theo tên, không ph�?thuộc slug �?// "Machine Learning & AI" đang gi�?slug legacy `ai-machine-learning`).
@@ -659,7 +658,6 @@ async function main() {
       deadline: new Date(createdAt.getTime() + DEADLINE_DAYS * 86_400_000),
       expiryDate: new Date(createdAt.getTime() + EXPIRY_DAYS * 86_400_000),
       status: JobStatus.OPEN,
-      featured: index % FEATURED_EVERY === 0,
       createdAt,
     };
 

@@ -6,7 +6,7 @@ import {
 function mockFetchOnce(body: unknown, ok = true) {
   global.fetch = jest.fn().mockResolvedValue({
     ok,
-    json: async () => body,
+    json: () => Promise.resolve(body),
     status: ok ? 200 : 500,
   }) as unknown as typeof fetch;
 }
@@ -96,7 +96,7 @@ describe('AiRecommendationService', () => {
       string,
       RequestInit,
     ];
-    const body = JSON.parse(String(init.body)) as Record<string, unknown>;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
     expect(body.direction).toBe('jd2cv');
     expect(body.top_k).toBe(5);
   });

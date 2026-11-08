@@ -1,8 +1,9 @@
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
 import jobCategoryServerRequest from "@/apiRequests/job-category.server";
+import recommendationServerRequest from "@/apiRequests/recommendation.server";
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
-import type { SavedSearchType } from "@shared/types";
+import type { RecommendedJobType, SavedSearchType } from "@shared/types";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -104,21 +105,36 @@ export default async function FreelancerFindWorkPage({
 
   let initialBookmarkedSlugs: string[] = [];
   let initialSavedSearches: SavedSearchType[] = [];
+  let initialRecommendedJobs: RecommendedJobType[] = [];
 
-  if (jobs.length > 0) {
-    const statuses = await Promise.all(
-      jobs.map(async (job) => {
-        const status = await jobServerRequest.getBookmarkStatus(job.slug);
-        return status?.isBookmarked ? job.slug : null;
-      }),
-    );
-    initialBookmarkedSlugs = statuses.filter(
+  // Tải song song bookmarks, saved searches và AI recommendations
+  const [bookmarkStatuses, savedSearchesRes, recommendationsRes] =
+    await Promise.allSettled([
+      jobs.length > 0
+        ? Promise.all(
+            jobs.map(async (job) => {
+              const status = await jobServerRequest.getBookmarkStatus(job.slug);
+              return status?.isBookmarked ? job.slug : null;
+            }),
+          )
+        : Promise.resolve([]),
+      savedSearchServerRequest.getSavedSearches(),
+      recommendationServerRequest.getRecommendedJobs(15),
+    ]);
+
+  if (bookmarkStatuses.status === "fulfilled") {
+    initialBookmarkedSlugs = bookmarkStatuses.value.filter(
       (slug): slug is string => Boolean(slug),
     );
   }
 
-  initialSavedSearches =
-    (await savedSearchServerRequest.getSavedSearches()) ?? [];
+  if (savedSearchesRes.status === "fulfilled") {
+    initialSavedSearches = savedSearchesRes.value ?? [];
+  }
+
+  if (recommendationsRes.status === "fulfilled" && recommendationsRes.value) {
+    initialRecommendedJobs = recommendationsRes.value.data ?? [];
+  }
 
   return (
     <FindWorkContent
@@ -135,6 +151,7 @@ export default async function FreelancerFindWorkPage({
       }
       initialBookmarkedSlugs={initialBookmarkedSlugs}
       initialSavedSearches={initialSavedSearches}
+      initialRecommendedJobs={initialRecommendedJobs}
       embedded={true}
       basePath="/freelancer/find-work"
     />

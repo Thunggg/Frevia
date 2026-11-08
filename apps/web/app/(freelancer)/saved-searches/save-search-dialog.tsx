@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BookmarkPlus, Pencil, Trash2 } from "@/components/icons";
+import { BookmarkPlus, Pencil, SlidersHorizontal, Trash2 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import {
@@ -122,6 +123,19 @@ export function SaveSearchDialog({
     }
   };
 
+  const handleUpdateCriteria = async (savedSearch: SavedSearchType) => {
+    setIsSubmitting(true);
+    try {
+      await savedSearchApiRequest.update(savedSearch.id, { searchParams });
+      toastSuccess({ message: t("updated") });
+      onChanged?.();
+    } catch {
+      toastError({ message: t("updateFailed") });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!deleting) return;
     setIsSubmitting(true);
@@ -137,6 +151,7 @@ export function SaveSearchDialog({
     }
   };
 
+  const isLimitReached = savedSearches.length >= 30;
   const isCurrentSearchSaved = savedSearches.some((savedSearch) =>
     matchesSearch(searchParams, savedSearch),
   );
@@ -186,11 +201,9 @@ export function SaveSearchDialog({
           >
             <BookmarkPlus className="size-4 text-[#4fae2e]" />
             <span>{t("triggerLabel")}</span>
-            {savedSearches.length > 0 && (
-              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-1.5 text-[11px] font-bold text-foreground">
-                {savedSearches.length}
-              </span>
-            )}
+            <span className="flex h-5 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-2 text-[11px] font-bold text-foreground">
+              {savedSearches.length}/30
+            </span>
           </button>
         </DialogTrigger>
         <DialogContent className="max-h-[min(42rem,calc(100dvh-2rem))] overflow-y-auto sm:max-w-xl rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
@@ -246,12 +259,16 @@ export function SaveSearchDialog({
             </form>
           ) : (
             <Button
-              className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 cursor-pointer"
+              className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 cursor-pointer disabled:cursor-not-allowed"
               onClick={() => setSaveConfirmationOpen(true)}
-              disabled={isSubmitting || isCurrentSearchSaved}
+              disabled={isSubmitting || isCurrentSearchSaved || isLimitReached}
             >
               <BookmarkPlus className="size-4 mr-1.5" />
-              {isCurrentSearchSaved ? t("currentSaved") : t("saveCurrent")}
+              {isLimitReached
+                ? t("limitReached")
+                : isCurrentSearchSaved
+                  ? t("currentSaved")
+                  : t("saveCurrent")}
             </Button>
           )}
 
@@ -277,6 +294,20 @@ export function SaveSearchDialog({
                       {searchSummary(savedSearch.searchParams)}
                     </span>
                   </button>
+                  {!matchesSearch(searchParams, savedSearch) && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-9 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
+                      aria-label={t("editCriteria")}
+                      title={t("editCriteria")}
+                      disabled={isSubmitting}
+                      onClick={() => handleUpdateCriteria(savedSearch)}
+                    >
+                      <SlidersHorizontal className="size-4" />
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"
@@ -307,6 +338,19 @@ export function SaveSearchDialog({
                 {t("emptyList")}
               </p>
             )}
+          </div>
+
+          <div className="pt-2 text-center">
+            <Button
+              asChild
+              variant="ghost"
+              className="w-full rounded-full text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              <Link href="/freelancer/saved-searches">
+                {t("manageTitle")} →
+              </Link>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

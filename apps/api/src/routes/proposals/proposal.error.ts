@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
@@ -90,4 +91,24 @@ export const FailedToUpdateProposalException = () =>
 export const FailedToLoadProposalException = () =>
   new InternalServerErrorException([
     { message: ManageProposalMessage.FAILED_TO_LOAD, path: '' },
+  ]);
+
+export const FreelancerBannedException = () =>
+  new ForbiddenException([
+    { message: ManageProposalMessage.FREELANCER_BANNED, path: '' },
+  ]);
+
+export const MaxProposalSubmissionsExceededException = () =>
+  new BadRequestException([
+    { message: ManageProposalMessage.MAX_SUBMISSIONS_EXCEEDED, path: 'jobId' },
+  ]);
+
+export const BidAmountTooLowException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.BID_AMOUNT_TOO_LOW, path: 'bidAmount' },
+  ]);
+
+export const ExtremeBidAmountException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.EXTREME_BID_AMOUNT, path: 'bidAmount' },
   ]);

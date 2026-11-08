@@ -77,6 +77,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       relatedJobs={relatedJobs}
       relatedSkill={relatedSearch}
       existingProposal={existingProposal}
+      currentUserId={user?.id}
     />
   );
 }

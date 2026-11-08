@@ -104,10 +104,12 @@ export class ManageJobController {
   createJob(
     @UserActive('userId')
     userId: number,
+    @UserActive('roleName')
+    roleName: string,
 
     @Body() body: CreateJobBodyDto,
   ) {
-    return this.manageJobService.createJob(userId, body);
+    return this.manageJobService.createJob(userId, roleName, body);
   }
 
   @Patch(':id')
@@ -118,11 +120,13 @@ export class ManageJobController {
 
     @UserActive('userId')
     userId: number,
+    @UserActive('roleName')
+    roleName: string,
 
     @Body()
     body: UpdateJobBodyDto,
   ) {
-    return this.manageJobService.updateJob(userId, id, body);
+    return this.manageJobService.updateJob(userId, roleName, id, body);
   }
 
   @Delete(':id')
@@ -132,8 +136,10 @@ export class ManageJobController {
 
     @UserActive('userId')
     userId: number,
+    @UserActive('roleName')
+    roleName: string,
   ) {
-    return this.manageJobService.deleteJob(userId, id);
+    return this.manageJobService.deleteJob(userId, roleName, id);
   }
 
   @Patch(':id/publish')

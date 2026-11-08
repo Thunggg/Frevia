@@ -32,8 +32,14 @@ async function savedSearchServerFetch<T>(url: string): Promise<T | null> {
 }
 
 const savedSearchServerRequest = {
-  getSavedSearches() {
-    return savedSearchServerFetch<SavedSearchType[]>("/api/saved-searches");
+  getSavedSearches(query?: { search?: string; order?: "asc" | "desc" }) {
+    const params = new URLSearchParams();
+    if (query?.search) params.set("search", query.search);
+    if (query?.order) params.set("order", query.order);
+    const queryString = params.toString();
+    return savedSearchServerFetch<SavedSearchType[]>(
+      queryString ? `/api/saved-searches?${queryString}` : "/api/saved-searches",
+    );
   },
 
   getSavedSearchDetail(id: number) {

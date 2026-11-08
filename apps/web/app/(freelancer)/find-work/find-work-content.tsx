@@ -3,11 +3,18 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
+import {
+  useEffect,
+  useState,
+  useTransition,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import { motion } from "motion/react";
 import {
   ChevronLeft,
   ChevronRight,
+  RefreshCw,
   Search,
   SearchX,
   SlidersHorizontal,
@@ -15,6 +22,7 @@ import {
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
+import recommendationApiRequest from "@/apiRequests/recommendation";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { BannerSlot } from "@/components/banner-slot";
@@ -43,11 +51,14 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type {
   JobCategoryBrowseItemType,
+  RecommendationComponentsType,
+  RecommendedJobType,
   SavedSearchType,
   ViewListJobResponseType,
 } from "@shared/types";
 import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
 import { JobCard } from "../_components/job-card";
+import { RecommendationExplanationDialog } from "../_components/recommendation-explanation-dialog";
 
 type FindWorkContentProps = {
   role: UserRole;
@@ -66,12 +77,10 @@ type FindWorkContentProps = {
   initialBookmarkedSlugs?: string[];
   initialSavedSearches?: SavedSearchType[];
   initialCategories?: JobCategoryBrowseItemType[];
+  initialRecommendedJobs?: RecommendedJobType[];
   embedded?: boolean;
   basePath?: string;
 };
-
-// Ánh xạ giá trị filter trên URL sang key dịch trong namespace "findWork"
-// được chia sẻ với trang saved searches — xem lib/search-filter-labels.ts
 
 function JobListSkeleton() {
   return (
@@ -117,12 +126,14 @@ export function FindWorkContent({
   initialBookmarkedSlugs = [],
   initialSavedSearches = [],
   initialCategories = [],
+  initialRecommendedJobs = [],
   embedded = false,
   basePath,
 }: FindWorkContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("findWork");
+  const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
   const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
@@ -138,6 +149,45 @@ export function FindWorkContent({
     initialSavedSearches ?? [],
   );
 
+  const canBookmark = role === "FREELANCER";
+
+  // Tab: "recommended" (Phù hợp nhất) vs "all" (Mới nhất)
+  const [activeTab, setActiveTab] = useState<"recommended" | "all">(() => {
+    const hasSearchFilter =
+      Boolean(searchParams.get("keyword")) ||
+      Boolean(searchParams.get("category")) ||
+      Boolean(searchParams.get("budget")) ||
+      Boolean(searchParams.get("time")) ||
+      Boolean(searchParams.get("sort"));
+    if (hasSearchFilter) return "all";
+    if (role === "FREELANCER" && (initialRecommendedJobs?.length ?? 0) > 0) {
+      return "recommended";
+    }
+    return "all";
+  });
+
+  // State quản lý danh sách việc làm gợi ý
+  const [recommendedJobs, setRecommendedJobs] = useState<RecommendedJobType[]>(
+    () => initialRecommendedJobs ?? [],
+  );
+  const [isLoadingRecs, setIsLoadingRecs] = useState(false);
+  const [hasFetchedRecs, setHasFetchedRecs] = useState(
+    () => (initialRecommendedJobs?.length ?? 0) > 0,
+  );
+
+  // State quản lý dialog giải thích mức độ phù hợp
+  const [explanationModal, setExplanationModal] = useState<{
+    open: boolean;
+    recommendationId: number | null;
+    jobTitle: string;
+    components?: RecommendationComponentsType;
+    matchScore?: number;
+  }>({
+    open: false,
+    recommendationId: null,
+    jobTitle: "",
+  });
+
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/find-work" : "/find-work");
   const jobBaseUrl = embedded ? "/freelancer/jobs" : "/job";
@@ -145,6 +195,35 @@ export function FindWorkContent({
   useEffect(() => {
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
   }, [initialBookmarkedSlugs]);
+
+  // Đồng bộ trạng thái bookmark đa màn hình (UC-12.03)
+  useEffect(() => {
+    const handleBookmarkUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        slug: string;
+        isBookmarked: boolean;
+      }>;
+      if (!customEvent.detail) return;
+      const { slug, isBookmarked } = customEvent.detail;
+      setBookmarkedSlugs((current) => {
+        const next = new Set(current);
+        if (isBookmarked) {
+          next.add(slug);
+        } else {
+          next.delete(slug);
+        }
+        return next;
+      });
+    };
+
+    window.addEventListener("frevia:bookmark-updated", handleBookmarkUpdated);
+    return () => {
+      window.removeEventListener(
+        "frevia:bookmark-updated",
+        handleBookmarkUpdated,
+      );
+    };
+  }, []);
 
   useEffect(() => {
     setSavedSearches(initialSavedSearches ?? []);
@@ -154,6 +233,58 @@ export function FindWorkContent({
     setSearchInput(initialKeyword);
   }, [initialKeyword]);
 
+  // Tải gợi ý khi freelancer chuyển sang tab "recommended" nếu chưa có dữ liệu
+  useEffect(() => {
+    if (
+      activeTab === "recommended" &&
+      !hasFetchedRecs &&
+      role === "FREELANCER"
+    ) {
+      setIsLoadingRecs(true);
+      recommendationApiRequest
+        .getRecommendedJobs(15)
+        .then((res) => {
+          setRecommendedJobs(res.data.data ?? []);
+          setHasFetchedRecs(true);
+        })
+        .catch(() => {
+          setRecommendedJobs([]);
+        })
+        .finally(() => {
+          setIsLoadingRecs(false);
+        });
+    }
+  }, [activeTab, hasFetchedRecs, role]);
+
+  const refreshRecommendations = async () => {
+    setIsLoadingRecs(true);
+    try {
+      const res = await recommendationApiRequest.getRecommendedJobs(15);
+      setRecommendedJobs(res.data.data ?? []);
+      setHasFetchedRecs(true);
+      toastSuccess({ message: tRec("refreshRecommendations") });
+    } catch {
+      toastError({ message: "Không thể làm mới danh sách gợi ý" });
+    } finally {
+      setIsLoadingRecs(false);
+    }
+  };
+
+  const handleViewExplanation = (
+    recommendationId: number,
+    jobTitle: string,
+    components?: RecommendationComponentsType,
+    matchScore?: number,
+  ) => {
+    setExplanationModal({
+      open: true,
+      recommendationId,
+      jobTitle,
+      components,
+      matchScore,
+    });
+  };
+
   const jobs = initialJobs ?? [];
   const pagination = initialPagination ?? {
     page: 1,
@@ -161,7 +292,6 @@ export function FindWorkContent({
     total: 0,
     totalPages: 0,
   };
-  const canBookmark = role === "FREELANCER";
   const currentSearchParams = Object.fromEntries(
     Array.from(searchParams.entries()).filter(([, value]) => value !== ""),
   );
@@ -189,6 +319,7 @@ export function FindWorkContent({
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setActiveTab("all");
     updateParams({ keyword: searchInput.trim() || null });
   };
 
@@ -196,12 +327,9 @@ export function FindWorkContent({
     name: "category" | "budget" | "time" | "sort",
     value: string,
   ) => {
+    setActiveTab("all");
     updateParams({ [name]: value });
     setFiltersOpen(false);
-  };
-
-  const goToPage = (page: number) => {
-    updateParams({ page: String(page) });
   };
 
   const clearAllFilters = () => {
@@ -212,27 +340,32 @@ export function FindWorkContent({
   };
 
   const applySavedSearch = (savedSearch: SavedSearchType) => {
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(savedSearch.searchParams)) {
-      if (
-        typeof value === "string" ||
-        typeof value === "number" ||
-        typeof value === "boolean"
-      ) {
-        params.set(key, String(value));
-      }
-    }
+    const nextParams = new URLSearchParams();
+    const sp = (savedSearch.searchParams ?? {}) as Record<string, unknown>;
 
-    const query = params.toString();
+    if (sp.keyword) nextParams.set("keyword", String(sp.keyword));
+    if (sp.category) nextParams.set("category", String(sp.category));
+    if (sp.budget) nextParams.set("budget", String(sp.budget));
+    if (sp.time) nextParams.set("time", String(sp.time));
+    if (sp.sort) nextParams.set("sort", String(sp.sort));
+
+    setSearchInput(sp.keyword ? String(sp.keyword) : "");
+    setFiltersOpen(false);
+    setActiveTab("all");
+
+    const query = nextParams.toString();
     startTransition(() => {
       router.push(query ? `${effectiveBasePath}?${query}` : effectiveBasePath);
     });
   };
 
+  const goToPage = (nextPage: number) => {
+    updateParams({ page: String(nextPage) });
+  };
+
   const toggleBookmark = async (slug: string, event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-
     if (!canBookmark || pendingBookmarkSlug) return;
 
     const isBookmarked = bookmarkedSlugs.has(slug);
@@ -247,10 +380,24 @@ export function FindWorkContent({
           return next;
         });
         toastSuccess({ message: tBookmark("removed") });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("frevia:bookmark-updated", {
+              detail: { slug, isBookmarked: false },
+            }),
+          );
+        }
       } else {
         await jobApiRequest.bookmarkJob(slug);
         setBookmarkedSlugs((current) => new Set(current).add(slug));
         toastSuccess({ message: tBookmark("added") });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("frevia:bookmark-updated", {
+              detail: { slug, isBookmarked: true },
+            }),
+          );
+        }
       }
     } catch {
       toastError({
@@ -330,7 +477,7 @@ export function FindWorkContent({
 
   const filterControls = (
     <>
-      {/* Category Select (UC-46.07 A.2 — lọc job theo danh mục công việc) */}
+      {/* Category Select */}
       {initialCategories.length > 0 ? (
         <Select
           value={initialCategory}
@@ -362,12 +509,9 @@ export function FindWorkContent({
         onValueChange={(value) => value && updateFilter("budget", value)}
       >
         <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[130px]">
-          <SelectValue placeholder={t("budget.label")} />
+          <SelectValue />
         </SelectTrigger>
         <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
-          <SelectItem value="all" className="rounded-full cursor-pointer">
-            {t("budget.any")}
-          </SelectItem>
           {Object.entries(BUDGET_KEYS).map(([value, key]) => (
             <SelectItem
               key={value}
@@ -380,18 +524,15 @@ export function FindWorkContent({
         </SelectContent>
       </Select>
 
-      {/* Posted Time Select */}
+      {/* Time Select */}
       <Select
         value={initialTime}
         onValueChange={(value) => value && updateFilter("time", value)}
       >
-        <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[130px]">
-          <SelectValue placeholder={t("time.label")} />
+        <SelectTrigger className="h-10 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none w-auto min-w-[140px]">
+          <SelectValue />
         </SelectTrigger>
         <SelectContent className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl font-sans">
-          <SelectItem value="all" className="rounded-full cursor-pointer">
-            {t("time.any")}
-          </SelectItem>
           {Object.entries(TIME_KEYS).map(([value, key]) => (
             <SelectItem
               key={value}
@@ -498,7 +639,7 @@ export function FindWorkContent({
           </section>
         )}
 
-        {/* Filter & Search Bar */}
+        {/* Filter & Search Bar: Luôn hiển thị cho mọi người dùng & tab để tối ưu tìm kiếm */}
         <div
           className={`sticky ${
             embedded ? "top-0" : "top-16"
@@ -625,89 +766,228 @@ export function FindWorkContent({
           </div>
         </div>
 
-        <BannerSlot position="SEARCH_RESULTS" className="border-b border-border/50 bg-background" />
+        <BannerSlot
+          position="SEARCH_RESULTS"
+          className="border-b border-border/50 bg-background"
+        />
 
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          {isPending ? (
-            <JobListSkeleton />
-          ) : jobs.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35 }}
-              className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center font-sans"
-            >
-              <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
-                <SearchX className="size-6 text-muted-foreground" />
+          {/* Sub-tabs cho Freelancer: Phù hợp nhất vs Mới nhất */}
+          {canBookmark && (
+            <div className="flex items-center justify-between border-b border-border pb-px mb-6">
+              <div className="flex items-center gap-6">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("recommended")}
+                  className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                    activeTab === "recommended"
+                      ? "border-[#4fae2e] text-[#4fae2e]"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span>{tRec("tabBestMatches")}</span>
+                  {recommendedJobs.length > 0 && (
+                    <span className="ml-2 rounded-full bg-[#4fae2e]/10 text-[#4fae2e] px-2 py-0.5 text-xs font-semibold">
+                      {recommendedJobs.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("all")}
+                  className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                    activeTab === "all"
+                      ? "border-[#4fae2e] text-[#4fae2e]"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span>{tRec("tabAllJobs")}</span>
+                  <span className="ml-2 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                    {pagination.total}
+                  </span>
+                </button>
               </div>
-              <p className="text-base font-semibold text-foreground">
-                {t("emptyTitle")}
-              </p>
-              <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-                {t("emptyDescription")}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-4 rounded-full text-xs cursor-pointer"
-                onClick={clearAllFilters}
-              >
-                {t("clearAllFilters")}
-              </Button>
-            </motion.div>
-          ) : (
-            <div className="space-y-3">
-              {jobs.map((job, index) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  index={index}
-                  jobBaseUrl={jobBaseUrl}
-                  filterBasePath={effectiveBasePath}
-                  canBookmark={canBookmark}
-                  isBookmarked={bookmarkedSlugs.has(job.slug)}
-                  isBookmarkPending={pendingBookmarkSlug === job.slug}
-                  onToggleBookmark={toggleBookmark}
-                />
-              ))}
+
+              {activeTab === "recommended" && (
+                <button
+                  type="button"
+                  disabled={isLoadingRecs}
+                  onClick={refreshRecommendations}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/40 transition-colors cursor-pointer disabled:opacity-50"
+                  title={tRec("refreshRecommendations")}
+                >
+                  <RefreshCw
+                    className={`size-3 ${isLoadingRecs ? "animate-spin" : ""}`}
+                  />
+                  <span className="hidden sm:inline">
+                    {tRec("refreshRecommendations")}
+                  </span>
+                </button>
+              )}
             </div>
           )}
 
-          {/* Pagination */}
-          {!isPending && pagination.totalPages > 1 ? (
-            <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
-              <p className="font-sans text-xs text-muted-foreground">
-                {t("pageOf", {
-                  page: pagination.page,
-                  totalPages: pagination.totalPages,
-                })}
-              </p>
-              <div className="flex gap-1.5">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="size-8 rounded-full cursor-pointer"
-                  disabled={pagination.page <= 1}
-                  onClick={() => goToPage(pagination.page - 1)}
+          {/* TAB 1: PHÙ HỢP NHẤT (GỢI Ý THEO HỒ SƠ) */}
+          {activeTab === "recommended" ? (
+            <div>
+              {isLoadingRecs ? (
+                <JobListSkeleton />
+              ) : recommendedJobs.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans"
                 >
-                  <ChevronLeft className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="size-8 rounded-full cursor-pointer"
-                  disabled={pagination.page >= pagination.totalPages}
-                  onClick={() => goToPage(pagination.page + 1)}
-                >
-                  <ChevronRight className="size-4" />
-                </Button>
-              </div>
+                  <p className="text-base font-semibold text-foreground">
+                    {tRec("emptyRecommendationsTitle")}
+                  </p>
+                  <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground leading-relaxed">
+                    {tRec("emptyRecommendationsDesc")}
+                  </p>
+                  <div className="mt-5 flex items-center gap-2.5">
+                    <Link
+                      href="/freelancer/profile"
+                      className="inline-flex items-center rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
+                    >
+                      {tRec("updateProfile")}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("all")}
+                      className="inline-flex items-center rounded-full border border-border bg-card hover:bg-accent/40 px-4 py-2 text-xs font-medium text-foreground transition-colors cursor-pointer"
+                    >
+                      {tRec("tabAllJobs")}
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="space-y-3">
+                  {recommendedJobs.map((rec, index) => (
+                    <JobCard
+                      key={`rec-${rec.job.id}`}
+                      job={rec.job}
+                      index={index}
+                      jobBaseUrl={jobBaseUrl}
+                      filterBasePath={effectiveBasePath}
+                      canBookmark={canBookmark}
+                      isBookmarked={bookmarkedSlugs.has(rec.job.slug)}
+                      isBookmarkPending={pendingBookmarkSlug === rec.job.slug}
+                      onToggleBookmark={toggleBookmark}
+                      matchScore={rec.score}
+                      components={rec.components}
+                      recommendationId={rec.recommendationId}
+                      onViewExplanation={(id, title) =>
+                        handleViewExplanation(
+                          id,
+                          title,
+                          rec.components,
+                          rec.score,
+                        )
+                      }
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          ) : null}
+          ) : (
+            /* TAB 2: MỚI NHẤT / TẤT CẢ VIỆC LÀM */
+            <div>
+              {isPending ? (
+                <JobListSkeleton />
+              ) : jobs.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center font-sans"
+                >
+                  <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
+                    <SearchX className="size-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-base font-semibold text-foreground">
+                    {t("emptyTitle")}
+                  </p>
+                  <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                    {t("emptyDescription")}
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-4 rounded-full text-xs cursor-pointer"
+                    onClick={clearAllFilters}
+                  >
+                    {t("clearAllFilters")}
+                  </Button>
+                </motion.div>
+              ) : (
+                <div className="space-y-3">
+                  {jobs.map((job, index) => (
+                    <JobCard
+                      key={job.id}
+                      job={job}
+                      index={index}
+                      jobBaseUrl={jobBaseUrl}
+                      filterBasePath={effectiveBasePath}
+                      canBookmark={canBookmark}
+                      isBookmarked={bookmarkedSlugs.has(job.slug)}
+                      isBookmarkPending={pendingBookmarkSlug === job.slug}
+                      onToggleBookmark={toggleBookmark}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {!isPending && pagination.totalPages > 1 ? (
+                <div className="mt-8 flex items-center justify-between border-t border-border pt-4 font-sans">
+                  <p className="font-sans text-xs text-muted-foreground">
+                    {t("pageOf", {
+                      page: pagination.page,
+                      totalPages: pagination.totalPages,
+                    })}
+                  </p>
+                  <div className="flex gap-1.5">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="size-8 rounded-full cursor-pointer"
+                      disabled={pagination.page <= 1}
+                      onClick={() => goToPage(pagination.page - 1)}
+                    >
+                      <ChevronLeft className="size-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="size-8 rounded-full cursor-pointer"
+                      disabled={pagination.page >= pagination.totalPages}
+                      onClick={() => goToPage(pagination.page + 1)}
+                    >
+                      <ChevronRight className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </main>
 
       {!embedded && <Footer />}
+
+      {/* Dialog Chi tiết mức độ phù hợp */}
+      <RecommendationExplanationDialog
+        open={explanationModal.open}
+        onOpenChange={(open) =>
+          setExplanationModal((prev) => ({ ...prev, open }))
+        }
+        recommendationId={explanationModal.recommendationId}
+        jobTitle={explanationModal.jobTitle}
+        components={explanationModal.components}
+        matchScore={explanationModal.matchScore}
+      />
     </div>
   );
 }

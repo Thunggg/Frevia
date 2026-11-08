@@ -66,6 +66,7 @@ export default async function FreelancerJobDetailPage({
       existingProposal={existingProposal}
       embedded={true}
       basePath="/freelancer/find-work"
+      currentUserId={user?.id}
     />
   );
 }

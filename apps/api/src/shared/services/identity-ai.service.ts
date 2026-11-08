@@ -77,7 +77,9 @@ export class IdentityAiService {
       throw AiServiceUnavailableException();
     }
 
-    console.log(`[IdentityAiService] Response ${response.status} ${response.statusText}`);
+    console.log(
+      `[IdentityAiService] Response ${response.status} ${response.statusText}`,
+    );
     if (!response.ok) {
       const text = await response.text().catch(() => 'No body');
       console.error(

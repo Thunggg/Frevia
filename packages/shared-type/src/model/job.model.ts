@@ -9,12 +9,6 @@ import {
 } from "./job-category.model";
 import { JobSkillSchema } from "./job-skill.model";
 
-const QueryBooleanSchema = z.preprocess((value) => {
-  if (value === "true") return true;
-  if (value === "false") return false;
-
-  return value;
-}, z.boolean());
 
 export const JobStatusSchema = z.enum([
   "DRAFT",
@@ -51,8 +45,6 @@ export const JobSchema = z.object({
   deadline: z.date().nullable(),
 
   status: JobStatusSchema,
-
-  featured: z.boolean(),
 
   expiryDate: z.date().nullable(),
 
@@ -125,10 +117,10 @@ export const CreateJobBodySchema = z
       .min(1, ManageJobMessage.SKILLS_REQUIRED)
       .max(10, ManageJobMessage.SKILLS_MAX_EXCEEDED),
 
-    // Danh mục công việc gắn vào job (BR-CAT-03): freelancer dùng danh mục để tìm/lọc job.
-    // Có thể chọn nhiều danh mục; bỏ trống nghĩa là job không thuộc danh mục nào.
+    // Danh mục công việc gắn vào job (BR-CAT-03, BR-J53): mỗi job chỉ thuộc duy nhất 1 danh mục.
     jobCategories: z
       .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
+      .max(1, ManageJobMessage.JOB_CATEGORY_ONLY_ONE)
       .optional()
       .default([]),
 
@@ -247,8 +239,6 @@ export const ViewListJobFilterSchema = z
       .max(120)
       .optional()
       .transform((value) => value || undefined),
-
-    featured: QueryBooleanSchema.optional(),
 
     clientId: z.coerce.number().int().positive().optional(),
 

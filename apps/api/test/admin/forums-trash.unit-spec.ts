@@ -101,9 +101,7 @@ describe('Admin forum trash (UF-33 to UF-36)', () => {
 
     // Lỗi database từ repository được service chuyển thành phản hồi lỗi (Forbidden).
     it('converts a database failure into a forbidden/error response', async () => {
-      repository.getTrashPosts.mockRejectedValue(
-        new Error('database is down'),
-      );
+      repository.getTrashPosts.mockRejectedValue(new Error('database is down'));
 
       await expect(
         service.getTrashPosts(RoleName.ADMIN, 1, 10),
