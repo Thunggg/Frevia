@@ -77,10 +77,10 @@ export class EmbeddingOutboxService
     });
   }
 
-  /** Ghi sự kiện rồi xử lý ngay; lỗi AI không làm hỏng request nghiệp vụ. */
+  /** Ghi sự kiện rồi xử lý ngay (best-effort); lỗi AI không làm hỏng request nghiệp vụ. */
   async enqueueAndProcess(input: EmbeddingOutboxInput): Promise<void> {
     await this.enqueue(input);
-    await this.processPending().catch((error: unknown) => {
+    void this.processPending().catch((error: unknown) => {
       this.logger.warn('Outbox processing failed', error);
     });
   }

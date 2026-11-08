@@ -36,6 +36,7 @@ const freelancerModules = [
   'SESSIONS',
   'JOBS',
   'SAVED-SEARCHES',
+  'JOB-ALERTS',
   'MANAGE-JOBS',
   'PROPOSALS',
   'CONTRACTS',
@@ -72,6 +73,7 @@ const clientModules = [
   'NOTIFICATIONS',
   'ACCOUNT-PROFILE',
   'REVIEWS',
+  'DISPUTES',
   'PROFILE-REVISIONS',
   'PAYMENTS',
   'RECOMMENDATIONS',
@@ -275,6 +277,8 @@ async function bootstrap() {
       (item) =>
         freelancerModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
+        !(item.path ?? '').startsWith('/api/forums/admin') &&
+        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
@@ -284,6 +288,8 @@ async function bootstrap() {
       (item) =>
         clientModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
+        !(item.path ?? '').startsWith('/api/forums/admin') &&
+        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
