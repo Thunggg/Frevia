@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  PlatformFeeStatusEnum,
   TransactionStatusEnum,
   TransactionTypeEnum,
 } from '../constants/payment.constant';

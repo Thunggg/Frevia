@@ -7,6 +7,7 @@ import {
 } from '@shared/types';
 import { ForumCommentRepository } from '../../src/routes/forums/forums-comment/forums-comment.repo';
 import { ForumCommentService } from '../../src/routes/forums/forums-comment/forums-comment.service';
+import { AIModerationService } from '../../src/shared/services/ai-moderation.service';
 
 describe('Forum comments (UF-11 to UF-16)', () => {
   const repository = {
@@ -22,8 +23,13 @@ describe('Forum comments (UF-11 to UF-16)', () => {
     deleteCommentLike: jest.fn(),
   };
 
+  const aiModerationService = {
+    moderateContent: jest.fn(),
+  };
+
   const service = new ForumCommentService(
     repository as unknown as ForumCommentRepository,
+    aiModerationService as unknown as AIModerationService,
   );
 
   const createdAt = new Date('2026-01-01T00:00:00.000Z');
@@ -55,7 +61,14 @@ describe('Forum comments (UF-11 to UF-16)', () => {
     },
   };
 
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    aiModerationService.moderateContent.mockResolvedValue({
+      status: 'PENDING',
+      score: 0.1,
+      categories: ['safe'],
+    });
+  });
 
   describe('UF-11 getForumCommentLists', () => {
     // UF-11: Trả về trang đầu danh sách bình luận kèm metadata phân trang.
@@ -166,6 +179,7 @@ describe('Forum comments (UF-11 to UF-16)', () => {
         1,
         10,
         'Useful answer',
+        expect.objectContaining({ status: 'PENDING' }),
       );
     });
 
@@ -230,9 +244,11 @@ describe('Forum comments (UF-11 to UF-16)', () => {
       await expect(
         service.updateForumComment(1, 5, 10, { content: 'Updated answer' }),
       ).resolves.toEqual(updated);
-      expect(repository.updateForumComment).toHaveBeenCalledWith(5, {
-        content: 'Updated answer',
-      });
+      expect(repository.updateForumComment).toHaveBeenCalledWith(
+        5,
+        { content: 'Updated answer' },
+        expect.objectContaining({ status: 'PENDING' }),
+      );
     });
 
     // Schema từ chối nội dung rỗng khi cập nhật.
@@ -385,9 +401,9 @@ describe('Forum comments (UF-11 to UF-16)', () => {
         postId: 2,
       });
 
-      await expect(
-        service.toggleLikeComment(10, 1, 5),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.toggleLikeComment(10, 1, 5)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
       expect(repository.createCommentLike).not.toHaveBeenCalled();
     });
   });
@@ -435,9 +451,9 @@ describe('Forum comments (UF-11 to UF-16)', () => {
         postId: 2,
       });
 
-      await expect(
-        service.toggleLikeComment(10, 1, 5),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.toggleLikeComment(10, 1, 5)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 });

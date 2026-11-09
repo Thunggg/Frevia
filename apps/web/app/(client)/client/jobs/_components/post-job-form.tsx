@@ -520,6 +520,7 @@ export function PostJobForm({
         name="jobCategories"
         control={form.control}
         render={({ field, fieldState }) => {
+          const hasSelectedCategory = field.value.length >= 1;
           const availableCategories = categoryOptions.filter(
             (jobCategory) => !field.value.includes(jobCategory.id),
           );
@@ -530,16 +531,24 @@ export function PostJobForm({
               <div ref={categoryPickerRef} className="relative">
                 <Input
                   value={categoryInput}
-                  onFocus={() => setIsCategoryMenuOpen(true)}
+                  disabled={hasSelectedCategory}
+                  onFocus={() => {
+                    if (!hasSelectedCategory) setIsCategoryMenuOpen(true);
+                  }}
                   onChange={(event) => {
                     setCategoryInput(event.target.value);
                     setIsCategoryMenuOpen(true);
                   }}
-                  placeholder={t("categoriesPlaceholder")}
+                  placeholder={
+                    hasSelectedCategory
+                      ? t("categoriesSelected")
+                      : t("categoriesPlaceholder")
+                  }
                   aria-invalid={fieldState.invalid}
-                  className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
+                  className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none disabled:opacity-60"
                 />
-                {isCategoryMenuOpen &&
+                {!hasSelectedCategory &&
+                isCategoryMenuOpen &&
                 (categoriesLoading || availableCategories.length > 0) ? (
                   <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-2xl border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-xl">
                     {categoriesLoading ? (
@@ -553,11 +562,8 @@ export function PostJobForm({
                           type="button"
                           className="block w-full rounded-full px-3.5 py-2 text-left text-xs font-medium font-sans hover:bg-[#F1F0F5] dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                           onClick={() => {
-                            field.onChange([...field.value, jobCategory.id]);
-                            setSelectedCategories((current) => [
-                              ...current,
-                              jobCategory,
-                            ]);
+                            field.onChange([jobCategory.id]);
+                            setSelectedCategories([jobCategory]);
                             setCategoryInput("");
                             setIsCategoryMenuOpen(false);
                           }}
@@ -572,8 +578,8 @@ export function PostJobForm({
               <p className="text-xs text-muted-foreground font-sans">
                 {t("categoriesHint")}
               </p>
-              {/* Chỉ báo khi người dùng đang mở bộ chọn mà không có danh mục nào để chọn. */}
-              {isCategoryMenuOpen &&
+              {!hasSelectedCategory &&
+              isCategoryMenuOpen &&
               !categoriesLoading &&
               categoryOptions.length === 0 ? (
                 <p className="text-xs text-muted-foreground font-sans">
@@ -593,12 +599,8 @@ export function PostJobForm({
                       type="button"
                       className="cursor-pointer ml-1"
                       onClick={() => {
-                        field.onChange(
-                          field.value.filter((id) => id !== jobCategory.id),
-                        );
-                        setSelectedCategories((current) =>
-                          current.filter((item) => item.id !== jobCategory.id),
-                        );
+                        field.onChange([]);
+                        setSelectedCategories([]);
                       }}
                     >
                       <X className="size-3 text-[#3f9225] hover:text-[#2f7319] dark:text-[#7ad75d]" />

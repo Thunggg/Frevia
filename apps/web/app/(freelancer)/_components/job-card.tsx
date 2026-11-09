@@ -12,7 +12,7 @@ import {
   Tag,
 } from "@/components/icons";
 
-import type { JobType } from "@shared/types";
+import type { JobType, RecommendationComponentsType } from "@shared/types";
 
 export type JobCardJob = Pick<
   JobType,
@@ -24,7 +24,6 @@ export type JobCardJob = Pick<
   | "budgetMax"
   | "budgetType"
   | "status"
-  | "featured"
   | "createdAt"
   | "hiringType"
   | "positionsRequired"
@@ -34,7 +33,7 @@ export type JobCardJob = Pick<
 >;
 
 type JobCardProps = {
-  job: JobCardJob;
+  job: any;
   /** Trang danh sách job — mọi chip và nút "Xem chi tiết" đều trỏ về đây. */
   jobBaseUrl: string;
   /** Trang tìm việc để áp bộ lọc theo danh mục/kỹ năng (UC-46.07 A.2). */
@@ -44,6 +43,10 @@ type JobCardProps = {
   isBookmarked?: boolean;
   isBookmarkPending?: boolean;
   onToggleBookmark?: (slug: string, event: MouseEvent) => void;
+  matchScore?: number;
+  components?: RecommendationComponentsType;
+  recommendationId?: number | null;
+  onViewExplanation?: (recommendationId: number, jobTitle: string) => void;
 };
 
 function stripHtml(value: string) {
@@ -63,8 +66,13 @@ export function JobCard({
   isBookmarked = false,
   isBookmarkPending = false,
   onToggleBookmark,
+  matchScore,
+  components,
+  recommendationId,
+  onViewExplanation,
 }: JobCardProps) {
   const t = useTranslations("findWork");
+  const tRec = useTranslations("recommendation");
   const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
   const tBookmark = useTranslations("bookmark");
@@ -74,7 +82,21 @@ export function JobCard({
   const preview = job.description
     ? stripHtml(job.description)
     : t("noDescription");
-  const skills = job.skills?.slice(0, 5) ?? [];
+
+  const normalizedSkills: Array<{ id: string | number; name: string }> = (
+    job.skills ?? []
+  )
+    .slice(0, 5)
+    .map((s: any, idx: number) => {
+      if (typeof s === "string") {
+        return { id: `skill-${idx}-${s}`, name: s };
+      }
+      return {
+        id: s?.skillId ?? s?.id ?? idx,
+        name: s?.skill?.name ?? s?.name ?? String(s),
+      };
+    });
+
   const jobCategories = job.jobCategories ?? [];
 
   const formatPostedTime = (value: string | Date) => {
@@ -104,14 +126,43 @@ export function JobCard({
         {/* Top Header Row: Status, Badges & Bookmark Button */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            {job.featured ? (
-              <span className="inline-flex items-center rounded-full bg-[#4fae2e] text-white px-3 py-0.5 text-xs font-semibold">
-                {t("featured")}
-              </span>
-            ) : null}
             <span className="inline-flex items-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 px-3 py-0.5 text-xs font-semibold">
               {tStatus(job.status)}
             </span>
+
+            {/* Match Score Badge */}
+            {typeof matchScore === "number" && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (recommendationId && onViewExplanation) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onViewExplanation(recommendationId, job.title);
+                  }
+                }}
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
+                  recommendationId && onViewExplanation
+                    ? "border-[#4fae2e]/30 bg-[#eaf8df] text-[#2d6e1a] hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:border-[#4fae2e]/30 cursor-pointer"
+                    : "border-border bg-muted/40 text-foreground"
+                }`}
+                title={
+                  recommendationId && onViewExplanation
+                    ? tRec("viewMatchDetails")
+                    : undefined
+                }
+              >
+                <span>
+                  {tRec("matchScore", { score: Math.round(matchScore * 100) })}
+                </span>
+                {recommendationId && onViewExplanation ? (
+                  <span className="text-[10px] font-normal underline opacity-80">
+                    {tRec("details")}
+                  </span>
+                ) : null}
+              </button>
+            )}
+
             {/* Job tuyển nhiều người: hiển thị tiến độ tuyển để freelancer biết còn chỗ hay không. */}
             {job.hiringType === "MULTIPLE" ? (
               <span className="inline-flex items-center rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-0.5 text-xs font-semibold text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]">
@@ -180,7 +231,7 @@ export function JobCard({
       {/* Bottom Row: Categories, Skills & View Action */}
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          {jobCategories.map((jobCategory) => (
+          {jobCategories.map((jobCategory: any) => (
             <Link
               key={`${job.id}-category-${jobCategory.id}`}
               href={`${filterBasePath}?category=${encodeURIComponent(jobCategory.slug)}`}
@@ -192,13 +243,13 @@ export function JobCard({
             </Link>
           ))}
 
-          {skills.map((skill) => (
+          {normalizedSkills.map((skill) => (
             <Link
-              key={`${job.id}-${skill.skillId}`}
-              href={`${filterBasePath}?keyword=${encodeURIComponent(skill.skill.name)}`}
+              key={`${job.id}-${skill.id}`}
+              href={`${filterBasePath}?keyword=${encodeURIComponent(skill.name)}`}
               className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800/80 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 px-3 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
             >
-              {skill.skill.name}
+              {skill.name}
             </Link>
           ))}
           {(job.skills?.length ?? 0) > 5 ? (
@@ -208,13 +259,15 @@ export function JobCard({
           ) : null}
         </div>
 
-        <Link
-          href={`${jobBaseUrl}/${job.slug}`}
-          className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
-        >
-          <span>{t("viewDetails")}</span>
-          <ArrowRight className="size-3.5" />
-        </Link>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Link
+            href={`${jobBaseUrl}/${job.slug}`}
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
+          >
+            <span>{t("viewDetails")}</span>
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

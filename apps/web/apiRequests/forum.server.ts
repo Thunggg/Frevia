@@ -14,12 +14,14 @@ import type {
 async function forumServerFetch<T>(url: string): Promise<T | null> {
   const accessToken = (await cookies()).get("accessToken")?.value;
 
-  if (!accessToken || !envConfig?.NESTJS_API_URL) {
+  if (!envConfig?.NESTJS_API_URL) {
     return null;
   }
 
   const res = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+    headers: accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : undefined,
     cache: "no-store",
   });
 

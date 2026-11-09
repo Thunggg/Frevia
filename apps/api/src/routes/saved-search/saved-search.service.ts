@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   CreateSavedSearchBodyType,
+  GetSavedSearchesQueryType,
+  MAX_SAVED_SEARCHES_PER_USER,
   SavedSearchType,
   UpdateSavedSearchBodyType,
 } from '@shared/types';
 import {
   FailedToCreateSavedSearchException,
   FailedToLoadSavedSearchException,
+  SavedSearchLimitExceededException,
   SavedSearchNotFoundException,
 } from './saved-search.error';
 import { SavedSearchRepository } from './saved-search.repo';
@@ -16,9 +19,12 @@ import { SavedSearchRepository } from './saved-search.repo';
 export class SavedSearchService {
   constructor(private readonly savedSearchRepository: SavedSearchRepository) {}
 
-  async getSavedSearches(userId: number): Promise<SavedSearchType[]> {
+  async getSavedSearches(
+    userId: number,
+    query?: GetSavedSearchesQueryType,
+  ): Promise<SavedSearchType[]> {
     try {
-      return await this.savedSearchRepository.findAllByUserId(userId);
+      return await this.savedSearchRepository.findAllByUserId(userId, query);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToLoadSavedSearchException();
@@ -50,6 +56,10 @@ export class SavedSearchService {
     userId: number,
     body: CreateSavedSearchBodyType,
   ): Promise<SavedSearchType> {
+    const currentCount = await this.savedSearchRepository.countByUserId(userId);
+    if (currentCount >= MAX_SAVED_SEARCHES_PER_USER) {
+      throw SavedSearchLimitExceededException();
+    }
     try {
       return await this.savedSearchRepository.create(userId, body);
     } catch (error) {

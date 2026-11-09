@@ -135,6 +135,7 @@ model User {
   // --- Forum ---
   forumPosts          ForumPost[]
   forumPostsReviewed  ForumPost[]    @relation("ForumPostReviewedBy")
+  forumCommentsReviewed ForumComment[] @relation("ForumCommentReviewedBy")
   forumComments       ForumComment[]
   forumLikes          ForumLike[]
   forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
@@ -634,7 +635,6 @@ model Job {
   budgetType  BudgetType
   deadline    DateTime?
   status      JobStatus  @default(DRAFT)
-  featured    Boolean    @default(false)
   expiryDate  DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -734,13 +734,32 @@ model SavedSearch {
 }
 
 model JobAlert {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  keywords  String?
-  skills    String[]
-  createdAt DateTime @default(now())
+  id         Int                   @id @default(autoincrement())
+  userId     Int
+  name       String?               @db.VarChar(100)
+  keywords   String?
+  skills     String[]
+  frequency  JobAlertFrequency     @default(DAILY)
+  channels   NotificationChannel[] @default([IN_APP])
+  isActive   Boolean               @default(true)
+  lastSentAt DateTime?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId, isActive])
+}
+
+enum JobAlertFrequency {
+  INSTANT
+  DAILY
+  WEEKLY
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
 }
 
 // ============================
@@ -798,19 +817,29 @@ model ProposalAttachment {
 // 6. Contracts
 // ============================
 model Contract {
-  id                 Int            @id @default(autoincrement())
-  jobId              Int
-  proposalId         Int            @unique
-  clientId           Int
-  freelancerId       Int
-  terms              String?
-  totalAmount        Decimal        @db.Decimal(10, 2)
-  status             ContractStatus @default(PENDING_SIGN)
-  signedByClient     Boolean        @default(false)
-  signedByFreelancer Boolean        @default(false)
-  platformFee        Decimal        @default(10.00) @db.Decimal(10, 2)
-  platformFeeStatus  PlatformFeeStatus @default(UNPAID)
-  platformFeePaidAt  DateTime?
+  id                  Int               @id @default(autoincrement())
+  slug                String            @unique @db.VarChar(255)
+  jobId               Int
+  proposalId          Int               @unique
+  clientId            Int
+  freelancerId        Int
+  terms               String?
+  totalAmount         Decimal           @db.Decimal(10, 2)
+  status              ContractStatus    @default(AWAITING_PAYMENT)
+  signedByClient      Boolean           @default(false)
+  signedByFreelancer  Boolean           @default(false)
+  clientSignedAt      DateTime?
+  freelancerSignedAt  DateTime?
+  clientPlatformFee   Decimal           @default(0.00) @db.Decimal(10, 2)
+  platformFee         Decimal           @default(10.00) @db.Decimal(10, 2)
+  platformFeeStatus   PlatformFeeStatus @default(UNPAID)
+  platformFeePaidAt   DateTime?
+  clientFeeStatus     PlatformFeeStatus @default(UNPAID)
+  clientFeePaidAt     DateTime?
+  freelancerFeeStatus PlatformFeeStatus @default(UNPAID)
+  freelancerFeePaidAt DateTime?
+  rejectedAt          DateTime?
+  rejectReason        String?
   createdAt          DateTime       @default(now())
   signedAt           DateTime?
   completedAt        DateTime?
@@ -1196,6 +1225,8 @@ model ForumPost {
   moderationStatus     ForumPostStatus @default(PENDING)
   moderationScore      Float?
   moderationCategories Json?
+  moderationMessage    String?
+  moderationLanguage   String?
   reviewedById         Int?
   reviewedAt           DateTime?
   createdAt            DateTime        @default(now())
@@ -1220,17 +1251,30 @@ model ForumComment {
   postId    Int
   userId    Int
   content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  // ============================
+  // Moderation (nhúng bởi AI proxy SensitiveAI)
+  // ============================
+  moderationStatus     ForumPostStatus @default(PENDING)
+  moderationScore      Float?
+  moderationCategories Json?
+  moderationMessage    String?
+  moderationLanguage   String?
+  reviewedById         Int?
+  reviewedAt           DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  deletedAt            DateTime?
 
-  post    ForumPost     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  user    User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  likes   ForumLike[]
-  reports ForumReport[]
+  post       ForumPost     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  user       User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewedBy User?         @relation("ForumCommentReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  likes      ForumLike[]
+  reports    ForumReport[]
 
   @@index([postId])
   @@index([userId])
+  @@index([moderationStatus])
+  @@index([reviewedById])
 }
 
 model ForumLike {
@@ -1518,11 +1562,14 @@ enum ProposalStatus {
 }
 
 enum ContractStatus {
+  AWAITING_PAYMENT
   PENDING_SIGN
   ACTIVE
   COMPLETED
   DISPUTED
   CANCELLED
+  REJECTED
+  EXPIRED
 }
 
 enum MilestoneStatus {

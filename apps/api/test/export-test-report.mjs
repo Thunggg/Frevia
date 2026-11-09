@@ -344,7 +344,7 @@ function renderHtml(tests, summary) {
 </head>
 <body>
   <h1>BÁO CÁO UNIT TEST BACKEND — FREVIA</h1>
-  <div class="subtitle">Danh sách kiểm thử đơn vị theo ma trận UF-01 → UF-36 (Report 5 - Unit Test)</div>
+  <div class="subtitle">Danh sách kiểm thử đơn vị theo ma trận UF-01 → UF-84 (Report 5 - Unit Test)</div>
 
   <div class="meta">
     <span><b>Ngày xuất:</b> ${escapeHtml(today)}</span>

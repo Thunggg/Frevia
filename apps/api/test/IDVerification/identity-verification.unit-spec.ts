@@ -46,8 +46,7 @@ describe('Admin identity verification (UF-29 to UF-32)', () => {
   ) => ({
     ...listDocument,
     status,
-    reviewedAt:
-      status === VerificationStatus.PENDING ? null : reviewedAt,
+    reviewedAt: status === VerificationStatus.PENDING ? null : reviewedAt,
     admin:
       status === VerificationStatus.PENDING
         ? null

@@ -10,6 +10,7 @@ import type {
   ProposalType,
   SaveProposalDraftBodyType,
   SubmittedProposalStatusType,
+  UpdateProposalBodyType,
 } from "@shared/types";
 
 import { http } from "@/lib/http";
@@ -43,6 +44,10 @@ export const proposalApiRequest = {
 
   updateDraft(proposalId: number, body: SaveProposalDraftBodyType) {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/draft`, body);
+  },
+
+  update(proposalId: number, body: UpdateProposalBodyType) {
+    return http.patch<ProposalType>(`/api/proposals/${proposalId}`, body);
   },
 
   submitDraft(proposalId: number) {

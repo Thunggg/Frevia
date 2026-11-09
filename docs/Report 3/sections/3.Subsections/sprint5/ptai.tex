@@ -1,0 +1,175 @@
+% =================================================================
+% Sprint 5 - Job Category Browsing (ptai)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Job Category Browsing}
+
+% -----------------------------------------------------------------
+% UC-46.06: View Job Category List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Category List}
+
+\fnhead{Function Trigger}
+A freelancer or guest clicks on ``Categories'' or ``Explore Disciplines'' from the main navigation.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Browse Categories (\texttt{/categories}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Guest.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Presents the public directory of all active job categories and technical disciplines, displaying the count of open jobs and trending skills within each domain.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Category directory landing screen at \texttt{/categories}.
+    \item Grid of category cards with icon, description, active job count badge, and top skill tags.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Frontend requests \texttt{GET /api/job-categories}.
+    \item Backend queries active categories where \texttt{deletedAt = null} and \texttt{status = 'ACTIVE'}.
+    \item Aggregates the count of published jobs currently in \texttt{OPEN} status for each category.
+    \item Returns sorted category array.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/ptai/ViewFreelancerJobCategoryList.png}{Public job categories directory interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Directory header explaining marketplace disciplines.
+    \item Category cards showing discipline name, description, active jobs badge, and popular skills.
+    \item Direct link to view all jobs within each discipline.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Endpoint & \texttt{GET /api/job-categories}. No query parameters required.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Publicly accessible to both guests and authenticated users.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-CAT-01: Only categories with \texttt{status = 'ACTIVE'} and \texttt{deletedAt = null} are returned.
+    \item BR-CAT-02: \texttt{jobCount} exclusively tallies jobs in \texttt{OPEN} status.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User opens Categories directory.
+    \item Frontend issues \texttt{GET /api/job-categories}.
+    \item Backend fetches active categories with job aggregates.
+    \item UI renders interactive category cards.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Database connection failure. Backend returns HTTP 500; frontend displays retry message.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{categories} & Array of objects (\texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{jobCount}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Directory of active job categories is displayed.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-46.07: View Job Category Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Category Detail}
+
+\fnhead{Function Trigger}
+A user clicks on a category card in the categories directory.\newline
+\textbf{Navigation path:} Browse Categories (\texttt{/categories}) $\rightarrow$ Click Category (\texttt{/categories/:slug}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer and Guest.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays information about a specific job category and provides a filtered catalog of all active jobs listed under that discipline.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Category detail and filtered jobs view at \texttt{/categories/:slug}.
+    \item Category banner with description and total available jobs.
+    \item Job listings feed filtered strictly by this category.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Frontend requests \texttt{GET /api/job-categories/:slug}.
+    \item Backend validates that category exists, is active, and not deleted.
+    \item Queries associated active jobs in \texttt{OPEN} status.
+    \item Returns category metadata along with paginated jobs.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/ptai/ViewFreelancerJobCategoryDetail.png}{Category detail and jobs feed interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header showing category title, description, and job count badge.
+    \item Filtered job cards matching this technical discipline.
+    \item Standard pagination bar.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{slug} & String identifier for the category in URL.\\ \hline
+\texttt{page} / \texttt{limit} & Standard pagination numbers.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Category must be active and valid.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-CAT-03: Accessing an inactive or soft-deleted category returns HTTP 404.
+    \item BR-CAT-04: Only jobs with status \texttt{OPEN} are displayed in the category feed.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User clicks on a category card.
+    \item Backend returns category details and matching active jobs.
+    \item UI renders category header and paginated job list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Category slug does not exist or category was deleted. Backend returns HTTP 404 Not Found.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Category Detail & Object with \texttt{id}, \texttt{name}, \texttt{description}, and array of matching \texttt{jobs}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Category details and filtered job opportunities are presented.
+\end{itemize}
+

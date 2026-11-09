@@ -1,0 +1,156 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{amsmath}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{hhline}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\numberwithin{figure}{section}
+
+% Color definitions
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptblue}{RGB}{46,117,181}
+\definecolor{hdrfill}{RGB}{255,232,225}
+\definecolor{codebg}{RGB}{248,249,250}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=fptblue,
+  citecolor=black
+}
+
+\renewcommand{\arraystretch}{1.5}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Column specifications
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+% Section title styling
+\titleformat{\section}{\Large\bfseries\color{fptred}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{fptblue}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-3pt}
+\fancyhead[L]{\small\itshape Frevia Platform -- Report 6: Software User Guides}
+\fancyhead[R]{\small\itshape Capstone Project}
+\fancyfoot[C]{Page \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Custom macros
+\newcommand{\hd}[1]{\textbf{#1}}
+\newcommand{\guide}[1]{{\itshape #1\par}}
+\newcommand{\rbadge}[1]{\textcolor{fptred}{\textbf{[#1]}}}
+
+% Code listings style
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}
+
+\begin{document}
+
+% =============================================================================
+% COVER PAGE
+% =============================================================================
+\begin{titlepage}
+  \thispagestyle{empty}
+  \centering
+  \vspace*{0.8cm}
+  \includegraphics[width=0.45\textwidth]{fpt_logo_r6.png}\\[3.5cm]
+  {\fontsize{26}{30}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[0.8cm]
+  {\fontsize{18}{22}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}\\[1.5cm]
+  {\fontsize{15}{18}\selectfont\bfseries Frevia -- AI-Powered Freelance Marketplace \& Community Platform}\\[2.5cm]
+  
+  \begin{minipage}{0.85\textwidth}
+    \centering
+    \begin{tabular}{ll}
+      \textbf{Author / In Charge:} & Nguyen Tien Thuan (CE181024) \\
+      \textbf{Project Name:} & Frevia Platform \\
+      \textbf{Academic Year:} & 2024 -- 2025 \\
+      \textbf{Supervision:} & FPT University \\
+    \end{tabular}
+  \end{minipage}
+
+  \vfill
+  {\large -- March 2025 --}\\[0.8cm]
+\end{titlepage}
+
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\renewcommand{\contentsname}{\color{fptblue}\Large Table of Contents}
+\tableofcontents
+\newpage
+
+% =============================================================================
+% I. RECORD OF CHANGES
+% =============================================================================
+\section*{\color{fptred} I. Record of Changes}
+\addcontentsline{toc}{section}{I. Record of Changes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{longtable}{|C{2.6cm}|C{1.8cm}|C{3.2cm}|L{6.8cm}|}
+\hline
+\rowcolor{hdrfill}\hd{Date} & \hd{A*, M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
+\endhead
+2025-03-05 & A & Nguyen Tien Thuan & Initial draft of Report 6 template structure, document metadata, and environment requirements. \\ \hline
+2025-03-08 & A & Nguyen Tien Thuan & Captured 28 verified screenshots across Part A (Installation) and Part B (Modules 2, 14, 15). \\ \hline
+2025-03-08 & M & Nguyen Tien Thuan & Added red bounding boxes and standardized numeric callout badges to all captured screenshots. \\ \hline
+2025-03-09 & M & Nguyen Tien Thuan & Translated entire document content, installation instructions, and user manual to formal English. \\ \hline
+2025-03-09 & A & Nguyen Tien Thuan & Finalized PDF compilation, verified cross-references, table of contents, and formatting compliance. \\ \hline
+\end{longtable}
+\end{center}
+
+\textit{*A - Added \quad M - Modified \quad D - Deleted}
+
+\newpage
+
+% =============================================================================
+% II. RELEASE PACKAGE & USER GUIDES
+% =============================================================================
+\section*{\color{fptred} II. Release Package \& User Guides}
+\addcontentsline{toc}{section}{II. Release Package \& User Guides}
+\setcounter{section}{0}
+
+% Input Part A: Deliverable Package & Installation Guides
+\input{sections/sec1_deliverables_install.tex}
+
+% Input Part A (cont): Docker Compose, Local Dev, Ports & Verification
+\input{sections/sec2_docker_ai.tex}
+
+% Input Part B: User Manual - Overview & Module 2 (M2.01 - M2.07)
+\input{sections/sec3_m02_auth_session.tex}
+
+% Input Part B: Module 14 - Admin RBAC & User Management (M14.01 - M14.08)
+\input{sections/sec3_m14_admin_rbac_users.tex}
+
+% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
+\input{sections/sec3_m15_admin_catalogs.tex}
+
+\end{document}
