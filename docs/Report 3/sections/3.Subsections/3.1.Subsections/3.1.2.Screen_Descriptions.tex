@@ -32,8 +32,8 @@
 6 & Guest & Reset Password & Allows users to set a new account password after successfully verifying the reset link received in their email. \\ \hline
 7 & Guest & Job List & Public job directory displaying all active job postings with keyword search, category filtering, and budget sorting. \\ \hline
 8 & Guest & Job Detail & Displays full details of a specific job posting including title, description, budget, required skills, and client statistics. \\ \hline
-9 & Guest & Freelancer Profile & Public profile screen displaying a freelancer\textquotesingle{}s professional title, bio, hourly rate, skills, reviews, and portfolio. \\ \hline
-10 & Guest & Client Profile & Public profile screen displaying a client\textquotesingle{}s company description, posted jobs history, total spend, and feedback rating. \\ \hline
+9 & Guest & Freelancer Profile & Public approved freelancer profile combining basic and professional details, active skills and portfolio items. Owner-only controls are hidden from other visitors. \\ \hline
+10 & Guest & Client Profile & Public approved client profile with display name, company name, description, website and social links. Private account and identity fields are excluded. \\ \hline
 11 & Guest & Forum Categories & Main forum overview screen displaying all discussion categories, total threads, and community activity statistics. \\ \hline
 12 & Guest & Forum Category Detail & Displays the list of discussion threads and topics contained within a selected forum category. \\ \hline
 13 & Guest & Post List & Displays all active discussion posts within a category with options to filter by popularity, latest activity, or keywords. \\ \hline
@@ -41,19 +41,19 @@
 % ==========================================================
 % Freelancer
 % ==========================================================
-15 & Freelancer & My Profile & Central freelancer profile dashboard displaying bio, professional title, education, languages, hourly rate, and profile strength. \\ \hline
-16 & Freelancer & Edit Freelancer Profile & Form screen allowing freelancers to update their bio, professional title, education, availability status, and rate. \\ \hline
+15 & Freelancer & My Profile & Freelancer settings for biography, professional title, education, certifications, languages, experience, availability and profile strength. \\ \hline
+16 & Freelancer & Edit Freelancer Profile & Owner-only professional profile form; saves directly or submits a pending revision under the profile review policy. \\ \hline
 17 & Freelancer & My Skills & Displays the full list of skills currently attached to the freelancer\textquotesingle{}s profile along with proficiency levels. \\ \hline
-18 & Freelancer & Add Skill & Searchable modal dialog to select skills from the master catalog and attach them to the freelancer profile. \\ \hline
+18 & Freelancer & Add Skill & Skill-name input with catalog suggestions and a required proficiency level from 1 to 10. \\ \hline
 19 & Freelancer & Delete Skill & Confirmation dialog allowing the freelancer to remove an attached skill from their profile. \\ \hline
-20 & Freelancer & Upload CV & Form screen allowing the freelancer to upload a curriculum vitae (CV/resume) document in PDF or DOCX format. \\ \hline
-21 & Freelancer & View CV & Document previewer interface allowing the freelancer to view and download their currently uploaded CV document. \\ \hline
+20 & Freelancer & Upload CV & Owner-only PDF CV upload, maximum 10 MB, with file-content validation and progress feedback. \\ \hline
+21 & Freelancer & View CV & Authorized CV view/download using the current file location; unavailable local files return a recoverable not-found response. \\ \hline
 22 & Freelancer & Replace CV & Screen allowing the freelancer to select and upload a new CV document to overwrite their existing resume. \\ \hline
-23 & Freelancer & Delete CV & Confirmation dialog prompting the freelancer to confirm permanent deletion of their attached CV file. \\ \hline
-24 & Freelancer & Portfolio List & Displays a portfolio gallery of project showcases, case studies, and prior work samples created by the freelancer. \\ \hline
-25 & Freelancer & Add Portfolio & Form screen allowing the freelancer to create a new portfolio item with title, description, skills used, and media files. \\ \hline
-26 & Freelancer & Portfolio Detail & Modal/screen showing detailed case study information, full-resolution media, and live project URLs of a portfolio entry. \\ \hline
-27 & Freelancer & Edit Portfolio & Form screen allowing the freelancer to modify description, skills, links, or attachments of an existing portfolio item. \\ \hline
+23 & Freelancer & Delete CV & Confirmation before clearing the current CV metadata and removing the attached file where storage permits. \\ \hline
+24 & Freelancer & Portfolio List & List of active portfolio entries with title, description and technologies; public view and owner-only management controls. \\ \hline
+25 & Freelancer & Add Portfolio & Portfolio form with required title, optional description, technologies and an optional HTTP/HTTPS project URL. Media upload is outside the agreed schema scope. \\ \hline
+26 & Freelancer & Portfolio Detail & Active portfolio detail with title, full description, technologies and the external project link. \\ \hline
+27 & Freelancer & Edit Portfolio & Owner-only form to edit title, description, technologies and project URL of an active portfolio item. \\ \hline
 28 & Freelancer & Delete Portfolio & Confirmation dialog prompting the freelancer to confirm the soft deletion of a portfolio project. \\ \hline
 29 & Freelancer & Identity Verification Upload & Screen allowing the freelancer to upload government-issued ID card/passport images and capture a selfie for eKYC verification. \\ \hline
 30 & Freelancer & Verification Status & Screen displaying the current status of the eKYC review (Pending Review, Approved, or Rejected with reason). \\ \hline
@@ -80,10 +80,10 @@
 51 & Freelancer & Open Dispute & Form screen allowing the freelancer to open a formal dispute regarding milestone deliverables or payment non-release. \\ \hline
 52 & Freelancer & Dispute Detail & Screen displaying dispute claims, evidence files, mediator messages, and resolution proposals from both parties. \\ \hline
 53 & Freelancer & Respond to Dispute & Form screen allowing the freelancer to submit rebuttal statements and supporting proof during arbitration. \\ \hline
-54 & Freelancer & Review List & Displays the list of feedback ratings and performance reviews received from clients upon contract completion. \\ \hline
+54 & Freelancer & Review List & Contract-scoped review list available only to contract participants, including active responses and ratings. \\ \hline
 55 & Freelancer & Review Detail & Modal/screen displaying specific multi-category ratings, detailed client comments, and response timestamps. \\ \hline
 56 & Freelancer & Write Review & Form screen allowing the freelancer to rate and review the client after a contract has been completed. \\ \hline
-57 & Freelancer & Edit Review & Form screen allowing the freelancer to modify their submitted rating and comments within the allowed review window. \\ \hline
+57 & Freelancer & Edit Review & Author-only review form to update accepted rating and comment fields; contract participation and resource ownership remain enforced. \\ \hline
 58 & Freelancer & Respond to Review & Form screen allowing the freelancer to post an official public response to a client review on their profile. \\ \hline
 59 & Freelancer & Stripe Connect Onboarding & External redirect interface allowing the freelancer to set up their Stripe Express payout account and banking info. \\ \hline
 60 & Freelancer & Payout History & Screen displaying historical escrow earnings releases, transaction fees, and payout deposit statuses. \\ \hline
@@ -97,7 +97,7 @@
 % Client
 % ==========================================================
 67 & Client & Client Dashboard & Main workspace dashboard for clients showing active job postings, proposal counts, active contracts, and spent funds. \\ \hline
-68 & Client & Client Profile & Company profile screen displaying corporate name, website URL, industry description, and past hire ratings. \\ \hline
+68 & Client & Client Profile & Client company settings for company name, company description and website; public display uses approved data. \\ \hline
 69 & Client & Edit Company Information & Form screen allowing the client to update their business profile, logo, headquarters address, and company bio. \\ \hline
 70 & Client & Post Job & Multi-step job creation wizard allowing the client to define job title, category, required skills, budget, and scope. \\ \hline
 71 & Client & My Jobs & Screen displaying all job listings posted by the client with status filters (Draft, Open, In Progress, Closed, Cancelled). \\ \hline
@@ -132,7 +132,7 @@
 100 & Client & Favorite Freelancers & Screen displaying bookmarked freelancer profiles for rapid direct hiring, re-engagement, or job invitations. \\ \hline
 101 & Client & Following List & Screen showing all freelancers followed by the client to receive updates on newly published portfolio projects. \\ \hline
 102 & Client & Write Review (Client) & Form screen allowing the client to submit a performance rating and written evaluation for the hired freelancer. \\ \hline
-103 & Client & Edit Review (Client) & Form screen allowing the client to update their submitted rating or review text within the permissible editing window. \\ \hline
+103 & Client & Edit Review (Client) & Author-only form to update a submitted contract review using the validated review API. \\ \hline
 104 & Client & Respond to Review (Client) & Form screen allowing the client to publish a formal response to feedback left by the freelancer. \\ \hline
 105 & Client & Social Links Management & Screen allowing the client to manage connected social media links and external business references. \\ \hline
 % ==========================================================

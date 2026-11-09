@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AddPortfolioType, UpdatePortfolioType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
+import { refreshFreelancerStrength } from '../../shared/utils/refresh-freelancer-strength';
 
 @Injectable()
 export class PortfolioRepository {
@@ -9,7 +10,7 @@ export class PortfolioRepository {
   async findFreelancerProfileById(profileId: number) {
     return this.prisma.profile.findFirst({
       where: {
-        OR: [{ id: profileId }, { userId: profileId }],
+        id: profileId,
         user: {
           deletedAt: null,
         },
@@ -43,19 +44,12 @@ export class PortfolioRepository {
 
   async addPortfolioToProfile(profileId: number, data: AddPortfolioType) {
     return this.prisma.$transaction(async (tx) => {
-      let freelancerProfile = await tx.freelancerProfile.findUnique({
+      const freelancerProfile = await tx.freelancerProfile.upsert({
         where: { profileId },
+        update: {},
+        create: { profileId },
       });
-
-      if (!freelancerProfile) {
-        freelancerProfile = await tx.freelancerProfile.create({
-          data: {
-            profileId,
-          },
-        });
-      }
-
-      return tx.portfolioItem.create({
+      const portfolio = await tx.portfolioItem.create({
         data: {
           freelancerProfileId: freelancerProfile.id,
           title: data.title,
@@ -64,6 +58,8 @@ export class PortfolioRepository {
           projectUrl: data.projectUrl ?? null,
         },
       });
+      await refreshFreelancerStrength(tx, profileId);
+      return portfolio;
     });
   }
 
@@ -96,6 +92,7 @@ export class PortfolioRepository {
     return this.prisma.portfolioItem.update({
       where: {
         id: portfolioId,
+        deletedAt: null,
       },
       data: {
         title: data.title,
@@ -111,13 +108,17 @@ export class PortfolioRepository {
   }
 
   async deletePortfolio(portfolioId: number) {
-    return this.prisma.portfolioItem.update({
-      where: {
-        id: portfolioId,
-      },
-      data: {
-        deletedAt: new Date(),
-      },
+    return this.prisma.$transaction(async (transaction) => {
+      const portfolio = await transaction.portfolioItem.update({
+        where: { id: portfolioId, deletedAt: null },
+        data: { deletedAt: new Date() },
+        include: { freelancerProfile: { select: { profileId: true } } },
+      });
+      await refreshFreelancerStrength(
+        transaction,
+        portfolio.freelancerProfile.profileId,
+      );
+      return portfolio;
     });
   }
 }

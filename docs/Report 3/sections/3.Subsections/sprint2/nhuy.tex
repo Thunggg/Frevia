@@ -1,0 +1,842 @@
+% Functional requirements -- Nguyen Lu Nhat Huy -- Sprint 2
+\Needspace{12\baselineskip}
+\subsection{Identity Verification}
+\Needspace{10\baselineskip}
+\subsubsection{Function: Upload Identity Documents (UC-18.01)}
+\label{fn:nhuy-uc-18-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Upload Identity Documents. Navigation: /account-profile (Identity Verification tab).
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}identity-verifications/\allowbreak{}ai-check;\allowbreak{} POST /\allowbreak{}identity-verifications/\allowbreak{}documents}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, IdVerificationDocument, FreelancerProfile. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Upload Identity Documents}\par\smallskip
+Document-type and front/back selectors; webcam liveness panel for AI submission; Submit; latest status badge, submission history and rejection instructions.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+documentType & Supported identity-document type. \\ \hline
+front / back & Document images; both sides where required by document type. \\ \hline
+selfie / liveness & Selfie and captured liveness frames for the AI path. \\ \hline
+document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the identity business rule. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only an authenticated freelancer submits or reads their own verification status.
+\item At most one active PENDING or APPROVED request is allowed per freelancer.
+\item Documents are confidential; storage delivery and file endpoints must enforce authorization.
+\item AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+\item Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /account-profile (Identity Verification tab) and selects Upload Identity Documents.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+E5 & An active PENDING/APPROVED request blocks resubmission. An unavailable AI service is reported without creating a successful verification record. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful upload identity documents produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Verification Status (UC-18.02)}
+\label{fn:nhuy-uc-18-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Verification Status. Navigation: /account-profile (Identity Verification tab).
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Return the latest verification state and submission history with rejection notes where present.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}identity-verifications/\allowbreak{}status}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, IdVerificationDocument, FreelancerProfile. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Verification Status}\par\smallskip
+Document-type and front/back selectors; webcam liveness panel for AI submission; Submit; latest status badge, submission history and rejection instructions.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Authenticated user context; no other user ID can replace it. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only an authenticated freelancer submits or reads their own verification status.
+\item At most one active PENDING or APPROVED request is allowed per freelancer.
+\item Documents are confidential; storage delivery and file endpoints must enforce authorization.
+\item AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+\item Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /account-profile (Identity Verification tab) and selects View Verification Status.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Return the latest verification state and submission history with rejection notes where present.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+E5 & An active PENDING/APPROVED request blocks resubmission. An unavailable AI service is reported without creating a successful verification record. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Return the latest verification state and submission history with rejection notes where present. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view verification status produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Client Profile Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Client Profile (UC-19.01)}
+\label{fn:nhuy-uc-19-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Client Profile. Navigation: /clients/[userId]; /client/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Guest, Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Combine approved public Profile, ClientProfile and SocialLink fields without private user information.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}clients/\allowbreak{}:userId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ClientProfile, SocialLink, ProfileRevision. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Client Profile}\par\smallskip
+Public company header, description, website and social links; owner link to settings; Company tab with name, description and website fields.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents.
+\item Only the authenticated Client updates their own company; the server derives the user ID from authentication.
+\item Apply the profile revision policy when strength is below 20 percent.
+\item Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /clients/[userId]; /client/profile and selects View Client Profile.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Combine approved public Profile, ClientProfile and SocialLink fields without private user information.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Combine approved public Profile, ClientProfile and SocialLink fields without private user information. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view client profile produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Update Company Information (UC-19.02)}
+\label{fn:nhuy-uc-19-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Update Company Information. Navigation: /clients/[userId]; /client/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Save or submit the authenticated Client company information according to the revision policy.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ClientProfile, SocialLink, ProfileRevision. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Update Company Information}\par\smallskip
+Public company header, description, website and social links; owner link to settings; Company tab with name, description and website fields.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+companyName & Required trimmed company name, up to 255 characters. \\ \hline
+companyDescription & Optional company description up to 5,000 characters. \\ \hline
+website & Optional HTTP/HTTPS URL, at most 255 characters. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents.
+\item Only the authenticated Client updates their own company; the server derives the user ID from authentication.
+\item Apply the profile revision policy when strength is below 20 percent.
+\item Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /clients/[userId]; /client/profile and selects Update Company Information.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Save or submit the authenticated Client company information according to the revision policy.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Save or submit the authenticated Client company information according to the revision policy. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful update company information produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Social Links Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Social Link List (UC-20.01)}
+\label{fn:nhuy-uc-20-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Social Link List. Navigation: /account-profile (Social Links); /client/profile; public profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}social-links;\allowbreak{} GET /\allowbreak{}clients/\allowbreak{}:userId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, SocialLink. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Social Link List}\par\smallskip
+Platform selector and URL input; saved links with labels and external-link icons; delete confirmation; public link area with empty-state handling.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item At most one link per platform per profile is allowed, including concurrent submissions.
+\item Only the owning user can add or hard-delete a social link.
+\item Open approved external links in a new tab with rel="noopener noreferrer".
+\item Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /account-profile (Social Links); /client/profile; public profile and selects View Social Link List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view social link list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Add Social Link (UC-20.02)}
+\label{fn:nhuy-uc-20-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Add Social Link. Navigation: /account-profile (Social Links); /client/profile; public profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Validate the platform and external URL, then insert one link on the authenticated user profile.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}social-links}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, SocialLink. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Add Social Link}\par\smallskip
+Platform selector and URL input; saved links with labels and external-link icons; delete confirmation; public link area with empty-state handling.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+platform & One supported social platform enum value. \\ \hline
+url & Required HTTP/HTTPS URL up to the SocialLink varchar(500) limit. \\ \hline
+id & SocialLink.id of the link selected for deletion. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item At most one link per platform per profile is allowed, including concurrent submissions.
+\item Only the owning user can add or hard-delete a social link.
+\item Open approved external links in a new tab with rel="noopener noreferrer".
+\item Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /account-profile (Social Links); /client/profile; public profile and selects Add Social Link.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Validate the platform and external URL, then insert one link on the authenticated user profile.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Validate the platform and external URL, then insert one link on the authenticated user profile. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful add social link produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Delete Social Link (UC-20.03)}
+\label{fn:nhuy-uc-20-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Delete Social Link. Navigation: /account-profile (Social Links); /client/profile; public profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Hard-delete the selected owned social link after confirmation.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}social-links/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, SocialLink. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Delete Social Link}\par\smallskip
+Platform selector and URL input; saved links with labels and external-link icons; delete confirmation; public link area with empty-state handling.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item At most one link per platform per profile is allowed, including concurrent submissions.
+\item Only the owning user can add or hard-delete a social link.
+\item Open approved external links in a new tab with rel="noopener noreferrer".
+\item Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /account-profile (Social Links); /client/profile; public profile and selects Delete Social Link.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Hard-delete the selected owned social link after confirmation.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Hard-delete the selected owned social link after confirmation. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful delete social link produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Favorite Freelancers}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Favorite Freelancer List (UC-21.01)}
+\label{fn:nhuy-uc-21-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Favorite Freelancer List. Navigation: /client/profile (Favorites); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Load the current Client favorites and join public freelancer details.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}favorites/\allowbreak{}freelancers}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, FreelancerProfile, FavoriteFreelancer. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Favorite Freelancer List}\par\smallskip
+Favorite toggle on public freelancer profile; Favorites list with name, title, skills, profile link and Remove action; empty state.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only an authenticated Client manages their own favorites.
+\item Reject self-favoriting and targets without an active Freelancer role.
+\item The composite key (clientId, freelancerId) prevents duplicate relationships.
+\item Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Favorites); /profiles/[id] and selects View Favorite Freelancer List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Load the current Client favorites and join public freelancer details.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Load the current Client favorites and join public freelancer details. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view favorite freelancer list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Add Freelancer to Favorites (UC-21.02)}
+\label{fn:nhuy-uc-21-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Add Freelancer to Favorites. Navigation: /client/profile (Favorites); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Insert a unique relationship from the current Client to an active freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, FreelancerProfile, FavoriteFreelancer. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Add Freelancer to Favorites}\par\smallskip
+Favorite toggle on public freelancer profile; Favorites list with name, title, skills, profile link and Remove action; empty state.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+freelancerId & Target freelancer User.id, not Profile.id. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only an authenticated Client manages their own favorites.
+\item Reject self-favoriting and targets without an active Freelancer role.
+\item The composite key (clientId, freelancerId) prevents duplicate relationships.
+\item Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Favorites); /profiles/[id] and selects Add Freelancer to Favorites.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Insert a unique relationship from the current Client to an active freelancer.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Insert a unique relationship from the current Client to an active freelancer. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful add freelancer to favorites produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Remove Freelancer from Favorites (UC-21.03)}
+\label{fn:nhuy-uc-21-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Remove Freelancer from Favorites. Navigation: /client/profile (Favorites); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Hard-delete the current Client relationship and update the favorite toggle and list.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, FreelancerProfile, FavoriteFreelancer. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Remove Freelancer from Favorites}\par\smallskip
+Favorite toggle on public freelancer profile; Favorites list with name, title, skills, profile link and Remove action; empty state.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only an authenticated Client manages their own favorites.
+\item Reject self-favoriting and targets without an active Freelancer role.
+\item The composite key (clientId, freelancerId) prevents duplicate relationships.
+\item Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Favorites); /profiles/[id] and selects Remove Freelancer from Favorites.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Hard-delete the current Client relationship and update the favorite toggle and list.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Hard-delete the current Client relationship and update the favorite toggle and list. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful remove freelancer from favorites produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}

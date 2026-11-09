@@ -1,0 +1,42 @@
+\subsection{Nhuy Requirement Traceability and Acceptance Scope}
+\label{sec:nhuy-traceability}
+The following register covers the 51 use cases owned by Nguyen Lu Nhat Huy across Sprints 1--5. Use-case identifiers follow the project UC catalog. The specifications state required behavior; the acceptance-gap register distinguishes requirements from verified implementation. Screen layouts are schematic descriptions rather than fabricated screenshots.
+
+\begin{longtable}{|p{1.2cm}|p{2.5cm}|p{4.2cm}|p{5.8cm}|}
+\hline\rowcolor{headerbg}Sprint & UC group & Feature & Persistent entities \\ \hline
+\endfirsthead
+\hline\rowcolor{headerbg}Sprint & UC group & Feature & Persistent entities \\ \hline\endhead
+1, 5 & UC-07 & Freelancer Profile Management & Profile, FreelancerProfile, ProfileRevision \\ \hline
+1 & UC-08 & Freelancer Skills Management & Profile, FreelancerProfile, FreelancerSkill, Skill \\ \hline
+1 & UC-09 & Portfolio Management & Profile, FreelancerProfile, PortfolioItem \\ \hline
+2 & UC-18 & Identity Verification & User, IdVerificationDocument, FreelancerProfile \\ \hline
+2 & UC-19 & Client Profile Management & User, Profile, ClientProfile, SocialLink, ProfileRevision \\ \hline
+2 & UC-20 & Social Links Management & Profile, SocialLink \\ \hline
+2 & UC-21 & Favorite Freelancers & User, Profile, FreelancerProfile, FavoriteFreelancer \\ \hline
+3 & UC-29 & Following Management & User, FollowFreelancer, Notification \\ \hline
+3 & UC-30 & Notification Management & Notification \\ \hline
+3 & UC-31 & Role Switching and Enrollment & User, Role, UserRole, Session \\ \hline
+4 & UC-39 & Contract Review Management & Contract, Review, Notification \\ \hline
+4 & UC-40 & Review Response Management & Review, ReviewResponse, Notification \\ \hline
+4 & UC-41 & General Account Profile & User, Profile, ProfileRevision \\ \hline
+5 & UC-47 & Profile Revision Review and Expert Profile & ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification \\ \hline
+\end{longtable}
+
+\subsubsection{Acceptance Gaps Requiring Verification}
+The following issues were identified in the earlier source/database audit. They are not asserted to be fixed by this documentation update. Revalidate them against the latest merged dev source.
+\begin{specdatatable}{UC}{Acceptance gap}
+UC-18.01 & Identity request uniqueness, confidential storage delivery and 5 MB/WebP validation remain acceptance gaps in the earlier audit. The AI UI accepts images and liveness; a manual PDF path needs separate UI verification. \\ \hline
+UC-19.02; UC-20.02 & HTTP/HTTPS-only URL validation and database-length limits require enforcement. Industry/location and portfolio media are excluded from the agreed database scope. \\ \hline
+UC-20.01; UC-20.03 & Public Freelancer social links and a confirmation step before deleting a social link require UI completion. \\ \hline
+UC-21.01--02 & Favorites must consistently display new freelancers after a successful add and exclude invalid targets. \\ \hline
+All owned UCs & A complete SRS is not evidence of completed implementation. Repeat integration and browser acceptance tests on the latest dev revision before marking these requirements verified. \\ \hline
+\end{specdatatable}
+
+\subsubsection{Schema and Identifier Conventions}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Profile.id identifies a general profile; User.id identifies an account. FreelancerProfile.id identifies the professional subtype. The three identifiers are not interchangeable.
+\item Client public profile routes and favorite/follow targets use User.id. Freelancer public profile routes use Profile.id.
+\item Contract URLs use the current slug route, while review APIs accept Contract.id.
+\item Portfolio scope is title, description, technologies and projectUrl. Client company scope is companyName, companyDescription and website.
+\item CV upload is PDF-only, maximum 10 MB. Avatar upload is JPEG/PNG/WebP, maximum 5 MB. Identity-document acceptance rules are recorded independently from these limits.
+\end{itemize}

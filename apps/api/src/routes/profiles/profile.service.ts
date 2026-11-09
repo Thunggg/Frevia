@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import {
   type AddFreelancerSkillType,
   type CvAnalysisConfirmType,
@@ -520,12 +521,24 @@ export class ProfileService {
     const update = {
       displayName: dto.displayName,
       title: dto.title,
-      bio: dto.bio,
+      bio: dto.bio === undefined ? profile.bio : dto.bio,
       availabilityStatus: dto.availabilityStatus,
-      education: dto.education,
-      certifications: dto.certifications,
-      languages: dto.languages,
-      experience: dto.experience,
+      education:
+        dto.education === undefined
+          ? profile.freelancerProfile?.education
+          : dto.education,
+      certifications:
+        dto.certifications === undefined
+          ? profile.freelancerProfile?.certifications
+          : dto.certifications,
+      languages:
+        dto.languages === undefined
+          ? profile.freelancerProfile?.languages
+          : dto.languages,
+      experience:
+        dto.experience === undefined
+          ? profile.freelancerProfile?.experience
+          : dto.experience,
     };
 
     if (
@@ -567,7 +580,7 @@ export class ProfileService {
       throw FreelancerProfileNotFoundException();
     }
 
-    return this.profileRepository.findSkillsByProfileId(profileId);
+    return this.profileRepository.findSkillsByProfileId(profile.id);
   }
 
   async searchSkillSuggestions(search?: string) {
@@ -601,22 +614,28 @@ export class ProfileService {
 
     const existingSkill =
       await this.profileRepository.findSkillByProfileIdAndSkillId(
-        profileId,
+        profile.id,
         catalogSkill.id,
       );
     if (existingSkill) {
       throw FreelancerSkillDuplicateException();
     }
 
-    const result = await this.profileRepository.addSkillToProfile(
-      profileId,
-      catalogSkill.id,
-      dto.proficiencyLevel,
-    );
+    const result = await this.profileRepository
+      .addSkillToProfile(profile.id, catalogSkill.id, dto.proficiencyLevel)
+      .catch((error: unknown) => {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2002'
+        ) {
+          throw FreelancerSkillDuplicateException();
+        }
+        throw error;
+      });
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',
-      documentId: profileId,
+      documentId: profile.id,
     });
     return result;
   }
@@ -635,7 +654,7 @@ export class ProfileService {
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',
-      documentId: skill.freelancerProfile.id,
+      documentId: skill.freelancerProfile.profile.id,
     });
     return result;
   }

@@ -14,6 +14,11 @@
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage{float}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Courier New}[Scale=MatchLowercase]
+\setlength{\emergencystretch}{3em}
 
 \definecolor{fptred}{RGB}{192,0,0}
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
@@ -381,10 +386,10 @@ Sprint 5 Regression \& UAT & 01/11/2026 & 04/11/2026 & Job Category tests, full 
 
 \section{Test Cases}
 
-The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 84 backend service functions across sheets \texttt{UF-01} to \texttt{UF-84} with a total of 507 unit test cases: 240 Normal, 196 Abnormal, and 71 Boundary). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 14 functional modules and 84 use-case features with a total of 411 system test cases).
+The unit matrix workbook \textbf{Report5\_Unit Test.xls} now contains 178 function matrices: the original 121 matrices and 57 added matrices for Nhat Huy, with 582 newly executed cases. The system workbook \textbf{Report5\_Test Report.xlsx} contains 817 case specifications across 39 module sheets, including 198 new cases marked Pending. The table below preserves the original 04 November baseline; current execution and extension figures follow in Section 5.
 
 \begin{table}[H]
-\caption{Summary of test case modules in Report5\_Test Report.xlsx and Report5\_Unit Test.xls}
+\caption{Historical module distribution reported on 04 November 2026}
 \centering
 \begin{tabular}{|c|>{\raggedright\arraybackslash}p{4.1cm}|c|c|c|>{\raggedright\arraybackslash}p{3.1cm}|}
 \hline
@@ -408,6 +413,8 @@ The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test
 \end{table}
 
 \section{Test Reports}
+
+\input{nhuy-test-summary.tex}
 
 \subsection{Test Execution Summary}
 
@@ -450,6 +457,6 @@ Minor & 0 open \newline (9 resolved) & UI validation message formatting, missing
 
 \subsection{Test Conclusion}
 
-Based on the execution results of 507 unit test cases, 84 integration test cases, 411 system test cases, and 42 user acceptance test scenarios---all achieving a \textbf{100.00\% pass rate} with \textbf{zero open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies all functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3). The system is stable, secure, and ready for final deployment and capstone demonstration.
+On 09 November 2026, all 1,358 executable backend unit tests passed, including 582 added cases for Nhat Huy's 51 use cases. The new matrix specifications and 198 system/API scenarios are complete as test documentation. System/API execution remains pending; no release-readiness or full integration claim is made from the unit results. The earlier figures above are retained as the original project's historical report.
 
 \end{document}

@@ -1,0 +1,837 @@
+% Functional requirements -- Nguyen Lu Nhat Huy -- Sprint 1
+\Needspace{12\baselineskip}
+\subsection{Freelancer Profile Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Freelancer Profile (UC-07.01)}
+\label{fn:nhuy-uc-07-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Freelancer Profile. Navigation: /freelancer/profile; /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Guest, Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Retrieve approved Profile and FreelancerProfile fields in one response.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}profiles/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Freelancer Profile}\par\smallskip
+Profile header with name and availability; professional sections; Skills and Portfolio panels; owner-only Edit and CV controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Use Profile.id for profile routes; User.id identifies the owner and must not be substituted for the profile ID.
+\item Only the owner changes professional data. Public output excludes credentials and private CV locations.
+\item Omitted optional fields are preserved. An explicit null or empty list clears the corresponding value.
+\item Freelancer and Client updates below 20 percent profile strength require a pending revision; other updates apply directly. Pending changes are not shown as approved public data.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /freelancer/profile; /profiles/[id] and selects View Freelancer Profile.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Retrieve approved Profile and FreelancerProfile fields in one response.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Retrieve approved Profile and FreelancerProfile fields in one response. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view freelancer profile produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Update Freelancer Profile (UC-07.02)}
+\label{fn:nhuy-uc-07-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Update Freelancer Profile. Navigation: /freelancer/profile; /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Persist basic and professional fields together or create a pending revision under the review policy.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{PUT /\allowbreak{}profiles/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Update Freelancer Profile}\par\smallskip
+Profile header with name and availability; professional sections; Skills and Portfolio panels; owner-only Edit and CV controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+displayName / title & Required trimmed text, 1--255 characters each. \\ \hline
+bio & Optional text up to 5,000 characters; null clears it. \\ \hline
+education / certifications / languages / experience & Each list has at most 20 non-empty entries, each up to 255 characters. \\ \hline
+availabilityStatus & A supported availability enum value. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Use Profile.id for profile routes; User.id identifies the owner and must not be substituted for the profile ID.
+\item Only the owner changes professional data. Public output excludes credentials and private CV locations.
+\item Omitted optional fields are preserved. An explicit null or empty list clears the corresponding value.
+\item Freelancer and Client updates below 20 percent profile strength require a pending revision; other updates apply directly. Pending changes are not shown as approved public data.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /freelancer/profile; /profiles/[id] and selects Update Freelancer Profile.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Persist basic and professional fields together or create a pending revision under the review policy.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Persist basic and professional fields together or create a pending revision under the review policy. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful update freelancer profile produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Freelancer Skills Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Freelancer Skill List (UC-08.01)}
+\label{fn:nhuy-uc-08-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Freelancer Skill List. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Guest, Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}skills}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, FreelancerSkill, Skill. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Freelancer Skill List}\par\smallskip
+Skill list with catalog name, proficiency /10 and owner-only remove action; Add Skill dialog with suggestions and level selector.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A freelancer can add and delete mappings only on their own profile.
+\item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\item Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+\item Show an empty state when there are no active skills.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects View Freelancer Skill List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Join FreelancerSkill with active Skill catalog entries and show proficiency levels. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view freelancer skill list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Add Freelancer Skill (UC-08.02)}
+\label{fn:nhuy-uc-08-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Add Freelancer Skill. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}skills}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, FreelancerSkill, Skill. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Add Freelancer Skill}\par\smallskip
+Skill list with catalog name, proficiency /10 and owner-only remove action; Add Skill dialog with suggestions and level selector.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+skillName & Required trimmed name up to 100 characters, entered or selected from suggestions. \\ \hline
+proficiencyLevel & Required integer from 1 to 10. \\ \hline
+id & Skill deletion uses FreelancerSkill.id, not Skill.id. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A freelancer can add and delete mappings only on their own profile.
+\item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\item Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+\item Show an empty state when there are no active skills.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects Add Freelancer Skill.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful add freelancer skill produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Delete Freelancer Skill (UC-08.03)}
+\label{fn:nhuy-uc-08-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Delete Freelancer Skill. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Hard-delete the owned mapping while retaining its Skill catalog entry.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}profiles/\allowbreak{}skills/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, FreelancerSkill, Skill. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Delete Freelancer Skill}\par\smallskip
+Skill list with catalog name, proficiency /10 and owner-only remove action; Add Skill dialog with suggestions and level selector.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A freelancer can add and delete mappings only on their own profile.
+\item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\item Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+\item Show an empty state when there are no active skills.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects Delete Freelancer Skill.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Hard-delete the owned mapping while retaining its Skill catalog entry.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Hard-delete the owned mapping while retaining its Skill catalog entry. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful delete freelancer skill produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Portfolio Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Portfolio List (UC-09.01)}
+\label{fn:nhuy-uc-09-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Portfolio List. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Guest, Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+List only non-deleted PortfolioItem records of the selected freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}portfolios}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, PortfolioItem. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Portfolio List}\par\smallskip
+Portfolio card grid with title, description and technologies; detail dialog; owner-only Add, Edit and Delete controls; confirmation before deletion.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only the owning freelancer creates, updates or deletes a portfolio item.
+\item Only items whose deletedAt is null are listed, opened or edited.
+\item Deletion sets deletedAt; it does not hard-delete the item.
+\item The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolio List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item List only non-deleted PortfolioItem records of the selected freelancer.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & List only non-deleted PortfolioItem records of the selected freelancer. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view portfolio list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Add Portfolio (UC-09.02)}
+\label{fn:nhuy-uc-09-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Add Portfolio. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Create an owned portfolio item with title, description, technologies and project link.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}portfolios}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, PortfolioItem. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Add Portfolio}\par\smallskip
+Portfolio card grid with title, description and technologies; detail dialog; owner-only Add, Edit and Delete controls; confirmation before deletion.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+title & Required trimmed title, 1--255 characters. \\ \hline
+description & Optional text, up to 5,000 characters. \\ \hline
+technologies & At most 20 non-empty names, each up to 100 characters. \\ \hline
+projectUrl & Optional HTTP/HTTPS project link up to 500 characters. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only the owning freelancer creates, updates or deletes a portfolio item.
+\item Only items whose deletedAt is null are listed, opened or edited.
+\item Deletion sets deletedAt; it does not hard-delete the item.
+\item The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects Add Portfolio.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Create an owned portfolio item with title, description, technologies and project link.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Create an owned portfolio item with title, description, technologies and project link. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful add portfolio produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Portfolio Detail (UC-09.03)}
+\label{fn:nhuy-uc-09-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Portfolio Detail. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Guest, Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Display a single non-deleted portfolio item and its external project link.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, PortfolioItem. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Portfolio Detail}\par\smallskip
+Portfolio card grid with title, description and technologies; detail dialog; owner-only Add, Edit and Delete controls; confirmation before deletion.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only the owning freelancer creates, updates or deletes a portfolio item.
+\item Only items whose deletedAt is null are listed, opened or edited.
+\item Deletion sets deletedAt; it does not hard-delete the item.
+\item The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolio Detail.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Display a single non-deleted portfolio item and its external project link.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Display a single non-deleted portfolio item and its external project link. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view portfolio detail produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Update Portfolio (UC-09.04)}
+\label{fn:nhuy-uc-09-04}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Update Portfolio. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Save validated edits on an owned, non-deleted portfolio item.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{PUT /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, PortfolioItem. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Update Portfolio}\par\smallskip
+Portfolio card grid with title, description and technologies; detail dialog; owner-only Add, Edit and Delete controls; confirmation before deletion.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+title & Required trimmed title, 1--255 characters. \\ \hline
+description & Optional text, up to 5,000 characters. \\ \hline
+technologies & At most 20 non-empty names, each up to 100 characters. \\ \hline
+projectUrl & Optional HTTP/HTTPS project link up to 500 characters. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only the owning freelancer creates, updates or deletes a portfolio item.
+\item Only items whose deletedAt is null are listed, opened or edited.
+\item Deletion sets deletedAt; it does not hard-delete the item.
+\item The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects Update Portfolio.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Save validated edits on an owned, non-deleted portfolio item.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Save validated edits on an owned, non-deleted portfolio item. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful update portfolio produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Delete Portfolio (UC-09.05)}
+\label{fn:nhuy-uc-09-05}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Delete Portfolio. Navigation: /profiles/[id]; /freelancer/profile.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Set deletedAt and remove the item from active list and detail results.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, PortfolioItem. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Delete Portfolio}\par\smallskip
+Portfolio card grid with title, description and technologies; detail dialog; owner-only Add, Edit and Delete controls; confirmation before deletion.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only the owning freelancer creates, updates or deletes a portfolio item.
+\item Only items whose deletedAt is null are listed, opened or edited.
+\item Deletion sets deletedAt; it does not hard-delete the item.
+\item The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /profiles/[id]; /freelancer/profile and selects Delete Portfolio.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Set deletedAt and remove the item from active list and detail results.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Set deletedAt and remove the item from active list and detail results. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful delete portfolio produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}

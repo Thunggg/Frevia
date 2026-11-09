@@ -335,9 +335,7 @@ export function ProfilePageClient({
       setIsFollowing((current) => !current);
       if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
-        message: isFollowing
-          ? t("toast.unfollowed")
-          : t("toast.followed"),
+        message: isFollowing ? t("toast.unfollowed") : t("toast.followed"),
       });
     } catch (error) {
       toastError({
@@ -469,10 +467,7 @@ export function ProfilePageClient({
       toastSuccess({ message: response.data.message });
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          t("toast.profileUpdateFailedRetry"),
-        ),
+        message: getErrorMessage(error, t("toast.profileUpdateFailedRetry")),
       });
     } finally {
       setPendingAction(null);
@@ -483,7 +478,12 @@ export function ProfilePageClient({
     event.preventDefault();
     const normalizedName = skillName.trim();
     const proficiencyLevel = Number(skillLevel);
-    if (!normalizedName || !Number.isInteger(proficiencyLevel)) {
+    if (
+      !normalizedName ||
+      !Number.isInteger(proficiencyLevel) ||
+      proficiencyLevel < 1 ||
+      proficiencyLevel > 10
+    ) {
       toastError({ message: t("toast.selectSkill") });
       return;
     }
@@ -501,20 +501,6 @@ export function ProfilePageClient({
 
     setPendingAction("skill-add");
     try {
-      const catalogResponse =
-        await profileApiRequest.searchSkillSuggestions(normalizedName);
-      const inCatalog =
-        catalogResponse.success &&
-        catalogResponse.data.some(
-          (option) =>
-            option.name.toLowerCase() === normalizedName.toLowerCase(),
-        );
-      if (!inCatalog) {
-        toastError({
-          message: t("toast.selectFromCatalog"),
-        });
-        return;
-      }
       const response = await profileApiRequest.addSkill(profileId, {
         skillName: normalizedName,
         proficiencyLevel,
@@ -533,10 +519,7 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.skillAdded") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          t("toast.addSkillFailedRetry"),
-        ),
+        message: getErrorMessage(error, t("toast.addSkillFailedRetry")),
       });
     } finally {
       setPendingAction(null);
@@ -555,10 +538,7 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.skillRemoved") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          t("toast.removeSkillFailed"),
-        ),
+        message: getErrorMessage(error, t("toast.removeSkillFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -621,10 +601,7 @@ export function ProfilePageClient({
       setPortfolioEditor(null);
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          t("toast.savePortfolioFailed"),
-        ),
+        message: getErrorMessage(error, t("toast.savePortfolioFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -662,10 +639,7 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.portfolioDeleted") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(
-          error,
-          t("toast.deletePortfolioFailed"),
-        ),
+        message: getErrorMessage(error, t("toast.deletePortfolioFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -691,9 +665,7 @@ export function ProfilePageClient({
         <Header role={headerRole} />
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
-          <h1 className="mt-4 text-2xl font-bold">
-            {t("unavailableTitle")}
-          </h1>
+          <h1 className="mt-4 text-2xl font-bold">{t("unavailableTitle")}</h1>
           <p className="mt-2 text-muted-foreground">{loadError}</p>
           <Button className="mt-6" onClick={() => void loadProfile()}>
             <RefreshCw /> {t("tryAgain")}
@@ -709,7 +681,9 @@ export function ProfilePageClient({
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={headerRole} />
-      <main className="flex-1">        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+      <main className="flex-1">
+        {" "}
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
               <Link href="/" className="transition-colors hover:text-[#4fae2e]">
@@ -728,7 +702,6 @@ export function ProfilePageClient({
             </p>
           </div>
         </section>
-
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {isOwner ? (
             <div className="mb-5">
@@ -829,8 +802,7 @@ export function ProfilePageClient({
                         <AlertDialogHeader>
                           <AlertDialogTitle>
                             {t("unfollowTitle", {
-                              name:
-                                profile.displayName ?? t("noNameFallback"),
+                              name: profile.displayName ?? t("noNameFallback"),
                             })}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
@@ -1030,9 +1002,7 @@ export function ProfilePageClient({
                     <SectionEmpty
                       title={t("noPortfolioTitle")}
                       description={
-                        isOwner
-                          ? t("noPortfolioOwner")
-                          : t("noPortfolioOther")
+                        isOwner ? t("noPortfolioOwner") : t("noPortfolioOther")
                       }
                     />
                   </div>
@@ -1142,9 +1112,7 @@ export function ProfilePageClient({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>{t("editProfileTitle")}</DialogTitle>
-            <DialogDescription>
-              {t("editProfileDescription")}
-            </DialogDescription>
+            <DialogDescription>{t("editProfileDescription")}</DialogDescription>
           </DialogHeader>
           <form onSubmit={updateProfile} className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1300,9 +1268,7 @@ export function ProfilePageClient({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("addSkillTitle")}</DialogTitle>
-            <DialogDescription>
-              {t("addSkillDescription")}
-            </DialogDescription>
+            <DialogDescription>{t("addSkillDescription")}</DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
             <FormField label={t("fieldSkillName")} htmlFor="skill-name">
@@ -1440,7 +1406,10 @@ export function ProfilePageClient({
                 }
               />
             </FormField>
-            <FormField label={t("fieldDescription")} htmlFor="portfolio-description">
+            <FormField
+              label={t("fieldDescription")}
+              htmlFor="portfolio-description"
+            >
               <Textarea
                 id="portfolio-description"
                 rows={5}

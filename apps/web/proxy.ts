@@ -76,7 +76,25 @@ export default async function proxy(request: NextRequest) {
 
   // Nếu có refresh token và access token cần refresh thì exchange refresh token
   if (refreshToken && accessTokenNeedsRefresh(accessToken)) {
-    const tokens = await exchangeRefreshToken(refreshToken);
+    let tokens: RefreshedTokens | null;
+    try {
+      tokens = await exchangeRefreshToken(refreshToken);
+    } catch (error) {
+      if (
+        !(error instanceof TypeError) &&
+        !(
+          error instanceof Error &&
+          ["AbortError", "TimeoutError"].includes(error.name)
+        )
+      )
+        throw error;
+      // Keep session cookies during a temporary backend outage.
+      if (isPublicRoute(pathname)) return response;
+      return new NextResponse(
+        "Backend temporarily unavailable. Please try again shortly.",
+        { status: 503 },
+      );
+    }
     if (tokens) {
       applyAuthCookies(response, tokens);
       hasSession = true;

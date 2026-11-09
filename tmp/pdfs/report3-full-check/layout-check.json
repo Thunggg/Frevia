@@ -1,0 +1,122 @@
+{
+  "file": "main.pdf",
+  "pages": 597,
+  "renderedPages": [
+    1
+  ],
+  "pagesWithOutsideText": [
+    {
+      "page": 241,
+      "textItems": 88,
+      "outsidePage": [
+        "page=1&limit=10&sortBy="
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 245,
+      "textItems": 98,
+      "outsidePage": [
+        "PermissionsService.get"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 264,
+      "textItems": 133,
+      "outsidePage": [
+        "ForumReportForbiddenExcepti"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 284,
+      "textItems": 140,
+      "outsidePage": [
+        "ForumAdminRepo.getAdminCategoryById(id"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 341,
+      "textItems": 90,
+      "outsidePage": [
+        "page=1&limit=10&sortBy=id&sortOrde"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 348,
+      "textItems": 109,
+      "outsidePage": [
+        "CreateUserRoleNotFoundExcep"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 374,
+      "textItems": 93,
+      "outsidePage": [
+        "DELETE /api/users/:id/freelancer-profile/portfolio-items/:i"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 435,
+      "textItems": 66,
+      "outsidePage": [
+        "page=1&limit=10&sortBy=id&sor"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 437,
+      "textItems": 132,
+      "outsidePage": [
+        "prisma.advertisementBanner.findUni"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 448,
+      "textItems": 129,
+      "outsidePage": [
+        "POST /api/admin/banners/upload-ima"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 453,
+      "textItems": 143,
+      "outsidePage": [
+        "prisma.advertisementBanner.deleteMan"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 526,
+      "textItems": 110,
+      "outsidePage": [
+        "prisma.jobCategory.find"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 536,
+      "textItems": 168,
+      "outsidePage": [
+        "JobCategoryNameAlreadyExis"
+      ],
+      "functionHeading": false
+    },
+    {
+      "page": 546,
+      "textItems": 132,
+      "outsidePage": [
+        "JobCategoryAdminNotFoundExcepti"
+      ],
+      "functionHeading": false
+    }
+  ],
+  "blankPages": []
+}

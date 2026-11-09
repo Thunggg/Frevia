@@ -132,6 +132,7 @@ export class ProfileRevisionService {
             education: profile.freelancerProfile?.education ?? [],
             certifications: profile.freelancerProfile?.certifications ?? [],
             languages: profile.freelancerProfile?.languages ?? [],
+            experience: profile.freelancerProfile?.experience ?? [],
           }
         : profileType === ProfileRevisionType.CLIENT
           ? {

@@ -51,6 +51,7 @@ type FreelancerProposal = {
   education?: string[] | null;
   certifications?: string[] | null;
   languages?: string[] | null;
+  experience?: string[] | null;
 };
 
 type ClientProposal = {
@@ -339,6 +340,10 @@ export class ProfileRevisionRepository {
               education: data.education ?? [],
               certifications: data.certifications ?? [],
               languages: data.languages ?? [],
+              experience:
+                data.experience === undefined
+                  ? undefined
+                  : (data.experience ?? []),
             },
             create: {
               profileId: revision.profileId,
@@ -346,6 +351,7 @@ export class ProfileRevisionRepository {
               education: data.education ?? [],
               certifications: data.certifications ?? [],
               languages: data.languages ?? [],
+              experience: data.experience ?? [],
             },
           });
         } else if (profileType === ProfileRevisionType.CLIENT) {

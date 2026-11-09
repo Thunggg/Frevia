@@ -1,13 +1,6 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Res,
-  StreamableFile,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { createReadStream } from 'fs';
+import { streamStoredFile } from '../../shared/utils/stream-stored-file';
 import type { Response } from 'express';
 import { IsPublic } from '../../shared/decorators/auth.decorator';
 import {
@@ -38,6 +31,6 @@ export class BannersController {
     const file = this.service.getLocalImage(filename);
     response.setHeader('Content-Type', file.mimeType);
     response.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    return new StreamableFile(createReadStream(file.absolutePath));
+    return streamStoredFile(file.absolutePath);
   }
 }

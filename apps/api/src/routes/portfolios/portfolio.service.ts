@@ -75,7 +75,7 @@ export class PortfolioService {
       }
 
       return await this.portfolioRepository.addPortfolioToProfile(
-        profileId,
+        profile.id,
         data,
       );
     } catch (error) {

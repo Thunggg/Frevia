@@ -18,6 +18,7 @@ const freelancerProfile = (userId = 10) => ({
 
 describe('ProfileService', () => {
   const repository = {
+    updateFreelancerProfile: jest.fn(),
     findFreelancerProfileById: jest.fn(),
     findSkillsByProfileId: jest.fn(),
     searchActiveCatalogSkills: jest.fn(),
@@ -27,18 +28,83 @@ describe('ProfileService', () => {
     findSkillById: jest.fn(),
     deleteSkill: jest.fn(),
   };
+  const revisions = {
+    requiresManualReview: jest.fn().mockReturnValue(false),
+    directUpdateResult: jest.fn(),
+    submitFreelancer: jest.fn(),
+  };
+  const outbox = { enqueueAndProcess: jest.fn().mockResolvedValue(undefined) };
   const service = new ProfileService(
     repository as unknown as ProfileRepository,
     {} as CloudinaryService,
     {} as AiCvAnalyzerService,
     {} as SkillResolverService,
-    {} as ProfileRevisionService,
-    {
-      enqueueAndProcess: jest.fn().mockResolvedValue(undefined),
-    } as unknown as EmbeddingOutboxService,
+    revisions as unknown as ProfileRevisionService,
+    outbox as unknown as EmbeddingOutboxService,
   );
 
   beforeEach(() => jest.clearAllMocks());
+
+  it('preserves professional fields omitted by the profile form', async () => {
+    repository.findFreelancerProfileById.mockResolvedValue({
+      ...freelancerProfile(),
+      bio: 'Existing biography',
+      profileCompletionPercent: 80,
+      freelancerProfile: {
+        education: ['University'],
+        certifications: ['Certificate'],
+        languages: ['Vietnamese'],
+        experience: ['Developer'],
+      },
+    });
+    repository.updateFreelancerProfile.mockResolvedValue({
+      profileCompletionPercent: 80,
+    });
+    await service.updateProfile(5, 10, {
+      displayName: 'Updated name',
+      title: 'Engineer',
+    });
+    expect(repository.updateFreelancerProfile).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        bio: 'Existing biography',
+        education: ['University'],
+        certifications: ['Certificate'],
+        languages: ['Vietnamese'],
+        experience: ['Developer'],
+      }),
+    );
+  });
+
+  it('clears explicitly empty professional fields', async () => {
+    repository.findFreelancerProfileById.mockResolvedValue({
+      ...freelancerProfile(),
+      profileCompletionPercent: 80,
+      freelancerProfile: { experience: ['Developer'] },
+    });
+    await service.updateProfile(5, 10, {
+      displayName: 'Name',
+      title: 'Engineer',
+      experience: [],
+    });
+    expect(repository.updateFreelancerProfile).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ experience: [] }),
+    );
+  });
+
+  it('indexes the general profile ID after deleting a skill', async () => {
+    repository.findSkillById.mockResolvedValue({
+      freelancerProfile: { id: 99, profile: { id: 5, userId: 10 } },
+    });
+    repository.deleteSkill.mockResolvedValue({ id: 7 });
+    await service.deleteSkill(7, 10);
+    expect(outbox.enqueueAndProcess).toHaveBeenCalledWith({
+      eventType: 'UPSERT',
+      documentType: 'CV',
+      documentId: 5,
+    });
+  });
 
   it('returns an empty skill list instead of a not-found error', async () => {
     repository.findFreelancerProfileById.mockResolvedValue(freelancerProfile());

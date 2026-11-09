@@ -8,7 +8,6 @@ import {
   ParseIntPipe,
   Post,
   Res,
-  StreamableFile,
   UploadedFile,
   Put,
   Query,
@@ -37,7 +36,8 @@ import {
   ProfileRevisionSubmissionDto,
 } from './profile.dto';
 import { UseInterceptors } from '@nestjs/common';
-import { createReadStream, existsSync } from 'fs';
+import { existsSync } from 'fs';
+import { streamStoredFile } from '../../shared/utils/stream-stored-file';
 import type { Response } from 'express';
 
 @Controller('profiles')
@@ -96,7 +96,7 @@ export class ProfileController {
       `attachment; filename="${file.fileName.replace(/"/g, '')}"`,
     );
     response.setHeader('Content-Type', 'application/pdf');
-    return new StreamableFile(createReadStream(file.absolutePath));
+    return streamStoredFile(file.absolutePath);
   }
 
   @Post(':id/cv/analyze')

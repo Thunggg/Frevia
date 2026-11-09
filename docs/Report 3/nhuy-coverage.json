@@ -1,0 +1,499 @@
+{
+  "updated": "2026-11-08",
+  "count": 51,
+  "sprints": [
+    {
+      "sprint": 1,
+      "count": 10
+    },
+    {
+      "sprint": 2,
+      "count": 10
+    },
+    {
+      "sprint": 3,
+      "count": 9
+    },
+    {
+      "sprint": 4,
+      "count": 12
+    },
+    {
+      "sprint": 5,
+      "count": 10
+    }
+  ],
+  "functions": [
+    {
+      "id": "UC-07.01",
+      "group": "07",
+      "sprint": 1,
+      "name": "View Freelancer Profile",
+      "endpoint": "GET /profiles/:id",
+      "action": "view",
+      "effect": "Retrieve approved Profile and FreelancerProfile fields in one response."
+    },
+    {
+      "id": "UC-07.02",
+      "group": "07",
+      "sprint": 1,
+      "name": "Update Freelancer Profile",
+      "endpoint": "PUT /profiles/:id",
+      "action": "update",
+      "effect": "Persist basic and professional fields together or create a pending revision under the review policy."
+    },
+    {
+      "id": "UC-08.01",
+      "group": "08",
+      "sprint": 1,
+      "name": "View Freelancer Skill List",
+      "endpoint": "GET /profiles/:id/skills",
+      "action": "list",
+      "effect": "Join FreelancerSkill with active Skill catalog entries and show proficiency levels."
+    },
+    {
+      "id": "UC-08.02",
+      "group": "08",
+      "sprint": 1,
+      "name": "Add Freelancer Skill",
+      "endpoint": "POST /profiles/:id/skills",
+      "action": "create",
+      "effect": "Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping."
+    },
+    {
+      "id": "UC-08.03",
+      "group": "08",
+      "sprint": 1,
+      "name": "Delete Freelancer Skill",
+      "endpoint": "DELETE /profiles/skills/:id",
+      "action": "delete",
+      "effect": "Hard-delete the owned mapping while retaining its Skill catalog entry."
+    },
+    {
+      "id": "UC-09.01",
+      "group": "09",
+      "sprint": 1,
+      "name": "View Portfolio List",
+      "endpoint": "GET /profiles/:id/portfolios",
+      "action": "list",
+      "effect": "List only non-deleted PortfolioItem records of the selected freelancer."
+    },
+    {
+      "id": "UC-09.02",
+      "group": "09",
+      "sprint": 1,
+      "name": "Add Portfolio",
+      "endpoint": "POST /profiles/:id/portfolios",
+      "action": "create",
+      "effect": "Create an owned portfolio item with title, description, technologies and project link."
+    },
+    {
+      "id": "UC-09.03",
+      "group": "09",
+      "sprint": 1,
+      "name": "View Portfolio Detail",
+      "endpoint": "GET /profiles/portfolios/:id",
+      "action": "view",
+      "effect": "Display a single non-deleted portfolio item and its external project link."
+    },
+    {
+      "id": "UC-09.04",
+      "group": "09",
+      "sprint": 1,
+      "name": "Update Portfolio",
+      "endpoint": "PUT /profiles/portfolios/:id",
+      "action": "update",
+      "effect": "Save validated edits on an owned, non-deleted portfolio item."
+    },
+    {
+      "id": "UC-09.05",
+      "group": "09",
+      "sprint": 1,
+      "name": "Delete Portfolio",
+      "endpoint": "DELETE /profiles/portfolios/:id",
+      "action": "delete",
+      "effect": "Set deletedAt and remove the item from active list and detail results."
+    },
+    {
+      "id": "UC-18.01",
+      "group": "18",
+      "sprint": 2,
+      "name": "Upload Identity Documents",
+      "endpoint": "POST /identity-verifications/ai-check; POST /identity-verifications/documents",
+      "action": "create",
+      "effect": "Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review."
+    },
+    {
+      "id": "UC-18.02",
+      "group": "18",
+      "sprint": 2,
+      "name": "View Verification Status",
+      "endpoint": "GET /identity-verifications/status",
+      "action": "view",
+      "effect": "Return the latest verification state and submission history with rejection notes where present."
+    },
+    {
+      "id": "UC-19.01",
+      "group": "19",
+      "sprint": 2,
+      "name": "View Client Profile",
+      "endpoint": "GET /clients/:userId",
+      "action": "view",
+      "effect": "Combine approved public Profile, ClientProfile and SocialLink fields without private user information."
+    },
+    {
+      "id": "UC-19.02",
+      "group": "19",
+      "sprint": 2,
+      "name": "Update Company Information",
+      "endpoint": "PUT /clients/me/profile",
+      "action": "update",
+      "effect": "Save or submit the authenticated Client company information according to the revision policy."
+    },
+    {
+      "id": "UC-20.01",
+      "group": "20",
+      "sprint": 2,
+      "name": "View Social Link List",
+      "endpoint": "GET /social-links; GET /clients/:userId",
+      "action": "list",
+      "effect": "Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap."
+    },
+    {
+      "id": "UC-20.02",
+      "group": "20",
+      "sprint": 2,
+      "name": "Add Social Link",
+      "endpoint": "POST /social-links",
+      "action": "create",
+      "effect": "Validate the platform and external URL, then insert one link on the authenticated user profile."
+    },
+    {
+      "id": "UC-20.03",
+      "group": "20",
+      "sprint": 2,
+      "name": "Delete Social Link",
+      "endpoint": "DELETE /social-links/:id",
+      "action": "delete",
+      "effect": "Hard-delete the selected owned social link after confirmation."
+    },
+    {
+      "id": "UC-21.01",
+      "group": "21",
+      "sprint": 2,
+      "name": "View Favorite Freelancer List",
+      "endpoint": "GET /favorites/freelancers",
+      "action": "list",
+      "effect": "Load the current Client favorites and join public freelancer details."
+    },
+    {
+      "id": "UC-21.02",
+      "group": "21",
+      "sprint": 2,
+      "name": "Add Freelancer to Favorites",
+      "endpoint": "POST /favorites/freelancers/:freelancerId",
+      "action": "create",
+      "effect": "Insert a unique relationship from the current Client to an active freelancer."
+    },
+    {
+      "id": "UC-21.03",
+      "group": "21",
+      "sprint": 2,
+      "name": "Remove Freelancer from Favorites",
+      "endpoint": "DELETE /favorites/freelancers/:freelancerId",
+      "action": "delete",
+      "effect": "Hard-delete the current Client relationship and update the favorite toggle and list."
+    },
+    {
+      "id": "UC-29.01",
+      "group": "29",
+      "sprint": 3,
+      "name": "View Following List",
+      "endpoint": "GET /following/freelancers",
+      "action": "list",
+      "effect": "Load freelancer relationships owned by the current Client and show the following state."
+    },
+    {
+      "id": "UC-29.02",
+      "group": "29",
+      "sprint": 3,
+      "name": "Follow Freelancer",
+      "endpoint": "POST /following/freelancers/:freelancerId",
+      "action": "create",
+      "effect": "Create a unique follow mapping and notify the target freelancer."
+    },
+    {
+      "id": "UC-29.03",
+      "group": "29",
+      "sprint": 3,
+      "name": "Unfollow Freelancer",
+      "endpoint": "DELETE /following/freelancers/:freelancerId",
+      "action": "delete",
+      "effect": "Remove only the current Client follow relationship."
+    },
+    {
+      "id": "UC-30.01",
+      "group": "30",
+      "sprint": 3,
+      "name": "View Notification List",
+      "endpoint": "GET /notifications",
+      "action": "list",
+      "effect": "Load the recipient active notifications in reverse chronological order."
+    },
+    {
+      "id": "UC-30.02",
+      "group": "30",
+      "sprint": 3,
+      "name": "Mark Notification as Read",
+      "endpoint": "PATCH /notifications/:id/read",
+      "action": "update",
+      "effect": "Set isRead to true on one owned notification.",
+      "input": "notification id"
+    },
+    {
+      "id": "UC-30.03",
+      "group": "30",
+      "sprint": 3,
+      "name": "Mark All Notifications as Read",
+      "endpoint": "PATCH /notifications/read-all",
+      "action": "update",
+      "effect": "Update the current recipient unread, non-deleted notifications together.",
+      "input": "authenticated recipient; no notification id"
+    },
+    {
+      "id": "UC-30.04",
+      "group": "30",
+      "sprint": 3,
+      "name": "Delete Notification",
+      "endpoint": "DELETE /notifications/:id",
+      "action": "delete",
+      "effect": "Set deletedAt on the owned notification and hide it from the list."
+    },
+    {
+      "id": "UC-31.01",
+      "group": "31",
+      "sprint": 3,
+      "name": "Switch Role",
+      "endpoint": "POST /auth/switch-role",
+      "action": "update",
+      "effect": "Change the primary role to an already assigned role and issue updated authentication tokens."
+    },
+    {
+      "id": "UC-31.02",
+      "group": "31",
+      "sprint": 3,
+      "name": "Join New Role",
+      "endpoint": "POST /auth/join-role",
+      "action": "create",
+      "effect": "Enroll in an allowed new role without duplicating the account or granting administrator privileges."
+    },
+    {
+      "id": "UC-39.01",
+      "group": "39",
+      "sprint": 4,
+      "name": "View Review List",
+      "endpoint": "GET /reviews/contracts/:contractId",
+      "action": "list",
+      "effect": "Retrieve reviews and active responses for a contract after verifying participant access."
+    },
+    {
+      "id": "UC-39.02",
+      "group": "39",
+      "sprint": 4,
+      "name": "View Review Detail",
+      "endpoint": "GET /reviews/:reviewId",
+      "action": "view",
+      "effect": "Retrieve one review and response after checking contract participation."
+    },
+    {
+      "id": "UC-39.03",
+      "group": "39",
+      "sprint": 4,
+      "name": "Write Review",
+      "endpoint": "POST /reviews/contracts/:contractId",
+      "action": "create",
+      "effect": "Create one review of the other participant in a completed contract and notify that participant."
+    },
+    {
+      "id": "UC-39.04",
+      "group": "39",
+      "sprint": 4,
+      "name": "Update Review",
+      "endpoint": "PATCH /reviews/:reviewId",
+      "action": "update",
+      "effect": "Update accepted fields of an existing review authored by the current user."
+    },
+    {
+      "id": "UC-39.05",
+      "group": "39",
+      "sprint": 4,
+      "name": "Delete Review",
+      "endpoint": "DELETE /reviews/:reviewId",
+      "action": "delete",
+      "effect": "Soft-delete the owned review so it no longer appears as active feedback."
+    },
+    {
+      "id": "UC-40.01",
+      "group": "40",
+      "sprint": 4,
+      "name": "Respond to Review",
+      "endpoint": "POST /reviews/:reviewId/response",
+      "action": "create",
+      "effect": "Create an active response from the reviewee and notify the review author."
+    },
+    {
+      "id": "UC-40.02",
+      "group": "40",
+      "sprint": 4,
+      "name": "Update Review Response",
+      "endpoint": "PATCH /reviews/responses/:responseId",
+      "action": "update",
+      "effect": "Save validated text in the current user response."
+    },
+    {
+      "id": "UC-40.03",
+      "group": "40",
+      "sprint": 4,
+      "name": "Delete Review Response",
+      "endpoint": "DELETE /reviews/responses/:responseId",
+      "action": "delete",
+      "effect": "Soft-delete the response authored by the current user."
+    },
+    {
+      "id": "UC-41.01",
+      "group": "41",
+      "sprint": 4,
+      "name": "View Profile",
+      "endpoint": "GET /account-profile",
+      "action": "view",
+      "effect": "Read the authenticated account profile, email and assigned roles."
+    },
+    {
+      "id": "UC-41.02",
+      "group": "41",
+      "sprint": 4,
+      "name": "Update Profile",
+      "endpoint": "PUT /account-profile",
+      "action": "update",
+      "effect": "Save or submit general display name and biography according to profile strength.",
+      "input": "displayName; optional bio"
+    },
+    {
+      "id": "UC-41.03",
+      "group": "41",
+      "sprint": 4,
+      "name": "Change Password",
+      "endpoint": "PUT /account-profile/password",
+      "action": "update",
+      "effect": "Verify the current credential, hash the confirmed replacement and update the password.",
+      "input": "currentPassword; newPassword; confirmPassword"
+    },
+    {
+      "id": "UC-41.04",
+      "group": "41",
+      "sprint": 4,
+      "name": "Upload Avatar",
+      "endpoint": "POST /account-profile/avatar",
+      "action": "upload",
+      "effect": "Validate image content and size, store it, and update the owned avatar URL.",
+      "input": "multipart file"
+    },
+    {
+      "id": "UC-47.01",
+      "group": "47",
+      "sprint": 5,
+      "name": "View Pending Profile Update Request List",
+      "endpoint": "GET /admin/profile-revisions",
+      "action": "list",
+      "effect": "Filter and paginate revisions, defaulting the review workflow to pending requests."
+    },
+    {
+      "id": "UC-47.02",
+      "group": "47",
+      "sprint": 5,
+      "name": "View Profile Update Request Detail",
+      "endpoint": "GET /admin/profile-revisions/:id",
+      "action": "view",
+      "effect": "Display the current and proposed snapshots, requester, profile type and prior review notes."
+    },
+    {
+      "id": "UC-47.03",
+      "group": "47",
+      "sprint": 5,
+      "name": "Approve Profile Update Request",
+      "endpoint": "PATCH /admin/profile-revisions/:id/approve",
+      "action": "approve",
+      "effect": "Apply validated proposed changes and record an APPROVED decision atomically.",
+      "input": "revision id; optional reviewNotes"
+    },
+    {
+      "id": "UC-47.04",
+      "group": "47",
+      "sprint": 5,
+      "name": "Reject Profile Update Request",
+      "endpoint": "PATCH /admin/profile-revisions/:id/reject",
+      "action": "reject",
+      "effect": "Keep approved profile data unchanged and record REJECTED with an explanatory note.",
+      "input": "revision id; required reviewNotes"
+    },
+    {
+      "id": "UC-47.05",
+      "group": "47",
+      "sprint": 5,
+      "name": "View Profile Update Request History",
+      "endpoint": "GET /admin/profile-revisions; GET /profile-revisions/me?type=...",
+      "action": "list",
+      "effect": "Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type."
+    },
+    {
+      "id": "UC-47.06",
+      "group": "47",
+      "sprint": 5,
+      "name": "Update Profile Expert",
+      "endpoint": "PUT /expert-profile/me",
+      "action": "update",
+      "effect": "Submit the owned Expert profile as a pending revision for administrator review.",
+      "input": "expert profile fields"
+    },
+    {
+      "id": "UC-07.03",
+      "group": "07",
+      "sprint": 5,
+      "name": "Upload CV",
+      "endpoint": "POST /profiles/:id/cv",
+      "action": "upload",
+      "effect": "Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.",
+      "input": "CV upload: multipart PDF file, maximum 10 MB; Profile.id"
+    },
+    {
+      "id": "UC-07.04",
+      "group": "07",
+      "sprint": 5,
+      "name": "View CV",
+      "endpoint": "GET /profiles/:id/cv/file",
+      "action": "view",
+      "effect": "Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.",
+      "input": "CV upload: multipart PDF file, maximum 10 MB; Profile.id"
+    },
+    {
+      "id": "UC-07.05",
+      "group": "07",
+      "sprint": 5,
+      "name": "Replace CV",
+      "endpoint": "POST /profiles/:id/cv",
+      "action": "upload",
+      "effect": "Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.",
+      "input": "CV upload: multipart PDF file, maximum 10 MB; Profile.id"
+    },
+    {
+      "id": "UC-07.06",
+      "group": "07",
+      "sprint": 5,
+      "name": "Delete CV",
+      "endpoint": "DELETE /profiles/:id/cv",
+      "action": "delete",
+      "effect": "Clear CV URL, public ID, file name and upload time, and update the related search index.",
+      "input": "CV upload: multipart PDF file, maximum 10 MB; Profile.id"
+    }
+  ]
+}

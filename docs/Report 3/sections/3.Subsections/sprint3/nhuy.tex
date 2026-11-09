@@ -1,0 +1,744 @@
+% Functional requirements -- Nguyen Lu Nhat Huy -- Sprint 3
+\Needspace{12\baselineskip}
+\subsection{Following Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Following List (UC-29.01)}
+\label{fn:nhuy-uc-29-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Following List. Navigation: /client/profile (Following); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Load freelancer relationships owned by the current Client and show the following state.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}following/\allowbreak{}freelancers}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, FollowFreelancer, Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Following List}\par\smallskip
+Following cards with profile links and Unfollow; discovery section and Follow action; empty-state message.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only a Client follows or unfollows an active freelancer; self-follow is rejected.
+\item A unique (clientId, freelancerId) mapping prevents duplicates.
+\item Create the follow and its recipient notification together in a transaction.
+\item Unfollow hard-deletes the mapping without deleting either user.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Following); /profiles/[id] and selects View Following List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Load freelancer relationships owned by the current Client and show the following state.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Load freelancer relationships owned by the current Client and show the following state. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view following list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Follow Freelancer (UC-29.02)}
+\label{fn:nhuy-uc-29-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Follow Freelancer. Navigation: /client/profile (Following); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Create a unique follow mapping and notify the target freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, FollowFreelancer, Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Follow Freelancer}\par\smallskip
+Following cards with profile links and Unfollow; discovery section and Follow action; empty-state message.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+freelancerId & Target freelancer User.id. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only a Client follows or unfollows an active freelancer; self-follow is rejected.
+\item A unique (clientId, freelancerId) mapping prevents duplicates.
+\item Create the follow and its recipient notification together in a transaction.
+\item Unfollow hard-deletes the mapping without deleting either user.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Following); /profiles/[id] and selects Follow Freelancer.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Create a unique follow mapping and notify the target freelancer.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Create a unique follow mapping and notify the target freelancer. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful follow freelancer produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Unfollow Freelancer (UC-29.03)}
+\label{fn:nhuy-uc-29-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Unfollow Freelancer. Navigation: /client/profile (Following); /profiles/[id].
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Remove only the current Client follow relationship.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, FollowFreelancer, Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Unfollow Freelancer}\par\smallskip
+Following cards with profile links and Unfollow; discovery section and Follow action; empty-state message.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Only a Client follows or unfollows an active freelancer; self-follow is rejected.
+\item A unique (clientId, freelancerId) mapping prevents duplicates.
+\item Create the follow and its recipient notification together in a transaction.
+\item Unfollow hard-deletes the mapping without deleting either user.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens /client/profile (Following); /profiles/[id] and selects Unfollow Freelancer.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Remove only the current Client follow relationship.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Remove only the current Client follow relationship. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful unfollow freelancer produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Notification Management}
+\Needspace{10\baselineskip}
+\subsubsection{Function: View Notification List (UC-30.01)}
+\label{fn:nhuy-uc-30-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects View Notification List. Navigation: Header notification menu; /notifications.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer, Expert, Admin.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Load the recipient active notifications in reverse chronological order.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{GET /\allowbreak{}notifications}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{View Notification List}\par\smallskip
+Notification list with title, content, timestamp and unread indication; Mark as Read, Mark All as Read and Delete controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A user reads and changes only their own notifications.
+\item Exclude rows with deletedAt set and sort by createdAt descending.
+\item Mark-read sets isRead=true; mark-all affects only the recipient unread active rows.
+\item Deletion is a soft delete and updates the displayed list and unread count.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header notification menu; /notifications and selects View Notification List.
+\item The application submits the selected identifier or list filters.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Load the recipient active notifications in reverse chronological order.
+\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Show an informative empty state for a valid empty result and allow retry after a transport failure.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Load the recipient active notifications in reverse chronological order. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful view notification list produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Mark Notification as Read (UC-30.02)}
+\label{fn:nhuy-uc-30-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Mark Notification as Read. Navigation: Header notification menu; /notifications.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer, Expert, Admin.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Set isRead to true on one owned notification.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{PATCH /\allowbreak{}notifications/\allowbreak{}:id/\allowbreak{}read}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Mark Notification as Read}\par\smallskip
+Notification list with title, content, timestamp and unread indication; Mark as Read, Mark All as Read and Delete controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Accepted input & notification id \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A user reads and changes only their own notifications.
+\item Exclude rows with deletedAt set and sort by createdAt descending.
+\item Mark-read sets isRead=true; mark-all affects only the recipient unread active rows.
+\item Deletion is a soft delete and updates the displayed list and unread count.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header notification menu; /notifications and selects Mark Notification as Read.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Set isRead to true on one owned notification.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Set isRead to true on one owned notification. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful mark notification as read produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Mark All Notifications as Read (UC-30.03)}
+\label{fn:nhuy-uc-30-03}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Mark All Notifications as Read. Navigation: Header notification menu; /notifications.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer, Expert, Admin.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Update the current recipient unread, non-deleted notifications together.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{PATCH /\allowbreak{}notifications/\allowbreak{}read-all}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Mark All Notifications as Read}\par\smallskip
+Notification list with title, content, timestamp and unread indication; Mark as Read, Mark All as Read and Delete controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Accepted input & authenticated recipient; no notification id \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A user reads and changes only their own notifications.
+\item Exclude rows with deletedAt set and sort by createdAt descending.
+\item Mark-read sets isRead=true; mark-all affects only the recipient unread active rows.
+\item Deletion is a soft delete and updates the displayed list and unread count.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header notification menu; /notifications and selects Mark All Notifications as Read.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Update the current recipient unread, non-deleted notifications together.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Update the current recipient unread, non-deleted notifications together. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful mark all notifications as read produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Delete Notification (UC-30.04)}
+\label{fn:nhuy-uc-30-04}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Delete Notification. Navigation: Header notification menu; /notifications.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer, Expert, Admin.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Set deletedAt on the owned notification and hide it from the list.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{DELETE /\allowbreak{}notifications/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Notification. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Delete Notification}\par\smallskip
+Notification list with title, content, timestamp and unread indication; Mark as Read, Mark All as Read and Delete controls.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item A user reads and changes only their own notifications.
+\item Exclude rows with deletedAt set and sort by createdAt descending.
+\item Mark-read sets isRead=true; mark-all affects only the recipient unread active rows.
+\item Deletion is a soft delete and updates the displayed list and unread count.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header notification menu; /notifications and selects Delete Notification.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Set deletedAt on the owned notification and hide it from the list.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Set deletedAt on the owned notification and hide it from the list. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful delete notification produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Role Switching and Enrollment}
+\Needspace{10\baselineskip}
+\subsubsection{Function: Switch Role (UC-31.01)}
+\label{fn:nhuy-uc-31-01}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Switch Role. Navigation: Header role menu; role enrollment dialog.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Change the primary role to an already assigned role and issue updated authentication tokens.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}auth/\allowbreak{}switch-role}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Role, UserRole, Session. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Switch Role}\par\smallskip
+Header showing current role, assigned role options and Join Role action; enrollment confirmation; destination dashboard after success.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+role & JSON field role; allowed values are Client or Freelancer. Expert and Admin are not self-enrollment options. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Switch only to a role already assigned to the authenticated user.
+\item Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings.
+\item Maintain exactly one active primary role for an account; role-context changes issue updated session tokens.
+\item Switching roles does not create a second user account or grant access to other users records.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header role menu; role enrollment dialog and selects Switch Role.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Change the primary role to an already assigned role and issue updated authentication tokens.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Change the primary role to an already assigned role and issue updated authentication tokens. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful switch role produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+\Needspace{10\baselineskip}
+\subsubsection{Function: Join New Role (UC-31.02)}
+\label{fn:nhuy-uc-31-02}
+
+\Needspace{7\baselineskip}
+\fnhead{Function Trigger}
+The actor selects Join New Role. Navigation: Header role menu; role enrollment dialog.
+
+\Needspace{7\baselineskip}
+\fnhead{Function Description}
+\Needspace{5\baselineskip}
+\sublabel{Actors / Roles}
+Client, Freelancer.
+\Needspace{5\baselineskip}
+\sublabel{Purpose}
+Enroll in an allowed new role without duplicating the account or granting administrator privileges.
+\Needspace{5\baselineskip}
+\sublabel{Interface and Data Processing}
+{\small\texttt{POST /\allowbreak{}auth/\allowbreak{}join-role}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Role, UserRole, Session. Route IDs are validated independently from owner IDs.
+
+\Needspace{7\baselineskip}
+\fnhead{Screen Layout (Mock-up Description)}
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\textbf{Join New Role}\par\smallskip
+Header showing current role, assigned role options and Join Role action; enrollment confirmation; destination dashboard after success.\par\smallskip
+\textit{Schematic interface description, not an application screenshot.}
+\end{minipage}}
+\end{center}
+
+\Needspace{7\baselineskip}
+\Needspace{18\baselineskip}
+\fnhead{Function Details}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Input Data}
+\begin{specdatatable}{Data}{Definition}
+role & JSON field role; allowed values are Client or Freelancer. Expert and Admin are not self-enrollment options. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Validation and Business Rules}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Switch only to a role already assigned to the authenticated user.
+\item Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings.
+\item Maintain exactly one active primary role for an account; role-context changes issue updated session tokens.
+\item Switching roles does not create a second user account or grant access to other users records.
+\end{itemize}
+\Needspace{5\baselineskip}
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item The actor opens Header role menu; role enrollment dialog and selects Join New Role.
+\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+\item The API checks authentication where required, authorization, resource existence and input validity.
+\item Enroll in an allowed new role without duplicating the account or granting administrator privileges.
+\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+\Needspace{5\baselineskip}
+\sublabel{Alternative Flow}
+Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
+\Needspace{5\baselineskip}
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
+E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
+E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
+E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+\end{flowtable}
+\Needspace{5\baselineskip}
+\Needspace{14\baselineskip}
+\sublabel{Output Data}
+\begin{specdatatable}{Data}{Definition}
+Result & Enroll in an allowed new role without duplicating the account or granting administrator privileges. \\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\end{specdatatable}
+\Needspace{5\baselineskip}
+\sublabel{Acceptance Criteria}
+\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
+\item Successful join new role produces the documented response and survives a reload where data is persisted.
+\item An unauthorized actor cannot access or modify the resource.
+\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}

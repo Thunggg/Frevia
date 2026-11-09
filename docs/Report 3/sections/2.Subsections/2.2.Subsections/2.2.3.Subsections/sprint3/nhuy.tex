@@ -1,0 +1,273 @@
+% Nhuy -- canonical use-case identifiers, 08/11/2026
+\paragraph{Following Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-29.01 View Following List}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-29.01 View Following List} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Following List from /client/profile (Following); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Load freelancer relationships owned by the current Client and show the following state.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Following); /profiles/[id] and selects View Following List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Load freelancer relationships owned by the current Client and show the following state. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-29-01:} Only a Client follows or unfollows an active freelancer; self-follow is rejected. \newline \textbf{BR-NH-29-02:} A unique (clientId, freelancerId) mapping prevents duplicates. \newline \textbf{BR-NH-29-03:} Create the follow and its recipient notification together in a transaction. \newline \textbf{BR-NH-29-04:} Unfollow hard-deletes the mapping without deleting either user.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}following/\allowbreak{}freelancers}}. Persistent entities: User, FollowFreelancer, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-29.02 Follow Freelancer}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-29.02 Follow Freelancer} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Follow Freelancer from /client/profile (Following); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Create a unique follow mapping and notify the target freelancer.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create a unique follow mapping and notify the target freelancer.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Following); /profiles/[id] and selects Follow Freelancer. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create a unique follow mapping and notify the target freelancer. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-29-01:} Only a Client follows or unfollows an active freelancer; self-follow is rejected. \newline \textbf{BR-NH-29-02:} A unique (clientId, freelancerId) mapping prevents duplicates. \newline \textbf{BR-NH-29-03:} Create the follow and its recipient notification together in a transaction. \newline \textbf{BR-NH-29-04:} Unfollow hard-deletes the mapping without deleting either user.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. Persistent entities: User, FollowFreelancer, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-29.03 Unfollow Freelancer}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-29.03 Unfollow Freelancer} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Unfollow Freelancer from /client/profile (Following); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Remove only the current Client follow relationship.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Remove only the current Client follow relationship.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Following); /profiles/[id] and selects Unfollow Freelancer. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Remove only the current Client follow relationship. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-29-01:} Only a Client follows or unfollows an active freelancer; self-follow is rejected. \newline \textbf{BR-NH-29-02:} A unique (clientId, freelancerId) mapping prevents duplicates. \newline \textbf{BR-NH-29-03:} Create the follow and its recipient notification together in a transaction. \newline \textbf{BR-NH-29-04:} Unfollow hard-deletes the mapping without deleting either user.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}following/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. Persistent entities: User, FollowFreelancer, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Notification Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-30.01 View Notification List}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-30.01 View Notification List} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Notification List from Header notification menu; /notifications.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Load the recipient active notifications in reverse chronological order.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header notification menu; /notifications and selects View Notification List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Load the recipient active notifications in reverse chronological order. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-30-01:} A user reads and changes only their own notifications. \newline \textbf{BR-NH-30-02:} Exclude rows with deletedAt set and sort by createdAt descending. \newline \textbf{BR-NH-30-03:} Mark-read sets isRead=true; mark-all affects only the recipient unread active rows. \newline \textbf{BR-NH-30-04:} Deletion is a soft delete and updates the displayed list and unread count.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}notifications}}. Persistent entities: Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-30.02 Mark Notification as Read}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-30.02 Mark Notification as Read} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Mark Notification as Read from Header notification menu; /notifications.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Set isRead to true on one owned notification.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Set isRead to true on one owned notification.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header notification menu; /notifications and selects Mark Notification as Read. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Set isRead to true on one owned notification. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-30-01:} A user reads and changes only their own notifications. \newline \textbf{BR-NH-30-02:} Exclude rows with deletedAt set and sort by createdAt descending. \newline \textbf{BR-NH-30-03:} Mark-read sets isRead=true; mark-all affects only the recipient unread active rows. \newline \textbf{BR-NH-30-04:} Deletion is a soft delete and updates the displayed list and unread count.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PATCH /\allowbreak{}notifications/\allowbreak{}:id/\allowbreak{}read}}. Persistent entities: Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-30.03 Mark All Notifications as Read}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-30.03 Mark All Notifications as Read} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Mark All Notifications as Read from Header notification menu; /notifications.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Update the current recipient unread, non-deleted notifications together.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Update the current recipient unread, non-deleted notifications together.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header notification menu; /notifications and selects Mark All Notifications as Read. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Update the current recipient unread, non-deleted notifications together. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-30-01:} A user reads and changes only their own notifications. \newline \textbf{BR-NH-30-02:} Exclude rows with deletedAt set and sort by createdAt descending. \newline \textbf{BR-NH-30-03:} Mark-read sets isRead=true; mark-all affects only the recipient unread active rows. \newline \textbf{BR-NH-30-04:} Deletion is a soft delete and updates the displayed list and unread count.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PATCH /\allowbreak{}notifications/\allowbreak{}read-all}}. Persistent entities: Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-30.04 Delete Notification}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-30.04 Delete Notification} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Notification from Header notification menu; /notifications.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Set deletedAt on the owned notification and hide it from the list.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Set deletedAt on the owned notification and hide it from the list.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header notification menu; /notifications and selects Delete Notification. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Set deletedAt on the owned notification and hide it from the list. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-30-01:} A user reads and changes only their own notifications. \newline \textbf{BR-NH-30-02:} Exclude rows with deletedAt set and sort by createdAt descending. \newline \textbf{BR-NH-30-03:} Mark-read sets isRead=true; mark-all affects only the recipient unread active rows. \newline \textbf{BR-NH-30-04:} Deletion is a soft delete and updates the displayed list and unread count.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}notifications/\allowbreak{}:id}}. Persistent entities: Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Role Switching and Enrollment}
+\Needspace{8\baselineskip}
+\subparagraph{UC-31.01 Switch Role}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-31.01 Switch Role} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Switch Role from Header role menu; role enrollment dialog.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Change the primary role to an already assigned role and issue updated authentication tokens.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Change the primary role to an already assigned role and issue updated authentication tokens.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header role menu; role enrollment dialog and selects Switch Role. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Change the primary role to an already assigned role and issue updated authentication tokens. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-31-01:} Switch only to a role already assigned to the authenticated user. \newline \textbf{BR-NH-31-02:} Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings. \newline \textbf{BR-NH-31-03:} Maintain exactly one active primary role for an account; role-context changes issue updated session tokens. \newline \textbf{BR-NH-31-04:} Switching roles does not create a second user account or grant access to other users records.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}auth/\allowbreak{}switch-role}}. Persistent entities: User, Role, UserRole, Session.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-31.02 Join New Role}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-31.02 Join New Role} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Join New Role from Header role menu; role enrollment dialog.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Enroll in an allowed new role without duplicating the account or granting administrator privileges.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Enroll in an allowed new role without duplicating the account or granting administrator privileges.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Header role menu; role enrollment dialog and selects Join New Role. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Enroll in an allowed new role without duplicating the account or granting administrator privileges. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-31-01:} Switch only to a role already assigned to the authenticated user. \newline \textbf{BR-NH-31-02:} Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings. \newline \textbf{BR-NH-31-03:} Maintain exactly one active primary role for an account; role-context changes issue updated session tokens. \newline \textbf{BR-NH-31-04:} Switching roles does not create a second user account or grant access to other users records.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}auth/\allowbreak{}join-role}}. Persistent entities: User, Role, UserRole, Session.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}

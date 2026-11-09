@@ -9,7 +9,6 @@ import {
   Put,
   Query,
   Res,
-  StreamableFile,
   UploadedFile,
   UploadedFiles,
   UseInterceptors,
@@ -44,7 +43,7 @@ import {
   ProfileRevisionSubmissionDto,
 } from './account-profile.dto';
 import { AccountProfileService } from './account-profile.service';
-import { createReadStream } from 'fs';
+import { streamStoredFile } from '../../shared/utils/stream-stored-file';
 import type { Response } from 'express';
 
 @Controller('account-profile')
@@ -102,7 +101,7 @@ export class GeneralAccountProfileController {
     );
     response.setHeader('Content-Type', file.contentType);
     response.setHeader('Cache-Control', 'private, max-age=31536000, immutable');
-    return new StreamableFile(createReadStream(file.absolutePath));
+    return streamStoredFile(file.absolutePath);
   }
 }
 
@@ -186,7 +185,7 @@ export class IdentityVerificationController {
       `inline; filename="${file.fileName.replace(/"/g, '')}"`,
     );
     response.setHeader('Content-Type', 'application/octet-stream');
-    return new StreamableFile(createReadStream(file.absolutePath));
+    return streamStoredFile(file.absolutePath);
   }
 }
 

@@ -1,0 +1,304 @@
+% Nhuy -- canonical use-case identifiers, 08/11/2026
+\paragraph{Identity Verification}
+\Needspace{8\baselineskip}
+\subparagraph{UC-18.01 Upload Identity Documents}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-18.01 Upload Identity Documents} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Upload Identity Documents from /account-profile (Identity Verification tab).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Identity Verification tab) and selects Upload Identity Documents. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \newline \textbf{E5:} An active PENDING/APPROVED request blocks resubmission. An unavailable AI service is reported without creating a successful verification record.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-18-01:} Only an authenticated freelancer submits or reads their own verification status. \newline \textbf{BR-NH-18-02:} At most one active PENDING or APPROVED request is allowed per freelancer. \newline \textbf{BR-NH-18-03:} Documents are confidential; storage delivery and file endpoints must enforce authorization. \newline \textbf{BR-NH-18-04:} AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request. \newline \textbf{BR-NH-18-05:} Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}identity-verifications/\allowbreak{}ai-check;\allowbreak{} POST /\allowbreak{}identity-verifications/\allowbreak{}documents}}. Persistent entities: User, IdVerificationDocument, FreelancerProfile.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-18.02 View Verification Status}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-18.02 View Verification Status} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Verification Status from /account-profile (Identity Verification tab).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Return the latest verification state and submission history with rejection notes where present.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Identity Verification tab) and selects View Verification Status. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Return the latest verification state and submission history with rejection notes where present. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \newline \textbf{E5:} An active PENDING/APPROVED request blocks resubmission. An unavailable AI service is reported without creating a successful verification record.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-18-01:} Only an authenticated freelancer submits or reads their own verification status. \newline \textbf{BR-NH-18-02:} At most one active PENDING or APPROVED request is allowed per freelancer. \newline \textbf{BR-NH-18-03:} Documents are confidential; storage delivery and file endpoints must enforce authorization. \newline \textbf{BR-NH-18-04:} AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request. \newline \textbf{BR-NH-18-05:} Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}identity-verifications/\allowbreak{}status}}. Persistent entities: User, IdVerificationDocument, FreelancerProfile.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Client Profile Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-19.01 View Client Profile}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-19.01 View Client Profile} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Guest, Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Client Profile from /clients/[userId]; /client/profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Combine approved public Profile, ClientProfile and SocialLink fields without private user information.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The requested active profile or item exists. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /clients/[userId]; /client/profile and selects View Client Profile. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Combine approved public Profile, ClientProfile and SocialLink fields without private user information. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-19-01:} Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents. \newline \textbf{BR-NH-19-02:} Only the authenticated Client updates their own company; the server derives the user ID from authentication. \newline \textbf{BR-NH-19-03:} Apply the profile revision policy when strength is below 20 percent. \newline \textbf{BR-NH-19-04:} Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}clients/\allowbreak{}:userId}}. Persistent entities: User, Profile, ClientProfile, SocialLink, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-19.02 Update Company Information}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-19.02 Update Company Information} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Company Information from /clients/[userId]; /client/profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Save or submit the authenticated Client company information according to the revision policy.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save or submit the authenticated Client company information according to the revision policy.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /clients/[userId]; /client/profile and selects Update Company Information. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save or submit the authenticated Client company information according to the revision policy. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-19-01:} Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents. \newline \textbf{BR-NH-19-02:} Only the authenticated Client updates their own company; the server derives the user ID from authentication. \newline \textbf{BR-NH-19-03:} Apply the profile revision policy when strength is below 20 percent. \newline \textbf{BR-NH-19-04:} Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile}}. Persistent entities: User, Profile, ClientProfile, SocialLink, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Social Links Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-20.01 View Social Link List}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.01 View Social Link List} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Social Link List from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects View Social Link List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-20-01:} At most one link per platform per profile is allowed, including concurrent submissions. \newline \textbf{BR-NH-20-02:} Only the owning user can add or hard-delete a social link. \newline \textbf{BR-NH-20-03:} Open approved external links in a new tab with rel="noopener noreferrer". \newline \textbf{BR-NH-20-04:} Profile.id links the SocialLink table; the authenticated User.id resolves that profile.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}social-links;\allowbreak{} GET /\allowbreak{}clients/\allowbreak{}:userId}}. Persistent entities: Profile, SocialLink.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-20.02 Add Social Link}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.02 Add Social Link} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Add Social Link from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Validate the platform and external URL, then insert one link on the authenticated user profile.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate the platform and external URL, then insert one link on the authenticated user profile.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects Add Social Link. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate the platform and external URL, then insert one link on the authenticated user profile. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-20-01:} At most one link per platform per profile is allowed, including concurrent submissions. \newline \textbf{BR-NH-20-02:} Only the owning user can add or hard-delete a social link. \newline \textbf{BR-NH-20-03:} Open approved external links in a new tab with rel="noopener noreferrer". \newline \textbf{BR-NH-20-04:} Profile.id links the SocialLink table; the authenticated User.id resolves that profile.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}social-links}}. Persistent entities: Profile, SocialLink.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-20.03 Delete Social Link}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.03 Delete Social Link} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Social Link from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the selected owned social link after confirmation.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the selected owned social link after confirmation.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects Delete Social Link. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Hard-delete the selected owned social link after confirmation. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-20-01:} At most one link per platform per profile is allowed, including concurrent submissions. \newline \textbf{BR-NH-20-02:} Only the owning user can add or hard-delete a social link. \newline \textbf{BR-NH-20-03:} Open approved external links in a new tab with rel="noopener noreferrer". \newline \textbf{BR-NH-20-04:} Profile.id links the SocialLink table; the authenticated User.id resolves that profile.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}social-links/\allowbreak{}:id}}. Persistent entities: Profile, SocialLink.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Favorite Freelancers}
+\Needspace{8\baselineskip}
+\subparagraph{UC-21.01 View Favorite Freelancer List}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.01 View Favorite Freelancer List} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Favorite Freelancer List from /client/profile (Favorites); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Load the current Client favorites and join public freelancer details.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects View Favorite Freelancer List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Load the current Client favorites and join public freelancer details. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-21-01:} Only an authenticated Client manages their own favorites. \newline \textbf{BR-NH-21-02:} Reject self-favoriting and targets without an active Freelancer role. \newline \textbf{BR-NH-21-03:} The composite key (clientId, freelancerId) prevents duplicate relationships. \newline \textbf{BR-NH-21-04:} Removal hard-deletes only the relationship; no freelancer account or profile is deleted. \newline \textbf{BR-NH-21-05:} A successful add must be visible after list reload, including a new freelancer with minimal professional data.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}favorites/\allowbreak{}freelancers}}. Persistent entities: User, Profile, FreelancerProfile, FavoriteFreelancer.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-21.02 Add Freelancer to Favorites}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.02 Add Freelancer to Favorites} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Add Freelancer to Favorites from /client/profile (Favorites); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Insert a unique relationship from the current Client to an active freelancer.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Insert a unique relationship from the current Client to an active freelancer.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects Add Freelancer to Favorites. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Insert a unique relationship from the current Client to an active freelancer. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-21-01:} Only an authenticated Client manages their own favorites. \newline \textbf{BR-NH-21-02:} Reject self-favoriting and targets without an active Freelancer role. \newline \textbf{BR-NH-21-03:} The composite key (clientId, freelancerId) prevents duplicate relationships. \newline \textbf{BR-NH-21-04:} Removal hard-deletes only the relationship; no freelancer account or profile is deleted. \newline \textbf{BR-NH-21-05:} A successful add must be visible after list reload, including a new freelancer with minimal professional data.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. Persistent entities: User, Profile, FreelancerProfile, FavoriteFreelancer.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-21.03 Remove Freelancer from Favorites}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.03 Remove Freelancer from Favorites} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Remove Freelancer from Favorites from /client/profile (Favorites); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the current Client relationship and update the favorite toggle and list.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the current Client relationship and update the favorite toggle and list.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects Remove Freelancer from Favorites. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Hard-delete the current Client relationship and update the favorite toggle and list. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-21-01:} Only an authenticated Client manages their own favorites. \newline \textbf{BR-NH-21-02:} Reject self-favoriting and targets without an active Freelancer role. \newline \textbf{BR-NH-21-03:} The composite key (clientId, freelancerId) prevents duplicate relationships. \newline \textbf{BR-NH-21-04:} Removal hard-deletes only the relationship; no freelancer account or profile is deleted. \newline \textbf{BR-NH-21-05:} A successful add must be visible after list reload, including a new freelancer with minimal professional data.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:freelancerId}}. Persistent entities: User, Profile, FreelancerProfile, FavoriteFreelancer.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
