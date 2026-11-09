@@ -2,130 +2,155 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
-\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage[a4paper,margin=2.2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{hhline}
 \usepackage[table]{xcolor}
 \usepackage{titlesec}
-\usepackage{hyperref}
 \usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{hyperref}
 
+\numberwithin{figure}{section}
+
+% Color definitions
 \definecolor{fptred}{RGB}{192,0,0}
 \definecolor{fptblue}{RGB}{46,117,181}
 \definecolor{hdrfill}{RGB}{255,232,225}
-\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
-\renewcommand{\arraystretch}{1.6}
+\definecolor{codebg}{RGB}{248,249,250}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=fptblue,
+  citecolor=black
+}
+
+\renewcommand{\arraystretch}{1.5}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
 
-\titleformat{\section}{\Large\bfseries}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.5em}{}
+% Column specifications
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
 
+% Section title styling
+\titleformat{\section}{\Large\bfseries\color{fptred}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{fptblue}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+
+% Header and Footer
 \pagestyle{fancy}
 \fancyhf{}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-3pt}
+\fancyhead[L]{\small\itshape Frevia Platform -- Report 6: Software User Guides}
+\fancyhead[R]{\small\itshape Capstone Project}
 \fancyfoot[C]{Page \thepage}
-\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
+% Custom macros
 \newcommand{\hd}[1]{\textbf{#1}}
 \newcommand{\guide}[1]{{\itshape #1\par}}
+\newcommand{\rbadge}[1]{\textcolor{fptred}{\textbf{[#1]}}}
+
+% Code listings style
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}
 
 \begin{document}
 
-%================ COVER =================
+% =============================================================================
+% COVER PAGE
+% =============================================================================
 \begin{titlepage}
   \thispagestyle{empty}
   \centering
-  \vspace*{1cm}
-  \includegraphics[width=0.4\textwidth]{fpt_logo_r6.png}\\[4.5cm]
-  {\fontsize{27}{32}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[1cm]
-  {\fontsize{19}{23}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}
+  \vspace*{0.8cm}
+  \includegraphics[width=0.45\textwidth]{fpt_logo_r6.png}\\[3.5cm]
+  {\fontsize{26}{30}\selectfont\bfseries\color{fptred} CAPSTONE PROJECT REPORT}\\[0.8cm]
+  {\fontsize{18}{22}\selectfont\bfseries\color{fptred} Report 6 -- Software User Guides}\\[1.5cm]
+  {\fontsize{15}{18}\selectfont\bfseries Frevia -- AI-Powered Freelance Marketplace \& Community Platform}\\[2.5cm]
+  
+  \begin{minipage}{0.85\textwidth}
+    \centering
+    \begin{tabular}{ll}
+      \textbf{Author / In Charge:} & Nguyen Tien Thuan (CE181024) \\
+      \textbf{Project Name:} & Frevia Platform \\
+      \textbf{Academic Year:} & 2024 -- 2025 \\
+      \textbf{Supervision:} & FPT University \\
+    \end{tabular}
+  \end{minipage}
+
   \vfill
-  {\large -- Hanoi, August 2019 --}\\[1cm]
+  {\large -- March 2025 --}\\[0.8cm]
 \end{titlepage}
 
-%================ TOC =================
-\renewcommand{\contentsname}{\color{fptblue}Table of Contents}
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\renewcommand{\contentsname}{\color{fptblue}\Large Table of Contents}
 \tableofcontents
 \newpage
 
-%================ I. RECORD OF CHANGES =================
+% =============================================================================
+% I. RECORD OF CHANGES
+% =============================================================================
 \section*{\color{fptred} I. Record of Changes}
 \addcontentsline{toc}{section}{I. Record of Changes}
 
 \begin{center}
-\begin{tabular}{|p{2.6cm}|p{1.8cm}|p{2.6cm}|p{6.2cm}|}
-\hline\noalign{\vskip0.4pt}
-\rowcolor{hdrfill}\hd{Date} & \hd{A* M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
-\end{tabular}
+\renewcommand{\arraystretch}{1.45}
+\begin{longtable}{|C{2.6cm}|C{1.8cm}|C{3.2cm}|L{6.8cm}|}
+\hline
+\rowcolor{hdrfill}\hd{Date} & \hd{A*, M, D} & \hd{In charge} & \hd{Change Description} \\ \hline
+\endhead
+2025-03-05 & A & Nguyen Tien Thuan & Initial draft of Report 6 template structure, document metadata, and environment requirements. \\ \hline
+2025-03-08 & A & Nguyen Tien Thuan & Captured 28 verified screenshots across Part A (Installation) and Part B (Modules 2, 14, 15). \\ \hline
+2025-03-08 & M & Nguyen Tien Thuan & Added red bounding boxes and standardized numeric callout badges to all captured screenshots. \\ \hline
+2025-03-09 & M & Nguyen Tien Thuan & Translated entire document content, installation instructions, and user manual to formal English. \\ \hline
+2025-03-09 & A & Nguyen Tien Thuan & Finalized PDF compilation, verified cross-references, table of contents, and formatting compliance. \\ \hline
+\end{longtable}
 \end{center}
 
 \textit{*A - Added \quad M - Modified \quad D - Deleted}
 
 \newpage
 
-%================ II. RELEASE PACKAGE & USER GUIDES =================
+% =============================================================================
+% II. RELEASE PACKAGE & USER GUIDES
+% =============================================================================
 \section*{\color{fptred} II. Release Package \& User Guides}
 \addcontentsline{toc}{section}{II. Release Package \& User Guides}
 \setcounter{section}{0}
 
-\section{Deliverable Package}
+% Input Part A: Deliverable Package & Installation Guides
+\input{sections/sec1_deliverables_install.tex}
 
-\guide{[The section will list all source programs, scripts, documents with version number in this release. You can see the example following table for reference, can customize or delete if not using belong to each project characteristics]}
+% Input Part A (cont): Docker Compose, Local Dev, Ports & Verification
+\input{sections/sec2_docker_ai.tex}
 
-\begin{center}
-\begin{tabular}{|p{1.4cm}|p{5.5cm}|p{7.5cm}|}
-\hline\noalign{\vskip0.4pt}
-\rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description} \\ \hline
-1 & Project Schedule/Tracking & \\ \hline
-2 & Project Backlog & \\ \hline
-3 & Source Codes & \\ \hline
-4 & Database Script(s) & \\ \hline
-5 & Final Report Document & \\ \hline
-6 & Test Cases Document & \\ \hline
-7 & Defects List & \\ \hline
-8 & Issues List & \\ \hline
-9 & Slide & \\ \hline
-\end{tabular}
-\end{center}
+% Input Part B: User Manual - Overview & Module 2 (M2.01 - M2.07)
+\input{sections/sec3_m02_auth_session.tex}
 
-\section{Installation Guides}
+% Input Part B: Module 14 - Admin RBAC & User Management (M14.01 - M14.08)
+\input{sections/sec3_m14_admin_rbac_users.tex}
 
-\subsection{System Requirements}
-
-\guide{[Define any system requirements necessary to support the application, including the software and relevant configurations]}
-
-\subsection{Installation Instruction}
-
-\guide{[Includes installation instructions and configuration guidelines]}
-
-\section{User Manual}
-
-\subsection{Overview}
-
-\guide{[Descript the overview of the application and if could, insert the features workflow to help user has the overview of all the features in this application]}
-
-\subsection{Workflow 1}
-
-\guide{[Describe the purpose of this workflow, draw workflow diagram and other relevant diagrams]}
-
-\guide{[Describe the detailed guides for the workflow by providing the brief description, step by step guides (attached with user interface) of how to use that function]}
-
-\subsection{Workflow 2}
-
-\dots
+% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
+\input{sections/sec3_m15_admin_catalogs.tex}
 
 \end{document}
