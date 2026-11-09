@@ -9,60 +9,60 @@
 \contentsline {subsection}{\numberline {2.1}Table Relationships}{21}{subsection.14}%
 \contentsline {subsection}{\numberline {2.2}Module Entity--Relationship Diagrams}{30}{subsection.15}%
 \contentsline {section}{\numberline {3.}Detailed Design}{43}{section.38}%
-\contentsline {subsection}{\numberline {3.1}Forum Management}{43}{subsection.39}%
+\contentsline {subsection}{\numberline {3.1}Verify JWT}{43}{subsection.39}%
 \contentsline {paragraph}{\numberline {3.1.0.1}Class Diagram}{44}{paragraph.40}%
-\contentsline {paragraph}{\numberline {3.1.0.2}UC-14.01 -- View Forum Category List}{45}{paragraph.42}%
-\contentsline {paragraph}{\numberline {3.1.0.3}UC-14.02 -- View Forum Category Detail}{46}{paragraph.44}%
-\contentsline {paragraph}{\numberline {3.1.0.4}UC-14.03 -- View Post List}{47}{paragraph.46}%
-\contentsline {paragraph}{\numberline {3.1.0.5}UC-14.04 -- View Post Detail}{48}{paragraph.48}%
-\contentsline {paragraph}{\numberline {3.1.0.6}UC-14.05 -- Create Post}{49}{paragraph.50}%
-\contentsline {paragraph}{\numberline {3.1.0.7}UC-14.06 -- Update Post}{50}{paragraph.52}%
-\contentsline {paragraph}{\numberline {3.1.0.8}UC-14.07 -- Delete Post}{51}{paragraph.54}%
-\contentsline {paragraph}{\numberline {3.1.0.9}UC-14.08 -- Like Post}{52}{paragraph.56}%
-\contentsline {paragraph}{\numberline {3.1.0.10}UC-14.09 -- Unlike Post}{53}{paragraph.58}%
-\contentsline {paragraph}{\numberline {3.1.0.11}UC-14.10 -- View Post Likes}{54}{paragraph.60}%
-\contentsline {paragraph}{\numberline {3.1.0.12}UC-14.11 -- View Post Comments}{55}{paragraph.62}%
-\contentsline {paragraph}{\numberline {3.1.0.13}UC-14.12 -- Create Comment}{56}{paragraph.64}%
-\contentsline {paragraph}{\numberline {3.1.0.14}UC-14.13 -- Update Comment}{57}{paragraph.66}%
-\contentsline {paragraph}{\numberline {3.1.0.15}UC-14.14 -- Delete Comment}{58}{paragraph.68}%
-\contentsline {paragraph}{\numberline {3.1.0.16}UC-14.15 -- Like Comment}{59}{paragraph.70}%
-\contentsline {paragraph}{\numberline {3.1.0.17}UC-14.16 -- Unlike Comment}{60}{paragraph.72}%
-\contentsline {paragraph}{\numberline {3.1.0.18}UC-14.17 -- Report Content}{61}{paragraph.74}%
-\contentsline {subsection}{\numberline {3.2}Job Browsing}{62}{subsection.76}%
-\contentsline {paragraph}{\numberline {3.2.0.1}Class Diagram}{62}{paragraph.77}%
-\contentsline {paragraph}{\numberline {3.2.0.2}UC-10.01 -- View Job List}{63}{paragraph.79}%
-\contentsline {paragraph}{\numberline {3.2.0.3}UC-10.02 -- View Job Detail}{64}{paragraph.81}%
-\contentsline {subsection}{\numberline {3.3}Job Management}{64}{subsection.83}%
-\contentsline {paragraph}{\numberline {3.3.0.1}Class Diagram}{65}{paragraph.84}%
-\contentsline {paragraph}{\numberline {3.3.0.2}UC-11.01 -- View My Jobs}{66}{paragraph.86}%
-\contentsline {paragraph}{\numberline {3.3.0.3}UC-11.02 -- Create Job}{67}{paragraph.88}%
-\contentsline {paragraph}{\numberline {3.3.0.4}UC-11.03 -- Publish Job}{68}{paragraph.90}%
-\contentsline {paragraph}{\numberline {3.3.0.5}UC-11.04 -- Update Job}{69}{paragraph.92}%
-\contentsline {paragraph}{\numberline {3.3.0.6}UC-11.05 -- Delete Job}{70}{paragraph.94}%
-\contentsline {paragraph}{\numberline {3.3.0.7}UC-11.06 -- Change Job Status}{71}{paragraph.96}%
-\contentsline {subsection}{\numberline {3.4}Bookmarked Jobs Management}{71}{subsection.98}%
-\contentsline {paragraph}{\numberline {3.4.0.1}Class Diagram}{72}{paragraph.99}%
-\contentsline {paragraph}{\numberline {3.4.0.2}UC-12.01 -- View Bookmarked Job List}{73}{paragraph.101}%
-\contentsline {paragraph}{\numberline {3.4.0.3}UC-12.02 -- Bookmark Job}{74}{paragraph.103}%
-\contentsline {paragraph}{\numberline {3.4.0.4}UC-12.03 -- Remove Bookmark}{75}{paragraph.105}%
-\contentsline {subsection}{\numberline {3.5}Verify JWT}{75}{subsection.107}%
-\contentsline {paragraph}{\numberline {3.5.0.1}Class Diagram}{76}{paragraph.108}%
-\contentsline {paragraph}{\numberline {3.5.0.2}UC-0 -- Verify JWT}{77}{paragraph.110}%
-\contentsline {subsection}{\numberline {3.6}Authentication}{77}{subsection.112}%
-\contentsline {paragraph}{\numberline {3.6.0.1}Class Diagram}{78}{paragraph.113}%
-\contentsline {paragraph}{\numberline {3.6.0.2}UC-01 -- Login with Google}{79}{paragraph.115}%
-\contentsline {paragraph}{\numberline {3.6.0.3}UC-02 -- Login}{80}{paragraph.117}%
-\contentsline {paragraph}{\numberline {3.6.0.4}UC-03 -- Logout}{81}{paragraph.119}%
-\contentsline {paragraph}{\numberline {3.6.0.5}UC-04 -- Register}{82}{paragraph.121}%
-\contentsline {paragraph}{\numberline {3.6.0.6}UC-05 -- Forgot Password}{83}{paragraph.123}%
-\contentsline {subsection}{\numberline {3.7}Role Management}{84}{subsection.125}%
-\contentsline {paragraph}{\numberline {3.7.0.1}Class Diagram}{84}{paragraph.126}%
-\contentsline {paragraph}{\numberline {3.7.0.2}UC-06.01 -- View Role List}{85}{paragraph.128}%
-\contentsline {paragraph}{\numberline {3.7.0.3}UC-06.02 -- View Role Detail}{86}{paragraph.130}%
-\contentsline {paragraph}{\numberline {3.7.0.4}UC-06.03 -- Create Role}{87}{paragraph.132}%
-\contentsline {paragraph}{\numberline {3.7.0.5}UC-06.04 -- Update Role}{88}{paragraph.134}%
-\contentsline {paragraph}{\numberline {3.7.0.6}UC-06.05 -- Delete Role}{89}{paragraph.136}%
-\contentsline {paragraph}{\numberline {3.7.0.7}UC-06.06 -- Update Role Permissions}{90}{paragraph.138}%
+\contentsline {paragraph}{\numberline {3.1.0.2}UC-0 -- Verify JWT}{45}{paragraph.42}%
+\contentsline {subsection}{\numberline {3.2}Authentication}{45}{subsection.44}%
+\contentsline {paragraph}{\numberline {3.2.0.1}Class Diagram}{46}{paragraph.45}%
+\contentsline {paragraph}{\numberline {3.2.0.2}UC-01 -- Login with Google}{47}{paragraph.47}%
+\contentsline {paragraph}{\numberline {3.2.0.3}UC-02 -- Login}{48}{paragraph.49}%
+\contentsline {paragraph}{\numberline {3.2.0.4}UC-03 -- Logout}{49}{paragraph.51}%
+\contentsline {paragraph}{\numberline {3.2.0.5}UC-04 -- Register}{50}{paragraph.53}%
+\contentsline {paragraph}{\numberline {3.2.0.6}UC-05 -- Forgot Password}{51}{paragraph.55}%
+\contentsline {subsection}{\numberline {3.3}Role Management}{52}{subsection.57}%
+\contentsline {paragraph}{\numberline {3.3.0.1}Class Diagram}{52}{paragraph.58}%
+\contentsline {paragraph}{\numberline {3.3.0.2}UC-06.01 -- View Role List}{53}{paragraph.60}%
+\contentsline {paragraph}{\numberline {3.3.0.3}UC-06.02 -- View Role Detail}{54}{paragraph.62}%
+\contentsline {paragraph}{\numberline {3.3.0.4}UC-06.03 -- Create Role}{55}{paragraph.64}%
+\contentsline {paragraph}{\numberline {3.3.0.5}UC-06.04 -- Update Role}{56}{paragraph.66}%
+\contentsline {paragraph}{\numberline {3.3.0.6}UC-06.05 -- Delete Role}{57}{paragraph.68}%
+\contentsline {paragraph}{\numberline {3.3.0.7}UC-06.06 -- Update Role Permissions}{58}{paragraph.70}%
+\contentsline {subsection}{\numberline {3.4}Job Browsing}{59}{subsection.72}%
+\contentsline {paragraph}{\numberline {3.4.0.1}Class Diagram}{59}{paragraph.73}%
+\contentsline {paragraph}{\numberline {3.4.0.2}UC-10.01 -- View Job List}{60}{paragraph.75}%
+\contentsline {paragraph}{\numberline {3.4.0.3}UC-10.02 -- View Job Detail}{61}{paragraph.77}%
+\contentsline {subsection}{\numberline {3.5}Job Management}{61}{subsection.79}%
+\contentsline {paragraph}{\numberline {3.5.0.1}Class Diagram}{62}{paragraph.80}%
+\contentsline {paragraph}{\numberline {3.5.0.2}UC-11.01 -- View My Jobs}{63}{paragraph.82}%
+\contentsline {paragraph}{\numberline {3.5.0.3}UC-11.02 -- Create Job}{64}{paragraph.84}%
+\contentsline {paragraph}{\numberline {3.5.0.4}UC-11.03 -- Publish Job}{65}{paragraph.86}%
+\contentsline {paragraph}{\numberline {3.5.0.5}UC-11.04 -- Update Job}{66}{paragraph.88}%
+\contentsline {paragraph}{\numberline {3.5.0.6}UC-11.05 -- Delete Job}{67}{paragraph.90}%
+\contentsline {paragraph}{\numberline {3.5.0.7}UC-11.06 -- Change Job Status}{68}{paragraph.92}%
+\contentsline {subsection}{\numberline {3.6}Bookmarked Jobs Management}{68}{subsection.94}%
+\contentsline {paragraph}{\numberline {3.6.0.1}Class Diagram}{69}{paragraph.95}%
+\contentsline {paragraph}{\numberline {3.6.0.2}UC-12.01 -- View Bookmarked Job List}{70}{paragraph.97}%
+\contentsline {paragraph}{\numberline {3.6.0.3}UC-12.02 -- Bookmark Job}{71}{paragraph.99}%
+\contentsline {paragraph}{\numberline {3.6.0.4}UC-12.03 -- Remove Bookmark}{72}{paragraph.101}%
+\contentsline {subsection}{\numberline {3.7}Forum Management}{72}{subsection.103}%
+\contentsline {paragraph}{\numberline {3.7.0.1}Class Diagram}{73}{paragraph.104}%
+\contentsline {paragraph}{\numberline {3.7.0.2}UC-14.01 -- View Forum Category List}{74}{paragraph.106}%
+\contentsline {paragraph}{\numberline {3.7.0.3}UC-14.02 -- View Forum Category Detail}{75}{paragraph.108}%
+\contentsline {paragraph}{\numberline {3.7.0.4}UC-14.03 -- View Post List}{76}{paragraph.110}%
+\contentsline {paragraph}{\numberline {3.7.0.5}UC-14.04 -- View Post Detail}{77}{paragraph.112}%
+\contentsline {paragraph}{\numberline {3.7.0.6}UC-14.05 -- Create Post}{78}{paragraph.114}%
+\contentsline {paragraph}{\numberline {3.7.0.7}UC-14.06 -- Update Post}{79}{paragraph.116}%
+\contentsline {paragraph}{\numberline {3.7.0.8}UC-14.07 -- Delete Post}{80}{paragraph.118}%
+\contentsline {paragraph}{\numberline {3.7.0.9}UC-14.08 -- Like Post}{81}{paragraph.120}%
+\contentsline {paragraph}{\numberline {3.7.0.10}UC-14.09 -- Unlike Post}{82}{paragraph.122}%
+\contentsline {paragraph}{\numberline {3.7.0.11}UC-14.10 -- View Post Likes}{83}{paragraph.124}%
+\contentsline {paragraph}{\numberline {3.7.0.12}UC-14.11 -- View Post Comments}{84}{paragraph.126}%
+\contentsline {paragraph}{\numberline {3.7.0.13}UC-14.12 -- Create Comment}{85}{paragraph.128}%
+\contentsline {paragraph}{\numberline {3.7.0.14}UC-14.13 -- Update Comment}{86}{paragraph.130}%
+\contentsline {paragraph}{\numberline {3.7.0.15}UC-14.14 -- Delete Comment}{87}{paragraph.132}%
+\contentsline {paragraph}{\numberline {3.7.0.16}UC-14.15 -- Like Comment}{88}{paragraph.134}%
+\contentsline {paragraph}{\numberline {3.7.0.17}UC-14.16 -- Unlike Comment}{89}{paragraph.136}%
+\contentsline {paragraph}{\numberline {3.7.0.18}UC-14.17 -- Report Content}{90}{paragraph.138}%
 \contentsline {subsection}{\numberline {3.8}Manage Conversation}{91}{subsection.140}%
 \contentsline {paragraph}{\numberline {3.8.0.1}Class Diagram}{91}{paragraph.141}%
 \contentsline {paragraph}{\numberline {3.8.0.2}UC-27.01 -- View Conversation List}{92}{paragraph.143}%

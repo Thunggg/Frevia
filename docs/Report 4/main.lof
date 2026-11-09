@@ -24,53 +24,53 @@
 \contentsline {figure}{\numberline {23}{\ignorespaces ERD20 --- Forum Reports \& Moderation}}{42}{figure.caption.35}%
 \contentsline {figure}{\numberline {24}{\ignorespaces ERD21 --- Messaging \& Notifications}}{42}{figure.caption.36}%
 \contentsline {figure}{\numberline {25}{\ignorespaces ERD22 --- Administration \& System}}{43}{figure.caption.37}%
-\contentsline {figure}{\numberline {26}{\ignorespaces Class diagram of Forum Management}}{44}{figure.caption.41}%
-\contentsline {figure}{\numberline {27}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{45}{figure.caption.43}%
-\contentsline {figure}{\numberline {28}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{46}{figure.caption.45}%
-\contentsline {figure}{\numberline {29}{\ignorespaces Sequence diagram of UC-14.03 View Post List}}{47}{figure.caption.47}%
-\contentsline {figure}{\numberline {30}{\ignorespaces Sequence diagram of UC-14.04 View Post Detail}}{48}{figure.caption.49}%
-\contentsline {figure}{\numberline {31}{\ignorespaces Sequence diagram of UC-14.05 Create Post}}{49}{figure.caption.51}%
-\contentsline {figure}{\numberline {32}{\ignorespaces Sequence diagram of UC-14.06 Update Post}}{50}{figure.caption.53}%
-\contentsline {figure}{\numberline {33}{\ignorespaces Sequence diagram of UC-14.07 Delete Post}}{51}{figure.caption.55}%
-\contentsline {figure}{\numberline {34}{\ignorespaces Sequence diagram of UC-14.08 Like Post}}{52}{figure.caption.57}%
-\contentsline {figure}{\numberline {35}{\ignorespaces Sequence diagram of UC-14.09 Unlike Post}}{53}{figure.caption.59}%
-\contentsline {figure}{\numberline {36}{\ignorespaces Sequence diagram of UC-14.10 View Post Likes}}{54}{figure.caption.61}%
-\contentsline {figure}{\numberline {37}{\ignorespaces Sequence diagram of UC-14.11 View Post Comments}}{55}{figure.caption.63}%
-\contentsline {figure}{\numberline {38}{\ignorespaces Sequence diagram of UC-14.12 Create Comment}}{56}{figure.caption.65}%
-\contentsline {figure}{\numberline {39}{\ignorespaces Sequence diagram of UC-14.13 Update Comment}}{57}{figure.caption.67}%
-\contentsline {figure}{\numberline {40}{\ignorespaces Sequence diagram of UC-14.14 Delete Comment}}{58}{figure.caption.69}%
-\contentsline {figure}{\numberline {41}{\ignorespaces Sequence diagram of UC-14.15 Like Comment}}{59}{figure.caption.71}%
-\contentsline {figure}{\numberline {42}{\ignorespaces Sequence diagram of UC-14.16 Unlike Comment}}{60}{figure.caption.73}%
-\contentsline {figure}{\numberline {43}{\ignorespaces Sequence diagram of UC-14.17 Report Content}}{61}{figure.caption.75}%
-\contentsline {figure}{\numberline {44}{\ignorespaces Class diagram of Job Browsing}}{62}{figure.caption.78}%
-\contentsline {figure}{\numberline {45}{\ignorespaces Sequence diagram of UC-10.01 View Job List}}{63}{figure.caption.80}%
-\contentsline {figure}{\numberline {46}{\ignorespaces Sequence diagram of UC-10.02 View Job Detail}}{64}{figure.caption.82}%
-\contentsline {figure}{\numberline {47}{\ignorespaces Class diagram of Job Management}}{65}{figure.caption.85}%
-\contentsline {figure}{\numberline {48}{\ignorespaces Sequence diagram of UC-11.01 View My Jobs}}{66}{figure.caption.87}%
-\contentsline {figure}{\numberline {49}{\ignorespaces Sequence diagram of UC-11.02 Create Job}}{67}{figure.caption.89}%
-\contentsline {figure}{\numberline {50}{\ignorespaces Sequence diagram of UC-11.03 Publish Job}}{68}{figure.caption.91}%
-\contentsline {figure}{\numberline {51}{\ignorespaces Sequence diagram of UC-11.04 Update Job}}{69}{figure.caption.93}%
-\contentsline {figure}{\numberline {52}{\ignorespaces Sequence diagram of UC-11.05 Delete Job}}{70}{figure.caption.95}%
-\contentsline {figure}{\numberline {53}{\ignorespaces Sequence diagram of UC-11.06 Change Job Status}}{71}{figure.caption.97}%
-\contentsline {figure}{\numberline {54}{\ignorespaces Class diagram of Bookmarked Jobs Management}}{72}{figure.caption.100}%
-\contentsline {figure}{\numberline {55}{\ignorespaces Sequence diagram of UC-12.01 View Bookmarked Job List}}{73}{figure.caption.102}%
-\contentsline {figure}{\numberline {56}{\ignorespaces Sequence diagram of UC-12.02 Bookmark Job}}{74}{figure.caption.104}%
-\contentsline {figure}{\numberline {57}{\ignorespaces Sequence diagram of UC-12.03 Remove Bookmark}}{75}{figure.caption.106}%
-\contentsline {figure}{\numberline {58}{\ignorespaces Class diagram of Verify JWT}}{76}{figure.caption.109}%
-\contentsline {figure}{\numberline {59}{\ignorespaces Sequence diagram of UC-0 Verify JWT}}{77}{figure.caption.111}%
-\contentsline {figure}{\numberline {60}{\ignorespaces Class diagram of Authentication}}{78}{figure.caption.114}%
-\contentsline {figure}{\numberline {61}{\ignorespaces Sequence diagram of UC-01 Login with Google}}{79}{figure.caption.116}%
-\contentsline {figure}{\numberline {62}{\ignorespaces Sequence diagram of UC-02 Login}}{80}{figure.caption.118}%
-\contentsline {figure}{\numberline {63}{\ignorespaces Sequence diagram of UC-03 Logout}}{81}{figure.caption.120}%
-\contentsline {figure}{\numberline {64}{\ignorespaces Sequence diagram of UC-04 Register}}{82}{figure.caption.122}%
-\contentsline {figure}{\numberline {65}{\ignorespaces Sequence diagram of UC-05 Forgot Password}}{83}{figure.caption.124}%
-\contentsline {figure}{\numberline {66}{\ignorespaces Class diagram of Role Management}}{84}{figure.caption.127}%
-\contentsline {figure}{\numberline {67}{\ignorespaces Sequence diagram of UC-06.01 View Role List}}{85}{figure.caption.129}%
-\contentsline {figure}{\numberline {68}{\ignorespaces Sequence diagram of UC-06.02 View Role Detail}}{86}{figure.caption.131}%
-\contentsline {figure}{\numberline {69}{\ignorespaces Sequence diagram of UC-06.03 Create Role}}{87}{figure.caption.133}%
-\contentsline {figure}{\numberline {70}{\ignorespaces Sequence diagram of UC-06.04 Update Role}}{88}{figure.caption.135}%
-\contentsline {figure}{\numberline {71}{\ignorespaces Sequence diagram of UC-06.05 Delete Role}}{89}{figure.caption.137}%
-\contentsline {figure}{\numberline {72}{\ignorespaces Sequence diagram of UC-06.06 Update Role Permissions}}{90}{figure.caption.139}%
+\contentsline {figure}{\numberline {26}{\ignorespaces Class diagram of Verify JWT}}{44}{figure.caption.41}%
+\contentsline {figure}{\numberline {27}{\ignorespaces Sequence diagram of UC-0 Verify JWT}}{45}{figure.caption.43}%
+\contentsline {figure}{\numberline {28}{\ignorespaces Class diagram of Authentication}}{46}{figure.caption.46}%
+\contentsline {figure}{\numberline {29}{\ignorespaces Sequence diagram of UC-01 Login with Google}}{47}{figure.caption.48}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Sequence diagram of UC-02 Login}}{48}{figure.caption.50}%
+\contentsline {figure}{\numberline {31}{\ignorespaces Sequence diagram of UC-03 Logout}}{49}{figure.caption.52}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Sequence diagram of UC-04 Register}}{50}{figure.caption.54}%
+\contentsline {figure}{\numberline {33}{\ignorespaces Sequence diagram of UC-05 Forgot Password}}{51}{figure.caption.56}%
+\contentsline {figure}{\numberline {34}{\ignorespaces Class diagram of Role Management}}{52}{figure.caption.59}%
+\contentsline {figure}{\numberline {35}{\ignorespaces Sequence diagram of UC-06.01 View Role List}}{53}{figure.caption.61}%
+\contentsline {figure}{\numberline {36}{\ignorespaces Sequence diagram of UC-06.02 View Role Detail}}{54}{figure.caption.63}%
+\contentsline {figure}{\numberline {37}{\ignorespaces Sequence diagram of UC-06.03 Create Role}}{55}{figure.caption.65}%
+\contentsline {figure}{\numberline {38}{\ignorespaces Sequence diagram of UC-06.04 Update Role}}{56}{figure.caption.67}%
+\contentsline {figure}{\numberline {39}{\ignorespaces Sequence diagram of UC-06.05 Delete Role}}{57}{figure.caption.69}%
+\contentsline {figure}{\numberline {40}{\ignorespaces Sequence diagram of UC-06.06 Update Role Permissions}}{58}{figure.caption.71}%
+\contentsline {figure}{\numberline {41}{\ignorespaces Class diagram of Job Browsing}}{59}{figure.caption.74}%
+\contentsline {figure}{\numberline {42}{\ignorespaces Sequence diagram of UC-10.01 View Job List}}{60}{figure.caption.76}%
+\contentsline {figure}{\numberline {43}{\ignorespaces Sequence diagram of UC-10.02 View Job Detail}}{61}{figure.caption.78}%
+\contentsline {figure}{\numberline {44}{\ignorespaces Class diagram of Job Management}}{62}{figure.caption.81}%
+\contentsline {figure}{\numberline {45}{\ignorespaces Sequence diagram of UC-11.01 View My Jobs}}{63}{figure.caption.83}%
+\contentsline {figure}{\numberline {46}{\ignorespaces Sequence diagram of UC-11.02 Create Job}}{64}{figure.caption.85}%
+\contentsline {figure}{\numberline {47}{\ignorespaces Sequence diagram of UC-11.03 Publish Job}}{65}{figure.caption.87}%
+\contentsline {figure}{\numberline {48}{\ignorespaces Sequence diagram of UC-11.04 Update Job}}{66}{figure.caption.89}%
+\contentsline {figure}{\numberline {49}{\ignorespaces Sequence diagram of UC-11.05 Delete Job}}{67}{figure.caption.91}%
+\contentsline {figure}{\numberline {50}{\ignorespaces Sequence diagram of UC-11.06 Change Job Status}}{68}{figure.caption.93}%
+\contentsline {figure}{\numberline {51}{\ignorespaces Class diagram of Bookmarked Jobs Management}}{69}{figure.caption.96}%
+\contentsline {figure}{\numberline {52}{\ignorespaces Sequence diagram of UC-12.01 View Bookmarked Job List}}{70}{figure.caption.98}%
+\contentsline {figure}{\numberline {53}{\ignorespaces Sequence diagram of UC-12.02 Bookmark Job}}{71}{figure.caption.100}%
+\contentsline {figure}{\numberline {54}{\ignorespaces Sequence diagram of UC-12.03 Remove Bookmark}}{72}{figure.caption.102}%
+\contentsline {figure}{\numberline {55}{\ignorespaces Class diagram of Forum Management}}{73}{figure.caption.105}%
+\contentsline {figure}{\numberline {56}{\ignorespaces Sequence diagram of UC-14.01 View Forum Category List}}{74}{figure.caption.107}%
+\contentsline {figure}{\numberline {57}{\ignorespaces Sequence diagram of UC-14.02 View Forum Category Detail}}{75}{figure.caption.109}%
+\contentsline {figure}{\numberline {58}{\ignorespaces Sequence diagram of UC-14.03 View Post List}}{76}{figure.caption.111}%
+\contentsline {figure}{\numberline {59}{\ignorespaces Sequence diagram of UC-14.04 View Post Detail}}{77}{figure.caption.113}%
+\contentsline {figure}{\numberline {60}{\ignorespaces Sequence diagram of UC-14.05 Create Post}}{78}{figure.caption.115}%
+\contentsline {figure}{\numberline {61}{\ignorespaces Sequence diagram of UC-14.06 Update Post}}{79}{figure.caption.117}%
+\contentsline {figure}{\numberline {62}{\ignorespaces Sequence diagram of UC-14.07 Delete Post}}{80}{figure.caption.119}%
+\contentsline {figure}{\numberline {63}{\ignorespaces Sequence diagram of UC-14.08 Like Post}}{81}{figure.caption.121}%
+\contentsline {figure}{\numberline {64}{\ignorespaces Sequence diagram of UC-14.09 Unlike Post}}{82}{figure.caption.123}%
+\contentsline {figure}{\numberline {65}{\ignorespaces Sequence diagram of UC-14.10 View Post Likes}}{83}{figure.caption.125}%
+\contentsline {figure}{\numberline {66}{\ignorespaces Sequence diagram of UC-14.11 View Post Comments}}{84}{figure.caption.127}%
+\contentsline {figure}{\numberline {67}{\ignorespaces Sequence diagram of UC-14.12 Create Comment}}{85}{figure.caption.129}%
+\contentsline {figure}{\numberline {68}{\ignorespaces Sequence diagram of UC-14.13 Update Comment}}{86}{figure.caption.131}%
+\contentsline {figure}{\numberline {69}{\ignorespaces Sequence diagram of UC-14.14 Delete Comment}}{87}{figure.caption.133}%
+\contentsline {figure}{\numberline {70}{\ignorespaces Sequence diagram of UC-14.15 Like Comment}}{88}{figure.caption.135}%
+\contentsline {figure}{\numberline {71}{\ignorespaces Sequence diagram of UC-14.16 Unlike Comment}}{89}{figure.caption.137}%
+\contentsline {figure}{\numberline {72}{\ignorespaces Sequence diagram of UC-14.17 Report Content}}{90}{figure.caption.139}%
 \contentsline {figure}{\numberline {73}{\ignorespaces Class diagram of Manage Conversation}}{91}{figure.caption.142}%
 \contentsline {figure}{\numberline {74}{\ignorespaces Sequence diagram of UC-27.01 View Conversation List}}{92}{figure.caption.144}%
 \contentsline {figure}{\numberline {75}{\ignorespaces Sequence diagram of UC-27.02 Start Conversation}}{93}{figure.caption.146}%
