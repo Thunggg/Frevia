@@ -47,6 +47,13 @@ const jobSelect = {
   positionsFilled: true,
   createdAt: true,
   updatedAt: true,
+  skills: {
+    select: {
+      jobId: true,
+      skillId: true,
+      skill: { select: { name: true } },
+    },
+  },
   jobCategories: {
     select: { category: { select: { id: true, name: true, slug: true } } },
   },
@@ -184,16 +191,7 @@ export class ManageJobRepository {
     const [jobs, total] = await this.prisma.$transaction([
       this.prisma.job.findMany({
         where,
-        select: {
-          ...jobSelect,
-          skills: {
-            select: {
-              jobId: true,
-              skillId: true,
-              skill: { select: { name: true } },
-            },
-          },
-        },
+        select: jobSelect,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { [sortBy]: order },
@@ -284,7 +282,7 @@ export class ManageJobRepository {
           positionsRequired: data.positionsRequired,
         },
 
-        select: jobSelect,
+        select: { id: true },
       });
 
       await this.replaceJobSkills(tx, createdJob.id, data.skills);
@@ -295,6 +293,9 @@ export class ManageJobRepository {
         where: { id: createdJob.id },
         select: jobSelect,
       });
+    }, {
+      maxWait: 10000,
+      timeout: 20000,
     });
 
     return this.normalizeJob(job);
@@ -344,7 +345,7 @@ export class ManageJobRepository {
           positionsRequired: data.positionsRequired,
         },
 
-        select: jobSelect,
+        select: { id: true },
       });
 
       await tx.jobSkill.deleteMany({
@@ -367,6 +368,9 @@ export class ManageJobRepository {
         where: { id: job.id },
         select: jobSelect,
       });
+    }, {
+      maxWait: 10000,
+      timeout: 20000,
     });
 
     return this.normalizeJob(updatedJob);
@@ -423,6 +427,9 @@ export class ManageJobRepository {
           },
         });
       }
+    }, {
+      maxWait: 10000,
+      timeout: 20000,
     });
   }
 
@@ -593,10 +600,21 @@ export class ManageJobRepository {
     jobId: number,
     skillIds: number[],
   ): Promise<void> {
-    await tx.jobSkill.createMany({
-      data: skillIds.map((skillId) => ({ jobId, skillId })),
-      skipDuplicates: true,
+    const uniqueIds = [...new Set(skillIds)];
+    if (uniqueIds.length === 0) return;
+
+    const existingSkills = await tx.skill.findMany({
+      where: { id: { in: uniqueIds }, deletedAt: null },
+      select: { id: true },
     });
+    const validSkillIds = existingSkills.map((s) => s.id);
+
+    if (validSkillIds.length > 0) {
+      await tx.jobSkill.createMany({
+        data: validSkillIds.map((skillId) => ({ jobId, skillId })),
+        skipDuplicates: true,
+      });
+    }
   }
 
   // Kiểm tra danh mục gửi lên: chỉ chấp nhận danh mục đang ACTIVE và chưa bị xoá
@@ -655,16 +673,7 @@ export class ManageJobRepository {
   ): Promise<ViewJobDetailResType | null> {
     const job = await this.prisma.job.findFirst({
       where: { id: jobId, clientId, deletedAt: null },
-      select: {
-        ...jobSelect,
-        skills: {
-          select: {
-            jobId: true,
-            skillId: true,
-            skill: { select: { name: true } },
-          },
-        },
-      },
+      select: jobSelect,
     });
 
     return job ? this.normalizeJob(job) : null;

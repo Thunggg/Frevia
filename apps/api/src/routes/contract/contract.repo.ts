@@ -84,7 +84,7 @@ const contractDetailSelect = {
 
 @Injectable()
 export class ContractRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findProposalWithJob(proposalId: number) {
     return this.prisma.proposal.findUnique({
@@ -206,23 +206,23 @@ export class ContractRepository {
       const milestonesData =
         data.milestones && data.milestones.length > 0
           ? data.milestones.map((m) => ({
-            contractId: contract.id,
-            title: m.title,
-            description: m.description ?? null,
-            amount: m.amount,
-            dueDate: m.dueDate ? new Date(m.dueDate) : null,
-            status: MilestoneStatus.PENDING,
-          }))
-          : [
-            {
               contractId: contract.id,
-              title: `${job?.title ?? 'Contract'} - Milestone 1`,
-              description: 'Initial milestone for contract',
-              amount: data.totalAmount,
-              dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+              title: m.title,
+              description: m.description ?? null,
+              amount: m.amount,
+              dueDate: m.dueDate ? new Date(m.dueDate) : null,
               status: MilestoneStatus.PENDING,
-            },
-          ];
+            }))
+          : [
+              {
+                contractId: contract.id,
+                title: `${job?.title ?? 'Contract'} - Milestone 1`,
+                description: 'Initial milestone for contract',
+                amount: data.totalAmount,
+                dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+                status: MilestoneStatus.PENDING,
+              },
+            ];
 
       await tx.milestone.createMany({
         data: milestonesData,

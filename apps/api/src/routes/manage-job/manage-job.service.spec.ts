@@ -310,6 +310,8 @@ describe('ManageJobService', () => {
       expect(repository.getBookmarkedJobLists).toHaveBeenCalledWith(1, {
         page: 1,
         limit: 10,
+        sortBy: 'createdAt',
+        order: 'desc',
       });
     });
   });

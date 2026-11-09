@@ -1,7 +1,10 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
 import { RecommendationService } from '../../src/routes/recommendations/recommendation.service';
-import type { FreelancerDocument, JobDocument } from '../../src/routes/recommendations/recommendation.repo';
+import type {
+  FreelancerDocument,
+  JobDocument,
+} from '../../src/routes/recommendations/recommendation.repo';
 import type { AiRecommendItem } from '../../src/shared/services/ai-recommendation.service';
 
 const freelancer: FreelancerDocument = {
@@ -192,4 +195,3 @@ describe('AI Recommendation Service (UF-121)', () => {
     expect(repository.createFeedback).toHaveBeenCalledWith(7, 'SAVE');
   });
 });
-

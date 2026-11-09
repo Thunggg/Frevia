@@ -14,6 +14,12 @@ export class PrismaService extends PrismaClient {
       idleTimeoutMillis: 5_000,
       connectionTimeoutMillis: 10_000,
     });
-    super({ adapter });
+    super({
+      adapter,
+      transactionOptions: {
+        maxWait: 10_000,
+        timeout: 20_000,
+      },
+    });
   }
 }
