@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Công Việc & Phân Công Report 6 - Frevia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --primary: #1e3a8a;
+    --primary-light: #eff6ff;
+    --accent: #2563eb;
+    --emerald: #059669;
+    --emerald-light: #ecfdf5;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+    --rose: #e11d48;
+    --rose-light: #fff1f2;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
+    background-color: var(--bg-page);
+    line-height: 1.5;
+    font-size: 13px;
+    padding: 20px;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 12mm 14mm 12mm;
+    @bottom-center {
+      content: "Trang " counter(page) " / " counter(pages);
+      font-size: 9px;
+      color: #94a3b8;
+    }
+  }
+
+  @media print {
+    body {
+      background: #fff;
+      padding: 0;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .avoid-break {
+      page-break-inside: avoid;
+    }
+    .no-print {
+      display: none;
+    }
+    .header-banner {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+
+  /* Header banner */
+  .header-banner {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .header-sub {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-bottom: 14px;
+  }
+  .meta-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* Section cards */
+  .section-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: #f1f5f9;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-body {
+    padding: 16px 18px;
+  }
+
+  /* Member Table */
+  table.member-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  table.member-table th {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  table.member-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  table.member-table tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+  .member-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+    color: #fff;
+  }
+  .bg-thuan { background: #2563eb; }
+  .bg-vy { background: #e11d48; }
+  .bg-tai { background: #059669; }
+  .bg-tin { background: #7c3aed; }
+  .bg-huy { background: #d97706; }
+
+  /* Standard rule box */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .rule-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px;
+  }
+  .rule-box-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .rule-box-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Module group */
+  .module-group {
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .module-header {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 8px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .actor-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+  .actor-guest { background: #f1f5f9; color: #475569; }
+  .actor-freelancer { background: #ecfdf5; color: #047857; }
+  .actor-client { background: #eff6ff; color: #1d4ed8; }
+  .actor-expert { background: #faf5ff; color: #7e22ce; }
+  .actor-admin { background: #fef2f2; color: #b91c1c; }
+
+  /* Checklist items */
+  .checklist-item {
+    padding: 8px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .checklist-item:last-child {
+    border-bottom: none;
+  }
+  .check-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #94a3b8;
+    border-radius: 3px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    background: #fff;
+  }
+  .check-box.checked {
+    background: #059669;
+    border-color: #059669;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .item-content {
+    flex-grow: 1;
+  }
+  .item-title {
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .item-uc {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #334155;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .item-assignee {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+  }
+  .item-desc {
+    font-size: 11px;
+    color: #475569;
+    margin-top: 3px;
+  }
+  .item-substep {
+    font-size: 10.5px;
+    color: #64748b;
+    margin-left: 12px;
+    margin-top: 2px;
+  }
+
+  /* Member section breakdown */
+  .member-checklist-card {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: #fff;
+  }
+  .member-checklist-header {
+    padding: 10px 14px;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 7px 7px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .code-pill {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header Banner -->
+  <div class="header-banner">
+    <div class="header-tag">Frevia Capstone Project • SEP490_04</div>
+    <div class="header-title">CHECKLIST CÔNG VIỆC & BẢNG PHÂN CÔNG REPORT 6</div>
+    <div class="header-sub">Tài liệu hướng dẫn sử dụng phần mềm (Software User Guides) • Quy chuẩn chụp ảnh &amp; biên dịch LaTeX</div>
+    <div class="meta-badges">
+      <span class="meta-badge">👥 5 Thành viên</span>
+      <span class="meta-badge">📦 16 Modules nghiệp vụ</span>
+      <span class="meta-badge">📋 128 Mục chức năng chi tiết</span>
+      <span class="meta-badge">📸 ~172 Màn hình chụp &amp; khoanh đỏ</span>
+      <span class="meta-badge">✨ 100% Khớp Use Cases SRS</span>
+    </div>
+  </div>
+
+  <!-- Quy chuẩn 5 phần -->
+  <div class="section-card avoid-break">
+    <div class="section-header">
+      <span>I. QUY CHUẨN 5 PHẦN BẮT BUỘC CHO MỖI CHỨC NĂNG</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">Áp dụng cho mọi mục trong Section 3</span>
+    </div>
+    <div class="section-body">
+      <div class="rule-grid">
+        <div class="rule-box">
+          <div class="rule-box-title">1. Mục đích &amp; Actor</div>
+          <div class="rule-box-desc">Chức năng dùng làm gì, vai trò nào được thao tác (Guest, Freelancer, Client, Expert, Admin), tiền điều kiện.</div>
+        </div>
+        <div class="rule-box">
+          <div class="rule-box-title">2. Sơ đồ luồng</div>
+          <div class="rule-box-desc">Sơ đồ chuyển màn hình (TikZ/Draw.io) hoặc text luồng chuyển đổi các bước.</div>
+        </div>
+        <div class="rule-box">
+          <div class="rule-box-title">3. Các bước Step-by-Step</div>
+          <div class="rule-box-desc">Đánh số <b>Step 1, Step 2, Step 3...</b> chỉ rõ tên nút bấm, các trường Form, và thông báo kết quả mong đợi.</div>
+        </div>
+        <div class="rule-box">
+          <div class="rule-box-title">4. Ảnh chụp khoanh đỏ</div>
+          <div class="rule-box-desc">Ảnh UI có <b>khung đỏ</b> và <b>số thứ tự màu đỏ</b> khớp chính xác từng Step thao tác.</div>
+        </div>
+        <div class="rule-box">
+          <div class="rule-box-title">5. Lưu ý &amp; Lỗi thường gặp</div>
+          <div class="rule-box-desc">Lỗi validation, file quá dung lượng, quên tick checkbox, cách xử lý khắc phục.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bảng phân công 5 thành viên -->
+  <div class="section-card avoid-break">
+    <div class="section-header">
+      <span>II. BẢNG PHÂN CÔNG TỔNG HỢP 5 THÀNH VIÊN (SEP490_04)</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">Chia đều theo đúng module đã làm</span>
+    </div>
+    <div class="section-body" style="padding: 0;">
+      <table class="member-table">
+        <thead>
+          <tr>
+            <th style="width: 50px; text-align: center;">STT</th>
+            <th style="width: 170px;">Thành viên &amp; Mã SV</th>
+            <th>Phần &amp; Module phụ trách chính</th>
+            <th style="width: 90px; text-align: center;">Khối lượng</th>
+            <th style="width: 130px;">File LaTeX con</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: center; font-weight: bold;">1</td>
+            <td>
+              <span class="member-badge bg-thuan">Nguyễn Tiến Thuận</span><br>
+              <span style="color: #64748b; font-size: 11px;">Mã SV: CE181024</span>
+            </td>
+            <td>
+              • <b>A2.4 &amp; A3.5–A3.6:</b> Cài đặt Docker Compose 5 containers + 2 AI Services + Ollama<br>
+              • <b>Module 2:</b> Authentication &amp; Session Management<br>
+              • <b>Module 14:</b> Admin RBAC (Roles, Permissions) &amp; Admin Users Management<br>
+              • <b>Module 15 (phần 1–3):</b> Admin Skills, Job Categories, Forum Categories<br>
+              • <i>Tổng hợp &amp; biên dịch file LaTeX chính</i>
+            </td>
+            <td style="text-align: center;">
+              <b>26 mục</b><br>
+              <span style="color: #64748b; font-size: 11px;">~35 ảnh</span>
+            </td>
+            <td>
+              <span class="code-pill">sec2_docker_ai.tex</span><br>
+              <span class="code-pill">sec3_m02_auth.tex</span><br>
+              <span class="code-pill">sec3_m14_rbac.tex</span><br>
+              <span class="code-pill">sec3_m15_cat.tex</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; font-weight: bold;">2</td>
+            <td>
+              <span class="member-badge bg-vy">Phạm Khả Vy</span><br>
+              <span style="color: #64748b; font-size: 11px;">Mã SV: CE182254</span>
+            </td>
+            <td>
+              • <b>Module 1 (M1.01–M1.06):</b> Overview, Homepage, Find Work, Job Detail, Public Freelancer Profile<br>
+              • <b>Module 4 (M4.01–M4.04):</b> Freelancer Profile, Skills &amp; Portfolio<br>
+              • <b>Module 6:</b> Bookmarks, Saved Searches, Job Alerts, Freelancer Proposals<br>
+              • <b>Module 8 (M8.01–M8.03, M8.05):</b> Client Job Posting, Job Management &amp; Review Proposals
+            </td>
+            <td style="text-align: center;">
+              <b>26 mục</b><br>
+              <span style="color: #64748b; font-size: 11px;">~36 ảnh</span>
+            </td>
+            <td>
+              <span class="code-pill">sec3_m01_guest.tex</span><br>
+              <span class="code-pill">sec3_m04_profile.tex</span><br>
+              <span class="code-pill">sec3_m06_props.tex</span><br>
+              <span class="code-pill">sec3_m08_jobs.tex</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; font-weight: bold;">3</td>
+            <td>
+              <span class="member-badge bg-tai">Trần Phát Tài</span><br>
+              <span style="color: #64748b; font-size: 11px;">Mã SV: CE181632</span>
+            </td>
+            <td>
+              • <b>Module 4 (M4.05) &amp; Module 8 (M8.04):</b> Quản lý CV &amp; AI Section-Aware CV-Job Matching<br>
+              • <b>Module 9:</b> Contract Lifecycle, Electronic Signatures, Contract Files, Milestones &amp; Deliverables<br>
+              • <b>Module 10:</b> Stripe Payment Methods, Milestone Escrow Funding, Stripe Connect Onboarding &amp; Payouts
+            </td>
+            <td style="text-align: center;">
+              <b>25 mục</b><br>
+              <span style="color: #64748b; font-size: 11px;">~34 ảnh</span>
+            </td>
+            <td>
+              <span class="code-pill">sec3_m04_cv_ai.tex</span><br>
+              <span class="code-pill">sec3_m09_contract.tex</span><br>
+              <span class="code-pill">sec3_m10_payment.tex</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; font-weight: bold;">4</td>
+            <td>
+              <span class="member-badge bg-tin">Võ Nhựt Tín</span><br>
+              <span style="color: #64748b; font-size: 11px;">Mã SV: CE180619</span>
+            </td>
+            <td>
+              • <b>Module 1 (M1.09) &amp; Module 12:</b> Public Forum, Real-time Chat (/conversations), Notifications, Forum Posts/Comments/Likes/Reports<br>
+              • <b>Module 11 (M11.01–M11.04):</b> Contract Dispute Creation, Fee Payment, Evidence &amp; Responses<br>
+              • <b>Module 16 (M16.03–M16.05):</b> Admin Moderation Queue, Forum Trash &amp; Dispute Arbitration
+            </td>
+            <td style="text-align: center;">
+              <b>25 mục</b><br>
+              <span style="color: #64748b; font-size: 11px;">~34 ảnh</span>
+            </td>
+            <td>
+              <span class="code-pill">sec3_m12_chat_forum.tex</span><br>
+              <span class="code-pill">sec3_m11_disputes.tex</span><br>
+              <span class="code-pill">sec3_m16_admin_mod.tex</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; font-weight: bold;">5</td>
+            <td>
+              <span class="member-badge bg-huy">Nguyễn Lư Nhật Huy</span><br>
+              <span style="color: #64748b; font-size: 11px;">Mã SV: CE181196</span>
+            </td>
+            <td>
+              • <b>A1, A2.1–A2.3 &amp; A3.1–A3.4:</b> Deliverable Package, System Requirements, Cài đặt từ máy trắng (Git, Node, PNPM, .env, Prisma Migrate &amp; Seed)<br>
+              • <b>Module 1 (M1.07–M1.08), Module 3 &amp; Module 7:</b> Account Settings, Role Switching, Client Profile, Favorites/Following, Public Experts<br>
+              • <b>Module 5 &amp; Module 13:</b> Freelancer eKYC (AI ID-Verification) &amp; Expert Workspace<br>
+              • <b>Module 11 (M11.05–M11.06), Module 15 (M15.04) &amp; Module 16 (M16.01–M16.02):</b> Reviews &amp; Responses, Admin Banners, Admin eKYC Review &amp; Profile Revisions Review
+            </td>
+            <td style="text-align: center;">
+              <b>26 mục</b><br>
+              <span style="color: #64748b; font-size: 11px;">~35 ảnh</span>
+            </td>
+            <td>
+              <span class="code-pill">sec1_install.tex</span><br>
+              <span class="code-pill">sec3_m03_account.tex</span><br>
+              <span class="code-pill">sec3_m05_ekyc.tex</span><br>
+              <span class="code-pill">sec3_m16_reviews.tex</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PHẦN A: ĐÓNG GÓI & CÀI ĐẶT -->
+  <div class="section-card avoid-break">
+    <div class="section-header">
+      <span>PHẦN A: ĐÓNG GÓI BÀN GIAO &amp; HƯỚNG DẪN CÀI ĐẶT HỆ THỐNG (SECTIONS 1 &amp; 2)</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">Phụ trách: Nhật Huy + Tiến Thuận</span>
+    </div>
+    <div class="section-body">
+
+      <!-- Hạng mục A1 -->
+      <div class="module-group">
+        <div class="module-header">
+          <span>Hạng mục A1: Record of Changes &amp; Deliverable Package (Section 1)</span>
+          <span class="member-badge bg-huy">Nhật Huy</span>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A1.1</span>Bảng Record of Changes</div>
+            <div class="item-desc">Ghi nhận lịch sử tạo mới (A) và cập nhật (M) của cả 5 thành viên theo từng đợt review.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A1.2</span>Bảng Deliverable Package (II.1)</div>
+            <div class="item-desc">Liệt kê đầy đủ 12 hạng mục bàn giao: Schedule, Backlog, Monorepo Source Code, 2 AI Services, DB Migrations/Seeds, Docker files, Reports 1–7, Test Suites, Slide thuyết trình.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hạng mục A2 -->
+      <div class="module-group">
+        <div class="module-header">
+          <span>Hạng mục A2: System Requirements &amp; Network Ports (Section 2.1)</span>
+          <span class="member-badge bg-huy">Nhật Huy</span>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A2.1</span>Yêu cầu phần cứng Client (Người dùng cuối)</div>
+            <div class="item-desc">CPU Dual-core+, RAM 4GB+, Webcam (chụp Selfie eKYC), Trình duyệt Chrome/Edge/Firefox/Safari.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A2.2</span>Yêu cầu phần cứng Server / Máy chạy Docker</div>
+            <div class="item-desc">CPU 4-8 cores, RAM tối thiểu 16GB (chạy 5 containers đồng thời + Ollama LLM), SSD trống 25GB+.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A2.3</span>Yêu cầu phần mềm nền tảng (Software Stack)</div>
+            <div class="item-desc">Windows 10/11 WSL2 / Ubuntu 22.04 LTS, Git, Node.js v22 LTS, PNPM v9+, Docker Desktop v26+, Python 3.11.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A2.4</span>Bảng ánh xạ cổng mạng (Network &amp; Port Mapping Table) <span class="member-badge bg-thuan">Tiến Thuận</span></div>
+            <div class="item-desc">Web Frontend (3003/3001), Backend API (3002/3000), Postgres (5432), Redis (6379), Ollama (11434), AI CV-Matching (8000), AI ID-Verification (8001).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hạng mục A3 -->
+      <div class="module-group">
+        <div class="module-header">
+          <span>Hạng mục A3: Hướng dẫn cài đặt từ A đến Z từ máy trắng (Section 2.2)</span>
+          <span style="font-size: 11px; color: #64748b;">Chụp ảnh khoanh đỏ từng bước bấm</span>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.1</span>Bước 1: Cài đặt công cụ nền tảng (Prerequisites) <span class="member-badge bg-huy">Nhật Huy</span></div>
+            <div class="item-desc">Tải &amp; cài Git, Node.js v22 LTS, PNPM, Docker Desktop (bật WSL2) và PostgreSQL/Redis. Chụp ảnh màn hình khoanh đỏ từng bước cài và lệnh kiểm tra version.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.2</span>Bước 2: Clone Source Code &amp; Cài đặt Dependencies <span class="member-badge bg-huy">Nhật Huy</span></div>
+            <div class="item-desc">Lệnh git clone, kiểm tra thư mục ai-services/, chạy pnpm install cho toàn bộ Monorepo.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.3</span>Bước 3: Cấu hình biến môi trường (.env) <span class="member-badge bg-huy">Nhật Huy</span></div>
+            <div class="item-desc">Tạo apps/api/.env và apps/web/.env. Giải thích chi tiết Database, JWT, Google OAuth, Cloudinary, Stripe, SMTP, AI Endpoints.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.4</span>Bước 4: Khởi tạo Database, Chạy Migration &amp; Seed <span class="member-badge bg-huy">Nhật Huy</span></div>
+            <div class="item-desc">Prisma generate, migrate deploy, seed:permissions, seed:job-categories, seed. Bảng danh sách tài khoản Demo để đăng nhập thử ngay.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.5</span>Bước 5: Khởi chạy toàn bộ hệ thống (Docker Compose &amp; Local) <span class="member-badge bg-thuan">Tiến Thuận</span></div>
+            <div class="item-desc">Chạy docker compose up -d --build (5 containers), lệnh kéo model ollama pull qwen3:4b, chụp ảnh Docker Desktop xanh Running. Hướng dẫn chạy local pnpm dev.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">A3.6</span>Bước 6: Kiểm tra vận hành sau cài đặt (Post-Installation Verification) <span class="member-badge bg-thuan">Tiến Thuận</span></div>
+            <div class="item-desc">Truy cập Web (localhost:3003), Swagger API (localhost:3002/api), AI Swagger (localhost:8000/docs &amp; 8001/docs).</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PHẦN B: HƯỚNG DẪN SỬ DỤNG THEO TỪNG MODULE -->
+  <div class="section-card">
+    <div class="section-header">
+      <span>PHẦN B: HƯỚNG DẪN SỬ DỤNG PHẦN MỀM THEO TỪNG MODULE &amp; ACTOR (SECTION 3)</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">16 Modules • 128 Chức năng chi tiết</span>
+    </div>
+    <div class="section-body">
+
+      <!-- MODULE 1 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 1: Tổng quan &amp; Khách vãng lai (Guest &amp; Public Browsing)</span>
+          <div>
+            <span class="actor-tag actor-guest">Guest</span>
+            <span class="member-badge bg-vy">Khả Vy (M1.01–M1.06)</span>
+            <span class="member-badge bg-huy">Nhật Huy (M1.07–M1.08)</span>
+            <span class="member-badge bg-tin">Nhựt Tín (M1.09)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.01</span>Tổng quan hệ thống (3.1 Overview) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Giới thiệu Frevia, 5 Actors, sơ đồ luồng tổng thể Đăng việc → Ký quỹ → Bàn giao → Đánh giá.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.02</span>Khám phá Trang chủ (/ - Homepage) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Navbar, ô tìm kiếm Hero Banner, danh mục nổi bật, việc làm mới nhất, liên kết Footer.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.03</span>Tìm kiếm, Lọc &amp; Sắp xếp việc làm (/find-work) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Tìm từ khóa, lọc Danh mục, Kỹ năng, Loại ngân sách (Fixed/Hourly), Khoảng giá, Trình độ, Sắp xếp. [UC-21.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.04</span>Xem chi tiết tin tuyển dụng công khai (/job/[slug]) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Mô tả công việc, kỹ năng yêu cầu, ngân sách, mốc Milestone dự kiến, thông tin Client, nút Apply Now. [UC-21.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.05</span>Xem hồ sơ công khai của Freelancer (/profiles/[id]) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Giới thiệu, tích xanh Verified Badge, kỹ năng, dự án Portfolio, lịch sử việc làm &amp; review. [UC-18.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.06</span>Xem chi tiết dự án Portfolio công khai (/profiles/[id]/portfolio/[itemId]) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Hình ảnh minh họa, tài liệu đính kèm, mô tả công việc đã làm, link demo dự án.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.07</span>Xem hồ sơ công khai của Client (/clients/[id]) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Thông tin công ty, website, quy mô, lịch sử các job đã đăng, đánh giá từ Freelancers. [UC-19.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.08</span>Tra cứu Danh bạ Chuyên gia &amp; Chi tiết Chuyên gia (/experts) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Tìm kiếm chuyên gia theo lĩnh vực, xem học vấn, chứng chỉ, kinh nghiệm, thông tin liên hệ. [UC-20.01, UC-20.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M1.09</span>Xem diễn đàn cộng đồng công khai (/forum &amp; /forum/posts/[id]) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Xem danh mục diễn đàn, đọc bài viết thảo luận, xem bình luận công khai.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 2 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 2: Xác thực &amp; Phiên đăng nhập (Authentication &amp; Session Management)</span>
+          <div>
+            <span class="actor-tag actor-guest">Guest</span>
+            <span class="actor-tag actor-admin">All Roles</span>
+            <span class="member-badge bg-thuan">Tiến Thuận (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.01</span>Đăng ký tài khoản mới bằng Email/Mật khẩu (/register)</div>
+            <div class="item-desc">Chọn vai trò khởi tạo (Freelancer/Client), nhập Họ tên, Email, Mật khẩu, xác nhận, tick đồng ý điều khoản. [UC-04]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.02</span>Đăng nhập bằng Email &amp; Mật khẩu (/login)</div>
+            <div class="item-desc">Nhập Email, Password, Remember me, Sign In, cơ chế tự chuyển hướng theo vai trò (Admin, Expert, User). [UC-02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.03</span>Đăng nhập / Đăng ký nhanh bằng Google OAuth (/login, /register)</div>
+            <div class="item-desc">Bấm "Continue with Google", chọn tài khoản trên popup OAuth, cấp quyền đăng nhập. [UC-01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.04</span>Quên mật khẩu &amp; Đặt lại mật khẩu qua Email (/forgot-password)</div>
+            <div class="item-desc">Nhập email nhận link đặt lại, mở email bấm link xác thực, nhập mật khẩu mới. [UC-05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.05</span>Xem danh sách &amp; Chi tiết phiên đăng nhập (/sessions)</div>
+            <div class="item-desc">Xem thiết bị, trình duyệt, hệ điều hành, địa chỉ IP, thời gian đăng nhập, badge Current Session. [UC-16.01, UC-16.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.06</span>Thu hồi phiên đăng nhập từ xa (/sessions)</div>
+            <div class="item-desc">Bấm nút "Revoke" để đăng xuất cưỡng bức một thiết bị cụ thể từ xa. [UC-16.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M2.07</span>Đăng xuất khỏi hệ thống (Logout)</div>
+            <div class="item-desc">Bấm Avatar menu góc trên bên phải → chọn "Log out" để hủy token an toàn. [UC-03]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 3 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 3: Cài đặt tài khoản &amp; Chuyển đổi vai trò (Account Settings &amp; Role Switching)</span>
+          <div>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="member-badge bg-huy">Nhật Huy (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.01</span>Cập nhật thông tin tài khoản cơ bản (/profile/edit)</div>
+            <div class="item-desc">Chỉnh sửa Họ tên hiển thị, Số điện thoại, Địa chỉ, Múi giờ cá nhân.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.02</span>Tải lên &amp; Cắt ảnh đại diện (Upload &amp; Crop Avatar)</div>
+            <div class="item-desc">Chọn file ảnh JPG/PNG, kéo khung cắt tỉ lệ 1:1, tải lên Cloudinary.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.03</span>Đổi mật khẩu bảo mật (Change Password)</div>
+            <div class="item-desc">Nhập mật khẩu cũ, mật khẩu mới tối thiểu 8 ký tự, xác nhận mật khẩu.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.04</span>Quản lý liên kết mạng xã hội (Manage Social Links)</div>
+            <div class="item-desc">Thêm/sửa/xóa liên kết GitHub, LinkedIn, Website cá nhân.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.05</span>Đăng ký thêm vai trò mới (Join as Client / Freelancer)</div>
+            <div class="item-desc">Kích hoạt thêm vai trò còn lại trên cùng 1 tài khoản mà không cần tạo tài khoản mới.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M3.06</span>Chuyển đổi vai trò qua lại (Switch Active Role)</div>
+            <div class="item-desc">Bấm nút chuyển vai trò trên menu người dùng để đổi ngữ cảnh làm việc Client ↔ Freelancer tức thì.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 4 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 4: Hồ sơ Freelancer, Kỹ năng, Portfolio &amp; Quản lý CV</span>
+          <div>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-vy">Khả Vy (M4.01–M4.04)</span>
+            <span class="member-badge bg-tai">Phát Tài (M4.05)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M4.01</span>Xem &amp; Cập nhật hồ sơ Freelancer (/profile/edit) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Chức danh nghề nghiệp, Bio, Mức giá/giờ, Số năm kinh nghiệm, Trạng thái sẵn sàng nhận việc. Giải thích Profile Revision nếu đã verify. [UC-18.01, UC-18.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M4.02</span>Quản lý Kỹ năng của Freelancer (Add/Remove Skills) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Tìm kiếm kỹ năng từ danh mục, chọn trình độ (Beginner/Intermediate/Expert), thêm hoặc gỡ bỏ. [UC-18.04, UC-18.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M4.03</span>Xem danh sách &amp; Thêm dự án Portfolio (/profile) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Bấm "Add Portfolio Item", nhập tiêu đề, mô tả, tải ảnh minh họa, gắn tag kỹ năng, link demo. [UC-18.06, UC-18.07]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M4.04</span>Sửa &amp; Xóa dự án Portfolio <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Chỉnh sửa thông tin dự án đã đăng hoặc xóa dự án khỏi hồ sơ. [UC-18.09, UC-18.10]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M4.05</span>Tải lên, Xem trước, Thay thế &amp; Xóa CV (AI CV Analyzer) <span class="member-badge bg-tai">Tài</span></div>
+            <div class="item-desc">Tải CV PDF, AI tự bóc tách Education, Skills, Experience, Projects. Xem trước CV, tải đè bản mới hoặc xóa CV. [UC-13.01–UC-13.04]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 5 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 5: Xác thực danh tính điện tử bằng AI – eKYC (Identity Verification)</span>
+          <div>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-huy">Nhật Huy (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M5.01</span>Gửi hồ sơ xác thực danh tính eKYC (/identity-verification)</div>
+            <div class="item-desc">Chọn loại giấy tờ (CCCD/Passport), tải ảnh mặt trước/mặt sau, mở webcam chụp ảnh Selfie Liveness trực tiếp, gọi AI so khớp khuôn mặt &amp; đọc OCR. [UC-29.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M5.02</span>Theo dõi trạng thái xác thực eKYC (/identity-verification)</div>
+            <div class="item-desc">Xem trạng thái PENDING, APPROVED (kèm huy hiệu Verified), hoặc REJECTED (kèm lý do để gửi lại).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 6 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 6: Tiện ích Tìm việc nâng cao &amp; Đề xuất ứng tuyển (Proposals)</span>
+          <div>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-vy">Khả Vy (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.01</span>Lưu việc làm yêu thích &amp; Quản lý Bookmarks (/bookmarks)</div>
+            <div class="item-desc">Bấm icon Bookmark trên thẻ việc làm, tra cứu danh sách đã lưu, bỏ bookmark khi xong. [UC-21.03–UC-21.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.02</span>Lưu bộ lọc tìm kiếm &amp; Quản lý Saved Searches</div>
+            <div class="item-desc">Lưu bộ lọc tìm kiếm kèm tên gợi nhớ, bấm chạy lại bộ lọc 1-click hoặc xóa bộ lọc đã lưu. [UC-21.06–UC-21.08]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.03</span>Thiết lập &amp; Quản lý Thông báo việc làm (Job Alerts)</div>
+            <div class="item-desc">Tạo thông báo việc làm mới khớp tiêu chí, cấu hình tần suất nhận, bật/tắt kích hoạt, sửa hoặc xóa Alert. [UC-21.09–UC-21.13]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.04</span>Gửi đề xuất ứng tuyển công việc (/job/[slug]/apply)</div>
+            <div class="item-desc">Viết Cover Letter, nhập giá chào thầu (Bid Amount), thời gian hoàn thành dự kiến, đính kèm CV và gửi Proposal. [UC-22.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.05</span>Xem danh sách &amp; Chi tiết Proposal đã gửi (/proposals)</div>
+            <div class="item-desc">Theo dõi trạng thái Proposal (PENDING, SHORTLISTED, ACCEPTED, REJECTED, WITHDRAWN). [UC-22.02, UC-22.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M6.06</span>Chỉnh sửa hoặc Rút lại Proposal đã gửi (/proposals/[id]/edit)</div>
+            <div class="item-desc">Cập nhật Cover Letter / giá chào khi Client chưa duyệt, hoặc bấm "Withdraw Proposal" để rút đơn ứng tuyển. [UC-22.04, UC-22.05]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 7 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 7: Không gian làm việc của Client – Hồ sơ, Yêu thích &amp; Theo dõi</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="member-badge bg-huy">Nhật Huy (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M7.01</span>Bảng điều khiển của Client (/dashboard)</div>
+            <div class="item-desc">Thống kê việc làm đang mở, số Proposal mới, hợp đồng đang chạy, tổng chi tiêu.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M7.02</span>Xem &amp; Cập nhật Hồ sơ Công ty (/client/profile/edit)</div>
+            <div class="item-desc">Tên công ty, Website, Quy mô nhân sự, Ngành nghề, Mô tả doanh nghiệp, Địa chỉ. [UC-19.01, UC-19.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M7.03</span>Lưu Freelancer vào danh sách Yêu thích (/favorites)</div>
+            <div class="item-desc">Bấm "Save to Favorites" trên hồ sơ Freelancer, tra cứu danh sách ứng viên tiềm năng, xóa khỏi danh sách. [UC-19.03–UC-19.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M7.04</span>Theo dõi &amp; Hủy theo dõi Freelancer (/following)</div>
+            <div class="item-desc">Bấm "Follow" để theo dõi hoạt động Freelancer xuất sắc, quản lý danh sách tại /following. [UC-19.06–UC-19.08]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 8 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 8: Đăng tin tuyển dụng, AI Gợi ý &amp; Tuyển chọn Ứng viên</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="member-badge bg-vy">Khả Vy (M8.01–M8.03, M8.05)</span>
+            <span class="member-badge bg-tai">Phát Tài (M8.04)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M8.01</span>Tạo tin tuyển dụng mới (/client/jobs/new) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Tiêu đề, Danh mục, Kỹ năng yêu cầu, Mô tả chi tiết, Ngân sách (Fixed/Hourly), Hạn nộp, Mốc Milestone dự kiến. Lưu nháp hoặc Đăng ngay. [UC-10.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M8.02</span>Quản lý danh sách việc làm đã đăng (/client/jobs) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Lọc theo trạng thái (DRAFT, OPEN, IN_PROGRESS, COMPLETED, CLOSED, CANCELLED), xem chi tiết. [UC-10.02, UC-10.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M8.03</span>Sửa, Đổi trạng thái (Đăng/Đóng/Mở lại) &amp; Xóa Job <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Chỉnh sửa nội dung tin tuyển dụng, đóng nhận hồ sơ khi đã chọn được người, hoặc xóa tin nháp. [UC-10.04–UC-10.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M8.04</span>Xem Proposal ứng tuyển &amp; AI CV-Job Matching Score <span class="member-badge bg-tai">Tài</span></div>
+            <div class="item-desc">Xem danh sách ứng viên, điểm số AI Match Score (%) kèm phân tích chi tiết (Skills, Experience, Education Match) từ AI CV-Matching + Ollama. [UC-22.02, UC-13.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M8.05</span>Xem chi tiết Proposal, Duyệt chọn (Accept) hoặc Từ chối (Reject) <span class="member-badge bg-vy">Vy</span></div>
+            <div class="item-desc">Đọc Cover Letter, CV đính kèm, chat với ứng viên, bấm Reject hoặc Accept để chuyển sang tạo hợp đồng. [UC-22.03, UC-22.06, UC-22.07]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 9 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 9: Hợp đồng, Tài liệu &amp; Bàn giao Milestone (Contract Workspace)</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-tai">Phát Tài (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.01</span>Khởi tạo Hợp đồng từ Proposal đã duyệt (/contracts/new)</div>
+            <div class="item-desc">Xác nhận điều khoản hợp đồng, tổng giá trị hợp đồng, thời hạn thực hiện và danh sách Milestone thanh toán. [UC-23.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.02</span>Xem danh sách &amp; Không gian làm việc chi tiết Hợp đồng (/contracts/[id])</div>
+            <div class="item-desc">Theo dõi trạng thái hợp đồng (DRAFT, PENDING_SIGN, ACTIVE, COMPLETED, DISPUTED, CANCELLED), tiến độ thanh toán. [UC-23.02, UC-23.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.03</span>Cập nhật điều khoản &amp; Ký hợp đồng điện tử hai bên (Sign Contract)</div>
+            <div class="item-desc">Client và Freelancer lần lượt ký xác nhận số trên giao diện để kích hoạt hợp đồng sang ACTIVE. [UC-23.04, UC-23.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.04</span>Hủy hợp đồng (Cancel Contract)</div>
+            <div class="item-desc">Thao tác hủy hợp đồng khi chưa bắt đầu hoặc hai bên thỏa thuận dừng hợp đồng kèm lý do. [UC-23.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.05</span>Quản lý Tài liệu chung của Hợp đồng (Contract Files)</div>
+            <div class="item-desc">Tải lên tài liệu đặc tả, thiết kế chung vào hợp đồng, tải xuống xem hoặc xóa file. [UC-23.07–UC-23.09]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.06</span>Tạo mới, Chỉnh sửa &amp; Xóa Milestone trong hợp đồng</div>
+            <div class="item-desc">Thêm mốc công việc mới (Tên, Mô tả, Số tiền, Hạn chót), chỉnh sửa hoặc xóa Milestone chưa nạp tiền. [UC-24.01, UC-24.04, UC-24.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.07</span>Freelancer cập nhật tiến độ &amp; Nộp sản phẩm (Submit Deliverable)</div>
+            <div class="item-desc">Đổi trạng thái Milestone sang IN_PROGRESS, tải lên file sản phẩm (source code zip, tài liệu), gửi ghi chú nghiệm thu. [UC-24.06, UC-24.07]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M9.08</span>Client kiểm tra bài nộp, Yêu cầu sửa hoặc Nghiệm thu giải ngân</div>
+            <div class="item-desc">Tải file bài nộp kiểm tra; bấm "Request Changes" nếu chưa đạt hoặc bấm "Approve &amp; Release Payment" để giải ngân tiền Escrow. [UC-24.08–UC-24.10]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 10 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 10: Thanh toán Ký quỹ Stripe Escrow &amp; Rút tiền Freelancer</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-tai">Phát Tài (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M10.01</span>Client quản lý Phương thức thanh toán đã lưu (/payments/methods)</div>
+            <div class="item-desc">Thêm thẻ quốc tế qua Stripe Elements (cung cấp số thẻ test 4242 4242...), đặt thẻ mặc định, xóa thẻ. [UC-25.01–UC-25.04]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M10.02</span>Client nạp tiền Ký quỹ Milestone qua Stripe (Fund Milestone Escrow)</div>
+            <div class="item-desc">Từ chi tiết hợp đồng, bấm "Fund Milestone", chọn thẻ thanh toán hoặc qua Stripe Checkout, tiền được khóa an toàn vào Escrow. [UC-25.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M10.03</span>Client xem Lịch sử giao dịch &amp; Hóa đơn chi tiết (/payments)</div>
+            <div class="item-desc">Tra cứu toàn bộ các khoản nạp tiền Escrow, phí nền tảng, hoàn tiền và biên lai chi tiết từng giao dịch. [UC-25.06, UC-25.07]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M10.04</span>Freelancer liên kết tài khoản Stripe Connect Express (/payouts/onboarding)</div>
+            <div class="item-desc">Bấm "Connect Stripe Account", hoàn tất form xác minh tài khoản ngân hàng để đủ điều kiện nhận tiền giải ngân. [UC-25.08]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M10.05</span>Freelancer theo dõi Lịch sử nhận tiền &amp; Chi tiết Payout (/payouts)</div>
+            <div class="item-desc">Kiểm tra số dư đã giải ngân từ Milestone hoàn thành, phí dịch vụ khấu trừ, trạng thái chuyển tiền về tài khoản Stripe. [UC-25.09, UC-25.10]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 11 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 11: Giải quyết Tranh chấp Hợp đồng &amp; Đánh giá tín nhiệm</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-tin">Nhựt Tín (M11.01–M11.04)</span>
+            <span class="member-badge bg-huy">Nhật Huy (M11.05–M11.06)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.01</span>Mở khiếu nại / Tranh chấp hợp đồng (/contracts/[id]/disputes/new) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Bấm "Open Dispute", chọn Milestone tranh chấp, nhập lý do chi tiết, số tiền yêu cầu hoàn lại/thanh toán, tải lên bằng chứng. [UC-26.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.02</span>Đóng phí trọng tài tranh chấp (Pay Dispute Arbitration Fee) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Thanh toán phí trọng tài qua Stripe để kích hoạt quy trình xem xét và phân xử của Admin. [UC-26.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.03</span>Xem chi tiết tranh chấp, Gửi phản hồi &amp; Bổ sung bằng chứng (/disputes/[id]) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Bên bị khiếu nại vào xem cáo buộc, viết bản giải trình và gửi tệp bằng chứng bảo vệ quyền lợi. [UC-26.03–UC-26.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.04</span>Chấp nhận hoặc Từ chối phương án hòa giải / Xem phán quyết <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Hai bên xem đề xuất phân chia tiền Escrow từ Admin và bấm đồng ý hoặc từ chối để chuyển sang phán quyết cuối. [UC-26.06, UC-26.07]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.05</span>Viết đánh giá &amp; Chấm điểm sau hợp đồng (/contracts/[id]/review) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Chấm điểm từ 1 đến 5 sao và viết nhận xét chi tiết cho đối tác sau khi hợp đồng hoàn thành. [UC-27.01]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M11.06</span>Xem danh sách đánh giá, Sửa, Xóa &amp; Phản hồi đánh giá <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Xem đánh giá trên hồ sơ cá nhân, sửa/xóa đánh giá trong hạn, hoặc viết phản hồi (Respond to Review) dưới đánh giá nhận được. [UC-27.02–UC-27.07]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 12 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 12: Nhắn tin Thời gian thực, Thông báo &amp; Diễn đàn</span>
+          <div>
+            <span class="actor-tag actor-client">Client</span>
+            <span class="actor-tag actor-freelancer">Freelancer</span>
+            <span class="member-badge bg-tin">Nhựt Tín (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.01</span>Danh sách hội thoại &amp; Nhắn tin thời gian thực (/conversations)</div>
+            <div class="item-desc">Mở chat từ Proposal/Hợp đồng, gửi tin nhắn WebSocket thời gian thực, đính kèm file/ảnh, xem trạng thái đã đọc.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.02</span>Trung tâm Thông báo thời gian thực (Notification Bell &amp; /notifications)</div>
+            <div class="item-desc">Xem thông báo bật lên ở icon Chuông trên Header khi có tin nhắn/proposal/hợp đồng mới, đánh dấu đã đọc hoặc bấm chuyển trang chi tiết.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.03</span>Đăng bài viết thảo luận mới trên Diễn đàn (/forum/new)</div>
+            <div class="item-desc">Chọn chuyên mục, nhập tiêu đề, soạn nội dung Rich Text/Markdown, gắn tag và đăng bài. [UC-17.07]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.04</span>Chỉnh sửa, Xóa bài viết cá nhân &amp; Like/Unlike bài viết</div>
+            <div class="item-desc">Sửa nội dung bài viết đã đăng, xóa mềm bài viết hoặc thả tim Like/Unlike. [UC-17.08–UC-17.10]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.05</span>Bình luận, Trả lời, Sửa, Xóa &amp; Like bình luận diễn đàn</div>
+            <div class="item-desc">Viết bình luận dưới bài đăng, reply comment người khác, sửa/xóa comment của mình. [UC-17.11–UC-17.15]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M12.06</span>Báo cáo bài viết hoặc bình luận vi phạm (Report Content)</div>
+            <div class="item-desc">Bấm nút "Report", chọn lý do vi phạm (Spam, Ngôn từ kích động, Lừa đảo...) gửi về Admin kiểm duyệt. [UC-17.16]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 13 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 13: Phân hệ Chuyên gia (Expert Workspace)</span>
+          <div>
+            <span class="actor-tag actor-expert">Expert</span>
+            <span class="member-badge bg-huy">Nhật Huy (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M13.01</span>Đăng nhập &amp; Không gian làm việc riêng của Chuyên gia (/expert/profile)</div>
+            <div class="item-desc">Cơ chế tự chuyển hướng tài khoản có Role Expert vào cổng riêng với Expert Shell navigation.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M13.02</span>Xem &amp; Cập nhật Hồ sơ Chuyên gia (/expert/profile)</div>
+            <div class="item-desc">Chức danh headline, lĩnh vực tư vấn, tiểu sử, số năm kinh nghiệm, công ty hiện tại, gửi yêu cầu duyệt Profile Revision. [UC-20.02, UC-20.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M13.03</span>Theo dõi trạng thái duyệt cập nhật hồ sơ Expert</div>
+            <div class="item-desc">Kiểm tra thông báo trạng thái bản chỉnh sửa (PENDING, APPROVED hoặc REJECTED kèm lý do từ Admin).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 14 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 14: Quản trị viên – RBAC (Roles &amp; Permissions) &amp; Users Management</span>
+          <div>
+            <span class="actor-tag actor-admin">Admin</span>
+            <span class="member-badge bg-thuan">Tiến Thuận (Toàn bộ)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.01</span>Bảng điều khiển Quản trị viên (/admin - Admin Dashboard)</div>
+            <div class="item-desc">Tổng quan các chỉ số toàn sàn: số Users, Jobs, Hợp đồng, Doanh thu, hàng đợi eKYC &amp; Moderation chờ xử lý.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.02</span>Xem &amp; Cập nhật hồ sơ tài khoản Admin (/admin/profile)</div>
+            <div class="item-desc">Quản lý thông tin cá nhân và bảo mật của quản trị viên hệ thống.</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.03</span>Quản lý Vai trò (Roles Management - /admin/roles)</div>
+            <div class="item-desc">Xem danh sách Role, xem chi tiết, Tạo Role mới, Cập nhật tên/mô tả Role, Xóa Role. [UC-06.01–UC-06.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.04</span>Gán quyền truy cập Routes cho từng Role (/admin/roles/[id])</div>
+            <div class="item-desc">Sử dụng ma trận Toggle Matrix theo Module để cấp hoặc thu hồi các quyền Permission và lưu thay đổi. [UC-06.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.05</span>Tra cứu Danh sách &amp; Chi tiết Quyền hạn (/admin/permissions)</div>
+            <div class="item-desc">Tìm kiếm, lọc danh sách Permissions theo phương thức HTTP (GET, POST, PUT, DELETE) và theo Module. [UC-15.01, UC-15.02]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.06</span>Xem danh sách, Tìm kiếm, Lọc &amp; Tạo mới Người dùng (/admin/users)</div>
+            <div class="item-desc">Lọc người dùng theo Role, Trạng thái (ACTIVE, INACTIVE, BANNED), tạo tài khoản cấp role Expert/Admin trực tiếp. [UC-28.01, UC-28.03]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.07</span>Xem chi tiết Đa hồ sơ &amp; Khóa/Mở khóa tài khoản (/admin/users/[id])</div>
+            <div class="item-desc">Xem thông tin Account, các tab hồ sơ sở hữu, thao tác khóa tài khoản vi phạm (Ban) hoặc mở khóa lại. [UC-28.02, UC-28.04]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M14.08</span>Admin chỉnh sửa trực tiếp các Tab Hồ sơ chuyên biệt của User</div>
+            <div class="item-desc">Sửa tab Client Profile, Freelancer Basics, Freelancer Skills, Freelancer Portfolio, Expert Profile. [UC-28.05–UC-28.09]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 15 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 15: Quản trị viên – Quản lý Danh mục Dữ liệu Chuẩn (Master Data)</span>
+          <div>
+            <span class="actor-tag actor-admin">Admin</span>
+            <span class="member-badge bg-thuan">Tiến Thuận (M15.01–M15.03)</span>
+            <span class="member-badge bg-huy">Nhật Huy (M15.04)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M15.01</span>Quản lý Danh mục Kỹ năng (/admin/skills) <span class="member-badge bg-thuan">Thuận</span></div>
+            <div class="item-desc">Xem danh sách, Tạo kỹ năng mới, Cập nhật tên/danh mục, Xóa mềm (Soft Delete) và Khôi phục kỹ năng. [UC-11.01–UC-11.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M15.02</span>Quản lý Danh mục Ngành nghề / Việc làm (/admin/job-categories) <span class="member-badge bg-thuan">Thuận</span></div>
+            <div class="item-desc">Xem danh sách, Xem chi tiết, Tạo mới, Cập nhật, Xóa mềm và Khôi phục danh mục việc làm. [UC-12.01–UC-12.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M15.03</span>Quản lý Chuyên mục Diễn đàn (/admin/categories) <span class="member-badge bg-thuan">Thuận</span></div>
+            <div class="item-desc">Xem danh sách, Tạo mới (Tên, Slug, Mô tả, Thứ tự hiển thị), Cập nhật, Xóa mềm và Khôi phục chuyên mục. [UC-14.01, UC-17.01–17.06]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M15.04</span>Quản lý Banner Quảng cáo &amp; Sự kiện (/admin/banners) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Xem danh sách, Tạo Banner tải ảnh lên Cloudinary, cấu hình vị trí/link đích/thời gian, bật/tắt hiển thị, Sửa, Xóa. [UC-31.01–UC-31.05]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 16 -->
+      <div class="module-group avoid-break">
+        <div class="module-header">
+          <span>MODULE 16: Quản trị viên – Hậu kiểm eKYC, Duyệt Hồ sơ, Kiểm duyệt &amp; Phân xử Tranh chấp</span>
+          <div>
+            <span class="actor-tag actor-admin">Admin</span>
+            <span class="member-badge bg-huy">Nhật Huy (M16.01–M16.02)</span>
+            <span class="member-badge bg-tin">Nhựt Tín (M16.03–M16.05)</span>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M16.01</span>Hậu kiểm &amp; Duyệt Xác thực eKYC (/admin/identity-verifications) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Đối chiếu ảnh CCCD mặt trước/sau, ảnh selfie webcam, kết quả chấm điểm AI (độ khớp mặt, OCR). Bấm Approve hoặc Reject kèm lý do. [UC-29.02–UC-29.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M16.02</span>Duyệt Yêu cầu Cập nhật Hồ sơ (Profile Revisions Review) <span class="member-badge bg-huy">Huy</span></div>
+            <div class="item-desc">Xem danh sách chỉnh sửa hồ sơ chờ duyệt, màn hình Diff View so sánh giá trị cũ vs mới. Bấm Approve hoặc Reject kèm ghi chú. [UC-30.01–UC-30.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M16.03</span>Kiểm duyệt Nội dung bị báo cáo vi phạm (/admin/moderation) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Xem hàng đợi bài viết/bình luận bị báo cáo, xem chi tiết và lý do. Bấm "Dismiss" (bỏ qua) hoặc "Remove" (xóa vi phạm). [UC-17.17–UC-17.19]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M16.04</span>Quản lý Thùng rác Diễn đàn &amp; Khôi phục nội dung (/admin/trash) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Xem các bài viết và bình luận đã bị xóa mềm, bấm "Restore" để khôi phục lại khi cần. [UC-17.04, UC-17.05]</div>
+          </div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-box"></div>
+          <div class="item-content">
+            <div class="item-title"><span class="item-uc">M16.05</span>Giám sát Hợp đồng &amp; Trọng tài Phân xử Tranh chấp (/admin/disputes) <span class="member-badge bg-tin">Tín</span></div>
+            <div class="item-desc">Xem hồ sơ tranh chấp (hợp đồng, sản phẩm nộp, chứng cứ hai bên). Ra phán quyết hoàn tiền Client, giải ngân Freelancer hoặc chia tỷ lệ %. [UC-23.10–11, UC-26.08–09]</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- CHECKLIST RIÊNG TỪNG THÀNH VIÊN -->
+  <div class="section-card">
+    <div class="section-header">
+      <span>III. BẢNG CHECKLIST BÀN GIAO RIÊNG CHO TỪNG THÀNH VIÊN</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">In ra hoặc tick trực tiếp theo tiến độ cá nhân</span>
+    </div>
+    <div class="section-body">
+
+      <!-- 1. Nguyễn Tiến Thuận -->
+      <div class="member-checklist-card avoid-break">
+        <div class="member-checklist-header bg-thuan">
+          <span>1. Nguyễn Tiến Thuận (CE181024) — Tổng cộng: 26 mục (~35 ảnh)</span>
+          <span style="font-size: 11px; opacity: 0.9;">File: sec2_docker_ai.tex, sec3_m02, sec3_m14, sec3_m15</span>
+        </div>
+        <div style="padding: 10px 14px;">
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>A2.4:</b> Bảng ánh xạ cổng mạng (Web, API, DB, Redis, Ollama, 2 AI microservices) <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>A3.5:</b> Chạy docker-compose 5 containers, kéo model ollama qwen3:4b, chạy local dev <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>A3.6:</b> Post-installation verification (Swagger API, Web UI, AI Docs) <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>M2.01 – M2.07:</b> Toàn bộ Module 2 (Đăng ký, Đăng nhập, Google OAuth, Quên MK, Quản lý &amp; Thu hồi Sessions, Logout) <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>M14.01 – M14.08:</b> Toàn bộ Module 14 (Admin Dashboard, Profile, Roles CRUD, Gán quyền Permission Matrix, Permission list, Users list/create/ban, Edit 5 tab hồ sơ User) <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>M15.01 – M15.03:</b> Quản lý Kỹ năng, Danh mục việc làm, Chuyên mục diễn đàn (Danh sách, Tạo, Sửa, Xóa mềm, Khôi phục) <span style="color:#059669; font-weight:bold;">[DONE - English]</span></div></div>
+          <div class="checklist-item"><div class="check-box checked">&#10003;</div><div class="item-content"><b>Tổng hợp LaTeX:</b> Ghép tất cả các file .tex con vào Report6_Software_User_Guides.tex và build PDF hoàn chỉnh <span style="color:#059669; font-weight:bold;">[DONE - 47 pages PDF in English]</span></div></div>
+        </div>
+      </div>
+
+      <!-- 2. Phạm Khả Vy -->
+      <div class="member-checklist-card avoid-break">
+        <div class="member-checklist-header bg-vy">
+          <span>2. Phạm Khả Vy (CE182254) — Tổng cộng: 26 mục (~36 ảnh)</span>
+          <span style="font-size: 11px; opacity: 0.9;">File: sec3_m01_guest.tex, sec3_m04_profile, sec3_m06, sec3_m08</span>
+        </div>
+        <div style="padding: 10px 14px;">
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M1.01:</b> Section 3.1 Overview (Tổng quan Frevia, 5 Actors, Sơ đồ nghiệp vụ tổng thể)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M1.02 – M1.06:</b> Homepage, Tìm việc làm &amp; Bộ lọc (/find-work), Chi tiết việc làm (/job/[slug]), Hồ sơ Freelancer công khai &amp; Chi tiết Portfolio</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M4.01 – M4.04:</b> Xem &amp; Sửa hồ sơ Freelancer (/profile/edit), Thêm/Xóa kỹ năng Freelancer, Danh sách/Thêm/Sửa/Xóa Portfolio</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M6.01 – M6.06:</b> Quản lý Bookmarks, Saved Searches, Job Alerts, Gửi Proposal (/apply), Xem danh sách/Chi tiết/Sửa/Rút Proposal</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M8.01 – M8.03 &amp; M8.05:</b> Đăng tin tuyển dụng (/client/jobs/new), Quản lý Job đã đăng, Sửa/Đổi trạng thái/Xóa Job, Xem Proposal ứng viên &amp; Chấp nhận/Từ chối</div></div>
+        </div>
+      </div>
+
+      <!-- 3. Trần Phát Tài -->
+      <div class="member-checklist-card avoid-break">
+        <div class="member-checklist-header bg-tai">
+          <span>3. Trần Phát Tài (CE181632) — Tổng cộng: 25 mục (~34 ảnh)</span>
+          <span style="font-size: 11px; opacity: 0.9;">File: sec3_m04_cv_ai.tex, sec3_m09_contract, sec3_m10_payment</span>
+        </div>
+        <div style="padding: 10px 14px;">
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M4.05:</b> Tải lên, Xem trước, Thay thế &amp; Xóa CV; AI phân tích các phần trong CV (Education, Skills, Experience, Projects)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M8.04:</b> Xem danh sách Proposal kèm Điểm số AI Section-Aware CV-Job Matching Score (%) &amp; Giải thích chi tiết</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M9.01 – M9.08:</b> Toàn bộ Module 9 (Tạo hợp đồng từ Proposal, Không gian làm việc hợp đồng, Ký hợp đồng số, Hủy hợp đồng, Quản lý Contract Files, Tạo/Sửa/Xóa Milestone, Nộp bài bàn giao Submit Deliverable, Client duyệt nghiệm thu hoặc Request Changes)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M10.01 – M10.05:</b> Toàn bộ Module 10 (Quản lý thẻ Stripe của Client, Nạp tiền ký quỹ Milestone Escrow, Xem lịch sử thanh toán &amp; hóa đơn, Freelancer kết nối Stripe Connect Express Onboarding, Xem lịch sử nhận tiền Payouts)</div></div>
+        </div>
+      </div>
+
+      <!-- 4. Võ Nhựt Tín -->
+      <div class="member-checklist-card avoid-break">
+        <div class="member-checklist-header bg-tin">
+          <span>4. Võ Nhựt Tín (CE180619) — Tổng cộng: 25 mục (~34 ảnh)</span>
+          <span style="font-size: 11px; opacity: 0.9;">File: sec3_m12_chat_forum.tex, sec3_m11_disputes, sec3_m16_admin_mod</span>
+        </div>
+        <div style="padding: 10px 14px;">
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M1.09:</b> Xem diễn đàn cộng đồng công khai (/forum &amp; bài viết chi tiết)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M12.01 – M12.06:</b> Toàn bộ Module 12 (Nhắn tin thời gian thực /conversations, Trung tâm thông báo, Đăng bài thảo luận /forum/new, Sửa/Xóa/Like bài viết, Bình luận/Reply/Sửa/Xóa/Like bình luận, Báo cáo vi phạm Report Content)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M11.01 – M11.04:</b> Mở tranh chấp hợp đồng (/disputes/new), Đóng phí trọng tài tranh chấp, Xem chi tiết tranh chấp &amp; Bổ sung bằng chứng, Phản hồi phương án hòa giải</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M16.03 – M16.05:</b> Admin kiểm duyệt nội dung vi phạm (/admin/moderation), Thùng rác diễn đàn &amp; Khôi phục (/admin/trash), Admin giám sát hợp đồng &amp; Trọng tài phân xử tranh chấp (/admin/disputes - thực thi giải ngân/hoàn tiền)</div></div>
+        </div>
+      </div>
+
+      <!-- 5. Nguyễn Lư Nhật Huy -->
+      <div class="member-checklist-card avoid-break">
+        <div class="member-checklist-header bg-huy">
+          <span>5. Nguyễn Lư Nhật Huy (CE181196) — Tổng cộng: 26 mục (~35 ảnh)</span>
+          <span style="font-size: 11px; opacity: 0.9;">File: sec1_install.tex, sec3_m03_account, sec3_m05_ekyc, sec3_m16_reviews</span>
+        </div>
+        <div style="padding: 10px 14px;">
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>A1.1 – A1.2:</b> Bảng Record of Changes &amp; Bảng Deliverable Package (12 gói bàn giao)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>A2.1 – A2.3:</b> System Requirements (Client, Server, Software Stack)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>A3.1 – A3.4:</b> Cài đặt từ máy trắng từ A–Z (Git, Node, PNPM, Docker, Clone repo, cấu hình .env, Prisma Migrate &amp; Seed dữ liệu mẫu, bảng Demo Accounts)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M1.07 – M1.08:</b> Hồ sơ công khai Client (/clients/[id]) &amp; Tra cứu Danh bạ Chuyên gia (/experts)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M3.01 – M3.06:</b> Toàn bộ Module 3 (Cài đặt tài khoản, Crop Avatar, Đổi mật khẩu, Social Links, Đăng ký thêm vai trò, Chuyển đổi vai trò)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M7.01 – M7.04:</b> Toàn bộ Module 7 (Client Dashboard, Hồ sơ Công ty, Danh sách Yêu thích /favorites, Danh sách Theo dõi /following)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M5.01 – M5.02:</b> Freelancer gửi hồ sơ xác thực eKYC (CCCD + Webcam Selfie Liveness qua AI) &amp; theo dõi trạng thái</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M13.01 – M13.03:</b> Toàn bộ Module 13 (Expert Workspace, Cập nhật hồ sơ chuyên gia, Theo dõi trạng thái duyệt)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M11.05 – M11.06:</b> Viết đánh giá sau hợp đồng (Write Review), Sửa/Xóa đánh giá &amp; Phản hồi đánh giá (Respond to Review)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M15.04:</b> Admin Quản lý Banner quảng cáo &amp; Sự kiện (/admin/banners)</div></div>
+          <div class="checklist-item"><div class="check-box"></div><div class="item-content"><b>M16.01 – M16.02:</b> Admin hậu kiểm &amp; duyệt eKYC (/admin/identity-verifications), Admin duyệt Profile Revisions có bảng so sánh Diff (/admin/profile-revisions)</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quy tắc Git & LaTeX -->
+  <div class="section-card avoid-break">
+    <div class="section-header">
+      <span>IV. QUY TẮC PHỐI HỢP GIT &amp; FILE LATEX ĐỂ KHÔNG BỊ CONFLICT</span>
+      <span style="font-size: 11px; font-weight: 600; color: #475569;">Bắt buộc tuân thủ</span>
+    </div>
+    <div class="section-body">
+      <ul style="padding-left: 20px; font-size: 11.5px; color: #334155; line-height: 1.8;">
+        <li><b>Không sửa trực tiếp file gốc:</b> File <span class="code-pill">Report6_Software_User_Guides.tex</span> chỉ do Tiến Thuận nạp lệnh <span class="code-pill">\input&#123;sections/...&#125;</span>. Mỗi thành viên chỉ viết vào file <span class="code-pill">.tex</span> được phân công trong thư mục <span class="code-pill">docs/report 6/sections/</span>.</li>
+        <li><b>Thư mục ảnh riêng:</b> Đặt ảnh vào đúng thư mục con trong <span class="code-pill">docs/report 6/images/</span> (ví dụ: <span class="code-pill">install/</span>, <span class="code-pill">auth/</span>, <span class="code-pill">freelancer/</span>, <span class="code-pill">client/</span>, <span class="code-pill">contracts_payments/</span>, <span class="code-pill">community/</span>, <span class="code-pill">admin/</span>).</li>
+        <li><b>Quy tắc đặt tên file ảnh:</b> Chữ thường, không dấu, bắt đầu bằng mã chức năng, ví dụ: <span class="code-pill">m02_01_register_form.png</span>, <span class="code-pill">m08_04_ai_matching.png</span>.</li>
+        <li><b>Quy tắc nhãn \label trong LaTeX:</b> Đặt cú pháp <span class="code-pill">\label&#123;fig:m02_01_register&#125;</span> để không bao giờ bị trùng tên giữa 5 người.</li>
+        <li><b>Escape ký tự đặc biệt:</b> Luôn gõ <span class="code-pill">\_</span>, <span class="code-pill">\%</span>, <span class="code-pill">\&amp;</span>, <span class="code-pill">\#</span>, <span class="code-pill">\$</span> khi viết văn bản thông thường ngoài môi trường code/url.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
